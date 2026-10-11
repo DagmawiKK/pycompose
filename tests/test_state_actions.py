@@ -1,5 +1,4 @@
 """state.Actions: pure action registry."""
-
 from __future__ import annotations
 
 import pytest
@@ -36,15 +35,14 @@ def test_register_duplicate_overwrites_or_is_ok() -> None:
     root = Node(id=ROOT_ID, type="Text")
     initial = State(root=root, version=0)
     actions = Actions()
-    expected_version = 10
 
     def v1(s: State, _payload: dict) -> State:
         return State(root=s.root, version=s.version + 1)
 
     def v2(s: State, _payload: dict) -> State:
-        return State(root=s.root, version=s.version + expected_version)
+        return State(root=s.root, version=s.version + 10)
 
     actions.register("x", v1)
     actions.register("x", v2)
     result = actions.dispatch("x", initial, {})
-    assert result.version == expected_version
+    assert result.version == 10
