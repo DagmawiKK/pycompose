@@ -1,0 +1,100 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pycompose"
+description = "A Python UI library for Android (Jetpack Compose Material 3)."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dynamic = ["version"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "bandit>=1.7",
+    "hypothesis>=6.100",
+    "import-linter==2.0",
+    "jsonschema>=4.20",
+    "mypy==1.11.2",
+    "pre-commit>=3.0",
+    "pydoclint>=0.5",
+    "pytest>=8.0",
+    "ruff==0.6.9",
+    "types-jsonschema>=4.20",
+]
+
+[tool.setuptools.packages.find]
+include = ["pycompose*"]
+
+[tool.setuptools.package-data]
+pycompose = ["py.typed"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pycompose.version.__version__" }
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+exclude = ["templates", "build", ".venv", "venv", "docs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "ARG", "RUF", "PIE", "PL", "TID", "ERA", "PERF"]
+ignore = ["PLR0913"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pycompose"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unreachable = true
+disallow_untyped_defs = true
+disallow_any_generics = true
+no_implicit_optional = true
+check_untyped_defs = true
+exclude = ["templates/android", "build"]
+
+[tool.importlinter]
+root_package = "pycompose"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Layered: core -> schema/state -> ir -> bridge -> components"
+type = "layers"
+layers = ["core", "schema", "state", "ir", "bridge", "components"]
+containers = ["pycompose"]
+explanation = "components depends on ir+core+registry; no cycles, no skips."
+
+[[tool.importlinter.contracts]]
+name = "Bridge is the only runtime boundary surface"
+type = "forbidden"
+source_modules = ["pycompose.bridge"]
+forbidden_modules = ["android", "com", "kotlinx", "gradle"]
+explanation = "Python bridge surface is Chaquopy-agnostic; the host implements transport."
+
+[[tool.importlinter.contracts]]
+name = "Runtime packages never import CLI or templates"
+type = "forbidden"
+source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
+                  "pycompose.ir", "pycompose.bridge", "pycompose.components"]
+forbidden_modules = ["pycompose.cli", "pycompose.templates"]
+explanation = "CLI and template assets are dev/tooling concerns, never runtime deps."
+
+[[tool.importlinter.contracts]]
+name = "State is independent (no ir/bridge/components deps)"
+type = "independence"
+modules = ["pycompose.state"]
+explanation = "State + Store stay minimal and purpose-free."
+
+[[tool.importlinter.contracts]]
+name = "No Android/Kotlin/Chaquopy imports anywhere in runtime"
+type = "forbidden"
+source_modules = ["pycompose"]
+forbidden_modules = ["android", "kotlinx", "com", "gradle"]
+explanation = "Python runtime is host-agnostic by construction (ADR-0004)."
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

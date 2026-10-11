@@ -1,0 +1,27 @@
+.agents/
+AGENTS.md
+docs/
+GLOSSARY.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Android / Gradle
+android/.gradle/
+android/**/build/
+*.apk
+*.aab
+local.properties
+.idea/
+*.iml

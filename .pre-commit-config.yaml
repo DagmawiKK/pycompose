@@ -1,0 +1,55 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        files: ^pycompose/
+        additional_dependencies: [types-jsonschema]
+
+  - repo: https://github.com/seddonym/import-linter
+    rev: v2.0
+    hooks:
+      - id: import-linter
+        name: import-linter (python boundaries)
+        args: ["--config", "pyproject.toml"]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: spotless-check
+        name: Spotless check (Kotlin)
+        language: system
+        entry: bash -c 'cd android && ./gradlew spotlessCheck --no-build-cache'
+        files: \.(kt|kts)$
+        pass_filenames: false
+      - id: detekt
+        name: Detekt (Kotlin)
+        language: system
+        entry: bash -c 'cd android && ./gradlew detekt --no-build-cache'
+        files: \.(kt|kts)$
+        pass_filenames: false
+      - id: codegen-check
+        name: Registry codegen --check
+        language: system
+        entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/schema/gen.py --check; fi; exec python tools/schema/gen.py --check'
+        files: ^schema/components\.json$
+        pass_filenames: false

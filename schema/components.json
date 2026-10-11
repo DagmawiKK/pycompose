@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "1.0.0",
+  "minLibraryVersion": "0.1.0",
+  "components": {
+    "Text": {
+      "category": "typography",
+      "stability": "stable",
+      "props": {
+        "text": { "type": "string", "required": true },
+        "style": {
+          "type": "enum",
+          "values": [
+            "bodyLarge",
+            "bodyMedium",
+            "bodySmall",
+            "titleLarge",
+            "titleMedium",
+            "titleSmall",
+            "headlineMedium"
+          ],
+          "default": "bodyMedium"
+        },
+        "color": { "type": "color" },
+        "modifier": { "type": "modifier" }
+      },
+      "children": { "allowed": false }
+    },
+    "Column": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "horizontalAlignment": {
+          "type": "enum",
+          "values": ["start", "center", "end"],
+          "default": "start"
+        },
+        "modifier": { "type": "modifier" }
+      },
+      "children": { "allowed": true, "min": 0 }
+    },
+    "Row": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "verticalAlignment": {
+          "type": "enum",
+          "values": ["top", "center", "bottom"],
+          "default": "top"
+        },
+        "modifier": { "type": "modifier" }
+      },
+      "children": { "allowed": true, "min": 0 }
+    },
+    "Box": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "contentAlignment": {
+          "type": "enum",
+          "values": [
+            "topStart",
+            "topCenter",
+            "topEnd",
+            "centerStart",
+            "center",
+            "centerEnd",
+            "bottomStart",
+            "bottomCenter",
+            "bottomEnd"
+          ],
+          "default": "topStart"
+        },
+        "modifier": { "type": "modifier" }
+      },
+      "children": { "allowed": true, "min": 0 }
+    },
+    "Spacer": {
+      "category": "layout",
+      "stability": "stable",
+      "props": { "modifier": { "type": "modifier" } },
+      "children": { "allowed": false }
+    },
+    "Scaffold": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "containerColor": { "type": "color" },
+        "modifier": { "type": "modifier" }
+      },
+      "children": { "allowed": true, "kind": "content" }
+    },
+    "FilledButton": {
+      "category": "buttons",
+      "stability": "stable",
+      "props": {
+        "text": { "type": "string", "required": true },
+        "onClick": { "type": "actionId", "required": true },
+        "enabled": { "type": "boolean", "default": true },
+        "modifier": { "type": "modifier" }
+      },
+      "children": { "allowed": false }
+    },
+    "TextField": {
+      "category": "input",
+      "stability": "stable",
+      "props": {
+        "value": { "type": "string", "required": true },
+        "onValueChange": { "type": "actionId", "required": true },
+        "label": { "type": "string" },
+        "enabled": { "type": "boolean", "default": true },
+        "modifier": { "type": "modifier" }
+      },
+      "children": { "allowed": false }
+    },
+    "LazyColumn": {
+      "category": "lists",
+      "stability": "stable",
+      "props": {
+        "verticalArrangement": {
+          "type": "enum",
+          "values": [
+            "top",
+            "center",
+            "bottom",
+            "spaceEvenly",
+            "spaceBetween",
+            "spaceAround"
+          ],
+          "default": "top"
+        },
+        "modifier": { "type": "modifier" }
+      },
+      "children": { "allowed": true, "kind": "items" }
+    }
+  },
+  "actions": {
+    "increment": {
+      "payload": { "by": { "type": "integer", "default": 1 } }
+    },
+    "submit": {
+      "payload": { "email": { "type": "string", "required": true } }
+    }
+  }
+}
