@@ -115,4 +115,9 @@ markers = [
 
 [tool.pydoclint]
 # Google-style docstrings, required for the runtime/public API (plan 06).
+# Types live in signatures/annotations, so docstrings carry descriptions only;
+# the docstring type-hint checks are off to avoid demanding redundant types.
 style = "google"
+arg-type-hints-in-docstring = false
+check-return-types = false
+allow-init-docstring = true
