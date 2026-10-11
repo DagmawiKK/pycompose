@@ -30,7 +30,10 @@ jobs:
       - name: Install
         run: pip install -e ".[dev]"
       - name: Actionlint (workflow files)
-        uses: rhysd/actionlint@v1
+        shell: bash
+        run: |
+          bash <(curl -sSfL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash) 1.7.12
+          ./actionlint -color
       - name: Ruff check
         run: ruff check .
       - name: Ruff format check
