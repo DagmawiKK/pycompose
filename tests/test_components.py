@@ -25,6 +25,7 @@ from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
+from pycompose.testing.helpers import component_screen, read_golden
 
 
 def test_text_constructs_a_registry_valid_node() -> None:
@@ -186,56 +187,11 @@ def test_components_and_modifier_data_are_frozen() -> None:
     assert modifier.to_wire() == {"operations": [{"type": "padding", "value": 4}]}
 
 
-def component_screen() -> Component:
-    return Scaffold(
-        id="screen",
-        content=Column(
-            id="body",
-            children=(
-                Text(id="title", text="Hello PyCompose", style="titleLarge"),
-                Row(
-                    id="actions",
-                    children=(
-                        FilledButton(
-                            id="add", text="Add", on_click="increment", enabled=True
-                        ),
-                        Spacer(id="gap", modifier=Modifier().size(8)),
-                    ),
-                ),
-                Box(
-                    id="input",
-                    children=(
-                        TextField(
-                            id="name",
-                            value="Ada",
-                            on_value_change="submit",
-                            label="Name",
-                        ),
-                    ),
-                ),
-                LazyColumn(
-                    id="items",
-                    items=(Text(id="first", text="One"), Text(id="second", text="Two")),
-                ),
-            ),
-        ),
-        modifier=Modifier()
-        .padding(16)
-        .fill_max_width()
-        .clip("rounded")
-        .clickable("submit"),
-    )
-
-
 def test_component_screen_matches_golden_and_generated_schema() -> None:
     candidate = emit_ir(State(root=component_screen()), "1.0.0")
     assert validate_ir(candidate).snapshot is candidate
     actual = to_json_bytes(candidate)
-    expected = (
-        (Path(__file__).parent / "fixtures" / "component_screen.json")
-        .read_bytes()
-        .removesuffix(b"\n")
-    )
+    expected = read_golden("component_screen.json")
     assert actual == expected
     schema = json.loads(
         (Path(__file__).parents[1] / "schema" / "ir.schema.json").read_text()

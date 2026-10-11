@@ -12,6 +12,7 @@ from pycompose.core import Node, Props
 from pycompose.errors import IrError, IrValidationError, SchemaError
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
+from pycompose.testing.helpers import read_golden
 
 
 def test_emit_ir_matches_golden_and_generated_schema() -> None:
@@ -31,9 +32,9 @@ def test_emit_ir_matches_golden_and_generated_schema() -> None:
         version=7,
     )
     snapshot = emit_ir(state, "1.0.0")
-    expected = (Path(__file__).parent / "fixtures" / "ir_counter.json").read_bytes()
-    assert to_json_bytes(snapshot) == expected.rstrip(b"\n")
-    assert to_json_bytes(emit_ir(state, "1.0.0")) == expected.rstrip(b"\n")
+    expected = read_golden("ir_counter.json")
+    assert to_json_bytes(snapshot) == expected
+    assert to_json_bytes(emit_ir(state, "1.0.0")) == expected
     schema_path = Path(__file__).parents[1] / "schema" / "ir.schema.json"
     jsonschema.validate(json.loads(expected), json.loads(schema_path.read_text()))
 

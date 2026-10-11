@@ -70,6 +70,21 @@ jobs:
         run: python tools/schema/gen.py --check
       - name: Schema + golden tests
         run: pytest -q -k "schema or golden"
+      - name: Verify goldens ship in the wheel
+        run: |
+          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/pycompose-wheel" .
+          python -I - "$RUNNER_TEMP/pycompose-wheel" <<'PY'
+          import sys
+          from pathlib import Path
+          wheel = next(Path(sys.argv[1]).glob("pycompose-*.whl"))
+          sys.path.insert(0, str(wheel))
+          from pycompose.ir import emit_ir, to_json_bytes
+          from pycompose.state import State
+          from pycompose.testing.helpers import component_screen, golden_names, read_golden
+          assert golden_names() == ("component_screen.json", "ir_counter.json")
+          assert to_json_bytes(emit_ir(State(root=component_screen()), "1.0.0")) == read_golden("component_screen.json")
+          assert read_golden("ir_counter.json")
+          PY
       - name: Upload reports
         if: failure()
         uses: actions/upload-artifact@v4
