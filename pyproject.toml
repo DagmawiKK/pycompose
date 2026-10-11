@@ -45,7 +45,7 @@ exclude = ["templates", "build", ".venv", "venv", "docs"]
 # (below). line-length 88 is the project standard (within PEP 8's
 # modern 99-char allowance).
 select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "ARG", "RUF", "PIE", "PL", "TID", "ERA", "PERF"]
-ignore = ["PLR0913"]
+ignore = ["PLR0913", "PLR2004"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["pycompose"]
