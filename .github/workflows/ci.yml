@@ -73,15 +73,17 @@ jobs:
   kotlin-lint-test-archunit:
     name: 3 · Kotlin lint · tests · ArchUnit
     runs-on: ubuntu-latest
-    if: hashFiles('android/settings.gradle.kts') != ''
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - if: hashFiles('android/settings.gradle.kts') != ''
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: ${{ env.JDK_VERSION }}
-      - uses: gradle/actions/setup-gradle@v4
+      - if: hashFiles('android/settings.gradle.kts') != ''
+        uses: gradle/actions/setup-gradle@v4
       - name: Spotless + Detekt + lint + unit tests (incl. ArchUnit)
+        if: hashFiles('android/settings.gradle.kts') != ''
         run: ./gradlew spotlessCheck detekt lintDebug testDebugUnitTest --continue
       - name: Upload reports
         if: failure()
@@ -93,32 +95,34 @@ jobs:
   build-template-smoke:
     name: 4 · Template build smoke
     runs-on: ubuntu-latest
-    if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
-      - uses: actions/setup-java@v4
+      - if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: ${{ env.JDK_VERSION }}
-      - uses: gradle/actions/setup-gradle@v4
+      - if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
+        uses: gradle/actions/setup-gradle@v4
       - name: Install CLI
         run: pip install -e ".[dev]"
       - name: Generate sample project
+        if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
         run: |
           cd "$RUNNER_TEMP"
           pycompose init smoke
       - name: Build template (host debug APK)
+        if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
         working-directory: ${{ runner.temp }}/smoke
         run: ./gradlew :host:assembleDebug
 
   resource-sync-check:
     name: 5 · Resource sync --check
     runs-on: ubuntu-latest
-    if: hashFiles('pycompose/cli/sync.py') != ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -128,12 +132,12 @@ jobs:
       - name: Install CLI
         run: pip install -e ".[dev]"
       - name: Sync check
+        if: hashFiles('pycompose/cli/sync.py') != ''
         run: pycompose sync --check
 
   hot-reload-smoke:
     name: 6 · Dev-server hot reload smoke
     runs-on: ubuntu-latest
-    if: hashFiles('pycompose/cli/dev_server.py') != ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
