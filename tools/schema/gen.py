@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -90,6 +91,16 @@ def _validate_registry(registry: dict) -> None:
     for action_id, action in sorted(actions.items()):
         _validate_action(action_id, action)
     _validate_action_refs(registry)
+    modifiers = registry.get("modifiers", {})
+    if not isinstance(modifiers, dict):
+        _die("'modifiers' must be an object")
+    for name, modifier in sorted(modifiers.items()):
+        if not isinstance(modifier, dict) or not isinstance(
+            modifier.get("props"), dict
+        ):
+            _die(f"modifier {name!r} needs a props object")
+        for prop_name, prop in sorted(modifier["props"].items()):
+            _validate_prop(name, prop_name, prop)
 
 
 def _require_semver(value: str, field: str) -> None:
@@ -153,6 +164,15 @@ def _validate_prop(name: str, prop_name: str, prop: dict) -> None:
             _die(f"enum prop {name}.{prop_name} needs a non-empty string 'values' list")
     if "required" in prop and not isinstance(prop["required"], bool):
         _die(f"prop {name}.{prop_name} 'required' must be a boolean")
+    for bound in ("minimum", "maximum"):
+        if bound in prop and (
+            not isinstance(prop[bound], int | float)
+            or isinstance(prop[bound], bool)
+            or (isinstance(prop[bound], float) and not math.isfinite(prop[bound]))
+        ):
+            _die(f"prop {name}.{prop_name} {bound} must be finite numeric data")
+    if "minimum" in prop and "maximum" in prop and prop["minimum"] > prop["maximum"]:
+        _die(f"prop {name}.{prop_name} minimum exceeds maximum")
 
 
 def _validate_action(action_id: str, action: dict) -> None:
@@ -192,6 +212,31 @@ def render_ir_schema(registry: dict) -> str:
         },
         "definitions": {
             "Node": _node_schema(sorted(component_defs)),
+            "ModifierOperation": {
+                "anyOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            *sorted(
+                                key
+                                for key, prop in modifier["props"].items()
+                                if prop.get("required")
+                            ),
+                        ],
+                        "properties": {
+                            "type": {"const": name},
+                            **{
+                                key: _prop_schema(prop, action_ids)
+                                for key, prop in sorted(modifier["props"].items())
+                            },
+                        },
+                        "additionalProperties": False,
+                    }
+                    for name, modifier in sorted(registry.get("modifiers", {}).items())
+                ]
+                or [False]
+            },
             **component_defs,
         },
     }
@@ -259,11 +304,22 @@ def _prop_schema(prop: dict, action_ids: list[str]) -> dict:
     elif ptype == "actionId":
         value = {"enum": action_ids}
     elif ptype == "modifier":
-        value = {"type": "object"}
+        value = {
+            "type": "object",
+            "properties": {
+                "operations": {
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/ModifierOperation"},
+                }
+            },
+        }
     else:
         _die(f"unsupported prop type {ptype!r}")
     if "default" in prop:
         value["default"] = prop["default"]
+    for bound in ("minimum", "maximum"):
+        if bound in prop:
+            value[bound] = prop[bound]
     return value
 
 

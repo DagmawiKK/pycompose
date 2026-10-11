@@ -133,6 +133,19 @@
       "children": { "allowed": true, "kind": "items" }
     }
   },
+  "modifiers": {
+    "padding": { "props": { "value": { "type": "dp", "required": true, "minimum": 0 } } },
+    "fillMaxWidth": { "props": { "fraction": { "type": "number", "required": true, "minimum": 0, "maximum": 1 } } },
+    "size": { "props": {
+      "width": { "type": "dp", "required": true, "minimum": 0 },
+      "height": { "type": "dp", "required": true, "minimum": 0 }
+    } },
+    "clip": { "props": { "shape": { "type": "enum", "required": true, "values": ["rectangle", "circle", "rounded"] } } },
+    "clickable": { "props": {
+      "onClick": { "type": "actionId", "required": true },
+      "enabled": { "type": "boolean", "required": true }
+    } }
+  },
   "actions": {
     "increment": {
       "payload": { "by": { "type": "integer", "default": 1 } }

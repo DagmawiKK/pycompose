@@ -6,7 +6,7 @@ A :class:`Node` is the unit of the IR tree: a stable id, a component type,
 
 from __future__ import annotations
 
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass, field
 from typing import cast
 
@@ -122,7 +122,7 @@ class Node:
         id: str,
         type: str,
         props: Props | Mapping[str, JsonValue | FrozenJsonValue] = _EMPTY_PROPS,
-        children: tuple[Node, ...] = (),
+        children: Iterable[Node] = (),
     ) -> None:
         """Construct a node, normalizing mappings into immutable Props.
 

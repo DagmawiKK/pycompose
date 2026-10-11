@@ -22,6 +22,14 @@
               ]
             },
             "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
               "type": "object"
             }
           },
@@ -47,6 +55,14 @@
               ]
             },
             "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
               "type": "object"
             }
           },
@@ -69,6 +85,14 @@
               "type": "boolean"
             },
             "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
               "type": "object"
             },
             "onClick": {
@@ -99,6 +123,14 @@
           "additionalProperties": false,
           "properties": {
             "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
               "type": "object"
             },
             "verticalArrangement": {
@@ -127,6 +159,14 @@
           "additionalProperties": false,
           "properties": {
             "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
               "type": "object"
             },
             "verticalAlignment": {
@@ -155,6 +195,14 @@
               "type": "string"
             },
             "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
               "type": "object"
             }
           },
@@ -173,6 +221,14 @@
           "additionalProperties": false,
           "properties": {
             "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
               "type": "object"
             }
           },
@@ -194,6 +250,14 @@
               "type": "string"
             },
             "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
               "type": "object"
             },
             "style": {
@@ -237,6 +301,14 @@
               "type": "string"
             },
             "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
               "type": "object"
             },
             "onValueChange": {
@@ -260,6 +332,110 @@
         }
       },
       "type": "object"
+    },
+    "ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "Node": {
       "allOf": [

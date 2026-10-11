@@ -7,8 +7,6 @@ retain split paths. Already qualified, unchanged branches preserve identity.
 
 from __future__ import annotations
 
-from dataclasses import replace
-
 from pycompose.core.ids import ROOT_ID, IdRegistry, child_id
 from pycompose.core.node import Node
 from pycompose.core.traversal import walk_nodes
@@ -66,7 +64,12 @@ def _emit_node(node: Node, node_id: str, ids: IdRegistry) -> Node:
             result = (
                 source
                 if unchanged
-                else replace(source, id=qualified, children=tuple(children))
+                else Node(
+                    id=qualified,
+                    type=source.type,
+                    props=source.props,
+                    children=tuple(children),
+                )
             )
             if frames:
                 frames[-1][1].append(result)

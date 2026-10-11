@@ -68,6 +68,17 @@ REGISTRY: Registry = Registry.from_mapping(
         'ifier":{"type":"modifier"},"onValueChange":{"requi'
         'red":true,"type":"actionId"},"value":{"required":t'
         'rue,"type":"string"}},"stability":"stable"}},"minL'
-        'ibraryVersion":"0.1.0","schemaVersion":"1.0.0"}'
+        'ibraryVersion":"0.1.0","modifiers":{"clickable":{"'
+        'props":{"enabled":{"required":true,"type":"boolean'
+        '"},"onClick":{"required":true,"type":"actionId"}}}'
+        ',"clip":{"props":{"shape":{"required":true,"type":'
+        '"enum","values":["rectangle","circle","rounded"]}}'
+        '},"fillMaxWidth":{"props":{"fraction":{"maximum":1'
+        ',"minimum":0,"required":true,"type":"number"}}},"p'
+        'adding":{"props":{"value":{"minimum":0,"required":'
+        'true,"type":"dp"}}},"size":{"props":{"height":{"mi'
+        'nimum":0,"required":true,"type":"dp"},"width":{"mi'
+        'nimum":0,"required":true,"type":"dp"}}}},"schemaVe'
+        'rsion":"1.0.0"}'
     )
 )

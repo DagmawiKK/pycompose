@@ -8,6 +8,7 @@ import re
 from pathlib import Path
 
 import jsonschema
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 COMPONENTS_PATH = ROOT / "schema" / "components.json"
@@ -161,3 +162,24 @@ def test_library_version_satisfies_min_library() -> None:
 
     min_library = _registry()["minLibraryVersion"]
     assert _version_tuple(__version__) >= _version_tuple(min_library)
+
+
+@pytest.mark.parametrize(
+    "operation",
+    [
+        {"type": "padding", "value": -1},
+        {"type": "fillMaxWidth", "fraction": 2},
+        {"type": "clip", "shape": "missing"},
+        {"type": "clickable", "onClick": "missing", "enabled": True},
+        {"type": "size", "width": 1},
+        {"type": "padding", "value": 1, "extra": 2},
+        {"type": "missing"},
+    ],
+)
+def test_ir_schema_rejects_invalid_modifier_operations(
+    operation: dict[str, object],
+) -> None:
+    schema = json.loads(IR_SCHEMA_PATH.read_text())
+    snapshot = _valid_snapshot()
+    snapshot["root"]["props"] = {"modifier": {"operations": [operation]}}
+    _expect_invalid(snapshot, schema)

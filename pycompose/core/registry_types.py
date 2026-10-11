@@ -12,9 +12,11 @@ and the generated validators; here ``type`` is treated as an opaque string.
 
 from __future__ import annotations
 
+import math
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from dataclasses import dataclass
+from dataclasses import field as dataclass_field
 from types import MappingProxyType
 from typing import Protocol, cast
 
@@ -43,6 +45,8 @@ class PropDef:
         required: Whether the prop must be present.
         has_default: Whether a default is declared.
         default: The declared default, when ``has_default`` is set.
+        minimum: Inclusive lower bound for a numeric prop.
+        maximum: Inclusive upper bound for a numeric prop.
     """
 
     type: str
@@ -50,10 +54,25 @@ class PropDef:
     required: bool = False
     has_default: bool = False
     default: JsonValue | FrozenJsonValue = None
+    minimum: int | float | None = None
+    maximum: int | float | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "values", tuple(self.values))
         object.__setattr__(self, "default", freeze_json(self.default))
+        for bound in (self.minimum, self.maximum):
+            if bound is not None and (
+                not isinstance(bound, int | float)
+                or isinstance(bound, bool)
+                or (isinstance(bound, float) and not math.isfinite(bound))
+            ):
+                raise ComponentRegistryError("numeric bounds must be finite numbers")
+        if (
+            self.minimum is not None
+            and self.maximum is not None
+            and self.minimum > self.maximum
+        ):
+            raise ComponentRegistryError("minimum exceeds maximum")
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> PropDef:
@@ -91,6 +110,8 @@ class PropDef:
             required=required,
             has_default="default" in data,
             default=cast("JsonValue", data.get("default")),
+            minimum=cast("int | float | None", data.get("minimum")),
+            maximum=cast("int | float | None", data.get("maximum")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -106,6 +127,10 @@ class PropDef:
             out["required"] = True
         if self.has_default:
             out["default"] = thaw_json(self.default)
+        if self.minimum is not None:
+            out["minimum"] = self.minimum
+        if self.maximum is not None:
+            out["maximum"] = self.maximum
         return out
 
 
@@ -411,16 +436,30 @@ class Registry(AbstractComponentRegistry):
         min_library_version: The minimum library version required.
         components: Component definitions by name.
         actions: Action definitions by id.
+        modifiers: Ordered modifier operation definitions by wire name.
     """
 
     schema_version: str
     min_library_version: str
     components: Mapping[str, ComponentSpec]
     actions: Mapping[str, ActionDef]
+    modifiers: Mapping[str, Mapping[str, PropDef]] = dataclass_field(
+        default_factory=dict
+    )
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "components", MappingProxyType(dict(self.components)))
         object.__setattr__(self, "actions", MappingProxyType(dict(self.actions)))
+        object.__setattr__(
+            self,
+            "modifiers",
+            MappingProxyType(
+                {
+                    name: MappingProxyType(dict(props))
+                    for name, props in self.modifiers.items()
+                }
+            ),
+        )
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object]) -> Registry:
@@ -468,6 +507,7 @@ class Registry(AbstractComponentRegistry):
             min_library_version=min_library_version,
             components=components,
             actions=actions,
+            modifiers=_parse_modifiers(data.get("modifiers", {})),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -476,7 +516,7 @@ class Registry(AbstractComponentRegistry):
         Returns:
             A JSON-ready dict matching the registry file.
         """
-        return {
+        result: dict[str, object] = {
             "schemaVersion": self.schema_version,
             "minLibraryVersion": self.min_library_version,
             "components": {
@@ -488,6 +528,12 @@ class Registry(AbstractComponentRegistry):
                 for action_id, action in self.actions.items()
             },
         }
+        if self.modifiers:
+            result["modifiers"] = {
+                name: {"props": {key: prop.to_mapping() for key, prop in props.items()}}
+                for name, props in self.modifiers.items()
+            }
+        return result
 
     def component(self, name: str) -> ComponentDef:
         """Return the component definition for ``name``.
@@ -538,3 +584,24 @@ class Registry(AbstractComponentRegistry):
             The action ids.
         """
         return tuple(self.actions)
+
+
+def _parse_modifiers(raw: object) -> Mapping[str, Mapping[str, PropDef]]:
+    if not isinstance(raw, Mapping):
+        raise ComponentRegistryError("registry 'modifiers' must be an object")
+    modifiers: dict[str, Mapping[str, PropDef]] = {}
+    for name, body in raw.items():
+        if not isinstance(name, str) or not isinstance(body, Mapping):
+            raise ComponentRegistryError("invalid modifier definition")
+        raw_props = body.get("props")
+        if not isinstance(raw_props, Mapping):
+            raise ComponentRegistryError(
+                "modifier 'props' must be an object", modifier=name
+            )
+        parsed: dict[str, PropDef] = {}
+        for prop_name, prop in raw_props.items():
+            if not isinstance(prop_name, str) or not isinstance(prop, Mapping):
+                raise ComponentRegistryError("invalid modifier prop", modifier=name)
+            parsed[prop_name] = PropDef.from_mapping(prop, where=f"{name}.{prop_name}")
+        modifiers[name] = parsed
+    return modifiers

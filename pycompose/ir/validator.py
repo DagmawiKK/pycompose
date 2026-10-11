@@ -27,7 +27,13 @@ from pycompose.ir.model import IRRoot
 from pycompose.schema.version import require_version
 from pycompose.utils.json_canonical import check_json
 
-__all__ = ["ValidationIssue", "ValidationResult", "validate_ir"]
+__all__ = [
+    "ValidationIssue",
+    "ValidationResult",
+    "validate_component",
+    "validate_ir",
+    "validate_modifier",
+]
 
 
 _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
@@ -52,10 +58,62 @@ def _valid_prop(value: object, prop: PropDef) -> bool:
     if check is None or not check(value, prop):
         return False
     try:
-        check_json(value)
+        if prop.type == "modifier":
+            validate_modifier(value)
+        else:
+            check_json(value)
     except IrValidationError:
         return False
+    if isinstance(value, int | float):
+        if prop.minimum is not None and value < prop.minimum:
+            return False
+        if prop.maximum is not None and value > prop.maximum:
+            return False
     return True
+
+
+def validate_modifier(value: object) -> None:
+    """Validate ordered operations using generated modifier definitions.
+
+    Legacy modifier objects without operations remain JSON-compatible. Invalid
+    JSON propagates IrValidationError from the shared checker.
+
+    Args:
+        value: Ordinary or frozen modifier object.
+
+    Raises:
+        IrValidationError: If operations, props or action references are invalid.
+    """
+    check_json(value)
+    if not isinstance(value, Mapping):
+        raise IrValidationError("modifier must be an object")
+    if "operations" not in value:
+        return
+    operations = value["operations"]
+    if not isinstance(operations, list | tuple):
+        raise IrValidationError("modifier operations must be an array")
+    for operation in operations:
+        if not isinstance(operation, Mapping) or not isinstance(
+            operation.get("type"), str
+        ):
+            raise IrValidationError("invalid modifier operation")
+        name = operation["type"]
+        spec = REGISTRY.modifiers.get(name)
+        if spec is None:
+            raise IrValidationError("unknown modifier operation", modifier=name)
+        for key, prop in spec.items():
+            if prop.required and key not in operation:
+                raise IrValidationError(
+                    "missing modifier prop", modifier=name, prop=key
+                )
+        for key, item in operation.items():
+            if key == "type":
+                continue
+            declared = spec.get(key)
+            if declared is None or not _valid_prop(item, declared):
+                raise IrValidationError(
+                    "invalid modifier prop", modifier=name, prop=key
+                )
 
 
 @dataclass(frozen=True, slots=True)
@@ -125,6 +183,22 @@ def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
     elif root is not snapshot.root or metadata is not snapshot.metadata:
         safe = replace(snapshot, root=root, metadata=metadata)
     return ValidationResult(snapshot=safe, issues=tuple(validation.issues))
+
+
+def validate_component(node: Node) -> None:
+    """Check one component's props and immediate child rules, fail-closed.
+
+    Descendants and global identities are checked by validate_ir after emission.
+    Constructors use this seam without repeatedly validating whole subtrees.
+    Invalid data propagates IrValidationError with node/prop context.
+
+    Args:
+        node: Candidate component node.
+    """
+    validation = _Validation(debug=True)
+    frame = validation.prepare(node)
+    if frame is not None and len(node.children) < frame.minimum:
+        validation.report("too few children", node)
 
 
 @dataclass(slots=True)
@@ -220,7 +294,12 @@ class _Validation:
             )
         ):
             return node
-        return replace(node, props=frame.props, children=tuple(frame.children))
+        return Node(
+            id=node.id,
+            type=node.type,
+            props=frame.props,
+            children=tuple(frame.children),
+        )
 
     def node(self, root: Node) -> Node | None:
         frames: list[_NodeFrame | None] = []
