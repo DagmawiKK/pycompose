@@ -1,6 +1,8 @@
-"""pycompose.state — frozen State + mutable Store + action handlers."""
+"""pycompose.state — frozen State, mutable Store, action registry."""
 
 from __future__ import annotations
 
-# Reserved: re-exports land with the state tickets (#6).
-__all__: list[str] = []
+from pycompose.state.actions import ActionHandler, Actions
+from pycompose.state.state import State, Store
+
+__all__ = ["ActionHandler", "Actions", "State", "Store"]
