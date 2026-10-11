@@ -68,7 +68,7 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["core", "schema", "state", "ir", "bridge", "components"]
+layers = ["components", "bridge", "ir", "state", "schema", "core"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
 
@@ -91,8 +91,9 @@ explanation = "CLI and template assets are dev/tooling concerns, never runtime d
 
 [[tool.importlinter.contracts]]
 name = "State is independent (no ir/bridge/components deps)"
-type = "independence"
-modules = ["pycompose.state"]
+type = "forbidden"
+source_modules = ["pycompose.state"]
+forbidden_modules = ["pycompose.ir", "pycompose.bridge", "pycompose.components"]
 explanation = "State + Store stay minimal and purpose-free."
 
 [[tool.importlinter.contracts]]
