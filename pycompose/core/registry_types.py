@@ -15,10 +15,12 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import Protocol, cast
 
 from pycompose.core.props import JsonValue
 from pycompose.errors import ComponentRegistryError
+from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
 
 __all__ = [
     "AbstractComponentRegistry",
@@ -47,7 +49,11 @@ class PropDef:
     values: tuple[str, ...] = ()
     required: bool = False
     has_default: bool = False
-    default: JsonValue = None
+    default: JsonValue | FrozenJsonValue = None
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "values", tuple(self.values))
+        object.__setattr__(self, "default", freeze_json(self.default))
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> PropDef:
@@ -99,7 +105,7 @@ class PropDef:
         if self.required:
             out["required"] = True
         if self.has_default:
-            out["default"] = self.default
+            out["default"] = thaw_json(self.default)
         return out
 
 
@@ -225,6 +231,9 @@ class ComponentSpec:
     props: Mapping[str, PropDef]
     children: ChildrenRule
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
+
     @classmethod
     def from_mapping(cls, name: str, data: Mapping[str, object]) -> ComponentSpec:
         """Build a :class:`ComponentSpec` from raw JSON.
@@ -299,6 +308,9 @@ class ActionDef:
 
     action_id: str
     payload: Mapping[str, PropDef]
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "payload", MappingProxyType(dict(self.payload)))
 
     @classmethod
     def from_mapping(cls, action_id: str, data: Mapping[str, object]) -> ActionDef:
@@ -405,6 +417,10 @@ class Registry(AbstractComponentRegistry):
     min_library_version: str
     components: Mapping[str, ComponentSpec]
     actions: Mapping[str, ActionDef]
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "components", MappingProxyType(dict(self.components)))
+        object.__setattr__(self, "actions", MappingProxyType(dict(self.actions)))
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object]) -> Registry:

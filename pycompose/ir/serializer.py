@@ -1,53 +1,74 @@
-"""Canonical JSON serializer for IR nodes."""
+"""Canonical serialization of nodes and versioned snapshots."""
 
 from __future__ import annotations
 
-import json
-from typing import Any
-
-from pycompose.core.node import Node, Props
+from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
+from pycompose.ir.model import IRRoot
+from pycompose.utils.json_canonical import canonical_json, thaw_json
 
 __all__ = ["node_to_dict", "to_dict", "to_json", "to_json_bytes"]
 
 
-def _props_to_dict(props: Props) -> dict[str, JsonValue]:
-    return dict(props.values)
+def node_to_dict(node: Node) -> dict[str, JsonValue]:
+    """Convert a node to wire data, omitting children on leaves.
 
+    Args:
+        node: IR node to convert.
 
-def _node_to_dict(node: Node) -> dict[str, Any]:
-    result: dict[str, Any] = {
+    Returns:
+        Plain JSON values with camelCase prop names.
+    """
+    result: dict[str, JsonValue] = {
         "id": node.id,
+        "props": node.props.to_wire(),
         "type": node.type,
-        "props": _props_to_dict(node.props),
-        "children": [_node_to_dict(child) for child in node.children],
     }
-    return result
+    if node.children:
+        result["children"] = [node_to_dict(child) for child in node.children]
+    return dict(sorted(result.items()))
 
 
-def node_to_dict(node: Node) -> dict[str, Any]:
-    d = _node_to_dict(node)
-    return {
-        "children": d["children"],
-        "id": d["id"],
-        "props": d["props"],
-        "type": d["type"],
+def to_dict(snapshot: Node | IRRoot) -> dict[str, JsonValue]:
+    """Convert a snapshot (or standalone node) to wire data.
+
+    Args:
+        snapshot: Node or versioned snapshot.
+
+    Returns:
+        A plain mapping with camelCase envelope keys.
+    """
+    if isinstance(snapshot, Node):
+        return node_to_dict(snapshot)
+    result: dict[str, JsonValue] = {
+        "root": node_to_dict(snapshot.root),
+        "schemaVersion": snapshot.schema_version,
+        "version": snapshot.version,
     }
+    if snapshot.metadata is not None:
+        result["metadata"] = thaw_json(snapshot.metadata)
+    return dict(sorted(result.items()))
 
 
-def to_dict(node: Node) -> dict[str, Any]:
-    return node_to_dict(node)
+def to_json(snapshot: Node | IRRoot) -> str:
+    """Serialize a snapshot with sorted keys and compact UTF-8 JSON.
+
+    Args:
+        snapshot: Node or versioned snapshot.
+
+    Returns:
+        Deterministic JSON text.
+    """
+    return canonical_json(to_dict(snapshot))
 
 
-def to_json(node: Node) -> str:
-    data = to_dict(node)
-    return json.dumps(
-        data,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False,
-    )
+def to_json_bytes(snapshot: Node | IRRoot) -> bytes:
+    """Serialize a snapshot to canonical UTF-8 bytes.
 
+    Args:
+        snapshot: Node or versioned snapshot.
 
-def to_json_bytes(node: Node) -> bytes:
-    return to_json(node).encode("utf-8")
+    Returns:
+        Deterministic UTF-8 bytes.
+    """
+    return to_json(snapshot).encode("utf-8")

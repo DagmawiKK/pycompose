@@ -6,7 +6,9 @@ Wire props are ``camelCase`` (the IR contract); the component layer accepts
 
 from __future__ import annotations
 
-from typing import Final, TypeAlias
+from typing import Final
+
+from pycompose.utils.json_canonical import JsonValue
 
 __all__ = [
     "JsonValue",
@@ -15,12 +17,6 @@ __all__ = [
     "to_camel_case",
     "to_snake_case",
 ]
-
-#: The JSON value vocabulary prop/default values are drawn from.
-# mypy 1.11 (pinned) cannot parse PEP 695 `type` aliases, so UP040 is off here.
-JsonValue: TypeAlias = (  # noqa: UP040
-    "str | int | float | bool | None | dict[str, JsonValue] | list[JsonValue]"
-)
 
 _UNDERSCORE: Final[str] = "_"
 

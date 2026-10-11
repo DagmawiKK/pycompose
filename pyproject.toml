@@ -68,7 +68,7 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["components", "bridge", "ir", "state", "schema", "core"]
+layers = ["components", "bridge", "ir", "state", "schema", "core", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
 
@@ -85,7 +85,8 @@ explanation = "Python bridge surface is Chaquopy-agnostic; the host implements t
 name = "Runtime packages never import CLI or templates"
 type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
-                  "pycompose.ir", "pycompose.bridge", "pycompose.components"]
+                  "pycompose.ir", "pycompose.bridge", "pycompose.components",
+                  "pycompose.utils"]
 forbidden_modules = ["pycompose.cli", "pycompose.templates"]
 explanation = "CLI and template assets are dev/tooling concerns, never runtime deps."
 

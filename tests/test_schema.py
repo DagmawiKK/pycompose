@@ -92,6 +92,12 @@ def test_generated_validators_are_fresh() -> None:
     assert VALIDATORS_PATH.read_text(encoding="utf-8") == _expected("render_validators")
 
 
+def test_generated_tables_match_the_full_registry() -> None:
+    from pycompose.ir.generated_validators import REGISTRY
+
+    assert REGISTRY.to_mapping() == _registry()
+
+
 def test_ir_schema_accepts_valid_snapshot() -> None:
     ir_schema = json.loads(IR_SCHEMA_PATH.read_text(encoding="utf-8"))
     jsonschema.validate(_valid_snapshot(), ir_schema)

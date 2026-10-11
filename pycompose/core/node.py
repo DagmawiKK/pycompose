@@ -12,6 +12,7 @@ from types import MappingProxyType
 
 from pycompose.core.props import JsonValue, is_camel_case
 from pycompose.errors import IrError
+from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
 
 __all__ = ["Node", "Props"]
 
@@ -24,7 +25,7 @@ class Props:
         values: The ``camelCase`` prop values; frozen to a read-only mapping.
     """
 
-    values: Mapping[str, JsonValue] = field(default_factory=dict)
+    values: Mapping[str, JsonValue | FrozenJsonValue] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         """Freeze the mapping and reject non-``camelCase`` prop names.
@@ -32,13 +33,15 @@ class Props:
         Raises:
             IrError: If any prop name is not ``camelCase``.
         """
-        frozen: Mapping[str, JsonValue] = MappingProxyType(dict(self.values))
+        frozen = MappingProxyType(
+            {name: freeze_json(value) for name, value in self.values.items()}
+        )
         for name in frozen:
             if not is_camel_case(name):
                 raise IrError("prop name is not camelCase", prop=name)
         object.__setattr__(self, "values", frozen)
 
-    def __getitem__(self, name: str) -> JsonValue:
+    def __getitem__(self, name: str) -> JsonValue | FrozenJsonValue:
         """Return the prop named ``name``.
 
         Args:
@@ -76,7 +79,7 @@ class Props:
         """
         return name in self.values
 
-    def get(self, name: str, default: JsonValue = None) -> JsonValue:
+    def get(self, name: str, default: JsonValue = None) -> JsonValue | FrozenJsonValue:
         """Return ``name`` or ``default`` when absent.
 
         Args:
@@ -92,9 +95,9 @@ class Props:
         """Return a plain ``camelCase`` mapping of the prop values.
 
         Returns:
-            A shallow copy of the prop values.
+            A detached JSON copy of the prop values.
         """
-        return dict(self.values)
+        return {name: thaw_json(value) for name, value in self.values.items()}
 
 
 @dataclass(frozen=True, slots=True)

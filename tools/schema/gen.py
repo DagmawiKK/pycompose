@@ -268,7 +268,7 @@ def _prop_schema(prop: dict, action_ids: list[str]) -> dict:
 
 
 def render_validators(registry: dict) -> str:
-    """Render the generated Python validator tables (Phase 1 stub)."""
+    """Render typed runtime tables directly from the SSOT registry."""
     action_ids = sorted(registry.get("actions", {}))
     ids = [json.dumps(action_id) for action_id in action_ids]
     if len(ids) == 1:
@@ -277,16 +277,36 @@ def render_validators(registry: dict) -> str:
         action_tuple = "(" + ", ".join(ids) + ")"
     else:
         action_tuple = "()"
+    raw = json.dumps(registry, sort_keys=True, separators=(",", ":"))
+    # Adjacent literals embed the entire registry without a runtime file read.
+    chunks = [
+        _python_string(raw[index : index + 50]) for index in range(0, len(raw), 50)
+    ]
+    literals = "\n".join(f"        {chunk}" for chunk in chunks)
     body = (
         f"# {GENERATED_NOTICE}\n"
-        '"""Generated IR validation tables '
-        '(stub; tables land with ir/validator)."""\n\n'
+        '"""Generated component, prop, children and action validation tables."""\n\n'
         "from __future__ import annotations\n\n"
-        "__all__ = [\"KNOWN_ACTION_IDS\", \"SCHEMA_VERSION\"]\n\n"
+        "import json\n\n"
+        "from pycompose.core.registry_types import Registry\n\n"
+        '__all__ = [\n    "KNOWN_ACTION_IDS",\n    "MIN_LIBRARY_VERSION",\n'
+        '    "MIN_SCHEMA_VERSION",\n    "REGISTRY",\n    "SCHEMA_VERSION",\n]\n\n'
         f"SCHEMA_VERSION: str = {json.dumps(registry['schemaVersion'])}\n"
+        "MIN_SCHEMA_VERSION: str = SCHEMA_VERSION\n"
+        f"MIN_LIBRARY_VERSION: str = {json.dumps(registry['minLibraryVersion'])}\n"
         f"KNOWN_ACTION_IDS: tuple[str, ...] = {action_tuple}\n"
+        f"REGISTRY: Registry = Registry.from_mapping(\n    json.loads(\n{literals}\n"
+        "    )\n)\n"
     )
     return body
+
+
+def _python_string(value: str) -> str:
+    # Choose quotes that preserve embedded JSON without unnecessary escaping.
+    if '"' in value and "'" not in value:
+        escaped = json.dumps(value)[1:-1].replace('\\"', '"')
+        return f"'{escaped}'"
+    return json.dumps(value)
 
 
 def _read(path: Path) -> str | None:
