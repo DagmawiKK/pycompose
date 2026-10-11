@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 from pathlib import Path
 
 import jsonschema
@@ -126,3 +127,31 @@ def test_ir_schema_rejects_bad_schema_version() -> None:
     snapshot = _valid_snapshot()
     snapshot["schemaVersion"] = "9.9.9"
     _expect_invalid(snapshot, ir_schema)
+
+
+def test_ir_schema_rejects_unknown_action_id() -> None:
+    ir_schema = json.loads(IR_SCHEMA_PATH.read_text(encoding="utf-8"))
+    snapshot = _valid_snapshot()
+    snapshot["root"] = {
+        "id": "root",
+        "type": "FilledButton",
+        "props": {"text": "Go", "onClick": "no_such_action"},
+    }
+    _expect_invalid(snapshot, ir_schema)
+
+
+def _version_tuple(version: str) -> tuple[int, ...]:
+    return tuple(int(part) for part in version.split("."))
+
+
+def test_registry_versions_are_semver() -> None:
+    registry = _registry()
+    for field in ("schemaVersion", "minLibraryVersion"):
+        assert re.fullmatch(r"\d+\.\d+\.\d+", registry[field]), field
+
+
+def test_library_version_satisfies_min_library() -> None:
+    from pycompose.version import __version__
+
+    min_library = _registry()["minLibraryVersion"]
+    assert _version_tuple(__version__) >= _version_tuple(min_library)

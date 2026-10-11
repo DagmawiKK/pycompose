@@ -43,10 +43,9 @@ pytest -q
 
 ## Registry (single source of truth)
 
-```bash
-python tools/schema/gen.py          # regenerate derived artifacts
-python tools/schema/gen.py --check  # fail on drift (CI + pre-commit)
-```
+Edit `schema/components.json` only — never the generated files. To add a component:
 
-Generated files are committed but never hand-edited. Edit
-`schema/components.json` only.
+1. Add its definition to `schema/components.json` (category, stability, props, children).
+2. `python tools/schema/gen.py` — regenerates `schema/ir.schema.json` + `pycompose/ir/generated_validators.py`.
+3. Review the diff; commit the generated artifacts alongside the registry change (they are committed, never hand-edited).
+4. `python tools/schema/gen.py --check` verifies no drift — enforced by pre-commit and CI.

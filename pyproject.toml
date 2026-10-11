@@ -72,6 +72,8 @@ explanation = "components depends on ir+core+registry; no cycles, no skips."
 name = "Bridge is the only runtime boundary surface"
 type = "forbidden"
 source_modules = ["pycompose.bridge"]
+# plan 09 words com.android/com.chaquo as forbidden; import-linter only accepts
+# top-level external modules, so `com` covers every com.* Android/Chaquopy import.
 forbidden_modules = ["android", "com", "kotlinx", "gradle"]
 explanation = "Python bridge surface is Chaquopy-agnostic; the host implements transport."
 
@@ -93,8 +95,16 @@ explanation = "State + Store stay minimal and purpose-free."
 name = "No Android/Kotlin/Chaquopy imports anywhere in runtime"
 type = "forbidden"
 source_modules = ["pycompose"]
+# Same top-level-external-module constraint as the bridge contract above; `com`
+# covers com.google.android / com.chaquo from plan 09. plan 09 also listed
+# ignore_imports = ["pycompose.templates.* -> *"]; that never matches until
+# templates/ contains importing modules, and import-linter fails on unmatched
+# ignores — add it back when templates/ lands.
 forbidden_modules = ["android", "kotlinx", "com", "gradle"]
 explanation = "Python runtime is host-agnostic by construction (ADR-0004)."
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "hot_reload_smoke: dev-server hot reload smoke (CI job 6)",
+]

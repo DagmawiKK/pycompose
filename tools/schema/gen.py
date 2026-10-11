@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -44,6 +45,8 @@ PROP_TYPE_VOCABULARY = frozenset(
 
 STABILITIES = frozenset({"beta", "experimental", "stable"})
 
+SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+$")
+
 
 def _die(message: str) -> None:
     raise SystemExit(f"gen.py: {message}")
@@ -67,11 +70,13 @@ def _validate_registry(registry: dict) -> None:
     for key in ("schemaVersion", "minLibraryVersion", "components", "actions"):
         if key not in registry:
             _die(f"missing top-level key {key!r} in components.json")
-    if not isinstance(registry["schemaVersion"], str) or not registry["schemaVersion"]:
-        _die("schemaVersion must be a non-empty string")
+    if not isinstance(registry["schemaVersion"], str):
+        _die("schemaVersion must be a string")
+    _require_semver(registry["schemaVersion"], "schemaVersion")
     min_library = registry["minLibraryVersion"]
-    if not isinstance(min_library, str) or not min_library:
-        _die("minLibraryVersion must be a non-empty string")
+    if not isinstance(min_library, str):
+        _die("minLibraryVersion must be a string")
+    _require_semver(min_library, "minLibraryVersion")
 
     components = registry["components"]
     if not isinstance(components, dict) or not components:
@@ -84,6 +89,26 @@ def _validate_registry(registry: dict) -> None:
         _die("'actions' must be an object")
     for action_id, action in sorted(actions.items()):
         _validate_action(action_id, action)
+    _validate_action_refs(registry)
+
+
+def _require_semver(value: str, field: str) -> None:
+    if SEMVER_PATTERN.fullmatch(value) is None:
+        _die(f"{field} must be MAJOR.MINOR.PATCH semver, got {value!r}")
+
+
+def _validate_action_refs(registry: dict) -> None:
+    declared = set(registry["actions"])
+    for name, comp in sorted(registry["components"].items()):
+        for prop_name, prop in sorted(comp["props"].items()):
+            if prop.get("type") != "actionId" or "default" not in prop:
+                continue
+            default = prop["default"]
+            if default not in declared:
+                _die(
+                    f"component {name}.{prop_name} defaults to action "
+                    f"{default!r} which is not declared in 'actions'"
+                )
 
 
 def _validate_component(name: str, comp: dict) -> None:
