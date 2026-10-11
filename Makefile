@@ -1,15 +1,19 @@
-.PHONY: lint lint-py lint-kt typecheck test fmt fmt-py fmt-kt precommit codegen codegen-check
+.PHONY: lint lint-py lint-kt lint-workflows typecheck test fmt fmt-py fmt-kt precommit codegen codegen-check
 
-lint: lint-py lint-kt
+lint: lint-py lint-kt lint-workflows
 
 lint-py:
 	ruff check .
 	mypy pycompose
 	bandit -ll -q -r pycompose
+	pydoclint pycompose
 	lint-imports --config pyproject.toml
 
 lint-kt:
 	@if [ -d android ]; then cd android && ./gradlew spotlessCheck detekt lintDebug; fi
+
+lint-workflows:
+	actionlint .github/workflows/*.yml
 
 typecheck:
 	mypy pycompose

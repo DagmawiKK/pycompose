@@ -29,6 +29,8 @@ jobs:
           cache: pip
       - name: Install
         run: pip install -e ".[dev]"
+      - name: Actionlint (workflow files)
+        uses: rhysd/actionlint@v1
       - name: Ruff check
         run: ruff check .
       - name: Ruff format check
@@ -37,6 +39,8 @@ jobs:
         run: mypy pycompose
       - name: Bandit
         run: bandit -ll -q -r pycompose
+      - name: pydoclint (Google-style docstrings)
+        run: pydoclint pycompose
       - name: import-linter (blocking boundary gate)
         run: lint-imports --config pyproject.toml
       - name: pytest

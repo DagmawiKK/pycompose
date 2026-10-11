@@ -17,6 +17,9 @@ build/
 .coverage
 htmlcov/
 
+# Node (commitlint)
+node_modules/
+
 # Android / Gradle
 android/.gradle/
 android/**/build/

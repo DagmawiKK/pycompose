@@ -1,3 +1,5 @@
+default_install_hook_types: [pre-commit, commit-msg]
+
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.6.9
@@ -12,6 +14,11 @@ repos:
       - id: mypy
         files: ^pycompose/
         additional_dependencies: [types-jsonschema]
+
+  - repo: https://github.com/jsh9/pydoclint
+    rev: 0.11.0
+    hooks:
+      - id: pydoclint
 
   - repo: https://github.com/seddonym/import-linter
     rev: v2.0
@@ -53,3 +60,13 @@ repos:
         entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/schema/gen.py --check; fi; exec python tools/schema/gen.py --check'
         files: ^schema/components\.json$
         pass_filenames: false
+      - id: actionlint
+        name: actionlint (workflow files)
+        language: system
+        entry: actionlint
+        files: ^\.github/workflows/
+      - id: commitlint
+        name: commitlint (semantic commit messages)
+        language: system
+        entry: bash -c 'exec npx --no-install commitlint --edit "$1"' --
+        stages: [commit-msg]

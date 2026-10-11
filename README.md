@@ -28,18 +28,26 @@ decisions (`AGENTS.md` mirrors them at the root).
 ```bash
 pip install -e ".[dev]"
 pre-commit install
+npm ci             # commitlint (commit-msg hook)
+brew install actionlint   # for the actionlint pre-commit hook (CI runs it too)
 make fmt && make precommit && make test
 ```
 
 ## Python checks
 
 ```bash
-ruff check . && ruff format --check .
+ruff check . && ruff format --check .   # E/W/N = PEP 8 + pep8-naming
 mypy pycompose
 bandit -ll -q -r pycompose
-import-linter --config pyproject.toml   # blocking boundary gate
+pydoclint pycompose                     # Google-style docstrings (public API)
+import-linter --config pyproject.toml   # blocking boundary gate (binary: lint-imports)
+actionlint .github/workflows/*.yml      # workflow files
 pytest -q
 ```
+
+Commit messages are semantic (Conventional Commits) and checked by a
+`commit-msg` hook ([`commitlint.config.mjs`](commitlint.config.mjs)) — no
+"Phase X:" / filler subjects.
 
 ## Registry (single source of truth)
 

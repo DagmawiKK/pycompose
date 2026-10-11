@@ -40,6 +40,10 @@ target-version = "py312"
 exclude = ["templates", "build", ".venv", "venv", "docs"]
 
 [tool.ruff.lint]
+# PEP 8 policy: E/W are the PEP 8 (pycodestyle) core rules, N is
+# pep8-naming, D-style docstring checks are delegated to pydoclint
+# (below). line-length 88 is the project standard (within PEP 8's
+# modern 99-char allowance).
 select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "ARG", "RUF", "PIE", "PL", "TID", "ERA", "PERF"]
 ignore = ["PLR0913"]
 
@@ -108,3 +112,7 @@ testpaths = ["tests"]
 markers = [
     "hot_reload_smoke: dev-server hot reload smoke (CI job 6)",
 ]
+
+[tool.pydoclint]
+# Google-style docstrings, required for the runtime/public API (plan 06).
+style = "google"
