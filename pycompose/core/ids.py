@@ -47,7 +47,7 @@ def child_id(parent_id: str, key: str | int) -> str:
     Returns:
         The deterministic child id.
     """
-    return make_path_id((*id_path(parent_id), key))
+    return f"{parent_id}{_SEPARATOR}{key}"
 
 
 def id_path(node_id: str) -> tuple[str, ...]:
@@ -69,7 +69,7 @@ class IdRegistry:
 
     def __init__(self) -> None:
         """Create an empty registry."""
-        self._claimed: dict[str, tuple[str, tuple[str, ...]]] = {}
+        self._claimed: set[str] = set()
 
     def claim(
         self,
@@ -91,15 +91,14 @@ class IdRegistry:
         Raises:
             IrError: If ``node_id`` was already claimed.
         """
-        resolved_path = id_path(node_id) if path is None else path
         if node_id in self._claimed:
             raise IrError(
                 "duplicate node id",
                 node_id=node_id,
                 node_type=node_type,
-                path=resolved_path,
+                path=id_path(node_id) if path is None else path,
             )
-        self._claimed[node_id] = (node_type, resolved_path)
+        self._claimed.add(node_id)
         return node_id
 
     def __contains__(self, node_id: object) -> bool:

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator, Mapping
 from dataclasses import dataclass, field
-from types import MappingProxyType
+from typing import cast
 
 from pycompose.core.props import JsonValue, is_camel_case
 from pycompose.errors import IrError
@@ -33,9 +33,7 @@ class Props:
         Raises:
             IrError: If any prop name is not ``camelCase``.
         """
-        frozen = MappingProxyType(
-            {name: freeze_json(value) for name, value in self.values.items()}
-        )
+        frozen = cast(Mapping[str, FrozenJsonValue], freeze_json(self.values))
         for name in frozen:
             if not is_camel_case(name):
                 raise IrError("prop name is not camelCase", prop=name)
@@ -100,7 +98,10 @@ class Props:
         return {name: thaw_json(value) for name, value in self.values.items()}
 
 
-@dataclass(frozen=True, slots=True)
+_EMPTY_PROPS = Props()
+
+
+@dataclass(frozen=True, slots=True, init=False)
 class Node:
     """One immutable element of the IR tree.
 
@@ -116,14 +117,48 @@ class Node:
     props: Props = field(default_factory=Props)
     children: tuple[Node, ...] = ()
 
+    def __init__(
+        self,
+        id: str,
+        type: str,
+        props: Props | Mapping[str, JsonValue | FrozenJsonValue] = _EMPTY_PROPS,
+        children: tuple[Node, ...] = (),
+    ) -> None:
+        """Construct a node, normalizing mappings into immutable Props.
+
+        Invalid structural fields propagate IrError from normalization.
+
+        Args:
+            id: Stable node id.
+            type: Registered component name (validated later).
+            props: Immutable Props or caller-owned mapping to detach.
+            children: Child nodes, normalized to a tuple.
+        """
+        object.__setattr__(self, "id", id)
+        object.__setattr__(self, "type", type)
+        object.__setattr__(self, "props", props)
+        object.__setattr__(self, "children", children)
+        self.__post_init__()
+
     def __post_init__(self) -> None:
-        """Validate identity and normalize ``children`` to a tuple.
+        """Validate structure and detach raw props at the ownership boundary.
 
         Raises:
-            IrError: If ``id`` or ``type`` is empty.
+            IrError: If identity, props or child types are invalid.
         """
-        if not self.id:
+        if not isinstance(self.id, str) or not self.id:
             raise IrError("node id must be non-empty", node_type=self.type)
-        if not self.type:
+        if not isinstance(self.type, str) or not self.type:
             raise IrError("node type must be non-empty", node_id=self.id)
-        object.__setattr__(self, "children", tuple(self.children))
+        props = cast(object, self.props)
+        if not isinstance(props, Props):
+            if not isinstance(props, Mapping):
+                raise IrError("node props must be a mapping", node_id=self.id)
+            object.__setattr__(self, "props", Props(props))
+        try:
+            children = tuple(self.children)
+        except TypeError as exc:
+            raise IrError("node children must be iterable", node_id=self.id) from exc
+        if any(not isinstance(child, Node) for child in children):
+            raise IrError("node children must be Nodes", node_id=self.id)
+        object.__setattr__(self, "children", children)

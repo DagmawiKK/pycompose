@@ -77,6 +77,53 @@ jobs:
           name: schema-reports
           path: reports/
 
+  ir-performance-report:
+    name: IR performance · informational
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+      - name: Install measurement dependencies
+        run: pip install -e ".[dev]"
+      - name: Prepare matched baseline
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+        run: |
+          base="${PR_BASE:-$PUSH_BASE}"
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            base="$(git rev-parse HEAD^)"
+          fi
+          git worktree add --detach "$RUNNER_TEMP/ir-baseline" "$base"
+          cp tools/bench_ir.py "$RUNNER_TEMP/ir-baseline/tools/bench_ir.py"
+          mkdir -p reports/ir-performance
+          git rev-parse "$base" HEAD > reports/ir-performance/revisions.txt
+      - name: Before and after timing
+        run: |
+          python "$RUNNER_TEMP/ir-baseline/tools/bench_ir.py" --processes 6 --values 8 --warmups 2 --min-time 0.05 --quiet -o reports/ir-performance/before.json
+          python tools/bench_ir.py --processes 6 --values 8 --warmups 2 --min-time 0.05 --quiet -o reports/ir-performance/after.json
+          python -m pyperf compare_to reports/ir-performance/before.json reports/ir-performance/after.json --table > reports/ir-performance/comparison.txt
+      - name: Phase timing
+        run: |
+          python "$RUNNER_TEMP/ir-baseline/tools/bench_ir.py" --phases construction,emit,validate,bytes --processes 3 --values 5 --min-time 0.03 --quiet -o reports/ir-performance/before-phases.json
+          python tools/bench_ir.py --phases construction,emit,validate,bytes --processes 3 --values 5 --min-time 0.03 --quiet -o reports/ir-performance/after-phases.json
+      - name: Separate memory measurements
+        run: |
+          python "$RUNNER_TEMP/ir-baseline/tools/bench_ir.py" --memory-report reports/ir-performance/before-memory.json
+          python tools/bench_ir.py --memory-report reports/ir-performance/after-memory.json
+      - name: Upload performance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ir-performance
+          path: reports/ir-performance/
+
   kotlin-lint-test-archunit:
     name: 3 · Kotlin lint · tests · ArchUnit
     runs-on: ubuntu-latest

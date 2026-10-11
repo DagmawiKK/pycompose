@@ -20,6 +20,7 @@ dev = [
     "mypy==1.11.2",
     "pre-commit>=3.0",
     "pydoclint>=0.5",
+    "pyperf>=2.7,<3",
     "pytest>=8.0",
     "ruff==0.6.9",
     "types-jsonschema>=4.20",

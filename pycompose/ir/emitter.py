@@ -1,4 +1,9 @@
-"""Pure emission from the current State snapshot."""
+"""Pure emission from the current State snapshot.
+
+Traversal/reconstruction costs O(N + L), where L counts emitted id bytes. Full
+parent-path ids intrinsically make L quadratic for a chain; do not additionally
+retain split paths. Already qualified, unchanged branches preserve identity.
+"""
 
 from __future__ import annotations
 
@@ -6,6 +11,7 @@ from dataclasses import replace
 
 from pycompose.core.ids import ROOT_ID, IdRegistry, child_id
 from pycompose.core.node import Node
+from pycompose.core.traversal import walk_nodes
 from pycompose.ir.generated_validators import MIN_SCHEMA_VERSION, SCHEMA_VERSION
 from pycompose.ir.model import IRRoot
 from pycompose.schema.version import require_version
@@ -36,14 +42,32 @@ def emit_ir(state: State, schema_version: str) -> IRRoot:
 
 
 def _emit_node(node: Node, node_id: str, ids: IdRegistry) -> Node:
-    ids.claim(node_id, node_type=node.type)
-    children: list[Node] = []
-    for child in node.children:
-        # Explicit full-path ids stay stable; local ids become stable sibling keys.
-        qualified = (
-            child.id
-            if child.id.startswith(f"{node_id}.")
-            else child_id(node_id, child.id)
-        )
-        children.append(_emit_node(child, qualified, ids))
-    return replace(node, id=node_id, children=tuple(children))
+    frames: list[tuple[str, list[Node]]] = []
+    result = node
+    for source, entering in walk_nodes(node):
+        if entering:
+            qualified = node_id
+            if frames:
+                parent_id = frames[-1][0]
+                # Full-path ids stay stable; local ids become sibling keys.
+                qualified = (
+                    source.id
+                    if source.id.startswith(f"{parent_id}.")
+                    else child_id(parent_id, source.id)
+                )
+            ids.claim(qualified, node_type=source.type)
+            frames.append((qualified, []))
+        else:
+            qualified, children = frames.pop()
+            unchanged = qualified == source.id and all(
+                left is right
+                for left, right in zip(children, source.children, strict=True)
+            )
+            result = (
+                source
+                if unchanged
+                else replace(source, id=qualified, children=tuple(children))
+            )
+            if frames:
+                frames[-1][1].append(result)
+    return result

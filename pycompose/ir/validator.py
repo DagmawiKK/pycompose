@@ -1,12 +1,21 @@
-"""Fail-closed validation driven by generated registry tables."""
+"""Fail-closed validation driven by generated registry tables.
+
+Valid snapshots retain identity; release reconstruction touches only changed
+nodes and ancestors. Registry/present prop ordering preserves diagnostic order,
+not wire ordering. Traversal costs O(N + V + identity bytes), plus prop sorting
+and materialized diagnostics. Ancestor paths cost O(depth) only on failure.
+Dropped branches are still traversed for cycles: structural cycles invalidate
+the entire candidate even when component policy would otherwise discard it.
+"""
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from dataclasses import dataclass, replace
+from collections.abc import Callable, Mapping
+from dataclasses import dataclass, field, replace
 
 from pycompose.core.node import Node, Props
 from pycompose.core.registry_types import PropDef
+from pycompose.core.traversal import NodeCycleError, walk_nodes
 from pycompose.errors import IrValidationError
 from pycompose.ir.generated_validators import (
     MIN_LIBRARY_VERSION,
@@ -16,7 +25,7 @@ from pycompose.ir.generated_validators import (
 )
 from pycompose.ir.model import IRRoot
 from pycompose.schema.version import require_version
-from pycompose.utils.json_canonical import canonical_json, thaw_json
+from pycompose.utils.json_canonical import check_json
 
 __all__ = ["ValidationIssue", "ValidationResult", "validate_ir"]
 
@@ -32,7 +41,7 @@ _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     and not isinstance(value, bool),
     "dp": lambda value, _: isinstance(value, int | float)
     and not isinstance(value, bool),
-    "modifier": lambda value, _: isinstance(value, dict),
+    "modifier": lambda value, _: isinstance(value, Mapping),
     "enum": lambda value, prop: isinstance(value, str) and value in prop.values,
     "actionId": lambda value, _: isinstance(value, str) and value in REGISTRY.actions,
 }
@@ -43,7 +52,7 @@ def _valid_prop(value: object, prop: PropDef) -> bool:
     if check is None or not check(value, prop):
         return False
     try:
-        canonical_json(value)
+        check_json(value)
     except IrValidationError:
         return False
     return True
@@ -105,13 +114,25 @@ def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
     metadata = snapshot.metadata
     if metadata is not None:
         try:
-            canonical_json(thaw_json(metadata))
+            check_json(metadata)
         except (IrValidationError, TypeError, ValueError):
-            validation.report("invalid metadata", snapshot.root, (snapshot.root.id,))
+            validation.report("invalid metadata", snapshot.root)
             metadata = None
-    root = validation.node(snapshot.root, (snapshot.root.id,))
-    safe = replace(snapshot, root=root, metadata=metadata) if root is not None else None
+    root = validation.node(snapshot.root)
+    safe: IRRoot | None = snapshot
+    if root is None:
+        safe = None
+    elif root is not snapshot.root or metadata is not snapshot.metadata:
+        safe = replace(snapshot, root=root, metadata=metadata)
     return ValidationResult(snapshot=safe, issues=tuple(validation.issues))
+
+
+@dataclass(slots=True)
+class _NodeFrame:
+    props: Props
+    minimum: int
+    allow_children: bool
+    children: list[Node] = field(default_factory=list)
 
 
 class _Validation:
@@ -119,71 +140,116 @@ class _Validation:
         self.debug = debug
         self.issues: list[ValidationIssue] = []
         self.ids: set[str] = set()
+        self.path: list[str] = []
 
-    def report(
-        self, message: str, node: Node, path: tuple[str, ...], prop: str | None = None
-    ) -> None:
+    def report(self, message: str, node: Node, prop: str | None = None) -> None:
+        path = tuple(self.path) if self.path else (node.id,)
         if self.debug:
             raise IrValidationError(
                 message, node_id=node.id, node_type=node.type, path=path, prop=prop
             )
         self.issues.append(ValidationIssue(message, node.id, node.type, path, prop))
 
-    def identity(self, node: Node, path: tuple[str, ...]) -> bool:
+    def identity(self, node: Node) -> bool:
         if (
             not isinstance(node.id, str)
             or not node.id
             or not isinstance(node.type, str)
             or not node.type
         ):
-            self.report("invalid node identity", node, path)
+            self.report("invalid node identity", node)
             return False
         try:
-            canonical_json(node.id)
-            canonical_json(node.type)
+            check_json(node.id)
+            check_json(node.type)
         except IrValidationError:
-            self.report("invalid node identity", node, path)
+            self.report("invalid node identity", node)
             return False
         if node.id in self.ids:
-            self.report("duplicate node id", node, path)
+            self.report("duplicate node id", node)
             return False
         self.ids.add(node.id)
         return True
 
-    def node(self, node: Node, path: tuple[str, ...]) -> Node | None:
-        if not self.identity(node, path):
+    def prepare(self, node: Node) -> _NodeFrame | None:
+        if not self.identity(node):
             return None
         spec = REGISTRY.components.get(node.type)
         if spec is None:
-            self.report("unknown component", node, path)
+            self.report("unknown component", node)
             return None
-        props = node.props.to_wire()
+        props = node.props.values
+        removed: set[str] = set()
         invalid_required = False
         for name, declared in sorted(spec.props.items()):
             if declared.required and name not in props:
-                self.report("missing required prop", node, path, name)
+                self.report("missing required prop", node, name)
                 invalid_required = True
         for name in sorted(node.props):
             prop = spec.props.get(name)
             if prop is None:
-                self.report("unknown prop", node, path, name)
-                del props[name]
+                self.report("unknown prop", node, name)
+                removed.add(name)
             elif not _valid_prop(props[name], prop):
-                self.report("invalid prop value", node, path, name)
-                del props[name]
+                self.report("invalid prop value", node, name)
+                removed.add(name)
                 invalid_required |= prop.required
         if invalid_required:
             return None
-        children: list[Node] = []
-        source_children = node.children
-        if source_children and not spec.children.allowed:
-            self.report("children are not allowed", node, path)
-            source_children = ()
-        for child in source_children:
-            safe = self.node(child, (*path, child.id))
-            if safe is not None:
-                children.append(safe)
-        if len(children) < (spec.children.min or 0):
-            self.report("too few children", node, path)
+        if node.children and not spec.children.allowed:
+            self.report("children are not allowed", node)
+        safe_props = (
+            Props({key: value for key, value in props.items() if key not in removed})
+            if removed
+            else node.props
+        )
+        return _NodeFrame(safe_props, spec.children.min or 0, spec.children.allowed)
+
+    def finish(self, node: Node, frame: _NodeFrame | None) -> Node | None:
+        if frame is None:
             return None
-        return replace(node, props=Props(props), children=tuple(children))
+        if len(frame.children) < frame.minimum:
+            self.report("too few children", node)
+            return None
+        if (
+            frame.props is node.props
+            and len(frame.children) == len(node.children)
+            and all(
+                left is right
+                for left, right in zip(frame.children, node.children, strict=True)
+            )
+        ):
+            return node
+        return replace(node, props=frame.props, children=tuple(frame.children))
+
+    def node(self, root: Node) -> Node | None:
+        frames: list[_NodeFrame | None] = []
+        safe: Node | None = None
+        try:
+            for node, entering in walk_nodes(root):
+                if entering:
+                    self.path.append(node.id)
+                    parent = frames[-1] if frames else None
+                    enabled = not frames or (
+                        parent is not None and parent.allow_children
+                    )
+                    frames.append(self.prepare(node) if enabled else None)
+                else:
+                    safe = self.finish(node, frames.pop())
+                    self.path.pop()
+                    parent = frames[-1] if frames else None
+                    if safe is not None and parent is not None:
+                        parent.children.append(safe)
+        except NodeCycleError as exc:
+            if self.debug:
+                raise
+            self.issues.append(
+                ValidationIssue(
+                    "cyclic node graph",
+                    str(exc.context["node_id"]),
+                    str(exc.context["node_type"]),
+                    (*self.path, str(exc.context["node_id"])),
+                )
+            )
+            return None
+        return safe
