@@ -180,10 +180,42 @@ jobs:
       - name: Install CLI
         run: pip install -e ".[dev]"
       - name: Generate sample project
-        if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
         run: |
           cd "$RUNNER_TEMP"
           pycompose init smoke
+      - name: Verify generated Python entrypoint
+        working-directory: ${{ runner.temp }}/smoke/app
+        run: |
+          python - <<'PY'
+          import main
+          from pycompose.ir import emit_ir, validate_ir
+          candidate = emit_ir(main.build(), "1.0.0")
+          assert validate_ir(candidate).snapshot is candidate
+          PY
+      - name: Verify installed wheel CLI and template assets
+        run: |
+          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/cli-wheel" .
+          python -m venv "$RUNNER_TEMP/cli-venv"
+          "$RUNNER_TEMP/cli-venv/bin/python" -m pip install --no-deps "$RUNNER_TEMP"/cli-wheel/pycompose-*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/cli-venv/bin/pycompose" init wheel-smoke
+          "$RUNNER_TEMP/cli-venv/bin/python" -I - <<'PY'
+          import sys
+          import tomllib
+          from pathlib import Path
+          project = Path("wheel-smoke")
+          config = tomllib.loads((project / "pycompose.toml").read_text())
+          assert config["python"]["entrypoint"] == "main:build"
+          assert (project / ".gitignore").is_file()
+          for resource in ("assets", "drawables", "fonts"):
+              assert (project / "resources" / resource).is_dir()
+          sys.path.insert(0, str(project / "app"))
+          import main
+          from pycompose.ir import emit_ir, validate_ir
+          candidate = emit_ir(main.build(), "1.0.0")
+          assert validate_ir(candidate).snapshot is candidate
+          assert not any(name.startswith("pycompose.templates") for name in sys.modules)
+          PY
       - name: Build template (host debug APK)
         if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
         working-directory: ${{ runner.temp }}/smoke

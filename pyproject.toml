@@ -11,6 +11,9 @@ license = { text = "MIT" }
 dynamic = ["version"]
 dependencies = []
 
+[project.scripts]
+pycompose = "pycompose.cli.main:main"
+
 [project.optional-dependencies]
 dev = [
     "bandit>=1.7",
@@ -26,11 +29,15 @@ dev = [
     "types-jsonschema>=4.20",
 ]
 
+[tool.setuptools]
+include-package-data = false
+
 [tool.setuptools.packages.find]
 include = ["pycompose*"]
+exclude = ["pycompose.templates*"]
 
 [tool.setuptools.package-data]
-pycompose = ["py.typed", "testing/fixtures/*.json"]
+pycompose = ["py.typed", "testing/fixtures/*.json", "templates/android/**/*", "templates/android/.gitignore", "templates/android/**/.gitkeep"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pycompose.version.__version__" }
@@ -69,7 +76,7 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["testing", "components", "bridge", "ir", "state", "schema", "core", "utils"]
+layers = ["cli", "testing", "components", "bridge", "ir", "state", "schema", "core", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
 
@@ -106,6 +113,13 @@ source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
                   "pycompose.utils"]
 forbidden_modules = ["pycompose.testing"]
 explanation = "Testing consumes runtime public APIs; runtime stays independent of test data."
+
+[[tool.importlinter.contracts]]
+name = "CLI does not depend on testing helpers"
+type = "forbidden"
+source_modules = ["pycompose.cli"]
+forbidden_modules = ["pycompose.testing"]
+explanation = "The CLI ships independent project assets, not test fixture builders."
 
 [[tool.importlinter.contracts]]
 name = "No Android/Kotlin/Chaquopy imports anywhere in runtime"
