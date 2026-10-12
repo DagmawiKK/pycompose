@@ -7,6 +7,8 @@ import sys
 from pathlib import Path
 
 from pycompose.cli.init import InitError, init_project
+from pycompose.cli.project import ProjectError, load_project
+from pycompose.cli.sync import sync_resources
 from pycompose.version import __version__
 
 
@@ -36,7 +38,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     build.add_argument("format", nargs="?", choices=("apk", "aab"), default="apk")
     build.add_argument("--release", action="store_true")
-    sync = commands.add_parser("sync", help="Sync resources (not implemented yet)")
+    sync = commands.add_parser(
+        "sync", help="Sync named resources into the Android host"
+    )
     sync.add_argument("--check", action="store_true")
     commands.add_parser("doctor", help="Check Android tooling (not implemented yet)")
     validate = commands.add_parser(
@@ -44,6 +48,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     validate.add_argument("path", type=Path)
     args = parser.parse_args(argv)
+    if args.command == "sync":
+        try:
+            changed = sync_resources(load_project(Path.cwd()), check=args.check)
+        except (ProjectError, OSError) as exc:
+            print(f"pycompose sync: {exc}", file=sys.stderr)
+            return 2
+        print("Resources up to date" if not changed else "\n".join(changed))
+        return 1 if args.check and changed else 0
     if args.command != "init":
         print(f"pycompose {args.command}: not implemented yet", file=sys.stderr)
         return 2

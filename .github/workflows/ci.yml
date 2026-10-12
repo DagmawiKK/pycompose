@@ -199,6 +199,10 @@ jobs:
           "$RUNNER_TEMP/cli-venv/bin/python" -m pip install --no-deps "$RUNNER_TEMP"/cli-wheel/pycompose-*.whl
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/cli-venv/bin/pycompose" init wheel-smoke
+          cd wheel-smoke
+          "$RUNNER_TEMP/cli-venv/bin/pycompose" sync
+          "$RUNNER_TEMP/cli-venv/bin/pycompose" sync --check
+          cd ..
           "$RUNNER_TEMP/cli-venv/bin/python" -I - <<'PY'
           import sys
           import tomllib
@@ -234,7 +238,12 @@ jobs:
         run: pip install -e ".[dev]"
       - name: Sync check
         if: hashFiles('pycompose/cli/sync.py') != ''
-        run: pycompose sync --check
+        run: |
+          cd "$RUNNER_TEMP"
+          pycompose init sync-smoke
+          cd sync-smoke
+          pycompose sync
+          pycompose sync --check
 
   hot-reload-smoke:
     name: 6 · Dev-server hot reload smoke

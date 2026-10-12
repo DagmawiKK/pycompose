@@ -130,7 +130,6 @@ def test_command_entry_points_have_help(tmp_path: Path, command: str) -> None:
         ("run",),
         ("build", "apk", "--release"),
         ("build", "aab"),
-        ("sync", "--check"),
         ("doctor",),
         ("validate", "ui.json"),
     ],
