@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 COMPONENTS_PATH = ROOT / "schema" / "components.json"
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
 VALIDATORS_PATH = ROOT / "pycompose" / "ir" / "generated_validators.py"
+PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
 GEN_PATH = ROOT / "tools" / "schema" / "gen.py"
 
 PROP_TYPE_VOCABULARY = {
@@ -91,6 +92,10 @@ def test_ir_schema_is_fresh() -> None:
 
 def test_generated_validators_are_fresh() -> None:
     assert VALIDATORS_PATH.read_text(encoding="utf-8") == _expected("render_validators")
+
+
+def test_generated_action_payloads_are_fresh() -> None:
+    assert PAYLOADS_PATH.read_text(encoding="utf-8") == _expected("render_payloads")
 
 
 def test_generated_tables_match_the_full_registry() -> None:

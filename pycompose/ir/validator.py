@@ -33,6 +33,7 @@ __all__ = [
     "validate_component",
     "validate_ir",
     "validate_modifier",
+    "validate_prop",
 ]
 
 
@@ -53,7 +54,16 @@ _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
 }
 
 
-def _valid_prop(value: object, prop: PropDef) -> bool:
+def validate_prop(value: object, prop: PropDef) -> bool:
+    """Check a JSON value against a generated prop or payload definition.
+
+    Args:
+        value: Candidate value, including frozen JSON containers.
+        prop: Definition from the component registry.
+
+    Returns:
+        Whether the type, bounds and registry references are valid.
+    """
     check = _TYPE_CHECKS.get(prop.type)
     if check is None or not check(value, prop):
         return False
@@ -110,7 +120,7 @@ def validate_modifier(value: object) -> None:
             if key == "type":
                 continue
             declared = spec.get(key)
-            if declared is None or not _valid_prop(item, declared):
+            if declared is None or not validate_prop(item, declared):
                 raise IrValidationError(
                     "invalid modifier prop", modifier=name, prop=key
                 )
@@ -264,7 +274,7 @@ class _Validation:
             if prop is None:
                 self.report("unknown prop", node, name)
                 removed.add(name)
-            elif not _valid_prop(props[name], prop):
+            elif not validate_prop(props[name], prop):
                 self.report("invalid prop value", node, name)
                 removed.add(name)
                 invalid_required |= prop.required
