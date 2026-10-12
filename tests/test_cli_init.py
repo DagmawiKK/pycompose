@@ -129,21 +129,6 @@ def test_command_entry_points_have_help(tmp_path: Path, command: str) -> None:
     assert f"pycompose {command}" in result.stdout
 
 
-@pytest.mark.parametrize(
-    "arguments",
-    [
-        ("run",),
-    ],
-)
-def test_future_commands_fail_explicitly_instead_of_claiming_success(
-    tmp_path: Path, arguments: tuple[str, ...]
-) -> None:
-    result = cli(tmp_path, *arguments)
-    assert result.returncode == 2
-    assert "not implemented yet" in result.stderr
-    assert list(tmp_path.iterdir()) == []
-
-
 def test_generated_python_entrypoint_emits_valid_ir(tmp_path: Path) -> None:
     assert cli(tmp_path, "init", "demo-app").returncode == 0
     project = tmp_path / "demo-app"

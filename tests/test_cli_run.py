@@ -1,0 +1,135 @@
+"""Run orchestration through controlled executables, not a physical device."""
+
+import json
+import os
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+import pytest
+from test_cli_build import wrapper
+from test_cli_init import cli
+
+
+def test_run_builds_installs_launches_and_cleans_up_its_reverse_tunnel(
+    tmp_path: Path,
+) -> None:
+    assert cli(tmp_path, "init", "demo").returncode == 0
+    project = tmp_path / "demo"
+    wrapper(
+        project,
+        """import zipfile
+from pathlib import Path
+p = Path("host/build/outputs/apk/debug/host-debug.apk")
+p.parent.mkdir(parents=True)
+with zipfile.ZipFile(p, "w") as archive:
+    archive.writestr("AndroidManifest.xml", "fixture only")
+""",
+    )
+    tools = tmp_path / "tools"
+    tools.mkdir()
+    adb = tools / "adb"
+    adb.write_text(
+        f"#!{sys.executable}\n"
+        + """import json, sys
+from pathlib import Path
+with Path("adb.jsonl").open("a") as log:
+    log.write(json.dumps(sys.argv[1:]) + "\\n")
+if sys.argv[1:] == ["devices"]:
+    print("List of devices attached\\nfixture-device\\tdevice")
+"""
+    )
+    adb.chmod(0o755)
+    env = {
+        **os.environ,
+        "PYTHONPATH": str(Path(__file__).parents[1]),
+        "PATH": str(tools),
+        "ANDROID_HOME": "",
+        "ANDROID_SDK_ROOT": "",
+    }
+    process = subprocess.Popen(
+        [sys.executable, "-m", "pycompose.cli", "run"],
+        cwd=project,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    try:
+        deadline = time.monotonic() + 10
+        launched = False
+        while time.monotonic() < deadline and process.poll() is None:
+            log = project / "adb.jsonl"
+            commands = (
+                [json.loads(line) for line in log.read_text().splitlines()]
+                if log.exists()
+                else []
+            )
+            if any("start" in command for command in commands):
+                launched = True
+                break
+            time.sleep(0.02)
+        assert launched
+        process.send_signal(signal.SIGINT)
+        output, errors = process.communicate(timeout=5)
+        assert process.returncode == 0, output + errors
+        commands = [
+            json.loads(line)
+            for line in (project / "adb.jsonl").read_text().splitlines()
+        ]
+        assert any(
+            command[:4] == ["-s", "fixture-device", "install", "-r"]
+            for command in commands
+        )
+        assert any(
+            "com.example.app_demo/com.pycompose.host.MainActivity" in command
+            for command in commands
+        )
+        assert any(command[2:4] == ["reverse", "--remove"] for command in commands)
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.communicate()
+
+
+@pytest.mark.parametrize(
+    "devices",
+    ["", "offline\toffline", "locked\tunauthorized", "first\tdevice\nsecond\tdevice"],
+)
+def test_run_rejects_unavailable_or_ambiguous_devices_before_building(
+    tmp_path: Path, devices: str
+) -> None:
+    assert cli(tmp_path, "init", "demo").returncode == 0
+    tools = tmp_path / "tools"
+    tools.mkdir()
+    adb = tools / "adb"
+    adb.write_text(
+        f'#!{sys.executable}\nprint({("List of devices attached\n" + devices)!r})\n'
+    )
+    adb.chmod(0o755)
+    result = cli(
+        tmp_path / "demo",
+        "run",
+        env={
+            "PATH": str(tools),
+            "ANDROID_HOME": "",
+            "ANDROID_SDK_ROOT": "",
+            "ANDROID_SERIAL": "",
+        },
+    )
+    assert result.returncode == 2
+    assert "connect one authorized device" in result.stderr
+    assert "Traceback" not in result.stderr
+
+
+def test_run_missing_adb_is_actionable(tmp_path: Path) -> None:
+    assert cli(tmp_path, "init", "demo").returncode == 0
+    result = cli(
+        tmp_path / "demo",
+        "run",
+        env={"PATH": "", "ANDROID_HOME": "", "ANDROID_SDK_ROOT": ""},
+    )
+    assert result.returncode == 2
+    assert "adb missing" in result.stderr

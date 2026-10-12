@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import subprocess
 import sys
 from pathlib import Path
 
@@ -10,6 +11,7 @@ from pycompose.cli.build import build_project
 from pycompose.cli.doctor import doctor
 from pycompose.cli.init import init_project
 from pycompose.cli.project import load_project
+from pycompose.cli.run import run_project
 from pycompose.cli.sync import sync_resources
 from pycompose.cli.validate import validate_file
 from pycompose.errors import PyComposeError
@@ -28,7 +30,13 @@ def _parser() -> argparse.ArgumentParser:
         "init", help="Create a project from packaged template assets"
     )
     init.add_argument("name", help="New project directory name")
-    commands.add_parser("run", help="Build, install and launch (not implemented yet)")
+    run = commands.add_parser(
+        "run", help="Build, install, launch, and watch a debug app"
+    )
+    run.add_argument("--device", help="ADB serial number")
+    run.add_argument(
+        "--port", type=int, default=0, help="Loopback server port (default: automatic)"
+    )
     build = commands.add_parser(
         "build", help="Package an Android app through its Gradle wrapper"
     )
@@ -76,9 +84,12 @@ def _sync(args: argparse.Namespace) -> int:
     return 1 if args.check and changed else 0
 
 
-def _unimplemented(args: argparse.Namespace) -> int:
-    print(f"pycompose {args.command}: not implemented yet", file=sys.stderr)
-    return 2
+def _run(args: argparse.Namespace) -> int:
+    try:
+        run_project(load_project(Path.cwd()), device=args.device, port=args.port)
+    except KeyboardInterrupt:
+        return 0
+    return 0
 
 
 def _init(args: argparse.Namespace) -> int:
@@ -112,10 +123,10 @@ def main(argv: list[str] | None = None) -> int:
         "validate": _validate,
         "build": _build,
         "doctor": _doctor,
-        "run": _unimplemented,
+        "run": _run,
     }
     try:
         return handlers[args.command](args)
-    except (PyComposeError, OSError) as exc:
+    except (PyComposeError, OSError, subprocess.TimeoutExpired) as exc:
         print(f"pycompose {args.command}: {exc}", file=sys.stderr)
         return 2
