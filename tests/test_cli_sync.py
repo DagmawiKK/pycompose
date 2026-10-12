@@ -184,7 +184,9 @@ def test_invalid_resources_fail_before_generating_outputs(
     result = cli(project, "sync")
     assert result.returncode == 2
     assert "Traceback" not in result.stderr
-    assert not (project / "host").exists()
+    assert not (
+        project / "host" / "src" / "main" / "res" / "values" / "strings.xml"
+    ).exists()
 
 
 def test_duplicate_drawable_names_and_locale_aliases_are_rejected(
@@ -210,6 +212,7 @@ def test_symlinked_source_and_output_paths_are_never_followed(tmp_path: Path) ->
     link.symlink_to(outside)
     assert cli(project, "sync").returncode == 2
     link.unlink()
+    (project / "host").rename(project / "original_host")
     (project / "host").symlink_to(tmp_path)
     assert cli(project, "sync").returncode == 2
     assert outside.read_bytes() == b"keep"

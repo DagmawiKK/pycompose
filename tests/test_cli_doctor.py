@@ -22,7 +22,7 @@ def test_doctor_reports_detected_tools_and_declared_plugin_versions(
 ) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"
-    (project / "gradle").mkdir()
+    (project / "gradle").mkdir(exist_ok=True)
     (project / "gradle" / "libs.versions.toml").write_text(
         '[versions]\nagp = "8.9.1"\nchaquopy = "17.0.0"\n'
     )
@@ -68,6 +68,8 @@ def test_doctor_surfaces_a_broken_toolchain_instead_of_claiming_health(
     tmp_path: Path,
 ) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
+    (tmp_path / "demo" / "gradlew").unlink()
+    (tmp_path / "demo" / "gradle" / "libs.versions.toml").unlink()
     env = {
         **os.environ,
         "PYTHONPATH": str(Path(__file__).parents[1]),
@@ -120,7 +122,7 @@ def test_doctor_reports_schema_mismatch_and_unsupported_declared_plugins(
 ) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"
-    (project / "gradle").mkdir()
+    (project / "gradle").mkdir(exist_ok=True)
     (project / "gradle" / "libs.versions.toml").write_text(
         '[versions]\nagp = "invalid"\nchaquopy = "18.0.0"\n'
     )

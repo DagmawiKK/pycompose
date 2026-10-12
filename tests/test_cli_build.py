@@ -29,8 +29,11 @@ def test_build_syncs_resources_invokes_gradle_and_reports_output(
     project = tmp_path / "demo"
     wrapper(
         project,
-        """import json, sys, zipfile
+        """import json, os, sys, zipfile
 from pathlib import Path
+assert os.environ["ORG_GRADLE_PROJECT_pycomposeApplicationId"] == "com.example.app_demo"
+assert os.environ["ORG_GRADLE_PROJECT_pycomposeVersionCode"] == "1"
+assert os.environ["ORG_GRADLE_PROJECT_pycomposeVersionName"] == "0.1.0"
 assert Path("host/src/main/res/values/strings.xml").is_file()
 Path("invocation.json").write_text(json.dumps(sys.argv[1:]))
 kind = "bundle" if "bundle" in sys.argv[1] else "apk"
@@ -52,6 +55,7 @@ with zipfile.ZipFile(output, "w") as archive:
 
 def test_build_reports_the_deferred_android_scaffold(tmp_path: Path) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
+    (tmp_path / "demo" / "gradlew").unlink()
     result = cli(tmp_path / "demo", "build")
     assert result.returncode == 2
     assert "Android scaffold" in result.stderr

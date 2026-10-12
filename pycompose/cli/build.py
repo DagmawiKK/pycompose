@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 import zipfile
@@ -17,6 +18,25 @@ from pycompose.cli.project import (
 from pycompose.cli.sync import sync_resources
 
 SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
+
+
+def _app_properties(project: Project, env: dict[str, str]) -> None:
+    config = project.table("app")
+    app_id = config.get("application_id")
+    version_name = config.get("version_name")
+    version_code = config.get("version_code")
+    if (
+        not isinstance(app_id, str)
+        or re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+", app_id) is None
+    ):
+        raise ProjectError("app.application_id must be an Android package name")
+    if not isinstance(version_name, str) or not version_name or "\0" in version_name:
+        raise ProjectError("app.version_name must be a nonempty string")
+    if type(version_code) is not int or not 1 <= version_code <= 2_100_000_000:
+        raise ProjectError("app.version_code must be a positive Android version code")
+    env["ORG_GRADLE_PROJECT_pycomposeApplicationId"] = app_id
+    env["ORG_GRADLE_PROJECT_pycomposeVersionName"] = version_name
+    env["ORG_GRADLE_PROJECT_pycomposeVersionCode"] = str(version_code)
 
 
 def _signing(project: Project, env: dict[str, str]) -> tuple[str, ...]:
@@ -120,6 +140,7 @@ def build_project(
     if os.name != "nt" and not os.access(wrapper, os.X_OK):
         raise ProjectError("Gradle wrapper is not executable; run chmod +x gradlew")
     env = dict(os.environ)
+    _app_properties(project, env)
     secrets = _signing(project, env) if release else ()
     sync_resources(project)
     variant = "release" if release else "debug"

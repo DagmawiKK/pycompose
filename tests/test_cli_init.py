@@ -51,7 +51,11 @@ def test_init_creates_config_python_entrypoint_and_resource_directories(
     assert json.loads((project / "resources" / "strings.json").read_text()) == {}
     assert (project / "app" / "main.py").is_file()
     assert (project / ".gitignore").is_file()
-    assert "Android scaffold" in result.stderr
+    assert result.stderr == ""
+    assert config["toolchain"]["template_version"] == "0.2.0"
+    assert (project / "gradlew").stat().st_mode & 0o111
+    assert (project / "gradle" / "wrapper" / "gradle-wrapper.jar").is_file()
+    assert (project / "ir" / "src" / "test" / "resources" / "ir_counter.json").is_file()
 
 
 def test_reinit_warns_and_preserves_every_existing_file(tmp_path: Path) -> None:

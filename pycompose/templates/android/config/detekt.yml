@@ -1,0 +1,11 @@
+style:
+  MaxLineLength:
+    maxLineLength: 100
+  MagicNumber:
+    ignorePropertyDeclaration: true
+  ForbiddenImport:
+    active: true
+    imports:
+      - 'pycompose.*'
+      - 'java.lang.reflect.*'
+      - 'kotlin.reflect.*'

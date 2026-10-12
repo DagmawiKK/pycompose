@@ -68,6 +68,8 @@ jobs:
         run: pip install -e ".[dev]"
       - name: Codegen drift check
         run: python tools/schema/gen.py --check
+      - name: Native template drift check
+        run: python tools/template/sync.py --check
       - name: Schema + golden tests
         run: pytest -q -k "schema or golden"
       - name: Verify goldens ship in the wheel
@@ -144,6 +146,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       - if: hashFiles('android/settings.gradle.kts') != ''
         uses: actions/setup-java@v4
         with:
@@ -151,8 +156,12 @@ jobs:
           java-version: ${{ env.JDK_VERSION }}
       - if: hashFiles('android/settings.gradle.kts') != ''
         uses: gradle/actions/setup-gradle@v4
+      - uses: android-actions/setup-android@v3
+      - name: Install pinned SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;34.0.0"
       - name: Spotless + Detekt + lint + unit tests (incl. ArchUnit)
         if: hashFiles('android/settings.gradle.kts') != ''
+        working-directory: android
         run: ./gradlew spotlessCheck detekt lintDebug testDebugUnitTest --continue
       - name: Upload reports
         if: failure()
@@ -177,6 +186,9 @@ jobs:
           java-version: ${{ env.JDK_VERSION }}
       - if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
         uses: gradle/actions/setup-gradle@v4
+      - uses: android-actions/setup-android@v3
+      - name: Install pinned SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;34.0.0"
       - name: Install CLI
         run: pip install -e ".[dev]"
       - name: Generate sample project
@@ -225,8 +237,19 @@ jobs:
           "$RUNNER_TEMP/cli-venv/bin/pycompose" validate wheel-smoke/ui.json
       - name: Build template (host debug APK)
         if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
-        working-directory: ${{ runner.temp }}/smoke
-        run: ./gradlew :host:assembleDebug
+        working-directory: ${{ runner.temp }}/wheel-smoke
+        run: |
+          "$RUNNER_TEMP/cli-venv/bin/pycompose" build apk
+          apk="host/build/outputs/apk/debug/host-debug.apk"
+          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging "$apk" > badging.txt
+          grep -F "package: name='com.example.app_wheel_smoke' versionCode='1' versionName='0.1.0'" badging.txt
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify "$apk"
+          python - <<'PY'
+          import zipfile
+          with zipfile.ZipFile("host/build/outputs/apk/debug/host-debug.apk") as archive:
+              for abi in ("arm64-v8a", "x86_64"):
+                  assert f"lib/{abi}/libpython3.12.so" in archive.namelist()
+          PY
 
   resource-sync-check:
     name: 5 · Resource sync --check
