@@ -8,6 +8,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from pycompose.errors import PyComposeError
+from pycompose.ir.generated_validators import MIN_LIBRARY_VERSION, SCHEMA_VERSION
+from pycompose.schema.version import require_version
+from pycompose.version import __version__
 
 
 class ProjectError(PyComposeError):
@@ -129,3 +132,27 @@ def load_project(directory: Path) -> Project:
             "cannot read pycompose.toml; run from a project created with pycompose init"
         ) from exc
     return Project(root, config)
+
+
+def check_project_versions(project: Project) -> str:
+    """Reject unsupported schema versions and libraries older than the project.
+
+    Args:
+        project: Project with a toolchain table.
+
+    Returns:
+        The configured schema version.
+
+    Raises:
+        ProjectError: If required version fields are not strings.
+    """
+    config = project.table("toolchain")
+    schema = config.get("schema_version")
+    library = config.get("library_version", MIN_LIBRARY_VERSION)
+    if not isinstance(schema, str) or not isinstance(library, str):
+        raise ProjectError(
+            "toolchain schema_version and library_version must be strings"
+        )
+    require_version(schema, minimum=SCHEMA_VERSION, maximum=SCHEMA_VERSION)
+    require_version(__version__, minimum=library, field="library_version")
+    return schema

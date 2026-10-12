@@ -1,0 +1,518 @@
+{
+  "$id": "https://pycompose.dev/schema/ir.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "C_Box": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topStart"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Box"
+        }
+      },
+      "type": "object"
+    },
+    "C_Column": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "horizontalAlignment": {
+              "default": "start",
+              "enum": [
+                "center",
+                "end",
+                "start"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Column"
+        }
+      },
+      "type": "object"
+    },
+    "C_FilledButton": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onClick",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_LazyColumn": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyColumn"
+        }
+      },
+      "type": "object"
+    },
+    "C_Row": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalAlignment": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Row"
+        }
+      },
+      "type": "object"
+    },
+    "C_Scaffold": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Scaffold"
+        }
+      },
+      "type": "object"
+    },
+    "C_Spacer": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Spacer"
+        }
+      },
+      "type": "object"
+    },
+    "C_Text": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "style": {
+              "default": "bodyMedium",
+              "enum": [
+                "bodyLarge",
+                "bodyMedium",
+                "bodySmall",
+                "headlineMedium",
+                "titleLarge",
+                "titleMedium",
+                "titleSmall"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Text"
+        }
+      },
+      "type": "object"
+    },
+    "C_TextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextField"
+        }
+      },
+      "type": "object"
+    },
+    "ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Node": {
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/C_Box"
+            },
+            {
+              "$ref": "#/definitions/C_Column"
+            },
+            {
+              "$ref": "#/definitions/C_FilledButton"
+            },
+            {
+              "$ref": "#/definitions/C_LazyColumn"
+            },
+            {
+              "$ref": "#/definitions/C_Row"
+            },
+            {
+              "$ref": "#/definitions/C_Scaffold"
+            },
+            {
+              "$ref": "#/definitions/C_Spacer"
+            },
+            {
+              "$ref": "#/definitions/C_Text"
+            },
+            {
+              "$ref": "#/definitions/C_TextField"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/definitions/Node"
+          },
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "props": {
+          "type": "object"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "props"
+      ],
+      "type": "object"
+    }
+  },
+  "properties": {
+    "root": {
+      "$ref": "#/definitions/Node"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "version",
+    "schemaVersion",
+    "root"
+  ],
+  "title": "PyCompose IR: canonical snapshot",
+  "type": "object"
+}

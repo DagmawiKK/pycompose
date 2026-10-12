@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 SCHEMA_PATH = ROOT / "schema" / "components.json"
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
+BUNDLED_SCHEMA_PATH = ROOT / "pycompose" / "schema" / "ir.schema.json"
 VALIDATORS_PATH = ROOT / "pycompose" / "ir" / "generated_validators.py"
 PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
 
@@ -468,6 +469,7 @@ def main(argv: list[str] | None = None) -> int:
     registry = load_registry()
     artifacts = {
         IR_SCHEMA_PATH: render_ir_schema(registry),
+        BUNDLED_SCHEMA_PATH: render_ir_schema(registry),
         VALIDATORS_PATH: render_validators(registry),
         PAYLOADS_PATH: render_payloads(registry),
     }

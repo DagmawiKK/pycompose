@@ -10,13 +10,18 @@ from pathlib import Path
 import pytest
 
 
-def cli(directory: Path, *arguments: str) -> subprocess.CompletedProcess[str]:
-    env = dict(os.environ)
-    env["PYTHONPATH"] = str(Path(__file__).parents[1])
+def cli(
+    directory: Path, *arguments: str, env: dict[str, str] | None = None
+) -> subprocess.CompletedProcess[str]:
+    environment = {
+        **os.environ,
+        **(env or {}),
+        "PYTHONPATH": str(Path(__file__).parents[1]),
+    }
     return subprocess.run(
         [sys.executable, "-m", "pycompose.cli", *arguments],
         cwd=directory,
-        env=env,
+        env=environment,
         text=True,
         capture_output=True,
         check=False,
@@ -128,10 +133,6 @@ def test_command_entry_points_have_help(tmp_path: Path, command: str) -> None:
     "arguments",
     [
         ("run",),
-        ("build", "apk", "--release"),
-        ("build", "aab"),
-        ("doctor",),
-        ("validate", "ui.json"),
     ],
 )
 def test_future_commands_fail_explicitly_instead_of_claiming_success(

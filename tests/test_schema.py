@@ -88,6 +88,9 @@ def test_components_json_shape() -> None:
 
 def test_ir_schema_is_fresh() -> None:
     assert IR_SCHEMA_PATH.read_text(encoding="utf-8") == _expected("render_ir_schema")
+    assert (
+        ROOT / "pycompose" / "schema" / "ir.schema.json"
+    ).read_bytes() == IR_SCHEMA_PATH.read_bytes()
 
 
 def test_generated_validators_are_fresh() -> None:

@@ -1,0 +1,140 @@
+"""Gradle packaging with environment-only signing properties and redacted logs."""
+
+from __future__ import annotations
+
+import os
+import subprocess
+import sys
+import zipfile
+from pathlib import Path
+
+from pycompose.cli.project import (
+    Project,
+    ProjectError,
+    check_project_versions,
+    project_path,
+)
+from pycompose.cli.sync import sync_resources
+
+SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
+
+
+def _signing(project: Project, env: dict[str, str]) -> tuple[str, ...]:
+    config = project.table("signing")
+    values = {}
+    for field in ("keystore", "key_alias", "store_password_env", "key_password_env"):
+        value = config.get(field)
+        if not isinstance(value, str) or not value or "\0" in value:
+            raise ProjectError(
+                "release signing requires a configured field", field=f"signing.{field}"
+            )
+        values[field] = value
+    keystore = Path(values["keystore"]).expanduser()
+    if not keystore.is_absolute():
+        keystore = project.root / keystore
+    if not keystore.is_file():
+        raise ProjectError("release keystore is missing", path=keystore)
+    secrets = []
+    for field, prop in (
+        ("store_password_env", "store.password"),
+        ("key_password_env", "key.password"),
+    ):
+        value = env.get(values[field])
+        if not value:
+            raise ProjectError(
+                "release signing environment variable is missing",
+                variable=values[field],
+            )
+        env[SIGNING_PREFIX + prop] = value
+        secrets.append(value)
+    env[SIGNING_PREFIX + "store.file"] = str(keystore.resolve())
+    env[SIGNING_PREFIX + "key.alias"] = values["key_alias"]
+    return tuple(secrets)
+
+
+def _redacted(text: str, secrets: tuple[str, ...]) -> str:
+    for value in sorted(secrets, key=len, reverse=True):
+        text = text.replace(value, "[REDACTED]")
+    return text
+
+
+def _artifacts(project: Project, kind: str, variant: str) -> tuple[Path, ...]:
+    folder = "apk" if kind == "apk" else "bundle"
+    root = project_path(project.root, f"host/build/outputs/{folder}/{variant}")
+    result = []
+    for path in sorted(root.rglob(f"*.{kind}")):
+        project_path(project.root, path.relative_to(project.root).as_posix())
+        try:
+            with zipfile.ZipFile(path) as archive:
+                expected = (
+                    {"AndroidManifest.xml"}
+                    if kind == "apk"
+                    else {"base/manifest/AndroidManifest.xml", "BundleConfig.pb"}
+                )
+                if not expected <= set(archive.namelist()):
+                    raise ProjectError(
+                        "Gradle output is not an Android artifact", path=path
+                    )
+        except zipfile.BadZipFile as exc:
+            raise ProjectError(
+                "Gradle output is not a valid ZIP artifact", path=path
+            ) from exc
+        if variant == "release" and path.name.endswith("-unsigned.apk"):
+            raise ProjectError("Gradle produced an unsigned release APK", path=path)
+        result.append(path)
+    if not result:
+        raise ProjectError("Gradle succeeded but produced no artifact", path=root)
+    return tuple(result)
+
+
+def build_project(
+    project: Project, *, kind: str = "apk", release: bool = False
+) -> tuple[Path, ...]:
+    """Sync resources, invoke the host Gradle task, and locate its artifacts.
+
+    Args:
+        project: Project containing a root Gradle wrapper and host module.
+        kind: apk or aab output.
+        release: Require configured signing and build the release variant.
+
+    Returns:
+        Output artifact paths; installability still requires native integration.
+
+    Raises:
+        ProjectError: If scaffold, signing, Gradle execution or output is invalid.
+    """
+    if kind not in {"apk", "aab"}:
+        raise ProjectError("build format must be apk or aab")
+    check_project_versions(project)
+    wrapper = project_path(
+        project.root, "gradlew.bat" if os.name == "nt" else "gradlew"
+    )
+    if not wrapper.is_file() or not any(
+        (project.root / name).is_file()
+        for name in ("settings.gradle.kts", "settings.gradle")
+    ):
+        raise ProjectError(
+            "Android scaffold is missing; build requires the Gradle wrapper "
+            "and host integration tickets"
+        )
+    if os.name != "nt" and not os.access(wrapper, os.X_OK):
+        raise ProjectError("Gradle wrapper is not executable; run chmod +x gradlew")
+    env = dict(os.environ)
+    secrets = _signing(project, env) if release else ()
+    sync_resources(project)
+    variant = "release" if release else "debug"
+    task = f":host:{'assemble' if kind == 'apk' else 'bundle'}{variant.title()}"
+    result = subprocess.run(
+        [str(wrapper), task, "--console=plain", "--no-daemon"],
+        cwd=project.root,
+        env=env,
+        capture_output=True,
+        text=True,
+        errors="replace",
+        check=False,
+    )
+    print(_redacted(result.stdout, secrets), end="")
+    print(_redacted(result.stderr, secrets), end="", file=sys.stderr)
+    if result.returncode:
+        raise ProjectError("Gradle task failed", task=task, exit_code=result.returncode)
+    return _artifacts(project, kind, variant)
