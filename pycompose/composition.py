@@ -10,7 +10,7 @@ from typing import Any, Generic, ParamSpec
 
 from pycompose.core.expansion import DeferredNode, expand_nodes
 from pycompose.core.node import Node
-from pycompose.errors import IrValidationError
+from pycompose.errors import IrError, IrValidationError
 
 __all__ = ["Composable", "Content", "composable", "content_nodes", "expand"]
 
@@ -28,7 +28,7 @@ class _Slot(DeferredNode):
 
     @property
     def recursion_key(self) -> object:
-        return self.function
+        return (type(self.function), id(self.function))
 
     @property
     def source(self) -> str:
@@ -65,14 +65,23 @@ def content_nodes(value: Content, *, key: str) -> tuple[Node, ...]:
     return tuple(value)
 
 
-def _detach(value: object) -> object:
-    if isinstance(value, list | tuple):
-        return tuple(_detach(item) for item in value)
-    if isinstance(value, Mapping):
-        return MappingProxyType({key: _detach(item) for key, item in value.items()})
-    if isinstance(value, set | frozenset):
-        return frozenset(_detach(item) for item in value)
-    return value
+def _detach(value: object, active: set[int] | None = None) -> object:
+    if not isinstance(value, list | tuple | Mapping | set | frozenset):
+        return value
+    seen = set() if active is None else active
+    if id(value) in seen:
+        raise IrValidationError("cyclic composable input")
+    seen.add(id(value))
+    try:
+        if isinstance(value, list | tuple):
+            return tuple(_detach(item, seen) for item in value)
+        if isinstance(value, Mapping):
+            return MappingProxyType(
+                {key: _detach(item, seen) for key, item in value.items()}
+            )
+        return frozenset(_detach(item, seen) for item in value)
+    finally:
+        seen.remove(id(value))
 
 
 def _argument_key(value: object) -> object:
@@ -130,6 +139,8 @@ class Composable(Generic[P]):
     """
 
     def __init__(self, function: Callable[P, Node]) -> None:
+        if not inspect.isfunction(function):
+            raise IrValidationError("composable requires a Python function")
         self.function = function
         self.signature = inspect.signature(function)
         self.__name__ = function.__name__
@@ -140,8 +151,28 @@ class Composable(Generic[P]):
         self.source = (
             f"{function.__qualname__} ({code.co_filename}:{code.co_firstlineno})"
         )
-        if "id" in self.signature.parameters or inspect.iscoroutinefunction(function):
+        unsupported = any(
+            parameter.kind
+            in {inspect.Parameter.POSITIONAL_ONLY, inspect.Parameter.VAR_POSITIONAL}
+            for parameter in self.signature.parameters.values()
+        )
+        if (
+            "id" in self.signature.parameters
+            or unsupported
+            or inspect.iscoroutinefunction(function)
+        ):
             raise IrValidationError("composable reserves id and must be synchronous")
+        parameters = [
+            inspect.Parameter("id", inspect.Parameter.KEYWORD_ONLY, annotation=str),
+            *(
+                parameter.replace(kind=inspect.Parameter.KEYWORD_ONLY)
+                if parameter.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
+                else parameter
+                for parameter in self.signature.parameters.values()
+            ),
+        ]
+        self.__signature__ = inspect.Signature(parameters, return_annotation=Node)
+        self.__annotations__.update({"id": str, "return": Node})
 
     def __call__(self, *, id: str, **props: Any) -> Node:
         """Declare an instance without executing its function.
@@ -165,7 +196,15 @@ class Composable(Generic[P]):
                 source=self.source,
                 reason=str(exc),
             ) from exc
-        return _Call(self, id, props)
+        try:
+            return _Call(self, id, props)
+        except (IrError, RecursionError, TypeError) as exc:
+            raise IrValidationError(
+                "invalid composable declaration",
+                node_id=id,
+                source=self.source,
+                reason=str(exc),
+            ) from exc
 
 
 def composable(function: Callable[P, Node]) -> Composable[P]:

@@ -12,6 +12,7 @@ from pycompose.cli.doctor import doctor
 from pycompose.cli.init import init_project
 from pycompose.cli.project import load_project
 from pycompose.cli.run import run_project
+from pycompose.cli.stubs import generate_stubs
 from pycompose.cli.sync import sync_resources
 from pycompose.cli.validate import validate_file
 from pycompose.errors import PyComposeError
@@ -53,12 +54,21 @@ def _parser() -> argparse.ArgumentParser:
         "validate", help="Validate IR JSON against the registry and wire schema"
     )
     validate.add_argument("path", type=Path)
+    stubs = commands.add_parser(
+        "stubs", help="Print optional module type stubs without importing app code"
+    )
+    stubs.add_argument("path", type=Path)
     return parser
 
 
 def _validate(args: argparse.Namespace) -> int:
     validate_file(args.path)
     print(f"Valid IR: {args.path}")
+    return 0
+
+
+def _stubs(args: argparse.Namespace) -> int:
+    print(generate_stubs(args.path), end="")
     return 0
 
 
@@ -124,6 +134,7 @@ def main(argv: list[str] | None = None) -> int:
         "build": _build,
         "doctor": _doctor,
         "run": _run,
+        "stubs": _stubs,
     }
     try:
         return handlers[args.command](args)
