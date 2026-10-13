@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
@@ -25,6 +27,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pycompose.host.bridge.ChaquopyBridge
+import com.pycompose.host.resources.AndroidResources
+import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.host.ui.BuiltinComponents
 import com.pycompose.host.ui.PyComposeTheme
 import com.pycompose.renderer.ActionDispatcher
@@ -56,9 +60,10 @@ class MainActivity : ComponentActivity() {
                 if (error.isNotEmpty()) Log.w("PyCompose", error)
             }
             val renderer =
-                remember(model) {
+                remember(model, LocalConfiguration.current) {
+                    val resources = ResourceResolver(AndroidResources(this))
                     Renderer(
-                        BuiltinComponents.registry(),
+                        BuiltinComponents.registry(resources),
                         ActionDispatcher(model::dispatch),
                         BuildConfig.DEBUG,
                     ) {
@@ -67,7 +72,7 @@ class MainActivity : ComponentActivity() {
                 }
             PyComposeTheme {
                 Surface(Modifier.fillMaxSize()) {
-                    Box {
+                    Box(Modifier.safeDrawingPadding()) {
                         snapshot?.let { renderer.Render(it) }
                         if (BuildConfig.DEBUG) {
                             Column(Modifier.align(Alignment.BottomEnd).padding(16.dp)) {

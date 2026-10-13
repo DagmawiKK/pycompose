@@ -28,7 +28,7 @@ internal object VersionGate {
         require(compare(candidate, parts(minimum, "minSchemaVersion")) >= 0) {
             "schemaVersion $schema is below host minSchemaVersion $minimum"
         }
-        require(candidate == parts(IrContract.SCHEMA_VERSION, "supported schemaVersion")) {
+        require(schema in IrContract.supportedSchemaVersions) {
             "Unsupported schemaVersion $schema; host supports ${IrContract.SCHEMA_VERSION}"
         }
         require(
@@ -41,4 +41,9 @@ internal object VersionGate {
             "Library version $library is below ${IrContract.MIN_LIBRARY_VERSION}"
         }
     }
+
+    fun available(
+        schema: String,
+        since: String,
+    ): Boolean = compare(parts(schema, "schemaVersion"), parts(since, "since")) >= 0
 }

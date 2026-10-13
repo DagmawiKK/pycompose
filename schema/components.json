@@ -1,5 +1,6 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
+  "supportedSchemaVersions": ["1.0.0", "1.1.0"],
   "minLibraryVersion": "0.1.0",
   "components": {
     "Text": {
@@ -7,6 +8,9 @@
       "stability": "stable",
       "props": {
         "text": { "type": "string", "required": true },
+        "resource": { "type": "resource", "values": ["string", "asset"], "since": "1.1.0" },
+        "fontResource": { "type": "resource", "values": ["font"], "since": "1.1.0" },
+        "locale": { "type": "string", "since": "1.1.0" },
         "style": {
           "type": "enum",
           "values": [
@@ -21,6 +25,17 @@
           "default": "bodyMedium"
         },
         "color": { "type": "color" },
+        "modifier": { "type": "modifier" }
+      },
+      "children": { "allowed": false }
+    },
+    "Image": {
+      "category": "media",
+      "stability": "stable",
+      "since": "1.1.0",
+      "props": {
+        "resource": { "type": "resource", "values": ["drawable", "asset"], "required": true },
+        "contentDescription": { "type": "string" },
         "modifier": { "type": "modifier" }
       },
       "children": { "allowed": false }

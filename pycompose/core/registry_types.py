@@ -41,12 +41,13 @@ class PropDef:
 
     Attributes:
         type: The prop type name (opaque here; see the codegen tool).
-        values: Allowed values for ``enum`` props.
+        values: Allowed enum values or resource kinds.
         required: Whether the prop must be present.
         has_default: Whether a default is declared.
         default: The declared default, when ``has_default`` is set.
         minimum: Inclusive lower bound for a numeric prop.
         maximum: Inclusive upper bound for a numeric prop.
+        since: First schema exposing the prop, if added after the initial catalog.
     """
 
     type: str
@@ -56,9 +57,14 @@ class PropDef:
     default: JsonValue | FrozenJsonValue = None
     minimum: int | float | None = None
     maximum: int | float | None = None
+    since: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "values", tuple(self.values))
+        if self.since is not None and (
+            not isinstance(self.since, str) or not self.since
+        ):
+            raise ComponentRegistryError("since must be a non-empty schema version")
         object.__setattr__(self, "default", freeze_json(self.default))
         for bound in (self.minimum, self.maximum):
             if bound is not None and (
@@ -112,6 +118,7 @@ class PropDef:
             default=cast("JsonValue", data.get("default")),
             minimum=cast("int | float | None", data.get("minimum")),
             maximum=cast("int | float | None", data.get("maximum")),
+            since=cast("str | None", data.get("since")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -131,6 +138,8 @@ class PropDef:
             out["minimum"] = self.minimum
         if self.maximum is not None:
             out["maximum"] = self.maximum
+        if self.since is not None:
+            out["since"] = self.since
         return out
 
 
@@ -248,6 +257,7 @@ class ComponentSpec:
         stability: Stability tag.
         props: Declared props by wire name.
         children: Child-node rules.
+        since: First schema exposing this component, if not in the initial catalog.
     """
 
     name: str
@@ -255,9 +265,14 @@ class ComponentSpec:
     stability: str
     props: Mapping[str, PropDef]
     children: ChildrenRule
+    since: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
+        if self.since is not None and (
+            not isinstance(self.since, str) or not self.since
+        ):
+            raise ComponentRegistryError("since must be a non-empty schema version")
 
     @classmethod
     def from_mapping(cls, name: str, data: Mapping[str, object]) -> ComponentSpec:
@@ -306,6 +321,7 @@ class ComponentSpec:
             stability=stability,
             props=props,
             children=ChildrenRule.from_mapping(raw_children, where=f"{name}.children"),
+            since=cast("str | None", data.get("since")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -314,12 +330,15 @@ class ComponentSpec:
         Returns:
             A JSON-ready dict.
         """
-        return {
+        result: dict[str, object] = {
             "category": self.category,
             "stability": self.stability,
             "props": {name: prop.to_mapping() for name, prop in self.props.items()},
             "children": self.children.to_mapping(),
         }
+        if self.since is not None:
+            result["since"] = self.since
+        return result
 
 
 @dataclass(frozen=True, slots=True)
@@ -437,6 +456,7 @@ class Registry(AbstractComponentRegistry):
         components: Component definitions by name.
         actions: Action definitions by id.
         modifiers: Ordered modifier operation definitions by wire name.
+        supported_schema_versions: Explicit compatible wire versions, when declared.
     """
 
     schema_version: str
@@ -446,8 +466,12 @@ class Registry(AbstractComponentRegistry):
     modifiers: Mapping[str, Mapping[str, PropDef]] = dataclass_field(
         default_factory=dict
     )
+    supported_schema_versions: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
+        object.__setattr__(
+            self, "supported_schema_versions", tuple(self.supported_schema_versions)
+        )
         object.__setattr__(self, "components", MappingProxyType(dict(self.components)))
         object.__setattr__(self, "actions", MappingProxyType(dict(self.actions)))
         object.__setattr__(
@@ -484,6 +508,13 @@ class Registry(AbstractComponentRegistry):
             raise ComponentRegistryError(
                 "registry 'minLibraryVersion' must be a non-empty string"
             )
+        supported = data.get("supportedSchemaVersions", [])
+        if not isinstance(supported, list) or not all(
+            isinstance(version, str) and version for version in supported
+        ):
+            raise ComponentRegistryError(
+                "supportedSchemaVersions must be a list of versions"
+            )
         raw_components = data.get("components")
         if not isinstance(raw_components, Mapping) or not raw_components:
             raise ComponentRegistryError(
@@ -508,6 +539,7 @@ class Registry(AbstractComponentRegistry):
             components=components,
             actions=actions,
             modifiers=_parse_modifiers(data.get("modifiers", {})),
+            supported_schema_versions=tuple(supported),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -533,6 +565,8 @@ class Registry(AbstractComponentRegistry):
                 name: {"props": {key: prop.to_mapping() for key, prop in props.items()}}
                 for name, props in self.modifiers.items()
             }
+        if self.supported_schema_versions:
+            result["supportedSchemaVersions"] = list(self.supported_schema_versions)
         return result
 
     def component(self, name: str) -> ComponentDef:

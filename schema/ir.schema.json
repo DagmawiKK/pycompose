@@ -1,6 +1,40 @@
 {
   "$id": "https://pycompose.dev/schema/ir.schema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "root": {
+            "$ref": "#/definitions/V_1_0_0_Node"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": "1.1.0"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "root": {
+            "$ref": "#/definitions/V_1_1_0_Node"
+          }
+        }
+      }
+    }
+  ],
   "definitions": {
     "C_Box": {
       "properties": {
@@ -113,6 +147,42 @@
         },
         "type": {
           "const": "FilledButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_Image": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "resource": {
+              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "required": [
+            "resource"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Image"
         }
       },
       "type": "object"
@@ -249,6 +319,13 @@
             "color": {
               "type": "string"
             },
+            "fontResource": {
+              "pattern": "^(@(font)/[a-z][a-z0-9_]*)(?![\\s\\S])",
+              "type": "string"
+            },
+            "locale": {
+              "type": "string"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -259,6 +336,10 @@
                 }
               },
               "type": "object"
+            },
+            "resource": {
+              "pattern": "^(@(string)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
             },
             "style": {
               "default": "bodyMedium",
@@ -451,6 +532,9 @@
               "$ref": "#/definitions/C_FilledButton"
             },
             {
+              "$ref": "#/definitions/C_Image"
+            },
+            {
               "$ref": "#/definitions/C_LazyColumn"
             },
             {
@@ -495,6 +579,836 @@
         "props"
       ],
       "type": "object"
+    },
+    "V_1_0_0_Box": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topStart"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Box"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_0_0_Column": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "horizontalAlignment": {
+              "default": "start",
+              "enum": [
+                "center",
+                "end",
+                "start"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Column"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_0_0_FilledButton": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onClick",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_0_0_LazyColumn": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyColumn"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_0_0_Node": {
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/V_1_0_0_Box"
+            },
+            {
+              "$ref": "#/definitions/V_1_0_0_Column"
+            },
+            {
+              "$ref": "#/definitions/V_1_0_0_FilledButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_0_0_LazyColumn"
+            },
+            {
+              "$ref": "#/definitions/V_1_0_0_Row"
+            },
+            {
+              "$ref": "#/definitions/V_1_0_0_Scaffold"
+            },
+            {
+              "$ref": "#/definitions/V_1_0_0_Spacer"
+            },
+            {
+              "$ref": "#/definitions/V_1_0_0_Text"
+            },
+            {
+              "$ref": "#/definitions/V_1_0_0_TextField"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/definitions/V_1_0_0_Node"
+          },
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "props": {
+          "type": "object"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "props"
+      ],
+      "type": "object"
+    },
+    "V_1_0_0_Row": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalAlignment": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Row"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_0_0_Scaffold": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Scaffold"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_0_0_Spacer": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Spacer"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_0_0_Text": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "style": {
+              "default": "bodyMedium",
+              "enum": [
+                "bodyLarge",
+                "bodyMedium",
+                "bodySmall",
+                "headlineMedium",
+                "titleLarge",
+                "titleMedium",
+                "titleSmall"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Text"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_0_0_TextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_1_0_Box": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topStart"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Box"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_1_0_Column": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "horizontalAlignment": {
+              "default": "start",
+              "enum": [
+                "center",
+                "end",
+                "start"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Column"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_1_0_FilledButton": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onClick",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_1_0_Image": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "resource": {
+              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "required": [
+            "resource"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Image"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_1_0_LazyColumn": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyColumn"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_1_0_Node": {
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/V_1_1_0_Box"
+            },
+            {
+              "$ref": "#/definitions/V_1_1_0_Column"
+            },
+            {
+              "$ref": "#/definitions/V_1_1_0_FilledButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_1_0_Image"
+            },
+            {
+              "$ref": "#/definitions/V_1_1_0_LazyColumn"
+            },
+            {
+              "$ref": "#/definitions/V_1_1_0_Row"
+            },
+            {
+              "$ref": "#/definitions/V_1_1_0_Scaffold"
+            },
+            {
+              "$ref": "#/definitions/V_1_1_0_Spacer"
+            },
+            {
+              "$ref": "#/definitions/V_1_1_0_Text"
+            },
+            {
+              "$ref": "#/definitions/V_1_1_0_TextField"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/definitions/V_1_1_0_Node"
+          },
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "props": {
+          "type": "object"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "props"
+      ],
+      "type": "object"
+    },
+    "V_1_1_0_Row": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalAlignment": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Row"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_1_0_Scaffold": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Scaffold"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_1_0_Spacer": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Spacer"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_1_0_Text": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "type": "string"
+            },
+            "fontResource": {
+              "pattern": "^(@(font)/[a-z][a-z0-9_]*)(?![\\s\\S])",
+              "type": "string"
+            },
+            "locale": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "resource": {
+              "pattern": "^(@(string)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            },
+            "style": {
+              "default": "bodyMedium",
+              "enum": [
+                "bodyLarge",
+                "bodyMedium",
+                "bodySmall",
+                "headlineMedium",
+                "titleLarge",
+                "titleMedium",
+                "titleSmall"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Text"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_1_0_TextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextField"
+        }
+      },
+      "type": "object"
     }
   },
   "properties": {
@@ -502,7 +1416,10 @@
       "$ref": "#/definitions/Node"
     },
     "schemaVersion": {
-      "const": "1.0.0"
+      "enum": [
+        "1.0.0",
+        "1.1.0"
+      ]
     },
     "version": {
       "type": "string"

@@ -13,6 +13,7 @@ class ChaquopyBridge(
 ) : BridgeSurface {
     private val application = context.applicationContext
     private var owner: Thread? = null
+    private var initialized = false
 
     override fun start(route: String) {
         check(Thread.currentThread() != Looper.getMainLooper().thread) { "Python on main thread" }
@@ -22,6 +23,7 @@ class ChaquopyBridge(
             if (!Python.isStarted()) Python.start(AndroidPlatform(application))
         }
         Python.getInstance().getModule(MODULE).callAttr("start", entrypoint, route, debug)
+        initialized = true
     }
 
     override fun acceptAction(action: String) {
@@ -49,7 +51,13 @@ class ChaquopyBridge(
 
     override fun reload(route: String) {
         requireWorker()
-        if (debug) Python.getInstance().getModule(MODULE).callAttr("reload", route)
+        if (debug) {
+            if (initialized) {
+                Python.getInstance().getModule(MODULE).callAttr("reload", route)
+            } else {
+                start(route)
+            }
+        }
     }
 
     private fun requireWorker() {

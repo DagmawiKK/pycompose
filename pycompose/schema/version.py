@@ -23,6 +23,7 @@ def require_version(
     minimum: str,
     maximum: str | None = None,
     field: str = "schemaVersion",
+    supported: tuple[str, ...] | None = None,
 ) -> None:
     """Reject malformed or unsupported versions using numeric comparison.
 
@@ -31,11 +32,14 @@ def require_version(
         minimum: Inclusive minimum compatible version.
         maximum: Inclusive maximum, if only a bounded contract is supported.
         field: Wire field named in errors.
+        supported: Explicit versions, when numeric ranges are insufficient.
 
     Raises:
         SchemaError: If a version is malformed or outside the supported range.
     """
     candidate = _parts(version)
+    if supported is not None and version not in supported:
+        raise SchemaError("unsupported schema version", field=field, version=version)
     if candidate < _parts(minimum):
         raise SchemaError(
             "version below supported minimum",

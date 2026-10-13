@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.takeOrElse
+import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.ir.generated.IrContract
 import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.PropResolver
@@ -26,6 +27,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import com.pycompose.ir.generated.Box as BoxNode
 import com.pycompose.ir.generated.Column as ColumnNode
 import com.pycompose.ir.generated.FilledButton as ButtonNode
+import com.pycompose.ir.generated.Image as ImageNode
 import com.pycompose.ir.generated.LazyColumn as ListNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
@@ -34,11 +36,11 @@ import com.pycompose.ir.generated.TextField as InputNode
 
 /** Thin native adapters, not reimplementations of Material 3 component behavior. */
 object BuiltinComponents {
-    fun registry(): ComponentRegistry =
+    fun registry(resources: ResourceResolver? = null): ComponentRegistry =
         ComponentRegistry
             .Builder()
             .layouts()
-            .controls()
+            .controls(resources)
             .build()
 
     private fun ComponentRegistry.Builder.layouts(): ComponentRegistry.Builder =
@@ -90,15 +92,26 @@ object BuiltinComponents {
                 }
             }
 
-    private fun ComponentRegistry.Builder.controls(): ComponentRegistry.Builder =
+    private fun ComponentRegistry.Builder.controls(
+        resources: ResourceResolver?,
+    ): ComponentRegistry.Builder =
         this
             .register("Text") { node, modifier, _ ->
                 val text = node as TextNode
-                Text(
-                    text.props.text,
+                ResourceText(
+                    text.props,
                     modifier,
-                    color = color(text.props.color),
-                    style = textStyle(text.props.style),
+                    color(text.props.color),
+                    textStyle(text.props.style),
+                    resources,
+                )
+            }.register("Image") { node, modifier, _ ->
+                val image = node as ImageNode
+                ResourceImage(
+                    image.props.resource,
+                    image.props.contentDescription,
+                    modifier,
+                    resources,
                 )
             }.register("FilledButton") { node, modifier, context ->
                 val button = node as ButtonNode

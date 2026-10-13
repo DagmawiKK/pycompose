@@ -37,7 +37,7 @@ def test_golden_screen_rebuilds_match_packaged_fixture_exactly() -> None:
 
 def test_every_packaged_golden_is_canonical_and_schema_valid() -> None:
     names = golden_names()
-    assert names == ("component_screen.json", "ir_counter.json")
+    assert names == ("component_screen.json", "ir_counter.json", "resource_screen.json")
     schema = json.loads(
         (Path(__file__).parents[1] / "schema" / "ir.schema.json").read_text()
     )

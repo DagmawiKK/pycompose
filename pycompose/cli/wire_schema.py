@@ -8,6 +8,7 @@ closed so generator changes cannot silently weaken CLI validation.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable
 from importlib.resources import files
 from typing import Any, cast
@@ -44,6 +45,9 @@ KEYWORDS = frozenset(
         "$ref",
         "allOf",
         "anyOf",
+        "if",
+        "then",
+        "pattern",
     }
 )
 
@@ -71,6 +75,12 @@ def _scalars(item: object, rule: dict[str, Any], path: str) -> None:
         and len(item) < rule.get("minItems", 0)
     ):
         raise ProjectError("value is too short", path=path)
+    if (
+        isinstance(item, str)
+        and "pattern" in rule
+        and re.search(rule["pattern"], item) is None
+    ):
+        raise ProjectError("invalid resource reference", path=path)
 
 
 class WireSchema:
@@ -130,6 +140,10 @@ class WireSchema:
             if set(rule) - KEYWORDS:
                 raise ProjectError("unsupported generated schema keyword", path=path)
             _scalars(item, rule, path)
+            if "if" in rule:
+                selected = self._version_branch(rule, item, path)
+                if selected is not None:
+                    pending.append((item, selected, path))
             pending.extend((item, child, path) for child in rule.get("allOf", []))
             if "anyOf" in rule:
                 pending.append((item, self._choice(rule, item, path), path))
@@ -155,3 +169,19 @@ class WireSchema:
                     (child, rule["items"], f"{path}[{index}]")
                     for index, child in enumerate(item)
                 )
+
+    def _version_branch(
+        self, rule: dict[str, Any], item: object, path: str
+    ) -> dict[str, Any] | None:
+        # Only schema-version selectors are supported, not arbitrary predicates.
+        condition = rule["if"]
+        if set(condition) != {"properties"} or set(condition["properties"]) != {
+            "schemaVersion"
+        }:
+            raise ProjectError("unsupported schema condition", path=path)
+        selector = condition["properties"]["schemaVersion"]
+        if set(selector) != {"const"} or "then" not in rule:
+            raise ProjectError("unsupported schema condition", path=path)
+        if isinstance(item, dict) and item.get("schemaVersion") == selector["const"]:
+            return cast("dict[str, Any]", rule["then"])
+        return None

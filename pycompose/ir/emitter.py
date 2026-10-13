@@ -11,7 +11,11 @@ from pycompose.core.expansion import expand_nodes
 from pycompose.core.ids import ROOT_ID, IdRegistry, child_id
 from pycompose.core.node import Node
 from pycompose.core.traversal import walk_nodes
-from pycompose.ir.generated_validators import MIN_SCHEMA_VERSION, SCHEMA_VERSION
+from pycompose.ir.generated_validators import (
+    MIN_SCHEMA_VERSION,
+    REGISTRY,
+    SCHEMA_VERSION,
+)
 from pycompose.ir.model import IRRoot
 from pycompose.schema.version import require_version
 from pycompose.state.state import State
@@ -35,7 +39,12 @@ def emit_ir(state: State, schema_version: str) -> IRRoot:
         A versioned IR snapshot.
 
     """
-    require_version(schema_version, minimum=MIN_SCHEMA_VERSION, maximum=SCHEMA_VERSION)
+    require_version(
+        schema_version,
+        minimum=MIN_SCHEMA_VERSION,
+        maximum=SCHEMA_VERSION,
+        supported=REGISTRY.supported_schema_versions or (SCHEMA_VERSION,),
+    )
     root = _emit_node(expand_nodes(state.root), ROOT_ID, IdRegistry())
     return IRRoot(root=root, schema_version=schema_version)
 

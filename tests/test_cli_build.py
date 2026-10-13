@@ -179,7 +179,7 @@ def test_build_rejects_schema_mismatch_and_resource_conflicts_before_gradle(
     config = project / "pycompose.toml"
     original = config.read_text()
     config.write_text(
-        original.replace('schema_version = "1.0.0"', 'schema_version = "2.0.0"')
+        original.replace('schema_version = "1.1.0"', 'schema_version = "2.0.0"')
     )
     assert cli(project, "build").returncode == 2
     config.write_text(original)

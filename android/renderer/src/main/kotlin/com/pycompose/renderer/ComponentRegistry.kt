@@ -12,6 +12,8 @@ class ComponentRegistry private constructor(
 ) {
     operator fun get(type: String): NodeRenderer? = adapters[type]
 
+    val types: Set<String> get() = adapters.keys.toSet()
+
     class Builder {
         private val adapters = linkedMapOf<String, NodeRenderer>()
 

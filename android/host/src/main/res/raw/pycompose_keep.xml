@@ -1,0 +1,2 @@
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@string/pycompose_greeting,@drawable/ic_pycompose" />

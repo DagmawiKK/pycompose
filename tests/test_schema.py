@@ -18,6 +18,7 @@ PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
 GEN_PATH = ROOT / "tools" / "schema" / "gen.py"
 
 PROP_TYPE_VOCABULARY = {
+    "resource",
     "actionId",
     "boolean",
     "color",

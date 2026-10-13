@@ -15,6 +15,7 @@ __all__ = [
     "Box",
     "Column",
     "FilledButton",
+    "Image",
     "LazyColumn",
     "Row",
     "Scaffold",
@@ -155,6 +156,35 @@ class FilledButton(Component):
             props["enabled"] = enabled
         props["on_click"] = on_click
         props["text"] = text
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class Image(Component):
+    """Native Image; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Image"
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        content_description: str | None = None,
+        modifier: Modifier | None = None,
+        resource: str,
+    ) -> None:
+        """Construct a registered Image.
+
+        Args:
+            id: Stable instance key.
+            content_description: Native contentDescription; None uses its default.
+            modifier: Native modifier; None uses its default.
+            resource: Required native resource.
+        """
+        props: dict[str, JsonValue] = {}
+        if content_description is not None:
+            props["content_description"] = content_description
+        props["resource"] = resource
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -300,7 +330,10 @@ class Text(Component):
         *,
         id: str,
         color: str | None = None,
+        font_resource: str | None = None,
+        locale: str | None = None,
         modifier: Modifier | None = None,
+        resource: str | None = None,
         style: _TextStyle | None = None,
         text: str,
     ) -> None:
@@ -309,13 +342,22 @@ class Text(Component):
         Args:
             id: Stable instance key.
             color: Native color; None uses its default.
+            font_resource: Native fontResource; None uses its default.
+            locale: Native locale; None uses its default.
             modifier: Native modifier; None uses its default.
+            resource: Native resource; None uses its default.
             style: Native style; None uses its default.
             text: Required native text.
         """
         props: dict[str, JsonValue] = {}
         if color is not None:
             props["color"] = color
+        if font_resource is not None:
+            props["font_resource"] = font_resource
+        if locale is not None:
+            props["locale"] = locale
+        if resource is not None:
+            props["resource"] = resource
         if style is not None:
             props["style"] = style
         props["text"] = text

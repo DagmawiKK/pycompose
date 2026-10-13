@@ -160,7 +160,7 @@ def test_leaf_children_are_rejected_or_removed_in_release() -> None:
 @pytest.mark.parametrize("debug", [True, False])
 @pytest.mark.parametrize(
     ("schema_version", "library_version"),
-    [("0.9.9", "0.1.0"), ("1.0.0", "0.0.9"), ("1.1.0", "0.1.0"), ("bad", "0.1.0")],
+    [("0.9.9", "0.1.0"), ("1.0.0", "0.0.9"), ("1.2.0", "0.1.0"), ("bad", "0.1.0")],
 )
 def test_version_mismatch_is_never_silently_degraded(
     debug: bool, schema_version: str, library_version: str

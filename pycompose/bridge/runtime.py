@@ -9,6 +9,7 @@ import sys
 from contextlib import suppress
 from pathlib import Path
 from threading import current_thread
+from types import ModuleType
 
 from pycompose.bridge.api import BridgeSurface
 from pycompose.errors import BridgeError
@@ -94,29 +95,44 @@ class RuntimeSession:
         if not filename:
             self._error = "app module has no reloadable source"
             return
-        directory = Path(filename).parent
-        previous = {}
-        for name, module in tuple(sys.modules.items()):
-            path = getattr(module, "__file__", None)
-            if name == "pycompose" or name.startswith("pycompose.") or not path:
-                continue
-            if Path(path).is_relative_to(directory):
-                previous[name] = module
-                del sys.modules[name]
-                cached = getattr(module, "__cached__", None)
-                if cached:
-                    # APK-bundled modules may have read-only bytecode.
-                    with suppress(OSError):
-                        Path(cached).unlink(missing_ok=True)
+        top = sys.modules[self._module.split(".")[0]]
+        directory = Path(getattr(top, "__file__", None) or filename).parent
+        if "." in self._module:
+            directory = directory.parent
+        previous = _user_modules(directory)
+        for name, module in previous.items():
+            del sys.modules[name]
+            cached = getattr(module, "__cached__", None)
+            if cached:
+                # APK-bundled modules may have read-only bytecode.
+                with suppress(OSError):
+                    Path(cached).unlink(missing_ok=True)
         importlib.invalidate_caches()
         try:
             candidate = self._build(route)
         except Exception as exc:
+            for name in _user_modules(directory):
+                del sys.modules[name]
             sys.modules.update(previous)
             self._error = str(exc)
         else:
             self._surface = candidate
             self._error = ""
+
+
+def _user_modules(directory: Path) -> dict[str, ModuleType]:
+    result = {}
+    for name, module in tuple(sys.modules.items()):
+        path = getattr(module, "__file__", None)
+        if (
+            name == "pycompose"
+            or name.startswith("pycompose.")
+            or not isinstance(path, str)
+        ):
+            continue
+        if Path(path).is_relative_to(directory):
+            result[name] = module
+    return result
 
 
 _session: RuntimeSession | None = None

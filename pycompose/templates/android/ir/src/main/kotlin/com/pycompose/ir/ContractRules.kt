@@ -7,6 +7,7 @@ data class PropertyRule(
     val values: Set<String> = emptySet(),
     val minimum: Double? = null,
     val maximum: Double? = null,
+    val since: String = "1.0.0",
 )
 
 /** Registered component structure and property constraints. */
@@ -14,4 +15,5 @@ data class ComponentRule(
     val childrenAllowed: Boolean,
     val minimumChildren: Int = 0,
     val props: Map<String, PropertyRule>,
+    val since: String = "1.0.0",
 )

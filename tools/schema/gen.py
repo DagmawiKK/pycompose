@@ -52,6 +52,7 @@ PROP_TYPE_VOCABULARY = frozenset(
         "modifier",
         "number",
         "string",
+        "resource",
     }
 )
 
@@ -95,6 +96,7 @@ def _validate_registry(registry: dict) -> None:
         _die("'components' must be a non-empty object")
     for name, comp in sorted(components.items()):
         _validate_component(name, comp)
+    _validate_versions(registry)
 
     actions = registry["actions"]
     if not isinstance(actions, dict):
@@ -115,8 +117,36 @@ def _validate_registry(registry: dict) -> None:
 
 
 def _require_semver(value: str, field: str) -> None:
-    if SEMVER_PATTERN.fullmatch(value) is None:
+    if not isinstance(value, str) or SEMVER_PATTERN.fullmatch(value) is None:
         _die(f"{field} must be MAJOR.MINOR.PATCH semver, got {value!r}")
+
+
+def _version_key(value: str) -> tuple[int, ...]:
+    return tuple(map(int, value.split(".")))
+
+
+def _supported(registry: dict) -> list[str]:
+    return registry.get("supportedSchemaVersions", [registry["schemaVersion"]])
+
+
+def _validate_versions(registry: dict) -> None:
+    supported = _supported(registry)
+    if (
+        not isinstance(supported, list)
+        or not supported
+        or registry["schemaVersion"] not in supported
+    ):
+        _die("supportedSchemaVersions must include the current schema")
+    for version in supported:
+        _require_semver(version, "supportedSchemaVersions")
+    if max(supported, key=_version_key) != registry["schemaVersion"]:
+        _die("schemaVersion must be the newest supported schema")
+    for spec in registry["components"].values():
+        for definition in [spec, *spec["props"].values()]:
+            if "since" in definition:
+                _require_semver(definition["since"], "since")
+                if definition["since"] not in supported:
+                    _die("since must refer to a supported schema")
 
 
 def _validate_action_refs(registry: dict) -> None:
@@ -223,6 +253,7 @@ def render_payloads(registry: dict) -> str:
     simple_types = {
         "string": "str",
         "color": "str",
+        "resource": "str",
         "actionId": "str",
         "boolean": "bool",
         "integer": "int",
@@ -296,7 +327,7 @@ def render_ir_schema(registry: dict) -> str:
         "required": ["version", "schemaVersion", "root"],
         "properties": {
             "version": {"type": "string"},
-            "schemaVersion": {"const": registry["schemaVersion"]},
+            "schemaVersion": {"enum": _supported(registry)},
             "root": {"$ref": "#/definitions/Node"},
         },
         "definitions": {
@@ -329,6 +360,39 @@ def render_ir_schema(registry: dict) -> str:
             **component_defs,
         },
     }
+    # Each supported envelope selects its own recursive catalog from the manifest.
+    branches = []
+    for version in _supported(registry):
+        prefix = "V_" + version.replace(".", "_") + "_"
+        available = {}
+        for name, spec in components.items():
+            if _version_key(spec.get("since", version)) > _version_key(version):
+                continue
+            scoped = {
+                **spec,
+                "props": {
+                    key: prop
+                    for key, prop in spec["props"].items()
+                    if _version_key(prop.get("since", version)) <= _version_key(version)
+                },
+            }
+            available[prefix + name] = _component_schema(name, scoped, action_ids)
+        node_name = prefix + "Node"
+        node_schema = _node_schema(sorted(available))
+        node_schema["properties"]["children"]["items"] = {
+            "$ref": "#/definitions/" + node_name
+        }
+        ir_schema["definitions"].update(available)
+        ir_schema["definitions"][node_name] = node_schema
+        branches.append(
+            {
+                "if": {"properties": {"schemaVersion": {"const": version}}},
+                "then": {
+                    "properties": {"root": {"$ref": "#/definitions/" + node_name}}
+                },
+            }
+        )
+    ir_schema["allOf"] = branches
     return json.dumps(ir_schema, indent=2, sort_keys=True) + "\n"
 
 
@@ -380,14 +444,30 @@ def _component_schema(name: str, comp: dict, action_ids: list[str]) -> dict:
 
 def _prop_schema(prop: dict, action_ids: list[str]) -> dict:
     ptype = prop["type"]
-    if ptype in {"string", "color"}:
-        value = {"type": "string"}
-    elif ptype in {"integer", "durationMs"}:
-        value = {"type": "integer"}
-    elif ptype in {"number", "dp"}:
-        value = {"type": "number"}
-    elif ptype == "boolean":
-        value = {"type": "boolean"}
+    basic = {
+        "string": "string",
+        "color": "string",
+        "integer": "integer",
+        "durationMs": "integer",
+        "number": "number",
+        "dp": "number",
+        "boolean": "boolean",
+    }
+    if ptype in basic:
+        value = {"type": basic[ptype]}
+    elif ptype == "resource":
+        native = "|".join(kind for kind in prop["values"] if kind != "asset")
+        patterns = []
+        if native:
+            patterns.append(f"@({native})/[a-z][a-z0-9_]*")
+        if "asset" in prop["values"]:
+            patterns.append(
+                r"@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*"
+            )
+        value = {
+            "type": "string",
+            "pattern": "^(" + "|".join(patterns) + r")(?![\s\S])",
+        }
     elif ptype == "enum":
         value = {"enum": sorted(prop["values"])}
     elif ptype == "actionId":
@@ -428,6 +508,7 @@ def render_validators(registry: dict) -> str:
         _python_string(raw[index : index + 50]) for index in range(0, len(raw), 50)
     ]
     literals = "\n".join(f"        {chunk}" for chunk in chunks)
+    minimum_schema = min(_supported(registry), key=_version_key)
     body = (
         f"# {GENERATED_NOTICE}\n"
         '"""Generated component, prop, children and action validation tables."""\n\n'
@@ -437,7 +518,7 @@ def render_validators(registry: dict) -> str:
         '__all__ = [\n    "KNOWN_ACTION_IDS",\n    "MIN_LIBRARY_VERSION",\n'
         '    "MIN_SCHEMA_VERSION",\n    "REGISTRY",\n    "SCHEMA_VERSION",\n]\n\n'
         f"SCHEMA_VERSION: str = {json.dumps(registry['schemaVersion'])}\n"
-        "MIN_SCHEMA_VERSION: str = SCHEMA_VERSION\n"
+        f"MIN_SCHEMA_VERSION: str = {json.dumps(minimum_schema)}\n"
         f"MIN_LIBRARY_VERSION: str = {json.dumps(registry['minLibraryVersion'])}\n"
         f"KNOWN_ACTION_IDS: tuple[str, ...] = {action_tuple}\n"
         f"REGISTRY: Registry = Registry.from_mapping(\n    json.loads(\n{literals}\n"
@@ -475,6 +556,7 @@ def _python_type(component: str, name: str, prop: dict) -> str:
     return {
         "string": "str",
         "color": "str",
+        "resource": "str",
         "actionId": "str",
         "boolean": "bool",
         "integer": "int",
@@ -650,6 +732,7 @@ def _kt_type(prop: dict) -> str:
     return {
         "string": "String",
         "color": "String",
+        "resource": "String",
         "actionId": "String",
         "enum": "String",
         "boolean": "Boolean",
@@ -788,6 +871,8 @@ def _kt_rules(props: dict) -> list[str]:
                 + ", ".join(_kt_string(value) for value in prop["values"])
                 + ")"
             )
+        if "since" in prop:
+            args.append(f"since = {_kt_string(prop['since'])}")
         args.extend(
             f"{field} = {float(prop[field])}"
             for field in ("minimum", "maximum")
@@ -801,6 +886,7 @@ def _kt_rules(props: dict) -> list[str]:
 
 def render_kotlin_registry(registry: dict) -> str:
     """Generate validation registrations from the same registry as Python."""
+    minimum_schema = min(_supported(registry), key=_version_key)
     lines = [
         f"// {GENERATED_NOTICE}",
         "package com.pycompose.ir.generated",
@@ -811,7 +897,10 @@ def render_kotlin_registry(registry: dict) -> str:
         "object IrContract {",
         "    const val SCHEMA_VERSION: String = "
         + _kt_string(registry["schemaVersion"]),
-        "    const val MIN_SCHEMA_VERSION: String = SCHEMA_VERSION",
+        "    const val MIN_SCHEMA_VERSION: String = " + _kt_string(minimum_schema),
+        "    val supportedSchemaVersions: Set<String> = setOf("
+        + ", ".join(_kt_string(value) for value in _supported(registry))
+        + ")",
         "    const val MIN_LIBRARY_VERSION: String = "
         + _kt_string(registry["minLibraryVersion"]),
         "    val actionIds: Set<String> = setOf("
@@ -827,6 +916,7 @@ def render_kotlin_registry(registry: dict) -> str:
                 + str(spec["children"]["allowed"]).lower()
                 + ",",
                 f"            minimumChildren = {spec['children'].get('min', 0)},",
+                f"            since = {_kt_string(spec.get('since', minimum_schema))},",
                 "            props = mapOf(",
                 *_kt_rules(spec["props"]),
                 "            ),",

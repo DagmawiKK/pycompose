@@ -5,14 +5,16 @@ import com.pycompose.ir.ComponentRule
 import com.pycompose.ir.PropertyRule
 
 object IrContract {
-    const val SCHEMA_VERSION: String = "1.0.0"
-    const val MIN_SCHEMA_VERSION: String = SCHEMA_VERSION
+    const val SCHEMA_VERSION: String = "1.1.0"
+    const val MIN_SCHEMA_VERSION: String = "1.0.0"
+    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0")
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
         "Box" to ComponentRule(
             childrenAllowed = true,
             minimumChildren = 0,
+            since = "1.0.0",
             props = mapOf(
                 "contentAlignment" to PropertyRule("enum", required = false, values = setOf("topStart", "topCenter", "topEnd", "centerStart", "center", "centerEnd", "bottomStart", "bottomCenter", "bottomEnd")),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -21,6 +23,7 @@ object IrContract {
         "Column" to ComponentRule(
             childrenAllowed = true,
             minimumChildren = 0,
+            since = "1.0.0",
             props = mapOf(
                 "horizontalAlignment" to PropertyRule("enum", required = false, values = setOf("start", "center", "end")),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -29,6 +32,7 @@ object IrContract {
         "FilledButton" to ComponentRule(
             childrenAllowed = false,
             minimumChildren = 0,
+            since = "1.0.0",
             props = mapOf(
                 "enabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -36,9 +40,20 @@ object IrContract {
                 "text" to PropertyRule("string", required = true),
             ),
         ),
+        "Image" to ComponentRule(
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.1.0",
+            props = mapOf(
+                "contentDescription" to PropertyRule("string", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "resource" to PropertyRule("resource", required = true, values = setOf("drawable", "asset")),
+            ),
+        ),
         "LazyColumn" to ComponentRule(
             childrenAllowed = true,
             minimumChildren = 0,
+            since = "1.0.0",
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
                 "verticalArrangement" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom", "spaceEvenly", "spaceBetween", "spaceAround")),
@@ -47,6 +62,7 @@ object IrContract {
         "Row" to ComponentRule(
             childrenAllowed = true,
             minimumChildren = 0,
+            since = "1.0.0",
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
                 "verticalAlignment" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom")),
@@ -55,6 +71,7 @@ object IrContract {
         "Scaffold" to ComponentRule(
             childrenAllowed = true,
             minimumChildren = 0,
+            since = "1.0.0",
             props = mapOf(
                 "containerColor" to PropertyRule("color", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -63,6 +80,7 @@ object IrContract {
         "Spacer" to ComponentRule(
             childrenAllowed = false,
             minimumChildren = 0,
+            since = "1.0.0",
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
             ),
@@ -70,9 +88,13 @@ object IrContract {
         "Text" to ComponentRule(
             childrenAllowed = false,
             minimumChildren = 0,
+            since = "1.0.0",
             props = mapOf(
                 "color" to PropertyRule("color", required = false),
+                "fontResource" to PropertyRule("resource", required = false, values = setOf("font"), since = "1.1.0"),
+                "locale" to PropertyRule("string", required = false, since = "1.1.0"),
                 "modifier" to PropertyRule("modifier", required = false),
+                "resource" to PropertyRule("resource", required = false, values = setOf("string", "asset"), since = "1.1.0"),
                 "style" to PropertyRule("enum", required = false, values = setOf("bodyLarge", "bodyMedium", "bodySmall", "titleLarge", "titleMedium", "titleSmall", "headlineMedium")),
                 "text" to PropertyRule("string", required = true),
             ),
@@ -80,6 +102,7 @@ object IrContract {
         "TextField" to ComponentRule(
             childrenAllowed = false,
             minimumChildren = 0,
+            since = "1.0.0",
             props = mapOf(
                 "enabled" to PropertyRule("boolean", required = false),
                 "label" to PropertyRule("string", required = false),

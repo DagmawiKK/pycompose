@@ -41,3 +41,33 @@ def build(*, route="home"):
         assert "broken app" in session.error()
     finally:
         sys.modules.pop("device_app", None)
+
+
+def test_failed_reload_restores_the_app_module_graph(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    helper = tmp_path / "device_helper.py"
+    helper.write_text('label = "original"\n')
+    app = tmp_path / "rollback_app.py"
+    app.write_text("""from pycompose.m3 import Text
+from pycompose.state import State, Actions
+import device_helper
+actions = Actions()
+def build():
+    return State(root=Text(id="text", text=device_helper.label))
+def increment(state, payload):
+    import device_helper
+    return State(root=Text(id="text", text=device_helper.label))
+actions.register("increment", increment)
+""")
+    monkeypatch.syspath_prepend(str(tmp_path))
+    try:
+        session = RuntimeSession("rollback_app:build", "home", debug=True)
+        helper.write_text('label = "failed candidate"\n')
+        app.write_text('import device_helper\nraise RuntimeError("broken")\n')
+        session.reload("home")
+        session.accept_action('{"actionId":"increment","payload":{}}')
+        assert json.loads(session.snapshot())["root"]["props"]["text"] == "original"
+    finally:
+        sys.modules.pop("rollback_app", None)
+        sys.modules.pop("device_helper", None)

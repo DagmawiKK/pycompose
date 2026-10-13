@@ -15,6 +15,7 @@ internal object WireValidator {
             "Unknown snapshot envelope field"
         }
         root["metadata"]?.let { require(it is JsonObject) { "metadata must be an object" } }
+        val schema = string(root["schemaVersion"], "schemaVersion")
         val pending = ArrayDeque<JsonElement>()
         pending.addLast(checkNotNull(root["root"]) { "Missing root" })
         val ids = mutableSetOf<String>()
@@ -24,10 +25,18 @@ internal object WireValidator {
             require(id.isNotEmpty() && ids.add(id)) { "Empty or duplicate node id: $id" }
             val type = string(node["type"], "node.type")
             val spec = checkNotNull(IrContract.components[type]) { "Unknown component: $type" }
+            require(VersionGate.available(schema, spec.since)) { "Component requires newer schema" }
             require(node.keys.all { it in setOf("id", "type", "props", "children") }) {
                 "Unknown node field at $id"
             }
             val props = node["props"] as? JsonObject ?: error("Missing object props at $id")
+            props.keys.forEach { key ->
+                spec.props[key]?.let { rule ->
+                    require(
+                        VersionGate.available(schema, rule.since),
+                    ) { "Prop requires newer schema" }
+                }
+            }
             properties(props, spec.props, "$id.props")
             require(spec.childrenAllowed || "children" !in node) { "Children forbidden at $id" }
             val children =
@@ -70,6 +79,7 @@ internal object WireValidator {
         val primitive = value as? JsonPrimitive
         when (rule.type) {
             "string", "color" -> string(value, path)
+            "resource" -> ResourceReference.parse(string(value, path), rule.values).getOrThrow()
             "enum" -> require(string(value, path) in rule.values) { "Invalid enum at $path" }
             "actionId" ->
                 require(string(value, path) in IrContract.actionIds) {

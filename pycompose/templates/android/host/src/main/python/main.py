@@ -3,7 +3,7 @@
 from pycompose import composable
 from pycompose.bridge.generated_payloads import IncrementPayload
 from pycompose.core import Node
-from pycompose.m3 import Column, FilledButton, Modifier, Text
+from pycompose.m3 import Column, FilledButton, Image, Modifier, Text
 from pycompose.state import Actions, State
 
 actions = Actions()
@@ -17,6 +17,21 @@ def counter(*, count: int) -> Node:
         children=[
             Text(id="count", text=f"Count: {count}", style="headlineMedium"),
             FilledButton(id="add", text="Add", on_click="increment"),
+            Text(
+                id="localized",
+                text="Greeting unavailable",
+                resource="@string/pycompose_greeting",
+                locale="fr",
+            ),
+            Image(
+                id="logo",
+                resource="@drawable/ic_pycompose",
+                content_description="PyCompose logo",
+                modifier=Modifier().size(96),
+            ),
+            Text(
+                id="asset", text="Asset unavailable", resource="@asset/demo/message.txt"
+            ),
         ],
     )
 

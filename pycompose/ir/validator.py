@@ -12,9 +12,11 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field, replace
+from typing import cast
 
 from pycompose.core.node import Node, Props
 from pycompose.core.registry_types import PropDef
+from pycompose.core.resources import valid_resource
 from pycompose.core.traversal import NodeCycleError, walk_nodes
 from pycompose.errors import IrValidationError
 from pycompose.ir.generated_validators import (
@@ -25,7 +27,7 @@ from pycompose.ir.generated_validators import (
 )
 from pycompose.ir.model import IRRoot
 from pycompose.schema.version import require_version
-from pycompose.utils.json_canonical import check_json
+from pycompose.utils.json_canonical import FrozenJsonValue, check_json
 
 __all__ = [
     "ValidationIssue",
@@ -39,6 +41,7 @@ __all__ = [
 
 _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     "string": lambda value, _: isinstance(value, str),
+    "resource": lambda value, prop: valid_resource(value, prop.values),
     "color": lambda value, _: isinstance(value, str),
     "boolean": lambda value, _: isinstance(value, bool),
     "integer": lambda value, _: isinstance(value, int) and not isinstance(value, bool),
@@ -175,10 +178,13 @@ def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
 
     """
     require_version(
-        snapshot.schema_version, minimum=MIN_SCHEMA_VERSION, maximum=SCHEMA_VERSION
+        snapshot.schema_version,
+        minimum=MIN_SCHEMA_VERSION,
+        maximum=SCHEMA_VERSION,
+        supported=REGISTRY.supported_schema_versions or (SCHEMA_VERSION,),
     )
     require_version(snapshot.version, minimum=MIN_LIBRARY_VERSION, field="version")
-    validation = _Validation(debug)
+    validation = _Validation(debug, snapshot.schema_version)
     metadata = snapshot.metadata
     if metadata is not None:
         try:
@@ -220,8 +226,9 @@ class _NodeFrame:
 
 
 class _Validation:
-    def __init__(self, debug: bool) -> None:
+    def __init__(self, debug: bool, schema_version: str = SCHEMA_VERSION) -> None:
         self.debug = debug
+        self.schema_version = schema_version
         self.issues: list[ValidationIssue] = []
         self.ids: set[str] = set()
         self.path: list[str] = []
@@ -259,10 +266,15 @@ class _Validation:
         if not self.identity(node):
             return None
         spec = REGISTRY.components.get(node.type)
-        if spec is None:
-            self.report("unknown component", node)
+        if spec is None or (spec.since is not None and not self.available(spec.since)):
+            message = (
+                "unknown component"
+                if spec is None
+                else "component requires newer schema"
+            )
+            self.report(message, node)
             return None
-        props = node.props.values
+        props = cast(Mapping[str, FrozenJsonValue], node.props.values)
         removed: set[str] = set()
         invalid_required = False
         for name, declared in sorted(spec.props.items()):
@@ -274,6 +286,10 @@ class _Validation:
             if prop is None:
                 self.report("unknown prop", node, name)
                 removed.add(name)
+            elif prop.since is not None and not self.available(prop.since):
+                self.report("prop requires newer schema", node, name)
+                removed.add(name)
+                invalid_required |= prop.required
             elif not validate_prop(props[name], prop):
                 self.report("invalid prop value", node, name)
                 removed.add(name)
@@ -289,6 +305,11 @@ class _Validation:
                 del retained[key]
             safe_props = Props(retained)
         return _NodeFrame(safe_props, spec.children.min or 0, spec.children.allowed)
+
+    def available(self, since: str) -> bool:
+        return tuple(map(int, self.schema_version.split("."))) >= tuple(
+            map(int, since.split("."))
+        )
 
     def finish(self, node: Node, frame: _NodeFrame | None) -> Node | None:
         if frame is None:

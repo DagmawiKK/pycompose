@@ -76,6 +76,23 @@ data class FilledButton(
 }
 
 @Serializable
+data class ImageProps(
+    val `contentDescription`: String? = null,
+    override val `modifier`: JsonObject? = null,
+    val `resource`: String,
+) : UiProps
+
+@Serializable
+@SerialName("Image")
+data class Image(
+    override val id: String,
+    override val props: ImageProps,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "Image"
+}
+
+@Serializable
 data class LazyColumnProps(
     override val `modifier`: JsonObject? = null,
     val `verticalArrangement`: String = "top",
@@ -141,7 +158,10 @@ data class Spacer(
 @Serializable
 data class TextProps(
     val `color`: String? = null,
+    val `fontResource`: String? = null,
+    val `locale`: String? = null,
     override val `modifier`: JsonObject? = null,
+    val `resource`: String? = null,
     val `style`: String = "bodyMedium",
     val `text`: String,
 ) : UiProps

@@ -35,6 +35,7 @@ android {
         )
     }
     testOptions.unitTests.isIncludeAndroidResources = true
+    bundle.language.enableSplit = false
     sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
     sourceSets.getByName("test").java.srcDir("../architecture/src/test/kotlin")
     lint {
