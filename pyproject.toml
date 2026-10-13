@@ -76,7 +76,7 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["cli", "testing", "m3", "components", "bridge", "ir", "state", "schema", "core", "utils"]
+layers = ["cli", "testing", "m3", "composition", "components", "bridge", "ir", "state", "schema", "core", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
 
@@ -94,7 +94,7 @@ name = "Runtime packages never import CLI or templates"
 type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
                   "pycompose.ir", "pycompose.bridge", "pycompose.components",
-                   "pycompose.utils", "pycompose.testing", "pycompose.m3"]
+                   "pycompose.utils", "pycompose.testing", "pycompose.m3", "pycompose.composition"]
 forbidden_modules = ["pycompose.cli", "pycompose.templates"]
 explanation = "CLI and template assets are dev/tooling concerns, never runtime deps."
 
@@ -110,7 +110,7 @@ name = "Runtime never imports testing helpers or fixtures"
 type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
                    "pycompose.ir", "pycompose.bridge", "pycompose.components",
-                   "pycompose.utils", "pycompose.m3"]
+                   "pycompose.utils", "pycompose.m3", "pycompose.composition"]
 forbidden_modules = ["pycompose.testing"]
 explanation = "Testing consumes runtime public APIs; runtime stays independent of test data."
 

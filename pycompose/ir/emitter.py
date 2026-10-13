@@ -7,6 +7,7 @@ retain split paths. Already qualified, unchanged branches preserve identity.
 
 from __future__ import annotations
 
+from pycompose.core.expansion import expand_nodes
 from pycompose.core.ids import ROOT_ID, IdRegistry, child_id
 from pycompose.core.node import Node
 from pycompose.core.traversal import walk_nodes
@@ -35,7 +36,7 @@ def emit_ir(state: State, schema_version: str) -> IRRoot:
 
     """
     require_version(schema_version, minimum=MIN_SCHEMA_VERSION, maximum=SCHEMA_VERSION)
-    root = _emit_node(state.root, ROOT_ID, IdRegistry())
+    root = _emit_node(expand_nodes(state.root), ROOT_ID, IdRegistry())
     return IRRoot(root=root, schema_version=schema_version)
 
 

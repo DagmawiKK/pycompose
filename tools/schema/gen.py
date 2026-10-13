@@ -513,10 +513,10 @@ def _python_constructor(name: str, spec: dict) -> list[str]:
         )
     alias = spec["children"].get("kind")
     if spec["children"]["allowed"]:
-        lines.append("        children: Sequence[Node] = (),")
+        lines.append("        children: Content = (),")
         arguments["children"] = "Ordered child nodes with stable keys."
         if alias in {"content", "items"}:
-            lines.append(f"        {alias}: Node | Sequence[Node] | None = None,")
+            lines.append(f"        {alias}: Content | None = None,")
             arguments[alias] = f"Alternative spelling for {alias} children."
     lines.extend(
         [
@@ -561,15 +561,21 @@ def _python_constructor(name: str, spec: dict) -> list[str]:
                 '                    "cannot supply both slot and children", '
                 "node_id=id",
                 "                )",
-                f"            children = ({alias},) "
-                f"if isinstance({alias}, Node) else {alias}",
+                f'            children = content_nodes({alias}, key="{alias}")',
             ]
         )
-    children = "children" if spec["children"]["allowed"] else "()"
+    children = "()"
+    if spec["children"]["allowed"]:
+        lines.append('        normalized = content_nodes(children, key="children")')
+        children = "normalized"
     modifier = ", modifier=modifier" if "modifier" in props else ""
-    lines.append(
-        f"        super().__init__(id=id, children={children}{modifier}, **props)"
-    )
+    invocation = f"id=id, children={children}{modifier}, **props"
+    if len(invocation) + len("        super().__init__()") > 88:
+        lines.extend(
+            ["        super().__init__(", f"            {invocation}", "        )"]
+        )
+    else:
+        lines.append(f"        super().__init__({invocation})")
     return [*lines, "", ""]
 
 
@@ -582,12 +588,11 @@ def render_python_components(registry: dict) -> str:
         "",
         "from __future__ import annotations",
         "",
-        "from collections.abc import Sequence",
         "from typing import Literal",
         "",
         "from pycompose.components.base import Component",
         "from pycompose.components.modifiers import Modifier",
-        "from pycompose.core import Node",
+        "from pycompose.composition import Content, content_nodes",
         "from pycompose.core.props import JsonValue",
         "from pycompose.errors import IrValidationError",
         "",

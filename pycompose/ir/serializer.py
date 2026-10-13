@@ -9,9 +9,11 @@ an explicit O(N + V) detached copy; to_json adapts from UTF-8 bytes.
 
 from __future__ import annotations
 
+from pycompose.core.expansion import DeferredNode
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
 from pycompose.core.traversal import walk_nodes
+from pycompose.errors import IrValidationError
 from pycompose.ir.model import IRRoot
 from pycompose.utils.json_canonical import canonical_json_bytes, thaw_json
 
@@ -26,10 +28,15 @@ def node_to_dict(node: Node) -> dict[str, JsonValue]:
 
     Returns:
         Plain JSON values with camelCase prop names.
+
+    Raises:
+        IrValidationError: If a Python declaration has not been expanded.
     """
     frames: list[tuple[dict[str, JsonValue], list[JsonValue]]] = []
     result: dict[str, JsonValue] = {}
     for source, entering in walk_nodes(node):
+        if isinstance(source, DeferredNode):
+            raise IrValidationError("expand Python declarations before serialization")
         if entering:
             children: list[JsonValue] = []
             result = {}
@@ -87,6 +94,9 @@ def to_json_bytes(snapshot: Node | IRRoot) -> bytes:
 
     Returns:
         Deterministic UTF-8 bytes.
+
+    Raises:
+        IrValidationError: If a Python declaration has not been expanded.
     """
     output = bytearray()
     root = snapshot if isinstance(snapshot, Node) else snapshot.root
@@ -99,6 +109,8 @@ def to_json_bytes(snapshot: Node | IRRoot) -> bytes:
         output.extend(b'"root":')
     sibling_counts: list[int] = []
     for node, entering in walk_nodes(root):
+        if isinstance(node, DeferredNode):
+            raise IrValidationError("expand Python declarations before serialization")
         if entering:
             if sibling_counts:
                 if sibling_counts[-1]:

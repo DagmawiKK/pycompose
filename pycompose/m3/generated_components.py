@@ -3,12 +3,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 from typing import Literal
 
 from pycompose.components.base import Component
 from pycompose.components.modifiers import Modifier
-from pycompose.core import Node
+from pycompose.composition import Content, content_nodes
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 
@@ -81,7 +80,7 @@ class Box(Component):
         id: str,
         content_alignment: _BoxContentAlignment | None = None,
         modifier: Modifier | None = None,
-        children: Sequence[Node] = (),
+        children: Content = (),
     ) -> None:
         """Construct a registered Box.
 
@@ -94,7 +93,8 @@ class Box(Component):
         props: dict[str, JsonValue] = {}
         if content_alignment is not None:
             props["content_alignment"] = content_alignment
-        super().__init__(id=id, children=children, modifier=modifier, **props)
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class Column(Component):
@@ -109,7 +109,7 @@ class Column(Component):
         id: str,
         horizontal_alignment: _ColumnHorizontalAlignment | None = None,
         modifier: Modifier | None = None,
-        children: Sequence[Node] = (),
+        children: Content = (),
     ) -> None:
         """Construct a registered Column.
 
@@ -122,7 +122,8 @@ class Column(Component):
         props: dict[str, JsonValue] = {}
         if horizontal_alignment is not None:
             props["horizontal_alignment"] = horizontal_alignment
-        super().__init__(id=id, children=children, modifier=modifier, **props)
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class FilledButton(Component):
@@ -169,8 +170,8 @@ class LazyColumn(Component):
         id: str,
         modifier: Modifier | None = None,
         vertical_arrangement: _LazyColumnVerticalArrangement | None = None,
-        children: Sequence[Node] = (),
-        items: Node | Sequence[Node] | None = None,
+        children: Content = (),
+        items: Content | None = None,
     ) -> None:
         """Construct a registered LazyColumn.
 
@@ -192,8 +193,9 @@ class LazyColumn(Component):
                 raise IrValidationError(
                     "cannot supply both slot and children", node_id=id
                 )
-            children = (items,) if isinstance(items, Node) else items
-        super().__init__(id=id, children=children, modifier=modifier, **props)
+            children = content_nodes(items, key="items")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class Row(Component):
@@ -208,7 +210,7 @@ class Row(Component):
         id: str,
         modifier: Modifier | None = None,
         vertical_alignment: _RowVerticalAlignment | None = None,
-        children: Sequence[Node] = (),
+        children: Content = (),
     ) -> None:
         """Construct a registered Row.
 
@@ -221,7 +223,8 @@ class Row(Component):
         props: dict[str, JsonValue] = {}
         if vertical_alignment is not None:
             props["vertical_alignment"] = vertical_alignment
-        super().__init__(id=id, children=children, modifier=modifier, **props)
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class Scaffold(Component):
@@ -236,8 +239,8 @@ class Scaffold(Component):
         id: str,
         container_color: str | None = None,
         modifier: Modifier | None = None,
-        children: Sequence[Node] = (),
-        content: Node | Sequence[Node] | None = None,
+        children: Content = (),
+        content: Content | None = None,
     ) -> None:
         """Construct a registered Scaffold.
 
@@ -259,8 +262,9 @@ class Scaffold(Component):
                 raise IrValidationError(
                     "cannot supply both slot and children", node_id=id
                 )
-            children = (content,) if isinstance(content, Node) else content
-        super().__init__(id=id, children=children, modifier=modifier, **props)
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class Spacer(Component):
