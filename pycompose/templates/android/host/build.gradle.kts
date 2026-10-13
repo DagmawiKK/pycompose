@@ -25,7 +25,17 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+    defaultConfig {
+        buildConfigField(
+            "String",
+            "PYCOMPOSE_ENTRYPOINT",
+            "\"${providers.gradleProperty("pycomposeEntrypoint").getOrElse("main:build")}\"",
+        )
+    }
+    testOptions.unitTests.isIncludeAndroidResources = true
+    sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
     sourceSets.getByName("test").java.srcDir("../architecture/src/test/kotlin")
     lint {
         abortOnError = true
@@ -39,6 +49,25 @@ chaquopy {
     defaultConfig {
         version = "3.12"
     }
+    sourceSets.getByName("main") {
+        setSrcDirs(
+            listOf(
+                providers.gradleProperty("pycomposeSourceDir").getOrElse("src/main/python"),
+                layout.buildDirectory.dir("generated/runtime"),
+            ),
+        )
+    }
+}
+
+val stageRuntime by tasks.registering(Sync::class) {
+    from(providers.gradleProperty("pycomposeRuntimeDir").getOrElse(rootProject.file("..").path)) {
+        include("pycompose/**/*.py", "pycompose/py.typed")
+        exclude("pycompose/cli/**", "pycompose/templates/**", "pycompose/testing/**")
+    }
+    into(layout.buildDirectory.dir("generated/runtime"))
+}
+tasks.matching { it.name.matches(Regex("merge.*PythonSources")) }.configureEach {
+    dependsOn(stageRuntime)
 }
 
 kotlin {
@@ -51,7 +80,18 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.activity.compose)
+    implementation(libs.lifecycle.compose)
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.savedstate)
+    implementation(libs.coroutines.android)
+    implementation(libs.serialization.json)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.archunit)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.compose.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit4)
+    testRuntimeOnly(libs.junit.vintage)
+    debugImplementation(libs.compose.test.manifest)
 }

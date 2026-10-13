@@ -51,6 +51,7 @@ class BridgeSurface:
         self._worker = current_thread()
         self._processing = False
         self._latest: str | None = None
+        self._latest_error = ""
         try:
             self._latest = self._snapshot(store.value)
         except SchemaError:
@@ -68,6 +69,7 @@ class BridgeSurface:
             raise BridgeError("reentrant actions must be queued by the host worker")
 
     def _report(self, message: str, error: Exception) -> None:
+        self._latest_error = f"{message}: {error}"
         LOGGER.log(
             logging.ERROR if self._debug else logging.WARNING,
             "%s: %s",
@@ -94,6 +96,7 @@ class BridgeSurface:
             self._report("Action ignored: worker contract violation", exc)
             return
         self._processing = True
+        self._latest_error = ""
         try:
             action = decode_action(action_json)
             current = self._store.value
@@ -124,3 +127,12 @@ class BridgeSurface:
             self._report("Snapshot unavailable: worker contract violation", exc)
             return None
         return self._latest
+
+    def expose_latest_error(self) -> str:
+        """Return the latest worker diagnostic as plain data.
+
+        Returns:
+            Error text, or an empty string for a successful transition.
+        """
+        self._require_worker()
+        return self._latest_error

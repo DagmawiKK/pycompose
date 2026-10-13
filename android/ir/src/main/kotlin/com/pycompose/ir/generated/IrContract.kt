@@ -108,4 +108,12 @@ object IrContract {
                 "width" to PropertyRule("dp", required = true, minimum = 0.0),
         ),
     )
+    val actionPayloads: Map<String, Map<String, PropertyRule>> = mapOf(
+        "increment" to mapOf(
+                "by" to PropertyRule("integer", required = false),
+        ),
+        "submit" to mapOf(
+                "email" to PropertyRule("string", required = true),
+        ),
+    )
 }

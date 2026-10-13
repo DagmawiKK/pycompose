@@ -1,0 +1,63 @@
+package com.pycompose.host.bridge
+
+import android.content.Context
+import android.os.Looper
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
+
+/** No PyObject is retained by Kotlin. Module calls and results stay on the worker. */
+class ChaquopyBridge(
+    context: Context,
+    private val entrypoint: String,
+    private val debug: Boolean,
+) : BridgeSurface {
+    private val application = context.applicationContext
+    private var owner: Thread? = null
+
+    override fun start(route: String) {
+        check(Thread.currentThread() != Looper.getMainLooper().thread) { "Python on main thread" }
+        if (owner == null) owner = Thread.currentThread()
+        requireWorker()
+        synchronized(startLock) {
+            if (!Python.isStarted()) Python.start(AndroidPlatform(application))
+        }
+        Python.getInstance().getModule(MODULE).callAttr("start", entrypoint, route, debug)
+    }
+
+    override fun acceptAction(action: String) {
+        requireWorker()
+        Python.getInstance().getModule(MODULE).callAttr("accept_action", action)
+    }
+
+    override fun fetchLatestSnapshot(): String {
+        requireWorker()
+        return Python
+            .getInstance()
+            .getModule(MODULE)
+            .callAttr("fetch_latest_snapshot")
+            .toString()
+    }
+
+    override fun fetchLatestError(): String {
+        requireWorker()
+        return Python
+            .getInstance()
+            .getModule(MODULE)
+            .callAttr("fetch_latest_error")
+            .toString()
+    }
+
+    override fun reload(route: String) {
+        requireWorker()
+        if (debug) Python.getInstance().getModule(MODULE).callAttr("reload", route)
+    }
+
+    private fun requireWorker() {
+        check(owner === Thread.currentThread()) { "Bridge called outside owning worker" }
+    }
+
+    companion object {
+        private const val MODULE = "pycompose.bridge.runtime"
+        private val startLock = Any()
+    }
+}

@@ -282,11 +282,12 @@ class _Validation:
             return None
         if node.children and not spec.children.allowed:
             self.report("children are not allowed", node)
-        safe_props = (
-            Props({key: value for key, value in props.items() if key not in removed})
-            if removed
-            else node.props
-        )
+        safe_props = node.props
+        if removed:
+            retained = dict(props)
+            for key in removed:
+                del retained[key]
+            safe_props = Props(retained)
         return _NodeFrame(safe_props, spec.children.min or 0, spec.children.allowed)
 
     def finish(self, node: Node, frame: _NodeFrame | None) -> Node | None:

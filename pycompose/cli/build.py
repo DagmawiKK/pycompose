@@ -37,6 +37,25 @@ def _app_properties(project: Project, env: dict[str, str]) -> None:
     env["ORG_GRADLE_PROJECT_pycomposeApplicationId"] = app_id
     env["ORG_GRADLE_PROJECT_pycomposeVersionName"] = version_name
     env["ORG_GRADLE_PROJECT_pycomposeVersionCode"] = str(version_code)
+    python = project.table("python")
+    entrypoint = python.get("entrypoint", "main:build")
+    source = python.get("source_dir", "app")
+    if (
+        not isinstance(entrypoint, str)
+        or re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*:[A-Za-z_]\w*", entrypoint)
+        is None
+    ):
+        raise ProjectError("invalid python.entrypoint")
+    if not isinstance(source, str):
+        raise ProjectError("invalid python.source_dir")
+    directory = project_path(project.root, source)
+    if not directory.is_dir():
+        raise ProjectError("Python source directory is missing", path=directory)
+    env["ORG_GRADLE_PROJECT_pycomposeEntrypoint"] = entrypoint
+    env["ORG_GRADLE_PROJECT_pycomposeSourceDir"] = str(directory)
+    env["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"] = str(
+        Path(__file__).resolve().parents[2]
+    )
 
 
 def _signing(project: Project, env: dict[str, str]) -> tuple[str, ...]:

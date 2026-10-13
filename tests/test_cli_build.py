@@ -34,6 +34,11 @@ from pathlib import Path
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeApplicationId"] == "com.example.app_demo"
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeVersionCode"] == "1"
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeVersionName"] == "0.1.0"
+assert os.environ["ORG_GRADLE_PROJECT_pycomposeEntrypoint"] == "main:build"
+source = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeSourceDir"])
+assert source == Path("app").resolve()
+runtime = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"])
+assert (runtime / "pycompose/bridge/runtime.py").is_file()
 assert Path("host/src/main/res/values/strings.xml").is_file()
 Path("invocation.json").write_text(json.dumps(sys.argv[1:]))
 kind = "bundle" if "bundle" in sys.argv[1] else "apk"

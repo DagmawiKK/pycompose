@@ -844,6 +844,20 @@ def render_kotlin_registry(registry: dict) -> str:
                 "        ),",
             ]
         )
+    lines.extend(
+        [
+            "    )",
+            "    val actionPayloads: Map<String, Map<String, PropertyRule>> = mapOf(",
+        ]
+    )
+    for name, spec in sorted(registry["actions"].items()):
+        lines.extend(
+            [
+                f"        {_kt_string(name)} to mapOf(",
+                *_kt_rules(spec["payload"]),
+                "        ),",
+            ]
+        )
     return "\n".join([*lines, "    )", "}", ""])
 
 
