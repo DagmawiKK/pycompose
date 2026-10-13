@@ -17,6 +17,9 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions.unitTests.isIncludeAndroidResources = true
+    sourceSets.getByName("test").java.srcDir("../architecture/src/test/kotlin")
+    sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
 }
 
 kotlin {
@@ -25,8 +28,17 @@ kotlin {
 
 dependencies {
     api(project(":ir"))
+    api(libs.serialization.json)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
     implementation(libs.compose.foundation)
+    testImplementation(libs.compose.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit4)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.archunit)
+    testRuntimeOnly(libs.junit.vintage)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    debugImplementation(libs.compose.test.manifest)
 }

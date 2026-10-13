@@ -9,3 +9,7 @@ style:
       - 'pycompose.*'
       - 'java.lang.reflect.*'
       - 'kotlin.reflect.*'
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - 'Composable'
