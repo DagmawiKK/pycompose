@@ -157,6 +157,8 @@ jobs:
       - if: hashFiles('android/settings.gradle.kts') != ''
         uses: gradle/actions/setup-gradle@v4
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Install pinned SDK packages
         run: sdkmanager "platforms;android-35" "build-tools;34.0.0"
       - name: Spotless + Detekt + lint + unit tests (incl. ArchUnit)
@@ -187,6 +189,8 @@ jobs:
       - if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
         uses: gradle/actions/setup-gradle@v4
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Install pinned SDK packages
         run: sdkmanager "platforms;android-35" "build-tools;34.0.0"
       - name: Install CLI
