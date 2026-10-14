@@ -24,7 +24,7 @@ def test_emit_ir_matches_golden_and_generated_schema() -> None:
                 Node(id="root.0", type="Text", props=Props({"text": "Hello"})),
                 Node(
                     id="root.1",
-                    type="FilledButton",
+                    type="Button",
                     props=Props({"text": "Add", "onClick": "increment"}),
                 ),
             ),
@@ -56,7 +56,7 @@ def test_emitter_qualifies_stable_keys_and_preserves_action_ids() -> None:
                 Node(id="label", type="Text", props=Props({"text": "hi"})),
                 Node(
                     id="submit",
-                    type="FilledButton",
+                    type="Button",
                     props=Props({"text": "Go", "onClick": "submit"}),
                 ),
             ),

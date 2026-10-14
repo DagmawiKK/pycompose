@@ -150,7 +150,7 @@ def test_ir_schema_rejects_unknown_action_id() -> None:
     snapshot = _valid_snapshot()
     snapshot["root"] = {
         "id": "root",
-        "type": "FilledButton",
+        "type": "Button",
         "props": {"text": "Go", "onClick": "no_such_action"},
     }
     _expect_invalid(snapshot, ir_schema)

@@ -47,8 +47,8 @@ def test_the_caret_is_declared_optional() -> None:
 
 def test_the_schema_grew_without_becoming_permissive() -> None:
     """Two props were added and the version moved; nothing else changed shape."""
-    assert SCHEMA["schemaVersion"] == "1.6.0"
-    assert "1.5.0" in SCHEMA["supportedSchemaVersions"]
+    assert SCHEMA["schemaVersion"] == "1.7.0"
+    assert {"1.5.0", "1.6.0"} <= set(SCHEMA["supportedSchemaVersions"])
     # The range form I tried first is not there, because the event channel
     # carries one scalar and a range is two.
     assert "selectionStart" not in json.dumps(SCHEMA)

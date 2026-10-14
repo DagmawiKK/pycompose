@@ -13,7 +13,7 @@ from pycompose.errors import IrValidationError, StateError
 from pycompose.ir import emit_ir, to_json, validate_ir
 from pycompose.ir.effects import read_effects
 from pycompose.ir.model import IRRoot
-from pycompose.m3 import FilledButton, Text
+from pycompose.m3 import Button, Text
 from pycompose.state import State
 
 
@@ -54,7 +54,7 @@ def toggle(state: State, payload: TogglePayload) -> State:  # noqa: ARG001
 def test_effects_and_binding_contracts_share_one_metadata_object() -> None:
     binding = toggle.bind(id="task_1", task_id=1)
     state = State(
-        root=FilledButton(id="done", text="Done", on_click=binding),
+        root=Button(id="done", text="Done", on_click=binding),
         effects=(Effect("toast", {"message": "saved"}),),
     )
     snapshot = json.loads(to_json(emit_ir(state, "1.4.0")))

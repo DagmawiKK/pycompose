@@ -10,8 +10,8 @@ from hypothesis import strategies as st
 
 from pycompose.components import (
     Box,
+    Button,
     Column,
-    FilledButton,
     LazyColumn,
     Modifier,
     Row,
@@ -52,7 +52,7 @@ def test_every_packaged_golden_is_canonical_and_schema_valid() -> None:
 TEXT = st.text(alphabet=st.characters(blacklist_categories=("Cs",)), max_size=30)
 LEAVES = st.one_of(
     TEXT.map(lambda text: Text(id="leaf", text=text)),
-    TEXT.map(lambda text: FilledButton(id="leaf", text=text, on_click="increment")),
+    TEXT.map(lambda text: Button(id="leaf", text=text, on_click="increment")),
     TEXT.map(lambda text: TextField(id="leaf", value=text, on_value_change="submit")),
     st.integers(min_value=0, max_value=48).map(
         lambda dp: Spacer(id="leaf", modifier=Modifier().padding(dp))

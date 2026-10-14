@@ -11,7 +11,7 @@ from pycompose import action
 from pycompose.bridge import BridgeSurface
 from pycompose.errors import IrValidationError
 from pycompose.ir import emit_ir
-from pycompose.m3 import FilledButton, Text
+from pycompose.m3 import Button, Text
 from pycompose.state import Actions, State, Store
 
 seen: list[str] = []
@@ -149,5 +149,5 @@ def test_handlers_receive_python_names_never_the_wire_spelling() -> None:
 
 def test_lifecycle_is_not_a_ui_action_so_components_cannot_bind_it() -> None:
     with pytest.raises(IrValidationError, match="invalid prop"):
-        FilledButton(id="x", text="Go", on_click="onResume")
+        Button(id="x", text="Go", on_click="onResume")
     assert emit_ir(State(root=Text(id="t", text="ok")), "1.4.0").metadata is None

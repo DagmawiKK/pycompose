@@ -29,3 +29,10 @@ android/**/build/
 local.properties
 .idea/
 *.iml
+
+# Fetched AndroidX API dumps; tools/schema refetches them.
+.cache/
+
+# Written by the example app when a test points storage at the cwd.
+/notes.json
+/notes.seq

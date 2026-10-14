@@ -42,6 +42,24 @@ data class Box(
 }
 
 @Serializable
+data class ButtonProps(
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `text`: String,
+) : UiProps
+
+@Serializable
+@SerialName("Button")
+data class Button(
+    override val id: String,
+    override val props: ButtonProps,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "Button"
+}
+
+@Serializable
 data class CheckboxProps(
     val `checked`: Boolean,
     val `enabled`: Boolean = true,
@@ -73,24 +91,6 @@ data class Column(
     override val children: List<UiNode> = emptyList(),
 ) : UiNode {
     override val componentType: String get() = "Column"
-}
-
-@Serializable
-data class FilledButtonProps(
-    val `enabled`: Boolean = true,
-    override val `modifier`: JsonObject? = null,
-    val `onClick`: String,
-    val `text`: String,
-) : UiProps
-
-@Serializable
-@SerialName("FilledButton")
-data class FilledButton(
-    override val id: String,
-    override val props: FilledButtonProps,
-) : UiNode {
-    override val children: List<UiNode> get() = emptyList()
-    override val componentType: String get() = "FilledButton"
 }
 
 @Serializable

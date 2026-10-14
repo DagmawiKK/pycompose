@@ -107,7 +107,7 @@ class Node:
 
     Attributes:
         id: Stable, parent-path-derived node id.
-        type: Component type name (e.g. ``FilledButton``).
+        type: Component type name (e.g. ``Button``).
         props: The node's ``camelCase`` props.
         children: Child nodes (empty for leaves).
     """

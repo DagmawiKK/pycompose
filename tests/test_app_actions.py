@@ -10,7 +10,7 @@ from pycompose import action
 from pycompose.bridge import BridgeSurface
 from pycompose.errors import IrValidationError
 from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.m3 import FilledButton, FilterChip
+from pycompose.m3 import Button, FilterChip
 from pycompose.state import Actions, State, Store
 
 
@@ -35,7 +35,7 @@ def choose_filter(state: State, payload: FilterPayload) -> State:
 
 def test_bound_app_action_round_trips_without_native_catalog_registration() -> None:
     binding = rename.bind(id="task_7", task_id=7)
-    state = State(root=FilledButton(id="rename", text="Rename", on_click=binding))
+    state = State(root=Button(id="rename", text="Rename", on_click=binding))
     snapshot = emit_ir(state, "1.2.0")
     assert validate_ir(snapshot).snapshot is snapshot
     metadata = json.loads(to_json(snapshot))["metadata"]["actionBindings"]
@@ -59,7 +59,7 @@ def test_bound_values_cannot_be_overridden_and_old_envelopes_reject_app_bindings
     None
 ):
     binding = rename.bind(id="task_7", task_id=7)
-    state = State(root=FilledButton(id="rename", text="Rename", on_click=binding))
+    state = State(root=Button(id="rename", text="Rename", on_click=binding))
     with pytest.raises(IrValidationError, match="schema"):
         validate_ir(emit_ir(state, "1.1.0"))
     store = Store(state)

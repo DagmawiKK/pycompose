@@ -24,6 +24,7 @@ codegen:
 
 codegen-check:
 	python tools/schema/gen.py --check
+	python tools/schema/check_upstream.py --offline
 
 test:
 	pytest -q

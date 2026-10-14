@@ -33,7 +33,7 @@ class RendererTest {
         val renderer = Renderer(registry, ActionDispatcher {}, debug = true)
         compose.setContent { renderer.Render(snapshot) }
         compose.onNodeWithText("Hello").assertExists()
-        compose.onNodeWithText("Unsupported: FilledButton").assertExists()
+        compose.onNodeWithText("Unsupported: Button").assertExists()
     }
 
     @Test

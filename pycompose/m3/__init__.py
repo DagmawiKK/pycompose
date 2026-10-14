@@ -4,9 +4,9 @@
 from pycompose.components.modifiers import Modifier
 from pycompose.m3.generated_components import (
     Box,
+    Button,
     Checkbox,
     Column,
-    FilledButton,
     FilterChip,
     Image,
     LazyColumn,
@@ -20,9 +20,9 @@ from pycompose.m3.generated_components import (
 
 __all__ = [
     "Box",
+    "Button",
     "Checkbox",
     "Column",
-    "FilledButton",
     "FilterChip",
     "Image",
     "LazyColumn",

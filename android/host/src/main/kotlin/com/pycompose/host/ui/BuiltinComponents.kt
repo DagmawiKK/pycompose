@@ -28,9 +28,9 @@ import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.PropResolver
 import kotlinx.serialization.json.JsonPrimitive
 import com.pycompose.ir.generated.Box as BoxNode
+import com.pycompose.ir.generated.Button as ButtonNode
 import com.pycompose.ir.generated.Checkbox as CheckboxNode
 import com.pycompose.ir.generated.Column as ColumnNode
-import com.pycompose.ir.generated.FilledButton as ButtonNode
 import com.pycompose.ir.generated.FilterChip as FilterChipNode
 import com.pycompose.ir.generated.Image as ImageNode
 import com.pycompose.ir.generated.LazyColumn as ListNode
@@ -124,7 +124,7 @@ object BuiltinComponents {
 
     private fun ComponentRegistry.Builder.controls(): ComponentRegistry.Builder =
         this
-            .register("FilledButton") { node, modifier, context ->
+            .register("Button") { node, modifier, context ->
                 val button = node as ButtonNode
                 Button(
                     onClick = { context.actions.dispatch(button.props.onClick) },

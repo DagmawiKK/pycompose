@@ -63,12 +63,12 @@ def test_validate_rejects_invalid_ir_with_actionable_diagnostics(
         {"id": "root", "type": "Text", "props": {"text": "hello"}, "extra": 1},
         {
             "id": "root",
-            "type": "FilledButton",
+            "type": "Button",
             "props": {"text": "go", "on_click": "submit"},
         },
         {
             "id": "root",
-            "type": "FilledButton",
+            "type": "Button",
             "props": {"text": "go", "onClick": "submit", "enabled": 1},
         },
         {

@@ -3,11 +3,11 @@
 from pycompose.components.base import Component
 
 
-class FilledButton(Component):
+class Button(Component):
     """Button with text, registered on_click action id and optional enabled."""
 
     __slots__ = ()
-    component_type = "FilledButton"
+    component_type = "Button"
 
 
 class TextButton(Component):

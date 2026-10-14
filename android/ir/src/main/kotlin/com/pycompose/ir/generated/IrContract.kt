@@ -5,9 +5,9 @@ import com.pycompose.ir.ComponentRule
 import com.pycompose.ir.PropertyRule
 
 object IrContract {
-    const val SCHEMA_VERSION: String = "1.6.0"
+    const val SCHEMA_VERSION: String = "1.7.0"
     const val MIN_SCHEMA_VERSION: String = "1.0.0"
-    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0")
+    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0")
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
@@ -18,6 +18,17 @@ object IrContract {
             props = mapOf(
                 "contentAlignment" to PropertyRule("enum", required = false, values = setOf("topStart", "topCenter", "topEnd", "centerStart", "center", "centerEnd", "bottomStart", "bottomCenter", "bottomEnd")),
                 "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
+        "Button" to ComponentRule(
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.0.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "text" to PropertyRule("string", required = true),
             ),
         ),
         "Checkbox" to ComponentRule(
@@ -38,17 +49,6 @@ object IrContract {
             props = mapOf(
                 "horizontalAlignment" to PropertyRule("enum", required = false, values = setOf("start", "center", "end")),
                 "modifier" to PropertyRule("modifier", required = false),
-            ),
-        ),
-        "FilledButton" to ComponentRule(
-            childrenAllowed = false,
-            minimumChildren = 0,
-            since = "1.0.0",
-            props = mapOf(
-                "enabled" to PropertyRule("boolean", required = false),
-                "modifier" to PropertyRule("modifier", required = false),
-                "onClick" to PropertyRule("actionId", required = true),
-                "text" to PropertyRule("string", required = true),
             ),
         ),
         "FilterChip" to ComponentRule(

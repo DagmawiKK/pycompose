@@ -61,8 +61,8 @@ class IrParserTest {
             """{"id":"root","type":"Text","props":{"text":null}}""",
             """{"id":"root","type":"Text","props":{"text":"ok","color":null}}""",
             """{"id":"root","type":"Text","props":{"text":"ok","modifier":null}}""",
-            """{"id":"root","type":"FilledButton","props":{"text":"ok","onClick":"bad"}}""",
-            """{"id":"root","type":"FilledButton",
+            """{"id":"root","type":"Button","props":{"text":"ok","onClick":"bad"}}""",
+            """{"id":"root","type":"Button",
                 "props":{"text":"ok","onClick":"increment","enabled":"true"}}""",
             """{"id":"root","type":"Spacer","props":{"modifier":{
                 "operations":[{"type":"padding","value":-1}]}}}""",

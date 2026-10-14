@@ -29,9 +29,9 @@ def test_imported_builtins_preserve_the_native_contract() -> None:
 
 
 def test_generated_interfaces_preserve_defaults_and_slots() -> None:
-    from pycompose.m3 import FilledButton, LazyColumn, Scaffold, Text
+    from pycompose.m3 import Button, LazyColumn, Scaffold, Text
 
-    button = FilledButton(id="add", text="Add", on_click="increment")
+    button = Button(id="add", text="Add", on_click="increment")
     assert button.props.to_wire() == {"text": "Add", "onClick": "increment"}
     text = Text(id="name", text="Ada")
     assert LazyColumn(id="list", items=(text,)).children == (text,)

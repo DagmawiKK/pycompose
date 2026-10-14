@@ -79,9 +79,9 @@ def test_release_unknown_root_produces_no_snapshot() -> None:
         ("Text", {"text": "hi", "color": 123}, "invalid prop value"),
         ("Spacer", {"modifier": []}, "invalid prop value"),
         ("Spacer", {"modifier": {"size": float("nan")}}, "invalid prop value"),
-        ("FilledButton", {"text": "Go", "onClick": "missing"}, "invalid prop value"),
+        ("Button", {"text": "Go", "onClick": "missing"}, "invalid prop value"),
         (
-            "FilledButton",
+            "Button",
             {"text": "Go", "onClick": "submit", "enabled": 1},
             "invalid prop value",
         ),

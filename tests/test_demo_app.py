@@ -108,7 +108,7 @@ class Screen:
         Returns:
             The add button's enabled flag.
         """
-        return bool(self._nodes("FilledButton")[0]["enabled"])
+        return bool(self._nodes("Button")[0]["enabled"])
 
 
 def send(bridge: BridgeSurface, handler: Any, instance: str, **payload: Any) -> None:
@@ -135,7 +135,7 @@ def test_demo_builds_a_valid_snapshot_of_instance_scoped_bindings(
     draft = f"app.{demo.set_draft.name}.draft"
     toggle = f"app.{demo.toggle_task.name}.task_1"
     done = f"app.{demo.set_filter.name}.done"
-    assert snapshot["schemaVersion"] == "1.6.0"
+    assert snapshot["schemaVersion"] == "1.7.0"
     assert bindings[add]["bound"] == {"title": ""}
     assert bindings[draft]["bound"] == {}
     assert bindings[draft]["payload"] == {"value": {"required": True, "type": "string"}}

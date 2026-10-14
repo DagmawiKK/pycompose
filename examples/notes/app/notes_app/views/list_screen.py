@@ -9,8 +9,8 @@ from notes_app.theme import Theme
 from pycompose import Registry, composable
 from pycompose.core import Node
 from pycompose.m3 import (
+    Button,
     Column,
-    FilledButton,
     LazyColumn,
     Modifier,
     Row,
@@ -78,7 +78,7 @@ def list_screen(
                     id="commands",
                     vertical_alignment="center",
                     children=[
-                        FilledButton(
+                        Button(
                             id="new",
                             text="New note",
                             on_click=actions.new_note.bind(id="new"),

@@ -14,9 +14,9 @@ from pycompose import action, composable
 from pycompose.core import Node
 from pycompose.core.effect import Effect
 from pycompose.m3 import (
+    Button,
     Checkbox,
     Column,
-    FilledButton,
     FilterChip,
     LazyColumn,
     Modifier,
@@ -241,7 +241,7 @@ def todo_app(*, tasks: list[Any], draft: str, selected: str, summary: str) -> No
                             modifier=Modifier().fill_max_width(0.7),
                         ),
                         Spacer(id="gap_add", modifier=Modifier().size(8)),
-                        FilledButton(
+                        Button(
                             id="add",
                             text="Add",
                             enabled=bool(draft.strip()),

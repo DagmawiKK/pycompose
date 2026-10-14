@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.6.0",
+  "schemaVersion": "1.7.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -7,10 +7,245 @@
     "1.3.0",
     "1.4.0",
     "1.5.0",
-    "1.6.0"
+    "1.6.0",
+    "1.7.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
+    "Box": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "contentAlignment": {
+          "type": "enum",
+          "values": [
+            "topStart",
+            "topCenter",
+            "topEnd",
+            "centerStart",
+            "center",
+            "centerEnd",
+            "bottomStart",
+            "bottomCenter",
+            "bottomEnd"
+          ],
+          "default": "topStart"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
+    },
+    "Button": {
+      "category": "buttons",
+      "stability": "stable",
+      "props": {
+        "text": {
+          "type": "string",
+          "required": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "text",
+        "onClick"
+      ]
+    },
+    "Checkbox": {
+      "category": "input",
+      "stability": "stable",
+      "since": "1.3.0",
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
+    "Column": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "horizontalAlignment": {
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end"
+          ],
+          "default": "start"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
+    },
+    "FilterChip": {
+      "category": "input",
+      "stability": "stable",
+      "since": "1.3.0",
+      "props": {
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
+    "Image": {
+      "category": "media",
+      "stability": "stable",
+      "since": "1.1.0",
+      "props": {
+        "resource": {
+          "type": "resource",
+          "values": [
+            "drawable",
+            "asset"
+          ],
+          "required": true
+        },
+        "contentDescription": {
+          "type": "string"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "resource"
+      ]
+    },
+    "LazyColumn": {
+      "category": "lists",
+      "stability": "stable",
+      "props": {
+        "verticalArrangement": {
+          "type": "enum",
+          "values": [
+            "top",
+            "center",
+            "bottom",
+            "spaceEvenly",
+            "spaceBetween",
+            "spaceAround"
+          ],
+          "default": "top"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "items"
+      }
+    },
+    "Row": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "verticalAlignment": {
+          "type": "enum",
+          "values": [
+            "top",
+            "center",
+            "bottom"
+          ],
+          "default": "top"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
+    },
+    "Scaffold": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "containerColor": {
+          "type": "color"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      }
+    },
+    "Spacer": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
     "Text": {
       "category": "typography",
       "stability": "stable",
@@ -60,135 +295,17 @@
       },
       "children": {
         "allowed": false
-      }
-    },
-    "Image": {
-      "category": "media",
-      "stability": "stable",
-      "since": "1.1.0",
-      "props": {
-        "resource": {
-          "type": "resource",
-          "values": [
-            "drawable",
-            "asset"
-          ],
-          "required": true
-        },
-        "contentDescription": {
-          "type": "string"
-        },
-        "modifier": {
-          "type": "modifier"
-        }
       },
-      "children": {
-        "allowed": false
-      }
+      "reshaped": [
+        "resource",
+        "fontResource",
+        "locale"
+      ]
     },
-    "Column": {
-      "category": "layout",
-      "stability": "stable",
-      "props": {
-        "horizontalAlignment": {
-          "type": "enum",
-          "values": [
-            "start",
-            "center",
-            "end"
-          ],
-          "default": "start"
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": true,
-        "min": 0
-      }
-    },
-    "Row": {
-      "category": "layout",
-      "stability": "stable",
-      "props": {
-        "verticalAlignment": {
-          "type": "enum",
-          "values": [
-            "top",
-            "center",
-            "bottom"
-          ],
-          "default": "top"
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": true,
-        "min": 0
-      }
-    },
-    "Box": {
-      "category": "layout",
-      "stability": "stable",
-      "props": {
-        "contentAlignment": {
-          "type": "enum",
-          "values": [
-            "topStart",
-            "topCenter",
-            "topEnd",
-            "centerStart",
-            "center",
-            "centerEnd",
-            "bottomStart",
-            "bottomCenter",
-            "bottomEnd"
-          ],
-          "default": "topStart"
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": true,
-        "min": 0
-      }
-    },
-    "Spacer": {
-      "category": "layout",
-      "stability": "stable",
-      "props": {
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": false
-      }
-    },
-    "Scaffold": {
-      "category": "layout",
-      "stability": "stable",
-      "props": {
-        "containerColor": {
-          "type": "color"
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": true,
-        "kind": "content"
-      }
-    },
-    "FilledButton": {
+    "TextButton": {
       "category": "buttons",
       "stability": "stable",
+      "since": "1.3.0",
       "props": {
         "text": {
           "type": "string",
@@ -208,7 +325,11 @@
       },
       "children": {
         "allowed": false
-      }
+      },
+      "reshaped": [
+        "text",
+        "onClick"
+      ]
     },
     "TextField": {
       "category": "input",
@@ -241,111 +362,13 @@
       },
       "children": {
         "allowed": false
-      }
-    },
-    "LazyColumn": {
-      "category": "lists",
-      "stability": "stable",
-      "props": {
-        "verticalArrangement": {
-          "type": "enum",
-          "values": [
-            "top",
-            "center",
-            "bottom",
-            "spaceEvenly",
-            "spaceBetween",
-            "spaceAround"
-          ],
-          "default": "top"
-        },
-        "modifier": {
-          "type": "modifier"
-        }
       },
-      "children": {
-        "allowed": true,
-        "kind": "items"
-      }
-    },
-    "Checkbox": {
-      "category": "input",
-      "stability": "stable",
-      "since": "1.3.0",
-      "props": {
-        "checked": {
-          "type": "boolean",
-          "required": true
-        },
-        "onCheckedChange": {
-          "type": "actionId",
-          "required": true
-        },
-        "enabled": {
-          "type": "boolean",
-          "default": true
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": false
-      }
-    },
-    "TextButton": {
-      "category": "buttons",
-      "stability": "stable",
-      "since": "1.3.0",
-      "props": {
-        "text": {
-          "type": "string",
-          "required": true
-        },
-        "onClick": {
-          "type": "actionId",
-          "required": true
-        },
-        "enabled": {
-          "type": "boolean",
-          "default": true
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": false
-      }
-    },
-    "FilterChip": {
-      "category": "input",
-      "stability": "stable",
-      "since": "1.3.0",
-      "props": {
-        "label": {
-          "type": "string",
-          "required": true
-        },
-        "selected": {
-          "type": "boolean",
-          "required": true
-        },
-        "onClick": {
-          "type": "actionId",
-          "required": true
-        },
-        "enabled": {
-          "type": "boolean",
-          "default": true
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": false
-      }
+      "reshaped": [
+        "value",
+        "onValueChange",
+        "selection",
+        "onSelectionChange"
+      ]
     }
   },
   "modifiers": {

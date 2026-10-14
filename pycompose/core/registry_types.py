@@ -203,7 +203,7 @@ class ComponentDef(Protocol):
 
     @property
     def name(self) -> str:
-        """Component type name (e.g. ``FilledButton``).
+        """Component type name (e.g. ``Button``).
 
         Returns:
             The component name.
@@ -247,6 +247,28 @@ class ComponentDef(Protocol):
         ...
 
 
+def _reshaped(name: str, value: object) -> tuple[str, ...]:
+    """Parse a component's declared reshaped props.
+
+    Args:
+        name: The component's registry key, for the error message.
+        value: The raw ``reshaped`` field.
+
+    Returns:
+        The prop names, in declaration order.
+
+    Raises:
+        ComponentRegistryError: If the field is present but malformed.
+    """
+    if value is None:
+        return ()
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        raise ComponentRegistryError(
+            f"component {name!r}: 'reshaped' must be a string list"
+        )
+    return tuple(value)
+
+
 @dataclass(frozen=True, slots=True)
 class ComponentSpec:
     """Concrete component definition (implements :class:`ComponentDef`).
@@ -258,6 +280,11 @@ class ComponentSpec:
         props: Declared props by wire name.
         children: Child-node rules.
         since: First schema exposing this component, if not in the initial catalog.
+        reshaped: Props PyCompose invented or reshaped, which Compose's
+            signature has no counterpart for. Compose has no `Button.text`
+            parameter -- text is a content slot there -- and no
+            `TextField.selection` at all. Recorded so the drift checker can say
+            "deliberate" rather than "removed".
     """
 
     name: str
@@ -266,6 +293,7 @@ class ComponentSpec:
     props: Mapping[str, PropDef]
     children: ChildrenRule
     since: str | None = None
+    reshaped: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -322,6 +350,7 @@ class ComponentSpec:
             props=props,
             children=ChildrenRule.from_mapping(raw_children, where=f"{name}.children"),
             since=cast("str | None", data.get("since")),
+            reshaped=_reshaped(name, data.get("reshaped")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -338,6 +367,8 @@ class ComponentSpec:
         }
         if self.since is not None:
             result["since"] = self.since
+        if self.reshaped:
+            result["reshaped"] = list(self.reshaped)
         return result
 
 

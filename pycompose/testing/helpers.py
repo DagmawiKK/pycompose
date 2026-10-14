@@ -4,8 +4,8 @@ from importlib.resources import files
 
 from pycompose.components import (
     Box,
+    Button,
     Column,
-    FilledButton,
     LazyColumn,
     Modifier,
     Row,
@@ -69,7 +69,7 @@ def component_screen() -> Node:
                 Row(
                     id="actions",
                     children=(
-                        FilledButton(
+                        Button(
                             id="add", text="Add", on_click="increment", enabled=True
                         ),
                         Spacer(id="gap", modifier=Modifier().size(8)),

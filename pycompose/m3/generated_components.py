@@ -13,9 +13,9 @@ from pycompose.errors import IrValidationError
 
 __all__ = [
     "Box",
+    "Button",
     "Checkbox",
     "Column",
-    "FilledButton",
     "FilterChip",
     "Image",
     "LazyColumn",
@@ -101,6 +101,38 @@ class Box(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class Button(Component):
+    """Native Button; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Button"
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        text: str,
+    ) -> None:
+        """Construct a registered Button.
+
+        Args:
+            id: Stable instance key.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            text: Required native text.
+        """
+        props: dict[str, JsonValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["text"] = text
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
 class Checkbox(Component):
     """Native Checkbox; props and defaults follow the component manifest."""
 
@@ -160,38 +192,6 @@ class Column(Component):
             props["horizontal_alignment"] = horizontal_alignment
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
-
-
-class FilledButton(Component):
-    """Native FilledButton; props and defaults follow the component manifest."""
-
-    __slots__ = ()
-    component_type = "FilledButton"
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        enabled: bool | None = None,
-        modifier: Modifier | None = None,
-        on_click: str,
-        text: str,
-    ) -> None:
-        """Construct a registered FilledButton.
-
-        Args:
-            id: Stable instance key.
-            enabled: Native enabled; None uses its default.
-            modifier: Native modifier; None uses its default.
-            on_click: Required native onClick.
-            text: Required native text.
-        """
-        props: dict[str, JsonValue] = {}
-        if enabled is not None:
-            props["enabled"] = enabled
-        props["on_click"] = on_click
-        props["text"] = text
-        super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
 class FilterChip(Component):
