@@ -33,6 +33,9 @@ dependencies {
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
     implementation(libs.compose.foundation)
+    // PropResolver.textStyle reads MaterialTheme, so :renderer needs material3.
+    // It had no reason to before: no adapter generated a style from the wire.
+    implementation(libs.compose.material3)
     testImplementation(libs.compose.test)
     testImplementation(libs.robolectric)
     testImplementation(libs.junit4)

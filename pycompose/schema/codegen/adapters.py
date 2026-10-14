@@ -51,13 +51,54 @@ SCALAR_KOTLIN = {
     "number": "Double",
 }
 
+DECODED = {"enum", "color", "resource"}
+"""Prop types that arrive on the wire as something other than their Kotlin type."""
+
+RESOLVER_RETURN = {
+    "alignment": "Alignment",
+    "arrangement": "Arrangement.Vertical",
+    "color": "Color",
+    "horizontal": "Alignment.Horizontal",
+    "resourceFont": "FontFamily?",
+    "resourceImage": "Painter?",
+    "resourceText": "String?",
+    "textStyle": "TextStyle",
+    "vertical": "Alignment.Vertical",
+}
+"""What each decoder hands back.
+
+Needed because a prop's Kotlin type is not its wire type: the wire carries the
+string ``"start"`` and Compose wants an ``Alignment.Horizontal``. The schema's
+``decode`` names the resolver; this says what comes out of it, so a generated
+adapter can declare the local it assigns to.
+"""
+
+RESOLVER_FALLBACK = {
+    "alignment": "Alignment.TopStart",
+    "arrangement": "Arrangement.Top",
+    "color": "Color.Unspecified",
+    "horizontal": "Alignment.Start",
+    "resourceFont": "null",
+    "resourceImage": "null",
+    "resourceText": "null",
+    "textStyle": "MaterialTheme.typography.bodyMedium",
+    "vertical": "Alignment.Top",
+}
+"""What a malformed value falls back to.
+
+Degrade, never throw: Compose must not see an exception from a bad prop in a
+debug snapshot (ADR-0005). Each is the value the hand-written adapter already
+chose for the same prop, so generating does not change behaviour.
+"""
+
 MECHANICAL = {"string", "boolean", "integer", "number", "actionId", "modifier"}
 """Schema prop types an adapter can render with no decision and no decoder.
 
-``color``, ``enum`` and ``resource`` are deliberately absent. Their encodings are
-declared in the schema (1.8.0) but the host has no PropResolver to decode them
-yet, and generating an adapter that passes a ``String`` where Compose wants a
-``Color`` would not compile.
+``color``, ``enum`` and ``resource`` are renderable too, but only when the prop
+declares a ``decode``: those types arrive on the wire as strings and need a
+resolver to become a ``Color`` or an ``Alignment``. A prop of one of those types
+with no ``decode`` is refused, because guessing which family its values belong to
+is how an adapter silently renders the wrong alignment.
 """
 
 
@@ -85,11 +126,106 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
     """
     if entry.get("adapter") == "manual":
         return False
+    if entry.get("wrapper"):
+        # Text and Image hand off to ResourceText / ResourceImage, which load
+        # their content off the Compose thread and report their own diagnostics.
+        # The call site is mechanical; what it delegates to is not.
+        return False
     if entry.get("children", {}).get("allowed"):
         return False
-    return all(
-        spec.get("type") in MECHANICAL for spec in entry.get("props", {}).values()
-    )
+    for spec in entry.get("props", {}).values():
+        if spec.get("type") in MECHANICAL:
+            continue
+        # Decodable types need a named resolver; without one they cannot be
+        # rendered at all rather than rendered wrongly.
+        if spec.get("type") in DECODED and spec.get("decode"):
+            continue
+        return False
+    return True
+
+
+def _slot(prop_name: str, spec: dict[str, Any]) -> tuple[str, str] | None:
+    """Render a prop flattened out of a Compose content slot.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+
+    Returns:
+        ``(argument, trailing)`` where either may be empty, or None when the
+        slot is optional and would need a null check -- a decision, not a
+        derivation.
+    """
+    slot = spec.get("content")
+    if slot is None:
+        return None
+    if not spec.get("required"):
+        return None
+    wrapped = f"{slot['composable']}(model.props.{prop_name})"
+    parameter = slot.get("parameter")
+    if parameter is not None:
+        return f"{parameter} = {{ {wrapped} }}", ""
+    return "", f"                    {wrapped}"
+
+
+def _decoded(
+    prop_name: str, spec: dict[str, Any], decoder: str
+) -> tuple[str, str] | None:
+    """Render one enum, color or resource prop through its declared resolver.
+
+    ``PropResolver`` already knows how to turn ``"start"`` into an
+    ``Alignment.Horizontal``; what it could not know was *which* family a given
+    prop's values belonged to. That is what the schema's ``decode`` field says
+    now, so this emits a call rather than guessing.
+
+    The result is bound to a local rather than inlined because a resolver call
+    inside an argument list runs a lambda, and Compose composable parameters
+    (``textStyle`` reads ``MaterialTheme``) are only legal in a composable
+    scope -- not inside a nested argument expression.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+        decoder: The resolver the schema named.
+
+    Returns:
+        A ``(local declaration, argument)`` pair, or ``(None, "")`` when the
+        prop cannot be rendered.
+    """
+    returns = RESOLVER_RETURN.get(decoder)
+    fallback = RESOLVER_FALLBACK.get(decoder)
+    if returns is None or fallback is None:
+        return None
+
+    # An optional prop is nullable in the model, so an absent value must not
+    # reach a resolver that takes a non-null String.
+    optional = not spec.get("required") and "default" not in spec
+    wire = f"model.props.{prop_name}"
+    access = f"{wire}?.takeIf {{ it.isNotEmpty() }}" if optional else wire
+    value = f"{prop_name}Value"
+
+    if decoder.startswith("resource"):
+        # A resource reference is a single wire string naming a kind and a name
+        # ("@drawable/ic_note"), so it goes through the resolver method that
+        # takes the whole reference rather than one taking a bare name. An
+        # absent resolver means the app declared no resources at all.
+        # decoder "resourceImage" -> ResourceResolver.image(reference). The
+        # name is lowerCamel on both sides; lowercasing the whole thing would
+        # have produced `resources?.Image(...)` and a compiler error.
+        method = decoder[len("resource") :][0].lower() + decoder[len("resource") + 1 :]
+        # Every resource accessor returns a Result, and a bad reference must not
+        # escape into Compose -- ADR-0005's degrade-don't-throw rule.
+        call = f"resources?.{method}({wire}).getOrNull()"
+        return f"val {value}: {returns} = {call}", f"{prop_name} = {value}"
+
+    if decoder == "textStyle":
+        return (
+            f"@Composable val {value}: TextStyle = PropResolver"
+            f".textStyle({access}, {fallback})",
+            f"{prop_name} = {value}",
+        )
+    resolved = f"PropResolver.{decoder}({access}).getOrDefault({fallback})"
+    return f"val {value}: {returns} = {resolved}", f"{prop_name} = {value}"
 
 
 def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:
@@ -144,21 +280,132 @@ def composables(name: str, entry: dict[str, Any]) -> set[str]:
     return used
 
 
+class _Fragments:
+    """The pieces one adapter is assembled from.
+
+    A list of strings was enough until decoded props arrived, which needed three
+    positions -- locals before the call, arguments inside it, and a trailing
+    content lambda after it -- and a single growing list pushed `render` past
+    the branch limit. Naming the three keeps each obvious.
+    """
+
+    def __init__(self) -> None:
+        """Start empty."""
+        self.locals: list[str] = []
+        self.arguments: list[str] = []
+        self.trailing: list[str] = []
+
+    def add(self, fragment: tuple[str, str] | None) -> bool:
+        """Append one prop's rendering.
+
+        Args:
+            fragment: The local/argument pair, or None to refuse.
+
+        Returns:
+            False when the prop cannot be rendered and the adapter is abandoned.
+        """
+        if fragment is None:
+            return False
+        local, argument = fragment
+        if local:
+            self.locals.append(local)
+        if argument:
+            self.arguments.append(argument)
+        return True
+
+    def trailing_lambda(self, body: str) -> None:
+        """Record a content lambda that follows the call.
+
+        Args:
+            body: The lambda body, already indented.
+        """
+        if body:
+            self.trailing.append(body)
+
+
+def _render_prop(prop: str, spec: dict[str, Any], out: _Fragments) -> bool:
+    """Render one prop into `out`, or report that the adapter cannot be built.
+
+    Args:
+        prop: The prop's schema name.
+        spec: Its schema entry.
+        out: Collects the rendered pieces.
+
+    Returns:
+        False when the prop carries a decision a generator cannot make.
+    """
+    prop_type = spec["type"]
+    prop_name = _camel(prop)
+    if prop_type == "modifier":
+        return True
+
+    decoder = spec.get("decode")
+    if decoder is not None:
+        return out.add(_decoded(prop_name, spec, decoder))
+    if spec.get("content") is not None:
+        return _render_slot(prop_name, spec, out)
+    if prop_type == "actionId":
+        callback = _callback(prop_name, spec)
+        return callback is not None and out.add(("", callback))
+    return _render_scalar(prop_name, spec, out)
+
+
+def _render_slot(prop_name: str, spec: dict[str, Any], out: _Fragments) -> bool:
+    """Render a flattened content slot.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+        out: Collects the rendered pieces.
+
+    Returns:
+        False when the slot is optional and would need a null check.
+    """
+    slot = _slot(prop_name, spec)
+    if slot is None:
+        return False
+    argument, body = slot
+    if argument:
+        out.arguments.append(argument)
+    out.trailing_lambda(body)
+    return True
+
+
+def _render_scalar(prop_name: str, spec: dict[str, Any], out: _Fragments) -> bool:
+    """Render a plain scalar prop, or refuse an undecodable one.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+        out: Collects the rendered pieces.
+
+    Returns:
+        False when the prop's type has no Kotlin mapping this generator knows.
+    """
+    if spec["type"] not in SCALAR_KOTLIN:
+        # An enum, color or resource with no decode. Refused rather than
+        # guessed: the value set does not say which resolver family it is.
+        return False
+    if spec.get("required") or "default" in spec:
+        # A nullable property would not compile where Compose wants a value.
+        out.arguments.append(f"{prop_name} = model.props.{prop_name}")
+    return True
+
+
 def render(name: str, entry: dict[str, Any]) -> str:
-    """Render one adapter.
+    """Render one adapter, or an empty string when it cannot be derived.
 
     A prop is passed only when its generated Kotlin property is non-null, which
     is exactly when the schema marks it required or gives it a default.
-    ``Button.enabled`` has a default and passes; an optional prop with no declared
-    default is a ``Boolean?`` in the model and is omitted, leaving Compose's own
-    default in charge. Passing a nullable through is the mistake that turns a
-    generator into something that does not compile.
+    ``Button.enabled`` has a default and passes; an optional prop with no
+    declared default is a ``Boolean?`` in the model and is omitted, leaving
+    Compose's own default in charge.
 
     A prop flattened out of a content slot becomes a lambda wrapping the slot's
     declared composable -- ``Text(model.props.text)`` inside ``Button``, or
     ``label = { Text(model.props.label) }`` for ``FilterChip``, which names its
-    slot. Only a required slot renders: an optional one needs a null check, and
-    that is a decision.
+    slot. An ``enum``, ``color`` or ``resource`` is routed through the resolver
+    its ``decode`` names, bound to a local first.
 
     Args:
         name: The component's schema name.
@@ -170,50 +417,23 @@ def render(name: str, entry: dict[str, Any]) -> str:
     if not is_mechanical(entry):
         return ""
 
-    arguments = ["modifier = modifier"]
-    trailing: list[str] = []
+    out = _Fragments()
+    out.arguments.append("modifier = modifier")
     for prop, spec in entry.get("props", {}).items():
-        prop_type = spec["type"]
-        prop_name = _camel(prop)
-        if prop_type == "modifier":
-            continue
-
-        slot = spec.get("content")
-        if slot is not None:
-            if not spec.get("required"):
-                return ""
-            wrapped = f"{slot['composable']}(model.props.{prop_name})"
-            parameter = slot.get("parameter")
-            if parameter is not None:
-                arguments.append(f"{parameter} = {{ {wrapped} }}")
-            else:
-                trailing.append(f"                    {wrapped}")
-            continue
-
-        if prop_type == "actionId":
-            callback = _callback(prop_name, spec)
-            if callback is None:
-                return ""
-            arguments.append(callback)
-            continue
-
-        if prop_type not in SCALAR_KOTLIN:
-            # color, enum, resource: the encodings are declared but the host has
-            # no PropResolver to decode them, so no honest mapping exists yet.
+        if not _render_prop(prop, spec, out):
             return ""
-        if not (spec.get("required") or "default" in spec):
-            continue
-        arguments.append(f"{prop_name} = model.props.{prop_name}")
 
-    body = "\n".join(f"                    {argument}," for argument in arguments)
+    body = "\n".join(f"                    {argument}," for argument in out.arguments)
     tail = ""
-    if trailing:
-        tail = " {\n" + "\n".join(trailing) + "\n            }"
+    if out.trailing:
+        tail = " {\n" + "\n".join(out.trailing) + "\n            }"
     node = f"{name}Node"
+    prelude = "\n".join(f"                {line}" for line in out.locals)
     return (
         f'            .register("{name}") {{ node, modifier, context ->\n'
         f"                val model = node as {node}\n"
-        f"                {name}(\n"
+        + (f"{prelude}\n" if prelude else "")
+        + f"                {name}(\n"
         f"{body}\n"
         f"                ){tail}\n"
         f"            }}"

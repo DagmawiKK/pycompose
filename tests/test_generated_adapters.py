@@ -11,6 +11,7 @@ the next schema change that reintroduces it fails here rather than at
 from __future__ import annotations
 
 import json
+import pathlib
 import re
 from pathlib import Path
 from typing import Any
@@ -59,22 +60,61 @@ def test_a_component_marked_manual_generates_nothing() -> None:
         assert render(name, registry[name]) == "", f"{name} generated an adapter"
 
 
-def test_every_component_is_either_marked_manual_or_generated() -> None:
+def manual_reason(entry: dict[str, Any]) -> str | None:
+    """Why a component cannot be derived, or None if it can.
+
+    Args:
+        entry: The component's schema entry.
+
+    Returns:
+        A short reason, or None when the adapter is derivable.
+    """
+    if entry.get("adapter") == "manual":
+        return "marked manual"
+    if entry.get("wrapper"):
+        return f"delegates to {entry['wrapper']}"
+    if entry.get("children", {}).get("allowed"):
+        return "composes children"
+    undecodable = [
+        name
+        for name, spec in entry.get("props", {}).items()
+        if spec.get("type") in {"enum", "color", "resource"} and not spec.get("decode")
+    ]
+    if undecodable:
+        return f"undecoded props: {', '.join(sorted(undecodable))}"
+    return None
+
+
+def test_every_component_is_either_generated_or_has_a_stated_reason() -> None:
     """No component may fall through both paths unnoticed.
 
     This is the gap that produced a blank screen once: a component in neither
-    file, discovered by a user rather than by a test.
+    file, discovered by a user rather than by a test. The reason has to be
+    *stated* rather than merely detectable, so that reading the schema tells you
+    why a component is hand-written.
     """
     registry = components()
     for name, entry in sorted(registry.items()):
-        manual = entry.get("adapter") == "manual"
-        generated = bool(render(name, entry))
-        why = (
-            "marked manual but still generated"
-            if manual
-            else "neither marked manual nor generated"
-        )
-        assert manual != generated, f"{name} is {why}"
+        reason = manual_reason(entry)
+        if reason is None:
+            assert render(name, entry), f"{name} is derivable but rendered nothing"
+        else:
+            assert render(name, entry) == "", f"{name} manual ({reason}) but generated"
+
+
+def test_a_component_excluded_only_by_a_rule_still_says_so() -> None:
+    """`adapter: manual` is the fallback, not the only way to be manual.
+
+    A component excluded purely by a rule the generator applies is still
+    hand-written, and the schema should record that -- otherwise someone tidying
+    the schema has no idea Box's adapter is theirs to maintain.
+    """
+    registry = components()
+    for name, entry in sorted(registry.items()):
+        if entry.get("children", {}).get("allowed"):
+            assert (
+                entry.get("adapter") == "manual"
+            ), f"{name} composes children but is not marked manual"
 
 
 def test_the_committed_file_matches_what_the_generator_produces() -> None:
@@ -273,3 +313,136 @@ def test_the_generated_file_imports_only_what_it_uses() -> None:
                 else line.rsplit(".", 1)[-1]
             )
             assert re.search(rf"\b{re.escape(simple)}\b", body), f"unused: {line}"
+
+
+# ---------------------------------------------------------------------------
+# Decoders: the prop types whose wire form is not their Kotlin type
+# ---------------------------------------------------------------------------
+
+
+def test_every_enum_color_and_resource_prop_declares_its_decoder() -> None:
+    """Without a `decode`, a generator cannot tell one enum family from another.
+
+    `PropResolver` knows how to turn `"start"` into an `Alignment.Horizontal`,
+    but nothing in the data says `["start","center","end"]` means *horizontal*
+    rather than some other family with the same three values. Declared per prop,
+    never inferred from the value set: inference breaks silently the day two
+    families share a value set, and the failure is a wrong alignment rather than
+    an error.
+    """
+    registry = components()
+    for name, entry in sorted(registry.items()):
+        for prop, spec in entry["props"].items():
+            if spec["type"] in {"enum", "color", "resource"}:
+                assert spec.get(
+                    "decode"
+                ), f"{name}.{prop} is a {spec['type']} with no decoder"
+
+
+def test_a_decoder_binds_to_a_resolver_that_exists() -> None:
+    """A typo'd decoder name generates Kotlin that does not compile."""
+    from pycompose.schema.codegen.adapters import RESOLVER_FALLBACK, RESOLVER_RETURN
+
+    declared = {
+        spec["decode"]
+        for entry in components().values()
+        for spec in entry["props"].values()
+        if spec.get("decode")
+    }
+    assert declared, "expected the catalog to declare decoders"
+    for decoder in declared:
+        assert decoder in RESOLVER_RETURN, decoder
+        assert decoder in RESOLVER_FALLBACK, decoder
+    # Everything except the resource family resolves through PropResolver.
+    for decoder in declared - {"resourceText", "resourceImage", "resourceFont"}:
+        source = (
+            pathlib.Path("android/renderer/src/main/kotlin")
+            / "com/pycompose/renderer/PropResolver.kt"
+        ).read_text()
+        assert f"fun {decoder}(" in source, f"{decoder} has no resolver"
+
+
+def decoded_example() -> tuple[str, str]:
+    """Return a component that is generated and carries a decoded prop.
+
+    Text and Image both declare `wrapper` and so are hand-written by design;
+    testing decoded output through them would assert nothing about the
+    generator. Scaffold is excluded by children, so this builds a minimal
+    component instead and renders it for real.
+
+    Returns:
+        The component name and its rendered adapter.
+    """
+    from pycompose.schema.codegen.adapters import render as render_one
+
+    entry = {
+        "children": {"allowed": False},
+        "props": {
+            "resource": {
+                "type": "resource",
+                "values": ["drawable", "asset"],
+                "decode": "resourceImage",
+                "required": True,
+            },
+            "contentDescription": {"type": "string"},
+        },
+    }
+    return "Image", render_one("Image", entry)
+
+
+def test_a_decoded_prop_becomes_a_local_not_an_inline_call() -> None:
+    """`textStyle` reads MaterialTheme, which is only in scope in composition.
+
+    Inlining it into an argument list makes the call non-composable, which the
+    compiler rejects -- so decoded props bind to a `val` first.
+    """
+    name, block = decoded_example()
+    assert block, f"{name} should render"
+    assert "val resourceValue: Painter? = resources?.image(" in block
+    assert "resource = resourceValue" in block
+
+
+def test_a_bad_resource_degrades_rather_than_throwing() -> None:
+    """ADR-0005: Compose must never see an exception from a malformed prop."""
+    _, block = decoded_example()
+    assert ".getOrNull()" in block
+
+
+def test_an_optional_decoded_prop_is_not_passed_to_a_non_null_resolver() -> None:
+    """`PropResolver.color` takes a String; a nullable would not compile."""
+    from pycompose.schema.codegen.adapters import render as render_one
+
+    entry = {
+        "children": {"allowed": False},
+        "props": {
+            "text": {"type": "string", "required": True},
+            "color": {"type": "color", "decode": "color"},
+        },
+    }
+    block = render_one("Text", entry)
+    assert "model.props.color?.takeIf" in block
+
+
+def test_a_wrapped_component_is_not_reduced_to_resolved_values() -> None:
+    """Text loads off the Compose thread; a String? cannot express that."""
+    for name in ("Text", "Image"):
+        entry = components()[name]
+        assert entry.get("wrapper"), f"{name} should declare a wrapper"
+        assert render(name, entry) == "", f"{name} must not be generated"
+
+
+def test_the_registry_refuses_a_decoder_on_a_type_that_needs_none() -> None:
+    """A decode on a plain string is a category error, not a harmless extra."""
+    from pycompose.core.registry_types import PropDef
+    from pycompose.errors import ComponentRegistryError
+
+    with pytest.raises(ComponentRegistryError):
+        PropDef.from_mapping({"type": "string", "decode": "color"}, where="test")
+
+
+def test_the_registry_refuses_an_unknown_decoder() -> None:
+    from pycompose.core.registry_types import PropDef
+    from pycompose.errors import ComponentRegistryError
+
+    with pytest.raises(ComponentRegistryError):
+        PropDef.from_mapping({"type": "enum", "decode": "diagonal"}, where="test")

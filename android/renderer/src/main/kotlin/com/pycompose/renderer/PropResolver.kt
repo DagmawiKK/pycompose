@@ -3,10 +3,13 @@ package com.pycompose.renderer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -87,6 +90,34 @@ object PropResolver {
     fun arrangement(value: String): Result<Arrangement.Vertical> = enum(value, arrangements)
 
     fun shape(value: String): Result<Shape> = enum(value, shapes)
+
+    /**
+     * Map a wire typography name to a Material 3 style.
+     *
+     * Composable because it reads [MaterialTheme], so it cannot be an ordinary
+     * function: the theme is only in scope during composition. Generated
+     * adapters call it from a `val` declaration at the top of the lambda for
+     * the same reason -- a call inside an argument list is not composable.
+     */
+    @Composable
+    fun textStyle(
+        value: String?,
+        fallback: TextStyle,
+    ): TextStyle =
+        with(MaterialTheme.typography) {
+            enum(
+                value.orEmpty(),
+                mapOf(
+                    "bodyLarge" to bodyLarge,
+                    "bodyMedium" to bodyMedium,
+                    "bodySmall" to bodySmall,
+                    "titleLarge" to titleLarge,
+                    "titleMedium" to titleMedium,
+                    "titleSmall" to titleSmall,
+                    "headlineMedium" to headlineMedium,
+                ),
+            ).getOrDefault(fallback)
+        }
 
     fun <T> enum(
         value: String,

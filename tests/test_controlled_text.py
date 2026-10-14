@@ -42,7 +42,7 @@ def test_the_caret_is_declared_optional() -> None:
     assert props["onSelectionChange"] == {
         "type": "actionId",
         # The caret travels back as the caret offset, on the wire under "value".
-        # Declared since 1.9.0, when callbacks stopped being bare actionIds.
+        # Declared since 1.10.0, when callbacks stopped being bare actionIds.
         "payload": [{"name": "value", "type": "integer"}],
     }
     for name in ("selection", "onSelectionChange"):
@@ -52,7 +52,7 @@ def test_the_caret_is_declared_optional() -> None:
 
 def test_the_schema_grew_without_becoming_permissive() -> None:
     """Two props were added and the version moved; nothing else changed shape."""
-    assert SCHEMA["schemaVersion"] == "1.9.0"
+    assert SCHEMA["schemaVersion"] == "1.10.0"
     assert {"1.5.0", "1.6.0", "1.7.0"} <= set(SCHEMA["supportedSchemaVersions"])
     # The range form I tried first is not there, because the event channel
     # carries one scalar and a range is two.

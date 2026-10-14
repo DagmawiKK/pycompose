@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.9.0",
+  "schemaVersion": "1.10.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -10,7 +10,8 @@
     "1.6.0",
     "1.7.0",
     "1.8.0",
-    "1.9.0"
+    "1.9.0",
+    "1.10.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -31,6 +32,7 @@
             "bottomCenter",
             "bottomEnd"
           ],
+          "decode": "alignment",
           "default": "topStart"
         },
         "modifier": {
@@ -116,6 +118,7 @@
             "center",
             "end"
           ],
+          "decode": "horizontal",
           "default": "start"
         },
         "modifier": {
@@ -172,6 +175,7 @@
             "drawable",
             "asset"
           ],
+          "decode": "resourceImage",
           "required": true
         },
         "contentDescription": {
@@ -184,7 +188,7 @@
       "children": {
         "allowed": false
       },
-      "adapter": "manual",
+      "wrapper": "ResourceImage",
       "reshaped": [
         "resource"
       ]
@@ -203,6 +207,7 @@
             "spaceBetween",
             "spaceAround"
           ],
+          "decode": "arrangement",
           "default": "top"
         },
         "modifier": {
@@ -226,6 +231,7 @@
             "center",
             "bottom"
           ],
+          "decode": "vertical",
           "default": "top"
         },
         "modifier": {
@@ -243,7 +249,8 @@
       "stability": "stable",
       "props": {
         "containerColor": {
-          "type": "color"
+          "type": "color",
+          "decode": "color"
         },
         "modifier": {
           "type": "modifier"
@@ -281,6 +288,7 @@
             "string",
             "asset"
           ],
+          "decode": "resourceText",
           "since": "1.1.0"
         },
         "fontResource": {
@@ -288,6 +296,7 @@
           "values": [
             "font"
           ],
+          "decode": "resourceFont",
           "since": "1.1.0"
         },
         "locale": {
@@ -305,10 +314,12 @@
             "titleSmall",
             "headlineMedium"
           ],
+          "decode": "textStyle",
           "default": "bodyMedium"
         },
         "color": {
-          "type": "color"
+          "type": "color",
+          "decode": "color"
         },
         "modifier": {
           "type": "modifier"
@@ -317,7 +328,7 @@
       "children": {
         "allowed": false
       },
-      "adapter": "manual",
+      "wrapper": "ResourceText",
       "reshaped": [
         "resource",
         "fontResource",

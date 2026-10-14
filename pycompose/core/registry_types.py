@@ -133,6 +133,15 @@ class PropDef:
             because a component entry cannot otherwise see what its own callback
             is handed, and a generated adapter that omits the argument does not
             compile.
+        decode: Which host resolver decodes this prop's value, for the prop
+            types whose Kotlin type is not the wire type: ``enum``, ``color``
+            and ``resource``. ``PropResolver`` already knows how to turn
+            ``"start"`` into an ``Alignment.Horizontal``, but nothing in the
+            data says ``['start','center','end']`` means *horizontal* rather
+            than some other family with the same three values. Declared per
+            prop rather than inferred from the value set, because inference
+            breaks silently the day two families share a value set, and the
+            failure is a wrong alignment rather than an error.
     """
 
     type: str
@@ -146,6 +155,7 @@ class PropDef:
     since: str | None = None
     content: ContentSlot | None = None
     payload: tuple[tuple[str, str], ...] = ()
+    decode: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "values", tuple(self.values))
@@ -228,6 +238,7 @@ class PropDef:
             since=cast("str | None", data.get("since")),
             content=_content(data, where),
             payload=_payload(data, where),
+            decode=_decode(ptype, cast("str | None", data.get("decode"))),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -258,6 +269,8 @@ class PropDef:
             out["payload"] = [
                 {"name": field_name, "type": kind} for field_name, kind in self.payload
             ]
+        if self.decode is not None:
+            out["decode"] = self.decode
         return out
 
 
@@ -391,6 +404,50 @@ def _adapter(name: str, value: object) -> str:
     return cast("str", value)
 
 
+DECODED_TYPES = ("enum", "color", "resource")
+"""Prop types whose Kotlin type is not the wire type, and so need a decoder."""
+
+DECODERS = (
+    "alignment",
+    "arrangement",
+    "color",
+    "horizontal",
+    "resourceFont",
+    "resourceImage",
+    "resourceText",
+    "textStyle",
+    "vertical",
+)
+"""The host resolvers a prop may name."""
+
+
+def _decode(ptype: str, value: str | None) -> str | None:
+    """Parse a prop's declared decoder.
+
+    Args:
+        ptype: The prop's declared type.
+        value: The raw ``decode`` field.
+
+    Returns:
+        The decoder name, or None when the prop needs none.
+
+    Raises:
+        ComponentRegistryError: If the field is present but unusable.
+    """
+    if value is None:
+        return None
+    if ptype not in DECODED_TYPES:
+        raise ComponentRegistryError(
+            f"only a {', '.join(DECODED_TYPES)} prop can name a decoder, "
+            f"not a {ptype} one"
+        )
+    if value not in DECODERS:
+        raise ComponentRegistryError(
+            f"'decode' must be one of {', '.join(DECODERS)}, not {value!r}"
+        )
+    return value
+
+
 def _content(data: Mapping[str, object], where: str) -> ContentSlot | None:
     """Parse a prop's declared content slot.
 
@@ -450,6 +507,37 @@ def _payload(data: Mapping[str, object], where: str) -> tuple[tuple[str, str], .
     return tuple(fields)
 
 
+WRAPPERS = ("ResourceText", "ResourceImage")
+"""Composables an adapter may delegate to whole.
+
+A wrapper resolves its content asynchronously -- off the Compose thread, with
+its own diagnostics -- so it cannot be expressed as a resolved prop value. The
+call site is mechanical; what it delegates to is not.
+"""
+
+
+def _wrapper(name: str, value: object) -> str | None:
+    """Parse a component's declared wrapper.
+
+    Args:
+        name: The component's registry key, for the error message.
+        value: The raw ``wrapper`` field.
+
+    Returns:
+        The wrapper's name, or None when the component has none.
+
+    Raises:
+        ComponentRegistryError: If the field is present but unrecognised.
+    """
+    if value is None:
+        return None
+    if value not in WRAPPERS:
+        raise ComponentRegistryError(
+            f"component {name!r}: 'wrapper' must be one of {', '.join(WRAPPERS)}"
+        )
+    return cast("str", value)
+
+
 def _reshaped(name: str, value: object) -> tuple[str, ...]:
     """Parse a component's declared reshaped props.
 
@@ -491,6 +579,9 @@ class ComponentSpec:
         adapter: ``"manual"`` when the Kotlin adapter cannot be generated. The
             default is to generate it; a component opts out by carrying a
             decision a generator cannot make, and says which.
+        wrapper: The hand-written composable this adapter delegates to whole,
+            when it has one. Set instead of ``adapter`` because the call site is
+            still mechanical -- only the thing it calls is not.
     """
 
     name: str
@@ -501,6 +592,7 @@ class ComponentSpec:
     since: str | None = None
     reshaped: tuple[str, ...] = ()
     adapter: str = "generated"
+    wrapper: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -559,6 +651,7 @@ class ComponentSpec:
             since=cast("str | None", data.get("since")),
             reshaped=_reshaped(name, data.get("reshaped")),
             adapter=_adapter(name, data.get("adapter")),
+            wrapper=_wrapper(name, data.get("wrapper")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -579,6 +672,8 @@ class ComponentSpec:
             result["reshaped"] = list(self.reshaped)
         if self.adapter != "generated":
             result["adapter"] = self.adapter
+        if self.wrapper is not None:
+            result["wrapper"] = self.wrapper
         return result
 
 
