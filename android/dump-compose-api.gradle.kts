@@ -46,12 +46,34 @@ val metadataDescriptor = "Lkotlin/Metadata;"
 val asm9 = org.objectweb.asm.Opcodes.ASM9
 val classesJar = "classes.jar"
 
+val experimentalMarker = "Experimental"
+
+val defaultMarker = "= default"
+
+/**
+ * Whether an annotation descriptor marks experimental API.
+ *
+ * Matched by name rather than by a list of known types so a Compose release
+ * that adds `@ExperimentalCarApi` is picked up without a code change, which is
+ * the difference between a policy that scales and one that needs editing each
+ * version.
+ */
+private fun isExperimental(descriptor: String): Boolean = experimentalMarker in descriptor
+
+/** `Landroidx/compose/material3/ExperimentalMaterial3Api;` -> `ExperimentalMaterial3Api`. */
+private fun marker(descriptor: String): String = descriptor.trimEnd(';').substringAfterLast('/')
+
 val renderer = project(":renderer")
 
 // Counted rather than logged per class: a systemic failure would otherwise
 // print once per composable and bury the summary, while a partial one is worth
 // seeing at all.
 var metadataFailures = 0
+
+// Parameters whose Kotlin type could not be read. Counted and reported: a dump
+// that silently substitutes JVM primitives for Kotlin types looks complete while
+// mis-typing dimensions as integers.
+var unresolved = 0
 
 tasks.register("dumpComposeApi") {
     group = "build"
@@ -99,6 +121,11 @@ tasks.register("dumpComposeApi") {
                     ", $metadataFailures class(es) degraded to descriptors"
                 } else {
                     ""
+                } +
+                if (unresolved > 0) {
+                    ", $unresolved parameter type(s) unresolved"
+                } else {
+                    ""
                 } + " -> $target",
         )
     }
@@ -108,13 +135,22 @@ tasks.register("dumpComposeApi") {
 private class ClassFacts {
     var name: String = ""
     var metadata: AnnotationFacts? = null
+    val annotations: MutableSet<String> = mutableSetOf()
     val composables = mutableListOf<MethodFacts>()
 }
 
-/** One @Composable method. */
+/**
+ * One @Composable method.
+ *
+ * [annotations] holds its runtime-*invisible* annotations, which is where
+ * Compose keeps both @Composable and the @Experimental* markers. @Composable is
+ * compiled away to nothing; stability is the reason for reading the classfile
+ * at all, so it has to come from here too.
+ */
 private class MethodFacts(
     val name: String,
     val descriptor: String,
+    val annotations: MutableSet<String> = mutableSetOf(),
 )
 
 /** The values of a single class-file annotation. */
@@ -165,6 +201,9 @@ private class ComposeDump {
                     descriptor: String,
                     visible: Boolean,
                 ): org.objectweb.asm.AnnotationVisitor? {
+                    if (visible && isExperimental(descriptor)) {
+                        facts.annotations.add(marker(descriptor))
+                    }
                     if (descriptor != metadataDescriptor || !visible) return null
                     val annotation = AnnotationFacts()
                     facts.metadata = annotation
@@ -190,6 +229,9 @@ private class ComposeDump {
                             annotationDescriptor: String,
                             visibleAnnotation: Boolean,
                         ): org.objectweb.asm.AnnotationVisitor? {
+                            if (isExperimental(annotationDescriptor)) {
+                                method.annotations.add(marker(annotationDescriptor))
+                            }
                             if (annotationDescriptor == composableDescriptor) {
                                 facts.composables.add(method)
                             }
@@ -218,11 +260,24 @@ private class ComposeDump {
         return parts.subList(0, end)
     }
 
-    private fun isSynthetic(part: String): Boolean =
-        part.endsWith(": Composer") ||
-            part.endsWith(": Int") ||
-            part.endsWith(": int") ||
-            part.startsWith("arg") && part.contains(": int")
+    /** Whether a JVM argument type is part of the Compose compiler's tail. */
+    private fun isSyntheticType(type: org.objectweb.asm.Type): Boolean =
+        type.className.substringAfterLast('.') in setOf("Composer", "Integer")
+
+    /**
+     * Whether a rendered parameter is part of the Compose compiler's tail.
+     *
+     * Tested against the type rather than the whole rendered string: an
+     * unresolved parameter renders as `arg5: ?Composer`, which no longer ends
+     * with ": Composer", so a suffix test silently stops trimming and every
+     * composable grows a Composer parameter.
+     */
+    private fun isSynthetic(part: String): Boolean {
+        val type = part.substringAfter(": ", "").removePrefix("?")
+        // Case-insensitive because an unresolved parameter keeps the descriptor's
+        // own spelling, and the JVM writes these as `int` and `Composer`.
+        return type.equals("Composer", true) || type.equals("Int", true)
+    }
 
     /** Render each composable as `name(a: T, b: U)`. */
     private fun render(facts: ClassFacts): List<String> {
@@ -248,29 +303,58 @@ private class ComposeDump {
                 // distinguishes them, so match on the first argument's type too.
                 val named =
                     kmClass?.functions?.filter { it.name == method.name || it.name == plain }
+                // Arity first, and it is exact: every parameter a Kotlin
+                // composable declares becomes a JVM argument one-for-one, so a
+                // candidate with a different count is simply a different
+                // overload. Matching on the first argument's type instead
+                // silently picked the wrong overload for ExposedDropdownMenu --
+                // a five-parameter candidate against a twelve-parameter JVM
+                // method -- and every parameter past the fifth fell back to its
+                // raw descriptor name, so Dp came out as `long`. 243 parameters
+                // looked inexpressible because they were unreadable.
+                // Compare against the *declared* count: the descriptor also
+                // carries the Compose compiler's (Composer, Int, Int) tail,
+                // which appears in no Kotlin signature.
+                val declaredArity = types.count { !isSyntheticType(it) }
+                val sameArity = named?.filter { it.valueParameters.size == declaredArity }
                 val km =
-                    named?.firstOrNull {
+                    sameArity?.firstOrNull {
                         it.valueParameters
                             .firstOrNull()
                             ?.type
-                            ?.render() == firstJvm
-                    }
-                        ?: named?.firstOrNull()
+                            ?.render()
+                            ?.equals(firstJvm, ignoreCase = true) == true
+                    } ?: sameArity?.firstOrNull() ?: named?.firstOrNull()
                 val declared = km?.name ?: plain
                 val parts =
                     types.mapIndexed { index, type ->
                         val declared = km?.valueParameters?.getOrNull(index)
+                        // No metadata entry matched this JVM method, so its
+                        // Kotlin type is unread. Rendering the descriptor's raw
+                        // primitive would claim Dp is `long`, and a schema
+                        // generated from that types a dimension prop as an
+                        // integer -- quietly wrong rather than absent. The `?`
+                        // prefix says unread, and the count is reported.
                         val name = declared?.name ?: "arg$index"
+                        if (declared == null) unresolved++
                         // Metadata names the Kotlin-level parameters; the descriptor
                         // knows the JVM-level types. They disagree at exactly one
                         // point that matters here -- a Function0 content slot and a
                         // Function1 callback are different types, which is the whole
                         // reason to read bytecode instead of a published text dump.
                         val kotlin =
-                            declared?.type?.render() ?: type.className.substringAfterLast('.')
-                        "$name: $kotlin"
+                            declared?.type?.render() ?: "?${type.className.substringAfterLast('.')}"
+                        // "= default" says the Compose side has one, and
+                        // PyCompose must not invent it: an optional prop is
+                        // omitted from the generated adapter so Compose's own
+                        // default applies. The value is not on the wire.
+                        val hasDefault =
+                            declared != null && declaresDefaultValue?.invoke(declared) == true
+                        "$name: $kotlin" + if (hasDefault) " $defaultMarker" else ""
                     }
-                "$declared(${trimmed(parts).joinToString(", ")})"
+                val stability = (method.annotations + facts.annotations).sorted()
+                val prefix = stability.joinToString("") { "@$it " }
+                "$prefix$declared(${trimmed(parts).joinToString(", ")})"
             }.sorted()
     }
 
@@ -397,6 +481,31 @@ private fun metadata(
         ) { _, method, _ -> answers[method.name] }
     return proxy as kotlin.Metadata
 }
+
+/**
+ * Whether a Kotlin parameter declares a default value.
+ *
+ * Reached reflectively on purpose. `KmValueParameter` exposes the answer as
+ * `Attributes.getDeclaresDefaultValue`, but that is a member-extension property
+ * on a class with no instance, and the underlying Flag's value is internal --
+ * so there is no way to name it from Kotlin here. One method lookup, resolved
+ * once, is cheaper than reaching into flag bits by hand.
+ *
+ * Two routes that look available and are not: Compose's AARs contain no
+ * `$default` synthetic bridges, so their presence would say nothing; and the
+ * metadata blob records only that a default exists, never its value -- which is
+ * the only question asked here.
+ */
+private val declaresDefaultValue: ((Any) -> Boolean)? =
+    runCatching {
+        val method =
+            Class.forName("kotlinx.metadata.Attributes").getMethod(
+                "getDeclaresDefaultValue",
+                kotlinx.metadata.KmValueParameter::class.java,
+            )
+        val probe = { parameter: Any -> method.invoke(null, parameter) as Boolean }
+        probe
+    }.getOrNull()
 
 /**
  * Reads an annotation's `name = value` pairs.

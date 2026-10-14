@@ -25,8 +25,11 @@ What this module still has to decide, and what it deliberately does not:
 
 * Whether a composable is stable enough to expose at all. The dump records the
   name and signature; stability is a design judgement.
-* Defaults, requiredness, children. The dump cannot tell you what ``enabled``
-  defaults to, and inventing one is a decision a person makes.
+* Default *values*. The dump records only that a default exists, never what it
+  is -- and it must not, because most Compose defaults read ambient state
+  (``MaterialTheme``, ``LocalContentColor``) and cannot cross a process
+  boundary. Presence is enough: an optional prop is omitted from the generated
+  adapter and Compose's own default applies.
 * Overloads. ``Text`` lists its ``AnnotatedString`` variants first and its
   ``String`` one last; neither "first" nor "widest" picks correctly, so the
   most-crossing overload wins.
@@ -86,6 +89,110 @@ class Kind(Enum):
     """A type this reader does not yet model. Refused rather than guessed."""
 
 
+class Wire(Enum):
+    """PyCompose's wire vocabulary, as the schema already spells it.
+
+    Deliberately the vocabulary ``components.json`` uses rather than a new one,
+    so a generated prop drops into an existing schema entry instead of needing
+    a migration. ``None`` from :func:`wire_type` means *not expressible* -- see
+    that function for why refusing is the whole point.
+    """
+
+    STRING = "string"
+    BOOLEAN = "boolean"
+    INTEGER = "integer"
+    NUMBER = "number"
+    DIMENSION = "dimension"
+    COLOR = "color"
+    ENUM = "enum"
+    EDGES = "edges"
+    BRUSH = "brush"
+    ACTION = "actionId"
+    MODIFIER = "modifier"
+    CONTENT = "content"
+
+
+SCALARS = {
+    "String": Wire.STRING,
+    "CharSequence": Wire.STRING,
+    "Boolean": Wire.BOOLEAN,
+    "Int": Wire.INTEGER,
+    "Long": Wire.INTEGER,
+    "Short": Wire.INTEGER,
+    "Byte": Wire.INTEGER,
+    "Float": Wire.NUMBER,
+    "Double": Wire.NUMBER,
+    "Dp": Wire.DIMENSION,
+    "DpOffset": Wire.DIMENSION,
+    "TextUnit": Wire.DIMENSION,
+    "Color": Wire.COLOR,
+    "ColorLong": Wire.COLOR,
+    "Modifier": Wire.MODIFIER,
+}
+"""Direct scalar mappings.
+
+Anything a Compose parameter takes whose wire form is the same string the app
+would have written maps straight across.
+"""
+
+ENUMS = {
+    # Layout
+    "Shape",
+    "Horizontal",
+    "Vertical",
+    "Orientation",
+    "Arrangement",
+    "Alignment",
+    "AlignmentDirection",
+    "LayoutDirection",
+    # Text
+    "TextAlign",
+    "FontStyle",
+    "FontWeight",
+    "FontFamily",
+    "TextDecoration",
+    "TextOverflow",
+    "TextDirection",
+    "SoftKeyboardType",
+    "KeyboardType",
+    "ImeAction",
+    "Capitalization",
+    "KeyboardCapitalization",
+    "TextUnitType",
+    "Hyphens",
+    "LineBreak",
+    "ContentScale",
+    "Alpha",
+    "Role",
+    # Interaction
+    "InteractionSource",
+}
+"""Families a schema entry declares its own values for.
+
+The family is *declared* rather than inferred from the type: two families can
+share a name in different packages, and the wrong one renders a wrong value
+rather than failing.
+"""
+
+EDGES = {"PaddingValues", "WindowInsets", "DpInsets", "DpInsetsAndCorners", "Padding"}
+"""Edge sets, which schema 1.8.0 declares as the `edges` family."""
+
+SIZED = {
+    "Dp",
+    "DpOffset",
+    "TextUnit",
+    "Size",
+    "IntSize",
+    "IntOffset",
+    "IntRect",
+    "Rect",
+    "DpRect",
+    "Offset",
+    "FloatSize",
+}
+"""Types carrying a size, which the `dimension` family covers."""
+
+
 _SCOPED = {
     "ColumnScope",
     "RowScope",
@@ -120,13 +227,16 @@ class Parameter:
         name: The Kotlin parameter name.
         type: The rendered Kotlin type.
         kind: What it means on the wire.
-        optional: Whether the dump says so.
+        required: True when Compose declares no default, so the app must supply
+            it. Derived rather than judged: a parameter with a default is
+            omitted from the generated adapter, and Compose's own default
+            applies.
     """
 
     name: str
     type: str
     kind: Kind
-    optional: bool = False
+    required: bool = True
 
     @property
     def payload(self) -> str | None:
@@ -153,12 +263,36 @@ class Composable:
         package: The package its file facade lives in.
         parameters: Every parameter, in declaration order.
         overloads: How many overloads share this name.
+        markers: The ``@Experimental*`` annotations it carries. Empty means
+            stable at the pinned version.
     """
 
     name: str
     package: str
     parameters: tuple[Parameter, ...]
     overloads: int = 1
+    markers: tuple[str, ...] = ()
+
+    @property
+    def experimental(self) -> bool:
+        """Whether the pinned version still considers this experimental.
+
+        Returns:
+            True when at least one @Experimental* marker is present.
+        """
+        return bool(self.markers)
+
+    @property
+    def omitted(self) -> tuple[Parameter, ...]:
+        """Return the parameters this surface does not expose.
+
+        Every one is recorded rather than dropped: a component present with
+        fewer props than Compose declares fails at build time when someone uses
+        an omitted one, and a prop that silently vanished fails to be noticed.
+        That is the whole reason :func:`wire_type` refuses rather than
+        approximates.
+        """
+        return tuple(p for p in self.parameters if wire_type(p) is None)
 
     @property
     def slots(self) -> tuple[Parameter, ...]:
@@ -180,12 +314,85 @@ class Composable:
 
 
 _SIGNATURE = re.compile(r"^(\w+)\((.*)\)$", re.DOTALL)
+UNREADABLE = "?"
+"""Prefix the dump puts on a parameter whose Kotlin type it could not read.
+
+Rendering the raw JVM type instead would be worse than useless: ``Dp``,
+``TextUnit`` and ``Long`` are all ``long`` in the descriptor, so a dimension
+prop would be typed as an integer -- quietly wrong rather than absent.
+"""
+
+_ANNOTATIONS = re.compile(r"^(?:@(\w+)\s+)+")
+_DEFAULT = re.compile(r"\s=\sdefault$")
 # Not anchored: findall over one parameter only ever matched the first, which
 # is why Checkbox appeared to have no callback at all.
 _PARAM = re.compile(r"(\w+): (.+?)(?=, \w+: |$)", re.DOTALL)
 _FUNCTION = re.compile(r"^Function(\d+)(?:<(.+)>)?$")
 _SIMPLE = re.compile(r"^[\w.]+$")
-_OPTIONAL = re.compile(r"= null")
+
+
+def wire_type(parameter: Parameter) -> Wire | None:
+    """Map a parameter to PyCompose's wire type, or None when it has none.
+
+    The refusal is the point. Compose parameters carry types that cannot cross a
+    process boundary at all -- ``Animatable``, ``TwoWayConverter``,
+    ``PagerScope``, a ``ProvidableCompositionLocal`` -- and at this version 53
+    distinct ones appear across the catalog. None is modelled. Modelling them
+    would mean inventing a representation for host state the app cannot own, and
+    the failure would be a prop that accepts something meaningless.
+
+    So a parameter this cannot type is *omitted* rather than approximated, and
+    the omission is recorded. That is the difference between a component that
+    is present with fewer props than Compose declares -- which fails at build
+    time, loudly -- and one that silently accepts a prop meaning nothing.
+
+    Args:
+        parameter: The parameter to type.
+
+    Returns:
+        Its wire type, or None when it is not expressible.
+    """
+    if parameter.kind is Kind.SLOT:
+        return Wire.CONTENT
+    if parameter.kind is Kind.CALLBACK:
+        return Wire.ACTION
+    if parameter.type.startswith(UNREADABLE):
+        # The dump could not read this parameter's Kotlin type. Refusing is the
+        # point: the raw JVM type behind it is `long` for Dp, TextUnit and Long
+        # alike, so typing it would put an integer where a dimension belongs.
+        return None
+    return _by_name(parameter.type.partition("<")[0])
+
+
+# Every mapping beyond SCALARS in one table, so adding a family is one row
+# rather than another branch -- which is the difference between a policy that
+# survives a Compose release and one that needs editing each time.
+FAMILIES = {
+    **{name: Wire.ENUM for name in ENUMS},
+    **{name: Wire.EDGES for name in EDGES},
+    **{name: Wire.DIMENSION for name in SIZED},
+    "Brush": Wire.BRUSH,
+}
+
+
+def _by_name(name: str) -> Wire | None:
+    """Resolve a bare Kotlin type name to a wire type.
+
+    Args:
+        name: The simple type name, with any generic argument removed.
+
+    Returns:
+        Its wire type, or None when the type is not expressible on the wire.
+    """
+    if name in SCALARS:
+        return SCALARS[name]
+    if name in FAMILIES:
+        return FAMILIES[name]
+    # Alignment, Arrangement and their subclasses are enum families whose
+    # members a schema entry declares itself.
+    if name.startswith(("Alignment", "Arrangement")):
+        return Wire.ENUM
+    return None
 
 
 def _classify(type_name: str) -> Kind:
@@ -216,36 +423,51 @@ def _classify(type_name: str) -> Kind:
     return Kind.UNKNOWN
 
 
-def _parse(signature: str) -> tuple[str, tuple[Parameter, ...]] | None:
+def _parse(
+    signature: str,
+) -> tuple[str, tuple[Parameter, ...], tuple[str, ...]] | None:
     """Read one rendered signature.
 
     Args:
-        signature: ``name(a: T, b: U)`` as the dump writes it.
+        signature: ``[@ExperimentalX ]name(a: T = default, b: U)`` as the dump
+            writes it.
 
     Returns:
-        The name and its parameters, or None when the shape is unrecognised.
+        The name, its parameters and its stability markers, or None when the
+        shape is unrecognised.
     """
-    match = _SIGNATURE.match(signature.strip())
+    text = signature.strip()
+    markers = (
+        tuple(_ANNOTATIONS.match(text).group(1).split())
+        if _ANNOTATIONS.match(text)
+        else ()
+    )
+    stripped = _ANNOTATIONS.sub("", text, count=1)
+    match = _SIGNATURE.match(stripped)
     if match is None:
         return None
     name, body = match.group(1), match.group(2)
     parameters: list[Parameter] = []
     if body.strip():
-        for raw in _PARAM.findall(body):
-            prop, type_name = raw[0], raw[1].strip()
-            if not type_name:
+        for prop, type_name in _PARAM.findall(body):
+            declared = _DEFAULT.search(type_name) is not None
+            rendered = _DEFAULT.sub("", type_name).strip()
+            if not rendered:
                 continue
             parameters.append(
                 Parameter(
                     name=prop,
-                    type=type_name,
-                    kind=_classify(type_name),
-                    optional=_OPTIONAL.search(type_name) is not None,
+                    type=rendered,
+                    kind=_classify(rendered),
+                    # A Compose default means the app need not supply it, and the
+                    # generated adapter omits it so Compose's own default wins.
+                    # That inverts to "required" with no further judgement.
+                    required=not declared,
                 )
             )
     if not parameters and body.strip():
         return None
-    return name, tuple(parameters)
+    return name, tuple(parameters), markers
 
 
 def load(directory: Path = DUMP_DIR) -> dict[str, dict[str, list[str]]]:
@@ -278,7 +500,7 @@ def load(directory: Path = DUMP_DIR) -> dict[str, dict[str, list[str]]]:
 
 
 def _most_crossing(
-    groups: dict[str, list[tuple[str, tuple[Parameter, ...]]]],
+    groups: dict[str, list[tuple[str, tuple[Parameter, ...], tuple[str, ...]]]],
 ) -> Iterator[Composable]:
     """Yield one composable per name, choosing the widest overload.
 
@@ -309,10 +531,11 @@ def _most_crossing(
             package=package,
             parameters=best[1],
             overloads=len(candidates),
+            markers=best[2],
         )
 
 
-def _plainness(signature: tuple[str, tuple[Parameter, ...]]) -> str:
+def _plainness(signature: tuple[str, tuple[Parameter, ...], tuple[str, ...]]) -> str:
     """Return a sort key that prefers plain types over wrapper types.
 
     Args:
@@ -325,7 +548,7 @@ def _plainness(signature: tuple[str, tuple[Parameter, ...]]) -> str:
     return "".join(sorted({t[0] for t in types}))
 
 
-def _priority(signature: tuple[str, tuple[Parameter, ...]]) -> int:
+def _priority(signature: tuple[str, tuple[Parameter, ...], tuple[str, ...]]) -> int:
     """Prefer the plainer of two equally plausible overloads.
 
     ``Text`` is overloaded on ``String`` and on ``AnnotatedString`` with
@@ -382,12 +605,19 @@ def composables(directory: Path = DUMP_DIR) -> dict[str, Composable]:
                 parsed = _parse(signature)
                 if parsed is None:
                     continue
-                groups.setdefault(parsed[0], []).append((class_name, parsed[1]))
+                groups.setdefault(parsed[0], []).append(
+                    (class_name, parsed[1], parsed[2])
+                )
     return {c.name: c for c in _most_crossing(groups)}
 
 
 def summarise(directory: Path = DUMP_DIR) -> str:
     """Describe what the dump contains, for a human.
+
+    Every line is a number someone might act on. An omitted count is a scope
+    decision; an unread count is a bug in the dump. They are reported separately
+    for exactly that reason -- lumping them together would make a tooling fault
+    look like a design choice.
 
     Args:
         directory: Where the JSON files live.
@@ -398,14 +628,22 @@ def summarise(directory: Path = DUMP_DIR) -> str:
     found = composables(directory)
     slots = sum(len(c.slots) for c in found.values())
     callbacks = sum(len(c.callbacks) for c in found.values())
-    unknown = sum(
-        1 for c in found.values() for p in c.parameters if p.kind is Kind.UNKNOWN
+    omitted = sum(len(c.omitted) for c in found.values())
+    unread = sum(
+        1 for c in found.values() for p in c.parameters if p.type.startswith(UNREADABLE)
     )
+    experimental = sum(1 for c in found.values() if c.experimental)
+    required = sum(1 for c in found.values() for p in c.parameters if p.required)
     overloads = sum(1 for c in found.values() if c.overloads > 1)
     return (
         f"{len(found)} composables across {len(load(directory))} artifacts\n"
-        f"  {slots} content slots, {callbacks} callbacks, {unknown} unmodelled types\n"
-        f"  {overloads} names with overloads, resolved to the most-crossing"
+        f"  {slots} content slots, {callbacks} callbacks\n"
+        f"  {required} required params, the rest have a Compose default\n"
+        f"  {experimental} experimental at this version, "
+        f"{len(found) - experimental} stable\n"
+        f"  {omitted} props not expressible on the wire, recorded as omitted\n"
+        f"  {unread} parameter types unread from metadata (a dump bug, not a scope)"
+        f"\n  {overloads} names with overloads, resolved to the most-crossing"
     )
 
 

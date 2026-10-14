@@ -16,14 +16,33 @@ import pytest
 
 from schema.classpath_dump import (
     Kind,
+    Wire,
     _classify,
     _parse,
     composables,
     load,
     summarise,
+    wire_type,
 )
 
 DUMP = Path("android/build/compose-api")
+
+
+def param(name: str, type_name: str, required: bool = True, kind: Kind = Kind.VALUE):
+    """Build a parameter for a fixture.
+
+    Args:
+        name: The parameter name.
+        type_name: The rendered Kotlin type.
+        required: Whether Compose declares no default for it.
+        kind: Its wire classification.
+
+    Returns:
+        The parameter.
+    """
+    from schema.classpath_dump import Parameter
+
+    return Parameter(name=name, type=type_name, kind=kind, required=required)
 
 
 def write_dump(directory: Path, payload: dict[str, list[str]]) -> Path:
@@ -88,7 +107,7 @@ def test_a_callback_reports_its_payload() -> None:
     """Dropping the payload compiles and then reports nothing."""
     parsed = _parse("Checkbox(checked: Boolean, onCheckedChange: Function1<Boolean>)")
     assert parsed is not None
-    _, parameters = parsed
+    parameters = parsed[1]
     callback = next(p for p in parameters if p.name == "onCheckedChange")
     assert callback.kind is Kind.CALLBACK
     assert callback.payload == "Boolean"
@@ -242,3 +261,199 @@ def test_a_missing_dump_says_so_rather_than_reporting_nothing() -> None:
     """An empty catalog is indistinguishable from a library that declares none."""
     with pytest.raises(FileNotFoundError, match="dumpComposeApi"):
         load(Path("/tmp/pycompose-no-such-dump"))
+
+
+# ---------------------------------------------------------------------------
+# Step 0 -- the dump carries defaults and stability
+# ---------------------------------------------------------------------------
+
+
+def test_a_compose_default_is_read_from_the_signature() -> None:
+    """`= default` is how the dump says "the app need not supply this".
+
+    Compose's AARs contain no `$default` synthetic bridges, so presence cannot
+    be read from those; it comes from the metadata blob. The *value* is not
+    recorded and must not be -- most Compose defaults read ambient state and
+    cannot cross a process boundary.
+    """
+    parsed = _parse("Checkbox(checked: Boolean, enabled: Boolean = default)")
+    assert parsed is not None
+    _, parameters, _ = parsed
+    assert parameters[0].required is True
+    assert parameters[1].required is False
+
+
+def test_the_default_marker_is_not_part_of_the_type() -> None:
+    """Otherwise `Boolean = default` becomes a wire type nobody has."""
+    parsed = _parse("Text(enabled: Boolean = default)")
+    assert parsed is not None
+    assert parsed[1][0].type == "Boolean"
+
+
+def test_an_unreadable_parameter_is_marked_not_guessed() -> None:
+    """`Dp`, `TextUnit` and `Long` are all `long` in a JVM descriptor.
+
+    Rendering the descriptor's spelling would type a dimension prop as an
+    integer -- quietly wrong rather than absent, which is worse than refusing.
+    """
+    parsed = _parse("Foo(size: ?long, name: String)")
+    assert parsed is not None
+    assert parsed[1][0].type == "?long"
+
+
+def test_stability_markers_are_read_off_the_signature() -> None:
+    parsed = _parse(
+        "@ExperimentalMaterial3Api Sheet(onDismissRequest: Function0<Unit>)"
+    )
+    assert parsed is not None
+    name, _, markers = parsed
+    assert name == "Sheet"
+    assert markers == ("ExperimentalMaterial3Api",)
+
+
+# ---------------------------------------------------------------------------
+# Step 1 -- stability and requiredness reach the model
+# ---------------------------------------------------------------------------
+
+
+def test_a_composable_reports_its_experimental_markers() -> None:
+    directory = write_dump(
+        Path("/tmp/pycompose-dump-stability"),
+        {
+            "SheetKt": [
+                "@ExperimentalMaterial3Api Sheet(onDismissRequest: Function0<Unit>)"
+            ],
+            "PlainKt": ["Plain(value: String)"],
+        },
+    )
+    found = composables(directory)
+    assert found["Sheet"].experimental is True
+    assert found["Plain"].experimental is False
+
+
+def test_a_required_parameter_is_one_without_a_default() -> None:
+    directory = write_dump(
+        Path("/tmp/pycompose-dump-required"),
+        {"CkKt": ["Checkbox(checked: Boolean, enabled: Boolean = default)"]},
+    )
+    parameters = {p.name: p for p in composables(directory)["Checkbox"].parameters}
+    assert parameters["checked"].required is True
+    assert parameters["enabled"].required is False
+
+
+# ---------------------------------------------------------------------------
+# Step 2 -- type resolution refuses rather than approximates
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("type_name", "wire"),
+    [
+        ("String", Wire.STRING),
+        ("Boolean", Wire.BOOLEAN),
+        ("Int", Wire.INTEGER),
+        ("Long", Wire.INTEGER),
+        ("Float", Wire.NUMBER),
+        ("Dp", Wire.DIMENSION),
+        ("TextUnit", Wire.DIMENSION),
+        ("Color", Wire.COLOR),
+        ("TextAlign", Wire.ENUM),
+        ("Shape", Wire.ENUM),
+        ("PaddingValues", Wire.EDGES),
+        ("Brush", Wire.BRUSH),
+        ("Modifier", Wire.MODIFIER),
+    ],
+)
+def test_an_expressible_type_maps_to_the_schema_vocabulary(
+    type_name: str, wire: Wire
+) -> None:
+    """The schema's own spelling, so a generated prop drops into an entry."""
+    assert wire_type(param("p", type_name)) is wire
+
+
+@pytest.mark.parametrize(
+    "type_name",
+    [
+        "Animatable",
+        "TwoWayConverter",
+        "PagerScope",
+        "MutableState",
+        "AnimationSpec",
+        "ProvidableCompositionLocal",
+        "DatePickerColors",
+    ],
+)
+def test_an_inexpressible_type_is_refused(type_name: str) -> None:
+    """None means no wire representation exists, and that is the honest answer.
+
+    Modelling these would mean inventing a representation for host state the app
+    cannot own, and the failure would be a prop that accepts something
+    meaningless.
+    """
+    assert wire_type(param("p", type_name)) is None
+
+
+def test_an_unreadable_type_is_refused_even_when_its_jvm_shape_looks_fine() -> None:
+    """`?long` is not a Long."""
+    assert wire_type(param("size", "?long")) is None
+
+
+def test_slots_and_callbacks_get_their_own_wire_types() -> None:
+    assert (
+        wire_type(param("content", "Function1<RowScope>", kind=Kind.SLOT))
+        is Wire.CONTENT
+    )
+    assert (
+        wire_type(param("onClick", "Function1<Boolean>", kind=Kind.CALLBACK))
+        is Wire.ACTION
+    )
+
+
+def test_omitted_props_are_recorded_not_dropped() -> None:
+    """The difference between a build error and a prop nobody notices."""
+    directory = write_dump(
+        Path("/tmp/pycompose-dump-omit"),
+        {
+            "CarouselKt": [
+                "Carousel(state: Animatable, modifier: Modifier = default,"
+                " onClick: Function1<Boolean>)"
+            ]
+        },
+    )
+    entry = composables(directory)["Carousel"]
+    omitted = {p.name for p in entry.omitted}
+    assert omitted == {"state"}
+    assert "modifier" in {p.name for p in entry.parameters}
+    assert "onClick" in {p.name for p in entry.parameters}
+
+
+def test_every_omitted_prop_is_an_untyped_one() -> None:
+    directory = write_dump(
+        Path("/tmp/pycompose-dump-omit2"),
+        {"XKt": ["X(a: Animatable, b: String, c: PagerScope)"]},
+    )
+    entry = composables(directory)["X"]
+    assert {p.name for p in entry.omitted} == {"a", "c"}
+    assert all(wire_type(p) is None for p in entry.omitted)
+
+
+@skip_without_dump
+def test_the_real_dump_separates_omissions_from_read_failures() -> None:
+    """Lumping them would make a tooling bug look like a scope decision."""
+    text = summarise(DUMP)
+    assert "not expressible on the wire" in text
+    assert "unread from metadata" in text
+
+
+@skip_without_dump
+def test_no_primitive_survives_as_a_wire_type() -> None:
+    """A JVM primitive leaking through means a parameter was never read."""
+    for name, entry in composables(DUMP).items():
+        for parameter in entry.parameters:
+            assert parameter.type not in (
+                "long",
+                "int",
+                "float",
+                "double",
+                "boolean",
+            ), f"{name}.{parameter.name} is a bare JVM primitive"
