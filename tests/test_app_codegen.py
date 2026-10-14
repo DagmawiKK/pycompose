@@ -258,3 +258,84 @@ def test_the_library_codegen_runs_from_the_package() -> None:
         check=False,
     )
     assert result.returncode == 0, result.stderr
+
+
+# ---------------------------------------------------------------------------
+# Bound to the build (ADR-0014)
+# ---------------------------------------------------------------------------
+
+
+def test_an_app_on_the_library_catalog_is_left_alone(tmp_path: Path) -> None:
+    """Binding codegen must not break apps that never adopted it."""
+    from pycompose.schema.codegen.app_slice import uses_generated_slice
+
+    app = tmp_path / "app"
+    app.mkdir()
+    (app / "main.py").write_text("from pycompose.m3 import Button\n")
+    assert uses_generated_slice(app) is False
+
+
+def test_an_app_that_adopted_the_slice_is_detected(tmp_path: Path) -> None:
+    from pycompose.schema.codegen.app_slice import uses_generated_slice
+
+    app = tmp_path / "app"
+    app.mkdir()
+    (app / "main.py").write_text("from m3 import Button\n")
+    assert uses_generated_slice(app) is True
+
+
+def test_adoption_ignores_the_generated_package_itself(tmp_path: Path) -> None:
+    """Otherwise the slice makes itself look adopted forever."""
+    from pycompose.schema.codegen.app_slice import uses_generated_slice
+
+    app = tmp_path / "app"
+    (app / "m3").mkdir(parents=True)
+    (app / "m3" / "__init__.py").write_text(
+        "from m3.generated_components import (\n    Button,\n)\n"
+    )
+    assert uses_generated_slice(app) is False
+
+
+def test_the_two_roots_are_separate(tmp_path: Path) -> None:
+    """A scaffolded project keeps Python under app/ and Android at the root.
+
+    This is the layout `pycompose init` produces, and the reason `build_app`
+    takes two roots: one directory holding both only ever worked for the notes
+    example, which is how the conflation survived being wrong.
+    """
+    from pycompose.schema.codegen.main import build_app
+
+    root = tmp_path / "project"
+    python_root = root / "app"
+    android_root = root
+    (python_root / "screen").mkdir(parents=True)
+    (android_root / "android/ir/src/main/kotlin/com/pycompose/ir/generated").mkdir(
+        parents=True
+    )
+    (android_root / "android/host/src/main/kotlin/com/pycompose/host/ui").mkdir(
+        parents=True
+    )
+    (python_root / "screen" / "view.py").write_text(
+        "from m3 import Button, Spacer, Text\n"
+    )
+
+    assert build_app(python_root, android_root=android_root) == 0
+
+    assert (python_root / "m3" / "generated_components.py").is_file()
+    assert (
+        android_root
+        / "android/ir/src/main/kotlin/com/pycompose/ir/generated/UiModels.kt"
+    ).is_file()
+    # And nothing was written into the Android root's Python side.
+    assert not (android_root / "m3").exists()
+
+
+def test_the_python_root_still_works_alone(tmp_path: Path) -> None:
+    """The notes example's layout, where both roots are one directory."""
+    from pycompose.schema.codegen.main import build_app
+
+    root = tmp_path / "app"
+    root.mkdir()
+    (root / "view.py").write_text("from m3 import Button\n")
+    assert build_app(root) == 0
+    assert (root / "m3" / "generated_components.py").is_file()

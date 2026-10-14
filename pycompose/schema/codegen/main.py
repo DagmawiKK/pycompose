@@ -1082,11 +1082,24 @@ def render_kotlin_registry(registry: dict[str, Any]) -> str:
     return "\n".join([*lines, "    )", "}", ""])
 
 
-def build_app(app: Path, *, check: bool) -> int:
+def build_app(
+    python_root: Path,
+    *,
+    android_root: Path | None = None,
+    check: bool = False,
+) -> int:
     """Generate an app's component slice, or verify it (ADR-0014).
 
+    The two roots are separate because a scaffolded project keeps them apart:
+    ``pycompose init`` writes Python under ``app/`` and the Gradle project at
+    the repository root, so the Kotlin slice belongs beside ``android/`` while
+    the generated package belongs beside the app's own sources. The notes
+    example puts both in one directory, which is why a single root looked
+    sufficient until it was not.
+
     Args:
-        app: The app's root directory.
+        python_root: Where the app's Python lives; receives the generated package.
+        android_root: Where the Kotlin slice goes; defaults to ``python_root``.
         check: Report drift instead of writing.
 
     Returns:
@@ -1102,18 +1115,20 @@ def build_app(app: Path, *, check: bool) -> int:
         slice_registry,
     )
 
-    if not app.is_dir():
-        print(f"gen.py: not a directory: {app}", file=sys.stderr)
-        return 1
+    native = python_root if android_root is None else android_root
+    for root in (python_root, native):
+        if not root.is_dir():
+            print(f"gen.py: not a directory: {root}", file=sys.stderr)
+            return 1
     try:
         registry = load_catalog(SCHEMA_PATH)
-        used = discover(app, registry)
+        used = discover(python_root, registry)
     except AppCodegenError as exc:
         print(f"gen.py: {exc}", file=sys.stderr)
         return 1
     if not used:
         print(
-            f"gen.py: {app} references no components; nothing to generate",
+            f"gen.py: {python_root} references no components; nothing to generate",
             file=sys.stderr,
         )
         return 1
@@ -1121,18 +1136,18 @@ def build_app(app: Path, *, check: bool) -> int:
     sliced = slice_registry(registry, used)
     package = APP_PACKAGE
     artifacts: dict[Path, str] = {
-        app / package / "generated_components.py": render_python_components(
-            sliced, package
+        python_root / package / "generated_components.py": (
+            render_python_components(sliced, package)
         ),
-        app / package / "__init__.py": render_python_exports(sliced, package),
-        app / _IR_RELATIVE / "UiModels.kt": render_kotlin_models(sliced),
-        app / _IR_RELATIVE / "IrContract.kt": render_kotlin_registry(sliced),
+        python_root / package / "__init__.py": render_python_exports(sliced, package),
+        native / _IR_RELATIVE / "UiModels.kt": render_kotlin_models(sliced),
+        native / _IR_RELATIVE / "IrContract.kt": render_kotlin_registry(sliced),
     }
     adapters = render_generated_adapters(sliced)
     if adapters:
-        artifacts[app / _ADAPTERS_RELATIVE] = adapters
+        artifacts[native / _ADAPTERS_RELATIVE] = adapters
     for fixture in sorted((ROOT / "pycompose/testing/fixtures").glob("*.json")):
-        artifacts[app / "android/ir/src/test/resources" / fixture.name] = (
+        artifacts[native / "android/ir/src/test/resources" / fixture.name] = (
             fixture.read_text(encoding="utf-8")
         )
 
@@ -1158,7 +1173,7 @@ def build_app(app: Path, *, check: bool) -> int:
         if sliced["components"][name].get("adapter") == "manual"
     ]
     print(
-        f"gen.py: {app}: {len(used)} component(s) generated "
+        f"gen.py: {python_root}: {len(used)} component(s) generated "
         f"({len(artifacts)} artifact(s)); "
         + (
             f"hand-written adapters still needed for {', '.join(sorted(manual))}"

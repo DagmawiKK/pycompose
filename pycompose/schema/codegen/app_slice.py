@@ -82,6 +82,44 @@ def discover(app: Path, catalog: dict[str, Any]) -> set[str]:
     return used
 
 
+def uses_generated_slice(python_root: Path, package: str = APP_PACKAGE) -> bool:
+    """Report whether an app imports its own generated component package.
+
+    This is what makes codegen bindable without a config flag. An app that
+    imports ``pycompose.m3`` has adopted the library catalog and needs nothing
+    generated; one that imports ``m3`` has adopted per-app codegen and needs it
+    before every build. Detecting the import means an existing project cannot be
+    broken by a build step that suddenly starts failing, and an adopter cannot
+    silently keep a stale slice because nothing reminded it to regenerate.
+
+    Args:
+        python_root: Where the app's Python lives.
+        package: The generated package's name.
+
+    Returns:
+        True when any module imports the generated package.
+    """
+    if not python_root.is_dir():
+        return False
+    for source in sorted(python_root.rglob("*.py")):
+        if package in source.relative_to(python_root).parts:
+            continue
+        try:
+            tree = ast.parse(source.read_text(encoding="utf-8"))
+        except (SyntaxError, UnicodeDecodeError):
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import) and any(
+                alias.name == package for alias in node.names
+            ):
+                return True
+            if isinstance(node, ast.ImportFrom) and (
+                node.module == package or (node.module or "").startswith(f"{package}.")
+            ):
+                return True
+    return False
+
+
 def slice_registry(registry: dict[str, Any], used: set[str]) -> dict[str, Any]:
     """Return the catalog narrowed to the components an app uses.
 
