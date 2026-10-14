@@ -33,7 +33,9 @@ def list_screen(
     Args:
         notes: The notes to render, newest first.
         session: The session shell, for the palette.
-        actions: The registry this screen binds its controls to.
+        actions: The registry this screen binds its controls to. Callers omit
+            it; the app context supplies it, as Compose supplies
+            ``LocalConfiguration.current``.
 
     Returns:
         A Scaffold declaration listing every note.
@@ -116,7 +118,9 @@ def note_row(
     Args:
         note: The note this row shows.
         theme: Colours to paint with.
-        actions: The registry this screen binds its controls to.
+        actions: The registry this screen binds its controls to. Callers omit
+            it; the app context supplies it, as Compose supplies
+            ``LocalConfiguration.current``.
 
     Returns:
         A clickable Row carrying this note's bindings.

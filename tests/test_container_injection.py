@@ -13,7 +13,7 @@ from typing import Any, TypedDict
 
 import pytest
 
-from pycompose import action
+from pycompose import AppContext, action, install_context
 from pycompose.bridge import BridgeSurface
 from pycompose.bridge.runtime import RuntimeSession
 from pycompose.errors import BridgeError, StateError
@@ -142,15 +142,17 @@ def test_the_app_s_actions_run_without_a_bridge(notes: Any) -> None:
     from notes_app.data.notes_repo import MemoryNotesRepo
     from notes_app.domain.models import Note
 
-    notes.actions.install_container(AppContainer(MemoryNotesRepo([Note(1, "Only")])))
-    start = notes.build(route="notes", restore="")
+    # A session installs both of these. This test stands in for one, and must
+    # do it before build: a composable reached during the first render resolves
+    # its registry from the context.
+    supplied = AppContainer(MemoryNotesRepo([Note(1, "Only")]))
+    notes.actions.install_container(supplied)
+    install_context(AppContext(actions=notes.actions, container=supplied))
+    start = notes.build(route="notes", restore="", container=supplied)
 
     # Call the decorated action itself, the way a developer would in a test.
-    notes.actions._contracts["notes_app.actions.delete_note"].function(
-        start,
-        {"note_id": 1},
-        container=AppContainer(MemoryNotesRepo([Note(1, "Only")])),
-    )
+    delete = notes.actions._contracts["notes_app.actions.delete_note"]
+    delete.function(start, {"note_id": 1}, container=supplied)
 
 
 # ---------------------------------------------------------------------------
@@ -215,7 +217,7 @@ def test_a_session_refuses_an_app_whose_actions_want_a_container_it_declares_non
     (app_dir / "__init__.py").write_text("")
     (app_dir / "main.py").write_text(
         "from typing import TypedDict\n"
-        "from pycompose import action\n"
+        "from pycompose import AppContext, action, install_context\n"
         "from pycompose.state import Actions, State\n"
         "\n"
         "class Nothing(TypedDict):\n"

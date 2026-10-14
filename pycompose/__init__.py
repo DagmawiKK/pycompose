@@ -2,15 +2,20 @@
 
 from pycompose import async_task, repository
 from pycompose.composition import composable
+from pycompose.core.context import AppContext, context
+from pycompose.core.context import install as install_context
 from pycompose.state.actions import Registry
 from pycompose.state.app_action import action
 from pycompose.version import __version__
 
 __all__ = [
-    "__version__",
+    "AppContext",
     "Registry",
+    "__version__",
     "action",
     "async_task",
     "composable",
+    "context",
+    "install_context",
     "repository",
 ]

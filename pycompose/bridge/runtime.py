@@ -15,6 +15,8 @@ from typing import cast
 
 from pycompose import async_task
 from pycompose.bridge.api import BridgeSurface
+from pycompose.core.context import AppContext
+from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
 from pycompose.state import Actions, State, Store
 from pycompose.state.app_action import AppAction
@@ -76,6 +78,13 @@ class RuntimeSession:
         build = getattr(module, self._function)
         signature = inspect.signature(build)
         container = self._resolve_container(module)
+        actions = self._resolve_actions(module)
+        # Before `build`, because a composable reached during the first render
+        # resolves its registry from this. The module is already imported, so
+        # both halves of the context exist by now.
+        install_context(AppContext(actions=actions, container=container))
+        self._check_injection(actions, container)
+        actions.install_container(container)
         arguments: dict[str, object] = {}
         if "route" in signature.parameters:
             arguments["route"] = route
@@ -87,33 +96,46 @@ class RuntimeSession:
         state = build(**arguments)
         if not isinstance(state, State):
             raise BridgeError("app build must return State")
+        surface = BridgeSurface(Store(state), actions, debug=self._debug)
+        if surface.expose_latest_snapshot() is None:
+            raise BridgeError("app build produced no valid snapshot")
+        return surface
+
+    def _resolve_actions(self, module: ModuleType) -> Actions:
+        """Return the registry this app declared.
+
+        Args:
+            module: The freshly imported app module.
+
+        Returns:
+            The app's registry, or an empty one when it declared none.
+
+        Raises:
+            BridgeError: If the declared registry is not an ``Actions``, or is
+                empty. An empty registry is the quietest possible failure: the
+                app starts, renders, and every control is inert because no
+                binding resolves to a handler. An app that *declares* one and it
+                comes out empty has misspelled something -- a renamed export, or
+                a Registry built in a different module -- so it is refused
+                rather than rendered blank. An app with no actions at all need
+                not declare a registry.
+        """
         definitions = [
             value for value in vars(module).values() if isinstance(value, AppAction)
         ]
         actions = getattr(module, "actions", None)
         declared = actions is not None
         if actions is None:
-            actions = Actions(*definitions)
+            return Actions(*definitions)
         if not isinstance(actions, Actions):
             raise BridgeError("app actions must be an Actions instance")
         if declared and not actions.handlers():
-            # An empty registry is the quietest possible failure: the app starts,
-            # renders, and every control is inert because no binding resolves to
-            # a handler. An app that *declares* one and it comes out empty has
-            # misspelled something -- a renamed export, or a Registry built in a
-            # different module -- so it is refused rather than rendered blank.
-            # An app with no actions at all need not declare a registry.
             raise BridgeError(
                 "app declared an actions registry but it holds nothing; check that "
                 "it is exported under the module-level name 'actions' and that the "
                 "actions are registered on it"
             )
-        self._check_injection(actions, container)
-        actions.install_container(container)
-        surface = BridgeSurface(Store(state), actions, debug=self._debug)
-        if surface.expose_latest_snapshot() is None:
-            raise BridgeError("app build produced no valid snapshot")
-        return surface
+        return actions
 
     def _check_injection(self, actions: Actions, container: object | None) -> None:
         """Fail at startup when an action wants a container the app never declared.

@@ -91,7 +91,7 @@ def build(
     # Only a direct call without one, which the session never makes.
     supplied = container if container is not None else build_container()
     return snapshot(
-        _rehydrated(restore).evolve(route=route), held(supplied.notes_repo), 0, actions
+        _rehydrated(restore).evolve(route=route), held(supplied.notes_repo), 0
     )
 
 

@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Generic, ParamSpec
 
+from pycompose.core.context import context, has_context
 from pycompose.core.expansion import DeferredNode, expand_nodes
 from pycompose.core.node import Node
 from pycompose.errors import IrError, IrValidationError
@@ -174,6 +175,40 @@ class Composable(Generic[P]):
         self.__signature__ = inspect.Signature(parameters, return_annotation=Node)
         self.__annotations__.update({"id": str, "return": Node})
 
+    def _from_context(self, props: dict[str, Any]) -> dict[str, Any]:
+        """Fill omitted optional inputs from the app context.
+
+        A parameter left at its ``None`` default, whose name the app context
+        carries, is filled from that context. This is how a screen binds a
+        control without every caller threading the registry down to it -- the
+        same bargain Compose strikes with ``LocalConfiguration.current``.
+
+        Only ``None`` is filled and never another value, so an explicit ``None``
+        and an omitted argument stay distinguishable. A required parameter is
+        filled too when the context carries it; when neither the caller nor the
+        context supplies one, the signature check below reports it exactly as it
+        would any other missing argument.
+
+        Args:
+            props: The props as supplied by the caller.
+
+        Returns:
+            The props to declare with.
+        """
+        if not has_context():
+            return props
+        ambient = context()
+        filled = dict(props)
+        for name in self.signature.parameters:
+            if name == "id" or name not in ambient:
+                continue
+            # Only an omitted or explicitly-None argument is filled. Anything
+            # the caller passed is theirs, whatever it is.
+            if name in filled and filled[name] is not None:
+                continue
+            filled[name] = ambient.get(name)
+        return filled
+
     def __call__(self, *, id: str, **props: Any) -> Node:
         """Declare an instance without executing its function.
 
@@ -187,6 +222,7 @@ class Composable(Generic[P]):
         Raises:
             IrValidationError: If props do not match the function signature.
         """
+        props = self._from_context(props)
         try:
             self.signature.bind(**props)
         except TypeError as exc:

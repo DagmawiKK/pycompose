@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
+from pycompose import AppContext, install_context
 from pycompose.bridge import BridgeSurface
 from pycompose.bridge.runtime import RuntimeSession
 from pycompose.repository import use_root
@@ -96,9 +97,11 @@ class Host:
         self.follow_navigation = follow_navigation
         self.repo: Any = repo if repo is not None else a_store()
         self.container = AppContainer(self.repo)
-        # A real session does this while resolving the app's factory; a test
-        # driving the surface directly has to say so once, in one place.
+        # A real session installs both of these while resolving the app's
+        # factory. A test driving the surface directly stands in for it, so it
+        # says so once, in one place.
         app.actions.install_container(self.container)
+        install_context(AppContext(actions=app.actions, container=self.container))
         self._bridge = BridgeSurface(
             Store(
                 app.build(

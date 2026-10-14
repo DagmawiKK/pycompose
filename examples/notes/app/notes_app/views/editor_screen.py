@@ -34,7 +34,9 @@ def editor_screen(
     Args:
         note: The note being edited.
         session: The session shell, for the palette.
-        actions: The registry this screen binds its controls to.
+        actions: The registry this screen binds its controls to. Callers omit
+            it; the app context supplies it, as Compose supplies
+            ``LocalConfiguration.current``.
 
     Returns:
         A Scaffold declaration holding the note's title and body fields.

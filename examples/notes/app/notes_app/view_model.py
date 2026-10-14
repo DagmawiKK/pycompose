@@ -14,7 +14,6 @@ from notes_app.domain.models import Note, NotesRepo
 from notes_app.domain.usecases import get_note, list_notes
 from notes_app.state import LIST_ROUTE, Session, note_in, seeded_session
 from notes_app.views import editor_screen, list_screen
-from pycompose import Registry
 from pycompose.core.effect import Effect
 from pycompose.errors import StateError
 from pycompose.state import State
@@ -26,7 +25,6 @@ def snapshot(
     session: Session,
     notes: list[Note],
     version: int,
-    actions: Registry,
     effects: tuple[Effect, ...] = (),
 ) -> State:
     """Return the snapshot one screen of this state produces.
@@ -35,7 +33,6 @@ def snapshot(
         session: The session shell.
         notes: The notes to render, newest first.
         version: Monotonic snapshot counter, advanced once per change.
-        actions: The registry the screen binds its controls to.
         effects: One-shot host requests to run once with this snapshot.
 
     Returns:
@@ -43,9 +40,9 @@ def snapshot(
     """
     editing = editing_note(session, notes)
     root = (
-        list_screen(id="screen", notes=notes, session=session, actions=actions)
+        list_screen(id="screen", notes=notes, session=session)
         if editing is None
-        else editor_screen(id="screen", note=editing, session=session, actions=actions)
+        else editor_screen(id="screen", note=editing, session=session)
     )
     return State(root=root, version=version, app=session, effects=effects)
 

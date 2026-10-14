@@ -56,10 +56,9 @@ select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "ARG", "RUF", "PIE", 
 ignore = ["PLR0913", "PLR2004"]
 
 [tool.ruff.lint.per-file-ignores]
-# An action's signature is dictated by the contract it implements, not by what
-# this particular transition happens to read: a lifecycle callback that only
-# repaints still declares `container`, because every action must be able to ask
-# for one. Flagging those individually would be noise the author cannot silence.
+# Every action takes a payload TypedDict, even one whose command carries no event
+# fields at all. Those leave `payload` unread, which the contract makes
+# unavoidable rather than accidental.
 "examples/**/actions.py" = ["ARG001"]
 # Handlers here exist to be introspected, not run. An unused parameter is the
 # point: it is what proves the signature is parsed and nothing else is.
