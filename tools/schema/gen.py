@@ -687,12 +687,21 @@ def _python_constructor(name: str, spec: dict) -> list[str]:
     return [*lines, "", ""]
 
 
-def render_python_components(registry: dict) -> str:
-    """Generate typed Python constructors from the native manifest."""
+def render_python_components(registry: dict, package: str = "pycompose.m3") -> str:
+    """Generate typed Python constructors from the native manifest.
+
+    Args:
+        registry: The parsed schema.
+        package: The package these are imported from, named in the module
+            docstring so an app slice does not point readers at the catalog.
+
+    Returns:
+        The generated module.
+    """
     names = sorted(registry["components"])
     lines = [
         f"# {GENERATED_NOTICE}",
-        '"""Typed native component constructors; import from pycompose.m3."""',
+        f'"""Typed native component constructors; import from {package}."""',
         "",
         "from __future__ import annotations",
         "",
@@ -727,18 +736,43 @@ def render_python_components(registry: dict) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def render_python_exports(registry: dict) -> str:
-    """Generate the import surface for all supported native components."""
+def render_python_exports(registry: dict, package: str = "pycompose.m3") -> str:
+    """Generate the import surface for all supported native components.
+
+    Args:
+        registry: The parsed schema.
+        package: The package the constructors live in. The library ships the
+            full catalog under ``pycompose.m3``; a per-app slice (ADR-0014)
+            ships its own subset under a bare ``m3``, because importing the
+            library's full set would bring back every component the app just
+            declined to ship.
+
+    Returns:
+        The generated ``__init__.py``.
+    """
     names = sorted(registry["components"])
+    # Sorted by module, because the pre-commit isort hook would otherwise
+    # reorder a file nobody may hand-edit and `gen.py --check` would then fail
+    # forever on it -- the same two-gates-revert-each-other trap as ktlint
+    # against the Kotlin adapters. "pycompose.m3.generated_components" sorts
+    # after "pycompose.components.modifiers"; a bare "m3" sorts before it, so
+    # the order genuinely differs between the library and an app slice.
+    imports = [
+        (f"{package}.generated_components", names),
+        ("pycompose.components.modifiers", ["Modifier"]),
+    ]
+    blocks = [
+        f"from {module} import ("
+        + "".join(f"\n    {name}," for name in entries)
+        + "\n)"
+        for module, entries in sorted(imports, key=lambda item: item[0])
+    ]
     return "\n".join(
         [
             f"# {GENERATED_NOTICE}",
             '"""Native components backed by the shared manifest."""',
             "",
-            "from pycompose.components.modifiers import Modifier",
-            "from pycompose.m3.generated_components import (",
-            *(f"    {name}," for name in names),
-            ")",
+            *blocks,
             "",
             "__all__ = [",
             *(f'    "{name}",' for name in sorted([*names, "Modifier"])),
@@ -1020,6 +1054,91 @@ def render_kotlin_registry(registry: dict) -> str:
     return "\n".join([*lines, "    )", "}", ""])
 
 
+def build_app(app: Path, *, check: bool) -> int:
+    """Generate an app's component slice, or verify it (ADR-0014).
+
+    Args:
+        app: The app's root directory.
+        check: Report drift instead of writing.
+
+    Returns:
+        Process exit code: 0 clean, 1 on drift or an unresolvable app.
+    """
+    from gen_app import (
+        _ADAPTERS_RELATIVE,
+        _IR_RELATIVE,
+        APP_PACKAGE,
+        AppCodegenError,
+        discover,
+        load_catalog,
+        slice_registry,
+    )
+
+    if not app.is_dir():
+        print(f"gen.py: not a directory: {app}", file=sys.stderr)
+        return 1
+    try:
+        registry = load_catalog(SCHEMA_PATH)
+        used = discover(app, registry)
+    except AppCodegenError as exc:
+        print(f"gen.py: {exc}", file=sys.stderr)
+        return 1
+    if not used:
+        print(
+            f"gen.py: {app} references no components; nothing to generate",
+            file=sys.stderr,
+        )
+        return 1
+
+    sliced = slice_registry(registry, used)
+    package = APP_PACKAGE
+    artifacts: dict[Path, str] = {
+        app / package / "generated_components.py": render_python_components(
+            sliced, package
+        ),
+        app / package / "__init__.py": render_python_exports(sliced, package),
+        app / _IR_RELATIVE / "UiModels.kt": render_kotlin_models(sliced),
+        app / _IR_RELATIVE / "IrContract.kt": render_kotlin_registry(sliced),
+    }
+    adapters = render_generated_adapters(sliced)
+    if adapters:
+        artifacts[app / _ADAPTERS_RELATIVE] = adapters
+    for fixture in sorted((ROOT / "pycompose/testing/fixtures").glob("*.json")):
+        artifacts[app / "android/ir/src/test/resources" / fixture.name] = (
+            fixture.read_text(encoding="utf-8")
+        )
+
+    if check:
+        drifted = [
+            str(path) for path, expected in artifacts.items() if _read(path) != expected
+        ]
+        if drifted:
+            for path in drifted:
+                print(f"gen.py: drift detected: {path}", file=sys.stderr)
+            return 1
+        print(f"gen.py: app slice up to date ({len(used)} component(s))")
+        return 0
+
+    for path, content in artifacts.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8")
+    manual = [
+        name
+        for name in sliced["components"]
+        if sliced["components"][name].get("adapter") == "manual"
+    ]
+    print(
+        f"gen.py: {app}: {len(used)} component(s) generated "
+        f"({len(artifacts)} artifact(s)); "
+        + (
+            f"hand-written adapters still needed for {', '.join(sorted(manual))}"
+            if manual
+            else "no hand-written adapters needed"
+        )
+    )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
@@ -1032,7 +1151,19 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Verify derived artifacts are up to date; exit non-zero on drift (CI).",
     )
+    parser.add_argument(
+        "--app",
+        type=Path,
+        metavar="DIR",
+        help=(
+            "Generate only the components DIR uses, into DIR itself (ADR-0014). "
+            "Discovery is by name in the AST; an app that stops referencing a "
+            "component stops shipping it."
+        ),
+    )
     args = parser.parse_args(argv)
+    if args.app is not None:
+        return build_app(args.app, check=args.check)
     registry = load_registry()
     artifacts = {
         IR_SCHEMA_PATH: render_ir_schema(registry),

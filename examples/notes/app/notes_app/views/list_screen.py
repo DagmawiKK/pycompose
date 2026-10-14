@@ -2,13 +2,7 @@
 
 from __future__ import annotations
 
-from notes_app.domain.models import Note
-from notes_app.domain.usecases import count_line
-from notes_app.state import Session
-from notes_app.theme import Theme
-from pycompose import Registry, composable
-from pycompose.core import Node
-from pycompose.m3 import (
+from m3 import (
     Button,
     Column,
     LazyColumn,
@@ -19,6 +13,13 @@ from pycompose.m3 import (
     Text,
     TextButton,
 )
+
+from notes_app.domain.models import Note
+from notes_app.domain.usecases import count_line
+from notes_app.state import Session
+from notes_app.theme import Theme
+from pycompose import Registry, composable
+from pycompose.core import Node
 
 
 @composable

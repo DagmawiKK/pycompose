@@ -2,12 +2,7 @@
 
 from __future__ import annotations
 
-from notes_app.domain.models import Note
-from notes_app.state import Session
-from notes_app.theme import Theme
-from pycompose import Registry, composable
-from pycompose.core import Node
-from pycompose.m3 import (
+from m3 import (
     Column,
     Modifier,
     Row,
@@ -17,6 +12,12 @@ from pycompose.m3 import (
     TextButton,
     TextField,
 )
+
+from notes_app.domain.models import Note
+from notes_app.state import Session
+from notes_app.theme import Theme
+from pycompose import Registry, composable
+from pycompose.core import Node
 
 
 @composable
