@@ -36,3 +36,8 @@ local.properties
 # Written by the example app when a test points storage at the cwd.
 /notes.json
 /notes.seq
+
+# Compose API dumps, rebuilt by ./gradlew dumpComposeApi. Build output from the
+# resolved classpath, never a checked-in source of truth -- that was the whole
+# point of reading bytecode instead of a published current.txt.
+android/build/compose-api/

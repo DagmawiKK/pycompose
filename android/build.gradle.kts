@@ -14,6 +14,12 @@ plugins {
     alias(libs.plugins.detekt)
 }
 
+// Not a module: a task that reads :renderer's resolved classpath and writes the
+// Compose API as JSON for the schema tooling. Applied, not included, because it
+// is a build-time utility and nothing should depend on it -- and it must live
+// here rather than in settings.gradle.kts because it needs a project receiver.
+apply(from = "dump-compose-api.gradle.kts")
+
 subprojects {
     apply(plugin = "com.diffplug.spotless")
     apply(plugin = "io.gitlab.arturbosch.detekt")

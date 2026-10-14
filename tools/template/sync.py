@@ -14,7 +14,18 @@ ROOT = Path(__file__).resolve().parents[2]
 # Build/cache outputs, machine-local configuration and stale bytecode are never
 # shipped; __pycache__ would otherwise leak a host-specific .pyc into the APK.
 EXCLUDED = frozenset(
-    {".gradle", ".kotlin", ".idea", "build", "local.properties", "__pycache__"}
+    {
+        ".gradle",
+        ".kotlin",
+        ".idea",
+        "build",
+        "local.properties",
+        "__pycache__",
+        # A build-time tool for developing the schema. It reads :renderer's
+        # classpath and exists only for the repo's own tooling -- a scaffolded
+        # app is handed generated code, and never regenerates the catalog.
+        "dump-compose-api.gradle.kts",
+    }
 )
 
 
