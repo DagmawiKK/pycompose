@@ -93,15 +93,22 @@ class Host:
                 touches a file and the data layer is never on the path.
         """
         from notes_app.container import AppContainer
+        from notes_app.domain import Notes
 
         self.follow_navigation = follow_navigation
         self.repo: Any = repo if repo is not None else a_store()
-        self.container = AppContainer(self.repo)
+        self.container = AppContainer(Notes(self.repo))
         # A real session installs both of these while resolving the app's
         # factory. A test driving the surface directly stands in for it, so it
         # says so once, in one place.
         app.actions.install_container(self.container)
-        install_context(AppContext(actions=app.actions, container=self.container))
+        install_context(
+            AppContext(
+                actions=app.actions,
+                container=self.container,
+                notes=self.container.notes,
+            )
+        )
         self._bridge = BridgeSurface(
             Store(
                 app.build(

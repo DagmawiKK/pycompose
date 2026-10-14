@@ -82,7 +82,16 @@ class RuntimeSession:
         # Before `build`, because a composable reached during the first render
         # resolves its registry from this. The module is already imported, so
         # both halves of the context exist by now.
-        install_context(AppContext(actions=actions, container=container))
+        # The context carries the registry plus whatever the app's own container
+        # holds, so a render function reaches a use case the same way Compose
+        # reaches anything else: by name, from the ambient.
+        install_context(
+            AppContext(
+                actions=actions,
+                container=container,
+                **_carried(container),
+            )
+        )
         self._check_injection(actions, container)
         actions.install_container(container)
         arguments: dict[str, object] = {}
@@ -322,3 +331,27 @@ def reload(route: str, restore: str = "") -> None:
     """
     if _session is not None:
         _session.reload(route, restore)
+
+
+def _carried(container: object | None) -> dict[str, object]:
+    """Return the public values an app container holds.
+
+    Read through ``dir`` rather than ``vars`` so a container using ``__slots__``
+    works as well as a plain one; an app should not have to know which the
+    runtime happened to prefer.
+
+    Args:
+        container: The app's container, or None when it declared none.
+
+    Returns:
+        Each public, non-callable attribute, by name.
+    """
+    if container is None:
+        return {}
+    return {
+        name: value
+        for name in dir(container)
+        if not name.startswith("_")
+        for value in (getattr(container, name),)
+        if not callable(value)
+    }

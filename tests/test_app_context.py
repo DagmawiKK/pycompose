@@ -157,7 +157,7 @@ def test_the_notes_snapshot_takes_no_registry() -> None:
     assert "actions" not in inspect.signature(snapshot).parameters
 
 
-def test_only_actions_that_reach_storage_still_declare_a_container() -> None:
+def test_only_actions_that_reach_storage_still_declare_a_dependency() -> None:
     """A toast does not need the repository, and no longer says so."""
     import inspect
 
@@ -167,16 +167,14 @@ def test_only_actions_that_reach_storage_still_declare_a_container() -> None:
     finally:
         sys.path.remove(str(APP))
 
-    # The package re-exports the registry as `actions`, shadowing the module.
     definitions = sys.modules["notes_app.actions"]
-
     mutates = {"new_note", "open_note", "set_title", "set_body", "delete_note"}
     renders_only = {"go_back", "show_about", "on_route_changed", "on_config_changed"}
 
     for name in sorted(mutates | renders_only):
         handler = getattr(definitions, name)
         function = getattr(handler, "function", handler)
-        wants = "container" in inspect.signature(function).parameters
+        wants = "notes" in inspect.signature(function).parameters
         assert wants is (name in mutates), name
 
 
@@ -189,11 +187,14 @@ def test_the_app_still_renders_with_a_context_installed() -> None:
         import main
         from notes_app.container import AppContainer
         from notes_app.data.notes_repo import MemoryNotesRepo
+        from notes_app.domain import Notes
     finally:
         sys.path.remove(str(APP))
 
-    supplied = AppContainer(MemoryNotesRepo([]))
+    supplied = AppContainer(Notes(MemoryNotesRepo([])))
     main.actions.install_container(supplied)
-    install_context(AppContext(actions=main.actions, container=supplied))
+    install_context(
+        AppContext(actions=main.actions, container=supplied, notes=supplied.notes)
+    )
     surface = BridgeSurface(Store(main.build(container=supplied)), main.actions)
     assert surface.expose_latest_snapshot() is not None

@@ -13,8 +13,7 @@ from __future__ import annotations
 
 from typing import Literal, TypedDict
 
-from notes_app.container import AppContainer
-from notes_app.domain import usecases
+from notes_app.domain import Notes
 from notes_app.state import LIST_ROUTE, Session, detail_route, note_in
 from notes_app.view_model import editing_note, of, showing_list, snapshot
 from pycompose import Registry, context
@@ -68,7 +67,7 @@ def _next(
     Returns:
         The next snapshot, one version on.
     """
-    notes = usecases.list_notes(context().container.notes_repo)
+    notes = context().notes.list()
     return snapshot(session, notes, state.version + 1, effects=effects)
 
 
@@ -80,19 +79,19 @@ def new_note(
     state: State,
     payload: Nothing,
     *,
-    container: AppContainer,
+    notes: Notes,
 ) -> State:
     """Create a note and ask the host to open it.
 
     Args:
         state: Snapshot before the tap.
         payload: Empty; this command takes no event fields.
-        container: The app's dependencies.
+        notes: What the app can do with notes.
 
     Returns:
         The next snapshot, carrying a navigate effect for the new note.
     """
-    note_id = usecases.create_note(container.notes_repo)
+    note_id = notes.create()
     return _next(
         state,
         of(state),
@@ -104,20 +103,20 @@ def new_note(
 
 
 @actions
-def open_note(state: State, payload: NoteId, *, container: AppContainer) -> State:
+def open_note(state: State, payload: NoteId, *, notes: Notes) -> State:
     """Open one note's editor.
 
     Args:
         state: Snapshot before the tap.
         payload: Note id bound by the row that was tapped.
-        container: The app's dependencies.
+        notes: What the app can do with notes.
 
     Returns:
         The next snapshot, carrying a navigate effect for that note.
     """
     session = of(state)
     note_id = payload["note_id"]
-    if usecases.get_note(container.notes_repo, note_id) is None:
+    if notes.get(note_id) is None:
         # The row names a note that no longer exists. Staying put beats navigating
         # to a destination the view-model would immediately bounce back from.
         return _next(state, session)
@@ -156,44 +155,44 @@ def on_route_changed(state: State, payload: Route) -> State:
 
 
 @actions
-def set_title(state: State, payload: Edit, *, container: AppContainer) -> State:
+def set_title(state: State, payload: Edit, *, notes: Notes) -> State:
     """Record the title field's current text.
 
     Args:
         state: Snapshot before the keystroke.
         payload: Bound note id, plus event-supplied field text.
-        container: The app's dependencies.
+        notes: What the app can do with notes.
 
     Returns:
         The next snapshot with the note retitled.
     """
     session = of(state)
-    if not _is_editing(session, payload["note_id"], container):
+    if not _is_editing(session, payload["note_id"], notes):
         return _next(state, session)
-    usecases.rename_note(container.notes_repo, payload["note_id"], payload["value"])
+    notes.rename(payload["note_id"], payload["value"])
     return _next(state, session)
 
 
 @actions
-def set_body(state: State, payload: Edit, *, container: AppContainer) -> State:
+def set_body(state: State, payload: Edit, *, notes: Notes) -> State:
     """Record the body field's current text.
 
     Args:
         state: Snapshot before the keystroke.
         payload: Bound note id, plus event-supplied field text.
-        container: The app's dependencies.
+        notes: What the app can do with notes.
 
     Returns:
         The next snapshot with the note's text replaced.
     """
     session = of(state)
-    if not _is_editing(session, payload["note_id"], container):
+    if not _is_editing(session, payload["note_id"], notes):
         return _next(state, session)
-    usecases.retext_note(container.notes_repo, payload["note_id"], payload["value"])
+    notes.retext(payload["note_id"], payload["value"])
     return _next(state, session)
 
 
-def _is_editing(session: Session, note_id: int, container: AppContainer) -> bool:
+def _is_editing(session: Session, note_id: int, notes: Notes) -> bool:
     """Return whether the current route is editing this note.
 
     A stale control must be harmless rather than destructive, so an edit for a
@@ -202,31 +201,31 @@ def _is_editing(session: Session, note_id: int, container: AppContainer) -> bool
     Args:
         session: The session shell.
         note_id: Note the control was bound to.
-        container: The app's dependencies.
+        notes: What the app can do with notes.
 
     Returns:
         True when that note is the one on screen.
     """
-    editing = editing_note(session, usecases.list_notes(container.notes_repo))
+    editing = editing_note(session, notes.list())
     return editing is not None and editing.id == note_id
 
 
 @actions
-def delete_note(state: State, payload: NoteId, *, container: AppContainer) -> State:
+def delete_note(state: State, payload: NoteId, *, notes: Notes) -> State:
     """Delete one note and return to the list.
 
     Args:
         state: Snapshot before the tap.
         payload: Note id bound by the control that was tapped.
-        container: The app's dependencies.
+        notes: What the app can do with notes.
 
     Returns:
         The next snapshot without that note, and a request to return to the list.
     """
     session = of(state)
-    if usecases.get_note(container.notes_repo, payload["note_id"]) is None:
+    if notes.get(payload["note_id"]) is None:
         return _next(state, session)
-    usecases.delete_note(container.notes_repo, payload["note_id"])
+    notes.delete(payload["note_id"])
     return _next(
         state,
         session,
@@ -273,22 +272,20 @@ def show_about(state: State, payload: Nothing) -> State:
 
 
 @actions
-def on_back_requested(
-    state: State, payload: Nothing, *, container: AppContainer
-) -> State:
+def on_back_requested(state: State, payload: Nothing, *, notes: Notes) -> State:
     """Handle the system back gesture the way a NavController would.
 
     Args:
         state: Snapshot before the gesture.
         payload: Empty; the host sends nothing extra.
-        container: The app's dependencies.
+        notes: What the app can do with notes.
 
     Returns:
         The list from anywhere but the list, or a snapshot asking the host to
         close the app when there is nowhere left to go back to.
     """
     session = of(state)
-    if showing_list(session, usecases.list_notes(container.notes_repo)):
+    if showing_list(session, notes.list()):
         return _next(state, session, effects=(Effect("finish"),))
     return _next(state, session, effects=(Effect("navigate", {"route": LIST_ROUTE}),))
 

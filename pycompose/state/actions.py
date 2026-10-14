@@ -8,7 +8,7 @@ from typing import Any, cast
 from pycompose.core.action_binding import BindingSpec, check_payload
 from pycompose.core.props import to_camel_case
 from pycompose.errors import StateError
-from pycompose.state.app_action import AppAction
+from pycompose.state.app_action import CONTAINER, AppAction
 from pycompose.state.state import State
 
 __all__ = ["ActionHandler", "Actions", "Registry"]
@@ -138,6 +138,12 @@ class Actions:
     def _supply(self, action_id: str) -> dict[str, Any]:
         """Return the dependencies this handler declared that it wants.
 
+        ``container`` is the graph itself. Any other name is looked up on it, so
+        an action may ask for what it actually uses -- a use case, say -- rather
+        than for the object that happens to carry it. Resolution is by name on
+        the app's own container, never by annotation, so the wiring is still
+        only discoverable by reading it.
+
         Args:
             action_id: Id the handler is registered under.
 
@@ -145,9 +151,10 @@ class Actions:
             Keyword arguments to pass, empty when it wants nothing.
 
         Raises:
-            StateError: If the handler wants a container and none was installed.
-                The session checks for this at startup, so reaching here means
-                something called dispatch outside a session.
+            StateError: If the handler wants something and the session installed
+                no container, or the container does not carry that name. The
+                session checks both at startup, so reaching here means dispatch
+                happened outside one.
         """
         definition = self._contracts.get(action_id)
         if definition is None or not definition.injected:
@@ -157,7 +164,19 @@ class Actions:
                 "this action asks for the container but the app declared none",
                 action_id=action_id,
             )
-        return {"container": self._container}
+        supplied = {}
+        for name in definition.injected:
+            if name == CONTAINER:
+                supplied[name] = self._container
+                continue
+            if not hasattr(self._container, name):
+                raise StateError(
+                    "the app container carries no such dependency",
+                    action_id=action_id,
+                    dependency=name,
+                )
+            supplied[name] = getattr(self._container, name)
+        return supplied
 
     def _check_declared(self, action_id: str, payload: Any) -> None:
         """Check a payload against the fields its handler declared.

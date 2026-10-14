@@ -45,7 +45,7 @@ from notes_app.actions import actions
 from notes_app.container import AppContainer
 from notes_app.container import build as build_container
 from notes_app.state import LIST_ROUTE, Session, seeded_session
-from notes_app.view_model import held, snapshot
+from notes_app.view_model import snapshot
 
 from pycompose.errors import StateError
 from pycompose.state import State
@@ -90,9 +90,7 @@ def build(
     """
     # Only a direct call without one, which the session never makes.
     supplied = container if container is not None else build_container()
-    return snapshot(
-        _rehydrated(restore).evolve(route=route), held(supplied.notes_repo), 0
-    )
+    return snapshot(_rehydrated(restore).evolve(route=route), supplied.notes.list(), 0)
 
 
 def _rehydrated(restore: str) -> Session:

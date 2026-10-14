@@ -14,10 +14,9 @@ from typing import Any, TypedDict
 import pytest
 
 from pycompose import AppContext, action, install_context
-from pycompose.bridge import BridgeSurface
 from pycompose.bridge.runtime import RuntimeSession
 from pycompose.errors import BridgeError, StateError
-from pycompose.state import Actions, State, Store
+from pycompose.state import Actions, State
 
 APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"
 
@@ -99,14 +98,26 @@ def test_a_third_positional_parameter_is_refused() -> None:
         action(handler)
 
 
-def test_a_parameter_that_is_not_a_container_is_refused() -> None:
-    """Only container may be injected; a resolver would be a different decision."""
+def test_an_action_may_ask_for_anything_the_container_carries() -> None:
+    """Asking for a use case beats asking for the object that holds it."""
 
-    def handler(state: State, payload: Nothing, *, repo: Container) -> State:
+    def handler(state: State, payload: Nothing, *, notes: Container) -> State:
         return state
 
-    with pytest.raises(StateError, match="only take container"):
-        action(handler)
+    assert action(handler).injected == ("notes",)
+
+
+def test_a_dependency_the_container_lacks_is_refused_at_startup() -> None:
+    """Not silently None -- the session names what it could not find."""
+
+    def handler(state: State, payload: Nothing, *, absent: Container) -> State:
+        return state
+
+    definition = action(handler)
+    registry = Actions(definition)
+    registry.install_container(Container())
+    with pytest.raises(StateError, match="carries no such dependency"):
+        registry.dispatch(definition.name, _state(), {})
 
 
 def test_the_injection_set_is_decided_once_not_per_dispatch() -> None:
@@ -140,19 +151,22 @@ def test_the_app_s_actions_run_without_a_bridge(notes: Any) -> None:
     """The claim from the design: no mocks, no reflection, no session."""
     from notes_app.container import AppContainer
     from notes_app.data.notes_repo import MemoryNotesRepo
+    from notes_app.domain import Notes
     from notes_app.domain.models import Note
 
     # A session installs both of these. This test stands in for one, and must
     # do it before build: a composable reached during the first render resolves
     # its registry from the context.
-    supplied = AppContainer(MemoryNotesRepo([Note(1, "Only")]))
+    supplied = AppContainer(Notes(MemoryNotesRepo([Note(1, "Only")])))
     notes.actions.install_container(supplied)
-    install_context(AppContext(actions=notes.actions, container=supplied))
+    install_context(
+        AppContext(actions=notes.actions, container=supplied, notes=supplied.notes)
+    )
     start = notes.build(route="notes", restore="", container=supplied)
 
     # Call the decorated action itself, the way a developer would in a test.
     delete = notes.actions._contracts["notes_app.actions.delete_note"]
-    delete.function(start, {"note_id": 1}, container=supplied)
+    delete.function(start, {"note_id": 1}, notes=supplied.notes)
 
 
 # ---------------------------------------------------------------------------
@@ -258,11 +272,9 @@ def test_the_notes_app_starts_with_its_container_installed(notes: Any) -> None:
     try:
         session = RuntimeSession("main:build", "notes", debug=True)
         assert session.error() == ""
-        assert notes.container().notes_repo is not None
-        surface = BridgeSurface(
-            Store(notes.build(route="notes", restore="", container=notes.container())),
-            notes.actions,
-        )
-        assert surface.expose_latest_snapshot() is not None
+        container = notes.container()
+        # What the session installed, reached the way an action reaches it.
+        assert container.notes.list() == []
+        assert notes.actions.injected == ("notes",)
     finally:
         use_root(Path.cwd())

@@ -64,10 +64,11 @@ class AppAction(Generic[S, P]):
     ) -> tuple[str, ...]:
         """Return the names this action wants supplied at dispatch.
 
-        Decided once, here, so that dispatch itself reflects on nothing. Only
-        ``container`` may be injected: resolving arbitrary annotations by type
-        would make a graph of a thing whose wiring can only be discovered by
-        running it, which is the trade this design deliberately declines.
+        Decided once, here, so that dispatch itself reflects on nothing. Names
+        are resolved on the app's own container, never by annotation type: a
+        resolver would build a graph whose wiring is only discoverable by running
+        it, which is the trade this design deliberately declines. ``container``
+        asks for the whole graph; any other name asks for one of its parts.
 
         Args:
             signature: The action's own signature.
@@ -77,23 +78,17 @@ class AppAction(Generic[S, P]):
             The names to supply, empty for an action that wants nothing.
 
         Raises:
-            StateError: If an extra parameter is anything other than a
-                keyword-only ``container``.
+            StateError: If an extra parameter is not keyword-only.
         """
         extra = parameters[2:]
-        if not extra:
-            return ()
         for name in extra:
-            if name != CONTAINER:
-                raise StateError(
-                    "an action may only take container after its payload",
-                    parameter=name,
-                )
             if signature.parameters[name].kind is not inspect.Parameter.KEYWORD_ONLY:
                 raise StateError(
-                    "container must be keyword-only so a typo cannot pass silently"
+                    "an injected dependency must be keyword-only so a typo "
+                    "cannot pass silently",
+                    parameter=name,
                 )
-        return (CONTAINER,)
+        return tuple(extra)
 
     def __call__(self, state: S, payload: P, **injected: Any) -> S:
         """Run the transition directly, without going through the runtime.

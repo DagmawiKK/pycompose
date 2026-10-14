@@ -10,8 +10,8 @@ from __future__ import annotations
 
 from typing import cast
 
-from notes_app.domain.models import Note, NotesRepo
-from notes_app.domain.usecases import get_note, list_notes
+from notes_app.domain.models import Note
+from notes_app.domain.usecases import Notes
 from notes_app.state import LIST_ROUTE, Session, note_in, seeded_session
 from notes_app.views import editor_screen, list_screen
 from pycompose.core.effect import Effect
@@ -77,29 +77,16 @@ def showing_list(session: Session, notes: list[Note]) -> bool:
     return editing_note(session, notes) is None
 
 
-def held(repo: NotesRepo) -> list[Note]:
-    """Return every note a repository holds, newest first.
+def held(notes: Notes) -> list[Note]:
+    """Return every note the use cases hold, newest first.
 
     Args:
-        repo: Where the notes are held.
+        notes: What the app can do with notes.
 
     Returns:
-        The stored notes.
+        The notes to render.
     """
-    return list_notes(repo)
-
-
-def find(repo: object, note_id: int) -> Note | None:
-    """Return one note from a repository, when it is still there.
-
-    Args:
-        repo: Anything satisfying the notes repository protocol.
-        note_id: Identity to look for.
-
-    Returns:
-        The note, or None.
-    """
-    return get_note(repo, note_id)  # type: ignore[arg-type]
+    return notes.list()
 
 
 def of(state: State) -> Session:
