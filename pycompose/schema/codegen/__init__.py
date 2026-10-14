@@ -15,6 +15,13 @@ happens to ship in the same distribution.
 
 from __future__ import annotations
 
-from pycompose.schema.codegen.main import build_app, main
+from pycompose.schema.codegen import main
+from pycompose.schema.codegen.main import build_app
+from pycompose.schema.codegen.main import main as run
 
-__all__ = ["build_app", "main"]
+# `main` stays the submodule and is not shadowed by a function of the same
+# name: `from pycompose.schema.codegen import main` must give the module, or
+# every caller reaching for a module-level constant gets a function instead.
+# The entry point is therefore `run`.
+
+__all__ = ["build_app", "main", "run"]

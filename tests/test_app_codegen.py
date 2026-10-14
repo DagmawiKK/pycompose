@@ -199,3 +199,62 @@ def shutil_copy(source: Path, destination: Path) -> None:
     import shutil
 
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns("android"))
+
+
+# ---------------------------------------------------------------------------
+# The packaged catalog, for an app with no repository
+# ---------------------------------------------------------------------------
+
+
+def test_the_catalog_ships_in_the_package() -> None:
+    """An installed wheel has no repo above it, so it must carry a catalog.
+
+    Without this, `build_app` works in a checkout and fails for every real user,
+    which is the shape of bug that only shows up after release.
+    """
+    from pycompose.schema.codegen import main as codegen
+
+    assert (
+        codegen.PACKAGED_CATALOG.is_file()
+    ), "components.json is not shipped; an installed pycompose cannot generate"
+
+
+def test_the_packaged_catalog_matches_the_source() -> None:
+    """It is a generated artifact, so this should be unreachable.
+
+    Asserted anyway because a duplicate of the SSOT is exactly what ADR-0002
+    exists to prevent, and a copy that silently goes stale is worse than no
+    copy at all -- apps would generate from a catalog the library has moved on
+    from.
+    """
+    from pycompose.schema.codegen import main as codegen
+
+    assert (
+        codegen.PACKAGED_CATALOG.read_bytes()
+        == (ROOT / "schema/components.json").read_bytes()
+    )
+
+
+def test_codegen_reads_the_packaged_catalog_when_there_is_no_repo(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The fallback path itself, not just the file's existence."""
+    from pycompose.schema.codegen import main as codegen
+
+    monkeypatch.setattr(codegen, "SCHEMA_PATH", codegen.PACKAGED_CATALOG)
+    registry = codegen.load_registry()
+    assert "Button" in registry["components"]
+
+
+def test_the_library_codegen_runs_from_the_package() -> None:
+    """`python -m pycompose.schema.codegen` is the entry point an app would use."""
+    import subprocess
+
+    result = subprocess.run(
+        [sys.executable, "-m", "pycompose.schema.codegen", "--check"],
+        capture_output=True,
+        text=True,
+        cwd=ROOT,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
