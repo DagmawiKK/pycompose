@@ -1,0 +1,601 @@
+{
+  "schemaVersion": "1.9.0",
+  "supportedSchemaVersions": [
+    "1.0.0",
+    "1.1.0",
+    "1.2.0",
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+    "1.9.0"
+  ],
+  "minLibraryVersion": "0.1.0",
+  "components": {
+    "Box": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "contentAlignment": {
+          "type": "enum",
+          "values": [
+            "topStart",
+            "topCenter",
+            "topEnd",
+            "centerStart",
+            "center",
+            "centerEnd",
+            "bottomStart",
+            "bottomCenter",
+            "bottomEnd"
+          ],
+          "default": "topStart"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      },
+      "adapter": "manual"
+    },
+    "Button": {
+      "category": "buttons",
+      "stability": "stable",
+      "props": {
+        "text": {
+          "type": "string",
+          "required": true,
+          "content": {
+            "composable": "Text"
+          }
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "text",
+        "onClick"
+      ]
+    },
+    "Checkbox": {
+      "category": "input",
+      "stability": "stable",
+      "since": "1.3.0",
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "boolean"
+            }
+          ],
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
+    "Column": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "horizontalAlignment": {
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end"
+          ],
+          "default": "start"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      },
+      "adapter": "manual"
+    },
+    "FilterChip": {
+      "category": "input",
+      "stability": "stable",
+      "since": "1.3.0",
+      "props": {
+        "label": {
+          "type": "string",
+          "required": true,
+          "content": {
+            "composable": "Text",
+            "parameter": "label"
+          }
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
+    "Image": {
+      "category": "media",
+      "stability": "stable",
+      "since": "1.1.0",
+      "props": {
+        "resource": {
+          "type": "resource",
+          "values": [
+            "drawable",
+            "asset"
+          ],
+          "required": true
+        },
+        "contentDescription": {
+          "type": "string"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "resource"
+      ]
+    },
+    "LazyColumn": {
+      "category": "lists",
+      "stability": "stable",
+      "props": {
+        "verticalArrangement": {
+          "type": "enum",
+          "values": [
+            "top",
+            "center",
+            "bottom",
+            "spaceEvenly",
+            "spaceBetween",
+            "spaceAround"
+          ],
+          "default": "top"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "items"
+      },
+      "adapter": "manual"
+    },
+    "Row": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "verticalAlignment": {
+          "type": "enum",
+          "values": [
+            "top",
+            "center",
+            "bottom"
+          ],
+          "default": "top"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      },
+      "adapter": "manual"
+    },
+    "Scaffold": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "containerColor": {
+          "type": "color"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      },
+      "adapter": "manual"
+    },
+    "Spacer": {
+      "category": "layout",
+      "stability": "stable",
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
+    "Text": {
+      "category": "typography",
+      "stability": "stable",
+      "props": {
+        "text": {
+          "type": "string",
+          "required": true
+        },
+        "resource": {
+          "type": "resource",
+          "values": [
+            "string",
+            "asset"
+          ],
+          "since": "1.1.0"
+        },
+        "fontResource": {
+          "type": "resource",
+          "values": [
+            "font"
+          ],
+          "since": "1.1.0"
+        },
+        "locale": {
+          "type": "string",
+          "since": "1.1.0"
+        },
+        "style": {
+          "type": "enum",
+          "values": [
+            "bodyLarge",
+            "bodyMedium",
+            "bodySmall",
+            "titleLarge",
+            "titleMedium",
+            "titleSmall",
+            "headlineMedium"
+          ],
+          "default": "bodyMedium"
+        },
+        "color": {
+          "type": "color"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "resource",
+        "fontResource",
+        "locale"
+      ]
+    },
+    "TextButton": {
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.3.0",
+      "props": {
+        "text": {
+          "type": "string",
+          "required": true,
+          "content": {
+            "composable": "Text"
+          }
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "text",
+        "onClick"
+      ]
+    },
+    "TextField": {
+      "category": "input",
+      "stability": "stable",
+      "props": {
+        "value": {
+          "type": "string",
+          "required": true
+        },
+        "selection": {
+          "type": "integer"
+        },
+        "onValueChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "required": true
+        },
+        "onSelectionChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "integer"
+            }
+          ]
+        },
+        "label": {
+          "type": "string",
+          "content": {
+            "composable": "Text",
+            "parameter": "label"
+          }
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "value",
+        "onValueChange",
+        "selection",
+        "onSelectionChange"
+      ]
+    }
+  },
+  "modifiers": {
+    "padding": {
+      "props": {
+        "value": {
+          "type": "dp",
+          "required": true,
+          "minimum": 0
+        }
+      }
+    },
+    "fillMaxWidth": {
+      "props": {
+        "fraction": {
+          "type": "number",
+          "required": true,
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "size": {
+      "props": {
+        "width": {
+          "type": "dp",
+          "required": true,
+          "minimum": 0
+        },
+        "height": {
+          "type": "dp",
+          "required": true,
+          "minimum": 0
+        }
+      }
+    },
+    "clip": {
+      "props": {
+        "shape": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "rectangle",
+            "circle",
+            "rounded"
+          ]
+        }
+      }
+    },
+    "clickable": {
+      "props": {
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "required": true
+        }
+      }
+    }
+  },
+  "actions": {
+    "increment": {
+      "payload": {
+        "by": {
+          "type": "integer",
+          "default": 1
+        }
+      }
+    },
+    "submit": {
+      "payload": {
+        "email": {
+          "type": "string",
+          "required": true
+        }
+      }
+    }
+  },
+  "effects": {
+    "navigate": {
+      "payload": {
+        "route": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "finish": {
+      "payload": {}
+    },
+    "haptic": {
+      "payload": {}
+    },
+    "openUrl": {
+      "payload": {
+        "url": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "toast": {
+      "payload": {
+        "message": {
+          "type": "string",
+          "required": true
+        }
+      }
+    }
+  },
+  "lifecycle": {
+    "onResume": {
+      "payload": {}
+    },
+    "onPause": {
+      "payload": {}
+    },
+    "onBackRequested": {
+      "payload": {}
+    },
+    "onRouteChanged": {
+      "payload": {
+        "route": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "onConfigChanged": {
+      "payload": {
+        "orientation": {
+          "type": "enum",
+          "values": [
+            "portrait",
+            "landscape"
+          ],
+          "required": true
+        },
+        "darkMode": {
+          "type": "boolean",
+          "required": true
+        },
+        "locale": {
+          "type": "string",
+          "required": true
+        },
+        "density": {
+          "type": "number",
+          "required": true
+        }
+      }
+    }
+  },
+  "valueTypes": {
+    "color": {
+      "encoding": "string",
+      "shape": "#RRGGBB",
+      "covers": "Color",
+      "since": "1.8.0"
+    },
+    "dimension": {
+      "encoding": "number",
+      "shape": "value in dp",
+      "covers": "Dp, TextUnit",
+      "since": "1.8.0"
+    },
+    "edges": {
+      "encoding": "object",
+      "shape": "{top, bottom, start, end}, each a dimension",
+      "covers": "PaddingValues, WindowInsets",
+      "since": "1.8.0"
+    },
+    "enum": {
+      "encoding": "string",
+      "shape": "one of a declared value set",
+      "covers": "Arrangement, TextAlign, Shape",
+      "since": "1.8.0"
+    },
+    "brush": {
+      "encoding": "union",
+      "shape": "a color, or {type: linear|radial, colors, stops}",
+      "covers": "Brush",
+      "since": "1.8.0"
+    }
+  }
+}

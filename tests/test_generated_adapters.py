@@ -17,7 +17,12 @@ from typing import Any
 
 import pytest
 
-from schema.gen_adapters import composables, is_mechanical, render, render_file
+from pycompose.schema.codegen.adapters import (
+    composables,
+    is_mechanical,
+    render,
+    render_file,
+)
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
 GENERATED = (

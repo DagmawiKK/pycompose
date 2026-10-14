@@ -65,7 +65,7 @@ def test_the_slice_holds_exactly_the_components_the_app_references(
     slice_names: set[str],
 ) -> None:
     """Discovery is by AST name, so the slice follows the source."""
-    from schema.gen_app import discover, load_catalog
+    from pycompose.schema.codegen.app_slice import discover, load_catalog
 
     referenced = discover(NOTES_APP, load_catalog(ROOT / "schema/components.json"))
     assert slice_names == referenced
@@ -112,7 +112,7 @@ def test_an_imported_component_counts_even_if_never_used(tmp_path: Path) -> None
     that imports one to re-export it would silently drop it -- and the build
     would fail on an import that looks perfectly ordinary.
     """
-    from schema.gen_app import discover, load_catalog
+    from pycompose.schema.codegen.app_slice import discover, load_catalog
 
     app = tmp_path / "app"
     app.mkdir()
@@ -123,7 +123,7 @@ def test_an_imported_component_counts_even_if_never_used(tmp_path: Path) -> None
 
 def test_the_generated_package_does_not_discover_itself(tmp_path: Path) -> None:
     """Otherwise the slice feeds itself and grows without an app asking."""
-    from schema.gen_app import discover, load_catalog
+    from pycompose.schema.codegen.app_slice import discover, load_catalog
 
     app = tmp_path / "app"
     (app / "m3").mkdir(parents=True)
@@ -135,7 +135,7 @@ def test_the_generated_package_does_not_discover_itself(tmp_path: Path) -> None:
 
 def test_usage_as_an_attribute_counts(tmp_path: Path) -> None:
     """`m3.Button` is an Attribute, not a Name."""
-    from schema.gen_app import discover, load_catalog
+    from pycompose.schema.codegen.app_slice import discover, load_catalog
 
     app = tmp_path / "app"
     app.mkdir()

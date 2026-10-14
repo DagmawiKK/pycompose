@@ -220,7 +220,7 @@ def render(name: str, entry: dict[str, Any]) -> str:
     )
 
 
-def render_file(registry: dict) -> str:
+def render_file(registry: dict[str, Any]) -> str:
     """Render every mechanically-derivable adapter as one Kotlin object.
 
     Args:

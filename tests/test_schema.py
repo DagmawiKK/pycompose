@@ -15,7 +15,6 @@ COMPONENTS_PATH = ROOT / "schema" / "components.json"
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
 VALIDATORS_PATH = ROOT / "pycompose" / "ir" / "generated_validators.py"
 PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
-GEN_PATH = ROOT / "tools" / "schema" / "gen.py"
 
 PROP_TYPE_VOCABULARY = {
     "resource",
@@ -37,11 +36,12 @@ def _registry() -> dict:
 
 
 def _gen() -> object:
-    spec = importlib.util.spec_from_file_location("_pycompose_gen", GEN_PATH)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    """The codegen module, imported the ordinary way.
+
+    It used to be loaded from ``tools/schema/gen.py`` by file path, because it
+    did not live anywhere importable. It lives in the package now.
+    """
+    return importlib.import_module("pycompose.schema.codegen.main")
 
 
 def _expected(renderer: str) -> str:
