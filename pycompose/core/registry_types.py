@@ -265,6 +265,32 @@ class ComponentDef(Protocol):
         ...
 
 
+ADAPTERS = ("generated", "manual")
+"""Whether the Kotlin adapter is derived from the schema or written by hand."""
+
+
+def _adapter(name: str, value: object) -> str:
+    """Parse a component's adapter mode.
+
+    Args:
+        name: The component's registry key, for the error message.
+        value: The raw ``adapter`` field.
+
+    Returns:
+        The adapter mode.
+
+    Raises:
+        ComponentRegistryError: If the field is present but unrecognised.
+    """
+    if value is None:
+        return "generated"
+    if value not in ADAPTERS:
+        raise ComponentRegistryError(
+            f"component {name!r}: 'adapter' must be one of {', '.join(ADAPTERS)}"
+        )
+    return cast("str", value)
+
+
 def _reshaped(name: str, value: object) -> tuple[str, ...]:
     """Parse a component's declared reshaped props.
 
@@ -303,6 +329,9 @@ class ComponentSpec:
             parameter -- text is a content slot there -- and no
             `TextField.selection` at all. Recorded so the drift checker can say
             "deliberate" rather than "removed".
+        adapter: ``"manual"`` when the Kotlin adapter cannot be generated. The
+            default is to generate it; a component opts out by carrying a
+            decision a generator cannot make, and says which.
     """
 
     name: str
@@ -312,6 +341,7 @@ class ComponentSpec:
     children: ChildrenRule
     since: str | None = None
     reshaped: tuple[str, ...] = ()
+    adapter: str = "generated"
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -369,6 +399,7 @@ class ComponentSpec:
             children=ChildrenRule.from_mapping(raw_children, where=f"{name}.children"),
             since=cast("str | None", data.get("since")),
             reshaped=_reshaped(name, data.get("reshaped")),
+            adapter=_adapter(name, data.get("adapter")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -387,6 +418,8 @@ class ComponentSpec:
             result["since"] = self.since
         if self.reshaped:
             result["reshaped"] = list(self.reshaped)
+        if self.adapter != "generated":
+            result["adapter"] = self.adapter
         return result
 
 

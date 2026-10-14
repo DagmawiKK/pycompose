@@ -39,7 +39,8 @@
       "children": {
         "allowed": true,
         "min": 0
-      }
+      },
+      "adapter": "manual"
     },
     "Button": {
       "category": "buttons",
@@ -114,7 +115,8 @@
       "children": {
         "allowed": true,
         "min": 0
-      }
+      },
+      "adapter": "manual"
     },
     "FilterChip": {
       "category": "input",
@@ -168,6 +170,7 @@
       "children": {
         "allowed": false
       },
+      "adapter": "manual",
       "reshaped": [
         "resource"
       ]
@@ -195,7 +198,8 @@
       "children": {
         "allowed": true,
         "kind": "items"
-      }
+      },
+      "adapter": "manual"
     },
     "Row": {
       "category": "layout",
@@ -217,7 +221,8 @@
       "children": {
         "allowed": true,
         "min": 0
-      }
+      },
+      "adapter": "manual"
     },
     "Scaffold": {
       "category": "layout",
@@ -233,7 +238,8 @@
       "children": {
         "allowed": true,
         "kind": "content"
-      }
+      },
+      "adapter": "manual"
     },
     "Spacer": {
       "category": "layout",
@@ -297,6 +303,7 @@
       "children": {
         "allowed": false
       },
+      "adapter": "manual",
       "reshaped": [
         "resource",
         "fontResource",
@@ -364,6 +371,7 @@
       "children": {
         "allowed": false
       },
+      "adapter": "manual",
       "reshaped": [
         "value",
         "onValueChange",
