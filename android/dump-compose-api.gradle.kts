@@ -229,10 +229,34 @@ private class ComposeDump {
         val kmClass = decodeMetadata(facts.metadata)
         return facts.composables
             .map { method ->
-                val km = kmClass?.functions?.firstOrNull { it.name == method.name }
+                // Kotlin mangles an internal inline function's JVM name by
+                // appending a hash -- `Text` is really `Text--4IGK_g`, and so is
+                // every one of its overloads. Matching the metadata by the mangled
+                // name finds nothing, so every parameter falls back to arg0; and
+                // reporting the mangled name makes five overloads of one function
+                // look like five unrelated composables. The metadata holds the real
+                // name, so prefer it and fall back to the JVM name.
+                val plain = method.name.substringBefore('-')
                 val types =
                     org.objectweb.asm.Type
                         .getArgumentTypes(method.descriptor)
+                val firstJvm = types.firstOrNull()?.className?.substringAfterLast('.')
+                // Matching metadata by name alone is wrong the moment a function is
+                // overloaded: all four JVM `Text` methods share the name, so the
+                // first metadata entry wins for every one of them and the two
+                // String overloads are reported as AnnotatedString. The descriptor
+                // distinguishes them, so match on the first argument's type too.
+                val named =
+                    kmClass?.functions?.filter { it.name == method.name || it.name == plain }
+                val km =
+                    named?.firstOrNull {
+                        it.valueParameters
+                            .firstOrNull()
+                            ?.type
+                            ?.render() == firstJvm
+                    }
+                        ?: named?.firstOrNull()
+                val declared = km?.name ?: plain
                 val parts =
                     types.mapIndexed { index, type ->
                         val declared = km?.valueParameters?.getOrNull(index)
@@ -246,7 +270,7 @@ private class ComposeDump {
                             declared?.type?.render() ?: type.className.substringAfterLast('.')
                         "$name: $kotlin"
                     }
-                "${method.name}(${trimmed(parts).joinToString(", ")})"
+                "$declared(${trimmed(parts).joinToString(", ")})"
             }.sorted()
     }
 
