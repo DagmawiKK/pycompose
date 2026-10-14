@@ -34,14 +34,22 @@ __all__ = [
     "Registry",
 ]
 
+OWNERS = ("python", "host")
+"""Who may set a prop. Anything else is refused rather than ignored."""
+
 
 @dataclass(frozen=True, slots=True)
 class PropDef:
     """A prop (or action-payload field) definition.
 
     Attributes:
-        type: The prop type name (opaque here; see the codegen tool).
+        type: The prop type name.
         values: Allowed enum values or resource kinds.
+        owner: Who drives the value. ``"python"`` means the app declares it and
+            a test can assert on it; ``"host"`` means the host retains it
+            between snapshots and the app never sees it -- the ripple behind a
+            tap, where a list is scrolled to. This is ADR-0013's question asked
+            per prop, so "state-controllable" is checkable rather than implied.
         required: Whether the prop must be present.
         has_default: Whether a default is declared.
         default: The declared default, when ``has_default`` is set.
@@ -52,6 +60,7 @@ class PropDef:
 
     type: str
     values: tuple[str, ...] = ()
+    owner: str = "python"
     required: bool = False
     has_default: bool = False
     default: JsonValue | FrozenJsonValue = None
@@ -110,9 +119,15 @@ class PropDef:
         required = data.get("required", False)
         if not isinstance(required, bool):
             raise ComponentRegistryError(f"{where}: 'required' must be a boolean")
+        owner = data.get("owner", "python")
+        if owner not in OWNERS:
+            raise ComponentRegistryError(
+                f"{where}: 'owner' must be one of {', '.join(OWNERS)}"
+            )
         return cls(
             type=ptype,
             values=values,
+            owner=cast("str", owner),
             required=required,
             has_default="default" in data,
             default=cast("JsonValue", data.get("default")),
@@ -128,6 +143,9 @@ class PropDef:
             A JSON-ready dict.
         """
         out: dict[str, object] = {"type": self.type}
+        if self.owner != "python":
+            # Absent means python, so the common case costs no bytes.
+            out["owner"] = self.owner
         if self.values:
             out["values"] = list(self.values)
         if self.required:

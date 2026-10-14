@@ -361,8 +361,17 @@ class Kind(Enum):
     VALUE = "value"
     """A structured value PyCompose has no encoding for yet."""
 
+    HOST_STATE = "hostState"
+    """State the host retains between snapshots, which the app never sees.
+
+    Not the same as a value PyCompose cannot encode. These are real, live
+    objects -- the ripple behind a tap, where a list is scrolled to -- and
+    naming them is what lets a component answer ADR-0013's question per prop:
+    does Python drive this, or does the host?
+    """
+
     DROP = "drop"
-    """Host-owned or framework-internal; PyCompose never passes it."""
+    """Framework-internal, or otherwise of no interest to an app."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -387,6 +396,15 @@ class Verdict:
             True when the schema should declare it.
         """
         return self.kind in {Kind.SCALAR, Kind.CALLBACK, Kind.MODIFIER, Kind.VALUE}
+
+    @property
+    def is_host_state(self) -> bool:
+        """Report whether the host retains this between snapshots.
+
+        Returns:
+            True when the app never sees this value.
+        """
+        return self.kind is Kind.HOST_STATE
 
 
 _SCALARS: dict[str, str] = {
@@ -415,14 +433,22 @@ _VALUES: dict[str, str] = {
     "androidx.compose.foundation.layout.Arrangement": "enum, crossable once",
 }
 
-_DROP = (
+# Retained by the host between snapshots. Declared rather than dropped, so a
+# component can say which of its props Python never sees.
+_HOST_STATE = (
     "MutableInteractionSource",
+    "ScrollState",
+    "LazyListState",
+    "rememberScrollState",
+    "BringIntoViewRequester",
+)
+
+_DROP = (
     "ScrollBehavior",
     "CoroutineScope",
     "Transition",
     "Density",
     "LayoutDirection",
-    "WindowInsets",
     "TextUnit",
     "KeyboardOptions",
     "KeyboardActions",
@@ -487,8 +513,12 @@ def classify(parameter: Parameter) -> Verdict:  # noqa: PLR0911 -- an ordered la
     if value is not None:
         return Verdict(Kind.VALUE, note=value)
 
+    for token in _HOST_STATE:
+        if token in declared:
+            return Verdict(Kind.HOST_STATE, note=f"{token} is retained by the host")
+
     for token in _DROP:
         if token in declared:
-            return Verdict(Kind.DROP, note=f"{token} is host-owned")
+            return Verdict(Kind.DROP, note=f"{token} is of no interest to an app")
 
     return Verdict(Kind.DROP, note="no encoding; needs a decision")
