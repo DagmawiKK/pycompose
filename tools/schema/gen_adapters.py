@@ -92,6 +92,58 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
     )
 
 
+def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:
+    """Render one actionId prop as a Kotlin callback argument.
+
+    Compose's ``onClick`` takes nothing and dispatches the bare actionId, while
+    ``onCheckedChange`` hands back the new value and reports it alongside. Which
+    of the two a callback is used to be invisible from the component entry; the
+    schema's ``payload`` says so since 1.9.0, and guessing produces a callback
+    with the wrong arity.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+
+    Returns:
+        The argument, or None when the callback shape is one this cannot render.
+    """
+    payload = spec.get("payload")
+    if not payload:
+        return f"{prop_name} = {{ context.actions.dispatch(model.props.{prop_name}) }}"
+    if len(payload) != 1:
+        return None
+    field_name, kind = payload[0]["name"], payload[0]["type"]
+    if kind not in SCALAR_KOTLIN:
+        return None
+    return (
+        f"{prop_name} = {{ {field_name} -> "
+        f"context.event(model.props.{prop_name}, JsonPrimitive({field_name})) }}"
+    )
+
+
+def composables(name: str, entry: dict[str, Any]) -> set[str]:
+    """List the Compose imports one adapter needs beyond the component itself.
+
+    A flattened content slot is its own dependency: ``Button`` compiles without
+    ``Text`` in scope until the slot becomes a real ``Text`` call.
+
+    Args:
+        name: The component's schema name.
+        entry: Its schema entry.
+
+    Returns:
+        Simple class names the generated code references, excluding ``name``.
+    """
+    used = {
+        slot["composable"]
+        for spec in entry.get("props", {}).values()
+        if (slot := spec.get("content")) is not None
+    }
+    used.discard(name)
+    return used
+
+
 def render(name: str, entry: dict[str, Any]) -> str:
     """Render one adapter.
 
@@ -101,6 +153,12 @@ def render(name: str, entry: dict[str, Any]) -> str:
     default is a ``Boolean?`` in the model and is omitted, leaving Compose's own
     default in charge. Passing a nullable through is the mistake that turns a
     generator into something that does not compile.
+
+    A prop flattened out of a content slot becomes a lambda wrapping the slot's
+    declared composable -- ``Text(model.props.text)`` inside ``Button``, or
+    ``label = { Text(model.props.label) }`` for ``FilterChip``, which names its
+    slot. Only a required slot renders: an optional one needs a null check, and
+    that is a decision.
 
     Args:
         name: The component's schema name.
@@ -113,16 +171,32 @@ def render(name: str, entry: dict[str, Any]) -> str:
         return ""
 
     arguments = ["modifier = modifier"]
+    trailing: list[str] = []
     for prop, spec in entry.get("props", {}).items():
         prop_type = spec["type"]
+        prop_name = _camel(prop)
         if prop_type == "modifier":
             continue
-        prop_name = _camel(prop)
-        if prop_type == "actionId":
-            arguments.append(
-                f"{prop_name} = {{ context.event(model.props.{prop_name}) }}"
-            )
+
+        slot = spec.get("content")
+        if slot is not None:
+            if not spec.get("required"):
+                return ""
+            wrapped = f"{slot['composable']}(model.props.{prop_name})"
+            parameter = slot.get("parameter")
+            if parameter is not None:
+                arguments.append(f"{parameter} = {{ {wrapped} }}")
+            else:
+                trailing.append(f"                    {wrapped}")
             continue
+
+        if prop_type == "actionId":
+            callback = _callback(prop_name, spec)
+            if callback is None:
+                return ""
+            arguments.append(callback)
+            continue
+
         if prop_type not in SCALAR_KOTLIN:
             # color, enum, resource: the encodings are declared but the host has
             # no PropResolver to decode them, so no honest mapping exists yet.
@@ -131,14 +205,17 @@ def render(name: str, entry: dict[str, Any]) -> str:
             continue
         arguments.append(f"{prop_name} = model.props.{prop_name}")
 
-    node = f"{name}Node"
     body = "\n".join(f"                    {argument}," for argument in arguments)
+    tail = ""
+    if trailing:
+        tail = " {\n" + "\n".join(trailing) + "\n            }"
+    node = f"{name}Node"
     return (
         f'            .register("{name}") {{ node, modifier, context ->\n'
         f"                val model = node as {node}\n"
         f"                {name}(\n"
         f"{body}\n"
-        f"                )\n"
+        f"                ){tail}\n"
         f"            }}"
     )
 
@@ -163,6 +240,8 @@ def render_file(registry: dict) -> str:
             if package is None:
                 continue
             imports.add(f"import {package}.{name}")
+            for extra in composables(name, entry):
+                imports.add(f"import {package}.{extra}")
             imports.add(f"import com.pycompose.ir.generated.{name} as {name}Node")
     if not blocks:
         return ""

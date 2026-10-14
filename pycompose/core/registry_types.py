@@ -30,12 +30,81 @@ __all__ = [
     "ChildrenRule",
     "ComponentDef",
     "ComponentSpec",
+    "ContentSlot",
     "PropDef",
     "Registry",
 ]
 
 OWNERS = ("python", "host")
 """Who may set a prop. Anything else is refused rather than ignored."""
+
+
+@dataclass(frozen=True, slots=True)
+class ContentSlot:
+    """A scalar prop flattened out of a Compose content slot.
+
+    Compose has no ``Button.text``: text arrives as a content lambda. PyCompose
+    flattens it into a prop, which is a reshaping, and this records how to put it
+    back -- which composable wraps the value, and whether it goes in a named
+    parameter or a trailing lambda.
+
+    Without this, a generated adapter passes ``text = ...`` to a composable with
+    no such parameter and the compiler says no. The failure is loud, but only
+    after someone waits for a Gradle run to find out.
+
+    Attributes:
+        composable: The Compose composable wrapping the value, such as
+            ``Text``.
+        parameter: The named content parameter to pass, or ``None`` for a
+            trailing lambda. ``FilterChip`` names it ``label``; ``Button`` takes
+            it positionally.
+    """
+
+    composable: str
+    parameter: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.composable:
+            raise ComponentRegistryError("content slot needs a composable")
+        if self.parameter is not None and not self.parameter:
+            raise ComponentRegistryError("content parameter must be a name or null")
+
+    @classmethod
+    def from_mapping(cls, data: Mapping[str, object], *, where: str) -> ContentSlot:
+        """Build a :class:`ContentSlot` from raw JSON.
+
+        Args:
+            data: The raw ``content`` object.
+            where: Human-readable location for error messages.
+
+        Returns:
+            The parsed content slot.
+
+        Raises:
+            ComponentRegistryError: If the object is malformed.
+        """
+        composable = data.get("composable")
+        if not isinstance(composable, str) or not composable:
+            raise ComponentRegistryError(
+                f"{where}: 'content.composable' must be a non-empty string"
+            )
+        parameter = data.get("parameter")
+        if parameter is not None and (not isinstance(parameter, str) or not parameter):
+            raise ComponentRegistryError(
+                f"{where}: 'content.parameter' must be a non-empty string or null"
+            )
+        return cls(composable=composable, parameter=parameter)
+
+    def to_mapping(self) -> dict[str, object]:
+        """Render as a plain JSON object.
+
+        Returns:
+            The slot as it appears in ``components.json``.
+        """
+        result: dict[str, object] = {"composable": self.composable}
+        if self.parameter is not None:
+            result["parameter"] = self.parameter
+        return result
 
 
 @dataclass(frozen=True, slots=True)
@@ -56,6 +125,14 @@ class PropDef:
         minimum: Inclusive lower bound for a numeric prop.
         maximum: Inclusive upper bound for a numeric prop.
         since: First schema exposing the prop, if added after the initial catalog.
+        content: Set when the prop was flattened out of a Compose content slot,
+            recording which composable wraps it and under what parameter name.
+        payload: The arguments a callback prop receives, as ``(name, type)``
+            pairs. Compose's ``onClick`` takes none; ``onCheckedChange`` takes
+            the new ``value``; ``onValueChange`` takes ``text``. Declared here
+            because a component entry cannot otherwise see what its own callback
+            is handed, and a generated adapter that omits the argument does not
+            compile.
     """
 
     type: str
@@ -67,9 +144,24 @@ class PropDef:
     minimum: int | float | None = None
     maximum: int | float | None = None
     since: str | None = None
+    content: ContentSlot | None = None
+    payload: tuple[tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "values", tuple(self.values))
+        object.__setattr__(self, "payload", tuple(self.payload))
+        if self.content is not None and self.type != "string":
+            raise ComponentRegistryError(
+                "a content slot must flatten a string prop, " f"not a {self.type} one"
+            )
+        if self.payload and self.type != "actionId":
+            raise ComponentRegistryError(
+                "only an actionId prop can declare a callback payload, "
+                f"not a {self.type} one"
+            )
+        for name, kind in self.payload:
+            if not name or not kind:
+                raise ComponentRegistryError("payload fields need a name and a type")
         if self.since is not None and (
             not isinstance(self.since, str) or not self.since
         ):
@@ -134,6 +226,8 @@ class PropDef:
             minimum=cast("int | float | None", data.get("minimum")),
             maximum=cast("int | float | None", data.get("maximum")),
             since=cast("str | None", data.get("since")),
+            content=_content(data, where),
+            payload=_payload(data, where),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -158,6 +252,12 @@ class PropDef:
             out["maximum"] = self.maximum
         if self.since is not None:
             out["since"] = self.since
+        if self.content is not None:
+            out["content"] = self.content.to_mapping()
+        if self.payload:
+            out["payload"] = [
+                {"name": field_name, "type": kind} for field_name, kind in self.payload
+            ]
         return out
 
 
@@ -289,6 +389,65 @@ def _adapter(name: str, value: object) -> str:
             f"component {name!r}: 'adapter' must be one of {', '.join(ADAPTERS)}"
         )
     return cast("str", value)
+
+
+def _content(data: Mapping[str, object], where: str) -> ContentSlot | None:
+    """Parse a prop's declared content slot.
+
+    Args:
+        data: The raw prop object.
+        where: Human-readable location for error messages.
+
+    Returns:
+        The parsed slot, or None when the prop is not flattened content.
+
+    Raises:
+        ComponentRegistryError: If the slot object is malformed.
+    """
+    raw = data.get("content")
+    if raw is None:
+        return None
+    if not isinstance(raw, Mapping):
+        raise ComponentRegistryError(f"{where}: 'content' must be an object")
+    return ContentSlot.from_mapping(raw, where=where)
+
+
+def _payload(data: Mapping[str, object], where: str) -> tuple[tuple[str, str], ...]:
+    """Parse a callback prop's declared arguments.
+
+    Args:
+        data: The raw prop object.
+        where: Human-readable location for error messages.
+
+    Returns:
+        The arguments as ``(name, type)`` pairs, empty when none are declared.
+
+    Raises:
+        ComponentRegistryError: If the payload is malformed.
+    """
+    raw = data.get("payload")
+    if raw is None:
+        return ()
+    if not isinstance(raw, list):
+        raise ComponentRegistryError(f"{where}: 'payload' must be a list")
+    fields: list[tuple[str, str]] = []
+    for item in raw:
+        if not isinstance(item, Mapping):
+            raise ComponentRegistryError(
+                f"{where}: each payload field must be an object"
+            )
+        field_name = item.get("name")
+        kind = item.get("type")
+        if not isinstance(field_name, str) or not field_name:
+            raise ComponentRegistryError(f"{where}: payload field needs a 'name'")
+        if not isinstance(kind, str) or not kind:
+            raise ComponentRegistryError(
+                f"{where}: payload field {field_name!r} needs a 'type'"
+            )
+        fields.append((field_name, kind))
+    if len({field_name for field_name, _ in fields}) != len(fields):
+        raise ComponentRegistryError(f"{where}: payload field names must be unique")
+    return tuple(fields)
 
 
 def _reshaped(name: str, value: object) -> tuple[str, ...]:

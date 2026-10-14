@@ -20,7 +20,13 @@ subprojects {
     configure<SpotlessExtension> {
         kotlin {
             target("src/**/*.kt")
-            targetExclude("**/generated/**")
+            // Generated code has exactly one owner, and it is not ktlint. Were
+            // spotless to reformat it, `gen.py --check` would fail forever on a
+            // file nobody is allowed to hand-edit -- the two gates would each
+            // revert the other. Same reasoning as the `generated/` packages.
+            // Both patterns in one call: a second targetExclude replaces the
+            // first rather than adding to it, silently un-excluding `generated/`.
+            targetExclude("**/generated/**", "**/Generated*.kt")
             ktlint("1.3.1")
         }
         kotlinGradle {
@@ -35,6 +41,9 @@ subprojects {
     }
     tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
         exclude("**/generated/**")
+        // Generated Kotlin is formatted by its generator, not by ktlint, so
+        // detekt's line-length rule has nothing useful to say about it.
+        exclude("**/Generated*.kt")
     }
     tasks.withType<Test>().configureEach {
         useJUnitPlatform()

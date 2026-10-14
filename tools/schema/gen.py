@@ -27,6 +27,10 @@ IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
 BUNDLED_SCHEMA_PATH = ROOT / "pycompose" / "schema" / "ir.schema.json"
 VALIDATORS_PATH = ROOT / "pycompose" / "ir" / "generated_validators.py"
 PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
+KOTLIN_ADAPTERS_PATH = (
+    ROOT / "android/host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
+)
+
 KOTLIN_MODELS_PATH = (
     ROOT / "android/ir/src/main/kotlin/com/pycompose/ir/generated/UiModels.kt"
 )
@@ -799,6 +803,20 @@ def _kt_props(name: str, props: dict, base: str = "UiProps") -> list[str]:
     return [*lines, f") : {base}", ""]
 
 
+def render_generated_adapters(registry: dict) -> str:
+    """Emit every Kotlin adapter the schema derives, or nothing when none does.
+
+    Args:
+        registry: The parsed schema.
+
+    Returns:
+        The generated Kotlin source.
+    """
+    from gen_adapters import render_file
+
+    return render_file(registry)
+
+
 def render_kotlin_models(registry: dict) -> str:
     """Generate sealed per-component models without Android types or reflection."""
     lines = [
@@ -1026,6 +1044,15 @@ def main(argv: list[str] | None = None) -> int:
         PYTHON_COMPONENTS_PATH: render_python_components(registry),
         PYTHON_EXPORTS_PATH: render_python_exports(registry),
     }
+    adapters = render_generated_adapters(registry)
+    if adapters:
+        mirror = (
+            ROOT
+            / "pycompose/templates/android"
+            / KOTLIN_ADAPTERS_PATH.relative_to(ROOT / "android")
+        )
+        artifacts[KOTLIN_ADAPTERS_PATH] = adapters
+        artifacts[mirror] = adapters
     for path in (KOTLIN_MODELS_PATH, KOTLIN_REGISTRY_PATH):
         artifacts[
             ROOT / "pycompose/templates/android" / path.relative_to(ROOT / "android")

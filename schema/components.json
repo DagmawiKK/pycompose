@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.8.0",
+  "schemaVersion": "1.9.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -9,7 +9,8 @@
     "1.5.0",
     "1.6.0",
     "1.7.0",
-    "1.8.0"
+    "1.8.0",
+    "1.9.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -48,7 +49,10 @@
       "props": {
         "text": {
           "type": "string",
-          "required": true
+          "required": true,
+          "content": {
+            "composable": "Text"
+          }
         },
         "onClick": {
           "type": "actionId",
@@ -81,6 +85,12 @@
         },
         "onCheckedChange": {
           "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "boolean"
+            }
+          ],
           "required": true
         },
         "enabled": {
@@ -125,7 +135,11 @@
       "props": {
         "label": {
           "type": "string",
-          "required": true
+          "required": true,
+          "content": {
+            "composable": "Text",
+            "parameter": "label"
+          }
         },
         "selected": {
           "type": "boolean",
@@ -317,7 +331,10 @@
       "props": {
         "text": {
           "type": "string",
-          "required": true
+          "required": true,
+          "content": {
+            "composable": "Text"
+          }
         },
         "onClick": {
           "type": "actionId",
@@ -352,13 +369,29 @@
         },
         "onValueChange": {
           "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
           "required": true
         },
         "onSelectionChange": {
-          "type": "actionId"
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "integer"
+            }
+          ]
         },
         "label": {
-          "type": "string"
+          "type": "string",
+          "content": {
+            "composable": "Text",
+            "parameter": "label"
+          }
         },
         "enabled": {
           "type": "boolean",
