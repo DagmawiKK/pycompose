@@ -260,9 +260,47 @@ private class ComposeDump {
         return parts.subList(0, end)
     }
 
-    /** Whether a JVM argument type is part of the Compose compiler's tail. */
+    /**
+     * How many positions a metadata candidate agrees with a JVM descriptor on.
+     *
+     * Name and arity together are not enough: Compose declares overloads that
+     * agree on both, and on the first argument's type too. Crossfade has a
+     * four-parameter `content` overload and a five-parameter one ending in a
+     * `label`, and picking the former for the latter shifted every parameter by
+     * one -- leaving a trailing content lambda with no metadata entry, which
+     * renders as `arg4: ?Function3`.
+     *
+     * A composable lambda is compared loosely: `content: @Composable (T) -> Unit`
+     * is `Function3<T, Composer, Integer, Unit>` in the descriptor and
+     * `Function1<T>` in the metadata, so the arity differs by design and only
+     * the family is comparable. Every other type must match exactly.
+     */
+    private fun agreement(
+        kotlin: List<String>,
+        jvm: List<String>,
+    ): Int =
+        kotlin.zip(jvm).count { (k, v) ->
+            val left = k.substringBefore('<').substringAfterLast('.')
+            val right = v.substringAfterLast('.')
+            if (left.startsWith("Function") && right.startsWith("Function")) {
+                true
+            } else {
+                left.equals(right, ignoreCase = true)
+            }
+        }
+
+    /**
+     * Whether a JVM argument type is part of the Compose compiler's tail.
+     *
+     * `int` and not just `Integer`: ASM reports a primitive argument's className
+     * as "int", so matching only the boxed name counted every trailing mask as
+     * a real parameter. The declared arity was then 2-3 too high, the arity
+     * filter matched nothing, and every composable fell back to an arbitrary
+     * overload -- which is why every fix to the matcher below appeared to do
+     * nothing.
+     */
     private fun isSyntheticType(type: org.objectweb.asm.Type): Boolean =
-        type.className.substringAfterLast('.') in setOf("Composer", "Integer")
+        type.className.substringAfterLast('.') in setOf("Composer", "Integer", "int")
 
     /**
      * Whether a rendered parameter is part of the Compose compiler's tail.
@@ -317,14 +355,21 @@ private class ComposeDump {
                 // which appears in no Kotlin signature.
                 val declaredArity = types.count { !isSyntheticType(it) }
                 val sameArity = named?.filter { it.valueParameters.size == declaredArity }
+                val jvmTypes =
+                    types
+                        .filterNot { isSyntheticType(it) }
+                        .map { it.className.substringAfterLast('.').substringAfterLast('$') }
                 val km =
-                    sameArity?.firstOrNull {
-                        it.valueParameters
-                            .firstOrNull()
-                            ?.type
-                            ?.render()
-                            ?.equals(firstJvm, ignoreCase = true) == true
-                    } ?: sameArity?.firstOrNull() ?: named?.firstOrNull()
+                    sameArity?.maxByOrNull {
+                        agreement(
+                            it.valueParameters.map { p ->
+                                p.type.render()
+                            },
+                            jvmTypes,
+                        )
+                    }
+                        ?: sameArity?.firstOrNull()
+                        ?: named?.firstOrNull()
                 val declared = km?.name ?: plain
                 val parts =
                     types.mapIndexed { index, type ->
@@ -432,6 +477,11 @@ private class ComposeDump {
             ) {
                 is kotlinx.metadata.jvm.KotlinClassMetadata.Class -> parsed.kmClass
                 is kotlinx.metadata.jvm.KotlinClassMetadata.FileFacade -> parsed.kmPackage
+                // A multi-file facade: several .kt files compiled into one
+                // class. SnapshotStateKt's collectAsState and friends live
+                // here, and dropping this case left every parameter of the 40
+                // affected composables unnamed.
+                is kotlinx.metadata.jvm.KotlinClassMetadata.MultiFileClassPart -> parsed.kmPackage
                 else -> null
             }
         } catch (failure: Throwable) {
