@@ -26,20 +26,25 @@ from pycompose.state.state import State
 S = TypeVar("S", bound=State)
 P = TypeVar("P")
 
+CONTAINER = "container"
+"""The one parameter an action may ask the session to supply."""
+
 
 class AppAction(Generic[S, P]):
     """An annotated transition and its data-only binding factory."""
 
-    def __init__(self, function: Callable[[S, P], S]) -> None:
+    def __init__(self, function: Callable[..., S]) -> None:
         self.function = function
         self.name = f"{function.__module__}.{function.__name__}"
         hints = get_type_hints(function)
-        parameters = list(inspect.signature(function).parameters)
-        if len(parameters) != 2:
+        signature = inspect.signature(function)
+        parameters = list(signature.parameters)
+        if len(parameters) < 2:
             raise StateError("action must accept State and one TypedDict payload")
         payload = hints.get(parameters[1])
         if payload is None or not is_typeddict(payload):
             raise StateError("action payload must be annotated with a TypedDict")
+        self.injected = self._injected(signature, parameters)
         self.aliases: dict[str, str] = {}
         self.fields: dict[str, PropDef] = {}
         for name, annotation in get_type_hints(payload, include_extras=True).items():
@@ -53,6 +58,58 @@ class AppAction(Generic[S, P]):
                 required = get_origin(declared) is Required
                 declared = get_args(declared)[0]
             self.fields[wire_name] = _field(declared, required)
+
+    def _injected(
+        self, signature: inspect.Signature, parameters: list[str]
+    ) -> tuple[str, ...]:
+        """Return the names this action wants supplied at dispatch.
+
+        Decided once, here, so that dispatch itself reflects on nothing. Only
+        ``container`` may be injected: resolving arbitrary annotations by type
+        would make a graph of a thing whose wiring can only be discovered by
+        running it, which is the trade this design deliberately declines.
+
+        Args:
+            signature: The action's own signature.
+            parameters: Its parameter names, in order.
+
+        Returns:
+            The names to supply, empty for an action that wants nothing.
+
+        Raises:
+            StateError: If an extra parameter is anything other than a
+                keyword-only ``container``.
+        """
+        extra = parameters[2:]
+        if not extra:
+            return ()
+        for name in extra:
+            if name != CONTAINER:
+                raise StateError(
+                    "an action may only take container after its payload",
+                    parameter=name,
+                )
+            if signature.parameters[name].kind is not inspect.Parameter.KEYWORD_ONLY:
+                raise StateError(
+                    "container must be keyword-only so a typo cannot pass silently"
+                )
+        return (CONTAINER,)
+
+    def __call__(self, state: S, payload: P, **injected: Any) -> S:
+        """Run the transition directly, without going through the runtime.
+
+        This is what makes a test a two-liner: the action is called as if it
+        were the function it decorates, and nothing about the host is involved.
+
+        Args:
+            state: Snapshot before the transition.
+            payload: The bound and event fields, merged.
+            **injected: Whatever this action declared it wanted.
+
+        Returns:
+            The handler's next State.
+        """
+        return self.function(state, payload, **injected)
 
     def bind(self, *, id: str, **values: Any) -> ActionBinding:
         """Declare a stable binding, leaving event-supplied fields unbound.
@@ -90,7 +147,7 @@ def _field(annotation: object, required: bool) -> PropDef:
     return PropDef(type=kind, required=required)
 
 
-def action(function: Callable[[S, P], S]) -> AppAction[S, P]:
+def action(function: Callable[..., S]) -> AppAction[S, P]:
     """Define a typed Python transition without modifying the native manifest.
 
     Args:

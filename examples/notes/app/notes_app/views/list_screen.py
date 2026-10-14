@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from notes_app.handlers import Handlers
-from notes_app.state import Note, NotesState, Session
+from notes_app.domain.models import Note
+from notes_app.domain.usecases import count_line
+from notes_app.state import Session
 from notes_app.theme import Theme
-from pycompose import composable
+from pycompose import Registry, composable
 from pycompose.core import Node
 from pycompose.m3 import (
     Column,
@@ -23,24 +24,24 @@ from pycompose.m3 import (
 @composable
 def list_screen(
     *,
-    state: NotesState,
+    notes: list[Note],
     session: Session,
-    handlers: Handlers,
+    actions: Registry,
 ) -> Node:
     """Render the whole list screen.
 
     Args:
-        state: The notes partition.
+        notes: The notes to render, newest first.
         session: The session shell, for the palette.
-        handlers: Action references this screen binds to.
+        actions: The registry this screen binds its controls to.
 
     Returns:
         A Scaffold declaration listing every note.
     """
     theme = Theme.of(session)
     rows: list[Node] = [
-        note_row(id=f"row_{note.id}", note=note, theme=theme, handlers=handlers)
-        for note in state.notes
+        note_row(id=f"row_{note.id}", note=note, theme=theme, actions=actions)
+        for note in notes
     ]
     if not rows:
         rows = [
@@ -66,7 +67,7 @@ def list_screen(
                 ),
                 Text(
                     id="count",
-                    text=state.count_line(),
+                    text=count_line(notes),
                     style="bodySmall",
                     color=theme.muted,
                 ),
@@ -78,13 +79,13 @@ def list_screen(
                         FilledButton(
                             id="new",
                             text="New note",
-                            on_click=handlers.new_note.bind(id="new"),
+                            on_click=actions.new_note.bind(id="new"),
                         ),
                         Spacer(id="gap_about", modifier=Modifier().size(8)),
                         TextButton(
                             id="about",
                             text="How this works",
-                            on_click=handlers.show_about.bind(id="about"),
+                            on_click=actions.show_about.bind(id="about"),
                         ),
                     ],
                 ),
@@ -104,7 +105,7 @@ def note_row(
     *,
     note: Note,
     theme: Theme,
-    handlers: Handlers,
+    actions: Registry,
 ) -> Node:
     """Render one row: the note's title and preview, plus its delete control.
 
@@ -115,7 +116,7 @@ def note_row(
     Args:
         note: The note this row shows.
         theme: Colours to paint with.
-        handlers: Action references this screen binds to.
+        actions: The registry this screen binds its controls to.
 
     Returns:
         A clickable Row carrying this note's bindings.
@@ -125,7 +126,7 @@ def note_row(
         vertical_alignment="center",
         modifier=Modifier()
         .padding(10)
-        .clickable(handlers.open_note.bind(id=f"n{note.id}", note_id=note.id)),
+        .clickable(actions.open_note.bind(id=f"n{note.id}", note_id=note.id)),
         children=[
             Column(
                 id="text",
@@ -148,7 +149,7 @@ def note_row(
             TextButton(
                 id="delete",
                 text="Delete",
-                on_click=handlers.delete_note.bind(id=f"n{note.id}", note_id=note.id),
+                on_click=actions.delete_note.bind(id=f"n{note.id}", note_id=note.id),
             ),
         ],
     )

@@ -1,96 +1,78 @@
-"""The view-model: declared state becomes one immutable snapshot.
+"""The view-model: the notes plus the shell become one snapshot.
 
-The app's state is in two parts, and keeping them apart is the point:
-
-* the **session shell** — route and appearance. Small, and the only part the host
-  must be able to restore after process death.
-* the **notes partition** — the feature's own data, attached only while a screen
-  actually shows notes.
-
-That split is what stops a keystroke in one screen from re-encoding everything
-the other fourteen features are holding.
-
-The only decision made here is which screen belongs on screen. A detail route
-naming a note that no longer exists falls back to the list, which is what a real
-``NavController`` does when its destination has been popped out from under it.
+The notes are read from storage when a screen needs them, rather than carried in
+the snapshot. That is what Phase 3 bought: a screen rendering a thousand notes no
+longer re-encodes them on every keystroke, and the host's ``Bundle`` never sees
+them at all. Only the session shell crosses the boundary.
 """
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from typing import Any
+from typing import cast
 
-from notes_app.handlers import Handlers
-from notes_app.state import (
-    LIST_ROUTE,
-    Note,
-    NotesState,
-    Session,
-    note_in,
-    seeded,
-    seeded_session,
-)
+from notes_app.domain.models import Note, NotesRepo
+from notes_app.domain.usecases import get_note, list_notes
+from notes_app.state import LIST_ROUTE, Session, note_in, seeded_session
 from notes_app.views import editor_screen, list_screen
+from pycompose import Registry
 from pycompose.core.effect import Effect
 from pycompose.errors import StateError
-from pycompose.state import AppState, State
-from pycompose.utils.json_canonical import thaw_json
+from pycompose.state import State
 
 NOTES = "notes"
 
 
 def snapshot(
     session: Session,
-    notes: NotesState,
+    notes: list[Note],
     version: int,
-    handlers: Handlers,
+    actions: Registry,
     effects: tuple[Effect, ...] = (),
 ) -> State:
     """Return the snapshot one screen of this state produces.
 
     Args:
         session: The session shell.
-        notes: The notes partition.
+        notes: The notes to render, newest first.
         version: Monotonic snapshot counter, advanced once per change.
-        handlers: Action references the screen binds to.
+        actions: The registry the screen binds its controls to.
         effects: One-shot host requests to run once with this snapshot.
 
     Returns:
-        A State carrying the screen, the shell and the notes partition.
+        A State carrying the screen and the session shell.
     """
     editing = editing_note(session, notes)
     root = (
-        list_screen(id="screen", state=notes, session=session, handlers=handlers)
+        list_screen(id="screen", notes=notes, session=session, actions=actions)
         if editing is None
-        else editor_screen(
-            id="screen", note=editing, session=session, handlers=handlers
-        )
+        else editor_screen(id="screen", note=editing, session=session, actions=actions)
     )
-    return State(
-        root=root, version=version, app=session, slices={NOTES: notes}, effects=effects
-    )
+    return State(root=root, version=version, app=session, effects=effects)
 
 
-def editing_note(session: Session, notes: NotesState) -> Note | None:
+def editing_note(session: Session, notes: list[Note]) -> Note | None:
     """Return the note the current route is editing.
 
     Args:
         session: The session shell, which owns the route.
-        notes: The notes partition.
+        notes: Every note held.
 
     Returns:
-        The note, or None when the list belongs on screen.
+        The note, or None when the list belongs on screen, or when the route
+        names something that is no longer there.
     """
     note_id = note_in(session.route)
-    return notes.find(note_id) if note_id is not None else None
+    if note_id is None:
+        return None
+    return next((note for note in notes if note.id == note_id), None)
 
 
-def showing_list(session: Session, notes: NotesState) -> bool:
+def showing_list(session: Session, notes: list[Note]) -> bool:
     """Return whether the list is what belongs on screen.
 
     Args:
         session: The session shell, which owns the route.
-        notes: The notes partition.
+        notes: Every note held.
 
     Returns:
         True for the list route and for a detail route with no live note.
@@ -98,92 +80,53 @@ def showing_list(session: Session, notes: NotesState) -> bool:
     return editing_note(session, notes) is None
 
 
-def of(state: State) -> tuple[Session, NotesState]:
-    """Return the app state a snapshot was built from.
+def held(repo: NotesRepo) -> list[Note]:
+    """Return every note a repository holds, newest first.
+
+    Args:
+        repo: Where the notes are held.
+
+    Returns:
+        The stored notes.
+    """
+    return list_notes(repo)
+
+
+def find(repo: object, note_id: int) -> Note | None:
+    """Return one note from a repository, when it is still there.
+
+    Args:
+        repo: Anything satisfying the notes repository protocol.
+        note_id: Identity to look for.
+
+    Returns:
+        The note, or None.
+    """
+    return get_note(repo, note_id)  # type: ignore[arg-type]
+
+
+def of(state: State) -> Session:
+    """Return the session shell a snapshot was built from.
 
     Args:
         state: The snapshot a transition starts from.
 
     Returns:
-        The session shell and the notes partition.
+        The decoded shell, or a fresh one when the data is unusable. A corrupt
+        shell must not stop the app starting.
     """
-    return decode(state.data)
-
-
-def decode(published: object) -> tuple[Session, NotesState]:
-    """Return the app state a published payload describes.
-
-    The shell and a feature partition share one payload, so each decodes only
-    the keys it owns.
-
-    "No save at all" and "a save holding no notes" are different states and are
-    treated differently: the first seeds the app, the second is what a user who
-    deleted everything meant. A save that cannot be understood falls back rather
-    than raising, because this runs during boot and a corrupt save must not stop
-    the app starting.
-
-    Args:
-        published: The decoded payload, or None when there is no save.
-
-    Returns:
-        The session shell and the notes partition.
-    """
-    if published is None:
-        return seeded_session(), seeded()
     try:
-        data = _as_object(published)
-        return (
-            Session.codec.decode(_mine(Session, data)),
-            NotesState.codec.decode(_mine(NotesState, data)),
-        )
+        return cast("Session", Session.codec.decode(state.data))
     except StateError:
-        return seeded_session(), seeded()
-
-
-def _as_object(published: object) -> dict[str, Any]:
-    """Return published data as a plain mapping.
-
-    Args:
-        published: The published payload.
-
-    Returns:
-        Its top-level keys.
-
-    Raises:
-        StateError: If the payload is not an object at all.
-    """
-    thawed = thaw_json(published)
-    if not isinstance(thawed, Mapping):
-        raise StateError("app state must be an object")
-    return dict(thawed)
-
-
-def _mine(part: type[AppState], published: Mapping[str, Any]) -> dict[str, Any]:
-    """Return the top-level keys one part of the app owns.
-
-    ``published`` is a plain mapping, whatever it was read from: JSON parsed
-    from the host's bytes, or taken off a snapshot where the canonical freeze had
-    already replaced it. Normalising once means an app never sees its state
-    vanish between a boot and a keystroke.
-
-    Args:
-        part: The declared state asking for its own keys.
-        published: The published payload, or anything unusable.
-
-    Returns:
-        The subset this part decodes from.
-    """
-    keys = set(part.codec.encode(part()))
-    return {key: value for key, value in published.items() if key in keys}
+        return seeded_session()
 
 
 __all__ = [
     "LIST_ROUTE",
-    "NOTES",
-    "NotesState",
+    "Note",
     "Session",
-    "decode",
     "editing_note",
+    "held",
     "of",
     "showing_list",
     "snapshot",

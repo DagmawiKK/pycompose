@@ -11,7 +11,7 @@ from pycompose.errors import StateError
 from pycompose.state.app_action import AppAction
 from pycompose.state.state import State
 
-__all__ = ["ActionHandler", "Actions"]
+__all__ = ["ActionHandler", "Actions", "Registry"]
 
 ActionHandler = Callable[[State, Any], State]
 
@@ -20,6 +20,7 @@ class Actions:
     def __init__(self, *definitions: AppAction[Any, Any]) -> None:
         self._handlers: dict[str, ActionHandler] = {}
         self._definitions = {definition.name: definition for definition in definitions}
+        self._container: object | None = None
         self._contracts: dict[str, AppAction[Any, Any]] = {}
         if len(self._definitions) != len(definitions):
             raise StateError("duplicate app action definitions")
@@ -27,6 +28,35 @@ class Actions:
             self.register(definition.name, cast(ActionHandler, definition.function))
             self._contracts[definition.name] = definition
             self._alias(definition)
+
+    @property
+    def injected(self) -> tuple[str, ...]:
+        """Return the parameters this registry's actions expect to be supplied.
+
+        Checked once when the session starts rather than when a control is
+        tapped, so an app whose actions want a container and which declares no
+        container fails to boot instead of failing on the first tap.
+
+        Returns:
+            The distinct injected names, in first-seen order.
+        """
+        names: list[str] = []
+        for definition in self._definitions.values():
+            for name in definition.injected:
+                if name not in names:
+                    names.append(name)
+        return tuple(names)
+
+    def install_container(self, container: object | None) -> None:
+        """Hand this registry the session's container.
+
+        The app builds its registry at import time, before a session exists, so
+        the container can only arrive afterwards.
+
+        Args:
+            container: The session container, or None when the app declared none.
+        """
+        self._container = container
 
     def _alias(self, definition: AppAction[Any, Any]) -> None:
         """Also register an action under its bare camelCase name.
@@ -100,10 +130,34 @@ class Actions:
             raise StateError("unknown action", action_id=action_id)
         named = self._python_payload(action_id, payload)
         self._check_declared(action_id, named)
-        result = handler(state, named)
+        result = handler(state, named, **self._supply(action_id))
         if not isinstance(result, State):
             raise StateError("handler must return a State")
         return result
+
+    def _supply(self, action_id: str) -> dict[str, Any]:
+        """Return the dependencies this handler declared that it wants.
+
+        Args:
+            action_id: Id the handler is registered under.
+
+        Returns:
+            Keyword arguments to pass, empty when it wants nothing.
+
+        Raises:
+            StateError: If the handler wants a container and none was installed.
+                The session checks for this at startup, so reaching here means
+                something called dispatch outside a session.
+        """
+        definition = self._contracts.get(action_id)
+        if definition is None or not definition.injected:
+            return {}
+        if self._container is None:
+            raise StateError(
+                "this action asks for the container but the app declared none",
+                action_id=action_id,
+            )
+        return {"container": self._container}
 
     def _check_declared(self, action_id: str, payload: Any) -> None:
         """Check a payload against the fields its handler declared.
@@ -168,3 +222,97 @@ class Actions:
 
     def handlers(self) -> Mapping[str, ActionHandler]:
         return self._handlers.copy()
+
+
+class Registry(Actions):
+    """An action registry that collects its own actions and names them.
+
+    ``Actions`` takes the actions it holds as arguments, which means an app
+    lists them once to build the registry and again to build whatever a screen
+    binds to -- and the two lists are only ever kept in step by discipline.
+    That is the wrong trade: forgetting one does not raise, it just produces a
+    control nobody can reach.
+
+    A ``Registry`` is used as a decorator instead, so the definition *is* the
+    registration:
+
+        actions = Registry()
+
+        @actions
+        def new_note(state: State, payload: Nothing) -> State:
+            ...
+
+    The same object is what the session finds, and what a screen binds through
+    (``actions.new_note.bind(id="new")``), so an action cannot be registered in
+    one place and forgotten in the other.
+    """
+
+    def __init__(self, *seed: AppAction[Any, Any]) -> None:
+        """Open an empty registry.
+
+        Args:
+            *seed: Actions to seed it with, if any.
+        """
+        super().__init__(*seed)
+
+    def __call__(self, function: Callable[..., State]) -> AppAction[Any, Any]:
+        """Define an action and register it.
+
+        Args:
+            function: A transition, in the shape ``@action`` accepts.
+
+        Returns:
+            The definition, so it can be bound and called directly.
+        """
+        definition: AppAction[State, Any] = AppAction(function)
+        self.add(definition)
+        return definition
+
+    def add(self, definition: AppAction[Any, Any]) -> None:
+        """Add one action to this registry.
+
+        Args:
+            definition: The action to register.
+
+        Raises:
+            StateError: If an action of the same name is already registered.
+        """
+        if definition.name in self._definitions:
+            raise StateError(
+                "duplicate app action definition", action_id=definition.name
+            )
+        self._definitions[definition.name] = definition
+        self._contracts[definition.name] = definition
+        self.register(definition.name, cast("ActionHandler", definition.function))
+        self._alias(definition)
+
+    def names(self) -> tuple[str, ...]:
+        """Return the bare names of the actions this registry holds.
+
+        Returns:
+            The function names, in registration order.
+        """
+        return tuple(name.rpartition(".")[2] for name in self._definitions)
+
+    def __getattr__(self, name: str) -> AppAction[Any, Any]:
+        """Return one of this registry's actions by name.
+
+        Args:
+            name: The bare function name, as declared.
+
+        Returns:
+            The action definition.
+
+        Raises:
+            AttributeError: If no action of that name was registered.
+        """
+        definitions: dict[str, AppAction[Any, Any]] = self.__dict__.get(
+            "_definitions", {}
+        )
+        for definition in definitions.values():
+            if definition.name.rpartition(".")[2] == name:
+                return definition
+        raise AttributeError(
+            f"no action named {name!r}; this registry holds "
+            f"{', '.join(self.names()) or 'nothing yet'}"
+        )

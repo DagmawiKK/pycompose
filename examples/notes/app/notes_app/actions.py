@@ -13,12 +13,13 @@ from __future__ import annotations
 
 from typing import Literal, TypedDict
 
-from notes_app.handlers import Handlers
-from notes_app.state import LIST_ROUTE, NotesState, Session, detail_route, note_in
+from notes_app.container import AppContainer
+from notes_app.domain import usecases
+from notes_app.state import LIST_ROUTE, Session, detail_route, note_in
 from notes_app.view_model import editing_note, of, showing_list, snapshot
-from pycompose import action
+from pycompose import Registry
 from pycompose.core.effect import Effect
-from pycompose.state import Actions, State
+from pycompose.state import State
 
 
 class NoteId(TypedDict):
@@ -48,41 +49,61 @@ class Config(TypedDict):
 def _next(
     state: State,
     session: Session,
-    notes: NotesState,
+    container: AppContainer,
     *,
     effects: tuple[Effect, ...] = (),
 ) -> State:
-    """Return the next snapshot after a change to app state.
+    """Return the next snapshot after a change.
+
+    The notes are read back from the repository rather than threaded through,
+    because they are not part of the snapshot at all -- only the shell crosses
+    the boundary. The route is deliberately untouched: a handler that wants a
+    different screen asks the host for one, and the host echoes it back as
+    ``on_route_changed``.
 
     Args:
         state: Snapshot before the transition.
         session: The session shell after the transition.
-        notes: The notes partition after the transition.
+        container: The app's dependencies.
         effects: One-shot host requests to run once with this snapshot.
 
     Returns:
         The next snapshot, one version on.
     """
-    return snapshot(session, notes, state.version + 1, HANDLERS, effects)
+    return snapshot(
+        session,
+        usecases.list_notes(container.notes_repo),
+        state.version + 1,
+        actions,
+        effects,
+    )
 
 
-@action
-def new_note(state: State, payload: Nothing) -> State:  # noqa: ARG001
+actions = Registry()
+
+
+@actions
+def new_note(
+    state: State,
+    payload: Nothing,
+    *,
+    container: AppContainer,
+) -> State:
     """Create a note and ask the host to open it.
 
     Args:
         state: Snapshot before the tap.
         payload: Empty; this command takes no event fields.
 
+        container: The app's dependencies.
     Returns:
         The next snapshot, carrying a navigate effect for the new note.
     """
-    session, notes = of(state)
-    created, note_id = notes.created()
+    note_id = usecases.create_note(container.notes_repo)
     return _next(
         state,
-        session,
-        created,
+        of(state),
+        container,
         effects=(
             Effect("haptic"),
             Effect("navigate", {"route": detail_route(note_id)}),
@@ -90,36 +111,37 @@ def new_note(state: State, payload: Nothing) -> State:  # noqa: ARG001
     )
 
 
-@action
-def open_note(state: State, payload: NoteId) -> State:
+@actions
+def open_note(state: State, payload: NoteId, *, container: AppContainer) -> State:
     """Open one note's editor.
 
     Args:
         state: Snapshot before the tap.
         payload: Note id bound by the row that was tapped.
 
+        container: The app's dependencies.
     Returns:
         The next snapshot, carrying a navigate effect for that note.
     """
-    session, notes = of(state)
+    session = of(state)
     note_id = payload["note_id"]
-    if notes.find(note_id) is None:
+    if usecases.get_note(container.notes_repo, note_id) is None:
         # The row names a note that no longer exists. Staying put beats navigating
         # to a destination the view-model would immediately bounce back from.
-        return _next(state, session, notes)
+        return _next(state, session, container)
     # The route is not moved here. The host echoes it back as on_route_changed,
     # so there is exactly one source of truth for what is showing and this
     # session is never rebuilt.
     return _next(
         state,
         session,
-        notes,
+        container,
         effects=(Effect("navigate", {"route": detail_route(note_id)}),),
     )
 
 
-@action
-def on_route_changed(state: State, payload: Route) -> State:
+@actions
+def on_route_changed(state: State, payload: Route, *, container: AppContainer) -> State:
     """Render the screen the host asked for.
 
     The host owns the route string and hands it back as an ordinary inbound
@@ -130,53 +152,58 @@ def on_route_changed(state: State, payload: Route) -> State:
         state: Snapshot before the route change.
         payload: The destination the host is now showing.
 
+        container: The app's dependencies.
     Returns:
         The next snapshot for that route, or an unchanged one when it is not a
         destination this app knows.
     """
-    session, notes = of(state)
+    session = of(state)
     route = payload["route"]
     if route != LIST_ROUTE and note_in(route) is None:
         # An unknown route is not a screen. Staying put beats rendering nothing.
-        return _next(state, session, notes)
-    return _next(state, session.evolve(route=route), notes)
+        return _next(state, session, container)
+    return _next(state, session.evolve(route=route), container)
 
 
-@action
-def set_title(state: State, payload: Edit) -> State:
+@actions
+def set_title(state: State, payload: Edit, *, container: AppContainer) -> State:
     """Record the title field's current text.
 
     Args:
         state: Snapshot before the keystroke.
         payload: Bound note id, plus event-supplied field text.
 
+        container: The app's dependencies.
     Returns:
         The next snapshot with the note retitled.
     """
-    session, notes = of(state)
-    if not _is_editing(session, notes, payload["note_id"]):
-        return _next(state, session, notes)
-    return _next(state, session, notes.retitled(payload["note_id"], payload["value"]))
+    session = of(state)
+    if not _is_editing(session, payload["note_id"], container):
+        return _next(state, session, container)
+    usecases.rename_note(container.notes_repo, payload["note_id"], payload["value"])
+    return _next(state, session, container)
 
 
-@action
-def set_body(state: State, payload: Edit) -> State:
+@actions
+def set_body(state: State, payload: Edit, *, container: AppContainer) -> State:
     """Record the body field's current text.
 
     Args:
         state: Snapshot before the keystroke.
         payload: Bound note id, plus event-supplied field text.
 
+        container: The app's dependencies.
     Returns:
         The next snapshot with the note's text replaced.
     """
-    session, notes = of(state)
-    if not _is_editing(session, notes, payload["note_id"]):
-        return _next(state, session, notes)
-    return _next(state, session, notes.retexted(payload["note_id"], payload["value"]))
+    session = of(state)
+    if not _is_editing(session, payload["note_id"], container):
+        return _next(state, session, container)
+    usecases.retext_note(container.notes_repo, payload["note_id"], payload["value"])
+    return _next(state, session, container)
 
 
-def _is_editing(session: Session, notes: NotesState, note_id: int) -> bool:
+def _is_editing(session: Session, note_id: int, container: AppContainer) -> bool:
     """Return whether the current route is editing this note.
 
     A stale control must be harmless rather than destructive, so an edit for a
@@ -184,132 +211,122 @@ def _is_editing(session: Session, notes: NotesState, note_id: int) -> bool:
 
     Args:
         session: The session shell.
-        notes: The notes partition.
         note_id: Note the control was bound to.
 
+        container: The app's dependencies.
     Returns:
         True when that note is the one on screen.
     """
-    editing = editing_note(session, notes)
+    editing = editing_note(session, usecases.list_notes(container.notes_repo))
     return editing is not None and editing.id == note_id
 
 
-@action
-def delete_note(state: State, payload: NoteId) -> State:
+@actions
+def delete_note(state: State, payload: NoteId, *, container: AppContainer) -> State:
     """Delete one note and return to the list.
 
     Args:
         state: Snapshot before the tap.
         payload: Note id bound by the control that was tapped.
 
+        container: The app's dependencies.
     Returns:
         The next snapshot without that note, and a request to return to the list.
     """
-    session, notes = of(state)
-    if notes.find(payload["note_id"]) is None:
-        return _next(state, session, notes)
+    session = of(state)
+    if usecases.get_note(container.notes_repo, payload["note_id"]) is None:
+        return _next(state, session, container)
+    usecases.delete_note(container.notes_repo, payload["note_id"])
     return _next(
         state,
         session,
-        notes.deleted(payload["note_id"]),
+        container,
         effects=(Effect("haptic"), Effect("navigate", {"route": LIST_ROUTE})),
     )
 
 
-@action
-def go_back(state: State, payload: Nothing) -> State:  # noqa: ARG001
+@actions
+def go_back(
+    state: State,
+    payload: Nothing,
+    *,
+    container: AppContainer,
+) -> State:
     """Return to the list from the editor.
 
     Args:
         state: Snapshot before the tap.
         payload: Empty; this command takes no event fields.
 
+        container: The app's dependencies.
     Returns:
         The next snapshot, carrying a navigate effect for the list.
     """
-    session, notes = of(state)
     return _next(
-        state, session, notes, effects=(Effect("navigate", {"route": LIST_ROUTE}),)
+        state,
+        of(state),
+        container,
+        effects=(Effect("navigate", {"route": LIST_ROUTE}),),
     )
 
 
-@action
-def show_about(state: State, payload: Nothing) -> State:  # noqa: ARG001
+@actions
+def show_about(state: State, payload: Nothing, *, container: AppContainer) -> State:
     """Explain where the interface comes from.
 
     Args:
         state: Snapshot before the tap.
         payload: Empty; this command takes no event fields.
 
+        container: The app's dependencies.
     Returns:
         The same screen plus a host toast.
     """
-    session, notes = of(state)
     return _next(
         state,
-        session,
-        notes,
+        of(state),
+        container,
         effects=(
             Effect("toast", {"message": "Every control here is native Material 3."}),
         ),
     )
 
 
-@action
-def on_back_requested(state: State, payload: Nothing) -> State:  # noqa: ARG001
+@actions
+def on_back_requested(
+    state: State, payload: Nothing, *, container: AppContainer
+) -> State:
     """Handle the system back gesture the way a NavController would.
 
     Args:
         state: Snapshot before the gesture.
         payload: Empty; the host sends nothing extra.
 
+        container: The app's dependencies.
     Returns:
         The list from anywhere but the list, or a snapshot asking the host to
         close the app when there is nowhere left to go back to.
     """
-    session, notes = of(state)
-    if showing_list(session, notes):
-        return _next(state, session, notes, effects=(Effect("finish"),))
+    session = of(state)
+    if showing_list(session, usecases.list_notes(container.notes_repo)):
+        return _next(state, session, container, effects=(Effect("finish"),))
     return _next(
-        state, session, notes, effects=(Effect("navigate", {"route": LIST_ROUTE}),)
+        state, session, container, effects=(Effect("navigate", {"route": LIST_ROUTE}),)
     )
 
 
-@action
-def on_config_changed(state: State, payload: Config) -> State:
+@actions
+def on_config_changed(
+    state: State, payload: Config, *, container: AppContainer
+) -> State:
     """Repaint when the device's appearance changes.
 
     Args:
         state: Snapshot before the configuration changed.
         payload: Orientation, dark mode, locale and density, from the host.
 
+        container: The app's dependencies.
     Returns:
         The next snapshot in the palette matching the new appearance.
     """
-    session, notes = of(state)
-    return _next(state, session.evolve(dark=payload["dark_mode"]), notes)
-
-
-HANDLERS = Handlers(
-    new_note=new_note,
-    open_note=open_note,
-    set_title=set_title,
-    set_body=set_body,
-    delete_note=delete_note,
-    go_back=go_back,
-    show_about=show_about,
-)
-
-# The runtime finds an app's registry by this exact module-level name.
-actions = Actions(
-    on_route_changed,
-    new_note,
-    open_note,
-    set_title,
-    set_body,
-    delete_note,
-    go_back,
-    show_about,
-    on_back_requested,
-    on_config_changed,
-)
+    return _next(state, of(state).evolve(dark=payload["dark_mode"]), container)

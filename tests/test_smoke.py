@@ -13,7 +13,14 @@ def test_version_is_string() -> None:
 
 
 def test_public_init_exports_version_and_composition() -> None:
-    assert pycompose.__all__ == ["__version__", "action", "async_task", "composable"]
+    assert pycompose.__all__ == [
+        "__version__",
+        "Registry",
+        "action",
+        "async_task",
+        "composable",
+        "repository",
+    ]
     assert callable(pycompose.composable)
     assert callable(pycompose.action)
 

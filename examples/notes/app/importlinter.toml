@@ -1,0 +1,75 @@
+# Boundary contracts for the Notes example.
+#
+# A separate file from the root pyproject.toml because import-linter resolves
+# one root package per configuration, and an app is not part of the library.
+# `make lint-py` runs both.
+#
+# Phase 5 generates this from the app's structure instead of maintaining it by
+# hand. Until then it is checked in, which means a layer added to the example
+# that breaks one of these fails the build rather than the review.
+
+[tool.importlinter]
+root_package = "notes_app"
+include_external_packages = true
+
+# The feature stack, top to bottom: an action produces a snapshot, the
+# view-model turns state into screens, and a screen describes UI. Nothing may
+# skip a layer below it.
+#
+# `domain` is not in this list and that is deliberate. Every layer may import
+# the domain -- that is the point of it -- so putting it at the bottom would make
+# every direct import of a use case an illegal skip. It gets its own contract
+# below, restricting what it may reach rather than who may reach it.
+[[tool.importlinter.contracts]]
+name = "Example: actions -> view_model -> views"
+type = "layers"
+layers = ["actions", "view_model", "views"]
+containers = ["notes_app"]
+explanation = "An action produces a snapshot, the view-model turns state into screens, a screen describes UI. No layer may skip one below it."
+
+# The point of the layering: an action reaches storage through a use case, never
+# around one.
+#
+# `allow_indirect_imports` is doing real work here and is not a loophole. Actions
+# resolve the repository through `container`, so the *transitive* chain
+# actions -> container -> data exists by design — the container is the one place
+# the app is wired to storage. What must not happen is a screen or an action
+# naming a backend, which is the shortcut that makes a feature untestable.
+[[tool.importlinter.contracts]]
+name = "Example: features never import data directly"
+type = "forbidden"
+source_modules = ["notes_app.views", "notes_app.actions", "notes_app.view_model"]
+forbidden_modules = ["notes_app.data"]
+allow_indirect_imports = true
+explanation = "A screen or an action that named a backend would be untestable without one. Reaching it through the container is the sanctioned path."
+
+# The rule that makes the domain a domain: it cannot see the app it belongs to.
+[[tool.importlinter.contracts]]
+name = "Example: domain is independent"
+type = "forbidden"
+source_modules = ["notes_app.domain"]
+forbidden_modules = [
+  "notes_app.views",
+  "notes_app.actions",
+  "notes_app.view_model",
+  "notes_app.container",
+]
+explanation = "Use cases are plain functions over plain data; nothing in domain/ may reach back into the app that uses it."
+
+# The whole reason to test the domain separately. Without this contract a single
+# convenience import in domain/ would quietly pull in the entire runtime.
+[[tool.importlinter.contracts]]
+name = "Example: domain never imports the framework"
+type = "forbidden"
+source_modules = ["notes_app.domain"]
+forbidden_modules = ["pycompose"]
+explanation = "The rules of the app must run with no library at all; that is what makes them fast to test and honest about their dependencies."
+
+# Storage answers the domain and nothing else. A backend that knew about a screen
+# would be unable to serve a second one.
+[[tool.importlinter.contracts]]
+name = "Example: data implements storage, not features"
+type = "forbidden"
+source_modules = ["notes_app.data"]
+forbidden_modules = ["notes_app.views", "notes_app.actions", "notes_app.view_model"]
+explanation = "A backend that referenced a screen could only ever serve that screen."

@@ -91,14 +91,53 @@ class RuntimeSession:
             value for value in vars(module).values() if isinstance(value, AppAction)
         ]
         actions = getattr(module, "actions", None)
+        declared = actions is not None
         if actions is None:
             actions = Actions(*definitions)
         if not isinstance(actions, Actions):
             raise BridgeError("app actions must be an Actions instance")
+        if declared and not actions.handlers():
+            # An empty registry is the quietest possible failure: the app starts,
+            # renders, and every control is inert because no binding resolves to
+            # a handler. An app that *declares* one and it comes out empty has
+            # misspelled something -- a renamed export, or a Registry built in a
+            # different module -- so it is refused rather than rendered blank.
+            # An app with no actions at all need not declare a registry.
+            raise BridgeError(
+                "app declared an actions registry but it holds nothing; check that "
+                "it is exported under the module-level name 'actions' and that the "
+                "actions are registered on it"
+            )
+        self._check_injection(actions, container)
+        actions.install_container(container)
         surface = BridgeSurface(Store(state), actions, debug=self._debug)
         if surface.expose_latest_snapshot() is None:
             raise BridgeError("app build produced no valid snapshot")
         return surface
+
+    def _check_injection(self, actions: Actions, container: object | None) -> None:
+        """Fail at startup when an action wants a container the app never declared.
+
+        Every handler's signature is known before the first frame is drawn, so
+        this is the whole of the check a compiler would do for a framework: a
+        missing binding is reported now, with the id of the action that asked,
+        rather than as an ``AttributeError`` on whichever control a user happens
+        to tap first.
+
+        Args:
+            actions: The app's registry, freshly built or reloaded.
+            container: The session container, or None when none was declared.
+
+        Raises:
+            BridgeError: If any action declares an injected parameter and no
+                container was declared.
+        """
+        wanted = actions.injected
+        if wanted and container is None:
+            raise BridgeError(
+                "app actions ask for a container but the entrypoint declares none",
+                injects=",".join(wanted),
+            )
 
     def accept_action(self, source: str) -> None:
         """Validate and run one native action before the host pulls a snapshot.

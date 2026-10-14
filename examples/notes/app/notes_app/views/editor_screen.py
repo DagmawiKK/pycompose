@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from notes_app.handlers import Handlers
-from notes_app.state import Note, Session
+from notes_app.domain.models import Note
+from notes_app.state import Session
 from notes_app.theme import Theme
-from pycompose import composable
+from pycompose import Registry, composable
 from pycompose.core import Node
 from pycompose.m3 import (
     Column,
@@ -24,7 +24,7 @@ def editor_screen(
     *,
     note: Note,
     session: Session,
-    handlers: Handlers,
+    actions: Registry,
 ) -> Node:
     """Render the editor for one note.
 
@@ -34,7 +34,7 @@ def editor_screen(
     Args:
         note: The note being edited.
         session: The session shell, for the palette.
-        handlers: Action references this screen binds to.
+        actions: The registry this screen binds its controls to.
 
     Returns:
         A Scaffold declaration holding the note's title and body fields.
@@ -54,7 +54,7 @@ def editor_screen(
                         TextButton(
                             id="back",
                             text="Notes",
-                            on_click=handlers.go_back.bind(id="back"),
+                            on_click=actions.go_back.bind(id="back"),
                         ),
                         Spacer(id="gap_bar_title", modifier=Modifier().size(8)),
                         Text(
@@ -71,9 +71,7 @@ def editor_screen(
                     id="title_field",
                     value=note.title,
                     label="Title",
-                    on_value_change=handlers.set_title.bind(
-                        id="title", note_id=note.id
-                    ),
+                    on_value_change=actions.set_title.bind(id="title", note_id=note.id),
                     modifier=Modifier().fill_max_width(),
                 ),
                 Spacer(id="gap_body", modifier=Modifier().size(12)),
@@ -81,14 +79,14 @@ def editor_screen(
                     id="body_field",
                     value=note.body,
                     label="Note",
-                    on_value_change=handlers.set_body.bind(id="body", note_id=note.id),
+                    on_value_change=actions.set_body.bind(id="body", note_id=note.id),
                     modifier=Modifier().fill_max_width(),
                 ),
                 Spacer(id="gap_delete", modifier=Modifier().size(24)),
                 TextButton(
                     id="delete",
                     text="Delete note",
-                    on_click=handlers.delete_note.bind(id="editor", note_id=note.id),
+                    on_click=actions.delete_note.bind(id="editor", note_id=note.id),
                 ),
             ],
         ),

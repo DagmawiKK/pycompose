@@ -8,6 +8,7 @@ lint-py:
 	bandit -ll -q -r pycompose
 	pydoclint pycompose
 	lint-imports --config pyproject.toml
+	@if [ -d examples/notes/app ]; then (cd examples/notes/app && lint-imports --config importlinter.toml); fi
 
 lint-kt:
 	@if [ -d android ]; then cd android && ./gradlew spotlessCheck detekt lintDebug; fi

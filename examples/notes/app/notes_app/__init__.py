@@ -14,6 +14,6 @@ Layers, each importing only the ones above it in this list:
 * :mod:`notes_app.actions` -- the transitions a user can trigger.
 """
 
-from notes_app.actions import HANDLERS, actions
+from notes_app.actions import actions
 
-__all__ = ["HANDLERS", "actions"]
+__all__ = ["actions", "actions"]

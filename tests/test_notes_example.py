@@ -9,7 +9,9 @@ control by the binding id the snapshot itself published.
 from __future__ import annotations
 
 import json
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -17,12 +19,37 @@ import pytest
 
 from pycompose.bridge import BridgeSurface
 from pycompose.bridge.runtime import RuntimeSession
+from pycompose.repository import use_root
 from pycompose.state import Store
 
 if TYPE_CHECKING:
     from types import ModuleType
 
 APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"
+
+
+SEEDED = [
+    (1, "Welcome", "This app is written entirely in Python."),
+    (2, "Try it", "Tap a note to edit it, or add one with the New button."),
+]
+
+
+def a_store(notes: Any = ...) -> Any:
+    """Return an in-memory store, seeded unless told otherwise.
+
+    Args:
+        notes: What it should hold. Defaults to the two seeded notes; pass a list
+            for an exact inventory.
+
+    Returns:
+        A memory-backed note repository.
+    """
+    from notes_app.data.notes_repo import MemoryNotesRepo
+    from notes_app.domain.models import Note
+
+    return MemoryNotesRepo(
+        [Note(*held) for held in (SEEDED if notes is ... else notes)]
+    )
 
 
 @pytest.fixture(scope="module")
@@ -51,6 +78,7 @@ class Host:
         route: str = "",
         restore: str = "",
         follow_navigation: bool = True,
+        repo: Any = None,
     ) -> None:
         """Start a session the way ChaquopyBridge would.
 
@@ -60,12 +88,56 @@ class Host:
             restore: Data the host saved from a previous process.
             follow_navigation: Echo navigate effects back as the host does. Off
                 to observe what an action asks for without moving the screen.
+            repo: Where the notes live. Defaults to an in-memory store, so no test
+                touches a file and the data layer is never on the path.
         """
+        from notes_app.container import AppContainer
+
         self.follow_navigation = follow_navigation
+        self.repo: Any = repo if repo is not None else a_store()
+        self.container = AppContainer(self.repo)
+        # A real session does this while resolving the app's factory; a test
+        # driving the surface directly has to say so once, in one place.
+        app.actions.install_container(self.container)
         self._bridge = BridgeSurface(
-            Store(app.build(route=route or "notes", restore=restore)),
+            Store(
+                app.build(
+                    route=route or "notes",
+                    restore=restore,
+                    container=self.container,
+                )
+            ),
             app.actions,
         )
+
+    @property
+    def titles(self) -> list[str]:
+        """Return the note titles held, newest first.
+
+        Returns:
+            Every stored title.
+        """
+        return [
+            held.title
+            for held in sorted(self.repo.load(), key=lambda n: n.id, reverse=True)
+        ]
+
+    def title_of(self, note_id: int) -> str:
+        """Return one note's stored title.
+
+        Args:
+            note_id: Identity to look for.
+
+        Returns:
+            The stored title.
+
+        Raises:
+            AssertionError: If no such note is held.
+        """
+        for held in self.repo.load():
+            if held.id == note_id:
+                return held.title
+        raise AssertionError(f"no held note with id {note_id}")
 
     @property
     def error(self) -> str:
@@ -162,31 +234,35 @@ def data(snapshot: dict[str, Any]) -> dict[str, Any]:
     return snapshot["metadata"]["data"]
 
 
-def titles(snapshot: dict[str, Any]) -> list[str]:
-    """Return the note titles a snapshot published, newest first.
+def titles_of(host: Any) -> list[str]:
+    """Return the titles held by a host started in one expression.
 
     Args:
-        snapshot: A parsed snapshot.
+        host: The host.
 
     Returns:
-        The titles, exactly as stored.
+        Every stored title, newest first.
     """
-    return [note["title"] for note in data(snapshot)["notes"]]
+    return host.titles
 
 
-def note(snapshot: dict[str, Any], note_id: int) -> dict[str, Any]:
-    """Return one published note by identity.
+def held_of(host: Any, note_id: int) -> Any:
+    """Return one stored note by identity.
 
     Args:
-        snapshot: A parsed snapshot.
+        host: The running host.
         note_id: The note to find.
 
     Returns:
-        The published note, failing the test if the snapshot lacks it.
+        The stored note.
+
+    Raises:
+        AssertionError: If no such note is held.
     """
-    found = [n for n in data(snapshot)["notes"] if n["id"] == note_id]
-    assert found, f"no note {note_id}"
-    return found[0]
+    for held in host.repo.load():
+        if held.id == note_id:
+            return held
+    raise AssertionError(f"no held note {note_id}")
 
 
 def effects(snapshot: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
@@ -233,9 +309,21 @@ def test_a_fresh_install_opens_on_the_list(app: ModuleType) -> None:
     host = Host(app)
     snapshot = host.snapshot()
     assert data(snapshot)["route"] == "notes"
-    assert titles(snapshot) == ["Welcome", "Try it"]
+    # Newest first, so the most recent note is the one under the thumb.
+    assert host.titles == ["Try it", "Welcome"]
     assert snapshot["root"]["type"] == "Scaffold"
     assert host.error == ""
+
+
+def test_a_genuinely_empty_store_opens_empty_rather_than_seeding(
+    app: ModuleType,
+) -> None:
+    """Nothing invents notes. A real install starts empty and stays that way."""
+    host = Host(app, repo=a_store([]))
+    assert host.titles == []
+    assert "No notes yet." in [
+        props["text"] for props in nodes(host.snapshot(), "Text")
+    ]
 
 
 def test_the_list_shows_a_title_preview_and_delete_for_every_note(
@@ -245,10 +333,10 @@ def test_the_list_shows_a_title_preview_and_delete_for_every_note(
     assert [props["text"] for props in nodes(snapshot, "Text")] == [
         "Notes",
         "2 notes",
-        "Welcome",
-        "This app is written entirely in Python.",
         "Try it",
         "Tap a note to edit it, or add one with the New button.",
+        "Welcome",
+        "This app is written entirely in Python.",
     ]
     assert len(nodes(snapshot, "TextButton")) == 3  # about + one delete per row
 
@@ -256,8 +344,7 @@ def test_the_list_shows_a_title_preview_and_delete_for_every_note(
 def test_an_empty_repository_says_so_instead_of_rendering_nothing(
     app: ModuleType,
 ) -> None:
-    empty = json.dumps({"notes": [], "nextId": 1, "route": "notes", "dark": False})
-    snapshot = Host(app, restore=empty).snapshot()
+    snapshot = Host(app, repo=a_store([])).snapshot()
     assert "No notes yet." in [props["text"] for props in nodes(snapshot, "Text")]
 
 
@@ -275,7 +362,7 @@ def test_creating_a_note_requests_navigation_rather_than_moving_itself(
     snapshot = host.snapshot()
 
     # The note exists and a move is requested, but the screen has not moved.
-    assert titles(snapshot)[0] == ""
+    assert host.titles[0] == ""
     assert data(snapshot)["route"] == "notes"
     assert effects(snapshot) == [("haptic", {}), ("navigate", {"route": "note:3"})]
 
@@ -304,7 +391,7 @@ def test_opening_and_leaving_a_note_round_trips(app: ModuleType) -> None:
     host.tap("go_back", "back")
     snapshot = host.snapshot()
     assert data(snapshot)["route"] == "notes"
-    assert titles(snapshot) == ["Welcome", "Try it"]
+    assert host.titles == ["Try it", "Welcome"]
 
 
 def test_system_back_leaves_the_editor_and_closes_the_app_from_the_list(
@@ -328,40 +415,25 @@ def test_a_route_change_never_rebuilds_the_session(app: ModuleType) -> None:
     host = Host(app)
     host.tap("new_note", "new")
     host.tap("set_title", "title", value="Half-typed")
-    assert titles(host.snapshot())[0] == "Half-typed"
+    assert host.titles[0] == "Half-typed"
 
     host.tap("go_back", "back")
     host.tap("open_note", "n3")
     snapshot = host.snapshot()
     assert data(snapshot)["route"] == "note:3"
-    assert titles(snapshot)[0] == "Half-typed"
+    assert host.titles[0] == "Half-typed"
 
 
 def test_a_detail_route_naming_a_deleted_note_falls_back_to_the_list(
     app: ModuleType,
 ) -> None:
-    saved = json.dumps(
-        {
-            "notes": [{"id": 7, "title": "Only", "body": ""}],
-            "nextId": 8,
-            "route": "notes",
-            "dark": False,
-        }
-    )
-    snapshot = Host(app, route="note:99", restore=saved).snapshot()
+    snapshot = Host(app, route="note:99", repo=a_store([(7, "Only")])).snapshot()
     assert snapshot["root"]["type"] == "Scaffold"
     assert "Notes" in [props["text"] for props in nodes(snapshot, "Text")]
 
 
 def test_the_host_route_wins_over_the_route_in_the_save(app: ModuleType) -> None:
-    saved = json.dumps(
-        {
-            "notes": [{"id": 1, "title": "Only", "body": "text"}],
-            "nextId": 2,
-            "route": "notes",
-            "dark": False,
-        }
-    )
+    saved = json.dumps({"route": "notes", "dark": False})
     assert (
         data(Host(app, route="note:1", restore=saved).snapshot())["route"] == "note:1"
     )
@@ -377,15 +449,19 @@ def test_typing_updates_the_note_being_edited(app: ModuleType) -> None:
     host.tap("new_note", "new")
     host.tap("set_title", "title", value="Groceries")
     host.tap("set_body", "body", value="Milk\nBread")
-    snapshot = host.snapshot()
-    assert titles(snapshot)[0] == "Groceries"
-    assert data(snapshot)["notes"][0]["body"] == "Milk\nBread"
+    assert host.titles[0] == "Groceries"
+    assert held_of(host, 3).body == "Milk\nBread"
+
+    # The list describes its own size, from a rule in the domain rather than
+    # from whatever state happened to be carrying the notes.
+    host.tap("go_back", "back")
+    assert "3 notes" in [props["text"] for props in nodes(host.snapshot(), "Text")]
 
 
 def test_each_row_deletes_only_its_own_note(app: ModuleType) -> None:
     host = Host(app)
     host.tap("delete_note", "n1")
-    assert titles(host.snapshot()) == ["Try it"]
+    assert host.titles == ["Try it"]
 
 
 def test_deleting_the_open_note_returns_to_the_list(app: ModuleType) -> None:
@@ -394,7 +470,7 @@ def test_deleting_the_open_note_returns_to_the_list(app: ModuleType) -> None:
     host.tap("delete_note", "editor")
     snapshot = host.snapshot()
     assert data(snapshot)["route"] == "notes"
-    assert titles(snapshot) == ["Welcome"]
+    assert host.titles == ["Welcome"]
 
 
 def test_a_cleared_title_is_stored_empty_and_reads_as_a_note(app: ModuleType) -> None:
@@ -403,7 +479,7 @@ def test_a_cleared_title_is_stored_empty_and_reads_as_a_note(app: ModuleType) ->
     host.tap("set_title", "title", value="")
     snapshot = host.snapshot()
     # Stored as the user left it; the placeholder belongs to the view, not the data.
-    assert note(snapshot, 1)["title"] == ""
+    assert held_of(host, 1).title == ""
     assert "Untitled" in [props["text"] for props in nodes(snapshot, "Text")]
 
 
@@ -422,22 +498,30 @@ def test_an_empty_body_previews_itself_clearly(app: ModuleType) -> None:
 
 
 def test_half_typed_text_survives_process_death(app: ModuleType) -> None:
-    first = Host(app)
+    """Death costs the session shell and the repository keeps the work.
+
+    Those are two different rescues and the test needs both: the shell is what
+    the host hands back, and storage is what outlives the process on its own.
+    """
+    disk = a_store()
+    first = Host(app, repo=disk)
     first.tap("new_note", "new")
     first.tap("set_title", "title", value="Half-typed")
     first.tap("set_body", "body", value="interrupted mid-sentence")
     published = first.snapshot()["metadata"]["data"]
 
-    # The host hands the same bytes to a brand new process, on the same route.
-    second = Host(app, route=published["route"], restore=json.dumps(published))
+    # A brand new process, same storage, and the bytes the host kept.
+    second = Host(
+        app, repo=disk, route=published["route"], restore=json.dumps(published)
+    )
     snapshot = second.snapshot()
     assert data(snapshot)["route"] == "note:3"
-    assert titles(snapshot)[0] == "Half-typed"
-    assert data(snapshot)["notes"][0]["body"] == "interrupted mid-sentence"
+    assert second.titles[0] == "Half-typed"
+    assert held_of(second, 3).body == "interrupted mid-sentence"
 
     # And the restored session is still editable, not merely readable.
     second.tap("set_body", "body", value="still here")
-    assert data(second.snapshot())["notes"][0]["body"] == "still here"
+    assert held_of(second, 3).body == "still here"
 
 
 @pytest.mark.parametrize(
@@ -447,52 +531,44 @@ def test_half_typed_text_survives_process_death(app: ModuleType) -> None:
         "not json",
         "[]",
         '"a string"',
-        '{"notes": "no"}',
-        '{"notes": [1, 2]}',
-        '{"notes": [{"title": "no id"}]}',
+        '{"route": 7}',
+        '{"route": "notes", "dark": "maybe"}',
+        '{"route": "notes", "surprise": 1}',
     ],
 )
 def test_a_save_that_cannot_be_understood_still_starts_the_app(
     app: ModuleType, restore: str
 ) -> None:
     host = Host(app, restore=restore)
-    assert titles(host.snapshot()) == ["Welcome", "Try it"]
+    assert host.titles == ["Try it", "Welcome"]
     assert host.error == ""
 
 
-def test_a_save_with_one_bad_entry_is_refused_whole_rather_than_half_applied(
+def test_a_shell_with_one_bad_field_is_refused_whole_rather_than_half_applied(
     app: ModuleType,
 ) -> None:
-    """The declared state makes partial recovery impossible, and that is the point.
+    """The declared shell makes partial recovery impossible, and that is the point.
 
-    An untyped mapping let one unreadable entry be dropped while its neighbours
-    rendered, which is how a notes app quietly loses data. The codec either
-    accepts the save exactly as written or refuses it.
+    An untyped mapping let one unreadable field fall back to its default while
+    its neighbours applied, so a restore silently produced a state the user never
+    had. The codec either accepts the save exactly as written or refuses it.
     """
-    saved = json.dumps(
-        {
-            "notes": [
-                {"id": 1, "title": "Good", "body": "kept"},
-                {"id": "bad", "title": "Broken", "body": ""},
-            ],
-            "nextId": 3,
-            "route": "notes",
-            "dark": False,
-        }
-    )
-    # Refused, so the app starts from seed data rather than showing a note that
-    # is missing from a list the user believes is complete.
-    assert titles(Host(app, restore=saved).snapshot()) == ["Welcome", "Try it"]
+    saved = json.dumps({"route": "note:4", "dark": "not a boolean"})
+    assert titles_of(Host(app, restore=saved)) == ["Try it", "Welcome"]
 
 
-def test_an_exhausted_save_stays_empty_rather_than_reseeding(app: ModuleType) -> None:
-    host = Host(app)
+def test_an_emptied_store_stays_empty_rather_than_reseeding(
+    app: ModuleType,
+) -> None:
+    """Deleting everything is a decision, not a state the app recovers from."""
+    disk = a_store()
+    host = Host(app, repo=disk)
     host.tap("delete_note", "n1")
     host.tap("delete_note", "n2")
-    assert titles(host.snapshot()) == []
+    assert host.titles == []
 
     saved = json.dumps(data(host.snapshot()))
-    assert titles(Host(app, restore=saved).snapshot()) == []
+    assert titles_of(Host(app, repo=disk, restore=saved)) == []
 
 
 # ---------------------------------------------------------------------------
@@ -533,24 +609,65 @@ def test_the_appearance_survives_process_death(app: ModuleType) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_the_shell_and_the_feature_are_encoded_as_separate_parts(
-    app: ModuleType,
-) -> None:
-    """The split is what keeps a keystroke from re-encoding the whole app.
+def test_only_the_shell_crosses_the_boundary(app: ModuleType) -> None:
+    """The whole point of Phase 3: the Bundle carries the shell and nothing else.
 
-    The shell is the small part the host must be able to restore. The notes are
-    a feature partition that rides beside it. Knowing which keys belong to which
-    is what lets a host keep the first and rebuild the second.
+    Anything the host saves has to fit in a transaction buffer measured in
+    kilobytes. Publishing the notes here would mean one more note could break
+    process death for every user, so the published data stays a shell and the
+    notes stay in the repository -- visible in the row count, absent from the
+    bytes the host keeps.
     """
-    host = Host(app)
-    snapshot = host.snapshot()
-    published = data(snapshot)
-    assert set(published) == {"route", "dark", "notes", "nextId"}
+    host = Host(app, repo=a_store([(n, f"Note {n}") for n in range(50)]))
+    published = data(host.snapshot())
 
-    # The shell alone is what a host would keep across process death.
-    shell = {"route": published["route"], "dark": published["dark"]}
-    assert len(shell) == 2
-    assert published["notes"], "the notes partition must carry the notes"
+    assert set(published) == {"route", "dark"}
+    assert len(json.dumps(published)) < 200
+    # Fifty rows render; none of them are in what the host saves.
+    assert "Note 49" in [props["text"] for props in nodes(host.snapshot(), "Text")]
+    assert len(host.repo.load()) == 50
+
+
+def test_ten_thousand_notes_survive_a_restart_without_the_bundle_complaining(
+    app: ModuleType,
+    tmp_path: Path,
+) -> None:
+    """Phase 3's acceptance bar, against the real file-backed store.
+
+    Before this seam every note travelled through ``SavedStateHandle``. Ten
+    thousand of them do not fit in a Bundle, and the exception that says so
+    names nothing useful -- so the notes went to disk and the shell stayed.
+
+    Opened on the editor rather than the list, and that is not a dodge: the list
+    expands every row into the snapshot, which has its own ceiling. Removing the
+    Bundle limit moved the wall rather than abolishing it, and pagination is
+    what the list still needs before ten thousand rows can be shown.
+    """
+    from notes_app.data.notes_repo import FileNotesRepo
+    from notes_app.domain.models import Note
+
+    use_root(tmp_path)
+    try:
+        # Seed the store directly: ten thousand taps through the bridge would be
+        # a test of the bridge, not of the seam this is about.
+        FileNotesRepo().store(
+            [Note(index, f"Note {index}", "x" * 200) for index in range(10_000)]
+        )
+
+        host = Host(app, route="note:1", repo=FileNotesRepo())
+        published = data(host.snapshot())
+        assert len(host.repo.load()) == 10_000
+        assert held_of(host, 9_999).title == "Note 9999"
+        assert set(published) == {"route", "dark"}
+        assert len(json.dumps(published)) < 200
+        # The file, meanwhile, is megabytes -- which is exactly why it is there.
+        assert (tmp_path / "notes.json").stat().st_size > 1_000_000
+
+        # A second process, reading the same files.
+        restarted = Host(app, route="note:1", repo=FileNotesRepo())
+        assert len(restarted.repo.load()) == 10_000
+    finally:
+        use_root(Path.cwd())
 
 
 def test_the_shell_is_restorable_on_its_own(app: ModuleType) -> None:
@@ -567,7 +684,7 @@ def test_the_shell_is_restorable_on_its_own(app: ModuleType) -> None:
         restore=json.dumps(published),
     )
     assert data(rebuilt.snapshot())["route"] == "note:2"
-    assert titles(rebuilt.snapshot()) == titles(host.snapshot())
+    assert titles_of(rebuilt) == host.titles
 
 
 def test_every_snapshot_is_a_valid_canonical_ir(app: ModuleType) -> None:
@@ -618,10 +735,16 @@ def test_the_runtime_starts_this_app_and_its_actions_work() -> None:
     binding fails validation, and the app starts to a blank screen.
     """
     sys.path.insert(0, str(APP))
+    # The real session builds the app's real container, so storage has to point
+    # somewhere a test may write rather than at the repository working directory.
+    scratch = Path(tempfile.mkdtemp())
+    use_root(scratch)
     try:
         session = RuntimeSession("main:build", "notes", debug=True)
     finally:
         sys.path.remove(str(APP))
+        sys.modules.pop("main", None)
+        use_root(Path.cwd())
     assert session.error() == ""
     snapshot = json.loads(session.snapshot())
     assert snapshot["root"]["type"] == "Scaffold"
@@ -650,17 +773,35 @@ def test_the_runtime_starts_this_app_and_its_actions_work() -> None:
 
 def test_the_app_survives_a_hot_reload_of_a_module_inside_its_package() -> None:
     """A reload must re-import the whole package, not just the entrypoint."""
+    from notes_app.data.notes_repo import FileNotesRepo
+    from notes_app.domain.models import Note
+
     sys.path.insert(0, str(APP))
-    model = APP / "notes_app" / "state.py"
-    original = model.read_text()
+    screen = APP / "notes_app" / "views" / "list_screen.py"
+    original = screen.read_text()
+    cached = APP / "notes_app" / "__pycache__"
+    # The session builds the real container, so point storage somewhere a test
+    # may write. Otherwise this would leave a notes.json in the repository.
+    use_root(Path(tempfile.mkdtemp()))
+    FileNotesRepo().store([Note(*held) for held in SEEDED])
     try:
         session = RuntimeSession("main:build", "notes", debug=True)
-        assert "Welcome" in session.snapshot()
+        assert "Notes" in [
+            props["text"] for props in nodes(json.loads(session.snapshot()), "Text")
+        ]
 
-        model.write_text(original.replace('title="Welcome"', 'title="Reloaded"'))
+        # A different length on purpose. A same-length edit restores to a file
+        # whose mtime and size match what Python cached before the test, and it
+        # will go on using the stale bytecode -- which would make this test pass
+        # for entirely the wrong reason.
+        screen.write_text(original.replace('text="Notes"', 'text="Reloaded heading"'))
         session.reload("notes")
+
         assert session.error() == ""
-        assert "Reloaded" in session.snapshot()
+        assert "Reloaded heading" in [
+            props["text"] for props in nodes(json.loads(session.snapshot()), "Text")
+        ]
+
         # The registry has to come back too, or every control is inert.
         session.accept_action(
             json.dumps(
@@ -678,5 +819,6 @@ def test_the_app_survives_a_hot_reload_of_a_module_inside_its_package() -> None:
         )
         assert session.error() == ""
     finally:
-        model.write_text(original)
+        screen.write_text(original)
+        shutil.rmtree(cached, ignore_errors=True)
         sys.path.remove(str(APP))
