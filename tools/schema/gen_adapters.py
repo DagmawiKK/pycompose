@@ -24,6 +24,26 @@ from __future__ import annotations
 
 from typing import Any
 
+COMPOSE_PACKAGE = {
+    "Box": "androidx.compose.foundation.layout",
+    "Button": "androidx.compose.material3",
+    "Checkbox": "androidx.compose.material3",
+    "Column": "androidx.compose.foundation.layout",
+    "FilterChip": "androidx.compose.material3",
+    "Image": "androidx.compose.foundation",
+    "Row": "androidx.compose.foundation.layout",
+    "Spacer": "androidx.compose.foundation.layout",
+    "Text": "androidx.compose.material3",
+    "TextButton": "androidx.compose.material3",
+    "TextField": "androidx.compose.material3",
+}
+"""Where each component's Compose class lives.
+
+Placeholder knowledge, and the only part of this file that is not derived from the
+schema. Phase C removes it: the API dump already says which ``*Kt`` class each
+composable hangs off, so the package is derivable rather than listed.
+"""
+
 SCALAR_KOTLIN = {
     "string": "String",
     "boolean": "Boolean",
@@ -63,6 +83,8 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
     Returns:
         True when every prop renders without a human decision.
     """
+    if entry.get("adapter") == "manual":
+        return False
     if entry.get("children", {}).get("allowed"):
         return False
     return all(
@@ -71,35 +93,46 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
 
 
 def render(name: str, entry: dict[str, Any]) -> str:
-    """Render one adapter's body.
+    """Render one adapter.
+
+    A prop is passed only when its generated Kotlin property is non-null, which
+    is exactly when the schema marks it required or gives it a default.
+    ``Button.enabled`` has a default and passes; an optional prop with no declared
+    default is a ``Boolean?`` in the model and is omitted, leaving Compose's own
+    default in charge. Passing a nullable through is the mistake that turns a
+    generator into something that does not compile.
 
     Args:
         name: The component's schema name.
         entry: Its schema entry.
 
     Returns:
-        The Kotlin call, or an empty string when it cannot be rendered.
+        The adapter as Kotlin, or an empty string when it cannot be derived.
     """
     if not is_mechanical(entry):
         return ""
 
-    node = f"{name}Node"
     arguments = ["modifier = modifier"]
-    for prop, spec in entry["props"].items():
+    for prop, spec in entry.get("props", {}).items():
         prop_type = spec["type"]
         if prop_type == "modifier":
             continue
-        kotlin = SCALAR_KOTLIN.get(prop_type)
-        if kotlin is None:
-            return ""
+        prop_name = _camel(prop)
         if prop_type == "actionId":
             arguments.append(
-                f"{_camel(prop)} = {{ context.event(node.props.{_camel(prop)}) }}"
+                f"{prop_name} = {{ context.event(model.props.{prop_name}) }}"
             )
-        else:
-            arguments.append(f"{_camel(prop)} = node.props.{_camel(prop)}")
+            continue
+        if prop_type not in SCALAR_KOTLIN:
+            # color, enum, resource: the encodings are declared but the host has
+            # no PropResolver to decode them, so no honest mapping exists yet.
+            return ""
+        if not (spec.get("required") or "default" in spec):
+            continue
+        arguments.append(f"{prop_name} = model.props.{prop_name}")
 
-    body = "\n".join(f"            {argument}," for argument in arguments)
+    node = f"{name}Node"
+    body = "\n".join(f"                    {argument}," for argument in arguments)
     return (
         f'            .register("{name}") {{ node, modifier, context ->\n'
         f"                val model = node as {node}\n"
@@ -126,7 +159,10 @@ def render_file(registry: dict) -> str:
         block = render(name, entry)
         if block:
             blocks.append(block)
-            imports.add(f"import androidx.compose.foundation.layout.{name}")
+            package = COMPOSE_PACKAGE.get(name)
+            if package is None:
+                continue
+            imports.add(f"import {package}.{name}")
             imports.add(f"import com.pycompose.ir.generated.{name} as {name}Node")
     if not blocks:
         return ""
