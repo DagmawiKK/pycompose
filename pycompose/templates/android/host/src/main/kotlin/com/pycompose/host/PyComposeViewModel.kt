@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
@@ -41,6 +42,13 @@ class PyComposeViewModel(
     private var restore = savedState.get<String>(STATE) ?: ""
 
     init {
+        // Background Python results arrive from any thread and are queued here, so
+        // the worker still only ever sees them as ordinary actions.
+        AsyncResult.listen { actionId, payload ->
+            val element = Json.parseToJsonElement(payload)
+            require(element is JsonObject) { "Async result must be an object" }
+            enqueue(Command.Push(Action(actionId, element)))
+        }
         val restored = route
         val saved = restore
         scope.launch {
@@ -68,6 +76,12 @@ class PyComposeViewModel(
                             // discard the app's session on every navigation, which
                             // is what makes a ViewModel impossible to retain.
                             Lifecycle.check("onRouteChanged", command.action.payload)
+                            bridge.acceptAction(command.action.toJson())
+                        }
+                        is Command.Push -> {
+                            // A background result, delivered exactly as a tap would
+                            // be: the payload is the app's, and its handler's
+                            // declared contract is what checks it.
                             bridge.acceptAction(command.action.toJson())
                         }
                     }
@@ -179,6 +193,9 @@ class PyComposeViewModel(
     }
 
     fun close() {
+        // A background result must never reach a closed view: the worker it would
+        // re-render into no longer exists.
+        AsyncResult.listen(null)
         commands.close()
         scope.cancel()
     }
@@ -201,6 +218,11 @@ class PyComposeViewModel(
 
         data class Reload(
             val route: String,
+        ) : Command
+
+        /** A background result, queued from whatever thread produced it. */
+        data class Push(
+            val action: Action,
         ) : Command
 
         data class Navigate(

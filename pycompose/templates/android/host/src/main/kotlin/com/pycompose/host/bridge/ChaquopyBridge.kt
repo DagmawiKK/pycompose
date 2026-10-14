@@ -10,6 +10,7 @@ class ChaquopyBridge(
     context: Context,
     private val entrypoint: String,
     private val debug: Boolean,
+    private val asyncSink: (String, String) -> Unit,
 ) : BridgeSurface {
     private val application = context.applicationContext
     private var owner: Thread? = null
@@ -29,6 +30,12 @@ class ChaquopyBridge(
             .getInstance()
             .getModule(MODULE)
             .callAttr("start", entrypoint, route, debug, restore)
+        // Background work needs somewhere to send its results before the app can
+        // use it. Registered here, on the worker, so it is never half-installed.
+        Python
+            .getInstance()
+            .getModule(MODULE)
+            .callAttr("install_async_sink", asyncSink)
         initialized = true
     }
 

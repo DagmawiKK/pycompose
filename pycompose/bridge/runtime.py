@@ -6,11 +6,14 @@ import importlib
 import inspect
 import re
 import sys
+from collections.abc import Callable
 from contextlib import suppress
 from pathlib import Path
 from threading import current_thread
 from types import ModuleType
+from typing import cast
 
+from pycompose import async_task
 from pycompose.bridge.api import BridgeSurface
 from pycompose.errors import BridgeError
 from pycompose.state import Actions, State, Store
@@ -199,6 +202,16 @@ def start(entrypoint: str, route: str, debug: bool, restore: str = "") -> None:
     _session = RuntimeSession(entrypoint, route, debug=debug, restore=restore)
 
 
+def install_async_sink(sink: object) -> None:
+    """Register where background results are delivered on this worker.
+
+    Args:
+        sink: A callable taking an action id and its canonical payload text, or
+            None to stop delivering.
+    """
+    async_task.install_sink(cast("Callable[[str, str], None]", sink))
+
+
 def accept_action(source: str) -> None:
     """Forward one data-only action to the Python-owned session.
 
@@ -225,10 +238,18 @@ def fetch_latest_snapshot() -> str:
 def fetch_latest_error() -> str:
     """Pull data-only debug diagnostics.
 
+    Background work records its failures here too, so one surface shows the app
+    everything that has gone wrong rather than only what went wrong on the
+    worker.
+
     Returns:
         Diagnostic text or an empty string.
     """
-    return _session.error() if _session is not None else ""
+    parts = [
+        _session.error() if _session is not None else "",
+        async_task.last_error(),
+    ]
+    return " / ".join(part for part in parts if part)
 
 
 def reload(route: str, restore: str = "") -> None:

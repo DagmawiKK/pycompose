@@ -98,10 +98,34 @@ class Actions:
         handler = self._handlers.get(action_id)
         if handler is None:
             raise StateError("unknown action", action_id=action_id)
-        result = handler(state, self._python_payload(action_id, payload))
+        named = self._python_payload(action_id, payload)
+        self._check_declared(action_id, named)
+        result = handler(state, named)
         if not isinstance(result, State):
             raise StateError("handler must return a State")
         return result
+
+    def _check_declared(self, action_id: str, payload: Any) -> None:
+        """Check a payload against the fields its handler declared.
+
+        A bound action is already checked twice over, by the binding and by
+        ``dispatch_binding``. An event with no control -- a background result,
+        say -- arrives here straight from the host, and this is the only place
+        its shape is enforced.
+
+        Args:
+            action_id: Id the payload arrived under.
+            payload: The translated payload.
+        """
+        definition = self._definitions.get(action_id)
+        if definition is None or not isinstance(payload, Mapping):
+            return
+        # The payload has already been translated to the handler's own names, and
+        # the declared fields are wire-named, so compare like with like.
+        declared = {
+            definition.aliases[name]: prop for name, prop in definition.fields.items()
+        }
+        check_payload(payload, declared, partial=True)
 
     def _python_payload(self, action_id: str, payload: Any) -> Any:
         """Translate wire-named payload fields to the handler's own names.
@@ -124,6 +148,23 @@ class Actions:
         return {
             definition.aliases.get(name, name): value for name, value in payload.items()
         }
+
+    def __contains__(self, action_id: object) -> bool:
+        """Report whether an action id names a handler this app registered.
+
+        Used when decoding an inbound event that no control is bound to -- a
+        background result, say. It narrows what the host may name to exactly what
+        the app declared, and never widens it.
+
+        Args:
+            action_id: The id to look for.
+
+        Returns:
+            True when a registered handler, or its alias, carries that id.
+        """
+        if not isinstance(action_id, str):
+            return False
+        return action_id in self._handlers or action_id in self._contracts
 
     def handlers(self) -> Mapping[str, ActionHandler]:
         return self._handlers.copy()

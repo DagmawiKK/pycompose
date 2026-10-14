@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping
+from collections.abc import Container, Mapping
 from dataclasses import dataclass
 from typing import cast
 
@@ -32,18 +32,26 @@ class Action:
     """A validated, detached action and its defaulted payload.
 
     Attributes:
-        action_id: Registry action id.
-        payload: Immutable registry-validated payload fields.
-        binding: Active app binding, when not using a legacy registry action.
+        action_id: Registry action id, or an app handler's name.
+        payload: Immutable payload fields.
+        binding: Active app binding, when the action came from a control.
+        app_handler: True when the id names a handler the app registered rather
+            than a registry action or a control's binding. Such a payload has no
+            wire contract to check here; the handler's own declared fields are
+            the contract, and they are checked when it is dispatched.
     """
 
     action_id: str
     payload: Mapping[str, FrozenJsonValue]
     binding: BindingSpec | None = None
+    app_handler: bool = False
 
     def __post_init__(self) -> None:
         if self.binding is not None:
             check_payload(self.payload, self.binding.event_fields)
+            object.__setattr__(self, "payload", freeze_json(self.payload))
+            return
+        if self.app_handler:
             object.__setattr__(self, "payload", freeze_json(self.payload))
             return
         object.__setattr__(
@@ -92,13 +100,23 @@ def _prepare_payload(
 
 
 def decode_action(
-    action_json: str, *, bindings: Mapping[str, BindingSpec] | None = None
+    action_json: str,
+    *,
+    bindings: Mapping[str, BindingSpec] | None = None,
+    handlers: Container[str] | None = None,
 ) -> Action:
     """Decode a host action and fill declared optional defaults.
+
+    An app handler is normally addressed through a control's binding, which is
+    what ties a tap to the instance it belongs to. Some events have no control --
+    a background result arriving with no screen to press -- and those name the
+    handler directly. Both are checked against the session's own registry, so
+    neither can name anything the app did not declare.
 
     Args:
         action_json: JSON envelope with actionId and optional payload object.
         bindings: App bindings from the active validated snapshot.
+        handlers: Action ids the app registered, for events with no control.
 
     Returns:
         An action ready for handler dispatch.
@@ -119,13 +137,25 @@ def decode_action(
         action_id not in REGISTRY.actions
         and action_id not in REGISTRY.lifecycle
         and action_id not in (bindings or {})
+        and action_id not in (handlers or ())
     ):
         raise BridgeError("unknown action", action_id=action_id)
     payload = raw.get("payload", {})
     if not isinstance(payload, dict):
         raise BridgeError("payload must be an object", action_id=action_id)
     binding = (bindings or {}).get(action_id)
+    # An app handler only takes over for an id nothing else declares. An app may
+    # register a handler whose alias happens to match a lifecycle event, and the
+    # registry contract for that event must still be the one that is enforced.
+    declared = action_id in REGISTRY.actions or action_id in REGISTRY.lifecycle
     try:
-        return Action(action_id, payload, binding)
+        return Action(
+            action_id,
+            payload,
+            binding,
+            app_handler=binding is None
+            and not declared
+            and action_id in (handlers or ()),
+        )
     except IrValidationError as exc:
         raise BridgeError("invalid app action payload", action_id=action_id) from exc

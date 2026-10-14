@@ -104,7 +104,11 @@ class BridgeSurface:
         self._processing = True
         self._latest_error = ""
         try:
-            action = decode_action(action_json, bindings=self._bindings)
+            action = decode_action(
+                action_json,
+                bindings=self._bindings,
+                handlers=self._actions,
+            )
             current = self._store.value
             next_state = (
                 self._actions.dispatch_binding(action.binding, current, action.payload)
