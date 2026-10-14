@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.7.0",
+  "schemaVersion": "1.8.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -8,7 +8,8 @@
     "1.4.0",
     "1.5.0",
     "1.6.0",
-    "1.7.0"
+    "1.7.0",
+    "1.8.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -522,6 +523,38 @@
           "required": true
         }
       }
+    }
+  },
+  "valueTypes": {
+    "color": {
+      "encoding": "string",
+      "shape": "#RRGGBB",
+      "covers": "Color",
+      "since": "1.8.0"
+    },
+    "dimension": {
+      "encoding": "number",
+      "shape": "value in dp",
+      "covers": "Dp, TextUnit",
+      "since": "1.8.0"
+    },
+    "edges": {
+      "encoding": "object",
+      "shape": "{top, bottom, start, end}, each a dimension",
+      "covers": "PaddingValues, WindowInsets",
+      "since": "1.8.0"
+    },
+    "enum": {
+      "encoding": "string",
+      "shape": "one of a declared value set",
+      "covers": "Arrangement, TextAlign, Shape",
+      "since": "1.8.0"
+    },
+    "brush": {
+      "encoding": "union",
+      "shape": "a color, or {type: linear|radial, colors, stops}",
+      "covers": "Brush",
+      "since": "1.8.0"
     }
   }
 }

@@ -15,7 +15,7 @@ __all__ = [
     "SCHEMA_VERSION",
 ]
 
-SCHEMA_VERSION: str = "1.7.0"
+SCHEMA_VERSION: str = "1.8.0"
 MIN_SCHEMA_VERSION: str = "1.0.0"
 MIN_LIBRARY_VERSION: str = "0.1.0"
 KNOWN_ACTION_IDS: tuple[str, ...] = ("increment", "submit")
@@ -124,8 +124,19 @@ REGISTRY: Registry = Registry.from_mapping(
         'd":true,"type":"dp"}}},"size":{"props":{"height":{'
         '"minimum":0,"required":true,"type":"dp"},"width":{'
         '"minimum":0,"required":true,"type":"dp"}}}},"schem'
-        'aVersion":"1.7.0","supportedSchemaVersions":["1.0.'
+        'aVersion":"1.8.0","supportedSchemaVersions":["1.0.'
         '0","1.1.0","1.2.0","1.3.0","1.4.0","1.5.0","1.6.0"'
-        ',"1.7.0"]}'
+        ',"1.7.0","1.8.0"],"valueTypes":{"brush":{"covers":'
+        '"Brush","encoding":"union","shape":"a color, or {t'
+        'ype: linear|radial, colors, stops}","since":"1.8.0'
+        '"},"color":{"covers":"Color","encoding":"string","'
+        'shape":"#RRGGBB","since":"1.8.0"},"dimension":{"co'
+        'vers":"Dp, TextUnit","encoding":"number","shape":"'
+        'value in dp","since":"1.8.0"},"edges":{"covers":"P'
+        'addingValues, WindowInsets","encoding":"object","s'
+        'hape":"{top, bottom, start, end}, each a dimension'
+        '","since":"1.8.0"},"enum":{"covers":"Arrangement, '
+        'TextAlign, Shape","encoding":"string","shape":"one'
+        ' of a declared value set","since":"1.8.0"}}}'
     )
 )

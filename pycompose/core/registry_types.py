@@ -477,6 +477,30 @@ class AbstractComponentRegistry(ABC):
         ...
 
 
+def _value_types(value: object) -> dict[str, Mapping[str, object]]:
+    """Parse the declared structured-value encodings.
+
+    Args:
+        value: The raw ``valueTypes`` section, absent on older schemas.
+
+    Returns:
+        Each family's encoding and shape, by name.
+
+    Raises:
+        ComponentRegistryError: If the section is present but malformed.
+    """
+    if value is None:
+        return {}
+    if not isinstance(value, Mapping):
+        raise ComponentRegistryError("'valueTypes' must be an object")
+    families: dict[str, Mapping[str, object]] = {}
+    for name, spec in value.items():
+        if not isinstance(spec, Mapping):
+            raise ComponentRegistryError(f"valueTypes.{name} must be an object")
+        families[name] = dict(spec)
+    return families
+
+
 @dataclass(frozen=True, slots=True)
 class Registry(AbstractComponentRegistry):
     """Frozen, in-memory view of the component registry.
@@ -492,6 +516,10 @@ class Registry(AbstractComponentRegistry):
             component can never bind one to a tap.
         modifiers: Ordered modifier operation definitions by wire name.
         supported_schema_versions: Explicit compatible wire versions, when declared.
+        value_types: The declared encodings for structured values, by name.
+            Material3 carries thousands of parameters typed ``Color``, ``Dp`` or
+            ``Shape``; these say how each family crosses as JSON, so a new
+            Compose type costs one entry rather than a new mechanism.
     """
 
     schema_version: str
@@ -504,8 +532,14 @@ class Registry(AbstractComponentRegistry):
         default_factory=dict
     )
     supported_schema_versions: tuple[str, ...] = ()
+    value_types: Mapping[str, Mapping[str, object]] = dataclass_field(
+        default_factory=dict
+    )
 
     def __post_init__(self) -> None:
+        object.__setattr__(
+            self, "value_types", MappingProxyType(dict(self.value_types))
+        )
         object.__setattr__(
             self, "supported_schema_versions", tuple(self.supported_schema_versions)
         )
@@ -583,6 +617,7 @@ class Registry(AbstractComponentRegistry):
             lifecycle=lifecycle,
             modifiers=_parse_modifiers(data.get("modifiers", {})),
             supported_schema_versions=tuple(supported),
+            value_types=_value_types(data.get("valueTypes")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -617,6 +652,10 @@ class Registry(AbstractComponentRegistry):
             }
         if self.supported_schema_versions:
             result["supportedSchemaVersions"] = list(self.supported_schema_versions)
+        if self.value_types:
+            result["valueTypes"] = {
+                name: dict(spec) for name, spec in self.value_types.items()
+            }
         return result
 
     def component(self, name: str) -> ComponentDef:
