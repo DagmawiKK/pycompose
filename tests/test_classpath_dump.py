@@ -1,459 +1,508 @@
-"""Tests for reading the classpath dump.
-
-The dump is only useful if the wire classification is right, and a wrong
-classification does not fail loudly -- a content slot read as a callback becomes
-an actionId, and the app renders nothing and nobody knows why until someone taps
-the wrong thing. So these tests pin the cases that are easy to get wrong and
-that the dump makes easy to get right.
-"""
+"""Behavioral tests at the artifact extraction and public inventory seams."""
 
 from __future__ import annotations
 
+import hashlib
 import json
+import os
+import subprocess
 from pathlib import Path
 
 import pytest
 
-from schema.classpath_dump import (
-    Kind,
-    Wire,
-    _classify,
-    _parse,
-    composables,
-    load,
-    summarise,
-    wire_type,
-)
-
 DUMP = Path("android/build/compose-api")
+ARTIFACT = "androidx.compose.material3:material3-android:1.3.1"
 
 
-def param(name: str, type_name: str, required: bool = True, kind: Kind = Kind.VALUE):
-    """Build a parameter for a fixture.
-
-    Args:
-        name: The parameter name.
-        type_name: The rendered Kotlin type.
-        required: Whether Compose declares no default for it.
-        kind: Its wire classification.
-
-    Returns:
-        The parameter.
-    """
-    from schema.classpath_dump import Parameter
-
-    return Parameter(name=name, type=type_name, kind=kind, required=required)
+def type_doc(name: str, *arguments: dict, annotations: tuple[str, ...] = ()):
+    return {
+        "classifier": name,
+        "nullable": False,
+        "annotations": list(annotations),
+        "suspend": False,
+        "arguments": [{"variance": "INVARIANT", "type": a} for a in arguments],
+    }
 
 
-def write_dump(directory: Path, payload: dict[str, list[str]]) -> Path:
-    """Write a one-artifact dump.
-
-    Args:
-        directory: Where to write.
-        payload: Class name to signatures.
-
-    Returns:
-        The directory written.
-    """
-    directory.mkdir(parents=True, exist_ok=True)
-    (directory / "material3.json").write_text(json.dumps(payload))
-    return directory
-
-
-# ---------------------------------------------------------------------------
-# Content slot versus callback
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    ("type_name", "kind"),
-    [
-        ("Function0<Unit>", Kind.SLOT),
-        ("Function1<RowScope>", Kind.SLOT),
-        ("Function1<Boolean>", Kind.CALLBACK),
-        ("Function1<TextFieldValue>", Kind.CALLBACK),
-        ("String", Kind.VALUE),
-        ("Boolean", Kind.VALUE),
-        ("Modifier", Kind.VALUE),
-        ("Function2", Kind.UNKNOWN),
-        ("Map<String, Unit>", Kind.UNKNOWN),
-    ],
-)
-def test_a_parameter_is_classified_by_what_it_carries(
-    type_name: str, kind: Kind
-) -> None:
-    """The distinction the whole approach exists for.
-
-    A `Function0` takes nothing, so there is nothing for the app to report and
-    it is content whatever it is called. A scoped `Function1` takes something
-    Compose provides, not something the app sends. A plain `Function1` takes a
-    value and is a real callback.
-    """
-    assert _classify(type_name) is kind
+def declaration(name: str = "Text", descriptor: str = "signature", **changes):
+    record = {
+        "artifact": ARTIFACT,
+        "owner": "androidx.compose.material3.TextKt",
+        "package": "androidx.compose.material3",
+        "name": name,
+        "visibility": "PUBLIC",
+        "classVisibility": "PUBLIC",
+        "jvm": {"name": name, "descriptor": descriptor, "matched": True},
+        "disposition": "ui",
+        "reason": None,
+        "composable": True,
+        "annotations": {"androidx/compose/runtime/Composable": {}},
+        "receiver": None,
+        "dispatchReceiver": None,
+        "contextReceivers": [],
+        "returnType": type_doc("kotlin/Unit"),
+        "typeParameters": [],
+        "parameters": [],
+    }
+    return record | changes
 
 
-def test_a_scoped_lambda_is_content_and_not_a_callback() -> None:
-    """Same arity, opposite meaning. This is the trap.
-
-    `RowScope.() -> Unit` and `(Boolean) -> Unit` both arrive as a one-argument
-    function type. Mapping both to an actionId would give `Button` a content
-    slot the app can "click".
-    """
-    assert _classify("Function1<RowScope>") is Kind.SLOT
-    assert _classify("Function1<Boolean>") is Kind.CALLBACK
+def parameter(name: str, value: dict, has_default: bool = False):
+    return {"name": name, "type": value, "hasDefault": has_default, "varargType": None}
 
 
-def test_a_callback_reports_its_payload() -> None:
-    """Dropping the payload compiles and then reports nothing."""
-    parsed = _parse("Checkbox(checked: Boolean, onCheckedChange: Function1<Boolean>)")
-    assert parsed is not None
-    parameters = parsed[1]
-    callback = next(p for p in parameters if p.name == "onCheckedChange")
-    assert callback.kind is Kind.CALLBACK
-    assert callback.payload == "Boolean"
-
-
-def test_a_slot_has_no_payload() -> None:
-    parsed = _parse("Button(onClick: Function0<Unit>, content: Function1<RowScope>)")
-    assert parsed is not None
-    for parameter in parsed[1]:
-        assert parameter.kind is Kind.SLOT
-        assert parameter.payload is None
-
-
-# ---------------------------------------------------------------------------
-# Parsing
-# ---------------------------------------------------------------------------
-
-
-def test_every_parameter_is_parsed_not_just_the_first() -> None:
-    """Anchoring the parameter pattern on ^ and $ finds one parameter.
-
-    That bug made Checkbox appear to have no callback at all, which is a very
-    plausible-looking wrong answer rather than an obvious one.
-    """
-    parsed = _parse(
-        "TextField(value: String, onValueChange: Function1<String>, enabled: Boolean)"
-    )
-    assert parsed is not None
-    assert [p.name for p in parsed[1]] == ["value", "onValueChange", "enabled"]
-
-
-def test_a_signature_with_no_parameters_parses() -> None:
-    parsed = _parse("Spacer()")
-    assert parsed is not None
-    assert parsed[1] == ()
-
-
-def test_a_signature_that_is_not_one_is_refused() -> None:
-    assert _parse("not a signature") is None
-
-
-# ---------------------------------------------------------------------------
-# Overloads
-# ---------------------------------------------------------------------------
-
-
-def test_the_plain_string_overload_is_preferred() -> None:
-    """`Text` is overloaded on String and AnnotatedString; an app writes String.
-
-    Most-crossing cannot separate them -- they share every parameter name -- so
-    without an explicit preference the choice falls to whichever the dump lists
-    first, and that is a decision nobody should inherit.
-    """
-    directory = write_dump(
-        Path("/tmp/pycompose-dump-overload"),
-        {
-            "androidx.compose.material3.TextKt": [
-                "Text(text: AnnotatedString, modifier: Modifier, color: Color)",
-                "Text(text: String, modifier: Modifier, color: Color)",
-            ]
+def write_inventory(directory: Path, records: list[dict], **changes):
+    document = {
+        "formatVersion": 1,
+        "provenance": {
+            "configuration": ":renderer:debugCompileClasspath",
+            "bom": "2025.01.01",
+            "compiler": "2.0.21",
+            "bomConstraints": {"androidx.compose.material3:material3-android": "1.3.1"},
+            "overrides": [],
+            "sourceHashes": {
+                path.relative_to("android").as_posix(): hashlib.sha256(
+                    path.read_bytes()
+                ).hexdigest()
+                for pattern in (
+                    "*.gradle.kts",
+                    "*/build.gradle.kts",
+                    "gradle/libs.versions.toml",
+                    "gradle.properties",
+                )
+                for path in Path("android").glob(pattern)
+            },
         },
+        "artifacts": [
+            {
+                "coordinate": ARTIFACT,
+                "sha256": "a" * 64,
+                "variant": "androidJvm",
+                "file": "material3.aar",
+            }
+        ],
+        "declarations": records,
+        "diagnostics": [],
+    } | changes
+    (directory / "inventory.json").write_text(json.dumps(document))
+    return document
+
+
+@pytest.fixture(scope="module")
+def native_document():
+    """Exercise the Gradle task once, never silently reuse an old artifact."""
+    if os.environ.get("PYCOMPOSE_NATIVE_API_TESTS") != "1":
+        pytest.skip("native CI runs the pinned artifact extraction")
+    result = subprocess.run(
+        ["./gradlew", "dumpComposeApi", "--rerun-tasks", "--console=plain"],
+        cwd="android",
+        capture_output=True,
+        text=True,
+        check=False,
     )
-    found = composables(directory)
-    assert found["Text"].parameters[0].type == "String"
+    assert result.returncode == 0, result.stdout + result.stderr
+    return json.loads((DUMP / "inventory.json").read_text())
 
 
-def test_the_choice_does_not_depend_on_listing_order() -> None:
-    """Reversing the dump must not reverse the answer."""
-    forward = write_dump(
-        Path("/tmp/pycompose-dump-order-a"),
-        {"TextKt": ["Text(text: String)", "Text(text: AnnotatedString)"]},
+def test_dump_extracts_exact_public_signatures_and_receivers(native_document) -> None:
+    document = native_document
+    assert document["formatVersion"] == 1
+    assert document["provenance"]["bom"] == "2025.01.01"
+    artifacts = {a["coordinate"]: a for a in document["artifacts"]}
+    assert ARTIFACT in artifacts
+    assert all(len(a["sha256"]) == 64 for a in artifacts.values())
+    public = [d for d in document["declarations"] if d["disposition"] == "ui"]
+    assert public
+    assert all(d["visibility"] == "PUBLIC" for d in public)
+    assert all(d["jvm"]["matched"] for d in public)
+    scoped = next(d for d in public if d["name"] == "NavigationBarItem")
+    assert (
+        scoped["receiver"]["classifier"]
+        == "androidx/compose/foundation/layout/RowScope"
     )
-    backward = write_dump(
-        Path("/tmp/pycompose-dump-order-b"),
-        {"TextKt": ["Text(text: AnnotatedString)", "Text(text: String)"]},
+    assert scoped["parameters"][-1]["name"] == "interactionSource"
+    assert scoped["parameters"][-1]["type"]["nullable"] is True
+    button = next(d for d in public if d["name"] == "Button")
+    click = next(p for p in button["parameters"] if p["name"] == "onClick")
+    content = next(p for p in button["parameters"] if p["name"] == "content")
+    assert "androidx/compose/runtime/Composable" not in click["type"]["annotations"]
+    assert "androidx/compose/runtime/Composable" in content["type"]["annotations"]
+    assert content["type"]["arguments"][-1]["type"]["classifier"] == "kotlin/Unit"
+    assert (
+        artifacts[ARTIFACT]["attributes"]["org.jetbrains.kotlin.platform.type"]
+        == "androidJvm"
     )
-    assert composables(forward)["Text"].parameters[0].type == "String"
-    assert composables(backward)["Text"].parameters[0].type == "String"
-
-
-def test_the_overload_count_is_kept() -> None:
-    directory = write_dump(
-        Path("/tmp/pycompose-dump-count"),
-        {"TextKt": ["Text(text: String)", "Text(text: AnnotatedString)"]},
+    properties = [
+        d for d in document["declarations"] if d["declarationKind"] == "property"
+    ]
+    month = next(
+        d
+        for d in properties
+        if d["owner"] == "androidx.compose.material3.DatePickerState"
+        and d["name"] == "displayedMonthMillis"
     )
-    assert composables(directory)["Text"].overloads == 2
-
-
-def test_overloads_merge_under_one_name() -> None:
-    """Five JVM methods, one composable -- or the catalog invents a component."""
-    directory = write_dump(
-        Path("/tmp/pycompose-dump-merge"),
-        {"TextKt": ["Text(text: String)", "Text(text: AnnotatedString)"]},
+    assert month["accessors"]["getter"]["matched"] is True
+    assert month["accessors"]["setter"]["matched"] is True
+    assert (
+        month["dispatchReceiver"]["classifier"]
+        == "androidx/compose/material3/DatePickerState"
     )
-    assert "Text" in composables(directory)
-
-
-# ---------------------------------------------------------------------------
-# The real dump
-# ---------------------------------------------------------------------------
-
-
-skip_without_dump = pytest.mark.skipif(
-    not DUMP.is_dir(),
-    reason="run ./gradlew dumpComposeApi first",
-)
-
-
-@skip_without_dump
-def test_the_real_dump_has_the_components_this_project_uses() -> None:
-    """If any of these is missing, the dump is reading the wrong artifacts."""
-    found = composables(DUMP)
-    for name in ("Button", "Checkbox", "Text", "TextField", "Card", "Column", "Row"):
-        assert name in found, f"{name} missing from the dump"
-
-
-@skip_without_dump
-def test_the_real_dump_does_not_contain_something_the_bom_lacks() -> None:
-    """The reason this route exists.
-
-    `TextFieldState` is material3 1.4.0-alpha and the BOM here resolves 1.3.1.
-    Its presence would mean the dump came from androidx-main after all, which is
-    the failure that blocked the full mirror.
-    """
-    assert "TextFieldState" not in composables(DUMP)
-
-
-@skip_without_dump
-def test_the_real_dump_separates_slots_from_callbacks_at_scale() -> None:
-    """Both kinds must survive; one of them collapsing is the bug."""
-    found = composables(DUMP)
-    slots = sum(len(c.slots) for c in found.values())
-    callbacks = sum(len(c.callbacks) for c in found.values())
-    assert slots > 100, f"only {slots} content slots"
-    assert callbacks > 50, f"only {callbacks} callbacks"
-
-
-@skip_without_dump
-def test_every_composable_in_the_real_dump_has_a_package() -> None:
-    """Without one, no Kotlin import can be generated."""
-    for name, entry in composables(DUMP).items():
-        assert entry.package, f"{name} has no package"
-
-
-@skip_without_dump
-def test_summarise_runs_against_the_real_dump() -> None:
-    assert "composables" in summarise(DUMP)
-
-
-def test_a_missing_dump_says_so_rather_than_reporting_nothing() -> None:
-    """An empty catalog is indistinguishable from a library that declares none."""
-    with pytest.raises(FileNotFoundError, match="dumpComposeApi"):
-        load(Path("/tmp/pycompose-no-such-dump"))
-
-
-# ---------------------------------------------------------------------------
-# Step 0 -- the dump carries defaults and stability
-# ---------------------------------------------------------------------------
-
-
-def test_a_compose_default_is_read_from_the_signature() -> None:
-    """`= default` is how the dump says "the app need not supply this".
-
-    Compose's AARs contain no `$default` synthetic bridges, so presence cannot
-    be read from those; it comes from the metadata blob. The *value* is not
-    recorded and must not be -- most Compose defaults read ambient state and
-    cannot cross a process boundary.
-    """
-    parsed = _parse("Checkbox(checked: Boolean, enabled: Boolean = default)")
-    assert parsed is not None
-    _, parameters, _ = parsed
-    assert parameters[0].required is True
-    assert parameters[1].required is False
-
-
-def test_the_default_marker_is_not_part_of_the_type() -> None:
-    """Otherwise `Boolean = default` becomes a wire type nobody has."""
-    parsed = _parse("Text(enabled: Boolean = default)")
-    assert parsed is not None
-    assert parsed[1][0].type == "Boolean"
-
-
-def test_an_unreadable_parameter_is_marked_not_guessed() -> None:
-    """`Dp`, `TextUnit` and `Long` are all `long` in a JVM descriptor.
-
-    Rendering the descriptor's spelling would type a dimension prop as an
-    integer -- quietly wrong rather than absent, which is worse than refusing.
-    """
-    parsed = _parse("Foo(size: ?long, name: String)")
-    assert parsed is not None
-    assert parsed[1][0].type == "?long"
-
-
-def test_stability_markers_are_read_off_the_signature() -> None:
-    parsed = _parse(
-        "@ExperimentalMaterial3Api Sheet(onDismissRequest: Function0<Unit>)"
+    assert month["disposition"] == "support"
+    assert any(
+        d["declarationKind"] == "constructor"
+        and d["owner"] == "androidx.compose.material3.ButtonColors"
+        for d in document["declarations"]
     )
-    assert parsed is not None
-    name, _, markers = parsed
-    assert name == "Sheet"
-    assert markers == ("ExperimentalMaterial3Api",)
+    from schema.classpath_dump import inventory
+
+    assert len(inventory(DUMP).ui) == len(public)
+    assert document["bytecodeAudit"]["unmatchedTargetMethods"] == []
+    assert document["provenance"]["overrides"] == []
+    state = next(
+        d
+        for d in document["declarations"]
+        if d["owner"] == "androidx.compose.runtime.State" and d["name"] == "value"
+    )
+    assert state["returnType"]["classifier"] == "#0"
+    assert state["enclosingTypeParameters"][0]["name"] == "T"
+    snackbar = next(
+        d
+        for d in document["declarations"]
+        if d["owner"] == "androidx.compose.material3.SnackbarHostState"
+        and d["name"] == "currentSnackbarData"
+    )
+    assert snackbar["accessors"]["getter"]["callable"] is True
+    assert snackbar["accessors"]["setter"]["visibility"] == "PRIVATE"
+    assert snackbar["accessors"]["setter"]["callable"] is False
 
 
-# ---------------------------------------------------------------------------
-# Step 1 -- stability and requiredness reach the model
-# ---------------------------------------------------------------------------
+def test_pinned_overloads_slots_and_scopes_survive_reading(native_document) -> None:
+    from schema.classpath_dump import inventory
+
+    found = inventory(DUMP)
+    assert len(found.ui) == sum(
+        d["disposition"] == "ui" for d in native_document["declarations"]
+    )
+    assert {d.name for d in found.ui}.isdisjoint({"MaterialTheme", "ProvideTextStyle"})
+    text = [d for d in found.ui if d.name == "Text"]
+    assert {d.parameters[0].type.classifier for d in text} == {
+        "kotlin/String",
+        "androidx/compose/ui/text/AnnotatedString",
+    }
+    basic = [
+        d
+        for d in found.declarations
+        if d.name == "BasicText" and d.disposition == "support"
+    ]
+    assert len(basic) == 2
+    assert all("minLines" in {p.name for p in d.parameters} for d in basic)
+    progress = [d for d in found.ui if d.name == "LinearProgressIndicator"]
+    assert len(progress) == 3
+    assert any(
+        p.name == "progress" and p.kind.value == "provider"
+        for d in progress
+        for p in d.parameters
+    )
+    animation = [
+        d
+        for d in found.declarations
+        if d.name == "AnimatedVisibility" and d.disposition == "support"
+    ]
+    assert any(
+        d.receiver and d.receiver.classifier.endswith("RowScope") for d in animation
+    )
+    assert any(
+        d.receiver and d.receiver.classifier.endswith("ColumnScope") for d in animation
+    )
+    tooltip = next(d for d in found.ui if d.name == "PlainTooltip")
+    assert tooltip.receiver.classifier == "androidx/compose/material3/TooltipScope"
+    assert "androidx/compose/material3/ExperimentalMaterial3Api" in tooltip.annotations
+    menu = next(d for d in found.ui if d.name == "ExposedDropdownMenu")
+    assert (
+        menu.dispatch_receiver.classifier
+        == "androidx/compose/material3/ExposedDropdownMenuBoxScope"
+    )
+    primitives = [
+        d
+        for d in found.ui
+        if d.parameters
+        and d.parameters[-1].type.classifier in {"kotlin/Int", "kotlin/Boolean"}
+    ]
+    assert primitives
+    deprecated = [
+        d
+        for d in found.declarations
+        if "kotlin/Deprecated" in d.annotations
+        and d.annotations["kotlin/Deprecated"].get("replaceWith")
+    ]
+    assert deprecated
+    assert any(
+        "expression" in d.annotations["kotlin/Deprecated"]["replaceWith"]["values"]
+        for d in deprecated
+    )
 
 
-def test_a_composable_reports_its_experimental_markers() -> None:
-    directory = write_dump(
-        Path("/tmp/pycompose-dump-stability"),
-        {
-            "SheetKt": [
-                "@ExperimentalMaterial3Api Sheet(onDismissRequest: Function0<Unit>)"
+def test_native_inventory_is_byte_stable(native_document) -> None:
+    before = (DUMP / "inventory.json").read_bytes()
+    result = subprocess.run(
+        ["./gradlew", "dumpComposeApi", "--rerun-tasks", "--console=plain"],
+        cwd="android",
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert json.loads(before) == native_document
+    assert (DUMP / "inventory.json").read_bytes() == before
+
+
+def test_inventory_retains_all_overloads_and_function_semantics(tmp_path: Path) -> None:
+    from schema.classpath_dump import inventory
+
+    unit = type_doc("kotlin/Unit")
+    records = [
+        declaration(
+            descriptor=str(index),
+            parameters=[
+                parameter("text", value),
+                parameter("onClick", type_doc("kotlin/Function0", unit)),
+                parameter(
+                    "content",
+                    type_doc(
+                        "kotlin/Function0",
+                        unit,
+                        annotations=("androidx/compose/runtime/Composable",),
+                    ),
+                    True,
+                ),
+                parameter(
+                    "progress",
+                    type_doc("kotlin/Function0", type_doc("kotlin/Float")),
+                    True,
+                ),
+                parameter(
+                    "confirmValueChange",
+                    type_doc(
+                        "kotlin/Function1",
+                        type_doc("kotlin/String"),
+                        type_doc("kotlin/Boolean"),
+                    ),
+                ),
             ],
-            "PlainKt": ["Plain(value: String)"],
-        },
-    )
-    found = composables(directory)
-    assert found["Sheet"].experimental is True
-    assert found["Plain"].experimental is False
-
-
-def test_a_required_parameter_is_one_without_a_default() -> None:
-    directory = write_dump(
-        Path("/tmp/pycompose-dump-required"),
-        {"CkKt": ["Checkbox(checked: Boolean, enabled: Boolean = default)"]},
-    )
-    parameters = {p.name: p for p in composables(directory)["Checkbox"].parameters}
-    assert parameters["checked"].required is True
-    assert parameters["enabled"].required is False
-
-
-# ---------------------------------------------------------------------------
-# Step 2 -- type resolution refuses rather than approximates
-# ---------------------------------------------------------------------------
+        )
+        for index, value in enumerate(
+            (
+                type_doc("kotlin/String"),
+                type_doc("androidx/compose/ui/text/AnnotatedString"),
+            )
+        )
+    ]
+    write_inventory(tmp_path, records)
+    found = inventory(tmp_path)
+    assert len(found.ui) == 2
+    assert {d.parameters[0].type.classifier for d in found.ui} == {
+        "kotlin/String",
+        "androidx/compose/ui/text/AnnotatedString",
+    }
+    parameters = {p.name: p for p in found.ui[0].parameters}
+    assert parameters["onClick"].kind.value == "callback"
+    assert parameters["content"].kind.value == "slot"
+    assert parameters["progress"].kind.value == "provider"
+    assert parameters["confirmValueChange"].kind.value == "unknown"
+    assert parameters["onClick"].required is True
+    assert parameters["content"].required is False
 
 
 @pytest.mark.parametrize(
-    ("type_name", "wire"),
+    "defect",
     [
-        ("String", Wire.STRING),
-        ("Boolean", Wire.BOOLEAN),
-        ("Int", Wire.INTEGER),
-        ("Long", Wire.INTEGER),
-        ("Float", Wire.NUMBER),
-        ("Dp", Wire.DIMENSION),
-        ("TextUnit", Wire.DIMENSION),
-        ("Color", Wire.COLOR),
-        ("TextAlign", Wire.ENUM),
-        ("Shape", Wire.ENUM),
-        ("PaddingValues", Wire.EDGES),
-        ("Brush", Wire.BRUSH),
-        ("Modifier", Wire.MODIFIER),
+        "format",
+        "version",
+        "default",
+        "match",
+        "empty",
+        "diagnostic",
+        "artifact",
+        "override",
+        "stale",
     ],
 )
-def test_an_expressible_type_maps_to_the_schema_vocabulary(
-    type_name: str, wire: Wire
+def test_inventory_refuses_untrusted_or_incomplete_input(
+    tmp_path: Path, defect: str
 ) -> None:
-    """The schema's own spelling, so a generated prop drops into an entry."""
-    assert wire_type(param("p", type_name)) is wire
+    from schema.classpath_dump import inventory
 
-
-@pytest.mark.parametrize(
-    "type_name",
-    [
-        "Animatable",
-        "TwoWayConverter",
-        "PagerScope",
-        "MutableState",
-        "AnimationSpec",
-        "ProvidableCompositionLocal",
-        "DatePickerColors",
-    ],
-)
-def test_an_inexpressible_type_is_refused(type_name: str) -> None:
-    """None means no wire representation exists, and that is the honest answer.
-
-    Modelling these would mean inventing a representation for host state the app
-    cannot own, and the failure would be a prop that accepts something
-    meaningless.
-    """
-    assert wire_type(param("p", type_name)) is None
-
-
-def test_an_unreadable_type_is_refused_even_when_its_jvm_shape_looks_fine() -> None:
-    """`?long` is not a Long."""
-    assert wire_type(param("size", "?long")) is None
-
-
-def test_slots_and_callbacks_get_their_own_wire_types() -> None:
-    assert (
-        wire_type(param("content", "Function1<RowScope>", kind=Kind.SLOT))
-        is Wire.CONTENT
+    document = write_inventory(
+        tmp_path,
+        [declaration(parameters=[parameter("text", type_doc("kotlin/String"))])],
     )
-    assert (
-        wire_type(param("onClick", "Function1<Boolean>", kind=Kind.CALLBACK))
-        is Wire.ACTION
-    )
+    if defect == "format":
+        document["formatVersion"] = 99
+    elif defect == "version":
+        document["provenance"]["bom"] = "2099.01.01"
+    elif defect == "default":
+        document["declarations"][0]["parameters"][0]["hasDefault"] = None
+    elif defect == "match":
+        document["declarations"][0]["jvm"]["matched"] = False
+    elif defect == "empty":
+        document["declarations"] = []
+    elif defect == "diagnostic":
+        document["diagnostics"] = [
+            {"target": True, "message": "unread public signature"}
+        ]
+    elif defect == "artifact":
+        document["artifacts"] = []
+    elif defect == "stale":
+        document["provenance"]["sourceHashes"]["dump-compose-api.gradle.kts"] = "0" * 64
+    else:
+        coordinate = ARTIFACT.replace("1.3.1", "1.4.0")
+        document["artifacts"][0]["coordinate"] = coordinate
+        document["declarations"][0]["artifact"] = coordinate
+    (tmp_path / "inventory.json").write_text(json.dumps(document))
+    with pytest.raises(ValueError):
+        inventory(tmp_path)
 
 
-def test_omitted_props_are_recorded_not_dropped() -> None:
-    """The difference between a build error and a prop nobody notices."""
-    directory = write_dump(
-        Path("/tmp/pycompose-dump-omit"),
-        {
-            "CarouselKt": [
-                "Carousel(state: Animatable, modifier: Modifier = default,"
-                " onClick: Function1<Boolean>)"
+def test_inventory_preserves_recursive_types_and_distinguishes_builders(
+    tmp_path: Path,
+) -> None:
+    from schema.classpath_dump import inventory
+
+    unit = type_doc("kotlin/Unit")
+    extension = ("kotlin/ExtensionFunctionType",)
+    nullable = type_doc("kotlin/String") | {"nullable": True}
+    mapping = type_doc("kotlin/collections/Map", type_doc("kotlin/Int"), nullable)
+    mapping["arguments"][1]["variance"] = "OUT"
+    records = [
+        declaration(
+            parameters=[
+                parameter("mapping", mapping),
+                parameter(
+                    "items",
+                    type_doc(
+                        "kotlin/Function1",
+                        type_doc("androidx/compose/foundation/lazy/LazyListScope"),
+                        unit,
+                        annotations=extension,
+                    ),
+                ),
+                parameter(
+                    "draw",
+                    type_doc(
+                        "kotlin/Function1",
+                        type_doc("androidx/compose/ui/graphics/drawscope/DrawScope"),
+                        unit,
+                        annotations=extension,
+                    ),
+                ),
             ]
-        },
+        )
+    ]
+    write_inventory(tmp_path, records)
+    params = {p.name: p for p in inventory(tmp_path).ui[0].parameters}
+    assert len(params["mapping"].type.arguments) == 2
+    assert params["mapping"].type.arguments[1][0] == "OUT"
+    assert params["mapping"].type.arguments[1][1].nullable is True
+    assert params["items"].kind.value == "builder"
+    assert params["draw"].kind.value == "unknown"
+
+
+def test_gap_report_is_a_capability_worklist_not_a_support_claim(
+    tmp_path: Path,
+) -> None:
+    from schema.classpath_dump import inventory
+
+    write_inventory(
+        tmp_path,
+        [
+            declaration(
+                parameters=[
+                    parameter(
+                        "state", type_doc("androidx/compose/material3/SheetState")
+                    ),
+                    parameter(
+                        "onClick", type_doc("kotlin/Function0", type_doc("kotlin/Unit"))
+                    ),
+                ]
+            )
+        ],
     )
-    entry = composables(directory)["Carousel"]
-    omitted = {p.name for p in entry.omitted}
-    assert omitted == {"state"}
-    assert "modifier" in {p.name for p in entry.parameters}
-    assert "onClick" in {p.name for p in entry.parameters}
+    report = inventory(tmp_path).capability_report()
+    assert report["status"] == "discovery-only"
+    assert report["componentNames"] == 1
+    assert report["overloads"] == 1
+    assert report["families"]["value"] == {"androidx/compose/material3/SheetState": 1}
+    assert report["families"]["callback"] == {"kotlin/Function0": 1}
+    assert report["controllerCandidates"] == {
+        "androidx/compose/material3/SheetState": 1
+    }
+    assert report["gaps"][0]["parameter"] == "state"
+    assert report["gaps"][0]["status"] == "needs-capability-audit"
 
 
-def test_every_omitted_prop_is_an_untyped_one() -> None:
-    directory = write_dump(
-        Path("/tmp/pycompose-dump-omit2"),
-        {"XKt": ["X(a: Animatable, b: String, c: PagerScope)"]},
+def test_unread_referenced_support_blocks_the_inventory(tmp_path: Path) -> None:
+    from schema.classpath_dump import inventory
+
+    support = declaration(
+        name="operation",
+        owner="androidx.compose.material3.Controller",
+        disposition="error",
+        reason="unmatched metadata signature",
+        jvm={"name": "operation", "descriptor": "broken", "matched": False},
     )
-    entry = composables(directory)["X"]
-    assert {p.name for p in entry.omitted} == {"a", "c"}
-    assert all(wire_type(p) is None for p in entry.omitted)
+    component = declaration(
+        parameters=[
+            parameter("state", type_doc("androidx/compose/material3/Controller")),
+        ]
+    )
+    write_inventory(tmp_path, [component, support])
+    with pytest.raises(ValueError, match="required support"):
+        inventory(tmp_path)
 
 
-@skip_without_dump
-def test_the_real_dump_separates_omissions_from_read_failures() -> None:
-    """Lumping them would make a tooling bug look like a scope decision."""
-    text = summarise(DUMP)
-    assert "not expressible on the wire" in text
-    assert "unread from metadata" in text
+def test_unmatched_public_accessor_is_not_treated_as_inaccessible(
+    tmp_path: Path,
+) -> None:
+    from schema.classpath_dump import inventory
+
+    public_getter = {
+        "name": "getMonth",
+        "descriptor": "()J",
+        "visibility": "PUBLIC",
+        "matched": True,
+        "callable": True,
+    }
+    public_setter = {
+        "name": "setMonth",
+        "descriptor": "(J)V",
+        "visibility": "PUBLIC",
+        "matched": False,
+        "callable": False,
+    }
+    write_inventory(
+        tmp_path,
+        [
+            declaration(),
+            declaration(
+                name="month",
+                descriptor="()J",
+                disposition="support",
+                accessors={"getter": public_getter, "setter": public_setter},
+            ),
+        ],
+    )
+    with pytest.raises(ValueError, match="accessor"):
+        inventory(tmp_path)
 
 
-@skip_without_dump
-def test_no_primitive_survives_as_a_wire_type() -> None:
-    """A JVM primitive leaking through means a parameter was never read."""
-    for name, entry in composables(DUMP).items():
-        for parameter in entry.parameters:
-            assert parameter.type not in (
-                "long",
-                "int",
-                "float",
-                "double",
-                "boolean",
-            ), f"{name}.{parameter.name} is a bare JVM primitive"
+def test_vararg_can_be_omitted_without_a_default_expression(tmp_path: Path) -> None:
+    from schema.classpath_dump import inventory
+
+    string = type_doc("kotlin/String")
+    locales = parameter("locales", type_doc("kotlin/Array", string)) | {
+        "varargType": string
+    }
+    write_inventory(tmp_path, [declaration(parameters=[locales])])
+    argument = inventory(tmp_path).ui[0].parameters[0]
+    assert argument.has_default is False
+    assert argument.required is False

@@ -1,694 +1,799 @@
+import groovy.json.JsonOutput
+import kotlinx.metadata.ClassKind
+import kotlinx.metadata.ExperimentalContextReceivers
+import kotlinx.metadata.KmAnnotationArgument
+import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.KmDeclarationContainer
+import kotlinx.metadata.KmType
+import kotlinx.metadata.KmTypeParameter
+import kotlinx.metadata.KmValueParameter
+import kotlinx.metadata.Visibility
+import kotlinx.metadata.declaresDefaultValue
+import kotlinx.metadata.isNullable
+import kotlinx.metadata.isSuspend
+import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.annotations
+import kotlinx.metadata.jvm.fieldSignature
+import kotlinx.metadata.jvm.getterSignature
+import kotlinx.metadata.jvm.setterSignature
+import kotlinx.metadata.jvm.signature
+import kotlinx.metadata.jvm.syntheticMethodForAnnotations
+import kotlinx.metadata.kind
+import kotlinx.metadata.visibility
+import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.objectweb.asm.AnnotationVisitor
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.FieldVisitor
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes
 import java.io.ByteArrayInputStream
+import java.security.MessageDigest
 import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 
-// Dump the resolved Compose classpath's real public API.
-//
-// This is the replacement for reading AndroidX's published `current.txt`, which
-// was blocked: every `androidx-*-stable` tag 404s, and `androidx-main` is ahead
-// of the BOM this project pins -- main declares `TextFieldState` from material3
-// 1.4.0-alpha while the BOM here resolves material3 to 1.3.1. Generating a
-// catalog from main produces components the pinned Compose cannot compile.
-//
-// Reading the classpath the app actually resolves removes the version question
-// entirely. There is no second version to keep in step, because the classpath
-// *is* the version.
-//
-// It is applied to the main build and reads :renderer's compile classpath rather
-// than resolving its own. A standalone project resolves the `-desktop` and
-// `-jvmstubs` variants of the same versions -- different artifacts, different
-// signatures -- so "the version we pin" and "the artifact we link" would quietly
-// diverge, which is the failure this whole approach exists to remove.
-//
-// Applied as a script plugin so this stays out of build.gradle.kts, and never on
-// an app's build path.
-
+// Development tooling only. Read the actual Android variant, never a separately
+// resolved desktop/stub artifact or AndroidX main. The runtime uses no metadata.
 buildscript {
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        // ASM reads the classfile: which methods carry @Composable, and their
-        // real JVM parameter types. kotlinx-metadata decodes the @Metadata blob
-        // Kotlin embeds, which is the only place the Kotlin-level parameter
-        // *names* live.
         classpath("org.ow2.asm:asm:9.7.1")
         classpath("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.9.0")
-        // kotlin.Metadata, which the blob is reconstructed into. Not inherited
-        // transitively into a buildscript classpath.
         classpath("org.jetbrains.kotlin:kotlin-stdlib:1.9.23")
     }
 }
 
-val composableDescriptor = "Landroidx/compose/runtime/Composable;"
-val metadataDescriptor = "Lkotlin/Metadata;"
-val asm9 = org.objectweb.asm.Opcodes.ASM9
-val classesJar = "classes.jar"
-
-val extraArguments = 0
-"""How many JVM arguments an overload may carry beyond its Kotlin parameters.
-
-Once the synthetic tail is stripped correctly this is zero, and it stays a
-tolerance rather than an equality test because the compiler's overload bridges
-are not uniform across the four Compose artifacts. A nearly-right candidate beats
-falling through to an arbitrary one.
-"""
-
-val experimentalMarker = "Experimental"
-
-val defaultMarker = "= default"
-
-/**
- * Whether an annotation descriptor marks experimental API.
- *
- * Matched by name rather than by a list of known types so a Compose release
- * that adds `@ExperimentalCarApi` is picked up without a code change, which is
- * the difference between a policy that scales and one that needs editing each
- * version.
- */
-private fun isExperimental(descriptor: String): Boolean = experimentalMarker in descriptor
-
-/** `Landroidx/compose/material3/ExperimentalMaterial3Api;` -> `ExperimentalMaterial3Api`. */
-private fun marker(descriptor: String): String = descriptor.trimEnd(';').substringAfterLast('/')
-
-val renderer = project(":renderer")
-
-// Counted rather than logged per class: a systemic failure would otherwise
-// print once per composable and bury the summary, while a partial one is worth
-// seeing at all.
-var metadataFailures = 0
-
-// Parameters whose Kotlin type could not be read. Counted and reported: a dump
-// that silently substitutes JVM primitives for Kotlin types looks complete while
-// mis-typing dimensions as integers.
-var unresolved = 0
+val composeAnnotation = "androidx/compose/runtime/Composable"
+val apiFormatVersion = 1
+val apiRenderer = project(":renderer")
 
 tasks.register("dumpComposeApi") {
     group = "build"
-    description = "Write the resolved Compose classpath's public API as JSON."
-
-    val classpath = renderer.configurations.getByName("debugCompileClasspath")
-    val outDir = layout.buildDirectory.dir("compose-api")
-    inputs.files(classpath)
-    outputs.dir(outDir)
-
-    doLast {
-        val target = outDir.get().asFile
-        target.mkdirs()
-        var artifacts = 0
-        var composables = 0
-        classpath.resolve().forEach { url ->
-            val path = url.toString()
-            // AndroidX ships AARs, and every Compose artifact on this classpath
-            // is one. Filtering to `.jar` alone silently drops the entire library
-            // and reports zero composables -- which reads exactly like a Compose
-            // that declares nothing.
-            if (!path.endsWith(".jar") && !path.endsWith(".aar")) return@forEach
-            val file = file(url.toURI())
-            // Sources carry the same API surface as bytecode and would double
-            // every composable if they were on the compile classpath.
-            val name = file.nameWithoutExtension
-            if (name.endsWith("-sources")) return@forEach
-            val json =
-                if (file.extension == "aar") {
-                    ZipFile(file).use { zip ->
-                        val entry = zip.getEntry(classesJar) ?: return@use null
-                        ComposeDump().dump(zip.getInputStream(entry).readBytes())
-                    }
-                } else {
-                    ComposeDump().dump(file.readBytes())
-                } ?: return@forEach
-            if (json.isEmpty()) return@forEach
-            File(target, "$name.json").writeText(json)
-            artifacts++
-            composables += json.split("  \"").size - 1
+    description = "Extract a lossless, version-proven Compose API inventory."
+    val rendererClasspath = apiRenderer.configurations.getByName("debugCompileClasspath")
+    val output = layout.buildDirectory.file("compose-api/inventory.json")
+    inputs.files(rendererClasspath)
+    inputs.file("dump-compose-api.gradle.kts")
+    inputs.file("gradle/libs.versions.toml")
+    val sourceInputs =
+        project.fileTree(".") {
+            include(
+                "*.gradle.kts",
+                "*/build.gradle.kts",
+                "gradle/libs.versions.toml",
+                "gradle.properties",
+            )
         }
-        logger.lifecycle(
-            "dumpComposeApi: $artifacts artifact(s), $composables composable(s)" +
-                if (metadataFailures > 0) {
-                    ", $metadataFailures class(es) degraded to descriptors"
+    inputs.files(sourceInputs)
+    outputs.file(output)
+    doLast {
+        val artifacts = mutableListOf<Map<String, Any?>>()
+        val declarations = mutableListOf<Map<String, Any?>>()
+        val diagnostics = mutableListOf<Map<String, Any?>>()
+        val variants =
+            rendererClasspath.incoming.artifacts.artifacts
+                .associateBy { it.file.canonicalPath }
+        rendererClasspath.resolvedConfiguration.resolvedArtifacts
+            .filter {
+                it.moduleVersion.id.group
+                    .startsWith("androidx.compose")
+            }.sortedBy { it.moduleVersion.id.toString() }
+            .forEach { artifact ->
+                val coordinate = artifact.moduleVersion.id.toString()
+                val file = artifact.file
+                val bytes = file.readBytes()
+                val attributes = checkNotNull(variants[file.canonicalPath]).variant.attributes
+                val variantAttributes =
+                    attributes.keySet().associate {
+                        it.name to attributes.getAttribute(it).toString()
+                    }
+                artifacts.add(
+                    mapOf(
+                        "coordinate" to coordinate,
+                        "sha256" to sha256(bytes),
+                        "variant" to variantAttributes["org.jetbrains.kotlin.platform.type"],
+                        "attributes" to variantAttributes.toSortedMap(),
+                        "file" to file.name,
+                    ),
+                )
+                val classes =
+                    if (file.extension == "aar") {
+                        ZipFile(file).use { zip ->
+                            val entry =
+                                checkNotNull(zip.getEntry("classes.jar")) {
+                                    "$coordinate lacks classes.jar"
+                                }
+                            zip.getInputStream(entry).readBytes()
+                        }
+                    } else {
+                        bytes
+                    }
+                declarations.addAll(ApiExtractor(coordinate, diagnostics).extract(classes))
+            }
+        val bomComponent =
+            rendererClasspath.incoming.resolutionResult.allComponents
+                .single {
+                    it.moduleVersion?.let { m ->
+                        m.group == "androidx.compose" && m.name == "compose-bom"
+                    } == true
+                }
+        val bom = checkNotNull(bomComponent.moduleVersion).version
+        val bomConstraints =
+            bomComponent.dependencies
+                .mapNotNull {
+                    (it.requested as? ModuleComponentSelector)?.let { m ->
+                        "${m.group}:${m.module}" to m.version
+                    }
+                }.toMap()
+                .toSortedMap()
+        val overrides =
+            artifacts.mapNotNull {
+                val coordinate = it["coordinate"].toString()
+                val module = coordinate.substringBeforeLast(':')
+                val expected = bomConstraints[module]
+                if (expected != null && expected != coordinate.substringAfterLast(':')) {
+                    "$module expected $expected, resolved ${coordinate.substringAfterLast(':')}"
                 } else {
-                    ""
-                } +
-                if (unresolved > 0) {
-                    ", $unresolved parameter type(s) unresolved"
-                } else {
-                    ""
-                } + " -> $target",
+                    null
+                }
+            }
+        val compiler =
+            project.extensions
+                .getByType<VersionCatalogsExtension>()
+                .named("libs")
+                .findVersion("kotlin")
+                .get()
+                .requiredVersion
+        val document =
+            mapOf(
+                "formatVersion" to apiFormatVersion,
+                "provenance" to
+                    mapOf(
+                        "configuration" to ":renderer:debugCompileClasspath",
+                        "bom" to bom,
+                        "compiler" to compiler,
+                        "bomConstraints" to bomConstraints,
+                        "overrides" to overrides,
+                        "sourceHashes" to
+                            sourceInputs.files
+                                .sortedBy {
+                                    it.relativeTo(project.projectDir).invariantSeparatorsPath
+                                }.associate {
+                                    it.relativeTo(project.projectDir).invariantSeparatorsPath to
+                                        sha256(it.readBytes())
+                                },
+                    ),
+                "artifacts" to artifacts,
+                "declarations" to
+                    declarations.sortedBy {
+                        "${it["owner"]}:${it["name"]}:${it["jvm"]}"
+                    },
+                "diagnostics" to diagnostics.sortedBy { it["message"].toString() },
+                "bytecodeAudit" to
+                    mapOf(
+                        "unmatchedTargetMethods" to
+                            diagnostics.filter {
+                                it["target"] == true && it["unmatchedBytecode"] == true
+                            },
+                    ),
+            )
+        val target = output.get().asFile
+        target.parentFile.mkdirs()
+        val temporary = File(target.parentFile, "inventory.json.pending")
+        temporary.writeText(JsonOutput.toJson(document) + "\n")
+        java.nio.file.Files.move(
+            temporary.toPath(),
+            target.toPath(),
+            java.nio.file.StandardCopyOption.REPLACE_EXISTING,
+            java.nio.file.StandardCopyOption.ATOMIC_MOVE,
         )
+        val ui = declarations.count { it["disposition"] == "ui" }
+        logger.lifecycle(
+            "dumpComposeApi: $ui public M3 overloads, ${declarations.size} declarations, " +
+                "${diagnostics.size} extraction errors -> $target",
+        )
+        val targetErrors = diagnostics.filter { it["target"] == true }
+        check(targetErrors.isEmpty()) {
+            targetErrors.take(20).joinToString("\n", "Compose extraction failed:\n")
+        }
+        check(overrides.isEmpty()) { "Compose BOM overrides: $overrides" }
+        check(ui > 0) { "The resolved classpath contains no public Material 3 UI." }
     }
 }
 
-/** One class's composable surface, as ASM reports it. */
-private class ClassFacts {
-    var name: String = ""
-    var metadata: AnnotationFacts? = null
-    val annotations: MutableSet<String> = mutableSetOf()
-    val composables = mutableListOf<MethodFacts>()
+private fun sha256(bytes: ByteArray): String =
+    MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
+
+private class ClassApi {
+    var name = ""
+    var access = 0
+    var metadata: MutableMap<String, Any?>? = null
+    val annotations = sortedMapOf<String, MutableMap<String, Any?>>()
+    val methods = mutableListOf<MethodApi>()
+    val fields = mutableMapOf<Pair<String, String>, Pair<Int, Any?>>()
 }
 
-/**
- * One @Composable method.
- *
- * [annotations] holds its runtime-*invisible* annotations, which is where
- * Compose keeps both @Composable and the @Experimental* markers. @Composable is
- * compiled away to nothing; stability is the reason for reading the classfile
- * at all, so it has to come from here too.
- */
-private class MethodFacts(
+private class MethodApi(
     val name: String,
     val descriptor: String,
-    val annotations: MutableSet<String> = mutableSetOf(),
-)
-
-/** The values of a single class-file annotation. */
-private class AnnotationFacts {
-    val values: MutableMap<String, Any?> = mutableMapOf()
+    val access: Int,
+) {
+    val annotations = sortedMapOf<String, MutableMap<String, Any?>>()
 }
 
-/** Reads composables out of one jar's bytes. */
-private class ComposeDump {
-    /** Return `{ "fqcn": ["name(a: T, b: U)", ...] }`, or an empty string. */
-    fun dump(bytes: ByteArray): String {
-        val byClass = sortedMapOf<String, List<String>>()
+/** Every annotation owns its array visitors; nested arrays never share state. */
+private fun annotationValues(into: MutableMap<String, Any?>): AnnotationVisitor =
+    object : AnnotationVisitor(Opcodes.ASM9) {
+        override fun visit(
+            name: String,
+            value: Any?,
+        ) {
+            into[name] = value
+        }
+
+        override fun visitEnum(
+            name: String,
+            descriptor: String,
+            value: String,
+        ) {
+            into[name] = value
+        }
+
+        override fun visitArray(name: String): AnnotationVisitor {
+            val items = mutableListOf<Any?>()
+            into[name] = items
+            return object : AnnotationVisitor(Opcodes.ASM9) {
+                override fun visit(
+                    name: String?,
+                    value: Any?,
+                ) {
+                    items.add(value)
+                }
+
+                override fun visitEnum(
+                    name: String?,
+                    descriptor: String,
+                    value: String,
+                ) {
+                    items.add(value)
+                }
+
+                override fun visitAnnotation(
+                    name: String?,
+                    descriptor: String,
+                ): AnnotationVisitor {
+                    val values = mutableMapOf<String, Any?>()
+                    items.add(mapOf("annotation" to descriptor, "values" to values))
+                    return annotationValues(values)
+                }
+
+                override fun visitArray(name: String?): AnnotationVisitor {
+                    val values = mutableMapOf<String, Any?>()
+                    items.add(values)
+                    return annotationValues(values).visitArray("items")
+                }
+            }
+        }
+
+        override fun visitAnnotation(
+            name: String,
+            descriptor: String,
+        ): AnnotationVisitor {
+            val values = mutableMapOf<String, Any?>()
+            into[name] = mapOf("annotation" to descriptor, "values" to values)
+            return annotationValues(values)
+        }
+    }
+
+private fun readClass(bytes: ByteArray): ClassApi {
+    val facts = ClassApi()
+    ClassReader(bytes).accept(
+        object : ClassVisitor(Opcodes.ASM9) {
+            override fun visit(
+                version: Int,
+                access: Int,
+                name: String,
+                signature: String?,
+                superName: String?,
+                interfaces: Array<out String>?,
+            ) {
+                facts.name = name
+                facts.access = access
+            }
+
+            override fun visitAnnotation(
+                descriptor: String,
+                visible: Boolean,
+            ): AnnotationVisitor {
+                val values = mutableMapOf<String, Any?>()
+                val name = descriptor.removePrefix("L").removeSuffix(";")
+                facts.annotations[name] = values
+                if (name == "kotlin/Metadata") facts.metadata = values
+                return annotationValues(values)
+            }
+
+            override fun visitMethod(
+                access: Int,
+                name: String,
+                descriptor: String,
+                signature: String?,
+                exceptions: Array<out String>?,
+            ): MethodVisitor {
+                val method = MethodApi(name, descriptor, access)
+                facts.methods.add(method)
+                return object : MethodVisitor(Opcodes.ASM9) {
+                    override fun visitAnnotation(
+                        descriptor: String,
+                        visible: Boolean,
+                    ): AnnotationVisitor {
+                        val values = mutableMapOf<String, Any?>()
+                        method.annotations[descriptor.removePrefix("L").removeSuffix(";")] = values
+                        return annotationValues(values)
+                    }
+                }
+            }
+
+            override fun visitField(
+                access: Int,
+                name: String,
+                descriptor: String,
+                signature: String?,
+                value: Any?,
+            ): FieldVisitor? {
+                facts.fields[name to descriptor] = access to value
+                return null
+            }
+        },
+        ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES,
+    )
+    return facts
+}
+
+private fun decode(facts: ClassApi): KotlinClassMetadata? {
+    val values = facts.metadata ?: return null
+
+    fun strings(key: String): Array<String> =
+        (values[key] as? List<*>)?.map { it as String }?.toTypedArray() ?: emptyArray()
+
+    fun ints(key: String): IntArray = values[key] as? IntArray ?: intArrayOf()
+    return KotlinClassMetadata.readLenient(
+        kotlinx.metadata.jvm.Metadata(
+            kind = values["k"] as? Int ?: 1,
+            metadataVersion = ints("mv"),
+            data1 = strings("d1"),
+            data2 = strings("d2"),
+            extraString = values["xs"] as? String ?: "",
+            packageName = values["pn"] as? String ?: "",
+            extraInt = values["xi"] as? Int ?: 0,
+        ),
+    )
+}
+
+private fun KmType.document(): Map<String, Any?> =
+    mapOf(
+        "classifier" to
+            when (val node = classifier) {
+                is KmClassifier.Class -> node.name
+                is KmClassifier.TypeAlias -> node.name
+                is KmClassifier.TypeParameter -> "#${node.id}"
+            },
+        "nullable" to isNullable,
+        "suspend" to isSuspend,
+        "annotations" to annotations.map { it.className }.sorted(),
+        "annotationValues" to
+            annotations.associate { a ->
+                a.className to a.arguments.mapValues { it.value.document() }
+            },
+        "arguments" to
+            arguments.map {
+                mapOf("variance" to it.variance?.name, "type" to it.type?.document())
+            },
+        "abbreviatedType" to abbreviatedType?.document(),
+        "outerType" to outerType?.document(),
+        "flexibleUpperBound" to flexibleTypeUpperBound?.type?.document(),
+    )
+
+private fun KmAnnotationArgument.document(): Any? =
+    when (this) {
+        is KmAnnotationArgument.LiteralValue<*> -> value.toString()
+        is KmAnnotationArgument.ArrayValue -> elements.map { it.document() }
+        is KmAnnotationArgument.AnnotationValue ->
+            mapOf(
+                "annotation" to annotation.className,
+                "values" to annotation.arguments.mapValues { it.value.document() },
+            )
+        is KmAnnotationArgument.EnumValue ->
+            mapOf(
+                "class" to enumClassName,
+                "entry" to enumEntryName,
+            )
+        is KmAnnotationArgument.KClassValue -> mapOf("class" to className)
+        is KmAnnotationArgument.ArrayKClassValue ->
+            mapOf(
+                "class" to className,
+                "arrayDimensions" to arrayDimensionCount,
+            )
+    }
+
+private class ApiExtractor(
+    private val coordinate: String,
+    private val diagnostics: MutableList<Map<String, Any?>>,
+) {
+    @OptIn(ExperimentalContextReceivers::class)
+    fun extract(bytes: ByteArray): List<Map<String, Any?>> {
+        val classes = sortedMapOf<String, ClassApi>()
         ZipInputStream(ByteArrayInputStream(bytes)).use { zip ->
             var entry = zip.nextEntry
             while (entry != null) {
-                if (entry.name.endsWith(".class") && !entry.name.contains('$')) {
-                    val facts = read(zip.readBytes())
-                    if (facts != null && facts.composables.isNotEmpty()) {
-                        byClass[facts.name.replace('/', '.')] = render(facts)
-                    }
+                if (entry.name.endsWith(".class")) {
+                    val facts = readClass(zip.readBytes())
+                    classes[facts.name] = facts
                 }
                 zip.closeEntry()
                 entry = zip.nextEntry
             }
         }
-        return byClass.entries.joinToString(",\n", "{\n", "\n}") { (fqcn, composables) ->
-            composables.joinToString(",\n", "\"$fqcn\": [\n", "\n]") { "  \"$it\"" }
-        }
-    }
-
-    /** Collect one class's name, its @Metadata and its @Composable methods. */
-    private fun read(bytes: ByteArray): ClassFacts? {
-        val facts = ClassFacts()
-        org.objectweb.asm.ClassReader(bytes).accept(
-            object : org.objectweb.asm.ClassVisitor(asm9) {
-                override fun visit(
-                    version: Int,
-                    access: Int,
-                    name: String,
-                    signature: String?,
-                    superName: String?,
-                    interfaces: Array<out String>?,
-                ) {
-                    facts.name = name
+        val metadata = classes.mapValues { (_, facts) -> decode(facts) }
+        val declarations = mutableListOf<Map<String, Any?>>()
+        for ((owner, facts) in classes) {
+            val parsed = metadata[owner]
+            val container: KmDeclarationContainer =
+                when (parsed) {
+                    is KotlinClassMetadata.Class -> parsed.kmClass
+                    is KotlinClassMetadata.FileFacade -> parsed.kmPackage
+                    is KotlinClassMetadata.MultiFileClassPart -> parsed.kmPackage
+                    // Multifile facades delegate to their parts; synthetic lambda
+                    // classes are implementations, not additional public APIs.
+                    else -> continue
                 }
-
-                override fun visitAnnotation(
-                    descriptor: String,
-                    visible: Boolean,
-                ): org.objectweb.asm.AnnotationVisitor? {
-                    if (visible && isExperimental(descriptor)) {
-                        facts.annotations.add(marker(descriptor))
+            val enclosing =
+                generateSequence(owner) {
+                    if ('$' in it) it.substringBeforeLast('$') else null
+                }.toList()
+            val classVisibility =
+                enclosing
+                    .mapNotNull {
+                        (metadata[it] as? KotlinClassMetadata.Class)?.kmClass?.visibility
+                    }.firstOrNull { it != Visibility.PUBLIC } ?: Visibility.PUBLIC
+            val classAnnotations =
+                enclosing
+                    .flatMap {
+                        classes[it]?.annotations.orEmpty().entries
+                    }.associate { it.toPair() }
+            val dispatchReceiver =
+                if (parsed is KotlinClassMetadata.Class) classType(owner).document() else null
+            for (function in container.functions) {
+                val signature = function.signature
+                val method = facts.method(signature)
+                val annotations =
+                    (classAnnotations + method?.annotations.orEmpty())
+                        .filterKeys { it != "kotlin/Metadata" }
+                val composable = annotations.containsKey(composeAnnotation)
+                val eligibility = exclusion(function.visibility, classVisibility, annotations)
+                val m3 = owner.startsWith("androidx/compose/material3/")
+                val reason =
+                    when {
+                        eligibility != null -> eligibility
+                        method == null -> "metadata JVM signature has no bytecode method"
+                        method.access and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_BRIDGE) != 0 ->
+                            "synthetic or bridge method"
+                        method.access and Opcodes.ACC_PUBLIC == 0 -> "non-public JVM method"
+                        else -> null
                     }
-                    if (descriptor != metadataDescriptor || !visible) return null
-                    val annotation = AnnotationFacts()
-                    facts.metadata = annotation
-                    return Collector(annotation)
+                if (eligibility == null && method == null) {
+                    diagnostics.add(
+                        mapOf(
+                            "target" to m3,
+                            "message" to
+                                "$coordinate $owner.${function.name}: unmatched $signature",
+                        ),
+                    )
                 }
-
-                override fun visitMethod(
-                    access: Int,
-                    name: String,
-                    descriptor: String,
-                    signature: String?,
-                    exceptions: Array<out String>?,
-                ): org.objectweb.asm.MethodVisitor {
-                    val method = MethodFacts(name, descriptor)
-                    return object : org.objectweb.asm.MethodVisitor(asm9) {
-                        // @Composable has BINARY retention, so it reaches the
-                        // visitor with visible=false. Checking only for visible
-                        // finds zero composables in the entire classpath, which
-                        // looks exactly like a Compose library that declares
-                        // nothing -- the failure this dump would otherwise ship
-                        // silently, and did, once.
-                        override fun visitAnnotation(
-                            annotationDescriptor: String,
-                            visibleAnnotation: Boolean,
-                        ): org.objectweb.asm.AnnotationVisitor? {
-                            if (isExperimental(annotationDescriptor)) {
-                                method.annotations.add(marker(annotationDescriptor))
-                            }
-                            if (annotationDescriptor == composableDescriptor) {
-                                facts.composables.add(method)
-                            }
-                            return null
-                        }
-                    }
-                }
-            },
-            org.objectweb.asm.ClassReader.SKIP_CODE or org.objectweb.asm.ClassReader.SKIP_DEBUG,
-        )
-        return facts
-    }
-
-    /**
-     * Drop the Compose compiler's synthetic tail.
-     *
-     * Every @Composable is compiled to `(realParams..., Composer, Int, Int)`,
-     * and that tail is not part of the signature a developer writes. Reporting
-     * it would put a `Composer` parameter on every one of the 983 composables,
-     * and a schema generated from that would model a parameter no call site can
-     * supply.
-     */
-    private fun trimmed(parts: List<String>): List<String> {
-        var end = parts.size
-        while (end > 0 && isSynthetic(parts[end - 1])) end--
-        return parts.subList(0, end)
-    }
-
-    /**
-     * How many positions a metadata candidate agrees with a JVM descriptor on.
-     *
-     * Name and arity together are not enough: Compose declares overloads that
-     * agree on both, and on the first argument's type too. Crossfade has a
-     * four-parameter `content` overload and a five-parameter one ending in a
-     * `label`, and picking the former for the latter shifted every parameter by
-     * one -- leaving a trailing content lambda with no metadata entry, which
-     * renders as `arg4: ?Function3`.
-     *
-     * A composable lambda is compared loosely: `content: @Composable (T) -> Unit`
-     * is `Function3<T, Composer, Integer, Unit>` in the descriptor and
-     * `Function1<T>` in the metadata, so the arity differs by design and only
-     * the family is comparable. Every other type must match exactly.
-     */
-    private fun agreement(
-        kotlin: List<String>,
-        jvm: List<String>,
-    ): Int =
-        kotlin.zip(jvm.take(kotlin.size)).count { (k, v) ->
-            val left = k.substringBefore('<').substringAfterLast('.')
-            val right = v.substringAfterLast('.')
-            if (left.startsWith("Function") && right.startsWith("Function")) {
-                true
-            } else {
-                left.equals(right, ignoreCase = true)
+                val returnsUnit =
+                    (function.returnType.classifier as? KmClassifier.Class)?.name == "kotlin/Unit"
+                val contextProvider = function.name in setOf("MaterialTheme", "ProvideTextStyle")
+                declarations.add(
+                    mapOf(
+                        "artifact" to coordinate,
+                        "owner" to owner.replace('/', '.'),
+                        "package" to owner.substringBeforeLast('/').replace('/', '.'),
+                        "name" to function.name,
+                        "declarationKind" to "function",
+                        "suspend" to function.isSuspend,
+                        "visibility" to function.visibility.name,
+                        "classVisibility" to classVisibility.name,
+                        "jvm" to facts.jvm(signature),
+                        "disposition" to
+                            when {
+                                eligibility == null && method == null -> "error"
+                                reason != null -> "excluded"
+                                m3 && composable && returnsUnit && !contextProvider -> "ui"
+                                else -> "support"
+                            },
+                        "category" to
+                            when {
+                                reason != null -> "excluded"
+                                !m3 -> "foundation-ui-helper"
+                                contextProvider -> "composition-provider"
+                                composable && !returnsUnit -> "composable-factory"
+                                else -> "material3"
+                            },
+                        "reason" to reason,
+                        "composable" to composable,
+                        "annotations" to annotations,
+                        "receiver" to function.receiverParameterType?.document(),
+                        "dispatchReceiver" to dispatchReceiver,
+                        "contextReceivers" to function.contextReceiverTypes.map { it.document() },
+                        "returnType" to function.returnType.document(),
+                        "typeParameters" to function.typeParameters.map { it.document() },
+                        "parameters" to function.valueParameters.map { it.document() },
+                    ),
+                )
             }
-        }
-
-    /**
-     * The JVM arguments that correspond to declared Kotlin parameters.
-     *
-     * Only the *tail* is synthetic. A compiled composable is
-     * `params..., <overflow block>, Composer, int, int`, and the overflow block
-     * contains plain `int` and `boolean` arguments that are very much real
-     * parameters: BasicText's `TextOverflow`, `softWrap`, `maxLines` and
-     * `minLines` sit right there. Stripping every `int` anywhere in the list --
-     * which is what an earlier version did -- counted BasicText as six
-     * parameters when its metadata declares nine, so no candidate ever fit and
-     * the matcher fell through.
-     */
-    private fun declaredTypes(types: Array<org.objectweb.asm.Type>): List<String> {
-        var end = types.size
-        while (end > 0 && isSynthetic(types[end - 1])) end--
-        return types
-            .take(end)
-            .map { it.className.substringAfterLast('.').substringAfterLast('$') }
-    }
-
-    /**
-     * Whether a trailing argument is part of the Compose compiler's tail.
-     *
-     * `int` and not only `Integer`: ASM reports a primitive argument's className
-     * as "int".
-     */
-    private fun isSynthetic(type: org.objectweb.asm.Type): Boolean =
-        type.className.substringAfterLast('.') in setOf("Composer", "Integer", "int")
-
-    /**
-     * Whether a rendered parameter is part of the Compose compiler's tail.
-     *
-     * Tested against the type rather than the whole rendered string: an
-     * unresolved parameter renders as `arg5: ?Composer`, which no longer ends
-     * with ": Composer", so a suffix test silently stops trimming and every
-     * composable grows a Composer parameter.
-     */
-    private fun isSynthetic(part: String): Boolean {
-        val type = part.substringAfter(": ", "").removePrefix("?")
-        // Case-insensitive because an unresolved parameter keeps the descriptor's
-        // own spelling, and the JVM writes these as `int` and `Composer`.
-        return type.equals("Composer", true) || type.equals("Int", true)
-    }
-
-    /** Render each composable as `name(a: T, b: U)`. */
-    private fun render(facts: ClassFacts): List<String> {
-        val kmClass = decodeMetadata(facts.metadata)
-        return facts.composables
-            .map { method ->
-                // Kotlin mangles an internal inline function's JVM name by
-                // appending a hash -- `Text` is really `Text--4IGK_g`, and so is
-                // every one of its overloads. Matching the metadata by the mangled
-                // name finds nothing, so every parameter falls back to arg0; and
-                // reporting the mangled name makes five overloads of one function
-                // look like five unrelated composables. The metadata holds the real
-                // name, so prefer it and fall back to the JVM name.
-                val plain = method.name.substringBefore('-')
-                val types =
-                    org.objectweb.asm.Type
-                        .getArgumentTypes(method.descriptor)
-                val firstJvm = types.firstOrNull()?.className?.substringAfterLast('.')
-                // Matching metadata by name alone is wrong the moment a function is
-                // overloaded: all four JVM `Text` methods share the name, so the
-                // first metadata entry wins for every one of them and the two
-                // String overloads are reported as AnnotatedString. The descriptor
-                // distinguishes them, so match on the first argument's type too.
-                val named =
-                    kmClass?.functions?.filter { it.name == method.name || it.name == plain }
-                // Arity first, and it is exact: every parameter a Kotlin
-                // composable declares becomes a JVM argument one-for-one, so a
-                // candidate with a different count is simply a different
-                // overload. Matching on the first argument's type instead
-                // silently picked the wrong overload for ExposedDropdownMenu --
-                // a five-parameter candidate against a twelve-parameter JVM
-                // method -- and every parameter past the fifth fell back to its
-                // raw descriptor name, so Dp came out as `long`. 243 parameters
-                // looked inexpressible because they were unreadable.
-                // Compare against the *declared* count: the descriptor also
-                // carries the Compose compiler's (Composer, Int, Int) tail,
-                // which appears in no Kotlin signature.
-                val jvmTypes = declaredTypes(types)
-                // Score rather than require an exact count. The Compose compiler
-                // emits overloads where the default-argument mask `int` sits
-                // *before* the Composer rather than in the tail, and one variant
-                // carries an extra bridge parameter after it, so the JVM argument
-                // count is the Kotlin parameter count or one or two more, and
-                // nothing is exact. Requiring equality meant the candidate list
-                // came back empty and the whole matcher fell through to an
-                // arbitrary overload.
-                // Tried and rejected: scoring a second time with every `int`
-                // removed, on the theory that the default-argument mask is an
-                // int. It is -- AnimatedVisibility has six Kotlin parameters and
-                // seven JVM arguments because of one -- but removing all ints
-                // also deletes genuinely Int-typed parameters like BasicText's
-                // maxLines, and unread parameters went from 69 to 74. The mask
-                // is identifiable by position and not by type, and position is
-                // not reliably known here.
-                val km =
-                    named
-                        ?.filter {
-                            val declared = it.valueParameters.size
-                            declared <= jvmTypes.size && jvmTypes.size - declared <= extraArguments
-                        }?.maxByOrNull {
-                            agreement(
-                                it.valueParameters.map { p ->
-                                    p.type.render()
+            for (property in container.properties) {
+                fun accessor(
+                    signature: JvmMethodSignature?,
+                    visibility: Visibility?,
+                ): Map<String, Any?>? =
+                    signature?.let {
+                        val method = facts.method(it)
+                        val annotations = classAnnotations + method?.annotations.orEmpty()
+                        val reason =
+                            when {
+                                visibility == null -> "missing accessor visibility"
+                                exclusion(visibility, classVisibility, annotations) != null ->
+                                    exclusion(visibility, classVisibility, annotations)
+                                method == null -> "unmatched accessor"
+                                method.access and Opcodes.ACC_PUBLIC == 0 ->
+                                    "non-public JVM accessor"
+                                else -> null
+                            }
+                        facts.jvm(it) +
+                            mapOf(
+                                "visibility" to visibility?.name,
+                                "access" to method?.access,
+                                "callable" to (reason == null),
+                                "reason" to reason,
+                            )
+                    }
+                val getter = accessor(property.getterSignature, property.getter.visibility)
+                val setter = accessor(property.setterSignature, property.setter?.visibility)
+                // Kotlin companion @JvmField/const properties are physically
+                // emitted on the enclosing class, not on the Companion class.
+                val fieldOwner =
+                    if (parsed is KotlinClassMetadata.Class &&
+                        parsed.kmClass.kind == ClassKind.COMPANION_OBJECT
+                    ) {
+                        classes[owner.substringBeforeLast('$')]
+                    } else {
+                        facts
+                    }
+                val field =
+                    property.fieldSignature?.let {
+                        facts.fields[it.name to it.descriptor]
+                            ?: fieldOwner?.fields?.get(it.name to it.descriptor)
+                    }
+                val signatures =
+                    listOfNotNull(
+                        property.getterSignature,
+                        property.setterSignature,
+                        property.syntheticMethodForAnnotations,
+                    )
+                val methods = signatures.mapNotNull { facts.method(it) }
+                val annotations =
+                    (
+                        classAnnotations +
+                            methods
+                                .flatMap {
+                                    it.annotations.entries
+                                }.associate { it.toPair() }
+                    ).filterKeys { it != "kotlin/Metadata" }
+                val eligibility = exclusion(property.visibility, classVisibility, annotations)
+                val matched = getter?.get("matched") == true || field != null
+                val unreadAccessor =
+                    listOfNotNull(getter, setter).any {
+                        it["visibility"] == "PUBLIC" && it["matched"] != true
+                    }
+                val reason =
+                    when {
+                        eligibility != null -> eligibility
+                        !matched || unreadAccessor -> "unmatched property accessor/field"
+                        else -> null
+                    }
+                if (eligibility == null && reason == "unmatched property accessor/field") {
+                    diagnostics.add(
+                        mapOf(
+                            "target" to owner.startsWith("androidx/compose/material3/"),
+                            "message" to "$coordinate $owner.${property.name}: $reason",
+                        ),
+                    )
+                }
+                declarations.add(
+                    mapOf(
+                        "artifact" to coordinate,
+                        "owner" to owner.replace('/', '.'),
+                        "package" to owner.substringBeforeLast('/').replace('/', '.'),
+                        "name" to property.name,
+                        "declarationKind" to "property",
+                        "visibility" to property.visibility.name,
+                        "classVisibility" to classVisibility.name,
+                        "jvm" to (
+                            getter ?: mapOf(
+                                "name" to property.fieldSignature?.name,
+                                "descriptor" to property.fieldSignature?.descriptor,
+                                "matched" to matched,
+                            )
+                        ),
+                        "accessors" to mapOf("getter" to getter, "setter" to setter),
+                        "constant" to field?.second,
+                        "disposition" to
+                            when {
+                                reason == "unmatched property accessor/field" -> "error"
+                                reason != null -> "excluded"
+                                else -> "support"
+                            },
+                        "reason" to reason,
+                        "composable" to annotations.containsKey(composeAnnotation),
+                        "annotations" to annotations,
+                        "receiver" to property.receiverParameterType?.document(),
+                        "dispatchReceiver" to dispatchReceiver,
+                        "contextReceivers" to property.contextReceiverTypes.map { it.document() },
+                        "returnType" to property.returnType.document(),
+                        "parameters" to emptyList<Any>(),
+                        "typeParameters" to property.typeParameters.map { it.document() },
+                    ),
+                )
+            }
+            if (parsed is KotlinClassMetadata.Class) {
+                for (constructor in parsed.kmClass.constructors) {
+                    val signature = constructor.signature
+                    val method = facts.method(signature)
+                    val annotations =
+                        (classAnnotations + method?.annotations.orEmpty())
+                            .filterKeys { it != "kotlin/Metadata" }
+                    val eligibility =
+                        exclusion(
+                            constructor.visibility,
+                            classVisibility,
+                            annotations,
+                        )
+                    val reason =
+                        when {
+                            eligibility != null -> eligibility
+                            parsed.kmClass.kind == ClassKind.ANNOTATION_CLASS ->
+                                "annotation constructors are not JVM callables"
+                            method == null -> "unmatched constructor"
+                            else -> null
+                        }
+                    if (reason == "unmatched constructor") {
+                        diagnostics.add(
+                            mapOf(
+                                "target" to owner.startsWith("androidx/compose/material3/"),
+                                "message" to "$coordinate $owner: $reason",
+                            ),
+                        )
+                    }
+                    declarations.add(
+                        mapOf(
+                            "artifact" to coordinate,
+                            "owner" to owner.replace('/', '.'),
+                            "package" to owner.substringBeforeLast('/').replace('/', '.'),
+                            "name" to "<init>",
+                            "declarationKind" to "constructor",
+                            "visibility" to constructor.visibility.name,
+                            "classVisibility" to classVisibility.name,
+                            "jvm" to facts.jvm(signature),
+                            "disposition" to
+                                when {
+                                    reason == "unmatched constructor" -> "error"
+                                    reason != null -> "excluded"
+                                    else -> "support"
                                 },
-                                jvmTypes,
+                            "reason" to reason,
+                            "composable" to false,
+                            "annotations" to annotations,
+                            "receiver" to null,
+                            "dispatchReceiver" to null,
+                            "contextReceivers" to emptyList<Any>(),
+                            "returnType" to classType(owner).document(),
+                            "typeParameters" to emptyList<Any>(),
+                            "parameters" to constructor.valueParameters.map { it.document() },
+                        ),
+                    )
+                }
+            }
+            if (owner.startsWith("androidx/compose/material3/") &&
+                classVisibility == Visibility.PUBLIC
+            ) {
+                val metadataSignatures =
+                    container.functions.mapNotNull { it.signature } +
+                        container.properties.flatMap {
+                            listOfNotNull(
+                                it.getterSignature,
+                                it.setterSignature,
+                                it.syntheticMethodForAnnotations,
                             )
                         }
-                        ?: named?.firstOrNull()
-                val declared = km?.name ?: plain
-                val parts =
-                    types.mapIndexed { index, type ->
-                        val declared = km?.valueParameters?.getOrNull(index)
-                        // No metadata entry matched this JVM method, so its
-                        // Kotlin type is unread. Rendering the descriptor's raw
-                        // primitive would claim Dp is `long`, and a schema
-                        // generated from that types a dimension prop as an
-                        // integer -- quietly wrong rather than absent. The `?`
-                        // prefix says unread, and the count is reported.
-                        val name = declared?.name ?: "arg$index"
-                        if (declared == null) unresolved++
-                        // Metadata names the Kotlin-level parameters; the descriptor
-                        // knows the JVM-level types. They disagree at exactly one
-                        // point that matters here -- a Function0 content slot and a
-                        // Function1 callback are different types, which is the whole
-                        // reason to read bytecode instead of a published text dump.
-                        val kotlin =
-                            declared?.type?.render() ?: "?${type.className.substringAfterLast('.')}"
-                        // "= default" says the Compose side has one, and
-                        // PyCompose must not invent it: an optional prop is
-                        // omitted from the generated adapter so Compose's own
-                        // default applies. The value is not on the wire.
-                        val hasDefault =
-                            declared != null && declaresDefaultValue?.invoke(declared) == true
-                        "$name: $kotlin" + if (hasDefault) " $defaultMarker" else ""
+                facts.methods
+                    .filter { m ->
+                        composeAnnotation in m.annotations &&
+                            m.access and Opcodes.ACC_PUBLIC != 0 &&
+                            m.access and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_BRIDGE) == 0 &&
+                            metadataSignatures.none {
+                                it.name == m.name && it.descriptor == m.descriptor
+                            }
+                    }.forEach { m ->
+                        diagnostics.add(
+                            mapOf(
+                                "target" to true,
+                                "unmatchedBytecode" to true,
+                                "message" to
+                                    "$coordinate $owner.${m.name}${m.descriptor}: " +
+                                    "annotated bytecode has no metadata declaration",
+                            ),
+                        )
                     }
-                val stability = (method.annotations + facts.annotations).sorted()
-                val prefix = stability.joinToString("") { "@$it " }
-                "$prefix$declared(${trimmed(parts).joinToString(", ")})"
-            }.sorted()
-    }
-
-    /**
-     * Decode the @Metadata blob, or null when unusable.
-     *
-     * A file facade's functions live on its `KmPackage` and a class's on its
-     * `KmClass`; both satisfy the declaration container the caller reads from.
-     * A version this kotlinx-metadata cannot parse degrades to JVM descriptors
-     * alone rather than failing the whole dump: names would be lost, arity and
-     * types -- including the Function0/Function1 distinction -- would not.
-     */
-    private fun decodeMetadata(
-        annotation: AnnotationFacts?,
-    ): kotlinx.metadata.KmDeclarationContainer? {
-        val values = annotation?.values ?: return null
-
-        // d1 and d2 are *parallel* String arrays -- index i of one corresponds
-        // to index i of the other -- and both are handed over whole. Collapsing
-        // either to its first element makes the pair inconsistent, and the
-        // reader throws InconsistentKotlinMetadataException for every class in
-        // the jar. That is the difference between names and arg0.
-        fun blob(key: String): Array<String> =
-            when (val value = values[key]) {
-                is Array<*> -> value.map { it?.toString().orEmpty() }.toTypedArray()
-                is String -> arrayOf(value)
-                else -> emptyArray()
             }
-        val d1 = blob("d1")
-        val d2 = blob("d2")
-        // d2 is legitimately empty: Kotlin 1.9 introduced a compact metadata
-        // form that packs everything into d1 and omits d2. Treating that as
-        // "no metadata" costs every parameter name in every modern jar, which is
-        // most of them -- and Compose is compiled by a recent compiler.
-        if (d1.isEmpty()) return null
-
-        fun ints(key: String): IntArray =
-            when (val value = values[key]) {
-                is IntArray -> value
-                is Array<*> -> value.filterIsInstance<Number>().map { it.toInt() }.toIntArray()
-                else -> intArrayOf(1, 0, 0)
-            }
-        // Kotlin spells the annotation's parameters out in full where the JVM
-        // calls them k/mv/d1; the compiler resolves the Kotlin names, and naming
-        // them the Java way fails at the call site rather than at the annotation.
-        // d1/d2 are String[] on the class file and hold one element here -- the
-        // reader splits them internally, so the blob is passed whole.
-        val header =
-            metadata(
-                kind = values["k"] as? Int ?: 1,
-                metadataVersion = ints("mv"),
-                bytecodeVersion = ints("bv"),
-                // Passed whole: the reader splits them internally.
-                data1 = d1,
-                data2 = d2,
-                extraString = values["xs"] as? String ?: "",
-                packageName = values["pn"] as? String ?: "",
-                extraInt = values["xi"] as? Int ?: 0,
-            )
-        // readLenient tolerates a *newer* metadata version; it still throws on
-        // data it cannot parse at all, which happens for synthetic and
-        // pre-release shapes inside an otherwise ordinary jar. One such class
-        // must not fail the dump: degrade to JVM descriptors, which keep arity
-        // and types -- including the Function0/Function1 distinction that the
-        // whole approach exists for -- and lose only the parameter names.
-        return try {
-            // ButtonKt is a *file facade*, and 0.9 models that as its own case
-            // rather than as a Class. Every top-level composable lives in one, so
-            // matching only Class finds metadata for classes and nothing for the
-            // functions anyone actually wants to mirror.
-            when (
-                val parsed =
-                    kotlinx.metadata.jvm.KotlinClassMetadata
-                        .readLenient(header)
-            ) {
-                is kotlinx.metadata.jvm.KotlinClassMetadata.Class -> parsed.kmClass
-                is kotlinx.metadata.jvm.KotlinClassMetadata.FileFacade -> parsed.kmPackage
-                // A multi-file facade: several .kt files compiled into one
-                // class. SnapshotStateKt's collectAsState and friends live
-                // here, and dropping this case left every parameter of the 40
-                // affected composables unnamed.
-                is kotlinx.metadata.jvm.KotlinClassMetadata.MultiFileClassPart -> parsed.kmPackage
-                else -> null
-            }
-        } catch (failure: Throwable) {
-            metadataFailures++
-            null
+        }
+        return declarations.map { declaration ->
+            val owner = declaration["owner"].toString().replace('.', '/')
+            val kmClass = (metadata[owner] as? KotlinClassMetadata.Class)?.kmClass
+            declaration +
+                mapOf(
+                    "enclosingTypeParameters" to
+                        kmClass?.typeParameters.orEmpty().map {
+                            it.document()
+                        },
+                    "classSupertypes" to kmClass?.supertypes.orEmpty().map { it.document() },
+                )
         }
     }
 }
 
-/**
- * Build a `kotlin.Metadata` carrying values read at runtime.
- *
- * Three ways to do this, all awkward, and the reason is worth recording:
- * `Metadata(...)` is an annotation, so Kotlin demands compile-time constants
- * for its arguments; implementing the interface hits Kotlin's own view of it,
- * where `kind` is a final val; and naming the properties the way the JVM does
- * (`k`, `mv`, `d1`) is not how Kotlin sees them either.
- *
- * A dynamic proxy sidesteps all of it. The interface is a runtime interface, so
- * the answer is keyed by method name and never has to agree with either naming.
- */
-private fun metadata(
-    kind: Int,
-    metadataVersion: IntArray,
-    bytecodeVersion: IntArray,
-    data1: Array<String>,
-    data2: Array<String>,
-    extraString: String,
-    packageName: String,
-    extraInt: Int,
-): kotlin.Metadata {
-    val answers =
-        mapOf(
-            "k" to kind,
-            "mv" to metadataVersion,
-            "bv" to bytecodeVersion,
-            "d1" to data1,
-            "d2" to data2,
-            "xs" to extraString,
-            "pn" to packageName,
-            "xi" to extraInt,
-        )
-    val proxy =
-        java.lang.reflect.Proxy.newProxyInstance(
-            kotlin.Metadata::class.java.classLoader,
-            arrayOf(kotlin.Metadata::class.java),
-        ) { _, method, _ -> answers[method.name] }
-    return proxy as kotlin.Metadata
-}
+private fun classType(name: String): KmType =
+    KmType().apply { classifier = KmClassifier.Class(name) }
 
-/**
- * Whether a Kotlin parameter declares a default value.
- *
- * Reached reflectively on purpose. `KmValueParameter` exposes the answer as
- * `Attributes.getDeclaresDefaultValue`, but that is a member-extension property
- * on a class with no instance, and the underlying Flag's value is internal --
- * so there is no way to name it from Kotlin here. One method lookup, resolved
- * once, is cheaper than reaching into flag bits by hand.
- *
- * Two routes that look available and are not: Compose's AARs contain no
- * `$default` synthetic bridges, so their presence would say nothing; and the
- * metadata blob records only that a default exists, never its value -- which is
- * the only question asked here.
- */
-private val declaresDefaultValue: ((Any) -> Boolean)? =
-    runCatching {
-        val method =
-            Class.forName("kotlinx.metadata.Attributes").getMethod(
-                "getDeclaresDefaultValue",
-                kotlinx.metadata.KmValueParameter::class.java,
-            )
-        val probe = { parameter: Any -> method.invoke(null, parameter) as Boolean }
-        probe
-    }.getOrNull()
+private fun ClassApi.method(signature: JvmMethodSignature?): MethodApi? =
+    methods.singleOrNull { it.name == signature?.name && it.descriptor == signature.descriptor }
 
-/**
- * Reads an annotation's `name = value` pairs.
- *
- * Arrays matter and returning null for them is the trap: d1, d2 and bv are all
- * arrays, so dropping them leaves a `kotlin.Metadata` with a kind and nothing
- * else. The reader then fails, `decodeMetadata` returns null, and every
- * parameter name falls back to `arg0` -- a dump that looks complete and has
- * lost the half that makes it useful.
- */
-private class Collector(
-    private val into: AnnotationFacts,
-) : org.objectweb.asm.AnnotationVisitor(asm9) {
-    private var pending: String? = null
-    private var elements: MutableList<Any?>? = null
+private fun ClassApi.jvm(signature: JvmMethodSignature?): Map<String, Any?> =
+    mapOf(
+        "name" to signature?.name,
+        "descriptor" to signature?.descriptor,
+        "matched" to (method(signature) != null),
+    )
 
-    override fun visit(
-        name: String?,
-        value: Any?,
-    ) {
-        if (name == null) {
-            elements?.add(value)
-            return
-        }
-        into.values[name] = value
+private fun KmValueParameter.document(): Map<String, Any?> =
+    mapOf(
+        "name" to name,
+        "type" to type.document(),
+        "hasDefault" to declaresDefaultValue,
+        "varargType" to varargElementType?.document(),
+    )
+
+private fun KmTypeParameter.document(): Map<String, Any?> =
+    mapOf(
+        "id" to id,
+        "name" to name,
+        "variance" to variance.name,
+        "bounds" to upperBounds.map { it.document() },
+    )
+
+private fun exclusion(
+    visibility: Visibility,
+    classVisibility: Visibility,
+    annotations: Map<String, Map<String, Any?>>,
+): String? =
+    when {
+        visibility != Visibility.PUBLIC || classVisibility != Visibility.PUBLIC ->
+            "non-public Kotlin declaration"
+        "androidx/annotation/RestrictTo" in annotations -> "restricted API"
+        annotations["kotlin/Deprecated"]?.get(
+            "level",
+        ) == "HIDDEN" -> "hidden compatibility declaration"
+        else -> null
     }
-
-    override fun visitArray(name: String): org.objectweb.asm.AnnotationVisitor {
-        pending = name
-        elements = mutableListOf()
-        return object : org.objectweb.asm.AnnotationVisitor(asm9) {
-            override fun visit(
-                ignored: String?,
-                value: Any?,
-            ) {
-                elements?.add(value)
-            }
-
-            override fun visitEnum(
-                ignored: String,
-                descriptor: String,
-                value: String?,
-            ) {
-                elements?.add(value)
-            }
-
-            override fun visitEnd() {
-                val collected = elements
-                if (pending != null && collected != null) {
-                    // A String[] stays an array; an int[] stays an array. Which
-                    // one matters: Metadata declares d1/d2 as String[].
-                    into.values[pending!!] =
-                        if (collected.all { it is String }) {
-                            collected.toTypedArray()
-                        } else {
-                            collected.filterIsInstance<Number>().map { it.toInt() }.toIntArray()
-                        }
-                }
-                pending = null
-                elements = null
-            }
-        }
-    }
-
-    override fun visitAnnotation(
-        name: String,
-        descriptor: String,
-    ): org.objectweb.asm.AnnotationVisitor? = null
-
-    override fun visitEnum(
-        name: String,
-        descriptor: String,
-        value: String?,
-    ) {
-        if (name != null) into.values[name] = value
-    }
-}
-
-/**
- * Render a Kotlin type the way the schema's wire vocabulary sees it.
- *
- * `KmClassifier` is a sealed hierarchy in kotlinx-metadata 0.9, so there is no
- * `.name` on the base: a class and a type alias have to be matched apart.
- */
-private fun kotlinx.metadata.KmType.render(): String {
-    val classifier =
-        when (val node = classifier) {
-            is kotlinx.metadata.KmClassifier.Class -> node.name
-            is kotlinx.metadata.KmClassifier.TypeAlias -> node.name
-            // 0.9 carries only a type parameter's id, not its bound, so this
-            // renders as the erasure rather than as a guess.
-            is kotlinx.metadata.KmClassifier.TypeParameter -> "Any"
-        }
-    val generic = arguments.firstOrNull()?.type?.render()
-    val simple = classifier.substringAfterLast('.').substringAfterLast('/')
-    return if (generic == null) simple else "$simple<$generic>"
-}
