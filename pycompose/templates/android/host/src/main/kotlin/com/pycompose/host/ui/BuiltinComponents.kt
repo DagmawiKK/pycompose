@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.PropResolver
@@ -131,17 +133,6 @@ object BuiltinComponents {
                 ) {
                     Text(button.props.text)
                 }
-            }.register("TextField") { node, modifier, context ->
-                val input = node as InputNode
-                TextField(
-                    value = input.props.value,
-                    onValueChange = { value ->
-                        context.event(input.props.onValueChange, JsonPrimitive(value))
-                    },
-                    modifier = modifier,
-                    enabled = input.props.enabled,
-                    label = input.props.label?.let { label -> { Text(label) } },
-                )
             }.register("Checkbox") { node, modifier, context ->
                 val checkbox = node as CheckboxNode
                 Checkbox(
@@ -170,7 +161,48 @@ object BuiltinComponents {
                     enabled = chip.props.enabled,
                     label = { Text(chip.props.label) },
                 )
+            }.textInputs()
+
+    private fun ComponentRegistry.Builder.textInputs(): ComponentRegistry.Builder =
+        register("TextField") { node, modifier, context ->
+            val input = node as InputNode
+            val report: (String) -> Unit = { value ->
+                context.event(input.props.onValueChange, JsonPrimitive(value))
             }
+            val caret = input.props.selection
+            val onCaret = input.props.onSelectionChange
+            // Controlled when the app says where the caret is, which puts it in
+            // the snapshot and makes it testable. Uncontrolled otherwise, where
+            // Compose owns it and the app never sees it. Both halves must be
+            // declared: one alone would either drop every caret report or reject
+            // every keystroke.
+            if (caret != null && onCaret != null) {
+                val wanted = input.props.value
+                val offset = caret.toInt().coerceIn(0, wanted.length)
+                TextField(
+                    value = TextFieldValue(text = wanted, selection = TextRange(offset)),
+                    // The caret travels back on the same callback that reports the
+                    // text: the event channel carries one value per action, and M3
+                    // has no selection callback of its own at this version. A caret
+                    // moved without the text changing is therefore not reported.
+                    onValueChange = { updated ->
+                        report(updated.text)
+                        context.event(onCaret, JsonPrimitive(updated.selection.start))
+                    },
+                    modifier = modifier,
+                    enabled = input.props.enabled,
+                    label = input.props.label?.let { text -> { Text(text) } },
+                )
+            } else {
+                TextField(
+                    value = input.props.value,
+                    onValueChange = report,
+                    modifier = modifier,
+                    enabled = input.props.enabled,
+                    label = input.props.label?.let { text -> { Text(text) } },
+                )
+            }
+        }
 
     private fun color(value: String?): Color =
         value?.let { PropResolver.color(it).getOrDefault(Color.Unspecified) } ?: Color.Unspecified

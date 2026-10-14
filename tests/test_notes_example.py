@@ -631,7 +631,7 @@ def test_only_the_shell_crosses_the_boundary(app: ModuleType) -> None:
     host = Host(app, repo=a_store([(n, f"Note {n}") for n in range(50)]))
     published = data(host.snapshot())
 
-    assert set(published) == {"route", "dark"}
+    assert set(published) == {"route", "dark", "titleCaret", "bodyCaret"}
     assert len(json.dumps(published)) < 200
     # Fifty rows render; none of them are in what the host saves.
     assert "Note 49" in [props["text"] for props in nodes(host.snapshot(), "Text")]
@@ -668,7 +668,7 @@ def test_ten_thousand_notes_survive_a_restart_without_the_bundle_complaining(
         published = data(host.snapshot())
         assert len(host.repo.load()) == 10_000
         assert held_of(host, 9_999).title == "Note 9999"
-        assert set(published) == {"route", "dark"}
+        assert set(published) == {"route", "dark", "titleCaret", "bodyCaret"}
         assert len(json.dumps(published)) < 200
         # The file, meanwhile, is megabytes -- which is exactly why it is there.
         assert (tmp_path / "notes.json").stat().st_size > 1_000_000
@@ -703,7 +703,7 @@ def test_every_snapshot_is_a_valid_canonical_ir(app: ModuleType) -> None:
     host.tap("set_title", "title", value="Check")
     host.tap("go_back", "back")
     snapshot = host.snapshot()
-    assert snapshot["schemaVersion"] == "1.5.0"
+    assert snapshot["schemaVersion"] == "1.6.0"
     assert "metadata" in snapshot
     assert host.error == ""
 

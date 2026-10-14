@@ -30,6 +30,11 @@ class Edit(TypedDict):
     value: str
 
 
+class Caret(TypedDict):
+    note_id: int
+    value: int
+
+
 class Route(TypedDict):
     route: str
 
@@ -171,6 +176,41 @@ def set_title(state: State, payload: Edit, *, notes: Notes) -> State:
         return _next(state, session)
     notes.rename(payload["note_id"], payload["value"])
     return _next(state, session)
+
+
+@actions
+def set_title_caret(state: State, payload: Caret, *, notes: Notes) -> State:
+    """Record where the caret sits in the title.
+
+    The field is controlled, so this is not a nicety: without a caret the
+    snapshot would send, the next keystroke would reset where the user left it.
+
+    Args:
+        state: Snapshot before the caret moved.
+        payload: Note id bound by the field that owns the caret.
+        notes: What the app can do with notes.
+
+    Returns:
+        The next snapshot with the caret where it was left.
+    """
+    session = of(state)
+    return _next(state, session.evolve(title_caret=int(payload["value"])))
+
+
+@actions
+def set_body_caret(state: State, payload: Caret, *, notes: Notes) -> State:
+    """Record where the caret sits in the body.
+
+    Args:
+        state: Snapshot before the caret moved.
+        payload: Note id bound by the field that owns the caret.
+        notes: What the app can do with notes.
+
+    Returns:
+        The next snapshot with the caret where it was left.
+    """
+    session = of(state)
+    return _next(state, session.evolve(body_caret=int(payload["value"])))
 
 
 @actions

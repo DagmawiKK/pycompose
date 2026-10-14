@@ -236,7 +236,9 @@ data class TextFieldProps(
     val `enabled`: Boolean = true,
     val `label`: String? = null,
     override val `modifier`: JsonObject? = null,
+    val `onSelectionChange`: String? = null,
     val `onValueChange`: String,
+    val `selection`: Long? = null,
     val `value`: String,
 ) : UiProps
 

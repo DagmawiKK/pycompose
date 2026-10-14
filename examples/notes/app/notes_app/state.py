@@ -54,10 +54,14 @@ class Session(AppState):
     Attributes:
         route: Which screen is showing.
         dark: Whether the device is in dark mode.
+        title_caret: Where the caret sits in the title field.
+        body_caret: Where the caret sits in the body field.
     """
 
     route: str = LIST_ROUTE
     dark: bool = False
+    title_caret: int = 0
+    body_caret: int = 0
 
 
 def seeded_session() -> Session:

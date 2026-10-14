@@ -73,7 +73,11 @@ def editor_screen(
                     id="title_field",
                     value=note.title,
                     label="Title",
+                    selection=session.title_caret,
                     on_value_change=actions.set_title.bind(id="title", note_id=note.id),
+                    on_selection_change=actions.set_title_caret.bind(
+                        id="title", note_id=note.id
+                    ),
                     modifier=Modifier().fill_max_width(),
                 ),
                 Spacer(id="gap_body", modifier=Modifier().size(12)),
@@ -81,7 +85,11 @@ def editor_screen(
                     id="body_field",
                     value=note.body,
                     label="Note",
+                    selection=session.body_caret,
                     on_value_change=actions.set_body.bind(id="body", note_id=note.id),
+                    on_selection_change=actions.set_body_caret.bind(
+                        id="body", note_id=note.id
+                    ),
                     modifier=Modifier().fill_max_width(),
                 ),
                 Spacer(id="gap_delete", modifier=Modifier().size(24)),

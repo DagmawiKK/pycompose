@@ -479,7 +479,9 @@ class TextField(Component):
         enabled: bool | None = None,
         label: str | None = None,
         modifier: Modifier | None = None,
+        on_selection_change: str | None = None,
         on_value_change: str,
+        selection: int | None = None,
         value: str,
     ) -> None:
         """Construct a registered TextField.
@@ -489,7 +491,9 @@ class TextField(Component):
             enabled: Native enabled; None uses its default.
             label: Native label; None uses its default.
             modifier: Native modifier; None uses its default.
+            on_selection_change: Native onSelectionChange; None uses its default.
             on_value_change: Required native onValueChange.
+            selection: Native selection; None uses its default.
             value: Required native value.
         """
         props: dict[str, JsonValue] = {}
@@ -497,6 +501,10 @@ class TextField(Component):
             props["enabled"] = enabled
         if label is not None:
             props["label"] = label
+        if on_selection_change is not None:
+            props["on_selection_change"] = on_selection_change
         props["on_value_change"] = on_value_change
+        if selection is not None:
+            props["selection"] = selection
         props["value"] = value
         super().__init__(id=id, children=(), modifier=modifier, **props)

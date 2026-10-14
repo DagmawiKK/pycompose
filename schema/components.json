@@ -1,12 +1,13 @@
 {
-  "schemaVersion": "1.5.0",
+  "schemaVersion": "1.6.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
     "1.2.0",
     "1.3.0",
     "1.4.0",
-    "1.5.0"
+    "1.5.0",
+    "1.6.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -217,9 +218,15 @@
           "type": "string",
           "required": true
         },
+        "selection": {
+          "type": "integer"
+        },
         "onValueChange": {
           "type": "actionId",
           "required": true
+        },
+        "onSelectionChange": {
+          "type": "actionId"
         },
         "label": {
           "type": "string"
