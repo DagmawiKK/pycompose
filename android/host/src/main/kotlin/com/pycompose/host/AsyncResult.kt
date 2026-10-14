@@ -20,7 +20,14 @@ object AsyncResult {
     private val sink = AtomicReference<((String, String) -> Unit)?>(null)
     private val main = AtomicReference<Handler?>()
 
-    /** Point results at [deliver]; pass null when the owning view goes away. */
+    /**
+     * Point results at [deliver]; pass null when the owning view goes away.
+     *
+     * The listener runs on the main thread, so it must not throw: an exception
+     * here would take the process down with it. Reporting a malformed result is
+     * the listener's job, not this object's -- swallowing the failure here
+     * instead would leave no sign that a result was lost.
+     */
     fun listen(deliver: ((String, String) -> Unit)?) {
         sink.set(deliver)
     }

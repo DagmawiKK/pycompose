@@ -11,6 +11,7 @@ import com.pycompose.ir.generated.IrContract
 import com.pycompose.ir.generated.UiNode
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
 
 class RenderContext internal constructor(
     val actions: ActionDispatcher,
@@ -27,10 +28,30 @@ class RenderContext internal constructor(
     ) {
         val fields =
             bindings[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
-        val type = if (value.isString) "string" else "boolean"
-        val candidates = fields.filterValues { it.type == type }
-        if (candidates.size == 1) {
-            actions.dispatch(actionId, JsonObject(mapOf(candidates.keys.single() to value)))
+        // A numeric primitive satisfies both numeric declarations: an app's int
+        // field is carried as "integer", not "number", so matching one name would
+        // silently miss exactly the case this is here to handle.
+        val types =
+            when {
+                value.isString -> setOf("string")
+                value.booleanOrNull != null -> setOf("boolean")
+                else -> setOf("integer", "number")
+            }
+        val candidates = fields.filterValues { it.type in types }
+        val targetField =
+            when {
+                candidates.size == 1 -> candidates.keys.single()
+                candidates.containsKey("value") -> "value"
+                fields.size == 1 -> fields.keys.single()
+                else -> null
+            }
+        if (targetField != null) {
+            actions.dispatch(actionId, JsonObject(mapOf(targetField to value)))
+        } else {
+            renderer.report(
+                "Cannot dispatch event for $actionId: no single field accepts " +
+                    "${types.joinToString("/")} among ${fields.keys}",
+            )
         }
     }
 
@@ -44,7 +65,7 @@ class Renderer(
     private val registry: ComponentRegistry,
     private val actions: ActionDispatcher,
     private val debug: Boolean = false,
-    private val report: (String) -> Unit = {},
+    internal val report: (String) -> Unit = {},
 ) {
     private val modifiers = ModifierBuilder(actions)
 

@@ -239,6 +239,50 @@ class PyComposeViewModelTest {
             model.close()
         }
 
+    @Test fun `effects requested while no runner is attached are not lost`() =
+        runTest {
+            val bridge = FakeBridge()
+            val model =
+                PyComposeViewModel(
+                    bridge,
+                    SavedStateHandle(),
+                    StandardTestDispatcher(testScheduler),
+                )
+            // No runner yet: this is the window while an Activity is rotating.
+            advanceUntilIdle()
+            assertNotNull(model.snapshot.value)
+
+            val ran = mutableListOf<String>()
+            model.effectRunner = RecordingRunner(ran)
+
+            // The snapshot the app produced while detached is delivered on attach.
+            assertEquals(listOf("toast:saved"), ran)
+            model.close()
+        }
+
+    @Test fun `a detached runner drains once and does not replay`() =
+        runTest {
+            val bridge = FakeBridge()
+            val model =
+                PyComposeViewModel(
+                    bridge,
+                    SavedStateHandle(),
+                    StandardTestDispatcher(testScheduler),
+                )
+            advanceUntilIdle()
+
+            val ran = mutableListOf<String>()
+            model.effectRunner = RecordingRunner(ran)
+            assertEquals(1, ran.size)
+
+            // Re-attaching, as a new Activity does after rotation, must not
+            // re-run effects the previous runner already performed.
+            val again = mutableListOf<String>()
+            model.effectRunner = RecordingRunner(again)
+            assertEquals(emptyList<String>(), again)
+            model.close()
+        }
+
     private class RecordingRunner(
         private val ran: MutableList<String>,
         private val reported: MutableList<String> = mutableListOf(),

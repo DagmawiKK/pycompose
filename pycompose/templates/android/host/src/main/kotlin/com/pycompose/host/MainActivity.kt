@@ -46,6 +46,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        model.effectRunner =
+            AndroidEffectRunner(
+                this,
+                model::navigate,
+            ) { message -> Log.w("PyCompose", message) }
         enableEdgeToEdge()
         reportConfiguration()
         onBackPressedDispatcher.addCallback(
@@ -108,6 +113,13 @@ class MainActivity : ComponentActivity() {
         super.onPause()
     }
 
+    override fun onDestroy() {
+        // Unconditional: this runner holds the Activity, so any runner still
+        // attached here is keeping a destroyed context alive.
+        model.effectRunner = null
+        super.onDestroy()
+    }
+
     /** Report the current configuration; it is the one fact Python cannot observe itself. */
     private fun reportConfiguration() {
         val configuration = resources.configuration
@@ -127,23 +139,15 @@ class MainActivity : ComponentActivity() {
     }
 
     /** The activity owns the bridge and the native effect capabilities it exposes. */
-    private fun CreationExtras.createModel(): PyComposeViewModel {
-        val model =
-            PyComposeViewModel(
-                ChaquopyBridge(
-                    applicationContext,
-                    BuildConfig.PYCOMPOSE_ENTRYPOINT,
-                    BuildConfig.DEBUG,
-                    AsyncResult::deliver,
-                ),
-                createSavedStateHandle(),
-                (application as PyComposeApplication).pythonWorker,
-            )
-        model.effectRunner =
-            AndroidEffectRunner(
-                this@MainActivity,
-                model::navigate,
-            ) { message -> Log.w("PyCompose", message) }
-        return model
-    }
+    private fun CreationExtras.createModel(): PyComposeViewModel =
+        PyComposeViewModel(
+            ChaquopyBridge(
+                applicationContext,
+                BuildConfig.PYCOMPOSE_ENTRYPOINT,
+                BuildConfig.DEBUG,
+                AsyncResult::deliver,
+            ),
+            createSavedStateHandle(),
+            (application as PyComposeApplication).pythonWorker,
+        )
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.pycompose.host.bridge.BridgeSurface
 import com.pycompose.ir.AppBindings
 import com.pycompose.ir.AppData
+import com.pycompose.ir.EffectRequest
 import com.pycompose.ir.Effects
 import com.pycompose.ir.IrParser
 import com.pycompose.ir.Lifecycle
@@ -29,8 +30,17 @@ class PyComposeViewModel(
     private val savedState: SavedStateHandle,
     dispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-    /** Set by the activity right after construction; it needs this model to navigate. */
+    /** Set by the activity; when attached, any queued effects are immediately drained. */
     var effectRunner: EffectRunner? = null
+        set(value) {
+            field = value
+            if (value != null && pendingEffects.isNotEmpty()) {
+                val toRun = pendingEffects.toList()
+                pendingEffects.clear()
+                value.runAll(toRun)
+            }
+        }
+    private val pendingEffects = mutableListOf<EffectRequest>()
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
     private val commands = Channel<Command>(QUEUE_CAPACITY)
     private val parser = IrParser()
@@ -45,9 +55,15 @@ class PyComposeViewModel(
         // Background Python results arrive from any thread and are queued here, so
         // the worker still only ever sees them as ordinary actions.
         AsyncResult.listen { actionId, payload ->
-            val element = Json.parseToJsonElement(payload)
-            require(element is JsonObject) { "Async result must be an object" }
-            enqueue(Command.Push(Action(actionId, element)))
+            runCatching {
+                val element = Json.parseToJsonElement(payload)
+                require(element is JsonObject) { "Async result must be an object" }
+                Action(actionId, element)
+            }.onSuccess { action ->
+                enqueue(Command.Push(action))
+            }.onFailure { error ->
+                mutableError.value = "Async result failed: ${error.message}"
+            }
         }
         val restored = route
         val saved = restore
@@ -124,10 +140,14 @@ class PyComposeViewModel(
 
     /** Execute the effects this snapshot asked for, at most once per snapshot. */
     private fun runEffects(ir: ValidatedIr) {
-        val runner = effectRunner ?: return
         val requested = Effects.read(ir.snapshot.metadata, ir.snapshot.schemaVersion)
         if (requested.isNotEmpty()) {
-            runner.runAll(requested)
+            val runner = effectRunner
+            if (runner != null) {
+                runner.runAll(requested)
+            } else {
+                pendingEffects.addAll(requested)
+            }
         }
     }
 
@@ -196,6 +216,8 @@ class PyComposeViewModel(
         // A background result must never reach a closed view: the worker it would
         // re-render into no longer exists.
         AsyncResult.listen(null)
+        effectRunner = null
+        pendingEffects.clear()
         commands.close()
         scope.cancel()
     }

@@ -137,7 +137,8 @@ def last_error() -> str:
     Returns:
         A diagnostic, or an empty string when nothing has failed.
     """
-    return _error
+    with _lock:
+        return _error
 
 
 def _report(message: str) -> None:
