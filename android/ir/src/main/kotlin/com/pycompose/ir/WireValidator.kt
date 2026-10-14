@@ -16,6 +16,11 @@ internal object WireValidator {
         }
         root["metadata"]?.let { require(it is JsonObject) { "metadata must be an object" } }
         val schema = string(root["schemaVersion"], "schemaVersion")
+        val metadata = root["metadata"] as? JsonObject
+        Effects.read(metadata, schema)
+        AppData.read(metadata, schema)
+        val bindings = AppBindings.read(metadata, schema)
+        val actionIds = IrContract.actionIds + bindings.keys
         val pending = ArrayDeque<JsonElement>()
         pending.addLast(checkNotNull(root["root"]) { "Missing root" })
         val ids = mutableSetOf<String>()
@@ -37,7 +42,7 @@ internal object WireValidator {
                     ) { "Prop requires newer schema" }
                 }
             }
-            properties(props, spec.props, "$id.props")
+            properties(props, spec.props, "$id.props", actionIds)
             require(spec.childrenAllowed || "children" !in node) { "Children forbidden at $id" }
             val children =
                 node["children"]?.let {
@@ -57,17 +62,21 @@ internal object WireValidator {
         return primitive.content
     }
 
-    private fun properties(
+    internal fun properties(
         values: JsonObject,
         rules: Map<String, PropertyRule>,
         path: String,
+        actionIds: Set<String> = IrContract.actionIds,
+        requireFields: Boolean = true,
     ) {
         rules.forEach { (name, rule) ->
-            require(!rule.required || name in values) { "Missing required $path.$name" }
+            require(
+                !requireFields || !rule.required || name in values,
+            ) { "Missing required $path.$name" }
         }
         values.forEach { (name, value) ->
             val rule = checkNotNull(rules[name]) { "Unknown property $path.$name" }
-            property(value, rule, "$path.$name")
+            property(value, rule, "$path.$name", actionIds)
         }
     }
 
@@ -75,6 +84,7 @@ internal object WireValidator {
         value: JsonElement,
         rule: PropertyRule,
         path: String,
+        actionIds: Set<String>,
     ) {
         val primitive = value as? JsonPrimitive
         when (rule.type) {
@@ -82,7 +92,7 @@ internal object WireValidator {
             "resource" -> ResourceReference.parse(string(value, path), rule.values).getOrThrow()
             "enum" -> require(string(value, path) in rule.values) { "Invalid enum at $path" }
             "actionId" ->
-                require(string(value, path) in IrContract.actionIds) {
+                require(string(value, path) in actionIds) {
                     "Undeclared action at $path"
                 }
             "boolean" ->
@@ -100,7 +110,7 @@ internal object WireValidator {
             "number", "dp" -> {
                 bounds(number(primitive, path), rule, path)
             }
-            "modifier" -> modifier(value, path)
+            "modifier" -> modifier(value, path, actionIds)
             else -> error("Unsupported registered prop type: ${rule.type}")
         }
     }
@@ -128,6 +138,7 @@ internal object WireValidator {
     private fun modifier(
         value: JsonElement,
         path: String,
+        actionIds: Set<String>,
     ) {
         val objectValue = value as? JsonObject ?: error("$path must be a modifier object")
         val operations = objectValue["operations"] ?: return
@@ -137,7 +148,12 @@ internal object WireValidator {
                 item as? JsonObject ?: error("Invalid modifier operation at $path[$index]")
             val type = string(operation["type"], "$path[$index].type")
             val rules = checkNotNull(IrContract.modifiers[type]) { "Unknown modifier: $type" }
-            properties(JsonObject(operation.filterKeys { it != "type" }), rules, "$path[$index]")
+            properties(
+                JsonObject(operation.filterKeys { it != "type" }),
+                rules,
+                "$path[$index]",
+                actionIds,
+            )
         }
     }
 }

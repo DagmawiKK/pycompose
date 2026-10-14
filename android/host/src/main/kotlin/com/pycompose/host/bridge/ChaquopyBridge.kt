@@ -15,14 +15,20 @@ class ChaquopyBridge(
     private var owner: Thread? = null
     private var initialized = false
 
-    override fun start(route: String) {
+    override fun start(
+        route: String,
+        restore: String,
+    ) {
         check(Thread.currentThread() != Looper.getMainLooper().thread) { "Python on main thread" }
         if (owner == null) owner = Thread.currentThread()
         requireWorker()
         synchronized(startLock) {
             if (!Python.isStarted()) Python.start(AndroidPlatform(application))
         }
-        Python.getInstance().getModule(MODULE).callAttr("start", entrypoint, route, debug)
+        Python
+            .getInstance()
+            .getModule(MODULE)
+            .callAttr("start", entrypoint, route, debug, restore)
         initialized = true
     }
 
@@ -49,13 +55,19 @@ class ChaquopyBridge(
             .toString()
     }
 
-    override fun reload(route: String) {
+    override fun reload(
+        route: String,
+        restore: String,
+    ) {
         requireWorker()
         if (debug) {
             if (initialized) {
-                Python.getInstance().getModule(MODULE).callAttr("reload", route)
+                Python
+                    .getInstance()
+                    .getModule(MODULE)
+                    .callAttr("reload", route, restore)
             } else {
-                start(route)
+                start(route, restore)
             }
         }
     }

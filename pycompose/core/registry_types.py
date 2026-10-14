@@ -455,6 +455,10 @@ class Registry(AbstractComponentRegistry):
         min_library_version: The minimum library version required.
         components: Component definitions by name.
         actions: Action definitions by id.
+        effects: Effect definitions by kind. Structurally identical to actions:
+            the host reads the contract, Python emits the request.
+        lifecycle: Host-initiated events by name. Kept apart from actions so a
+            component can never bind one to a tap.
         modifiers: Ordered modifier operation definitions by wire name.
         supported_schema_versions: Explicit compatible wire versions, when declared.
     """
@@ -463,6 +467,8 @@ class Registry(AbstractComponentRegistry):
     min_library_version: str
     components: Mapping[str, ComponentSpec]
     actions: Mapping[str, ActionDef]
+    effects: Mapping[str, ActionDef]
+    lifecycle: Mapping[str, ActionDef]
     modifiers: Mapping[str, Mapping[str, PropDef]] = dataclass_field(
         default_factory=dict
     )
@@ -474,6 +480,8 @@ class Registry(AbstractComponentRegistry):
         )
         object.__setattr__(self, "components", MappingProxyType(dict(self.components)))
         object.__setattr__(self, "actions", MappingProxyType(dict(self.actions)))
+        object.__setattr__(self, "effects", MappingProxyType(dict(self.effects)))
+        object.__setattr__(self, "lifecycle", MappingProxyType(dict(self.lifecycle)))
         object.__setattr__(
             self,
             "modifiers",
@@ -533,11 +541,15 @@ class Registry(AbstractComponentRegistry):
             if not isinstance(action_id, str) or not isinstance(body, Mapping):
                 raise ComponentRegistryError(f"action {action_id!r} must be an object")
             actions[action_id] = ActionDef.from_mapping(action_id, body)
+        effects = _contracts(data, "effects")
+        lifecycle = _contracts(data, "lifecycle")
         return cls(
             schema_version=schema_version,
             min_library_version=min_library_version,
             components=components,
             actions=actions,
+            effects=effects,
+            lifecycle=lifecycle,
             modifiers=_parse_modifiers(data.get("modifiers", {})),
             supported_schema_versions=tuple(supported),
         )
@@ -558,6 +570,13 @@ class Registry(AbstractComponentRegistry):
             "actions": {
                 action_id: action.to_mapping()
                 for action_id, action in self.actions.items()
+            },
+            "effects": {
+                kind: effect.to_mapping() for kind, effect in self.effects.items()
+            },
+            "lifecycle": {
+                event: lifecycle.to_mapping()
+                for event, lifecycle in self.lifecycle.items()
             },
         }
         if self.modifiers:
@@ -618,6 +637,30 @@ class Registry(AbstractComponentRegistry):
             The action ids.
         """
         return tuple(self.actions)
+
+
+def _contracts(data: Mapping[str, object], field: str) -> dict[str, ActionDef]:
+    """Parse one id-to-payload table that shares the action contract shape.
+
+    Args:
+        data: The parsed registry JSON.
+        field: Table name used in diagnostics.
+
+    Returns:
+        The parsed contracts, empty when the table is absent.
+
+    Raises:
+        ComponentRegistryError: If the table or any entry is malformed.
+    """
+    raw = data.get(field, {})
+    if not isinstance(raw, Mapping):
+        raise ComponentRegistryError(f"registry {field!r} must be an object")
+    result: dict[str, ActionDef] = {}
+    for name, body in raw.items():
+        if not isinstance(name, str) or not isinstance(body, Mapping):
+            raise ComponentRegistryError(f"{field} {name!r} must be an object")
+        result[name] = ActionDef.from_mapping(name, body)
+    return result
 
 
 def _parse_modifiers(raw: object) -> Mapping[str, Mapping[str, PropDef]]:

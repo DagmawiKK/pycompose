@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pytest
 
+from pycompose.ir.generated_validators import SCHEMA_VERSION
+
 
 def cli(
     directory: Path, *arguments: str, env: dict[str, str] | None = None
@@ -45,7 +47,7 @@ def test_init_creates_config_python_entrypoint_and_resource_directories(
     assert config["resources"]["path"] == "resources"
     assert config["signing"]["store_password_env"] == "PYCOMPOSE_STORE_PASSWORD"
     assert config["signing"]["key_password_env"] == "PYCOMPOSE_KEY_PASSWORD"
-    assert config["toolchain"]["schema_version"] == "1.1.0"
+    assert config["toolchain"]["schema_version"] == SCHEMA_VERSION
     for resource in ("assets", "drawables", "fonts"):
         assert (project / "resources" / resource).is_dir()
     assert json.loads((project / "resources" / "strings.json").read_text()) == {}

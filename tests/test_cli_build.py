@@ -7,6 +7,8 @@ from pathlib import Path
 import pytest
 from test_cli_init import cli
 
+from pycompose.ir.generated_validators import SCHEMA_VERSION
+
 
 def wrapper(project: Path, body: str) -> None:
     (project / "settings.gradle.kts").write_text('include(":host")\n')
@@ -179,12 +181,14 @@ def test_build_rejects_schema_mismatch_and_resource_conflicts_before_gradle(
     config = project / "pycompose.toml"
     original = config.read_text()
     config.write_text(
-        original.replace('schema_version = "1.1.0"', 'schema_version = "2.0.0"')
+        original.replace(
+            f'schema_version = "{SCHEMA_VERSION}"', 'schema_version = "2.0.0"'
+        )
     )
     assert cli(project, "build").returncode == 2
     config.write_text(original)
     raw = project / "host" / "src" / "main" / "res" / "values" / "strings.xml"
-    raw.parent.mkdir(parents=True)
+    raw.parent.mkdir(parents=True, exist_ok=True)
     raw.write_bytes(b"user resource")
     assert cli(project, "build").returncode == 2
     assert raw.read_bytes() == b"user resource"

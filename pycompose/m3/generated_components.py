@@ -13,14 +13,17 @@ from pycompose.errors import IrValidationError
 
 __all__ = [
     "Box",
+    "Checkbox",
     "Column",
     "FilledButton",
+    "FilterChip",
     "Image",
     "LazyColumn",
     "Row",
     "Scaffold",
     "Spacer",
     "Text",
+    "TextButton",
     "TextField",
 ]
 
@@ -98,6 +101,38 @@ class Box(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class Checkbox(Component):
+    """Native Checkbox; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Checkbox"
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        checked: bool,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_checked_change: str,
+    ) -> None:
+        """Construct a registered Checkbox.
+
+        Args:
+            id: Stable instance key.
+            checked: Required native checked.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_checked_change: Required native onCheckedChange.
+        """
+        props: dict[str, JsonValue] = {}
+        props["checked"] = checked
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_checked_change"] = on_checked_change
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
 class Column(Component):
     """Native Column; props and defaults follow the component manifest."""
 
@@ -156,6 +191,41 @@ class FilledButton(Component):
             props["enabled"] = enabled
         props["on_click"] = on_click
         props["text"] = text
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class FilterChip(Component):
+    """Native FilterChip; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "FilterChip"
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        enabled: bool | None = None,
+        label: str,
+        modifier: Modifier | None = None,
+        on_click: str,
+        selected: bool,
+    ) -> None:
+        """Construct a registered FilterChip.
+
+        Args:
+            id: Stable instance key.
+            enabled: Native enabled; None uses its default.
+            label: Required native label.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+        """
+        props: dict[str, JsonValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["label"] = label
+        props["on_click"] = on_click
+        props["selected"] = selected
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -360,6 +430,38 @@ class Text(Component):
             props["resource"] = resource
         if style is not None:
             props["style"] = style
+        props["text"] = text
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class TextButton(Component):
+    """Native TextButton; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TextButton"
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        text: str,
+    ) -> None:
+        """Construct a registered TextButton.
+
+        Args:
+            id: Stable instance key.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            text: Required native text.
+        """
+        props: dict[str, JsonValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
         props["text"] = text
         super().__init__(id=id, children=(), modifier=modifier, **props)
 

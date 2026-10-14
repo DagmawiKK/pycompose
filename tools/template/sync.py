@@ -11,7 +11,11 @@ import argparse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-EXCLUDED = frozenset({".gradle", ".kotlin", ".idea", "build", "local.properties"})
+# Build/cache outputs, machine-local configuration and stale bytecode are never
+# shipped; __pycache__ would otherwise leak a host-specific .pyc into the APK.
+EXCLUDED = frozenset(
+    {".gradle", ".kotlin", ".idea", "build", "local.properties", "__pycache__"}
+)
 
 
 def main() -> int:

@@ -4,21 +4,26 @@
 from pycompose.components.modifiers import Modifier
 from pycompose.m3.generated_components import (
     Box,
+    Checkbox,
     Column,
     FilledButton,
+    FilterChip,
     Image,
     LazyColumn,
     Row,
     Scaffold,
     Spacer,
     Text,
+    TextButton,
     TextField,
 )
 
 __all__ = [
     "Box",
+    "Checkbox",
     "Column",
     "FilledButton",
+    "FilterChip",
     "Image",
     "LazyColumn",
     "Modifier",
@@ -26,5 +31,6 @@ __all__ = [
     "Scaffold",
     "Spacer",
     "Text",
+    "TextButton",
     "TextField",
 ]

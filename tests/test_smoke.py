@@ -13,8 +13,9 @@ def test_version_is_string() -> None:
 
 
 def test_public_init_exports_version_and_composition() -> None:
-    assert pycompose.__all__ == ["__version__", "composable"]
+    assert pycompose.__all__ == ["__version__", "action", "composable"]
     assert callable(pycompose.composable)
+    assert callable(pycompose.action)
 
 
 def test_error_hierarchy_base() -> None:

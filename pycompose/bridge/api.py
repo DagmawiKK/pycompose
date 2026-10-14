@@ -4,6 +4,7 @@ import logging
 from threading import current_thread
 
 from pycompose.bridge.types import decode_action
+from pycompose.core.action_binding import BindingSpec, read_bindings
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.ir import emit_ir, to_json, validate_ir
 from pycompose.ir.generated_validators import SCHEMA_VERSION
@@ -52,8 +53,9 @@ class BridgeSurface:
         self._processing = False
         self._latest: str | None = None
         self._latest_error = ""
+        self._bindings: dict[str, BindingSpec] = {}
         try:
-            self._latest = self._snapshot(store.value)
+            self._latest, self._bindings = self._snapshot(store.value)
         except SchemaError:
             raise
         except Exception as exc:
@@ -78,11 +80,15 @@ class BridgeSurface:
             exc_info=self._debug,
         )
 
-    def _snapshot(self, state: State) -> str | None:
+    def _snapshot(self, state: State) -> tuple[str | None, dict[str, BindingSpec]]:
         result = validate_ir(emit_ir(state, self._schema_version), debug=self._debug)
         for issue in result.issues:
             LOGGER.warning("IR validation: %s", issue)
-        return to_json(result.snapshot) if result.snapshot is not None else None
+        if result.snapshot is None:
+            return None, {}
+        bindings = read_bindings(result.snapshot.metadata)
+        self._actions.validate_bindings(bindings)
+        return to_json(result.snapshot), bindings
 
     def accept_action(self, action_json: str) -> None:
         """Process one action synchronously; errors never escape to the host.
@@ -98,16 +104,23 @@ class BridgeSurface:
         self._processing = True
         self._latest_error = ""
         try:
-            action = decode_action(action_json)
+            action = decode_action(action_json, bindings=self._bindings)
             current = self._store.value
-            next_state = self._actions.dispatch(
-                action.action_id, current, action.payload
+            next_state = (
+                self._actions.dispatch_binding(action.binding, current, action.payload)
+                if action.binding is not None
+                else self._actions.dispatch(
+                    action.action_id,
+                    current,
+                    action.payload,
+                )
             )
             if _unchanged(next_state, current):
                 return
-            snapshot = self._snapshot(next_state)
+            snapshot, bindings = self._snapshot(next_state)
             if snapshot is not None:
                 self._store.mutate(lambda _state: next_state)
+                self._bindings = bindings
                 if snapshot != self._latest:
                     self._latest = snapshot
         except Exception as exc:

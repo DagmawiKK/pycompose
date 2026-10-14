@@ -5,9 +5,9 @@ import com.pycompose.ir.ComponentRule
 import com.pycompose.ir.PropertyRule
 
 object IrContract {
-    const val SCHEMA_VERSION: String = "1.1.0"
+    const val SCHEMA_VERSION: String = "1.5.0"
     const val MIN_SCHEMA_VERSION: String = "1.0.0"
-    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0")
+    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0")
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
@@ -18,6 +18,17 @@ object IrContract {
             props = mapOf(
                 "contentAlignment" to PropertyRule("enum", required = false, values = setOf("topStart", "topCenter", "topEnd", "centerStart", "center", "centerEnd", "bottomStart", "bottomCenter", "bottomEnd")),
                 "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
+        "Checkbox" to ComponentRule(
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.3.0",
+            props = mapOf(
+                "checked" to PropertyRule("boolean", required = true),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onCheckedChange" to PropertyRule("actionId", required = true),
             ),
         ),
         "Column" to ComponentRule(
@@ -38,6 +49,18 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
                 "text" to PropertyRule("string", required = true),
+            ),
+        ),
+        "FilterChip" to ComponentRule(
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.3.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "label" to PropertyRule("string", required = true),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "selected" to PropertyRule("boolean", required = true),
             ),
         ),
         "Image" to ComponentRule(
@@ -99,6 +122,17 @@ object IrContract {
                 "text" to PropertyRule("string", required = true),
             ),
         ),
+        "TextButton" to ComponentRule(
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.3.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "text" to PropertyRule("string", required = true),
+            ),
+        ),
         "TextField" to ComponentRule(
             childrenAllowed = false,
             minimumChildren = 0,
@@ -137,6 +171,38 @@ object IrContract {
         ),
         "submit" to mapOf(
                 "email" to PropertyRule("string", required = true),
+        ),
+    )
+    val effectPayloads: Map<String, Map<String, PropertyRule>> = mapOf(
+        "finish" to mapOf(
+        ),
+        "haptic" to mapOf(
+        ),
+        "navigate" to mapOf(
+                "route" to PropertyRule("string", required = true),
+        ),
+        "openUrl" to mapOf(
+                "url" to PropertyRule("string", required = true),
+        ),
+        "toast" to mapOf(
+                "message" to PropertyRule("string", required = true),
+        ),
+    )
+    val lifecyclePayloads: Map<String, Map<String, PropertyRule>> = mapOf(
+        "onBackRequested" to mapOf(
+        ),
+        "onConfigChanged" to mapOf(
+                "darkMode" to PropertyRule("boolean", required = true),
+                "density" to PropertyRule("number", required = true),
+                "locale" to PropertyRule("string", required = true),
+                "orientation" to PropertyRule("enum", required = true, values = setOf("portrait", "landscape")),
+        ),
+        "onPause" to mapOf(
+        ),
+        "onResume" to mapOf(
+        ),
+        "onRouteChanged" to mapOf(
+                "route" to PropertyRule("string", required = true),
         ),
     )
 }

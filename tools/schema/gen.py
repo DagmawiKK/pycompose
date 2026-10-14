@@ -104,6 +104,8 @@ def _validate_registry(registry: dict) -> None:
     for action_id, action in sorted(actions.items()):
         _validate_action(action_id, action)
     _validate_action_refs(registry)
+    _validate_effects(registry.get("effects", {}))
+    _validate_lifecycle(registry.get("lifecycle", {}))
     modifiers = registry.get("modifiers", {})
     if not isinstance(modifiers, dict):
         _die("'modifiers' must be an object")
@@ -114,6 +116,26 @@ def _validate_registry(registry: dict) -> None:
             _die(f"modifier {name!r} needs a props object")
         for prop_name, prop in sorted(modifier["props"].items()):
             _validate_prop(name, prop_name, prop)
+
+
+def _validate_effects(effects: object) -> None:
+    """Validate the declared effect kinds and their payload contracts."""
+    if not isinstance(effects, dict):
+        _die("'effects' must be an object")
+    for kind, effect in sorted(effects.items()):
+        if re.fullmatch(r"[A-Za-z][A-Za-z0-9]*", kind) is None:
+            _die(f"effect kind {kind!r} must be a PascalCase identifier")
+        _validate_action(kind, effect)
+
+
+def _validate_lifecycle(lifecycle: object) -> None:
+    """Validate host-initiated lifecycle events and their payload contracts."""
+    if not isinstance(lifecycle, dict):
+        _die("'lifecycle' must be an object")
+    for event, body in sorted(lifecycle.items()):
+        if re.fullmatch(r"on[A-Z][A-Za-z0-9]*", event) is None:
+            _die(f"lifecycle event {event!r} must be an onXxx identifier")
+        _validate_action(event, body)
 
 
 def _require_semver(value: str, field: str) -> None:
@@ -941,6 +963,35 @@ def render_kotlin_registry(registry: dict) -> str:
         ]
     )
     for name, spec in sorted(registry["actions"].items()):
+        lines.extend(
+            [
+                f"        {_kt_string(name)} to mapOf(",
+                *_kt_rules(spec["payload"]),
+                "        ),",
+            ]
+        )
+    lines.extend(
+        [
+            "    )",
+            "    val effectPayloads: Map<String, Map<String, PropertyRule>> = mapOf(",
+        ]
+    )
+    for name, spec in sorted(registry.get("effects", {}).items()):
+        lines.extend(
+            [
+                f"        {_kt_string(name)} to mapOf(",
+                *_kt_rules(spec["payload"]),
+                "        ),",
+            ]
+        )
+    lines.extend(
+        [
+            "    )",
+            "    val lifecyclePayloads: "
+            "Map<String, Map<String, PropertyRule>> = mapOf(",
+        ]
+    )
+    for name, spec in sorted(registry.get("lifecycle", {}).items()):
         lines.extend(
             [
                 f"        {_kt_string(name)} to mapOf(",

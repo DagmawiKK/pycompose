@@ -8,6 +8,8 @@ from pathlib import Path
 import pytest
 from test_cli_init import cli
 
+from pycompose.ir.generated_validators import SCHEMA_VERSION
+
 
 def executable(path: Path, output: str, exit_code: int = 0) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -59,7 +61,7 @@ def test_doctor_reports_detected_tools_and_declared_plugin_versions(
         "ADB:",
         "AGP (declared): 8.9.1",
         "Chaquopy (declared): 17.0.0",
-        "Schema: 1.1.0",
+        f"Schema: {SCHEMA_VERSION}",
     ):
         assert expected in result.stdout
 
@@ -129,7 +131,7 @@ def test_doctor_reports_schema_mismatch_and_unsupported_declared_plugins(
     config = project / "pycompose.toml"
     config.write_text(
         config.read_text().replace(
-            'schema_version = "1.1.0"', 'schema_version = "2.0.0"'
+            f'schema_version = "{SCHEMA_VERSION}"', 'schema_version = "2.0.0"'
         )
     )
     result = cli(

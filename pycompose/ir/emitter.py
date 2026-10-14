@@ -7,10 +7,16 @@ retain split paths. Already qualified, unchanged branches preserve identity.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 from pycompose.core.expansion import expand_nodes
 from pycompose.core.ids import ROOT_ID, IdRegistry, child_id
 from pycompose.core.node import Node
+from pycompose.core.props import JsonValue
 from pycompose.core.traversal import walk_nodes
+from pycompose.ir.bindings import lower_bindings
+from pycompose.ir.data import lower_data
+from pycompose.ir.effects import lower_effects
 from pycompose.ir.generated_validators import (
     MIN_SCHEMA_VERSION,
     REGISTRY,
@@ -46,7 +52,18 @@ def emit_ir(state: State, schema_version: str) -> IRRoot:
         supported=REGISTRY.supported_schema_versions or (SCHEMA_VERSION,),
     )
     root = _emit_node(expand_nodes(state.root), ROOT_ID, IdRegistry())
-    return IRRoot(root=root, schema_version=schema_version)
+    root, bindings = lower_bindings(root)
+    metadata: Mapping[str, JsonValue] | None = None
+    # Binding contracts, effect requests and app data share one metadata object;
+    # their keys never collide, so a merge preserves both declaration orders.
+    for member in (
+        bindings,
+        lower_effects(state.effects),
+        lower_data(state.data),
+    ):
+        if member is not None:
+            metadata = {**(metadata or {}), **member}
+    return IRRoot(root=root, schema_version=schema_version, metadata=metadata)
 
 
 def _emit_node(node: Node, node_id: str, ids: IdRegistry) -> Node:

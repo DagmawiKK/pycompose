@@ -50,7 +50,7 @@ def test_sync_refuses_unmanaged_outputs_and_never_clobbers_raw_res(
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"
     raw = project / "host" / "src" / "main" / "res" / "values"
-    raw.mkdir(parents=True)
+    raw.mkdir(parents=True, exist_ok=True)
     (raw / "strings.xml").write_bytes(b"user strings")
     (raw / "colors.xml").write_bytes(b"user colors")
     result = cli(project, "sync")

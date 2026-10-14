@@ -10,14 +10,17 @@ import pytest
 
 from pycompose.components import (
     Box,
+    Checkbox,
     Column,
     FilledButton,
+    FilterChip,
     LazyColumn,
     Modifier,
     Row,
     Scaffold,
     Spacer,
     Text,
+    TextButton,
     TextField,
 )
 from pycompose.components.base import Component
@@ -120,6 +123,9 @@ def test_modifier_chain_preserves_order_and_duplicates() -> None:
         (FilledButton, {"text": "Add", "on_click": "increment"}),
         (TextField, {"value": "", "on_value_change": "submit"}),
         (LazyColumn, {}),
+        (Checkbox, {"checked": False, "on_checked_change": "increment"}),
+        (TextButton, {"text": "Delete", "on_click": "increment"}),
+        (FilterChip, {"label": "All", "selected": True, "on_click": "increment"}),
     ],
 )
 def test_every_component_fails_closed_on_unknown_props(
@@ -144,6 +150,11 @@ def test_every_component_fails_closed_on_unknown_props(
         lambda: Row(id="x", vertical_alignment="wrong"),
         lambda: Column(id="x", horizontalAlignment="start"),
         lambda: Spacer(id="x", children=(Text(id="nested", text="no"),)),
+        lambda: Checkbox(id="x"),
+        lambda: Checkbox(id="x", checked="yes", on_checked_change="increment"),
+        lambda: TextButton(id="x", text="Delete"),
+        lambda: FilterChip(id="x", label="All", selected="yes", on_click="increment"),
+        lambda: FilterChip(id="x", label="All", selected=True, on_click="missing"),
     ],
 )
 def test_invalid_component_values_fail_at_construction(
@@ -197,3 +208,38 @@ def test_component_screen_matches_golden_and_generated_schema() -> None:
         (Path(__file__).parents[1] / "schema" / "ir.schema.json").read_text()
     )
     jsonschema.validate(json.loads(actual), schema)
+
+
+@pytest.mark.parametrize(
+    "component,props",
+    [
+        (Checkbox, {"checked": True, "on_checked_change": "increment"}),
+        (TextButton, {"text": "Delete", "on_click": "increment"}),
+        (FilterChip, {"label": "All", "selected": False, "on_click": "increment"}),
+    ],
+)
+def test_controls_added_in_1_3_0_map_python_props_to_registry_valid_ir(
+    component: type[Component], props: dict[str, JsonValue]
+) -> None:
+    node = component(id="root", **props)
+    candidate = emit_ir(State(root=node), "1.3.0")
+    assert validate_ir(candidate).snapshot is candidate
+    assert node.type == component.component_type
+    assert all("_" not in name for name in node.props)
+
+
+@pytest.mark.parametrize(
+    "component,props",
+    [
+        (Checkbox, {"checked": True, "on_checked_change": "increment"}),
+        (TextButton, {"text": "Delete", "on_click": "increment"}),
+        (FilterChip, {"label": "All", "selected": True, "on_click": "increment"}),
+    ],
+)
+def test_controls_added_after_1_3_0_need_that_schema(
+    component: type[Component], props: dict[str, JsonValue]
+) -> None:
+    node = component(id="root", **props)
+    assert emit_ir(State(root=node), "1.3.0").schema_version == "1.3.0"
+    with pytest.raises(IrValidationError, match="newer schema"):
+        validate_ir(emit_ir(State(root=node), "1.2.0"))

@@ -1,16 +1,42 @@
 {
-  "schemaVersion": "1.1.0",
-  "supportedSchemaVersions": ["1.0.0", "1.1.0"],
+  "schemaVersion": "1.5.0",
+  "supportedSchemaVersions": [
+    "1.0.0",
+    "1.1.0",
+    "1.2.0",
+    "1.3.0",
+    "1.4.0",
+    "1.5.0"
+  ],
   "minLibraryVersion": "0.1.0",
   "components": {
     "Text": {
       "category": "typography",
       "stability": "stable",
       "props": {
-        "text": { "type": "string", "required": true },
-        "resource": { "type": "resource", "values": ["string", "asset"], "since": "1.1.0" },
-        "fontResource": { "type": "resource", "values": ["font"], "since": "1.1.0" },
-        "locale": { "type": "string", "since": "1.1.0" },
+        "text": {
+          "type": "string",
+          "required": true
+        },
+        "resource": {
+          "type": "resource",
+          "values": [
+            "string",
+            "asset"
+          ],
+          "since": "1.1.0"
+        },
+        "fontResource": {
+          "type": "resource",
+          "values": [
+            "font"
+          ],
+          "since": "1.1.0"
+        },
+        "locale": {
+          "type": "string",
+          "since": "1.1.0"
+        },
         "style": {
           "type": "enum",
           "values": [
@@ -24,21 +50,40 @@
           ],
           "default": "bodyMedium"
         },
-        "color": { "type": "color" },
-        "modifier": { "type": "modifier" }
+        "color": {
+          "type": "color"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
       },
-      "children": { "allowed": false }
+      "children": {
+        "allowed": false
+      }
     },
     "Image": {
       "category": "media",
       "stability": "stable",
       "since": "1.1.0",
       "props": {
-        "resource": { "type": "resource", "values": ["drawable", "asset"], "required": true },
-        "contentDescription": { "type": "string" },
-        "modifier": { "type": "modifier" }
+        "resource": {
+          "type": "resource",
+          "values": [
+            "drawable",
+            "asset"
+          ],
+          "required": true
+        },
+        "contentDescription": {
+          "type": "string"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
       },
-      "children": { "allowed": false }
+      "children": {
+        "allowed": false
+      }
     },
     "Column": {
       "category": "layout",
@@ -46,12 +91,21 @@
       "props": {
         "horizontalAlignment": {
           "type": "enum",
-          "values": ["start", "center", "end"],
+          "values": [
+            "start",
+            "center",
+            "end"
+          ],
           "default": "start"
         },
-        "modifier": { "type": "modifier" }
+        "modifier": {
+          "type": "modifier"
+        }
       },
-      "children": { "allowed": true, "min": 0 }
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
     },
     "Row": {
       "category": "layout",
@@ -59,12 +113,21 @@
       "props": {
         "verticalAlignment": {
           "type": "enum",
-          "values": ["top", "center", "bottom"],
+          "values": [
+            "top",
+            "center",
+            "bottom"
+          ],
           "default": "top"
         },
-        "modifier": { "type": "modifier" }
+        "modifier": {
+          "type": "modifier"
+        }
       },
-      "children": { "allowed": true, "min": 0 }
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
     },
     "Box": {
       "category": "layout",
@@ -85,47 +148,93 @@
           ],
           "default": "topStart"
         },
-        "modifier": { "type": "modifier" }
+        "modifier": {
+          "type": "modifier"
+        }
       },
-      "children": { "allowed": true, "min": 0 }
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
     },
     "Spacer": {
       "category": "layout",
       "stability": "stable",
-      "props": { "modifier": { "type": "modifier" } },
-      "children": { "allowed": false }
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
     },
     "Scaffold": {
       "category": "layout",
       "stability": "stable",
       "props": {
-        "containerColor": { "type": "color" },
-        "modifier": { "type": "modifier" }
+        "containerColor": {
+          "type": "color"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
       },
-      "children": { "allowed": true, "kind": "content" }
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      }
     },
     "FilledButton": {
       "category": "buttons",
       "stability": "stable",
       "props": {
-        "text": { "type": "string", "required": true },
-        "onClick": { "type": "actionId", "required": true },
-        "enabled": { "type": "boolean", "default": true },
-        "modifier": { "type": "modifier" }
+        "text": {
+          "type": "string",
+          "required": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
       },
-      "children": { "allowed": false }
+      "children": {
+        "allowed": false
+      }
     },
     "TextField": {
       "category": "input",
       "stability": "stable",
       "props": {
-        "value": { "type": "string", "required": true },
-        "onValueChange": { "type": "actionId", "required": true },
-        "label": { "type": "string" },
-        "enabled": { "type": "boolean", "default": true },
-        "modifier": { "type": "modifier" }
+        "value": {
+          "type": "string",
+          "required": true
+        },
+        "onValueChange": {
+          "type": "actionId",
+          "required": true
+        },
+        "label": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
       },
-      "children": { "allowed": false }
+      "children": {
+        "allowed": false
+      }
     },
     "LazyColumn": {
       "category": "lists",
@@ -143,30 +252,246 @@
           ],
           "default": "top"
         },
-        "modifier": { "type": "modifier" }
+        "modifier": {
+          "type": "modifier"
+        }
       },
-      "children": { "allowed": true, "kind": "items" }
+      "children": {
+        "allowed": true,
+        "kind": "items"
+      }
+    },
+    "Checkbox": {
+      "category": "input",
+      "stability": "stable",
+      "since": "1.3.0",
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
+    "TextButton": {
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.3.0",
+      "props": {
+        "text": {
+          "type": "string",
+          "required": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
+    "FilterChip": {
+      "category": "input",
+      "stability": "stable",
+      "since": "1.3.0",
+      "props": {
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
     }
   },
   "modifiers": {
-    "padding": { "props": { "value": { "type": "dp", "required": true, "minimum": 0 } } },
-    "fillMaxWidth": { "props": { "fraction": { "type": "number", "required": true, "minimum": 0, "maximum": 1 } } },
-    "size": { "props": {
-      "width": { "type": "dp", "required": true, "minimum": 0 },
-      "height": { "type": "dp", "required": true, "minimum": 0 }
-    } },
-    "clip": { "props": { "shape": { "type": "enum", "required": true, "values": ["rectangle", "circle", "rounded"] } } },
-    "clickable": { "props": {
-      "onClick": { "type": "actionId", "required": true },
-      "enabled": { "type": "boolean", "required": true }
-    } }
+    "padding": {
+      "props": {
+        "value": {
+          "type": "dp",
+          "required": true,
+          "minimum": 0
+        }
+      }
+    },
+    "fillMaxWidth": {
+      "props": {
+        "fraction": {
+          "type": "number",
+          "required": true,
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "size": {
+      "props": {
+        "width": {
+          "type": "dp",
+          "required": true,
+          "minimum": 0
+        },
+        "height": {
+          "type": "dp",
+          "required": true,
+          "minimum": 0
+        }
+      }
+    },
+    "clip": {
+      "props": {
+        "shape": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "rectangle",
+            "circle",
+            "rounded"
+          ]
+        }
+      }
+    },
+    "clickable": {
+      "props": {
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "required": true
+        }
+      }
+    }
   },
   "actions": {
     "increment": {
-      "payload": { "by": { "type": "integer", "default": 1 } }
+      "payload": {
+        "by": {
+          "type": "integer",
+          "default": 1
+        }
+      }
     },
     "submit": {
-      "payload": { "email": { "type": "string", "required": true } }
+      "payload": {
+        "email": {
+          "type": "string",
+          "required": true
+        }
+      }
+    }
+  },
+  "effects": {
+    "navigate": {
+      "payload": {
+        "route": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "finish": {
+      "payload": {}
+    },
+    "haptic": {
+      "payload": {}
+    },
+    "openUrl": {
+      "payload": {
+        "url": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "toast": {
+      "payload": {
+        "message": {
+          "type": "string",
+          "required": true
+        }
+      }
+    }
+  },
+  "lifecycle": {
+    "onResume": {
+      "payload": {}
+    },
+    "onPause": {
+      "payload": {}
+    },
+    "onBackRequested": {
+      "payload": {}
+    },
+    "onRouteChanged": {
+      "payload": {
+        "route": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "onConfigChanged": {
+      "payload": {
+        "orientation": {
+          "type": "enum",
+          "values": [
+            "portrait",
+            "landscape"
+          ],
+          "required": true
+        },
+        "darkMode": {
+          "type": "boolean",
+          "required": true
+        },
+        "locale": {
+          "type": "string",
+          "required": true
+        },
+        "density": {
+          "type": "number",
+          "required": true
+        }
+      }
     }
   }
 }

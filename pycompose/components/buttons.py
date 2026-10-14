@@ -8,3 +8,10 @@ class FilledButton(Component):
 
     __slots__ = ()
     component_type = "FilledButton"
+
+
+class TextButton(Component):
+    """Low-emphasis button with text, registered on_click action id and enabled."""
+
+    __slots__ = ()
+    component_type = "TextButton"

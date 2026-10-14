@@ -42,6 +42,24 @@ data class Box(
 }
 
 @Serializable
+data class CheckboxProps(
+    val `checked`: Boolean,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onCheckedChange`: String,
+) : UiProps
+
+@Serializable
+@SerialName("Checkbox")
+data class Checkbox(
+    override val id: String,
+    override val props: CheckboxProps,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "Checkbox"
+}
+
+@Serializable
 data class ColumnProps(
     val `horizontalAlignment`: String = "start",
     override val `modifier`: JsonObject? = null,
@@ -73,6 +91,25 @@ data class FilledButton(
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "FilledButton"
+}
+
+@Serializable
+data class FilterChipProps(
+    val `enabled`: Boolean = true,
+    val `label`: String,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `selected`: Boolean,
+) : UiProps
+
+@Serializable
+@SerialName("FilterChip")
+data class FilterChip(
+    override val id: String,
+    override val props: FilterChipProps,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "FilterChip"
 }
 
 @Serializable
@@ -174,6 +211,24 @@ data class Text(
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "Text"
+}
+
+@Serializable
+data class TextButtonProps(
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `text`: String,
+) : UiProps
+
+@Serializable
+@SerialName("TextButton")
+data class TextButton(
+    override val id: String,
+    override val props: TextButtonProps,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "TextButton"
 }
 
 @Serializable
