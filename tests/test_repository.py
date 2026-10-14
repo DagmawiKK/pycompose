@@ -201,3 +201,33 @@ def test_a_document_may_live_outside_the_root(tmp_path: Path) -> None:
     document.save([Note(1)])
     assert document.load() == [Note(1)]
     assert document.path == elsewhere / "notes.json"
+
+
+def test_diagnostics_are_bounded_so_a_failing_loop_cannot_leak() -> None:
+    """A background pass that fails every time would otherwise grow forever."""
+    from pycompose.repository import DIAGNOSTIC_HISTORY
+
+    document = Document("notes.json", Note, directory="/proc/nope/deeper")
+    for _ in range(DIAGNOSTIC_HISTORY * 3):
+        with pytest.raises(StateError):
+            document.save([Note(1)])
+
+    kept = diagnostics()
+    assert len(kept) == DIAGNOSTIC_HISTORY
+
+
+def test_the_newest_diagnostics_are_the_ones_kept() -> None:
+    """Oldest goes first, so what survives explains what is happening now."""
+    from pycompose.repository import DIAGNOSTIC_HISTORY
+
+    # Alternate names so each failure is distinguishable in the history.
+    names = [f"note_{index % 4}.json" for index in range(DIAGNOSTIC_HISTORY * 2)]
+    for name in names:
+        with pytest.raises(StateError):
+            Document(name, Note, directory="/proc/nope/deeper").save([Note(1)])
+
+    kept = diagnostics()
+    assert len(kept) == DIAGNOSTIC_HISTORY
+    # The tail of what was written, in the order it was written.
+    expected = names[-DIAGNOSTIC_HISTORY:]
+    assert [line.split(":")[0].split()[-1] for line in kept] == expected

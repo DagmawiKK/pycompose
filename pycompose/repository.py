@@ -26,8 +26,10 @@ that cannot start is worse than one that starts empty.
 
 from __future__ import annotations
 
+import json
 import os
 import threading
+from collections import deque
 from collections.abc import Iterator, Sequence
 from dataclasses import is_dataclass
 from importlib import import_module
@@ -48,8 +50,14 @@ __all__ = [
 
 T = TypeVar("T")
 
+DIAGNOSTIC_HISTORY = 32
+"""How many storage problems are remembered before the oldest is dropped."""
+
 _override: Path | None = None
-_diagnostics: list[str] = []
+# Bounded: a background pass that fails every time would otherwise grow this for
+# the life of the process. The oldest goes first, because the newest is the one
+# that explains what is happening now.
+_diagnostics: deque[str] = deque(maxlen=DIAGNOSTIC_HISTORY)
 _lock = threading.RLock()
 
 
@@ -232,8 +240,6 @@ class Document(Generic[T]):
             return []
         if not raw.strip():
             return []
-        import json
-
         try:
             decoded = json.loads(raw)
         except ValueError as exc:

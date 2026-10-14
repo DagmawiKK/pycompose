@@ -272,3 +272,50 @@ def test_the_notes_app_has_no_handler_dataclass_left() -> None:
     """The cycle-breaker module existed only to be a second list of actions."""
     assert not (APP / "notes_app" / "handlers.py").exists()
     assert "Handlers" not in (APP / "notes_app" / "view_model.py").read_text()
+
+
+# ---------------------------------------------------------------------------
+# Names a registry already uses
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("name", ["add", "names", "dispatch", "register", "handlers"])
+def test_an_action_may_not_take_a_name_the_registry_uses(name: str) -> None:
+    """`__getattr__` runs only when ordinary lookup fails, so `registry.add`
+    would resolve to the method and a screen binding through it would fail far
+    from the cause."""
+    actions = Registry()
+
+    def shadow(state: State, payload: Nothing) -> State:
+        return state
+
+    shadow.__name__ = name
+    with pytest.raises(StateError, match="reserved"):
+        actions(shadow)
+
+
+def test_the_reserved_names_are_the_registry_s_own() -> None:
+    from pycompose.state.actions import RESERVED
+
+    assert {"add", "names", "dispatch", "register", "handlers"} <= RESERVED
+
+
+def test_an_ordinary_action_name_is_still_fine() -> None:
+    actions = Registry()
+
+    @actions
+    def delete_note(state: State, payload: Nothing) -> State:
+        return state
+
+    assert actions.delete_note is delete_note
+
+
+def test_looking_an_action_up_is_a_direct_hit() -> None:
+    """The index is built once at registration, not scanned per access."""
+    actions = Registry()
+
+    @actions
+    def only(state: State, payload: Nothing) -> State:
+        return state
+
+    assert actions.__dict__["_by_name"]["only"] is only

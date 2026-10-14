@@ -253,7 +253,10 @@ class Registry(Actions):
         Args:
             *seed: Actions to seed it with, if any.
         """
+        self._by_name: dict[str, AppAction[Any, Any]] = {}
         super().__init__(*seed)
+        for definition in self._definitions.values():
+            self._by_name[definition.name.rpartition(".")[2]] = definition
 
     def __call__(self, function: Callable[..., State]) -> AppAction[Any, Any]:
         """Define an action and register it.
@@ -281,7 +284,18 @@ class Registry(Actions):
             raise StateError(
                 "duplicate app action definition", action_id=definition.name
             )
+        bare = definition.name.rpartition(".")[2]
+        if bare in RESERVED:
+            # `__getattr__` runs only when ordinary lookup fails, so an action
+            # named `add` would leave `registry.add` resolving to the method and
+            # a screen binding through it failing far from the cause.
+            raise StateError(
+                "action name is reserved by the registry",
+                action=definition.name,
+                reserved=sorted(RESERVED),
+            )
         self._definitions[definition.name] = definition
+        self._by_name[bare] = definition
         self._contracts[definition.name] = definition
         self.register(definition.name, cast("ActionHandler", definition.function))
         self._alias(definition)
@@ -292,7 +306,7 @@ class Registry(Actions):
         Returns:
             The function names, in registration order.
         """
-        return tuple(name.rpartition(".")[2] for name in self._definitions)
+        return tuple(self._by_name)
 
     def __getattr__(self, name: str) -> AppAction[Any, Any]:
         """Return one of this registry's actions by name.
@@ -306,13 +320,14 @@ class Registry(Actions):
         Raises:
             AttributeError: If no action of that name was registered.
         """
-        definitions: dict[str, AppAction[Any, Any]] = self.__dict__.get(
-            "_definitions", {}
-        )
-        for definition in definitions.values():
-            if definition.name.rpartition(".")[2] == name:
-                return definition
+        found: AppAction[Any, Any] | None = self.__dict__.get("_by_name", {}).get(name)
+        if found is not None:
+            return found
         raise AttributeError(
             f"no action named {name!r}; this registry holds "
             f"{', '.join(self.names()) or 'nothing yet'}"
         )
+
+
+RESERVED = frozenset(name for name in dir(Registry) if not name.startswith("_"))
+"""Names a registry already uses. An action may not take one."""
