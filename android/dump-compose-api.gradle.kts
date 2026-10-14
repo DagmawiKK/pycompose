@@ -46,6 +46,15 @@ val metadataDescriptor = "Lkotlin/Metadata;"
 val asm9 = org.objectweb.asm.Opcodes.ASM9
 val classesJar = "classes.jar"
 
+val extraArguments = 0
+"""How many JVM arguments an overload may carry beyond its Kotlin parameters.
+
+Once the synthetic tail is stripped correctly this is zero, and it stays a
+tolerance rather than an equality test because the compiler's overload bridges
+are not uniform across the four Compose artifacts. A nearly-right candidate beats
+falling through to an arbitrary one.
+"""
+
 val experimentalMarker = "Experimental"
 
 val defaultMarker = "= default"
@@ -279,7 +288,7 @@ private class ComposeDump {
         kotlin: List<String>,
         jvm: List<String>,
     ): Int =
-        kotlin.zip(jvm).count { (k, v) ->
+        kotlin.zip(jvm.take(kotlin.size)).count { (k, v) ->
             val left = k.substringBefore('<').substringAfterLast('.')
             val right = v.substringAfterLast('.')
             if (left.startsWith("Function") && right.startsWith("Function")) {
@@ -290,16 +299,32 @@ private class ComposeDump {
         }
 
     /**
-     * Whether a JVM argument type is part of the Compose compiler's tail.
+     * The JVM arguments that correspond to declared Kotlin parameters.
      *
-     * `int` and not just `Integer`: ASM reports a primitive argument's className
-     * as "int", so matching only the boxed name counted every trailing mask as
-     * a real parameter. The declared arity was then 2-3 too high, the arity
-     * filter matched nothing, and every composable fell back to an arbitrary
-     * overload -- which is why every fix to the matcher below appeared to do
-     * nothing.
+     * Only the *tail* is synthetic. A compiled composable is
+     * `params..., <overflow block>, Composer, int, int`, and the overflow block
+     * contains plain `int` and `boolean` arguments that are very much real
+     * parameters: BasicText's `TextOverflow`, `softWrap`, `maxLines` and
+     * `minLines` sit right there. Stripping every `int` anywhere in the list --
+     * which is what an earlier version did -- counted BasicText as six
+     * parameters when its metadata declares nine, so no candidate ever fit and
+     * the matcher fell through.
      */
-    private fun isSyntheticType(type: org.objectweb.asm.Type): Boolean =
+    private fun declaredTypes(types: Array<org.objectweb.asm.Type>): List<String> {
+        var end = types.size
+        while (end > 0 && isSynthetic(types[end - 1])) end--
+        return types
+            .take(end)
+            .map { it.className.substringAfterLast('.').substringAfterLast('$') }
+    }
+
+    /**
+     * Whether a trailing argument is part of the Compose compiler's tail.
+     *
+     * `int` and not only `Integer`: ASM reports a primitive argument's className
+     * as "int".
+     */
+    private fun isSynthetic(type: org.objectweb.asm.Type): Boolean =
         type.className.substringAfterLast('.') in setOf("Composer", "Integer", "int")
 
     /**
@@ -353,22 +378,36 @@ private class ComposeDump {
                 // Compare against the *declared* count: the descriptor also
                 // carries the Compose compiler's (Composer, Int, Int) tail,
                 // which appears in no Kotlin signature.
-                val declaredArity = types.count { !isSyntheticType(it) }
-                val sameArity = named?.filter { it.valueParameters.size == declaredArity }
-                val jvmTypes =
-                    types
-                        .filterNot { isSyntheticType(it) }
-                        .map { it.className.substringAfterLast('.').substringAfterLast('$') }
+                val jvmTypes = declaredTypes(types)
+                // Score rather than require an exact count. The Compose compiler
+                // emits overloads where the default-argument mask `int` sits
+                // *before* the Composer rather than in the tail, and one variant
+                // carries an extra bridge parameter after it, so the JVM argument
+                // count is the Kotlin parameter count or one or two more, and
+                // nothing is exact. Requiring equality meant the candidate list
+                // came back empty and the whole matcher fell through to an
+                // arbitrary overload.
+                // Tried and rejected: scoring a second time with every `int`
+                // removed, on the theory that the default-argument mask is an
+                // int. It is -- AnimatedVisibility has six Kotlin parameters and
+                // seven JVM arguments because of one -- but removing all ints
+                // also deletes genuinely Int-typed parameters like BasicText's
+                // maxLines, and unread parameters went from 69 to 74. The mask
+                // is identifiable by position and not by type, and position is
+                // not reliably known here.
                 val km =
-                    sameArity?.maxByOrNull {
-                        agreement(
-                            it.valueParameters.map { p ->
-                                p.type.render()
-                            },
-                            jvmTypes,
-                        )
-                    }
-                        ?: sameArity?.firstOrNull()
+                    named
+                        ?.filter {
+                            val declared = it.valueParameters.size
+                            declared <= jvmTypes.size && jvmTypes.size - declared <= extraArguments
+                        }?.maxByOrNull {
+                            agreement(
+                                it.valueParameters.map { p ->
+                                    p.type.render()
+                                },
+                                jvmTypes,
+                            )
+                        }
                         ?: named?.firstOrNull()
                 val declared = km?.name ?: plain
                 val parts =
