@@ -23,7 +23,11 @@ internal object WireValidator {
         val bindings = AppBindings.read(metadata, schema)
         val actionIds = IrContract.actionIds + bindings.keys
         val pending = ArrayDeque<JsonElement>()
-        pending.addLast(checkNotNull(root["root"]) { "Missing root" })
+        val rootNode =
+            checkNotNull(root["root"]) { "Missing root" } as? JsonObject
+                ?: error("root must be an object")
+        require("slot" !in rootNode) { "The root cannot fill a slot" }
+        pending.addLast(rootNode)
         val ids = mutableSetOf<String>()
         while (pending.isNotEmpty()) {
             val node = pending.removeLast() as? JsonObject ?: error("Node must be an object")
@@ -32,7 +36,7 @@ internal object WireValidator {
             val type = string(node["type"], "node.type")
             val spec = checkNotNull(IrContract.components[type]) { "Unknown component: $type" }
             require(VersionGate.available(schema, spec.since)) { "Component requires newer schema" }
-            require(node.keys.all { it in setOf("id", "type", "props", "children") }) {
+            require(node.keys.all { it in setOf("id", "type", "props", "slot", "children") }) {
                 "Unknown node field at $id"
             }
             val props = node["props"] as? JsonObject ?: error("Missing object props at $id")
@@ -45,14 +49,38 @@ internal object WireValidator {
                 }
             }
             properties(props, spec.props, "$id.props", actionIds)
-            require(spec.childrenAllowed || "children" !in node) { "Children forbidden at $id" }
-            val children =
-                node["children"]?.let {
-                    it as? JsonArray ?: error("children must be an array at $id")
-                } ?: JsonArray(emptyList())
-            require(children.size >= spec.minimumChildren) { "Too few children at $id" }
-            children.reversed().forEach(pending::addLast)
+            validatedChildren(node, spec, id).reversed().forEach(pending::addLast)
         }
+    }
+
+    /**
+     * Children of one node, after checking that each may compose where it says.
+     *
+     * A child either fills a slot its parent declared or is a primary child --
+     * the only reading under which `minimumChildren` means anything, since a
+     * `topBar` is no part of a component's content.
+     */
+    private fun validatedChildren(
+        node: JsonObject,
+        spec: ComponentRule,
+        id: String,
+    ): JsonArray {
+        val children =
+            node["children"]?.let {
+                it as? JsonArray ?: error("children must be an array at $id")
+            } ?: JsonArray(emptyList())
+        var primary = 0
+        children.forEach { child ->
+            val slot = (child as? JsonObject)?.get("slot")?.let { string(it, "$id.slot") }
+            if (slot == null) {
+                require(spec.childrenAllowed) { "Children forbidden at $id" }
+                primary += 1
+            } else {
+                require(slot in spec.slots) { "Unknown slot $slot at $id" }
+            }
+        }
+        require(primary >= spec.minimumChildren) { "Too few children at $id" }
+        return children
     }
 
     fun string(

@@ -33,7 +33,9 @@ COMPOSE_PACKAGE = {
     "Column": "androidx.compose.foundation.layout",
     "FilterChip": "androidx.compose.material3",
     "Image": "androidx.compose.foundation",
+    "LazyColumn": "androidx.compose.foundation.lazy",
     "Row": "androidx.compose.foundation.layout",
+    "Scaffold": "androidx.compose.material3",
     "Spacer": "androidx.compose.foundation.layout",
     "Text": "androidx.compose.material3",
     "TextButton": "androidx.compose.material3",
@@ -93,6 +95,29 @@ debug snapshot (ADR-0005). Each is the value the hand-written adapter already
 chose for the same prop, so generating does not change behaviour.
 """
 
+SLOT_KINDS = frozenset({"content", "items"})
+"""How a slot composes: nodes in order, or lazy list items with stable keys."""
+
+CONSUMERS = frozenset({"paddingValues"})
+"""Slot scopes the adapter consumes, so an app never double-applies one."""
+
+KOTLIN_TYPES = {
+    "Alignment": "androidx.compose.ui.Alignment",
+    "Arrangement": "androidx.compose.foundation.layout.Arrangement",
+    "Color": "androidx.compose.ui.graphics.Color",
+    "FontFamily": "androidx.compose.ui.text.font.FontFamily",
+    "MaterialTheme": "androidx.compose.material3.MaterialTheme",
+    "Painter": "androidx.compose.ui.graphics.painter.Painter",
+    "PropResolver": "com.pycompose.renderer.PropResolver",
+    "TextStyle": "androidx.compose.ui.text.TextStyle",
+}
+"""Package for every bare Compose name this generator emits.
+
+Generated code names resolvers and their returns in full instead of importing
+them, the way the value path already did: one less import list to keep honest,
+and a name that cannot be shadowed by a prop.
+"""
+
 MECHANICAL = {"string", "boolean", "integer", "number", "actionId", "modifier"}
 """Schema prop types an adapter can render with no decision and no decoder.
 
@@ -102,6 +127,25 @@ resolver to become a ``Color`` or an ``Alignment``. A prop of one of those types
 with no ``decode`` is refused, because guessing which family its values belong to
 is how an adapter silently renders the wrong alignment.
 """
+
+
+def qualify(source: str) -> str:
+    """Fully qualify a Kotlin expression's leading type name.
+
+    Args:
+        source: Kotlin source, e.g. ``Arrangement.Vertical`` or ``Color?``.
+
+    Returns:
+        The source with a known leading type name replaced by its package-qualified
+        spelling; anything already qualified or unknown is returned unchanged.
+    """
+    head, separator, rest = source.partition(".")
+    nullable = head.endswith("?")
+    bare = head[:-1] if nullable else head
+    qualified = KOTLIN_TYPES.get(bare)
+    if qualified is None:
+        return source
+    return f"{qualified}{'?' if nullable else ''}{separator}{rest}"
 
 
 def _camel(name: str) -> str:
@@ -115,6 +159,29 @@ def _camel(name: str) -> str:
     """
     head, *rest = name.split("_")
     return head + "".join(word[:1].upper() + word[1:] for word in rest)
+
+
+def _declared_slots(entry: dict[str, Any]) -> bool:
+    """Report whether every child path is drawn from the closed slot vocabulary.
+
+    Args:
+        entry: The component's schema entry.
+
+    Returns:
+        True when the primary children and every named slot use a kind and a
+        consumer this generator renders.
+    """
+    children = entry.get("children", {})
+    if children.get("kind") not in {None, *SLOT_KINDS}:
+        return False
+    if children.get("consume") not in {None, *CONSUMERS}:
+        return False
+    for slot in entry.get("slots", {}).values():
+        if slot.get("kind", "content") not in SLOT_KINDS:
+            return False
+        if slot.get("consume") not in {None, *CONSUMERS}:
+            return False
+    return True
 
 
 def is_mechanical(entry: dict[str, Any]) -> bool:
@@ -133,13 +200,17 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
         # their content off the Compose thread and report their own diagnostics.
         # The call site is mechanical; what it delegates to is not.
         return False
-    if entry.get("children", {}).get("allowed"):
+    if not _declared_slots(entry):
         return False
     for spec in entry.get("props", {}).values():
         if "valueType" in spec:
             if spec["type"] == "value" and (
                 spec.get("required") or "nativeDefault" in spec
             ):
+                continue
+            # A colour prop takes a tagged value *or* the legacy string, and the
+            # adapter handles both explicitly; no other decoded family does.
+            if spec.get("type") == "color" and spec.get("decode") == "color":
                 continue
             return False
         if spec.get("type") in MECHANICAL:
@@ -173,7 +244,7 @@ def _slot(prop_name: str, spec: dict[str, Any]) -> tuple[str, str] | None:
     parameter = slot.get("parameter")
     if parameter is not None:
         return f"{parameter} = {{ {wrapped} }}", ""
-    return "", f"                    {wrapped}"
+    return "", wrapped
 
 
 def _decoded(
@@ -200,10 +271,14 @@ def _decoded(
         A ``(local declaration, argument)`` pair, or ``(None, "")`` when the
         prop cannot be rendered.
     """
-    returns = RESOLVER_RETURN.get(decoder)
-    fallback = RESOLVER_FALLBACK.get(decoder)
-    if returns is None or fallback is None:
+    declared = RESOLVER_RETURN.get(decoder)
+    # A declared fallback wins: it is the value the hand-written adapter used for
+    # exactly this parameter, and a per-decoder default is a guess about the rest.
+    declared_fallback = spec.get("fallback") or RESOLVER_FALLBACK.get(decoder)
+    if declared is None or declared_fallback is None:
         return None
+    returns = qualify(declared)
+    fallback = qualify(declared_fallback)
 
     # An optional prop is nullable in the model, so an absent value must not
     # reach a resolver that takes a non-null String.
@@ -211,6 +286,8 @@ def _decoded(
     wire = f"model.props.{prop_name}"
     access = f"{wire}?.takeIf {{ it.isNotEmpty() }}" if optional else wire
     value = f"{prop_name}Value"
+
+    resolver = qualify("PropResolver")
 
     if decoder.startswith("resource"):
         # A resource reference is a single wire string naming a kind and a name
@@ -226,13 +303,29 @@ def _decoded(
         call = f"resources?.{method}({wire}).getOrNull()"
         return f"val {value}: {returns} = {call}", f"{prop_name} = {value}"
 
-    if decoder == "textStyle":
+    if decoder == "color" and "valueType" in spec:
+        # The wire carries either a tagged value (the app built a Color) or a
+        # legacy string, exactly as the hand-written helper read it. Tagged
+        # first: it is the form that could carry a theme reference.
+        tagged = resolver_call(spec["valueType"], "wire")
         return (
-            f"@Composable val {value}: TextStyle = PropResolver"
-            f".textStyle({access}, {fallback})",
+            f"val {value}: {returns} = when (val wire = {wire}) {{\n"
+            f"                    is JsonObject -> {tagged}.getOrDefault({fallback})\n"
+            "                    is JsonPrimitive -> "
+            f"{resolver}.color(wire.content).getOrDefault({fallback})\n"
+            f"                    else -> {fallback}\n"
+            "                }",
             f"{prop_name} = {value}",
         )
-    resolved = f"PropResolver.{decoder}({access}).getOrDefault({fallback})"
+
+    if decoder == "textStyle":
+        # The adapter body is already composable, so a plain local is enough;
+        # the resolver itself is what must run in composition.
+        return (
+            f"val {value}: {returns} = {resolver}" f".textStyle({access}, {fallback})",
+            f"{prop_name} = {value}",
+        )
+    resolved = f"{resolver}.{decoder}({access}).getOrDefault({fallback})"
     return f"val {value}: {returns} = {resolved}", f"{prop_name} = {value}"
 
 
@@ -266,6 +359,68 @@ def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:
     )
 
 
+def _slot_body(
+    nodes: str,
+    name: str | None,
+    kind: str | None,
+    consume: str | None,
+) -> tuple[str, str | None]:
+    """Render the inside of one declared slot's content lambda.
+
+    Args:
+        nodes: Kotlin expression for the parent's child list.
+        name: Slot name, or None for the primary children.
+        kind: ``content`` composes nodes in order; ``items`` lists them lazily.
+        consume: Slot scope the adapter consumes on the subtree's behalf.
+
+    Returns:
+        The lambda body, then its parameter name when the slot consumes a scope.
+    """
+    if kind == "items":
+        listed = (
+            f"context.unslotted({nodes})"
+            if name is None
+            else f'context.slotNodes({nodes}, "{name}")'
+        )
+        read = f"items({listed}, key = {{ it.id }}) {{ context.node(it) }}"
+    elif name is None:
+        read = f"context.children({nodes})"
+    else:
+        # The parameter is non-null, so the lambda always runs and the slot's
+        # own lambda is invoked inside it. Evaluating the slot without invoking
+        # it would build the subtree and drop it: a component that renders
+        # nothing, which is what this line used to do.
+        read = f'context.slot({nodes}, "{name}")?.invoke()'
+    if consume is None:
+        return read, None
+    return f"Column(Modifier.padding(padding)) {{ {read} }}", "padding"
+
+
+def _named_slot(slot_name: str, slot: dict[str, Any]) -> str:
+    """Render one named slot as a Kotlin argument.
+
+    A nullable Compose parameter takes the slot lambda directly, so an empty
+    subtree stays ``null`` and keeps Compose's own default -- passing an empty
+    lambda to FilterChip's ``leadingIcon`` would reserve icon space for nothing.
+    A non-null parameter always gets a lambda and composes nothing when empty.
+
+    Args:
+        slot_name: The declared slot name.
+        slot: Its schema entry.
+
+    Returns:
+        The ``native = ...`` argument.
+    """
+    native = slot["native"]
+    kind = slot.get("kind", "content")
+    consume = slot.get("consume")
+    if slot.get("nullable") and consume is None:
+        return f'{native} = context.slot(model.children, "{slot_name}")'
+    body, parameter = _slot_body("model.children", slot_name, kind, consume)
+    prefix = f"{parameter} -> " if parameter is not None else ""
+    return f"{native} = {{ {prefix}{body} }}"
+
+
 def composables(name: str, entry: dict[str, Any]) -> set[str]:
     """List the Compose imports one adapter needs beyond the component itself.
 
@@ -288,6 +443,34 @@ def composables(name: str, entry: dict[str, Any]) -> set[str]:
     return used
 
 
+def extra_imports(entry: dict[str, Any]) -> set[str]:
+    """List the fully qualified imports an adapter needs beyond its component.
+
+    Args:
+        entry: The component's schema entry.
+
+    Returns:
+        Import statements' targets, sorted by the caller.
+    """
+    qualified: set[str] = set()
+    for spec in entry.get("props", {}).values():
+        if spec.get("type") == "color" and "valueType" in spec:
+            qualified.add("kotlinx.serialization.json.JsonObject")
+    slots = [entry.get("children", {}), *entry.get("slots", {}).values()]
+    for slot in slots:
+        if slot.get("consume") == "paddingValues":
+            qualified.update(
+                {
+                    "androidx.compose.foundation.layout.Column",
+                    "androidx.compose.foundation.layout.padding",
+                    "androidx.compose.ui.Modifier",
+                }
+            )
+        if slot.get("kind") == "items":
+            qualified.add("androidx.compose.foundation.lazy.items")
+    return qualified
+
+
 class _Fragments:
     """The pieces one adapter is assembled from.
 
@@ -302,6 +485,7 @@ class _Fragments:
         self.locals: list[str] = []
         self.arguments: list[str] = []
         self.trailing: list[str] = []
+        self.trailing_parameter: str | None = None
 
     def add(self, fragment: tuple[str, str] | None) -> bool:
         """Append one prop's rendering.
@@ -321,14 +505,16 @@ class _Fragments:
             self.arguments.append(argument)
         return True
 
-    def trailing_lambda(self, body: str) -> None:
+    def trailing_lambda(self, body: str, parameter: str | None = None) -> None:
         """Record a content lambda that follows the call.
 
         Args:
             body: The lambda body, already indented.
+            parameter: Lambda parameter name, for a slot that consumes a scope.
         """
         if body:
             self.trailing.append(body)
+            self.trailing_parameter = parameter or self.trailing_parameter
 
 
 def _render_prop(prop: str, spec: dict[str, Any], out: _Fragments) -> bool:
@@ -442,6 +628,12 @@ def render(name: str, entry: dict[str, Any]) -> str:
     slot. An ``enum``, ``color`` or ``resource`` is routed through the resolver
     its ``decode`` names, bound to a local first.
 
+    Children and named slots are declared, so the generator no longer guesses
+    where a subtree goes: the primary children reach their native parameter, a
+    named slot reaches its ``native`` parameter, ``items`` lists them lazily
+    with stable keys, and a ``paddingValues`` scope is consumed once on the
+    subtree's behalf.
+
     Args:
         name: The component's schema name.
         entry: Its schema entry.
@@ -457,11 +649,28 @@ def render(name: str, entry: dict[str, Any]) -> str:
     for prop, spec in entry.get("props", {}).items():
         if not _render_prop(prop, spec, out):
             return ""
+    for slot_name, slot in sorted(entry.get("slots", {}).items()):
+        out.arguments.append(_named_slot(slot_name, slot))
+
+    children = entry.get("children", {})
+    if children.get("allowed"):
+        # Emitted by name rather than trailing: the schema says which parameter
+        # the primary children reach, and says nothing about where it sits.
+        children_body, parameter = _slot_body(
+            "model.children", None, children.get("kind"), children.get("consume")
+        )
+        prefix = f"{parameter} -> " if parameter is not None else ""
+        native = children.get("native", "content")
+        out.arguments.append(f"{native} = {{ {prefix}{children_body} }}")
 
     body = "\n".join(f"                    {argument}," for argument in out.arguments)
     tail = ""
     if out.trailing:
-        tail = " {\n" + "\n".join(out.trailing) + "\n            }"
+        head = " {"
+        if out.trailing_parameter is not None:
+            head = f" {{ {out.trailing_parameter} ->"
+        body_lines = "\n".join(f"                    {line}" for line in out.trailing)
+        tail = head + "\n" + body_lines + "\n                }"
     node = f"{name}Node"
     prelude = "\n".join(f"                {line}" for line in out.locals)
     return (
@@ -497,6 +706,8 @@ def render_file(registry: dict[str, Any]) -> str:
             imports.add(f"import {package}.{name}")
             for extra in composables(name, entry):
                 imports.add(f"import {package}.{extra}")
+            for qualified in extra_imports(entry):
+                imports.add(f"import {qualified}")
             imports.add(f"import com.pycompose.ir.generated.{name} as {name}Node")
     if not blocks:
         return ""

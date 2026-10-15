@@ -16,7 +16,7 @@ from typing import cast
 
 from pycompose.core.action_binding import ActionBinding, read_bindings
 from pycompose.core.node import Node, Props
-from pycompose.core.registry_types import PropDef
+from pycompose.core.registry_types import ComponentDef, PropDef
 from pycompose.core.resources import valid_resource
 from pycompose.core.traversal import NodeCycleError, walk_nodes
 from pycompose.core.values import validate_bounds, validate_number, validate_value
@@ -314,7 +314,10 @@ def validate_component(node: Node) -> None:
     """
     validation = _Validation(debug=True)
     frame = validation.prepare(node)
-    if frame is not None and len(node.children) < frame.minimum:
+    if frame is None:
+        return
+    unslotted = sum(1 for child in node.children if child.slot is None)
+    if unslotted < frame.minimum:
         validation.report("too few children", node)
 
 
@@ -323,7 +326,9 @@ class _NodeFrame:
     props: Props
     minimum: int
     allow_children: bool
+    slots: frozenset[str] = frozenset()
     children: list[Node] = field(default_factory=list)
+    unslotted: int = 0
 
 
 class _Validation:
@@ -342,6 +347,33 @@ class _Validation:
                 message, node_id=node.id, node_type=node.type, path=path, prop=prop
             )
         self.issues.append(ValidationIssue(message, node.id, node.type, path, prop))
+
+    def child_rules(self, node: Node, spec: ComponentDef) -> None:
+        """Report direct children or slots a component does not declare.
+
+        Args:
+            node: Parent node whose children are checked.
+            spec: The parent's registry definition.
+        """
+        if not spec.children.allowed and any(
+            child.slot is None for child in node.children
+        ):
+            self.report("children are not allowed", node)
+        for child in node.children:
+            if child.slot is not None and child.slot not in spec.slots:
+                self.report("unknown slot", node, child.slot)
+
+    def child_allowed(self, parent: _NodeFrame, child: Node) -> bool:
+        """Report whether ``parent`` accepts ``child``'s slot.
+
+        Args:
+            parent: The enclosing frame with its declared child rules.
+            child: The candidate child node.
+
+        Returns:
+            True when the child fills a slot the parent declares.
+        """
+        return _child_allowed(parent, child)
 
     def identity(self, node: Node) -> bool:
         if (
@@ -400,15 +432,19 @@ class _Validation:
                 invalid_required |= prop.required
         if invalid_required:
             return None
-        if node.children and not spec.children.allowed:
-            self.report("children are not allowed", node)
+        self.child_rules(node, spec)
         safe_props = node.props
         if removed:
             retained = dict(props)
             for key in removed:
                 del retained[key]
             safe_props = Props(retained)
-        return _NodeFrame(safe_props, spec.children.min or 0, spec.children.allowed)
+        return _NodeFrame(
+            safe_props,
+            spec.children.min or 0,
+            spec.children.allowed,
+            frozenset(spec.slots),
+        )
 
     def available(self, since: str) -> bool:
         return tuple(map(int, self.schema_version.split("."))) >= tuple(
@@ -438,7 +474,7 @@ class _Validation:
     def finish(self, node: Node, frame: _NodeFrame | None) -> Node | None:
         if frame is None:
             return None
-        if len(frame.children) < frame.minimum:
+        if frame.unslotted < frame.minimum:
             self.report("too few children", node)
             return None
         if (
@@ -455,9 +491,16 @@ class _Validation:
             type=node.type,
             props=frame.props,
             children=tuple(frame.children),
+            slot=node.slot,
         )
 
     def node(self, root: Node) -> Node | None:
+        if root.slot is not None:
+            # The root has no parent to fill a slot of, and the host rejects a
+            # snapshot that says otherwise -- so release mode drops the slot
+            # rather than the app's whole first frame.
+            self.report("the root cannot fill a slot", root)
+            root = replace(root, slot=None)
         frames: list[_NodeFrame | None] = []
         safe: Node | None = None
         try:
@@ -466,7 +509,7 @@ class _Validation:
                     self.path.append(node.id)
                     parent = frames[-1] if frames else None
                     enabled = not frames or (
-                        parent is not None and parent.allow_children
+                        parent is not None and _child_allowed(parent, node)
                     )
                     frames.append(self.prepare(node) if enabled else None)
                 else:
@@ -475,6 +518,8 @@ class _Validation:
                     parent = frames[-1] if frames else None
                     if safe is not None and parent is not None:
                         parent.children.append(safe)
+                        if safe.slot is None:
+                            parent.unslotted += 1
         except NodeCycleError as exc:
             if self.debug:
                 raise
@@ -488,3 +533,19 @@ class _Validation:
             )
             return None
         return safe
+
+
+def _child_allowed(parent: _NodeFrame, child: Node) -> bool:
+    """Report whether a frame accepts a child, by the child's slot.
+
+    Args:
+        parent: Enclosing frame carrying the declared child rules.
+        child: Candidate child node.
+
+    Returns:
+        True for primary children of a frame that allows them, or for named
+        children of a frame that declares the slot.
+    """
+    if child.slot is None:
+        return parent.allow_children
+    return child.slot in parent.slots

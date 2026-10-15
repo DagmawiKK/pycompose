@@ -43,6 +43,26 @@ class IrParserTest {
     }
 
     @Test
+    fun `a declared slot survives parsing into the model`() {
+        // The wire carries the slot, the contract checks it, and the renderer
+        // reads it off the model -- so it has to be a model property, not just a
+        // validated field.
+        val source =
+            """
+            {"version":"0.1.0","schemaVersion":"1.15.0","root":{
+            "id":"root","type":"Scaffold","props":{},"children":[
+              {"id":"bar","type":"Text","props":{"text":"Top bar"},"slot":"topBar"}]}}
+            """.trimIndent()
+        val parsed = IrParser().parse(source).getOrThrow().snapshot
+        assertEquals(
+            "topBar",
+            parsed.root.children
+                .single()
+                .slot,
+        )
+    }
+
+    @Test
     fun `all component golden parses including ordered modifiers and typed props`() {
         val source = checkNotNull(javaClass.getResource("/component_screen.json")).readText()
         val parsed = IrParser().parse(source).getOrThrow()
@@ -76,6 +96,11 @@ class IrParserTest {
             """{"id":"root","type":"Column","props":{},"children":[
                 {"id":"same","type":"Text","props":{"text":"a"}},
                 {"id":"same","type":"Text","props":{"text":"b"}}]}""",
+            // The root has no parent, so it fills no slot.
+            """{"id":"root","type":"Text","props":{"text":"ok"},"slot":"topBar"}""",
+            // Column declares no slots, so the child has nowhere to compose.
+            """{"id":"root","type":"Column","props":{},"children":[
+                {"id":"child","type":"Text","props":{"text":"a"},"slot":"topBar"}]}""",
         ],
     )
     fun `wire failures return diagnostics rather than partially valid models`(node: String) {

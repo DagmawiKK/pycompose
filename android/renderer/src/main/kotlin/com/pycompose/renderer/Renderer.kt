@@ -55,8 +55,33 @@ class RenderContext internal constructor(
         }
     }
 
+    /** Primary children, in declaration order. */
+    fun unslotted(nodes: List<UiNode>): List<UiNode> = nodes.filter { it.slot == null }
+
+    /** Fillers of one declared slot, in declaration order. */
+    fun slotNodes(
+        nodes: List<UiNode>,
+        slot: String,
+    ): List<UiNode> = nodes.filter { it.slot == slot }
+
     @Composable fun children(nodes: List<UiNode>) {
-        nodes.forEach { child -> key(child.id) { node(child) } }
+        unslotted(nodes).forEach { child -> key(child.id) { node(child) } }
+    }
+
+    /**
+     * A slot as a lambda, or null when empty so Compose's default applies.
+     *
+     * The filled nodes are composed here rather than through [children], which
+     * exists to leave slotted children out of the primary subtree -- running
+     * them through it a second time composes nothing at all.
+     */
+    fun slot(
+        nodes: List<UiNode>,
+        slot: String,
+    ): (@Composable () -> Unit)? {
+        val filled = slotNodes(nodes, slot)
+        if (filled.isEmpty()) return null
+        return { filled.forEach { child -> key(child.id) { node(child) } } }
     }
 }
 

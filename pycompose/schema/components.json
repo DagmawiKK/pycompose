@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.14.0",
+  "schemaVersion": "1.15.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -15,7 +15,8 @@
     "1.11.0",
     "1.12.0",
     "1.13.0",
-    "1.14.0"
+    "1.14.0",
+    "1.15.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -46,8 +47,7 @@
       "children": {
         "allowed": true,
         "min": 0
-      },
-      "adapter": "manual"
+      }
     },
     "Button": {
       "category": "buttons",
@@ -145,8 +145,7 @@
       "children": {
         "allowed": true,
         "min": 0
-      },
-      "adapter": "manual"
+      }
     },
     "FilterChip": {
       "category": "input",
@@ -179,6 +178,16 @@
       },
       "children": {
         "allowed": false
+      },
+      "slots": {
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
       }
     },
     "Image": {
@@ -234,8 +243,7 @@
       "children": {
         "allowed": true,
         "kind": "items"
-      },
-      "adapter": "manual"
+      }
     },
     "Row": {
       "category": "layout",
@@ -258,8 +266,7 @@
       "children": {
         "allowed": true,
         "min": 0
-      },
-      "adapter": "manual"
+      }
     },
     "Scaffold": {
       "category": "layout",
@@ -268,7 +275,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color"
+          "decode": "color",
+          "fallback": "androidx.compose.material3.MaterialTheme.colorScheme.background"
         },
         "modifier": {
           "type": "modifier"
@@ -276,9 +284,23 @@
       },
       "children": {
         "allowed": true,
-        "kind": "content"
+        "kind": "content",
+        "consume": "paddingValues"
       },
-      "adapter": "manual"
+      "slots": {
+        "bottomBar": {
+          "native": "bottomBar"
+        },
+        "floatingActionButton": {
+          "native": "floatingActionButton"
+        },
+        "snackbarHost": {
+          "native": "snackbarHost"
+        },
+        "topBar": {
+          "native": "topBar"
+        }
+      }
     },
     "Spacer": {
       "category": "layout",

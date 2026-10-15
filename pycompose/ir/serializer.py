@@ -44,6 +44,8 @@ def node_to_dict(node: Node) -> dict[str, JsonValue]:
                 result["children"] = children
             result["id"] = source.id
             result["props"] = source.props.to_wire()
+            if source.slot is not None:
+                result["slot"] = source.slot
             result["type"] = source.type
             frames.append((result, children))
         else:
@@ -126,6 +128,9 @@ def to_json_bytes(snapshot: Node | IRRoot) -> bytes:
             output.extend(canonical_json_bytes(node.id))
             output.extend(b',"props":')
             output.extend(canonical_json_bytes(node.props.values))
+            if node.slot is not None:
+                output.extend(b',"slot":')
+                output.extend(canonical_json_bytes(node.slot))
             output.extend(b',"type":')
             output.extend(canonical_json_bytes(node.type))
             output.extend(b"}")

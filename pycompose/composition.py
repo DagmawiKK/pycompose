@@ -13,8 +13,14 @@ from pycompose.core.expansion import DeferredNode, expand_nodes
 from pycompose.core.node import Node
 from pycompose.errors import IrError, IrValidationError
 
-__all__ = ["Composable", "Content", "composable", "content_nodes", "expand"]
-
+__all__ = [
+    "Composable",
+    "Content",
+    "composable",
+    "content_nodes",
+    "expand",
+    "slot_nodes",
+]
 P = ParamSpec("P")
 Content = Node | Sequence[Node] | Callable[[], Node | Sequence[Node]]
 
@@ -64,6 +70,56 @@ def content_nodes(value: Content, *, key: str) -> tuple[Node, ...]:
     ):
         raise IrValidationError("content must be a Node, node sequence, or callable")
     return tuple(value)
+
+
+def slot_nodes(value: Content, *, key: str, slot: str) -> tuple[Node, ...]:
+    """Normalize one named slot's content and mark every node with the slot.
+
+    A named slot is filled with explicit nodes: a content function carries its
+    own deferred identity, and a slot is a structural fact the parent states.
+
+    Args:
+        value: One node or ordered nodes for the slot.
+        key: Stable namespace reported in validation errors.
+        slot: Declared ``camelCase`` slot name.
+
+    Returns:
+        Child declarations carrying the slot, in construction order.
+
+    Raises:
+        IrValidationError: If the value is not a node or node sequence, or a
+            deferred content function was supplied for a slot.
+    """
+    if callable(value):
+        raise IrValidationError(
+            "a named slot takes nodes, not a content function", node_id=key, prop=slot
+        )
+    nodes = content_nodes(value, key=key)
+    return tuple(
+        node if node.slot == slot else _with_slot(node, slot) for node in nodes
+    )
+
+
+def _with_slot(node: Node, slot: str) -> Node:
+    """Return ``node`` marked as filling ``slot``.
+
+    The copy keeps every wire-visible field; only the parent's slot differs, and
+    a node never belongs to two slots because sibling ids must stay unique.
+
+    Args:
+        node: The child node to mark.
+        slot: Declared ``camelCase`` slot name.
+
+    Returns:
+        A node equal to ``node`` apart from its slot.
+    """
+    return Node(
+        id=node.id,
+        type=node.type,
+        props=node.props,
+        children=node.children,
+        slot=slot,
+    )
 
 
 def _detach(value: object, active: set[int] | None = None) -> object:

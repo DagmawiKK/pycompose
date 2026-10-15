@@ -18,4 +18,5 @@ data class ComponentRule(
     val minimumChildren: Int = 0,
     val props: Map<String, PropertyRule>,
     val since: String = "1.0.0",
+    val slots: Set<String> = emptySet(),
 )

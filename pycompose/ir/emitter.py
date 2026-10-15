@@ -96,6 +96,7 @@ def _emit_node(node: Node, node_id: str, ids: IdRegistry) -> Node:
                     type=source.type,
                     props=source.props,
                     children=tuple(children),
+                    slot=source.slot,
                 )
             )
             if frames:

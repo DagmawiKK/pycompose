@@ -83,7 +83,13 @@ def lower_bindings(root: Node) -> tuple[Node, Mapping[str, JsonValue] | None]:
         result = (
             source
             if unchanged
-            else Node(id=source.id, type=source.type, props=props, children=children)
+            else Node(
+                id=source.id,
+                type=source.type,
+                props=props,
+                children=children,
+                slot=source.slot,
+            )
         )
         if frames:
             frames[-1].append(result)

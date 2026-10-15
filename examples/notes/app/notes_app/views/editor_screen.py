@@ -46,29 +46,29 @@ def editor_screen(
     return Scaffold(
         id="screen",
         container_color=theme.background,
+        top_bar=Row(
+            id="bar",
+            vertical_alignment="center",
+            children=[
+                TextButton(
+                    id="back",
+                    text="Notes",
+                    on_click=actions.go_back.bind(id="back"),
+                ),
+                Spacer(id="gap_bar_title", modifier=Modifier().size(8)),
+                Text(
+                    id="bar_title",
+                    text=note.label,
+                    style="titleMedium",
+                    color=theme.on_surface,
+                    modifier=Modifier().fill_max_width(0.7),
+                ),
+            ],
+        ),
         content=Column(
             id="body",
             modifier=Modifier().padding(20).fill_max_width(),
             children=[
-                Row(
-                    id="bar",
-                    vertical_alignment="center",
-                    children=[
-                        TextButton(
-                            id="back",
-                            text="Notes",
-                            on_click=actions.go_back.bind(id="back"),
-                        ),
-                        Spacer(id="gap_bar_title", modifier=Modifier().size(8)),
-                        Text(
-                            id="bar_title",
-                            text=note.label,
-                            style="titleMedium",
-                            color=theme.on_surface,
-                            modifier=Modifier().fill_max_width(0.7),
-                        ),
-                    ],
-                ),
                 Spacer(id="gap_title", modifier=Modifier().size(16)),
                 TextField(
                     id="title_field",

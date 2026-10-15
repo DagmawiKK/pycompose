@@ -144,6 +144,9 @@ class PropDef:
             failure is a wrong alignment rather than an error.
         value_type: Optional approved native value family for tagged inputs.
         native_default: Native default provider used by generated adapters.
+        fallback: Native expression used in place of a decoded prop's per-decoder
+            default, for the parameters where the hand-written adapter read the
+            theme instead. Only valid together with ``decode``.
         nullable: Whether an explicit null is valid, distinct from absence.
     """
 
@@ -161,6 +164,7 @@ class PropDef:
     decode: str | None = None
     value_type: str | None = None
     native_default: str | None = None
+    fallback: str | None = None
     nullable: bool = False
 
     def __post_init__(self) -> None:
@@ -247,6 +251,7 @@ class PropDef:
             decode=_decode(ptype, cast("str | None", data.get("decode"))),
             value_type=cast("str | None", data.get("valueType")),
             native_default=cast("str | None", data.get("nativeDefault")),
+            fallback=cast("str | None", data.get("fallback")),
             nullable=cast("bool", data.get("nullable", False)),
         )
 
@@ -263,6 +268,7 @@ class PropDef:
                 for key, value in {
                     "valueType": self.value_type,
                     "nativeDefault": self.native_default,
+                    "fallback": self.fallback,
                     "nullable": True if self.nullable else None,
                 }.items()
                 if value is not None
@@ -296,17 +302,21 @@ class PropDef:
 
 @dataclass(frozen=True, slots=True)
 class ChildrenRule:
-    """Rules governing a component's child nodes.
+    """Rules governing a component's primary (unslotted) child nodes.
 
     Attributes:
         allowed: Whether children are permitted.
         kind: Optional children kind (e.g. ``content``, ``items``).
         min: Optional minimum child count.
+        native: Native parameter name the children are placed in.
+        consume: Slot scope the adapter consumes on the children's behalf.
     """
 
     allowed: bool
     kind: str | None = None
     min: int | None = None
+    native: str | None = None
+    consume: str | None = None
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> ChildrenRule:
@@ -333,7 +343,21 @@ class ChildrenRule:
             not isinstance(minimum, int) or isinstance(minimum, bool)
         ):
             raise ComponentRegistryError(f"{where}: 'min' must be an integer")
-        return cls(allowed=allowed, kind=kind, min=minimum)
+        native = data.get("native")
+        if native is not None and (not isinstance(native, str) or not native):
+            raise ComponentRegistryError(f"{where}: 'native' must be a name")
+        consume = data.get("consume")
+        if consume is not None and consume not in CONSUMERS:
+            raise ComponentRegistryError(
+                f"{where}: 'consume' must be one of {', '.join(CONSUMERS)}"
+            )
+        return cls(
+            allowed=allowed,
+            kind=kind,
+            min=minimum,
+            native=native,
+            consume=cast("str | None", consume),
+        )
 
     def to_mapping(self) -> dict[str, object]:
         """Render back to the ``components.json`` children shape.
@@ -346,7 +370,92 @@ class ChildrenRule:
             out["kind"] = self.kind
         if self.min is not None:
             out["min"] = self.min
+        if self.native is not None:
+            out["native"] = self.native
+        if self.consume is not None:
+            out["consume"] = self.consume
         return out
+
+
+@dataclass(frozen=True, slots=True)
+class SlotRule:
+    """One named slot: where a subtree goes and what it carries.
+
+    Attributes:
+        native: Native parameter name the subtree is composed in.
+        kind: Slot kind (``content`` composes nodes, ``items`` lists them).
+        nullable: Whether the native parameter accepts null, so an empty slot
+            is omitted instead of composed empty.
+        consume: Slot scope the adapter consumes on the subtree's behalf.
+    """
+
+    native: str
+    kind: str = "content"
+    nullable: bool = False
+    consume: str | None = None
+
+    @classmethod
+    def from_mapping(cls, data: Mapping[str, object], *, where: str) -> SlotRule:
+        """Build a :class:`SlotRule` from raw JSON.
+
+        Args:
+            data: The raw slot object.
+            where: Human-readable location for error messages.
+
+        Returns:
+            The parsed slot rule.
+
+        Raises:
+            ComponentRegistryError: If the slot object is malformed.
+        """
+        native = data.get("native")
+        if not isinstance(native, str) or not native:
+            raise ComponentRegistryError(f"{where}: 'native' must be a name")
+        kind = data.get("kind", "content")
+        if kind not in SLOT_KINDS:
+            raise ComponentRegistryError(
+                f"{where}: 'kind' must be one of {', '.join(SLOT_KINDS)}"
+            )
+        nullable = data.get("nullable", False)
+        if not isinstance(nullable, bool):
+            raise ComponentRegistryError(f"{where}: 'nullable' must be a boolean")
+        consume = data.get("consume")
+        if consume is not None and consume not in CONSUMERS:
+            raise ComponentRegistryError(
+                f"{where}: 'consume' must be one of {', '.join(CONSUMERS)}"
+            )
+        return cls(
+            native=native,
+            kind=cast("str", kind),
+            nullable=nullable,
+            consume=cast("str | None", consume),
+        )
+
+    def to_mapping(self) -> dict[str, object]:
+        """Render back to the ``components.json`` slot shape.
+
+        Returns:
+            A JSON-ready dict.
+        """
+        out: dict[str, object] = {"native": self.native}
+        if self.kind != "content":
+            out["kind"] = self.kind
+        if self.nullable:
+            out["nullable"] = True
+        if self.consume is not None:
+            out["consume"] = self.consume
+        return out
+
+
+SLOT_KINDS = ("content", "items")
+"""How a slot's subtree is composed: nodes in order, or lazy list items."""
+
+CONSUMERS = ("paddingValues",)
+"""Slot scopes the adapter consumes on the subtree's behalf.
+
+A consumed scope is never lost: the adapter applies it in the one place Compose
+idiomatically applies it, and the app cannot apply it twice.
+"""
 
 
 class ComponentDef(Protocol):
@@ -394,6 +503,15 @@ class ComponentDef(Protocol):
 
         Returns:
             The children rule.
+        """
+        ...
+
+    @property
+    def slots(self) -> Mapping[str, SlotRule]:
+        """Named slots by wire name.
+
+        Returns:
+            The slot rules.
         """
         ...
 
@@ -602,6 +720,9 @@ class ComponentSpec:
         wrapper: The hand-written composable this adapter delegates to whole,
             when it has one. Set instead of ``adapter`` because the call site is
             still mechanical -- only the thing it calls is not.
+        slots: Named slots by wire name, each reaching its own native parameter.
+            Declared rather than inferred: which of a component's content
+            parameters a subtree belongs in is a decision the schema owns.
     """
 
     name: str
@@ -613,9 +734,11 @@ class ComponentSpec:
     reshaped: tuple[str, ...] = ()
     adapter: str = "generated"
     wrapper: str | None = None
+    slots: Mapping[str, SlotRule] = dataclass_field(default_factory=dict)
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
+        object.__setattr__(self, "slots", MappingProxyType(dict(self.slots)))
         if self.since is not None and (
             not isinstance(self.since, str) or not self.since
         ):
@@ -662,6 +785,18 @@ class ComponentSpec:
             raise ComponentRegistryError(
                 f"component {name!r}: 'children' must be an object"
             )
+        raw_slots = data.get("slots", {})
+        if not isinstance(raw_slots, Mapping):
+            raise ComponentRegistryError(
+                f"component {name!r}: 'slots' must be an object"
+            )
+        slots: dict[str, SlotRule] = {}
+        for slot_name, slot in raw_slots.items():
+            if not isinstance(slot_name, str) or not isinstance(slot, Mapping):
+                raise ComponentRegistryError(
+                    f"component {name!r}: slot {slot_name!r} must be an object"
+                )
+            slots[slot_name] = SlotRule.from_mapping(slot, where=f"{name}.{slot_name}")
         return cls(
             name=name,
             category=category,
@@ -672,6 +807,7 @@ class ComponentSpec:
             reshaped=_reshaped(name, data.get("reshaped")),
             adapter=_adapter(name, data.get("adapter")),
             wrapper=_wrapper(name, data.get("wrapper")),
+            slots=slots,
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -686,6 +822,10 @@ class ComponentSpec:
             "props": {name: prop.to_mapping() for name, prop in self.props.items()},
             "children": self.children.to_mapping(),
         }
+        if self.slots:
+            result["slots"] = {
+                name: rule.to_mapping() for name, rule in self.slots.items()
+            }
         if self.since is not None:
             result["since"] = self.since
         if self.reshaped:

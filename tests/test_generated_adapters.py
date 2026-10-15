@@ -60,31 +60,6 @@ def test_a_component_marked_manual_generates_nothing() -> None:
         assert render(name, registry[name]) == "", f"{name} generated an adapter"
 
 
-def manual_reason(entry: dict[str, Any]) -> str | None:
-    """Why a component cannot be derived, or None if it can.
-
-    Args:
-        entry: The component's schema entry.
-
-    Returns:
-        A short reason, or None when the adapter is derivable.
-    """
-    if entry.get("adapter") == "manual":
-        return "marked manual"
-    if entry.get("wrapper"):
-        return f"delegates to {entry['wrapper']}"
-    if entry.get("children", {}).get("allowed"):
-        return "composes children"
-    undecodable = [
-        name
-        for name, spec in entry.get("props", {}).items()
-        if spec.get("type") in {"enum", "color", "resource"} and not spec.get("decode")
-    ]
-    if undecodable:
-        return f"undecoded props: {', '.join(sorted(undecodable))}"
-    return None
-
-
 def test_every_component_is_either_generated_or_has_a_stated_reason() -> None:
     """No component may fall through both paths unnoticed.
 
@@ -95,26 +70,28 @@ def test_every_component_is_either_generated_or_has_a_stated_reason() -> None:
     """
     registry = components()
     for name, entry in sorted(registry.items()):
-        reason = manual_reason(entry)
-        if reason is None:
-            assert render(name, entry), f"{name} is derivable but rendered nothing"
-        else:
-            assert render(name, entry) == "", f"{name} manual ({reason}) but generated"
+        block = render(name, entry)
+        assert bool(block) == is_mechanical(
+            entry
+        ), f"{name}: rendered={bool(block)} but is_mechanical={is_mechanical(entry)}"
+        if not block:
+            # A wrapper delegates the decision; anything else is a decision the
+            # schema has to own outright.
+            assert entry.get("adapter") == "manual" or entry.get(
+                "wrapper"
+            ), f"{name} is hand-written but its entry does not say why"
 
 
-def test_a_component_excluded_only_by_a_rule_still_says_so() -> None:
-    """`adapter: manual` is the fallback, not the only way to be manual.
+def test_declaring_children_makes_a_component_generatable() -> None:
+    """Children used to be the widest exclusion; declaring them removes the guess.
 
-    A component excluded purely by a rule the generator applies is still
-    hand-written, and the schema should record that -- otherwise someone tidying
-    the schema has no idea Box's adapter is theirs to maintain.
+    Each of these was hand-written because its subtree had nowhere declared to
+    go. None of them carries a decision now: the schema says which parameter
+    receives which children, and the generator follows it.
     """
     registry = components()
-    for name, entry in sorted(registry.items()):
-        if entry.get("children", {}).get("allowed"):
-            assert (
-                entry.get("adapter") == "manual"
-            ), f"{name} composes children but is not marked manual"
+    for name in ("Box", "Column", "LazyColumn", "Row", "Scaffold"):
+        assert render(name, registry[name]), f"{name} should be generated"
 
 
 def test_the_committed_file_matches_what_the_generator_produces() -> None:
@@ -158,7 +135,9 @@ def test_no_optional_prop_is_passed_through() -> None:
 
     ``Boolean?`` into a ``Boolean`` parameter does not compile. A prop may only
     be passed when the schema marks it required or gives it a default; anything
-    else is omitted so Compose's own default applies.
+    else is omitted so Compose's own default applies. A decoded prop is passed
+    all the same, because its resolver takes the nullable wire value and each
+    decoding path handles absence itself.
     """
     registry = components()
     for name, entry in sorted(registry.items()):
@@ -169,7 +148,11 @@ def test_no_optional_prop_is_passed_through() -> None:
             referenced = re.search(rf"model\.props\.{re.escape(prop)}\b", block)
             if referenced is None:
                 continue
-            if spec["type"] in ("actionId", "modifier") or spec.get("content"):
+            if (
+                spec["type"] in ("actionId", "modifier")
+                or spec.get("content")
+                or spec.get("decode")
+            ):
                 continue
             assert (
                 spec.get("required") or "default" in spec or "nativeDefault" in spec
@@ -203,8 +186,7 @@ def test_a_flattened_slot_renders_its_declared_composable() -> None:
     assert "Text(model.props.text)" in block
     assert "text = model.props.text" not in block
     # Trailing lambda, because Button takes content positionally.
-    # A trailing lambda, because Button takes its content positionally.
-    assert ") {\n                    Text(model.props.text)\n            }" in block
+    assert ") {\n                    Text(model.props.text)\n                }" in block
 
 
 def test_a_named_slot_is_passed_by_name() -> None:
@@ -225,6 +207,87 @@ def test_an_optional_slot_is_not_generated() -> None:
     entry = components()["TextField"]
     assert entry["props"]["label"].get("content")
     assert render("TextField", entry) == ""
+
+
+# ---------------------------------------------------------------------------
+# Declared slots: Compose has no single "children"
+# ---------------------------------------------------------------------------
+
+
+def test_primary_children_reach_the_declared_parameter() -> None:
+    """The primary children go to the parameter the schema names, by name.
+
+    Not as a trailing lambda: the schema says which parameter receives them and
+    says nothing about where that parameter sits in the signature.
+    """
+    block = render("Column", components()["Column"])
+    assert "content = { context.children(model.children) }," in block
+
+
+def test_a_named_slot_reaches_its_native_parameter() -> None:
+    """Scaffold's four content parameters are four slots, not one subtree.
+
+    The lambda has to *invoke* the slot: evaluating it builds the subtree and
+    drops it, which compiles and renders nothing.
+    """
+    block = render("Scaffold", components()["Scaffold"])
+    for native in ("bottomBar", "floatingActionButton", "snackbarHost", "topBar"):
+        assert (
+            f'{native} = {{ context.slot(model.children, "{native}")?.invoke() }}'
+            in block
+        )
+
+
+def test_a_nullable_slot_keeps_compose_default() -> None:
+    """FilterChip's icons are nullable, so empty must stay null.
+
+    An empty lambda reserves icon space for nothing, which is a layout change
+    the app never asked for.
+    """
+    block = render("FilterChip", components()["FilterChip"])
+    assert 'leadingIcon = context.slot(model.children, "leadingIcon")' in block
+    assert 'trailingIcon = context.slot(model.children, "trailingIcon")' in block
+
+
+def test_a_consumed_scope_is_applied_by_the_adapter() -> None:
+    """Scaffold hands PaddingValues down; the app must not apply it twice."""
+    from pycompose.schema.codegen.adapters import extra_imports
+
+    entry = components()["Scaffold"]
+    block = render("Scaffold", entry)
+    assert "content = { padding -> Column(Modifier.padding(padding)) {" in block
+    assert "androidx.compose.foundation.layout.padding" in extra_imports(entry)
+    assert "androidx.compose.foundation.layout.Column" in extra_imports(entry)
+    assert "androidx.compose.ui.Modifier" in extra_imports(entry)
+
+
+def test_a_lazy_slot_lists_children_as_keyed_items() -> None:
+    """LazyColumn's content is a lazy scope; keys keep state across recomposition."""
+    from pycompose.schema.codegen.adapters import extra_imports
+
+    entry = components()["LazyColumn"]
+    block = render("LazyColumn", entry)
+    assert (
+        "content = { items(context.unslotted(model.children), key = { it.id })" in block
+    )
+    assert "androidx.compose.foundation.lazy.items" in extra_imports(entry)
+
+
+def test_a_named_items_slot_lists_its_own_nodes() -> None:
+    """A lazy slot lists the slot's children, not the primary ones."""
+    entry = components()["Column"]
+    entry["slots"] = {"header": {"native": "header", "kind": "items"}}
+    block = render("Column", entry)
+    assert (
+        'items(context.slotNodes(model.children, "header"), key = { it.id })' in block
+    )
+
+
+def test_an_undeclared_slot_kind_is_refused() -> None:
+    """Rather than emit Kotlin for a shape the generator does not know."""
+    entry = components()["Scaffold"]
+    entry["slots"]["topBar"]["kind"] = "canvas"
+    assert render("Scaffold", entry) == ""
 
 
 # ---------------------------------------------------------------------------
@@ -369,8 +432,8 @@ def decoded_example() -> tuple[str, str]:
 
     Text and Image both declare `wrapper` and so are hand-written by design;
     testing decoded output through them would assert nothing about the
-    generator. Scaffold is excluded by children, so this builds a minimal
-    component instead and renders it for real.
+    generator. A minimal entry is rendered for real instead, so the assertion
+    covers the generator's own emission rather than a hand-written adapter.
 
     Returns:
         The component name and its rendered adapter.
@@ -400,7 +463,10 @@ def test_a_decoded_prop_becomes_a_local_not_an_inline_call() -> None:
     """
     name, block = decoded_example()
     assert block, f"{name} should render"
-    assert "val resourceValue: Painter? = resources?.image(" in block
+    assert (
+        "val resourceValue: androidx.compose.ui.graphics.painter.Painter? = "
+        "resources?.image(" in block
+    )
     assert "resource = resourceValue" in block
 
 

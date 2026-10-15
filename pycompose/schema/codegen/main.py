@@ -80,6 +80,22 @@ PROP_TYPE_VOCABULARY = frozenset(
 
 STABILITIES = frozenset({"beta", "experimental", "stable"})
 
+SLOT_KINDS = frozenset({"content", "items"})
+"""How a slot's subtree composes: nodes in order, or lazy list items."""
+
+CONSUMERS = frozenset({"paddingValues"})
+"""Slot scopes the adapter consumes on the subtree's behalf."""
+
+SLOT_NAME = re.compile(r"^[a-z][A-Za-z0-9]*$")
+"""Named slots are ``camelCase`` on the wire, so no spelling is invented."""
+
+NATIVE_PARAMETER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+RESERVED_SLOTS = frozenset({"children", "id", "modifier", "props"})
+
+#: Keys a slot entry may carry. Anything else is a typo, not a convention.
+SLOT_KEYS = frozenset({"native", "kind", "nullable", "consume"})
+
 SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+$")
 
 
@@ -238,10 +254,96 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
         _die(f"component {name!r} needs a 'children' object")
     if not isinstance(children.get("allowed"), bool):
         _die(f"component {name!r} needs children.allowed as a boolean")
-    if "kind" in children and not isinstance(children["kind"], str):
-        _die(f"component {name!r} children.kind must be a string")
+    if children.get("kind", "content") not in SLOT_KINDS:
+        _die(
+            f"component {name!r} children.kind must be one of "
+            + ", ".join(sorted(SLOT_KINDS))
+        )
     if "min" in children and not isinstance(children["min"], int):
         _die(f"component {name!r} children.min must be an integer")
+    natively = children.get("native")
+    if natively is not None and not (
+        isinstance(natively, str) and NATIVE_PARAMETER.match(natively)
+    ):
+        _die(f"component {name!r} children.native must be a parameter name")
+    if children.get("consume") not in {None, *CONSUMERS}:
+        _die(
+            f"component {name!r} children.consume must be one of "
+            + ", ".join(sorted(CONSUMERS))
+        )
+    _validate_slots(name, props, children, comp.get("slots", {}))
+
+
+def _validate_slots(
+    name: str,
+    props: dict[str, Any],
+    children: dict[str, Any],
+    slots: object,
+) -> None:
+    """Check a component's declared slots against the slot vocabulary.
+
+    Args:
+        name: Component name, for error messages.
+        props: The component's props, which no slot may shadow.
+        children: The component's ``children`` object, whose native parameter a
+            slot must not reuse either.
+        slots: The raw ``slots`` object.
+    """
+    if not isinstance(slots, dict):
+        _die(f"component {name!r} needs a 'slots' object")
+    natives: set[str] = {children.get("native", "content")}
+    for slot_name, slot in sorted(slots.items()):
+        where = f"component {name!r} slot {slot_name!r}"
+        _validate_slot(where, slot_name, slot, natives, props)
+
+
+def _validate_slot(
+    where: str,
+    slot_name: str,
+    slot: object,
+    natives: set[str],
+    props: dict[str, Any],
+) -> None:
+    """Check one declared slot, claiming its native parameter in ``natives``.
+
+    Args:
+        where: Human-readable location, for error messages.
+        slot_name: The declared ``camelCase`` name.
+        slot: The raw slot object.
+        natives: Native parameters the component already claims, including the
+            primary children's.
+        props: The component's props, which no argument name may repeat.
+    """
+    if not isinstance(slot_name, str) or not SLOT_NAME.match(slot_name):
+        _die(f"{where}: the name must be camelCase")
+    if slot_name in RESERVED_SLOTS or slot_name in props:
+        _die(f"{where}: the name collides with a prop or reserved argument")
+    if not isinstance(slot, dict):
+        _die(f"{where} must be an object")
+    unknown = sorted(set(slot) - SLOT_KEYS)
+    if unknown:
+        _die(f"{where} has unknown keys: {', '.join(unknown)}")
+    native = slot.get("native")
+    if not isinstance(native, str) or not NATIVE_PARAMETER.match(native):
+        _die(f"{where}: 'native' must be a parameter name")
+    if native in natives or native in props:
+        # Two arguments with one name is not valid Kotlin, and a slot that
+        # shadows a prop drops one of them silently.
+        _die(f"{where}: 'native' repeats another parameter")
+    natives.add(native)
+    if not isinstance(slot.get("nullable", False), bool):
+        _die(f"{where}: 'nullable' must be a boolean")
+    if slot.get("kind", "content") not in SLOT_KINDS:
+        _die(f"{where}: 'kind' must be one of " + ", ".join(sorted(SLOT_KINDS)))
+    if slot.get("consume") not in {None, *CONSUMERS}:
+        _die(f"{where}: 'consume' must be one of " + ", ".join(sorted(CONSUMERS)))
+    if slot.get("nullable", False) and slot.get("consume") is not None:
+        # A consumed scope has to be applied, which a null slot never is.
+        _die(f"{where}: 'consume' needs a non-nullable slot")
+    if slot.get("nullable", False) and slot.get("kind") == "items":
+        # A nullable parameter takes a plain lambda, which cannot list items
+        # lazily; composing them eagerly instead would be a different tree.
+        _die(f"{where}: an items slot cannot be nullable")
 
 
 def _validate_prop(name: str, prop_name: str, prop: dict[str, Any]) -> None:
@@ -272,6 +374,11 @@ def _validate_prop(name: str, prop_name: str, prop: dict[str, Any]) -> None:
             _die(f"prop {name}.{prop_name} {bound} must be finite numeric data")
     if "minimum" in prop and "maximum" in prop and prop["minimum"] > prop["maximum"]:
         _die(f"prop {name}.{prop_name} minimum exceeds maximum")
+    if "fallback" in prop:
+        if prop.get("decode") is None:
+            _die(f"prop {name}.{prop_name} 'fallback' needs a 'decode'")
+        if not isinstance(prop["fallback"], str) or not prop["fallback"]:
+            _die(f"prop {name}.{prop_name} 'fallback' must be Kotlin source")
 
 
 def _validate_action(action_id: str, action: dict[str, Any]) -> None:
@@ -491,6 +598,7 @@ def _node_schema(component_refs: list[str]) -> dict[str, Any]:
             "id": {"type": "string", "minLength": 1},
             "type": {"type": "string"},
             "props": {"type": "object"},
+            "slot": {"type": "string", "pattern": SLOT_NAME.pattern},
             "children": {
                 "type": "array",
                 "items": {"$ref": "#/definitions/Node"},
@@ -522,10 +630,19 @@ def _component_schema(
         "props": props_schema,
     }
     children = comp.get("children", {})
-    if children.get("allowed"):
+    slots = sorted(comp.get("slots", {}))
+    if children.get("allowed") or slots:
+        child: dict[str, Any] = {}
+        if slots:
+            child["properties"] = {"slot": {"enum": slots}}
+            if not children.get("allowed"):
+                child["required"] = ["slot"]
+        elif not children.get("allowed"):
+            child["properties"] = {"slot": False}
         minimum = children.get("min", 0)
-        if minimum:
-            node_properties["children"] = {"minItems": minimum}
+        if minimum and not slots:
+            child["minItems"] = minimum
+        node_properties["children"] = {"type": "array", "items": child}
     else:
         node_properties["children"] = False
     return {"type": "object", "properties": node_properties}
@@ -670,7 +787,7 @@ def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
 
 def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
     props = spec["props"]
-    arguments = {"id": "Stable instance key."}
+    alias = spec["children"].get("kind")
     lines = [
         f"class {name}(Component):",
         f'    """Native {name}; props and defaults follow the component manifest."""',
@@ -683,18 +800,8 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
         "        *,",
         "        id: str,",
     ]
-    for field, prop in sorted(props.items()):
-        python_name = _python_prop(field)
-        signature, description = _python_argument(name, field, prop)
-        lines.append(f"        {python_name}: {signature},")
-        arguments[python_name] = description
-    alias = spec["children"].get("kind")
-    if spec["children"]["allowed"]:
-        lines.append("        children: Content = (),")
-        arguments["children"] = "Ordered child nodes with stable keys."
-        if alias in {"content", "items"}:
-            lines.append(f"        {alias}: Content | None = None,")
-            arguments[alias] = f"Alternative spelling for {alias} children."
+    signature, arguments = _python_signature(name, spec)
+    lines.extend(signature)
     lines.extend(
         [
             "    ) -> None:",
@@ -751,6 +858,8 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
     if spec["children"]["allowed"]:
         lines.append('        normalized = content_nodes(children, key="children")')
         children = "normalized"
+    slot_lines, children = _python_slot_body(spec, children)
+    lines.extend(slot_lines)
     modifier = ", modifier=modifier" if "modifier" in props else ""
     invocation = f"id=id, children={children}{modifier}, **props"
     if len(invocation) + len("        super().__init__()") > 88:
@@ -760,6 +869,73 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
     else:
         lines.append(f"        super().__init__({invocation})")
     return [*lines, "", ""]
+
+
+def _python_signature(
+    name: str, spec: dict[str, Any]
+) -> tuple[list[str], dict[str, str]]:
+    """Render one component's keyword parameters and their docstring lines.
+
+    Args:
+        name: Component name, for prop annotations.
+        spec: The component's manifest entry.
+
+    Returns:
+        Signature lines, then one description per parameter.
+    """
+    lines: list[str] = []
+    arguments = {"id": "Stable instance key."}
+    for field, prop in sorted(spec["props"].items()):
+        python_name = _python_prop(field)
+        annotation, description = _python_argument(name, field, prop)
+        lines.append(f"        {python_name}: {annotation},")
+        arguments[python_name] = description
+    alias = spec["children"].get("kind")
+    if spec["children"]["allowed"]:
+        lines.append("        children: Content = (),")
+        arguments["children"] = "Ordered child nodes with stable keys."
+        if alias in {"content", "items"}:
+            lines.append(f"        {alias}: Content | None = None,")
+            arguments[alias] = f"Alternative spelling for {alias} children."
+    for slot_name, slot in sorted(spec.get("slots", {}).items()):
+        slot_arg = _python_prop(slot_name)
+        lines.append(f"        {slot_arg}: Content | None = None,")
+        arguments[slot_arg] = f"Nodes for the native {slot['native']} slot."
+    return lines, arguments
+
+
+def _python_slot_body(spec: dict[str, Any], children: str) -> tuple[list[str], str]:
+    """Render the statements that collect one component's named slots.
+
+    Args:
+        spec: The component's manifest entry.
+        children: Expression for the primary children so far.
+
+    Returns:
+        Body lines, then the child expression the constructor passes on.
+    """
+    if not spec.get("slots"):
+        return [], children
+    lines = ["        slotted: tuple[Node, ...] = ()"]
+    for slot_name, _slot in sorted(spec["slots"].items()):
+        slot_arg = _python_prop(slot_name)
+        call = f"slotted += slot_nodes({slot_arg}, "
+        lines.append(f"        if {slot_arg} is not None:")
+        single = f'{call}key="{slot_name}", slot="{slot_name}")'
+        if len(single) + len("            ") <= 88:
+            lines.append(f"            {single}")
+            continue
+        lines.extend(
+            [
+                "            slotted += slot_nodes(",
+                f"                {slot_arg},",
+                f'                key="{slot_name}",',
+                f'                slot="{slot_name}",',
+                "            )",
+            ]
+        )
+    combined = "slotted" if children == "()" else "normalized + slotted"
+    return lines, combined
 
 
 def _python_argument(
@@ -800,7 +976,8 @@ def render_python_components(
         "",
         "from pycompose.components.base import Component",
         "from pycompose.components.modifiers import Modifier",
-        "from pycompose.composition import Content, content_nodes",
+        "from pycompose.composition import Content, content_nodes, slot_nodes",
+        "from pycompose.core.node import Node",
         "from pycompose.core.props import JsonValue",
         "from pycompose.errors import IrValidationError",
         "",
@@ -981,6 +1158,9 @@ def render_kotlin_models(registry: dict[str, Any]) -> str:
         "    val props: UiProps",
         "    val children: List<UiNode>",
         "    val componentType: String",
+        "",
+        "    /** Slot this node fills in its parent; null is the primary slot. */",
+        "    val slot: String? get() = null",
         "}",
         "",
         "sealed interface UiProps {",
@@ -1018,6 +1198,7 @@ def render_kotlin_models(registry: dict[str, Any]) -> str:
         )
         if spec["children"]["allowed"]:
             lines.append("    override val children: List<UiNode> = emptyList(),")
+        lines.append("    override val slot: String? = null,")
         lines.append(") : UiNode {")
         if not spec["children"]["allowed"]:
             lines.append("    override val children: List<UiNode> get() = emptyList()")
@@ -1104,6 +1285,9 @@ def render_kotlin_registry(registry: dict[str, Any]) -> str:
         lines.extend(
             [
                 f"        {_kt_string(name)} to ComponentRule(",
+                "            slots = setOf("
+                + ", ".join(_kt_string(slot) for slot in sorted(spec.get("slots", {})))
+                + "),",
                 "            childrenAllowed = "
                 + str(spec["children"]["allowed"]).lower()
                 + ",",
@@ -1338,12 +1522,29 @@ def main(argv: list[str] | None = None) -> int:
         )
         artifacts[KOTLIN_ADAPTERS_PATH] = adapters
         artifacts[mirror] = adapters
-    for path in tuple(artifacts):
-        if not path.is_relative_to(ROOT / "android"):
+    # The template is the project `pycompose init` scaffolds, and it carries the
+    # framework sources verbatim. Whatever the modules have is what a generated
+    # app gets, so every counterpart is mirrored -- not just the generated half,
+    # which would ship a project whose renderer predates its adapters.
+    template = ROOT / "pycompose/templates/android"
+    for path in sorted(template.rglob("*")):
+        if not path.is_file():
             continue
-        artifacts[
-            ROOT / "pycompose/templates/android" / path.relative_to(ROOT / "android")
-        ] = artifacts[path]
+        source = ROOT / "android" / path.relative_to(template)
+        if not source.is_file():
+            continue
+        raw = source.read_bytes()
+        try:
+            contents = raw.decode("utf-8")
+        except UnicodeDecodeError:
+            contents = None
+        if contents is None or "\r" in contents:
+            # Not plain LF text: the Gradle wrapper jar is not source at all,
+            # and gradlew.bat keeps its CRLF line endings. `pycompose init`
+            # copies both, and tests/test_template_parity.py compares them byte
+            # for byte -- it sees what a text artifact cannot.
+            continue
+        artifacts[path] = contents
     for fixture in sorted((ROOT / "pycompose/testing/fixtures").glob("*.json")):
         relative = Path("ir/src/test/resources") / fixture.name
         contents = fixture.read_text(encoding="utf-8")

@@ -1,6 +1,7 @@
 package com.pycompose.host
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -79,6 +80,41 @@ class BuiltinComponentsTest {
         compose.onNode(isToggleable()).performClick()
         assertEquals("""{"done":true}""", actions.last().payload.toString())
         assertEquals(3, actions.size)
+    }
+
+    @Test
+    fun declaredSlotsComposeOnceAndThePrimaryChildrenBelowTheTopBar() {
+        // Scaffold declares five content parameters; before slots the wire could
+        // only say "children", so a topBar was unreachable from Python. The
+        // failure mode this pins: slotted children leaking into the content
+        // subtree and composing twice.
+        val source =
+            """
+            {"version":"0.1.0","schemaVersion":"1.15.0","root":{
+              "id":"root","type":"Scaffold","props":{},"children":[
+                {"id":"body","type":"Text","props":{"text":"Content here"}},
+                {"id":"bar","type":"Text","props":{"text":"Top bar"},"slot":"topBar"}]}}
+            """.trimIndent()
+        val snapshot = IrParser().parse(source).getOrThrow()
+        val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher {})
+        compose.setContent { PyComposeTheme { renderer.Render(snapshot) } }
+
+        compose.onNodeWithText("Top bar").assertExists()
+        assertEquals(1, compose.onAllNodesWithText("Top bar").fetchSemanticsNodes().size)
+        assertEquals(1, compose.onAllNodesWithText("Content here").fetchSemanticsNodes().size)
+        // The slot is laid out where Scaffold puts a top bar, and the content is
+        // pushed below it by the PaddingValues its adapter consumes.
+        val top =
+            compose
+                .onNodeWithText("Top bar")
+                .getBoundsInRoot()
+                .top.value
+        val body =
+            compose
+                .onNodeWithText("Content here")
+                .getBoundsInRoot()
+                .top.value
+        assertTrue("topBar at $top should precede content at $body", top < body)
     }
 
     @Test fun resourceGoldenUsesRealLocalizedStringsDrawableAndAsset() {

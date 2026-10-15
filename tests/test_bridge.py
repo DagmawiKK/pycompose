@@ -39,7 +39,7 @@ def test_action_handler_publishes_the_next_canonical_snapshot() -> None:
     assert bridge.accept_action('{"actionId":"increment","payload":{"by":2}}') is None
     assert bridge.expose_latest_snapshot() == (
         '{"root":{"id":"root","props":{"text":"2"},"type":"Text"},'
-        '"schemaVersion":"1.14.0","version":"0.1.0"}'
+        '"schemaVersion":"1.15.0","version":"0.1.0"}'
     )
     assert store.value.root.props.values["text"] == "2"
 

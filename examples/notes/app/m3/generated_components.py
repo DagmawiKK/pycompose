@@ -7,7 +7,8 @@ from typing import Literal
 
 from pycompose.components.base import Component
 from pycompose.components.modifiers import Modifier
-from pycompose.composition import Content, content_nodes
+from pycompose.composition import Content, content_nodes, slot_nodes
+from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
 from pycompose.core.values import UNSET, _Unset
 from pycompose.errors import IrValidationError
@@ -199,6 +200,10 @@ class Scaffold(Component):
         modifier: Modifier | None = None,
         children: Content = (),
         content: Content | None = None,
+        bottom_bar: Content | None = None,
+        floating_action_button: Content | None = None,
+        snackbar_host: Content | None = None,
+        top_bar: Content | None = None,
     ) -> None:
         """Construct a registered Scaffold.
 
@@ -208,6 +213,10 @@ class Scaffold(Component):
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
+            bottom_bar: Nodes for the native bottomBar slot.
+            floating_action_button: Nodes for the native floatingActionButton slot.
+            snackbar_host: Nodes for the native snackbarHost slot.
+            top_bar: Nodes for the native topBar slot.
 
         Raises:
             IrValidationError: If slot and children are both set.
@@ -222,7 +231,26 @@ class Scaffold(Component):
                 )
             children = content_nodes(content, key="content")
         normalized = content_nodes(children, key="children")
-        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+        slotted: tuple[Node, ...] = ()
+        if bottom_bar is not None:
+            slotted += slot_nodes(bottom_bar, key="bottomBar", slot="bottomBar")
+        if floating_action_button is not None:
+            slotted += slot_nodes(
+                floating_action_button,
+                key="floatingActionButton",
+                slot="floatingActionButton",
+            )
+        if snackbar_host is not None:
+            slotted += slot_nodes(
+                snackbar_host,
+                key="snackbarHost",
+                slot="snackbarHost",
+            )
+        if top_bar is not None:
+            slotted += slot_nodes(top_bar, key="topBar", slot="topBar")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class Spacer(Component):

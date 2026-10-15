@@ -14,6 +14,9 @@ sealed interface UiNode {
     val props: UiProps
     val children: List<UiNode>
     val componentType: String
+
+    /** Slot this node fills in its parent; null is the primary slot. */
+    val slot: String? get() = null
 }
 
 sealed interface UiProps {
@@ -40,6 +43,7 @@ data class Box(
     override val id: String,
     override val props: BoxProps,
     override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Box"
 }
@@ -59,6 +63,7 @@ data class ButtonProps(
 data class Button(
     override val id: String,
     override val props: ButtonProps,
+    override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "Button"
@@ -77,6 +82,7 @@ data class CheckboxProps(
 data class Checkbox(
     override val id: String,
     override val props: CheckboxProps,
+    override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "Checkbox"
@@ -94,6 +100,7 @@ data class Column(
     override val id: String,
     override val props: ColumnProps,
     override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Column"
 }
@@ -112,6 +119,7 @@ data class FilterChipProps(
 data class FilterChip(
     override val id: String,
     override val props: FilterChipProps,
+    override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "FilterChip"
@@ -129,6 +137,7 @@ data class ImageProps(
 data class Image(
     override val id: String,
     override val props: ImageProps,
+    override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "Image"
@@ -146,6 +155,7 @@ data class LazyColumn(
     override val id: String,
     override val props: LazyColumnProps,
     override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "LazyColumn"
 }
@@ -162,6 +172,7 @@ data class Row(
     override val id: String,
     override val props: RowProps,
     override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Row"
 }
@@ -178,6 +189,7 @@ data class Scaffold(
     override val id: String,
     override val props: ScaffoldProps,
     override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Scaffold"
 }
@@ -192,6 +204,7 @@ data class SpacerProps(
 data class Spacer(
     override val id: String,
     override val props: SpacerProps,
+    override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "Spacer"
@@ -213,6 +226,7 @@ data class TextProps(
 data class Text(
     override val id: String,
     override val props: TextProps,
+    override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "Text"
@@ -231,6 +245,7 @@ data class TextButtonProps(
 data class TextButton(
     override val id: String,
     override val props: TextButtonProps,
+    override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "TextButton"
@@ -252,6 +267,7 @@ data class TextFieldProps(
 data class TextField(
     override val id: String,
     override val props: TextFieldProps,
+    override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "TextField"

@@ -103,6 +103,7 @@ class _Expansion:
                 type=node.type,
                 props=node.props,
                 children=frame.children,
+                slot=node.slot,
             )
         )
         frame.output.append(result)

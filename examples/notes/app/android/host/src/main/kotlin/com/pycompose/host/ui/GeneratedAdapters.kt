@@ -4,13 +4,25 @@ package com.pycompose.host.ui
 
 import com.pycompose.renderer.ComponentRegistry
 import kotlinx.serialization.json.JsonPrimitive
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.Modifier
 import com.pycompose.ir.generated.Button as ButtonNode
+import com.pycompose.ir.generated.Column as ColumnNode
+import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
+import com.pycompose.ir.generated.Row as RowNode
+import com.pycompose.ir.generated.Scaffold as ScaffoldNode
 import com.pycompose.ir.generated.Spacer as SpacerNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
+import kotlinx.serialization.json.JsonObject
 
 /** Adapters derived mechanically from the schema, for every component whose
  * props carry no decision a generator cannot make. */
@@ -36,7 +48,51 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                 ) {
                     Text(model.props.text)
+                }
             }
+            .register("Column") { node, modifier, context ->
+                val model = node as ColumnNode
+                val horizontalAlignmentValue: androidx.compose.ui.Alignment.Horizontal = com.pycompose.renderer.PropResolver.horizontal(model.props.horizontalAlignment).getOrDefault(androidx.compose.ui.Alignment.Start)
+                Column(
+                    modifier = modifier,
+                    horizontalAlignment = horizontalAlignmentValue,
+                    content = { context.children(model.children) },
+                )
+            }
+            .register("LazyColumn") { node, modifier, context ->
+                val model = node as LazyColumnNode
+                val verticalArrangementValue: androidx.compose.foundation.layout.Arrangement.Vertical = com.pycompose.renderer.PropResolver.arrangement(model.props.verticalArrangement).getOrDefault(androidx.compose.foundation.layout.Arrangement.Top)
+                LazyColumn(
+                    modifier = modifier,
+                    verticalArrangement = verticalArrangementValue,
+                    content = { items(context.unslotted(model.children), key = { it.id }) { context.node(it) } },
+                )
+            }
+            .register("Row") { node, modifier, context ->
+                val model = node as RowNode
+                val verticalAlignmentValue: androidx.compose.ui.Alignment.Vertical = com.pycompose.renderer.PropResolver.vertical(model.props.verticalAlignment).getOrDefault(androidx.compose.ui.Alignment.Top)
+                Row(
+                    modifier = modifier,
+                    verticalAlignment = verticalAlignmentValue,
+                    content = { context.children(model.children) },
+                )
+            }
+            .register("Scaffold") { node, modifier, context ->
+                val model = node as ScaffoldNode
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.MaterialTheme.colorScheme.background)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.MaterialTheme.colorScheme.background)
+                    else -> androidx.compose.material3.MaterialTheme.colorScheme.background
+                }
+                Scaffold(
+                    modifier = modifier,
+                    containerColor = containerColorValue,
+                    bottomBar = { context.slot(model.children, "bottomBar")?.invoke() },
+                    floatingActionButton = { context.slot(model.children, "floatingActionButton")?.invoke() },
+                    snackbarHost = { context.slot(model.children, "snackbarHost")?.invoke() },
+                    topBar = { context.slot(model.children, "topBar")?.invoke() },
+                    content = { padding -> Column(Modifier.padding(padding)) { context.children(model.children) } },
+                )
             }
             .register("Spacer") { node, modifier, context ->
                 val model = node as SpacerNode
@@ -52,7 +108,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                 ) {
                     Text(model.props.text)
-            }
+                }
             }
     fun register(into: ComponentRegistry.Builder):
         ComponentRegistry.Builder =

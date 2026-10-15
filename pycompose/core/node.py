@@ -110,12 +110,15 @@ class Node:
         type: Component type name (e.g. ``Button``).
         props: The node's ``camelCase`` props.
         children: Child nodes (empty for leaves).
+        slot: Named slot this node fills in its parent, or ``None`` for the
+            parent's primary children.
     """
 
     id: str
     type: str
     props: Props = field(default_factory=Props)
     children: tuple[Node, ...] = ()
+    slot: str | None = None
 
     def __init__(
         self,
@@ -123,6 +126,7 @@ class Node:
         type: str,
         props: Props | Mapping[str, JsonValue | FrozenJsonValue] = _EMPTY_PROPS,
         children: Iterable[Node] = (),
+        slot: str | None = None,
     ) -> None:
         """Construct a node, normalizing mappings into immutable Props.
 
@@ -133,23 +137,29 @@ class Node:
             type: Registered component name (validated later).
             props: Immutable Props or caller-owned mapping to detach.
             children: Child nodes, normalized to a tuple.
+            slot: Named slot in the parent, or ``None`` for primary children.
         """
         object.__setattr__(self, "id", id)
         object.__setattr__(self, "type", type)
         object.__setattr__(self, "props", props)
         object.__setattr__(self, "children", children)
+        object.__setattr__(self, "slot", slot)
         self.__post_init__()
 
     def __post_init__(self) -> None:
         """Validate structure and detach raw props at the ownership boundary.
 
         Raises:
-            IrError: If identity, props or child types are invalid.
+            IrError: If identity, props, slot or child types are invalid.
         """
         if not isinstance(self.id, str) or not self.id:
             raise IrError("node id must be non-empty", node_type=self.type)
         if not isinstance(self.type, str) or not self.type:
             raise IrError("node type must be non-empty", node_id=self.id)
+        if self.slot is not None and (
+            not isinstance(self.slot, str) or not is_camel_case(self.slot)
+        ):
+            raise IrError("node slot must be a camelCase name", node_id=self.id)
         props = cast(object, self.props)
         if not isinstance(props, Props):
             if not isinstance(props, Mapping):
