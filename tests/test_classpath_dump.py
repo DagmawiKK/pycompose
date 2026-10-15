@@ -89,22 +89,6 @@ def write_inventory(directory: Path, records: list[dict], **changes):
     return document
 
 
-@pytest.fixture(scope="module")
-def native_document():
-    """Exercise the Gradle task once, never silently reuse an old artifact."""
-    if os.environ.get("PYCOMPOSE_NATIVE_API_TESTS") != "1":
-        pytest.skip("native CI runs the pinned artifact extraction")
-    result = subprocess.run(
-        ["./gradlew", "dumpComposeDefaults", "--rerun-tasks", "--console=plain"],
-        cwd="android",
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    assert result.returncode == 0, result.stdout + result.stderr
-    return json.loads((DUMP / "inventory.json").read_text())
-
-
 def test_dump_extracts_exact_public_signatures_and_receivers(native_document) -> None:
     document = native_document
     assert document["formatVersion"] == 1
@@ -746,6 +730,7 @@ class GeneratedBindingProof {{
     result = subprocess.run(
         [
             "./gradlew",
+            "-Pkotlin.incremental=false",
             "--init-script",
             str(init),
             ":host:testDebugUnitTest",

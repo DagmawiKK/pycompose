@@ -17,9 +17,10 @@ def render_default(expression: dict[str, Any], imports: set[str]) -> str:
     """Validate and render one typed expression, collecting extension imports.
 
     The vocabulary is closed and mirrors ``android/tools/SourceDefaults.kt``:
-    literals, public properties, extension properties over a literal receiver, and
-    zero-argument public calls. A call carrying arguments would smuggle per-binding
-    Kotlin back into the schema, so it is refused rather than rendered.
+    literals, public properties, singleton objects, extension properties over a
+    literal receiver, and zero-argument public calls. A call carrying arguments
+    would smuggle per-binding Kotlin back into the schema, so it is refused rather
+    than rendered.
 
     Args:
         expression: Compiler-resolved default evidence.
@@ -35,9 +36,10 @@ def render_default(expression: dict[str, Any], imports: set[str]) -> str:
     if kind == "literal":
         _keys(expression, {"kind", "type", "value"})
         return _literal(expression["value"], expression["type"])
-    if kind in {"property", "extensionProperty", "call"}:
+    if kind in {"property", "object", "extensionProperty", "call"}:
         fields = {
             "property": set(),
+            "object": set(),
             "extensionProperty": {"receiver"},
             "call": set(),
         }[kind]
@@ -45,7 +47,7 @@ def render_default(expression: dict[str, Any], imports: set[str]) -> str:
         symbol = expression["symbol"]
         if not isinstance(symbol, str) or not SYMBOL.fullmatch(symbol):
             raise ValueError("default needs a qualified native symbol")
-        if kind == "property":
+        if kind in {"property", "object"}:
             return symbol
         if kind == "extensionProperty":
             alias = "default_" + symbol.replace(".", "_")

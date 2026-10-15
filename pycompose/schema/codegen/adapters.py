@@ -24,6 +24,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.schema.codegen.values import resolver_call
+
 COMPOSE_PACKAGE = {
     "Box": "androidx.compose.foundation.layout",
     "Button": "androidx.compose.material3",
@@ -347,16 +349,12 @@ def _render_prop(prop: str, spec: dict[str, Any], out: _Fragments) -> bool:
 
     if prop_type == "value":
         family = spec["valueType"]
-        method = family[:1].lower() + family[1:]
         wire = f"model.props.{prop_name}"
         declaration = ""
         if not spec.get("required"):
             declaration = f"val {prop_name}Wire = {wire}\n                "
             wire = f"{prop_name}Wire"
-        call = (
-            f"com.pycompose.renderer.generated.ValueResolver.{method}"
-            f"({wire}).getOrThrow()"
-        )
+        call = resolver_call(family, wire) + ".getOrThrow()"
         if spec.get("nullable"):
             call = (
                 f"when ({wire}) {{\n"
@@ -364,7 +362,7 @@ def _render_prop(prop: str, spec: dict[str, Any], out: _Fragments) -> bool:
                 f"{spec['nativeDefault']}\n"
                 "                    com.pycompose.ir.OptionalValue.Null -> null\n"
                 f"                    is com.pycompose.ir.OptionalValue.Present -> "
-                f"com.pycompose.renderer.generated.ValueResolver.{method}({wire}.value).getOrThrow()\n"
+                f"{resolver_call(family, f'{wire}.value')}.getOrThrow()\n"
                 "                }"
             )
         elif not spec.get("required"):

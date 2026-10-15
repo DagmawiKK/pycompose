@@ -7,6 +7,7 @@ import keyword
 from typing import Any
 
 from pycompose.core.props import to_snake_case
+from pycompose.core.values import FLOAT_MAX, FLOAT_MIN
 from pycompose.schema.codegen.defaults import render_default
 
 KINDS = {"scalar", "record", "factory", "constant", "reference"}
@@ -128,6 +129,34 @@ def dependency_closure(
         for name, spec in registry.get("valueTypes", {}).items()
         if "family" not in spec or spec["family"] in needed
     }
+
+
+def method_name(family: str) -> str:
+    """Name the generated resolver method for one value family.
+
+    Args:
+        family: The value family, e.g. ``Sp``.
+
+    Returns:
+        The Kotlin method name, e.g. ``sp``.
+    """
+    return family[:1].lower() + family[1:]
+
+
+def resolver_call(family: str, source: str) -> str:
+    """Call the generated value resolver for one family over wire data.
+
+    Args:
+        family: The value family, e.g. ``Sp``.
+        source: The Kotlin expression holding the JSON value.
+
+    Returns:
+        Kotlin source evaluating to the native value.
+    """
+    return (
+        f"com.pycompose.renderer.generated.ValueResolver.{method_name(family)}"
+        f"({source})"
+    )
 
 
 def render_python(registry: dict[str, Any]) -> str:
@@ -358,7 +387,7 @@ def render_native(registry: dict[str, Any]) -> str:
         native_type = next(
             s["kotlinType"] for s in specs.values() if s["family"] == family
         )
-        method = family[:1].lower() + family[1:]
+        method = method_name(family)
         lines.extend(
             [
                 "    @Composable",
@@ -429,7 +458,7 @@ def _decode_parameter(source: str, rule: dict[str, Any]) -> str:
     kind = rule["type"]
     if kind == "value":
         family = rule["valueType"]
-        return f"{family[:1].lower() + family[1:]}({source})"
+        return f"{method_name(family)}({source})"
     if kind == "list":
         converted = _decode_parameter("element", rule["items"])
         return f"{source}.map {{ element -> {converted} }}"
@@ -490,15 +519,15 @@ def parameter_schema(rule: dict[str, Any]) -> dict[str, Any]:
             bits = 32 if rule["type"] == "int" else 64
             schema.update(minimum=-(2 ** (bits - 1)), maximum=2 ** (bits - 1) - 1)
         if rule["type"] == "float":
-            schema.update(minimum=-3.4028234663852886e38, maximum=3.4028234663852886e38)
+            schema.update(minimum=-FLOAT_MAX, maximum=FLOAT_MAX)
             schema = {
                 "allOf": [
                     schema,
                     {
                         "anyOf": [
                             {"const": 0},
-                            {"minimum": 1.401298464324817e-45},
-                            {"maximum": -1.401298464324817e-45},
+                            {"minimum": FLOAT_MIN},
+                            {"maximum": -FLOAT_MIN},
                         ]
                     },
                 ]

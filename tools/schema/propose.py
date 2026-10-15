@@ -96,6 +96,22 @@ def assignable(found: Inventory, family: dict[str, str], source: str) -> bool:
     return family["kotlinType"].replace(".", "/") in ancestors(found).get(source, set())
 
 
+def value_families(registry: dict[str, Any]) -> dict[str, str]:
+    """Map every implemented native type to its wire family.
+
+    Args:
+        registry: The approved component registry.
+
+    Returns:
+        Native type names, ``/``-separated, keyed to family names.
+    """
+    return {
+        spec["kotlinType"].replace(".", "/"): spec["family"]
+        for spec in registry.get("valueTypes", {}).values()
+        if "family" in spec
+    }
+
+
 def _rule(value: KotlinType, families: dict[str, str]) -> dict[str, Any]:
     if value.classifier in SCALARS:
         result: dict[str, Any] = {"type": SCALARS[value.classifier]}
@@ -488,11 +504,7 @@ def bind(
             }
     except ValueError as exc:
         return {"name": name, "unsupported": str(exc)}
-    families = {
-        s["kotlinType"].replace(".", "/"): s["family"]
-        for s in registry["valueTypes"].values()
-        if "family" in s
-    }
+    families = value_families(registry)
     matches = select(found, approved.get("source"), name)
     if not matches:
         return {"name": name, "unsupported": "no public value callable at this pin"}

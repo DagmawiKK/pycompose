@@ -180,7 +180,7 @@ jobs:
         env:
           PYCOMPOSE_NATIVE_API_TESTS: "1"
         run: |
-          pytest -q tests/test_classpath_dump.py
+          pytest -q tests/test_classpath_dump.py tests/test_component_proposals.py
           python tools/schema/classpath_dump.py --report android/build/compose-api/capabilities.json
           python tools/schema/check_upstream.py
       - name: Upload reports

@@ -16,7 +16,7 @@ fun hex(bytes: ByteArray): String {
     return digest.joinToString("") { "%02x".format(it) }
 }
 
-/** Every approved binding, so one BOM bump resolves the whole catalog. */
+/** Every approved value binding; every pinned UI overload is requested below. */
 fun approvedNames(schema: File): String {
     val registry = JsonSlurper().parse(schema) as Map<*, *>
     val values = registry["valueTypes"] as Map<*, *>
@@ -59,9 +59,9 @@ tasks.register("dumpComposeDefaults") {
                 val supported = record["disposition"] == "support"
                 val named = requested.contains(record["name"].toString())
                 val constructed = record["name"] == "<init>" && requested.contains(owner)
-                supported && (named || constructed)
+                record["disposition"] == "ui" || supported && (named || constructed)
             }
-        check(targets.isNotEmpty()) { "No matching public value declarations" }
+        check(targets.isNotEmpty()) { "No matching public declarations" }
 
         val sources = targets.map { it["artifact"].toString() }.toSortedSet()
         val archives =

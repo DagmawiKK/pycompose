@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -115,7 +116,13 @@ private class Defaults(private val context: BindingContext) {
         reference: KtNameReferenceExpression,
         type: KotlinType,
     ): Map<String, Any?> {
-        val property = context[BindingContext.REFERENCE_TARGET, reference] as? PropertyDescriptor
+        val target = context[BindingContext.REFERENCE_TARGET, reference]
+        if (target is ClassDescriptor && target.kind == ClassKind.OBJECT) {
+            check(resolving.isEmpty() && target.exported()) { "non-public/token object default" }
+            staticQualifier(node)
+            return mapOf("kind" to "object", "symbol" to target.symbol())
+        }
+        val property = target as? PropertyDescriptor
             ?: error("default is not a resolved property")
         check(!property.isVar) { "mutable default reference" }
         if (property.extensionReceiverParameter == null) staticQualifier(node)
@@ -188,7 +195,10 @@ private class Defaults(private val context: BindingContext) {
         }
         // Only a zero-argument call is a reusable policy. Anything with
         // arguments would smuggle per-binding Kotlin back into the schema.
-        check(resolved.valueArguments.isEmpty()) { "default call takes arguments" }
+        check(
+            call.valueArguments.isEmpty() && call.lambdaArguments.isEmpty() &&
+                resolved.valueArguments.values.all { it.arguments.isEmpty() },
+        ) { "default call takes arguments" }
         val symbol = if (target is ConstructorDescriptor) {
             target.containingDeclaration.symbol()
         } else {
@@ -208,16 +218,33 @@ private fun targetSymbol(target: JsonObject): String {
     }
 }
 
-private fun CallableDescriptor.matches(target: JsonObject): Boolean {
+private fun CallableDescriptor.matches(target: JsonObject, defaults: Boolean = true): Boolean {
     val parameters = target.getAsJsonArray("parameters")
     val identity = if (this is ConstructorDescriptor) containingDeclaration.symbol() else symbol()
+    val receiver = target["receiver"]
+    val receiverMatches = if (receiver.isJsonNull) {
+        extensionReceiverParameter == null
+    } else {
+        extensionReceiverParameter?.type?.matches(receiver.asJsonObject) == true
+    }
     return identity == targetSymbol(target) &&
+        receiverMatches &&
+        contextReceiverParameters.size == target.getAsJsonArray("contextReceivers").size() &&
+        contextReceiverParameters.zip(
+            target.getAsJsonArray("contextReceivers"),
+        ).all { (actual, expected) ->
+            actual.type.matches(expected.asJsonObject)
+        } &&
         (this is ConstructorDescriptor) == (target["declarationKind"].asString == "constructor") &&
         valueParameters.size == parameters.size() &&
         valueParameters.zip(parameters).all { (actual, expected) ->
             actual.name.asString() == expected.asJsonObject["name"].asString &&
                 actual.type.matches(expected.asJsonObject.getAsJsonObject("type")) &&
-                actual.declaresDefaultValue() == expected.asJsonObject["hasDefault"].asBoolean
+                (
+                    !defaults ||
+                        actual.declaresDefaultValue() ==
+                        expected.asJsonObject["hasDefault"].asBoolean
+                    )
         } &&
         returnType?.matches(target.getAsJsonObject("returnType")) == true
 }
@@ -227,12 +254,28 @@ private fun resolveTarget(
     declarations: List<Pair<KtDeclaration, CallableDescriptor>>,
     defaults: Defaults,
 ): Map<String, Any?> {
-    val matches = declarations.filter { (node, descriptor) ->
+    val direct = declarations.filter { (node, descriptor) ->
         descriptor.matches(target) &&
             (
                 target["sourceFile"].isJsonNull ||
                     node.containingKtFile.name == target["sourceFile"].asString
                 )
+    }
+    // Android actual declarations inherit defaults from their common expect.
+    // Require both an exact platform signature/file and one matching expect;
+    // never search by name or borrow another overload's defaults.
+    val platform = declarations.filter { (node, descriptor) ->
+        (descriptor as? MemberDescriptor)?.isActual == true &&
+            descriptor.matches(target, defaults = false) &&
+            !target["sourceFile"].isJsonNull &&
+            node.containingKtFile.name == target["sourceFile"].asString
+    }
+    val matches = if (direct.isEmpty() && platform.size == 1) {
+        declarations.filter { (_, descriptor) ->
+            (descriptor as? MemberDescriptor)?.isExpect == true && descriptor.matches(target)
+        }
+    } else {
+        direct
     }
     val parameters = target.getAsJsonArray("parameters").filter {
         it.asJsonObject["hasDefault"].asBoolean
