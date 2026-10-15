@@ -64,6 +64,40 @@ def test_pinned_ui_defaults_cover_every_exact_overload(native_document):
     assert all((s.owner, s.jvm_name, s.jvm_descriptor) in defaults for s in found.ui)
 
 
+def test_pinned_denominator_separates_components_from_styling_hooks(native_document):
+    from schema.classpath_dump import inventory, source_defaults
+    from schema.components import propose_components
+
+    assert native_document["provenance"]["bom"] == "2025.01.01"
+    report = propose_components(
+        inventory(DUMP),
+        source_defaults(DUMP),
+        json.loads(Path("schema/components.json").read_text()),
+    )
+    assert report["coverage"]["components"] == {
+        "names": 99,
+        "overloads": 132,
+        "callPlan": 88,
+        "blocked": 44,
+    }
+    assert report["coverage"]["hooks"] == {
+        "names": 17,
+        "overloads": 23,
+        "callPlan": 0,
+        "blocked": 23,
+    }
+    hooks = {c["name"] for c in report["candidates"] if c["surface"] == "hook"}
+    assert {"Thumb", "Container", "Indicator", "InputField"} <= hooks
+    # A member of a provided scope is app-composed, not a hook.
+    assert "ExposedDropdownMenu" not in hooks
+    assert (
+        next(c for c in report["candidates"] if c["name"] == "ExposedDropdownMenu")[
+            "surface"
+        ]
+        == "component"
+    )
+
+
 def test_generated_native_calls_render_defaults_slots_and_events(
     native_document, tmp_path
 ):
@@ -223,10 +257,12 @@ def test_batch_preserves_overloads_and_reports_required_and_optional_gaps(tmp_pa
     before = json.dumps(approved)
     report = propose_components(inventory(tmp_path), {}, approved)
     assert report["status"] == "proposal-only"
-    assert report["coverage"]["componentNames"] == 2
-    assert report["coverage"]["overloads"] == 3
-    assert report["coverage"]["callPlan"] == 2
-    assert report["coverage"]["blocked"] == 1
+    components = report["coverage"]["components"]
+    assert components["names"] == 2
+    assert components["overloads"] == 3
+    assert components["callPlan"] == 2
+    assert components["blocked"] == 1
+    assert report["coverage"]["hooks"]["overloads"] == 0
     assert report["coverage"]["enabled"] == 0
     assert report["coverage"]["compiled"] == 0
     samples = [p for p in report["candidates"] if p["name"] == "Sample"]
@@ -243,12 +279,93 @@ def test_batch_preserves_overloads_and_reports_required_and_optional_gaps(tmp_pa
         {
             "reason": "no wire policy for example/State",
             "blocks": ["Sample"],
+            "hooks": [],
             "limits": ["Other"],
         }
     ]
     assert json.dumps(approved) == before
     write_inventory(tmp_path, list(reversed(records)))
     assert propose_components(inventory(tmp_path), {}, approved) == report
+
+
+def test_styling_hooks_leave_the_component_denominator(tmp_path):
+    from schema.classpath_dump import inventory
+    from schema.components import propose_components
+
+    row_scope = type_doc("androidx/compose/foundation/layout/RowScope")
+    missing = type_doc("example/Missing")
+    records = [
+        # A scope-bound component: the app composes it inside the row provider.
+        declaration(
+            "Inside",
+            "scoped",
+            owner="androidx.compose.foundation.layout.RowScope",
+            dispatchReceiver=row_scope,
+            parameters=[parameter("value", missing)],
+        ),
+        # A styling hook: reachable only as a parameter of the component above.
+        declaration(
+            "Thumb",
+            "hook",
+            owner="example.SliderDefaults",
+            dispatchReceiver=type_doc("example/SliderDefaults"),
+            parameters=[parameter("value", missing)],
+        ),
+        # The provider that makes RowScope a scope an app receives.
+        declaration(
+            "Row",
+            "provider",
+            parameters=[
+                parameter(
+                    "content",
+                    type_doc(
+                        "kotlin/Function1",
+                        row_scope,
+                        type_doc("kotlin/Unit"),
+                        annotations=(
+                            "androidx/compose/runtime/Composable",
+                            "kotlin/ExtensionFunctionType",
+                        ),
+                    ),
+                )
+            ],
+        ),
+    ]
+    write_inventory(tmp_path, records)
+    report = propose_components(
+        inventory(tmp_path), {}, {"components": {}, "valueTypes": {}}
+    )
+
+    surfaces = {p["name"]: p["surface"] for p in report["candidates"]}
+    assert surfaces == {"Inside": "component", "Thumb": "hook", "Row": "component"}
+    assert report["coverage"]["components"] == {
+        "names": 2,
+        "overloads": 2,
+        "callPlan": 1,
+        "blocked": 1,
+    }
+    assert report["coverage"]["hooks"] == {
+        "names": 1,
+        "overloads": 1,
+        "callPlan": 0,
+        "blocked": 1,
+    }
+    # Hook gaps never read as component blockers, and a hook still records the
+    # capability its owner would need.
+    assert report["worklist"] == [
+        {
+            "reason": "no wire policy for example/Missing",
+            "blocks": ["Inside"],
+            "hooks": ["Thumb"],
+            "limits": [],
+        },
+        {
+            "reason": "receiver/generic declaration needs a native protocol",
+            "blocks": ["Inside"],
+            "hooks": ["Thumb"],
+            "limits": [],
+        },
+    ]
 
 
 def test_parameter_policies_use_types_not_component_or_parameter_names(tmp_path):

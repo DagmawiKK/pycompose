@@ -12,7 +12,7 @@ import argparse
 import json
 import sys
 from collections import Counter, defaultdict
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from pathlib import Path
 from typing import Any, NamedTuple
 
@@ -166,11 +166,54 @@ def _opt_ins(annotations: list[str]) -> set[str]:
     }
 
 
+def _scope_providers(declarations: Iterable[Declaration]) -> set[str]:
+    """Classifiers an app composes *inside*, not merely passes as a parameter.
+
+    A scope is provided by a composable that declares it as its own receiver (a
+    scoped builder) or as the receiver of a composable lambda parameter
+    (``content: FooScope.() -> Unit``). Members of such a type are composed by
+    the app within its provider; members of any other type only reach an app as
+    a parameter of the component that consumes them (ADR-0016 decision 1).
+    """
+    providers: set[str] = set()
+    for declaration in declarations:
+        if not declaration.composable:
+            continue
+        if declaration.receiver is not None:
+            providers.add(declaration.receiver.classifier)
+        for parameter in declaration.parameters:
+            value = parameter.type
+            if (
+                "androidx/compose/runtime/Composable" in value.annotations
+                and "kotlin/ExtensionFunctionType" in value.annotations
+                and value.arguments
+                and value.arguments[0][1] is not None
+            ):
+                providers.add(value.arguments[0][1].classifier)
+    return providers
+
+
+def _surface(source: Declaration, scope_providers: set[str]) -> str:
+    """Report whether an app composes a declaration or only passes it in.
+
+    Member composables of `*Defaults` objects and similar carriers
+    (`SliderDefaults.Thumb`, `TextFieldDefaults.Container`) are styling hooks:
+    parameter support for the component that consumes them, never entries in the
+    component denominator. Members of a provided scope (`ExposedDropdownMenu`
+    inside `ExposedDropdownMenuBoxScope`) are scope-bound components.
+    """
+    receiver = source.dispatch_receiver
+    if receiver is not None and receiver.classifier not in scope_providers:
+        return "hook"
+    return "component"
+
+
 def _plan(
     source: Declaration,
     families: dict[str, str],
     defaults: dict[str, Any],
     default_markers: dict[str, set[str]],
+    scope_providers: set[str],
 ) -> dict[str, Any]:
     """Plan one exact overload, recording every capability it would need."""
     parameters: dict[str, Any] = {}
@@ -212,6 +255,7 @@ def _plan(
             opt_ins.update(default_markers.get(symbol, set()))
     return {
         "name": source.name,
+        "surface": _surface(source, scope_providers),
         "source": identity(source),
         "call": source.package + "." + source.name,
         "annotations": source.annotations,
@@ -363,24 +407,43 @@ def _block_unaddressable_overloads(candidates: list[dict[str, Any]]) -> None:
 def _worklist(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Group recorded gaps by the capability that would close them.
 
-    Each reason lists the components it blocks and the ones it only limits, so
-    capabilities can be added in one deliberate batch instead of overload by
-    overload.
+    Each reason lists the components it blocks, the hooks it blocks (styling
+    hooks are parameter support, so their gaps never read as component
+    blockers), and the names it only limits — so capabilities can be added in
+    one deliberate batch instead of overload by overload.
     """
     blocking: dict[str, set[str]] = defaultdict(set)
+    hooks: dict[str, set[str]] = defaultdict(set)
     limiting: dict[str, set[str]] = defaultdict(set)
     for candidate in candidates:
         for gap in candidate["gaps"]:
-            bucket = blocking if gap["required"] else limiting
-            bucket[gap["reason"]].add(candidate["name"])
+            if not gap["required"]:
+                limiting[gap["reason"]].add(candidate["name"])
+            elif candidate["surface"] == "hook":
+                hooks[gap["reason"]].add(candidate["name"])
+            else:
+                blocking[gap["reason"]].add(candidate["name"])
     return [
         {
             "reason": reason,
             "blocks": sorted(blocking[reason]),
+            "hooks": sorted(hooks[reason]),
             "limits": sorted(limiting[reason]),
         }
-        for reason in sorted(blocking.keys() | limiting.keys())
+        for reason in sorted(blocking.keys() | hooks.keys() | limiting.keys())
     ]
+
+
+def _surface_coverage(candidates: list[dict[str, Any]], surface: str) -> dict[str, int]:
+    """Count what one surface offers, keeping hooks out of the component tally."""
+    subset = [c for c in candidates if c["surface"] == surface]
+    statuses = Counter(c["status"] for c in subset)
+    return {
+        "names": len({c["name"] for c in subset}),
+        "overloads": len(subset),
+        "callPlan": statuses["call-plan"],
+        "blocked": statuses["blocked"],
+    }
 
 
 def propose_components(
@@ -402,12 +465,14 @@ def propose_components(
     # Every representable argument is passed explicitly, so the arguments a call
     # carries are what Kotlin resolves on; overloads those arguments cannot tell
     # apart are refused rather than silently bound to a sibling.
+    scope_providers = _scope_providers(found.declarations)
     candidates = [
         _plan(
             source,
             families,
             defaults.get((source.owner, source.jvm_name, source.jvm_descriptor), {}),
             default_markers,
+            scope_providers,
         )
         for source in sorted(
             found.ui,
@@ -424,17 +489,14 @@ def propose_components(
         p["policy"] for c in candidates for p in c["parameters"].values()
     )
     _block_unaddressable_overloads(candidates)
-    statuses = Counter(c["status"] for c in candidates)
     return {
         "formatVersion": 1,
         "bom": found.bom,
         "compiler": found.compiler,
         "status": "proposal-only",
         "coverage": {
-            "componentNames": len({d.name for d in found.ui}),
-            "overloads": len(candidates),
-            "callPlan": statuses["call-plan"],
-            "blocked": statuses["blocked"],
+            "components": _surface_coverage(candidates, "component"),
+            "hooks": _surface_coverage(candidates, "hook"),
             "enabled": 0,
             "compiled": 0,
         },
