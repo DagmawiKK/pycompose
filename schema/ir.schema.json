@@ -10550,19 +10550,74 @@
       "additionalProperties": false,
       "properties": {
         "defaultElevation": {
-          "$ref": "#/definitions/Family_Dp"
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
         },
         "disabledElevation": {
-          "$ref": "#/definitions/Family_Dp"
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
         },
         "focusedElevation": {
-          "$ref": "#/definitions/Family_Dp"
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
         },
         "hoveredElevation": {
-          "$ref": "#/definitions/Family_Dp"
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
         },
         "pressedElevation": {
-          "$ref": "#/definitions/Family_Dp"
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
         },
         "type": {
           "const": "buttonElevation"

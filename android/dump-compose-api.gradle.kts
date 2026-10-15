@@ -210,6 +210,7 @@ private fun sha256(bytes: ByteArray): String =
 
 private class ClassApi {
     var name = ""
+    var sourceFile: String? = null
     var access = 0
     var metadata: MutableMap<String, Any?>? = null
     val annotations = sortedMapOf<String, MutableMap<String, Any?>>()
@@ -305,6 +306,13 @@ private fun readClass(bytes: ByteArray): ClassApi {
                 facts.access = access
             }
 
+            override fun visitSource(
+                source: String?,
+                debug: String?,
+            ) {
+                facts.sourceFile = source
+            }
+
             override fun visitAnnotation(
                 descriptor: String,
                 visible: Boolean,
@@ -348,7 +356,7 @@ private fun readClass(bytes: ByteArray): ClassApi {
                 return null
             }
         },
-        ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES,
+        ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES,
     )
     return facts
 }
@@ -744,6 +752,8 @@ private class ApiExtractor(
             val kmClass = (metadata[owner] as? KotlinClassMetadata.Class)?.kmClass
             declaration +
                 mapOf(
+                    "sourceFile" to classes[owner]?.sourceFile,
+                    "classKind" to kmClass?.kind?.name,
                     "enclosingTypeParameters" to
                         kmClass?.typeParameters.orEmpty().map {
                             it.document()

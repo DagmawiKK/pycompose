@@ -64,3 +64,12 @@ def test_explicit_value_imports_are_kept_in_app_slice(tmp_path: Path) -> None:
             / "android/ir/src/main/kotlin/com/pycompose/ir/generated/ValueModels.kt"
         ).read_text()
     )
+
+
+def test_value_runtime_contract_excludes_native_build_metadata() -> None:
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    python = render_python(registry)
+    models = render_models(registry)
+    assert "androidx.compose" not in python + models
+    assert "defaultNative" not in python + models
+    assert "androidx.compose" in render_native(registry)

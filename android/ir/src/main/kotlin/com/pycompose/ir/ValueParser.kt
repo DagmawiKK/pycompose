@@ -21,7 +21,8 @@ object ValueParser {
     fun validate(
         value: JsonElement,
         family: String,
-    ): Result<Unit> = runCatching { tagged(value, family, 0) }
+        specs: JsonObject = ValueContract.specs,
+    ): Result<Unit> = runCatching { tagged(value, family, 0, specs) }
 
     internal fun validateFloat(value: JsonElement) {
         number(value, JsonObject(mapOf("type" to JsonPrimitive("float"))))
@@ -54,11 +55,12 @@ object ValueParser {
         value: JsonElement,
         family: String,
         depth: Int,
+        specs: JsonObject,
     ) {
         require(depth < MAX_DEPTH) { "Value nesting is too deep" }
         val data = value as? JsonObject ?: error("Value must be a tagged object")
         val name = WireValidator.string(data["type"], "value.type")
-        val spec = ValueContract.specs[name]?.jsonObject ?: error("Unknown value constructor")
+        val spec = specs[name]?.jsonObject ?: error("Unknown value constructor")
         require(spec["family"]?.jsonPrimitive?.content == family) { "Wrong value family" }
         val parameters = checkNotNull(spec["parameters"]).jsonObject
         require(data.keys.all { it == "type" || it in parameters }) { "Unknown value field" }
@@ -70,7 +72,7 @@ object ValueParser {
                     "Missing value field: $key"
                 }
             } else {
-                parameter(supplied, rule, depth + 1)
+                parameter(supplied, rule, depth + 1, specs)
             }
         }
     }
@@ -79,6 +81,7 @@ object ValueParser {
         value: JsonElement,
         rule: JsonObject,
         depth: Int,
+        specs: JsonObject,
     ) {
         if (value == JsonNull) {
             require(rule["nullable"]?.jsonPrimitive?.booleanOrNull == true) {
@@ -88,7 +91,7 @@ object ValueParser {
         }
         when (rule["type"]?.jsonPrimitive?.content) {
             "value" -> {
-                tagged(value, checkNotNull(rule["valueType"]).jsonPrimitive.content, depth)
+                tagged(value, checkNotNull(rule["valueType"]).jsonPrimitive.content, depth, specs)
                 bounds(
                     value,
                     rule["minimum"]?.jsonPrimitive?.doubleOrNull,
@@ -99,7 +102,14 @@ object ValueParser {
                 val items = value as? JsonArray ?: error("Expected value list")
                 val minimum = rule["minItems"]?.jsonPrimitive?.longOrNull ?: 0
                 require(items.size >= minimum) { "Too few value items" }
-                items.forEach { parameter(it, checkNotNull(rule["items"]).jsonObject, depth) }
+                items.forEach {
+                    parameter(
+                        it,
+                        checkNotNull(rule["items"]).jsonObject,
+                        depth,
+                        specs,
+                    )
+                }
             }
             "string" -> {
                 val text = WireValidator.string(value, "value field")

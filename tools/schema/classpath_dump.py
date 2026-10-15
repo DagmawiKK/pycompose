@@ -319,6 +319,54 @@ def _require(condition: bool, message: str) -> None:
         raise ValueError(message)
 
 
+UNRESOLVED = {"kind": "unsupported", "reason": "source could not be pinned"}
+"""Reported per binding, so one ambiguous declaration never blinds the catalog."""
+
+
+def source_defaults(
+    directory: Path = DUMP_DIR,
+) -> dict[tuple[str, str, str], dict[str, Any]]:
+    """Read compiler-resolved defaults only while artifacts/tool inputs still match."""
+    found = inventory(directory)
+    data = json.loads((directory / "defaults.json").read_text(encoding="utf-8"))
+    _require(data["formatVersion"] == 1, "unsupported source evidence format")
+    _require(
+        data["inventoryHash"]
+        == hashlib.sha256((directory / "inventory.json").read_bytes()).hexdigest(),
+        "stale source evidence; rerun dumpComposeDefaults",
+    )
+    _require(
+        data["toolHash"]
+        == hashlib.sha256(
+            Path(__file__).with_name("SourceDefaults.kt").read_bytes()
+        ).hexdigest(),
+        "stale source compiler; rerun dumpComposeDefaults",
+    )
+    artifacts = {item["coordinate"] for item in found.document["artifacts"]}
+    for source in data["sources"]:
+        _require(
+            source["artifact"] in artifacts,
+            "source artifact is not on the pinned classpath",
+        )
+        _require(
+            source["sha256"]
+            == hashlib.sha256(Path(source["file"]).read_bytes()).hexdigest(),
+            "source archive changed; rerun dumpComposeDefaults",
+        )
+    result = {}
+    for declaration in data["declarations"]:
+        jvm = declaration["jvm"]
+        key = (declaration["owner"], jvm["name"], jvm["descriptor"])
+        _require(key not in result, "ambiguous source evidence")
+        if not declaration["matched"]:
+            # One binding the sources could not pin must not blind the others;
+            # the proposal for it simply loses its defaults and shows as drift.
+            result[key] = {p: UNRESOLVED for p in declaration["defaults"]}
+            continue
+        result[key] = declaration["defaults"]
+    return result
+
+
 def _classifiers(value: Any):
     if isinstance(value, dict):
         if "classifier" in value:

@@ -89,12 +89,11 @@ object ValueResolver {
     fun buttonColors(value: ButtonColorsValue): androidx.compose.material3.ButtonColors =
         when (value) {
             is WirebuttonColors -> {
-                val defaults = androidx.compose.material3.ButtonDefaults.buttonColors()
                 androidx.compose.material3.ButtonDefaults.buttonColors(
-                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else defaults.containerColor,
-                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else defaults.contentColor,
-                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else defaults.disabledContainerColor,
-                    disabledContentColor = if ("disabledContentColor" in value.supplied) value.disabledContentColor?.let { item -> color(item) }!! else defaults.disabledContentColor,
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContentColor = if ("disabledContentColor" in value.supplied) value.disabledContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
             }
         }

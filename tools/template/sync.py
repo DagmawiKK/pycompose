@@ -21,10 +21,11 @@ EXCLUDED = frozenset(
         "build",
         "local.properties",
         "__pycache__",
-        # A build-time tool for developing the schema. It reads :renderer's
-        # classpath and exists only for the repo's own tooling -- a scaffolded
+        # Build-time tools for developing the schema. They read :renderer's
+        # classpath and exist only for the repo's own tooling -- a scaffolded
         # app is handed generated code, and never regenerates the catalog.
         "dump-compose-api.gradle.kts",
+        "dump-compose-defaults.gradle.kts",
     }
 )
 

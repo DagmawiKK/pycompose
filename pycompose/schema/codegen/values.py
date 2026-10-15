@@ -7,6 +7,9 @@ import keyword
 from typing import Any
 
 from pycompose.core.props import to_snake_case
+from pycompose.schema.codegen.defaults import render_default
+
+KINDS = {"scalar", "record", "factory", "constant", "reference"}
 
 
 def validate_definitions(registry: dict[str, Any]) -> None:
@@ -18,28 +21,16 @@ def validate_definitions(registry: dict[str, Any]) -> None:
     for name, spec in specs.items():
         if not name.isidentifier() or keyword.iskeyword(name):
             _die(f"invalid value constructor: {name}")
-        if spec.get("kind") not in {
-            "scalar",
-            "record",
-            "factory",
-            "constant",
-            "reference",
-        }:
+        if spec.get("kind") not in KINDS:
             _die(f"unsupported value policy for {name}")
         _require_semver(spec.get("since"), f"valueTypes.{name}.since")
         if spec["since"] not in registry["supportedSchemaVersions"]:
             _die(f"value {name} requires an unsupported schema")
-        native = spec["native"]
         for field, rule in spec["parameters"].items():
             if not field.isidentifier() or keyword.iskeyword(to_snake_case(field)):
                 _die(f"invalid value parameter: {name}.{field}")
             _validate_rule(rule, families)
-            if (
-                not rule.get("required")
-                and "defaultNative" not in rule
-                and "defaults" not in native
-            ):
-                _die(f"missing native default provider: {name}.{field}")
+            _validate_default(name, field, rule, spec["native"])
     for section in ("components", "modifiers"):
         for spec in registry.get(section, {}).values():
             for prop in spec["props"].values():
@@ -47,6 +38,23 @@ def validate_definitions(registry: dict[str, Any]) -> None:
                     _die(f"unknown value family: {prop['valueType']}")
                 if prop["type"] == "value" and "valueType" not in prop:
                     _die("value props need a valueType")
+
+
+def _validate_default(
+    name: str, field: str, rule: dict[str, Any], native: dict[str, Any]
+) -> None:
+    """Every optional parameter needs a default; only typed evidence is accepted."""
+    from pycompose.schema.codegen.main import _die
+
+    if "default" in rule:
+        try:
+            render_default(rule["default"], set())
+        except ValueError as exc:
+            _die(f"{name}.{field}: {exc}")
+    elif not rule.get("required") and not (
+        "defaultNative" in rule or {"defaults"} & set(native)
+    ):
+        _die(f"missing native default provider: {name}.{field}")
 
 
 def _validate_rule(rule: dict[str, Any], families: set[str]) -> None:
@@ -69,6 +77,29 @@ def definitions(registry: dict[str, Any]) -> dict[str, Any]:
         for name, spec in sorted(registry.get("valueTypes", {}).items())
         if "family" in spec
     }
+
+
+def _runtime_contract(registry: dict[str, Any]) -> str:
+    """Do not duplicate compiler/native metadata in Python and JVM validators."""
+
+    def rule_contract(rule: dict[str, Any]) -> dict[str, Any]:
+        return {
+            key: rule_contract(value) if key == "items" else value
+            for key, value in rule.items()
+            if key not in {"defaultNative", "default"}
+        }
+
+    specs = {
+        name: {
+            "family": spec["family"],
+            "since": spec["since"],
+            "parameters": {
+                field: rule_contract(rule) for field, rule in spec["parameters"].items()
+            },
+        }
+        for name, spec in definitions(registry).items()
+    }
+    return json.dumps(specs, sort_keys=True, separators=(",", ":"))
 
 
 def dependency_closure(
@@ -108,7 +139,7 @@ def render_python(registry: dict[str, Any]) -> str:
     from pycompose.schema.codegen.main import GENERATED_NOTICE, _python_string
 
     specs = definitions(registry)
-    raw = json.dumps(specs, sort_keys=True, separators=(",", ":"))
+    raw = _runtime_contract(registry)
     optional = any(
         not p.get("required") for s in specs.values() for p in s["parameters"].values()
     )
@@ -235,7 +266,7 @@ def render_models(registry: dict[str, Any]) -> str:
             "    val specs: JsonObject = json.parseToJsonElement(",
         ]
     )
-    raw = json.dumps(specs, sort_keys=True, separators=(",", ":"))
+    raw = _runtime_contract(registry)
     chunks = [raw[i : i + 60] for i in range(0, len(raw), 60)]
     lines.extend(
         "        " + _kt_string(chunk) + (" +" if i < len(chunks) - 1 else "")
@@ -246,7 +277,7 @@ def render_models(registry: dict[str, Any]) -> str:
         lines.extend(
             [
                 f"    fun read{family}(value: JsonElement): {family}Value {{",
-                f'        ValueParser.validate(value, "{family}").getOrThrow()',
+                f'        ValueParser.validate(value, "{family}", specs).getOrThrow()',
                 "        val data = value.jsonObject",
                 '        return when (data.getValue("type").jsonPrimitive.content) {',
             ]
@@ -305,6 +336,13 @@ def render_native(registry: dict[str, Any]) -> str:
 
     specs = definitions(registry)
     families = sorted({s["family"] for s in specs.values()})
+    imports: set[str] = set()
+    defaults = {
+        (name, field): render_default(rule["default"], imports)
+        for name, spec in specs.items()
+        for field, rule in spec["parameters"].items()
+        if "default" in rule
+    }
     lines = [
         f"// {GENERATED_NOTICE}",
         "package com.pycompose.renderer.generated",
@@ -312,6 +350,7 @@ def render_native(registry: dict[str, Any]) -> str:
         "import androidx.compose.runtime.Composable",
         "import androidx.compose.ui.unit.sp",
         "import androidx.compose.ui.unit.em",
+        *sorted(imports),
         "import kotlinx.serialization.json.JsonElement",
         *(f"import com.pycompose.ir.generated.{f}Value" for f in families),
         "import com.pycompose.ir.generated.ValueContract",
@@ -379,7 +418,10 @@ def render_native(registry: dict[str, Any]) -> str:
                     else:
                         expression = _decode_parameter(source, rule)
                     if not rule.get("required"):
-                        fallback = rule.get("defaultNative", f"defaults.{field}")
+                        fallback = defaults.get(
+                            (name, field),
+                            rule.get("defaultNative", f"defaults.{field}"),
+                        )
                         present = expression + ("" if rule.get("nullable") else "!!")
                         expression = (
                             f'if ("{field}" in value.supplied) '

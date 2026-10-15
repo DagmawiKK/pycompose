@@ -181,167 +181,94 @@ object ValueContract {
     const val SCHEMA_VERSION = "1.11.0"
     private val json = Json { classDiscriminator = "type" }
     val specs: JsonObject = json.parseToJsonElement(
-        "{\"Color\":{\"family\":\"Color\",\"kind\":\"scalar\",\"kotlinType\":\"and" +
-        "roidx.compose.ui.graphics.Color\",\"native\":{\"call\":\"androidx." +
-        "compose.ui.graphics.Color\"},\"parameters\":{\"color\":{\"maximum\"" +
-        ":4294967295,\"minimum\":0,\"required\":true,\"type\":\"long\"}},\"sin" +
-        "ce\":\"1.11.0\",\"source\":{\"artifact\":\"androidx.compose.ui:ui-gr" +
-        "aphics-android:1.7.7\",\"descriptor\":\"(J)J\",\"name\":\"Color\",\"ow" +
-        "ner\":\"androidx.compose.ui.graphics.ColorKt\"}},\"CutCornerShap" +
-        "e\":{\"family\":\"Shape\",\"kind\":\"factory\",\"kotlinType\":\"androidx" +
-        ".compose.ui.graphics.Shape\",\"native\":{\"call\":\"androidx.compo" +
-        "se.foundation.shape.CutCornerShape\"},\"parameters\":{\"size\":{\"" +
-        "minimum\":0,\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"}}" +
-        ",\"since\":\"1.11.0\"},\"Dp\":{\"family\":\"Dp\",\"kind\":\"scalar\",\"kotl" +
-        "inType\":\"androidx.compose.ui.unit.Dp\",\"native\":{\"call\":\"andr" +
-        "oidx.compose.ui.unit.Dp\"},\"parameters\":{\"value\":{\"required\":" +
-        "true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"Em\":{\"family\":\"Text" +
-        "Unit\",\"kind\":\"scalar\",\"kotlinType\":\"androidx.compose.ui.unit" +
-        ".TextUnit\",\"native\":{\"extension\":\"em\"},\"parameters\":{\"value\"" +
-        ":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"FontFa" +
-        "mily\":{\"family\":\"FontFamily\",\"kind\":\"constant\",\"kotlinType\":" +
-        "\"androidx.compose.ui.text.font.FontFamily\",\"native\":{\"consta" +
-        "ntParameter\":\"name\",\"constants\":{\"Cursive\":\"androidx.compose" +
-        ".ui.text.font.FontFamily.Cursive\",\"Default\":\"androidx.compos" +
-        "e.ui.text.font.FontFamily.Default\",\"Monospace\":\"androidx.com" +
-        "pose.ui.text.font.FontFamily.Monospace\",\"SansSerif\":\"android" +
-        "x.compose.ui.text.font.FontFamily.SansSerif\",\"Serif\":\"androi" +
-        "dx.compose.ui.text.font.FontFamily.Serif\"}},\"parameters\":{\"n" +
-        "ame\":{\"required\":true,\"type\":\"string\",\"values\":[\"Default\",\"S" +
-        "ansSerif\",\"Serif\",\"Monospace\",\"Cursive\"]}},\"since\":\"1.11.0\"}" +
-        ",\"FontWeight\":{\"family\":\"FontWeight\",\"kind\":\"scalar\",\"kotlin" +
-        "Type\":\"androidx.compose.ui.text.font.FontWeight\",\"native\":{\"" +
-        "call\":\"androidx.compose.ui.text.font.FontWeight\"},\"parameter" +
-        "s\":{\"weight\":{\"maximum\":1000,\"minimum\":1,\"required\":true,\"ty" +
-        "pe\":\"int\"}},\"since\":\"1.11.0\"},\"Offset\":{\"family\":\"Offset\",\"k" +
-        "ind\":\"record\",\"kotlinType\":\"androidx.compose.ui.geometry.Off" +
-        "set\",\"native\":{\"call\":\"androidx.compose.ui.geometry.Offset\"}" +
-        ",\"parameters\":{\"x\":{\"required\":true,\"type\":\"float\"},\"y\":{\"re" +
-        "quired\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"PaddingValu" +
-        "es\":{\"family\":\"PaddingValues\",\"kind\":\"record\",\"kotlinType\":\"" +
-        "androidx.compose.foundation.layout.PaddingValues\",\"native\":{" +
-        "\"call\":\"androidx.compose.foundation.layout.PaddingValues\"},\"" +
-        "parameters\":{\"bottom\":{\"defaultNative\":\"androidx.compose.ui." +
-        "unit.Dp(0f)\",\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"e" +
-        "nd\":{\"defaultNative\":\"androidx.compose.ui.unit.Dp(0f)\",\"mini" +
-        "mum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"start\":{\"defaultNat" +
-        "ive\":\"androidx.compose.ui.unit.Dp(0f)\",\"minimum\":0,\"type\":\"v" +
-        "alue\",\"valueType\":\"Dp\"},\"top\":{\"defaultNative\":\"androidx.com" +
-        "pose.ui.unit.Dp(0f)\",\"minimum\":0,\"type\":\"value\",\"valueType\":" +
-        "\"Dp\"}},\"since\":\"1.11.0\"},\"RoundedCornerShape\":{\"family\":\"Sha" +
-        "pe\",\"kind\":\"factory\",\"kotlinType\":\"androidx.compose.ui.graph" +
-        "ics.Shape\",\"native\":{\"call\":\"androidx.compose.foundation.sha" +
-        "pe.RoundedCornerShape\"},\"parameters\":{\"size\":{\"minimum\":0,\"r" +
-        "equired\":true,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.1" +
-        "1.0\"},\"Size\":{\"family\":\"Size\",\"kind\":\"record\",\"kotlinType\":\"" +
-        "androidx.compose.ui.geometry.Size\",\"native\":{\"call\":\"android" +
-        "x.compose.ui.geometry.Size\"},\"parameters\":{\"height\":{\"minimu" +
-        "m\":0,\"required\":true,\"type\":\"float\"},\"width\":{\"minimum\":0,\"r" +
-        "equired\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"SolidColor" +
-        "\":{\"family\":\"Brush\",\"kind\":\"record\",\"kotlinType\":\"androidx.c" +
-        "ompose.ui.graphics.Brush\",\"native\":{\"call\":\"androidx.compose" +
-        ".ui.graphics.SolidColor\"},\"parameters\":{\"value\":{\"required\":" +
-        "true,\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"}," +
-        "\"Sp\":{\"family\":\"TextUnit\",\"kind\":\"scalar\",\"kotlinType\":\"andr" +
-        "oidx.compose.ui.unit.TextUnit\",\"native\":{\"extension\":\"sp\"},\"" +
-        "parameters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"sinc" +
-        "e\":\"1.11.0\"},\"TextStyle\":{\"family\":\"TextStyle\",\"kind\":\"recor" +
-        "d\",\"kotlinType\":\"androidx.compose.ui.text.TextStyle\",\"native" +
-        "\":{\"call\":\"androidx.compose.ui.text.TextStyle\",\"defaults\":\"a" +
-        "ndroidx.compose.ui.text.TextStyle()\"},\"parameters\":{\"color\":" +
-        "{\"type\":\"value\",\"valueType\":\"Color\"},\"fontFamily\":{\"nullable" +
-        "\":true,\"type\":\"value\",\"valueType\":\"FontFamily\"},\"fontSize\":{" +
-        "\"minimum\":0,\"type\":\"value\",\"valueType\":\"TextUnit\"},\"fontWeig" +
-        "ht\":{\"nullable\":true,\"type\":\"value\",\"valueType\":\"FontWeight\"" +
-        "},\"letterSpacing\":{\"type\":\"value\",\"valueType\":\"TextUnit\"}},\"" +
-        "since\":\"1.11.0\"},\"ThemeColor\":{\"family\":\"Color\",\"kind\":\"refe" +
-        "rence\",\"kotlinType\":\"androidx.compose.ui.graphics.Color\",\"na" +
-        "tive\":{\"constantParameter\":\"name\",\"propertyOwner\":\"androidx." +
-        "compose.material3.MaterialTheme.colorScheme\"},\"parameters\":{" +
-        "\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"primary\"," +
-        "\"onPrimary\",\"primaryContainer\",\"onPrimaryContainer\",\"inverse" +
-        "Primary\",\"secondary\",\"onSecondary\",\"secondaryContainer\",\"onS" +
-        "econdaryContainer\",\"tertiary\",\"onTertiary\",\"tertiaryContaine" +
-        "r\",\"onTertiaryContainer\",\"background\",\"onBackground\",\"surfac" +
-        "e\",\"onSurface\",\"surfaceVariant\",\"onSurfaceVariant\",\"surfaceT" +
-        "int\",\"inverseSurface\",\"inverseOnSurface\",\"error\",\"onError\",\"" +
-        "errorContainer\",\"onErrorContainer\",\"outline\",\"outlineVariant" +
-        "\",\"scrim\",\"surfaceBright\",\"surfaceDim\",\"surfaceContainer\",\"s" +
-        "urfaceContainerHigh\",\"surfaceContainerHighest\",\"surfaceConta" +
-        "inerLow\",\"surfaceContainerLowest\"]}},\"since\":\"1.11.0\"},\"Them" +
-        "eShape\":{\"family\":\"Shape\",\"kind\":\"reference\",\"kotlinType\":\"a" +
-        "ndroidx.compose.ui.graphics.Shape\",\"native\":{\"constantParame" +
-        "ter\":\"name\",\"propertyOwner\":\"androidx.compose.material3.Mate" +
-        "rialTheme.shapes\"},\"parameters\":{\"name\":{\"required\":true,\"ty" +
-        "pe\":\"string\",\"values\":[\"extraSmall\",\"small\",\"medium\",\"large\"" +
-        ",\"extraLarge\"]}},\"since\":\"1.11.0\"},\"ThemeTypography\":{\"famil" +
-        "y\":\"TextStyle\",\"kind\":\"reference\",\"kotlinType\":\"androidx.com" +
-        "pose.ui.text.TextStyle\",\"native\":{\"constantParameter\":\"name\"" +
-        ",\"propertyOwner\":\"androidx.compose.material3.MaterialTheme.t" +
-        "ypography\"},\"parameters\":{\"name\":{\"required\":true,\"type\":\"st" +
-        "ring\",\"values\":[\"displayLarge\",\"displayMedium\",\"displaySmall" +
-        "\",\"headlineLarge\",\"headlineMedium\",\"headlineSmall\",\"titleLar" +
-        "ge\",\"titleMedium\",\"titleSmall\",\"bodyLarge\",\"bodyMedium\",\"bod" +
-        "ySmall\",\"labelLarge\",\"labelMedium\",\"labelSmall\"]}},\"since\":\"" +
-        "1.11.0\"},\"WindowInsets\":{\"family\":\"WindowInsets\",\"kind\":\"rec" +
-        "ord\",\"kotlinType\":\"androidx.compose.foundation.layout.Window" +
-        "Insets\",\"native\":{\"call\":\"androidx.compose.foundation.layout" +
-        ".WindowInsets\"},\"parameters\":{\"bottom\":{\"defaultNative\":\"and" +
-        "roidx.compose.ui.unit.Dp(0f)\",\"minimum\":0,\"type\":\"value\",\"va" +
-        "lueType\":\"Dp\"},\"left\":{\"defaultNative\":\"androidx.compose.ui." +
-        "unit.Dp(0f)\",\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"r" +
-        "ight\":{\"defaultNative\":\"androidx.compose.ui.unit.Dp(0f)\",\"mi" +
-        "nimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\":{\"defaultNat" +
-        "ive\":\"androidx.compose.ui.unit.Dp(0f)\",\"minimum\":0,\"type\":\"v" +
-        "alue\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"buttonColors\":{\"" +
-        "family\":\"ButtonColors\",\"kind\":\"factory\",\"kotlinType\":\"androi" +
-        "dx.compose.material3.ButtonColors\",\"native\":{\"call\":\"android" +
-        "x.compose.material3.ButtonDefaults.buttonColors\",\"defaults\":" +
-        "\"androidx.compose.material3.ButtonDefaults.buttonColors()\"}," +
-        "\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"" +
-        "Color\"},\"contentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
-        "\"disabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
-        "},\"disabledContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
-        "}},\"since\":\"1.11.0\"},\"buttonElevation\":{\"family\":\"ButtonElev" +
-        "ation\",\"kind\":\"factory\",\"kotlinType\":\"androidx.compose.mater" +
-        "ial3.ButtonElevation\",\"native\":{\"call\":\"androidx.compose.mat" +
-        "erial3.ButtonDefaults.buttonElevation\"},\"parameters\":{\"defau" +
-        "ltElevation\":{\"defaultNative\":\"androidx.compose.ui.unit.Dp(0" +
-        "f)\",\"type\":\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"d" +
-        "efaultNative\":\"androidx.compose.ui.unit.Dp(0f)\",\"type\":\"valu" +
-        "e\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"defaultNative\":\"an" +
-        "droidx.compose.ui.unit.Dp(0f)\",\"type\":\"value\",\"valueType\":\"D" +
-        "p\"},\"hoveredElevation\":{\"defaultNative\":\"androidx.compose.ui" +
-        ".unit.Dp(1f)\",\"type\":\"value\",\"valueType\":\"Dp\"},\"pressedEleva" +
-        "tion\":{\"defaultNative\":\"androidx.compose.ui.unit.Dp(0f)\",\"ty" +
-        "pe\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"horizontal" +
-        "Gradient\":{\"family\":\"Brush\",\"kind\":\"factory\",\"kotlinType\":\"a" +
-        "ndroidx.compose.ui.graphics.Brush\",\"native\":{\"call\":\"android" +
-        "x.compose.ui.graphics.Brush.horizontalGradient\"},\"parameters" +
-        "\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Color\"},\"m" +
-        "inItems\":2,\"required\":true,\"type\":\"list\"},\"endX\":{\"defaultNa" +
-        "tive\":\"Float.POSITIVE_INFINITY\",\"type\":\"float\"},\"startX\":{\"d" +
-        "efaultNative\":\"0f\",\"type\":\"float\"}},\"since\":\"1.11.0\"},\"linea" +
-        "rGradient\":{\"family\":\"Brush\",\"kind\":\"factory\",\"kotlinType\":\"" +
-        "androidx.compose.ui.graphics.Brush\",\"native\":{\"call\":\"androi" +
-        "dx.compose.ui.graphics.Brush.linearGradient\"},\"parameters\":{" +
-        "\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Color\"},\"minI" +
-        "tems\":2,\"required\":true,\"type\":\"list\"},\"end\":{\"defaultNative" +
-        "\":\"androidx.compose.ui.geometry.Offset.Infinite\",\"type\":\"val" +
-        "ue\",\"valueType\":\"Offset\"},\"start\":{\"defaultNative\":\"androidx" +
-        ".compose.ui.geometry.Offset.Zero\",\"type\":\"value\",\"valueType\"" +
-        ":\"Offset\"}},\"since\":\"1.11.0\"},\"verticalGradient\":{\"family\":\"" +
-        "Brush\",\"kind\":\"factory\",\"kotlinType\":\"androidx.compose.ui.gr" +
-        "aphics.Brush\",\"native\":{\"call\":\"androidx.compose.ui.graphics" +
-        ".Brush.verticalGradient\"},\"parameters\":{\"colors\":{\"items\":{\"" +
-        "type\":\"value\",\"valueType\":\"Color\"},\"minItems\":2,\"required\":t" +
-        "rue,\"type\":\"list\"},\"endY\":{\"defaultNative\":\"Float.POSITIVE_I" +
-        "NFINITY\",\"type\":\"float\"},\"startY\":{\"defaultNative\":\"0f\",\"typ" +
-        "e\":\"float\"}},\"since\":\"1.11.0\"}}"
+        "{\"Color\":{\"family\":\"Color\",\"parameters\":{\"color\":{\"maximum\":" +
+        "4294967295,\"minimum\":0,\"required\":true,\"type\":\"long\"}},\"sinc" +
+        "e\":\"1.11.0\"},\"CutCornerShape\":{\"family\":\"Shape\",\"parameters\"" +
+        ":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"value\",\"valueT" +
+        "ype\":\"Dp\"}},\"since\":\"1.11.0\"},\"Dp\":{\"family\":\"Dp\",\"parameter" +
+        "s\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11." +
+        "0\"},\"Em\":{\"family\":\"TextUnit\",\"parameters\":{\"value\":{\"requir" +
+        "ed\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"FontFamily\":{\"f" +
+        "amily\":\"FontFamily\",\"parameters\":{\"name\":{\"required\":true,\"t" +
+        "ype\":\"string\",\"values\":[\"Default\",\"SansSerif\",\"Serif\",\"Monos" +
+        "pace\",\"Cursive\"]}},\"since\":\"1.11.0\"},\"FontWeight\":{\"family\":" +
+        "\"FontWeight\",\"parameters\":{\"weight\":{\"maximum\":1000,\"minimum" +
+        "\":1,\"required\":true,\"type\":\"int\"}},\"since\":\"1.11.0\"},\"Offset" +
+        "\":{\"family\":\"Offset\",\"parameters\":{\"x\":{\"required\":true,\"typ" +
+        "e\":\"float\"},\"y\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1" +
+        ".11.0\"},\"PaddingValues\":{\"family\":\"PaddingValues\",\"parameter" +
+        "s\":{\"bottom\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"" +
+        "end\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"start\":{" +
+        "\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\":{\"minimum" +
+        "\":0,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Rou" +
+        "ndedCornerShape\":{\"family\":\"Shape\",\"parameters\":{\"size\":{\"mi" +
+        "nimum\":0,\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"}},\"" +
+        "since\":\"1.11.0\"},\"Size\":{\"family\":\"Size\",\"parameters\":{\"heig" +
+        "ht\":{\"minimum\":0,\"required\":true,\"type\":\"float\"},\"width\":{\"m" +
+        "inimum\":0,\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"}" +
+        ",\"SolidColor\":{\"family\":\"Brush\",\"parameters\":{\"value\":{\"requ" +
+        "ired\":true,\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.1" +
+        "1.0\"},\"Sp\":{\"family\":\"TextUnit\",\"parameters\":{\"value\":{\"requ" +
+        "ired\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"TextStyle\":{\"" +
+        "family\":\"TextStyle\",\"parameters\":{\"color\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"fontFamily\":{\"nullable\":true,\"type\":\"val" +
+        "ue\",\"valueType\":\"FontFamily\"},\"fontSize\":{\"minimum\":0,\"type\"" +
+        ":\"value\",\"valueType\":\"TextUnit\"},\"fontWeight\":{\"nullable\":tr" +
+        "ue,\"type\":\"value\",\"valueType\":\"FontWeight\"},\"letterSpacing\":" +
+        "{\"type\":\"value\",\"valueType\":\"TextUnit\"}},\"since\":\"1.11.0\"},\"" +
+        "ThemeColor\":{\"family\":\"Color\",\"parameters\":{\"name\":{\"require" +
+        "d\":true,\"type\":\"string\",\"values\":[\"primary\",\"onPrimary\",\"pri" +
+        "maryContainer\",\"onPrimaryContainer\",\"inversePrimary\",\"second" +
+        "ary\",\"onSecondary\",\"secondaryContainer\",\"onSecondaryContaine" +
+        "r\",\"tertiary\",\"onTertiary\",\"tertiaryContainer\",\"onTertiaryCo" +
+        "ntainer\",\"background\",\"onBackground\",\"surface\",\"onSurface\",\"" +
+        "surfaceVariant\",\"onSurfaceVariant\",\"surfaceTint\",\"inverseSur" +
+        "face\",\"inverseOnSurface\",\"error\",\"onError\",\"errorContainer\"," +
+        "\"onErrorContainer\",\"outline\",\"outlineVariant\",\"scrim\",\"surfa" +
+        "ceBright\",\"surfaceDim\",\"surfaceContainer\",\"surfaceContainerH" +
+        "igh\",\"surfaceContainerHighest\",\"surfaceContainerLow\",\"surfac" +
+        "eContainerLowest\"]}},\"since\":\"1.11.0\"},\"ThemeShape\":{\"family" +
+        "\":\"Shape\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"stri" +
+        "ng\",\"values\":[\"extraSmall\",\"small\",\"medium\",\"large\",\"extraLa" +
+        "rge\"]}},\"since\":\"1.11.0\"},\"ThemeTypography\":{\"family\":\"TextS" +
+        "tyle\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\"," +
+        "\"values\":[\"displayLarge\",\"displayMedium\",\"displaySmall\",\"hea" +
+        "dlineLarge\",\"headlineMedium\",\"headlineSmall\",\"titleLarge\",\"t" +
+        "itleMedium\",\"titleSmall\",\"bodyLarge\",\"bodyMedium\",\"bodySmall" +
+        "\",\"labelLarge\",\"labelMedium\",\"labelSmall\"]}},\"since\":\"1.11.0" +
+        "\"},\"WindowInsets\":{\"family\":\"WindowInsets\",\"parameters\":{\"bo" +
+        "ttom\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"left\":{" +
+        "\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"right\":{\"minim" +
+        "um\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\":{\"minimum\":0,\"t" +
+        "ype\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"buttonCol" +
+        "ors\":{\"family\":\"ButtonColors\",\"parameters\":{\"containerColor\"" +
+        ":{\"type\":\"value\",\"valueType\":\"Color\"},\"contentColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"disabledContentColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"},\"buttonEl" +
+        "evation\":{\"family\":\"ButtonElevation\",\"parameters\":{\"defaultE" +
+        "levation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"dis" +
+        "abledElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"" +
+        "},\"focusedElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\"" +
+        ":\"Dp\"},\"hoveredElevation\":{\"minimum\":0,\"type\":\"value\",\"value" +
+        "Type\":\"Dp\"},\"pressedElevation\":{\"minimum\":0,\"type\":\"value\",\"" +
+        "valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"horizontalGradient\":{\"f" +
+        "amily\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"valu" +
+        "e\",\"valueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":" +
+        "\"list\"},\"endX\":{\"type\":\"float\"},\"startX\":{\"type\":\"float\"}},\"" +
+        "since\":\"1.11.0\"},\"linearGradient\":{\"family\":\"Brush\",\"paramet" +
+        "ers\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        ",\"minItems\":2,\"required\":true,\"type\":\"list\"},\"end\":{\"type\":\"" +
+        "value\",\"valueType\":\"Offset\"},\"start\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Offset\"}},\"since\":\"1.11.0\"},\"verticalGradient\":{\"famil" +
+        "y\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":\"lis" +
+        "t\"},\"endY\":{\"type\":\"float\"},\"startY\":{\"type\":\"float\"}},\"sinc" +
+        "e\":\"1.11.0\"}}"
     ).jsonObject
 
     fun readBrush(value: JsonElement): BrushValue {
-        ValueParser.validate(value, "Brush").getOrThrow()
+        ValueParser.validate(value, "Brush", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "SolidColor" -> WireSolidColor(
@@ -371,7 +298,7 @@ object ValueContract {
     }
 
     fun readButtonColors(value: JsonElement): ButtonColorsValue {
-        ValueParser.validate(value, "ButtonColors").getOrThrow()
+        ValueParser.validate(value, "ButtonColors", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "buttonColors" -> WirebuttonColors(
@@ -386,7 +313,7 @@ object ValueContract {
     }
 
     fun readButtonElevation(value: JsonElement): ButtonElevationValue {
-        ValueParser.validate(value, "ButtonElevation").getOrThrow()
+        ValueParser.validate(value, "ButtonElevation", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "buttonElevation" -> WirebuttonElevation(
@@ -402,7 +329,7 @@ object ValueContract {
     }
 
     fun readColor(value: JsonElement): ColorValue {
-        ValueParser.validate(value, "Color").getOrThrow()
+        ValueParser.validate(value, "Color", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "Color" -> WireColor(
@@ -418,7 +345,7 @@ object ValueContract {
     }
 
     fun readDp(value: JsonElement): DpValue {
-        ValueParser.validate(value, "Dp").getOrThrow()
+        ValueParser.validate(value, "Dp", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "Dp" -> WireDp(
@@ -430,7 +357,7 @@ object ValueContract {
     }
 
     fun readFontFamily(value: JsonElement): FontFamilyValue {
-        ValueParser.validate(value, "FontFamily").getOrThrow()
+        ValueParser.validate(value, "FontFamily", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "FontFamily" -> WireFontFamily(
@@ -442,7 +369,7 @@ object ValueContract {
     }
 
     fun readFontWeight(value: JsonElement): FontWeightValue {
-        ValueParser.validate(value, "FontWeight").getOrThrow()
+        ValueParser.validate(value, "FontWeight", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "FontWeight" -> WireFontWeight(
@@ -454,7 +381,7 @@ object ValueContract {
     }
 
     fun readOffset(value: JsonElement): OffsetValue {
-        ValueParser.validate(value, "Offset").getOrThrow()
+        ValueParser.validate(value, "Offset", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "Offset" -> WireOffset(
@@ -467,7 +394,7 @@ object ValueContract {
     }
 
     fun readPaddingValues(value: JsonElement): PaddingValuesValue {
-        ValueParser.validate(value, "PaddingValues").getOrThrow()
+        ValueParser.validate(value, "PaddingValues", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "PaddingValues" -> WirePaddingValues(
@@ -482,7 +409,7 @@ object ValueContract {
     }
 
     fun readShape(value: JsonElement): ShapeValue {
-        ValueParser.validate(value, "Shape").getOrThrow()
+        ValueParser.validate(value, "Shape", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "CutCornerShape" -> WireCutCornerShape(
@@ -502,7 +429,7 @@ object ValueContract {
     }
 
     fun readSize(value: JsonElement): SizeValue {
-        ValueParser.validate(value, "Size").getOrThrow()
+        ValueParser.validate(value, "Size", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "Size" -> WireSize(
@@ -515,7 +442,7 @@ object ValueContract {
     }
 
     fun readTextStyle(value: JsonElement): TextStyleValue {
-        ValueParser.validate(value, "TextStyle").getOrThrow()
+        ValueParser.validate(value, "TextStyle", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "TextStyle" -> WireTextStyle(
@@ -535,7 +462,7 @@ object ValueContract {
     }
 
     fun readTextUnit(value: JsonElement): TextUnitValue {
-        ValueParser.validate(value, "TextUnit").getOrThrow()
+        ValueParser.validate(value, "TextUnit", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "Em" -> WireEm(
@@ -551,7 +478,7 @@ object ValueContract {
     }
 
     fun readWindowInsets(value: JsonElement): WindowInsetsValue {
-        ValueParser.validate(value, "WindowInsets").getOrThrow()
+        ValueParser.validate(value, "WindowInsets", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "WindowInsets" -> WireWindowInsets(

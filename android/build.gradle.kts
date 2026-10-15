@@ -14,11 +14,16 @@ plugins {
     alias(libs.plugins.detekt)
 }
 
-// Not a module: a task that reads :renderer's resolved classpath and writes the
-// Compose API as JSON for the schema tooling. Applied, not included, because it
-// is a build-time utility and nothing should depend on it -- and it must live
-// here rather than in settings.gradle.kts because it needs a project receiver.
-apply(from = "dump-compose-api.gradle.kts")
+// Not a module: tasks that read :renderer's resolved classpath and its pinned
+// sources, and write the Compose API evidence for the schema tooling. Applied,
+// not included, because they are build-time utilities nothing should depend on
+// -- and they must live here rather than in settings.gradle.kts because they
+// need a project receiver. A scaffolded app is handed generated code and ships
+// neither script, so they are applied only where they exist.
+listOf("dump-compose-api.gradle.kts", "dump-compose-defaults.gradle.kts")
+    .map(::file)
+    .filter(File::exists)
+    .forEach { apply(from = it) }
 
 subprojects {
     apply(plugin = "com.diffplug.spotless")

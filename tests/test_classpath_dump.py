@@ -12,6 +12,7 @@ import pytest
 
 DUMP = Path("android/build/compose-api")
 ARTIFACT = "androidx.compose.material3:material3-android:1.3.1"
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def type_doc(name: str, *arguments: dict, annotations: tuple[str, ...] = ()):
@@ -94,7 +95,7 @@ def native_document():
     if os.environ.get("PYCOMPOSE_NATIVE_API_TESTS") != "1":
         pytest.skip("native CI runs the pinned artifact extraction")
     result = subprocess.run(
-        ["./gradlew", "dumpComposeApi", "--rerun-tasks", "--console=plain"],
+        ["./gradlew", "dumpComposeDefaults", "--rerun-tasks", "--console=plain"],
         cwd="android",
         capture_output=True,
         text=True,
@@ -311,6 +312,256 @@ def test_inventory_retains_all_overloads_and_function_semantics(tmp_path: Path) 
     assert parameters["confirmValueChange"].kind.value == "unknown"
     assert parameters["onClick"].required is True
     assert parameters["content"].required is False
+
+
+def test_value_proposal_derives_an_unused_constructor_without_parameter_policy() -> (
+    None
+):
+    from schema.classpath_dump import Declaration
+    from schema.propose import propose_value
+
+    source = Declaration.read(
+        declaration(
+            name="<init>",
+            owner="androidx.compose.ui.geometry.Rect",
+            disposition="support",
+            composable=False,
+            declarationKind="constructor",
+            returnType=type_doc("androidx/compose/ui/geometry/Rect"),
+            parameters=[
+                parameter(name, type_doc("kotlin/Float"))
+                for name in ("left", "top", "right", "bottom")
+            ],
+        )
+    )
+    proposal = propose_value(source, since="1.11.0", families={})
+    assert proposal["parameters"] == {
+        name: {"type": "float", "required": True}
+        for name in ("left", "top", "right", "bottom")
+    }
+    assert proposal["native"] == {"call": "androidx.compose.ui.geometry.Rect"}
+    assert proposal["family"] == "Rect"
+
+
+def test_pinned_source_defaults_generate_native_factories(native_document) -> None:
+    from schema.classpath_dump import inventory, source_defaults
+    from schema.propose import propose_value
+
+    assert native_document["provenance"]["bom"] == "2025.01.01"
+    found = inventory(DUMP)
+    defaults = source_defaults(DUMP)
+    source = next(
+        d
+        for d in found.declarations
+        if d.name == "buttonColors" and d.parameters and len(d.parameters) == 4
+    )
+    spec = propose_value(
+        source,
+        since="1.11.0",
+        families={"androidx/compose/ui/graphics/Color": "Color"},
+        defaults=defaults[source.owner, source.jvm_name, source.jvm_descriptor],
+    )
+    assert list(spec["parameters"]) == [
+        "containerColor",
+        "contentColor",
+        "disabledContainerColor",
+        "disabledContentColor",
+    ]
+    assert spec["parameters"]["containerColor"]["default"] == {
+        "kind": "property",
+        "symbol": "androidx.compose.ui.graphics.Color.Companion.Unspecified",
+    }
+    assert "defaultNative" not in json.dumps(spec)
+
+
+def test_defaults_the_compiler_cannot_pin_are_refused_not_guessed(
+    native_document,
+) -> None:
+    assert native_document["provenance"]["compiler"] == "2.0.21"
+    # Material3 keeps these defaults in a non-public token object, so the
+    # compiler must refuse them rather than couple generated code to API that
+    # may change without notice.
+    resolve = ["--console=plain", "-PcomposeValueNames=buttonElevation"]
+    try:
+        result = subprocess.run(
+            ["./gradlew", "dumpComposeDefaults", *resolve],
+            cwd="android",
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert_refuses_token_defaults()
+    finally:
+        # Restore the catalog-wide evidence the other seams depend on.
+        subprocess.run(
+            ["./gradlew", "dumpComposeDefaults", "--console=plain"],
+            cwd="android",
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+
+def assert_refuses_token_defaults() -> None:
+    """A non-public default must be refused, never guessed at."""
+    from schema.classpath_dump import inventory, source_defaults
+    from schema.propose import propose_value
+
+    found = inventory(DUMP)
+    defaults = source_defaults(DUMP)
+    source = next(d for d in found.declarations if d.name == "buttonElevation")
+    key = (source.owner, source.jvm_name, source.jvm_descriptor)
+    assert all(
+        rule["kind"] == "unsupported" and "non-public" in rule["reason"]
+        for rule in defaults[key].values()
+    )
+    with pytest.raises(ValueError, match="non-public"):
+        propose_value(
+            source,
+            since="1.11.0",
+            families={"androidx/compose/ui/unit/Dp": "Dp"},
+            defaults=defaults[key],
+        )
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    assert "source" not in registry["valueTypes"]["buttonElevation"]
+
+
+def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -> None:
+    from schema.check_upstream import _derived, compare_values
+    from schema.classpath_dump import inventory, source_defaults
+    from schema.propose import refresh
+
+    assert native_document["provenance"]["compiler"] == "2.0.21"
+    found = inventory(DUMP)
+    evidence = source_defaults(DUMP)
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    results = refresh(found, evidence, registry)
+    derived = [item for item in results if "proposal" in item]
+    # Every approved binding carrying a source is re-derived, not silently skipped.
+    assert {item["name"] for item in derived} == {
+        name
+        for name, spec in registry["valueTypes"].items()
+        if "family" in spec and "source" in spec
+    }
+    for item in derived:
+        approved = registry["valueTypes"][item["name"]]
+        # A refresh reproduces the approved compiler-resolved facts exactly;
+        # semantic policy such as ARGB bounds is preserved, not regenerated.
+        assert _derived(item["proposal"]) == _derived(approved)
+    # Legacy policy is reported as such rather than counted as automated.
+    assert all(item.get("handwritten") for item in results if "proposal" not in item)
+    assert compare_values(registry, found, evidence) == []
+
+
+def test_release_drift_is_reported_instead_of_silently_accepted(
+    native_document,
+) -> None:
+    from schema.check_upstream import DRIFT, compare_values
+    from schema.classpath_dump import inventory, source_defaults
+
+    assert native_document["artifacts"]
+    found = inventory(DUMP)
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    # A release that changes a default must show up as a proposal diff for a
+    # person to review, never be silently adopted.
+    registry["valueTypes"]["buttonColors"]["parameters"]["containerColor"]["default"][
+        "symbol"
+    ] = "androidx.compose.ui.graphics.Color.Companion.Red"
+    errors = compare_values(registry, found, source_defaults(DUMP))
+    assert errors == [f"buttonColors: {DRIFT}"]
+
+
+def test_unused_pinned_constructor_is_generated_decoded_and_renders(
+    native_document,
+    tmp_path: Path,
+) -> None:
+    from pycompose.schema.codegen.values import (
+        render_models,
+        render_native,
+        render_python,
+    )
+    from schema.classpath_dump import inventory
+    from schema.propose import propose_value
+
+    assert native_document["bytecodeAudit"]["unmatchedTargetMethods"] == []
+    source = next(
+        d
+        for d in inventory(DUMP).declarations
+        if d.owner == "androidx.compose.ui.geometry.Rect" and d.name == "<init>"
+    )
+    spec = propose_value(source, since="1.11.0", families={})
+    # Approval here is test-local: Rect is not added to the shipped catalog.
+    registry = {"valueTypes": {"Rect": spec}}
+    namespace = {}
+    exec(render_python(registry), namespace)
+    data = namespace["Rect"](1, 2, 11, 22)
+    assert data == {"type": "Rect", "left": 1, "top": 2, "right": 11, "bottom": 22}
+    (tmp_path / "ValueModels.kt").write_text(
+        render_models(registry).replace(
+            "com.pycompose.ir.generated", "com.pycompose.proof"
+        )
+    )
+    (tmp_path / "ValueResolver.kt").write_text(
+        render_native(registry)
+        .replace("com.pycompose.ir.generated", "com.pycompose.proof")
+        .replace("com.pycompose.renderer.generated", "com.pycompose.proof")
+    )
+    encoded = json.dumps(json.dumps(data))
+    (tmp_path / "GeneratedBindingProof.kt").write_text(f"""
+package com.pycompose.proof
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.assertWidthIsEqualTo
+import androidx.compose.ui.test.assertHeightIsEqualTo
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.unit.dp
+import kotlinx.serialization.json.Json
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [34])
+class GeneratedBindingProof {{
+    @get:Rule val compose = createComposeRule()
+    @Test fun unusedConstructorControlsNativeLayout() {{
+        compose.setContent {{
+            val json = Json.parseToJsonElement({encoded})
+            val rect = ValueResolver.rect(json).getOrThrow()
+            Box(Modifier.size(rect.width.dp, rect.height.dp).testTag("rect"))
+        }}
+        compose.onNodeWithTag("rect").assertWidthIsEqualTo(10.dp).assertHeightIsEqualTo(20.dp)
+    }}
+}}
+""")
+    init = tmp_path / "proof.gradle"
+    init.write_text(
+        "gradle.projectsEvaluated { gradle.rootProject.project(':host').android."
+        f"sourceSets.test.java.srcDir({json.dumps(str(tmp_path))}) }}"
+    )
+    result = subprocess.run(
+        [
+            "./gradlew",
+            "--init-script",
+            str(init),
+            ":host:testDebugUnitTest",
+            "--tests",
+            "com.pycompose.proof.GeneratedBindingProof",
+            "--console=plain",
+        ],
+        cwd="android",
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 @pytest.mark.parametrize(
