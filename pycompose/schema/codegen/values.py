@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import keyword
+import textwrap
 from typing import Any
 
 from pycompose.core.props import to_snake_case
@@ -27,6 +28,11 @@ def validate_definitions(registry: dict[str, Any]) -> None:
         _require_semver(spec.get("since"), f"valueTypes.{name}.since")
         if spec["since"] not in registry["supportedSchemaVersions"]:
             _die(f"value {name} requires an unsupported schema")
+        markers = spec.get("optIn", [])
+        if markers != sorted(set(markers)) or not all(
+            isinstance(marker, str) and marker for marker in markers
+        ):
+            _die(f"valueTypes.{name}.optIn must be sorted, unique annotation names")
         for field, rule in spec["parameters"].items():
             if not field.isidentifier() or keyword.iskeyword(to_snake_case(field)):
                 _die(f"invalid value parameter: {name}.{field}")
@@ -221,14 +227,31 @@ def render_python(registry: dict[str, Any]) -> str:
         )
         if params:
             lines.extend(["", "    Args:"])
-            lines.extend(
-                f"        {to_snake_case(p)}: Native {p} argument." for p in ordered
-            )
+            for field in ordered:
+                lines.extend(
+                    textwrap.wrap(
+                        f"{to_snake_case(field)}: Native {field} argument.",
+                        width=88,
+                        initial_indent="        ",
+                        subsequent_indent="            ",
+                    )
+                )
         lines.extend(
             ["", "    Returns:", "        Validated, detached JSON data.", '    """']
         )
         lines.extend(["    return construct(", f'        "{name}",', "        {"])
-        lines.extend(f'            "{p}": {to_snake_case(p)},' for p in ordered)
+        for field in ordered:
+            entry = f'            "{field}": {to_snake_case(field)},'
+            if len(entry) <= 88:
+                lines.append(entry)
+            else:
+                lines.extend(
+                    [
+                        f'            "{field}": (',
+                        f"                {to_snake_case(field)}",
+                        "            ),",
+                    ]
+                )
         lines.extend(["        },", "        DEFINITIONS,", "    )", "", ""])
     return "\n".join(lines).rstrip() + "\n"
 
@@ -388,9 +411,23 @@ def render_native(registry: dict[str, Any]) -> str:
             s["kotlinType"] for s in specs.values() if s["family"] == family
         )
         method = method_name(family)
+        markers = sorted(
+            {
+                marker
+                for spec in specs.values()
+                if spec["family"] == family
+                for marker in spec.get("optIn", [])
+            }
+        )
+        opt_in = (
+            [f"    @OptIn({', '.join(f'{m}::class' for m in markers)})"]
+            if markers
+            else []
+        )
         lines.extend(
             [
                 "    @Composable",
+                *opt_in,
                 f"    fun {method}(value: JsonElement): Result<{native_type}> {{",
                 "        val parsed = runCatching { "
                 f"ValueContract.read{family}(value) }}"
@@ -399,6 +436,7 @@ def render_native(registry: dict[str, Any]) -> str:
                 "    }",
                 "",
                 "    @Composable",
+                *opt_in,
                 f"    fun {method}(value: {family}Value): {native_type} =",
                 "        when (value) {",
             ]

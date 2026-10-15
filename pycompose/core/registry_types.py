@@ -913,6 +913,8 @@ class Registry(AbstractComponentRegistry):
             raise ComponentRegistryError(
                 "supportedSchemaVersions must be a list of versions"
             )
+        if len(set(supported)) != len(supported):
+            raise ComponentRegistryError("supportedSchemaVersions must be unique")
         raw_components = data.get("components")
         if not isinstance(raw_components, Mapping) or not raw_components:
             raise ComponentRegistryError(

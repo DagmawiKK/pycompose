@@ -15,8 +15,12 @@ __all__ = [
     "Color",
     "CutCornerShape",
     "Dp",
+    "DpOffset",
+    "DpSize",
     "Em",
+    "FabPosition",
     "FontFamily",
+    "FontStyle",
     "FontWeight",
     "Offset",
     "PaddingValues",
@@ -24,16 +28,69 @@ __all__ = [
     "Size",
     "SolidColor",
     "Sp",
+    "StrokeCap",
+    "TextAlign",
+    "TextDecoration",
+    "TextOverflow",
     "TextStyle",
     "ThemeColor",
     "ThemeShape",
     "ThemeTypography",
+    "TimePickerLayoutType",
     "ToggleableState",
     "WindowInsets",
+    "assistChipColors",
+    "assistChipElevation",
+    "bottomAppBarFabElevation",
     "buttonColors",
     "buttonElevation",
+    "cardColors",
+    "cardElevation",
+    "centerAlignedTopAppBarColors",
+    "checkboxColors",
+    "datePickerColors",
+    "elevatedAssistChipColors",
+    "elevatedAssistChipElevation",
+    "elevatedCardColors",
+    "elevatedCardElevation",
+    "elevatedFilterChipColors",
+    "elevatedFilterChipElevation",
+    "elevatedSuggestionChipColors",
+    "elevatedSuggestionChipElevation",
+    "exposedDropdownMenuOutlinedTextFieldColors",
+    "filledIconButtonColors",
+    "filledIconToggleButtonColors",
+    "filledTonalIconButtonColors",
+    "filledTonalIconToggleButtonColors",
+    "filterChipColors",
+    "filterChipElevation",
+    "floatingActionButtonElevation",
     "horizontalGradient",
+    "iconButtonColors",
+    "iconToggleButtonColors",
+    "inputChipColors",
+    "inputChipElevation",
+    "itemColors",
+    "largeTopAppBarColors",
     "linearGradient",
+    "loweredElevation",
+    "mediumTopAppBarColors",
+    "navigationBarItemColors",
+    "outlinedCardColors",
+    "outlinedCardElevation",
+    "outlinedIconButtonColors",
+    "outlinedIconToggleButtonColors",
+    "outlinedTextFieldColors",
+    "radioButtonColors",
+    "richTooltipColors",
+    "segmentedButtonColors",
+    "sliderColors",
+    "suggestionChipColors",
+    "suggestionChipElevation",
+    "switchColors",
+    "textFieldColors",
+    "timePickerColors",
+    "topAppBarColors",
     "verticalGradient",
 ]
 
@@ -51,103 +108,637 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     'ers":{"size":{"minimum":0,"required":true,"type":"'
     'value","valueType":"Dp"}},"since":"1.11.0"},"Dp":{'
     '"family":"Dp","parameters":{"value":{"required":tr'
-    'ue,"type":"float"}},"since":"1.11.0"},"Em":{"famil'
-    'y":"TextUnit","parameters":{"value":{"required":tr'
-    'ue,"type":"float"}},"since":"1.11.0"},"FontFamily"'
-    ':{"family":"FontFamily","parameters":{"name":{"req'
-    'uired":true,"type":"string","values":["Cursive","D'
-    'efault","Monospace","SansSerif","Serif"]}},"since"'
-    ':"1.11.0"},"FontWeight":{"family":"FontWeight","pa'
-    'rameters":{"weight":{"maximum":1000,"minimum":1,"r'
-    'equired":true,"type":"int"}},"since":"1.11.0"},"Of'
-    'fset":{"family":"Offset","parameters":{"x":{"requi'
-    'red":true,"type":"float"},"y":{"required":true,"ty'
-    'pe":"float"}},"since":"1.11.0"},"PaddingValues":{"'
-    'family":"PaddingValues","parameters":{"bottom":{"m'
-    'inimum":0,"type":"value","valueType":"Dp"},"end":{'
-    '"minimum":0,"type":"value","valueType":"Dp"},"star'
-    't":{"minimum":0,"type":"value","valueType":"Dp"},"'
-    'top":{"minimum":0,"type":"value","valueType":"Dp"}'
-    '},"since":"1.11.0"},"RoundedCornerShape":{"family"'
-    ':"Shape","parameters":{"size":{"minimum":0,"requir'
+    'ue,"type":"float"}},"since":"1.11.0"},"DpOffset":{'
+    '"family":"DpOffset","parameters":{"x":{"required":'
+    'true,"type":"value","valueType":"Dp"},"y":{"requir'
     'ed":true,"type":"value","valueType":"Dp"}},"since"'
-    ':"1.11.0"},"Size":{"family":"Size","parameters":{"'
-    'height":{"minimum":0,"required":true,"type":"float'
-    '"},"width":{"minimum":0,"required":true,"type":"fl'
-    'oat"}},"since":"1.11.0"},"SolidColor":{"family":"B'
-    'rush","parameters":{"value":{"required":true,"type'
-    '":"value","valueType":"Color"}},"since":"1.11.0"},'
-    '"Sp":{"family":"TextUnit","parameters":{"value":{"'
-    'required":true,"type":"float"}},"since":"1.11.0"},'
-    '"TextStyle":{"family":"TextStyle","parameters":{"c'
-    'olor":{"type":"value","valueType":"Color"},"fontFa'
-    'mily":{"nullable":true,"type":"value","valueType":'
-    '"FontFamily"},"fontSize":{"minimum":0,"type":"valu'
-    'e","valueType":"TextUnit"},"fontWeight":{"nullable'
-    '":true,"type":"value","valueType":"FontWeight"},"l'
-    'etterSpacing":{"type":"value","valueType":"TextUni'
-    't"}},"since":"1.11.0"},"ThemeColor":{"family":"Col'
-    'or","parameters":{"name":{"required":true,"type":"'
-    'string","values":["background","error","errorConta'
-    'iner","inverseOnSurface","inversePrimary","inverse'
-    'Surface","onBackground","onError","onErrorContaine'
-    'r","onPrimary","onPrimaryContainer","onSecondary",'
-    '"onSecondaryContainer","onSurface","onSurfaceVaria'
-    'nt","onTertiary","onTertiaryContainer","outline","'
-    'outlineVariant","primary","primaryContainer","scri'
-    'm","secondary","secondaryContainer","surface","sur'
-    'faceBright","surfaceContainer","surfaceContainerHi'
-    'gh","surfaceContainerHighest","surfaceContainerLow'
-    '","surfaceContainerLowest","surfaceDim","surfaceTi'
-    'nt","surfaceVariant","tertiary","tertiaryContainer'
-    '"]}},"since":"1.11.0"},"ThemeShape":{"family":"Sha'
-    'pe","parameters":{"name":{"required":true,"type":"'
-    'string","values":["extraLarge","extraSmall","large'
-    '","medium","small"]}},"since":"1.11.0"},"ThemeTypo'
-    'graphy":{"family":"TextStyle","parameters":{"name"'
-    ':{"required":true,"type":"string","values":["bodyL'
-    'arge","bodyMedium","bodySmall","displayLarge","dis'
-    'playMedium","displaySmall","headlineLarge","headli'
-    'neMedium","headlineSmall","labelLarge","labelMediu'
-    'm","labelSmall","titleLarge","titleMedium","titleS'
-    'mall"]}},"since":"1.11.0"},"ToggleableState":{"fam'
-    'ily":"ToggleableState","parameters":{"name":{"requ'
-    'ired":true,"type":"string","values":["Indeterminat'
-    'e","Off","On"]}},"since":"1.12.0"},"WindowInsets":'
-    '{"family":"WindowInsets","parameters":{"bottom":{"'
-    'minimum":0,"type":"value","valueType":"Dp"},"left"'
-    ':{"minimum":0,"type":"value","valueType":"Dp"},"ri'
-    'ght":{"minimum":0,"type":"value","valueType":"Dp"}'
-    ',"top":{"minimum":0,"type":"value","valueType":"Dp'
-    '"}},"since":"1.11.0"},"buttonColors":{"family":"Bu'
-    'ttonColors","parameters":{"containerColor":{"type"'
-    ':"value","valueType":"Color"},"contentColor":{"typ'
-    'e":"value","valueType":"Color"},"disabledContainer'
+    ':"1.13.0"},"DpSize":{"family":"DpSize","parameters'
+    '":{"height":{"required":true,"type":"value","value'
+    'Type":"Dp"},"width":{"required":true,"type":"value'
+    '","valueType":"Dp"}},"since":"1.13.0"},"Em":{"fami'
+    'ly":"TextUnit","parameters":{"value":{"required":t'
+    'rue,"type":"float"}},"since":"1.11.0"},"FabPositio'
+    'n":{"family":"FabPosition","parameters":{"name":{"'
+    'required":true,"type":"string","values":["Center",'
+    '"End","EndOverlay","Start"]}},"since":"1.13.0"},"F'
+    'ontFamily":{"family":"FontFamily","parameters":{"n'
+    'ame":{"required":true,"type":"string","values":["C'
+    'ursive","Default","Monospace","SansSerif","Serif"]'
+    '}},"since":"1.11.0"},"FontStyle":{"family":"FontSt'
+    'yle","parameters":{"name":{"required":true,"type":'
+    '"string","values":["Italic","Normal"]}},"since":"1'
+    '.13.0"},"FontWeight":{"family":"FontWeight","param'
+    'eters":{"weight":{"maximum":1000,"minimum":1,"requ'
+    'ired":true,"type":"int"}},"since":"1.11.0"},"Offse'
+    't":{"family":"Offset","parameters":{"x":{"required'
+    '":true,"type":"float"},"y":{"required":true,"type"'
+    ':"float"}},"since":"1.11.0"},"PaddingValues":{"fam'
+    'ily":"PaddingValues","parameters":{"bottom":{"mini'
+    'mum":0,"type":"value","valueType":"Dp"},"end":{"mi'
+    'nimum":0,"type":"value","valueType":"Dp"},"start":'
+    '{"minimum":0,"type":"value","valueType":"Dp"},"top'
+    '":{"minimum":0,"type":"value","valueType":"Dp"}},"'
+    'since":"1.11.0"},"RoundedCornerShape":{"family":"S'
+    'hape","parameters":{"size":{"minimum":0,"required"'
+    ':true,"type":"value","valueType":"Dp"}},"since":"1'
+    '.11.0"},"Size":{"family":"Size","parameters":{"hei'
+    'ght":{"minimum":0,"required":true,"type":"float"},'
+    '"width":{"minimum":0,"required":true,"type":"float'
+    '"}},"since":"1.11.0"},"SolidColor":{"family":"Brus'
+    'h","parameters":{"value":{"required":true,"type":"'
+    'value","valueType":"Color"}},"since":"1.11.0"},"Sp'
+    '":{"family":"TextUnit","parameters":{"value":{"req'
+    'uired":true,"type":"float"}},"since":"1.11.0"},"St'
+    'rokeCap":{"family":"StrokeCap","parameters":{"name'
+    '":{"required":true,"type":"string","values":["Butt'
+    '","Round","Square"]}},"since":"1.13.0"},"TextAlign'
+    '":{"family":"TextAlign","parameters":{"name":{"req'
+    'uired":true,"type":"string","values":["Center","En'
+    'd","Justify","Left","Right","Start","Unspecified"]'
+    '}},"since":"1.13.0"},"TextDecoration":{"family":"T'
+    'extDecoration","parameters":{"name":{"required":tr'
+    'ue,"type":"string","values":["LineThrough","None",'
+    '"Underline"]}},"since":"1.13.0"},"TextOverflow":{"'
+    'family":"TextOverflow","parameters":{"name":{"requ'
+    'ired":true,"type":"string","values":["Clip","Ellip'
+    'sis","Visible"]}},"since":"1.13.0"},"TextStyle":{"'
+    'family":"TextStyle","parameters":{"color":{"type":'
+    '"value","valueType":"Color"},"fontFamily":{"nullab'
+    'le":true,"type":"value","valueType":"FontFamily"},'
+    '"fontSize":{"minimum":0,"type":"value","valueType"'
+    ':"TextUnit"},"fontWeight":{"nullable":true,"type":'
+    '"value","valueType":"FontWeight"},"letterSpacing":'
+    '{"type":"value","valueType":"TextUnit"}},"since":"'
+    '1.11.0"},"ThemeColor":{"family":"Color","parameter'
+    's":{"name":{"required":true,"type":"string","value'
+    's":["background","error","errorContainer","inverse'
+    'OnSurface","inversePrimary","inverseSurface","onBa'
+    'ckground","onError","onErrorContainer","onPrimary"'
+    ',"onPrimaryContainer","onSecondary","onSecondaryCo'
+    'ntainer","onSurface","onSurfaceVariant","onTertiar'
+    'y","onTertiaryContainer","outline","outlineVariant'
+    '","primary","primaryContainer","scrim","secondary"'
+    ',"secondaryContainer","surface","surfaceBright","s'
+    'urfaceContainer","surfaceContainerHigh","surfaceCo'
+    'ntainerHighest","surfaceContainerLow","surfaceCont'
+    'ainerLowest","surfaceDim","surfaceTint","surfaceVa'
+    'riant","tertiary","tertiaryContainer"]}},"since":"'
+    '1.11.0"},"ThemeShape":{"family":"Shape","parameter'
+    's":{"name":{"required":true,"type":"string","value'
+    's":["extraLarge","extraSmall","large","medium","sm'
+    'all"]}},"since":"1.11.0"},"ThemeTypography":{"fami'
+    'ly":"TextStyle","parameters":{"name":{"required":t'
+    'rue,"type":"string","values":["bodyLarge","bodyMed'
+    'ium","bodySmall","displayLarge","displayMedium","d'
+    'isplaySmall","headlineLarge","headlineMedium","hea'
+    'dlineSmall","labelLarge","labelMedium","labelSmall'
+    '","titleLarge","titleMedium","titleSmall"]}},"sinc'
+    'e":"1.11.0"},"TimePickerLayoutType":{"family":"Tim'
+    'ePickerLayoutType","parameters":{"name":{"required'
+    '":true,"type":"string","values":["Horizontal","Ver'
+    'tical"]}},"since":"1.13.0"},"ToggleableState":{"fa'
+    'mily":"ToggleableState","parameters":{"name":{"req'
+    'uired":true,"type":"string","values":["Indetermina'
+    'te","Off","On"]}},"since":"1.12.0"},"WindowInsets"'
+    ':{"family":"WindowInsets","parameters":{"bottom":{'
+    '"minimum":0,"type":"value","valueType":"Dp"},"left'
+    '":{"minimum":0,"type":"value","valueType":"Dp"},"r'
+    'ight":{"minimum":0,"type":"value","valueType":"Dp"'
+    '},"top":{"minimum":0,"type":"value","valueType":"D'
+    'p"}},"since":"1.11.0"},"assistChipColors":{"family'
+    '":"ChipColors","parameters":{"containerColor":{"ty'
+    'pe":"value","valueType":"Color"},"disabledContaine'
+    'rColor":{"type":"value","valueType":"Color"},"disa'
+    'bledLabelColor":{"type":"value","valueType":"Color'
+    '"},"disabledLeadingIconContentColor":{"type":"valu'
+    'e","valueType":"Color"},"disabledTrailingIconConte'
+    'ntColor":{"type":"value","valueType":"Color"},"lab'
+    'elColor":{"type":"value","valueType":"Color"},"lea'
+    'dingIconContentColor":{"type":"value","valueType":'
+    '"Color"},"trailingIconContentColor":{"type":"value'
+    '","valueType":"Color"}},"since":"1.13.0"},"assistC'
+    'hipElevation":{"family":"ChipElevation","parameter'
+    's":{"draggedElevation":{"type":"value","valueType"'
+    ':"Dp"},"elevation":{"type":"value","valueType":"Dp'
+    '"}},"since":"1.13.0"},"bottomAppBarFabElevation":{'
+    '"family":"FloatingActionButtonElevation","paramete'
+    'rs":{"defaultElevation":{"type":"value","valueType'
+    '":"Dp"},"focusedElevation":{"type":"value","valueT'
+    'ype":"Dp"},"hoveredElevation":{"type":"value","val'
+    'ueType":"Dp"},"pressedElevation":{"type":"value","'
+    'valueType":"Dp"}},"since":"1.13.0"},"buttonColors"'
+    ':{"family":"ButtonColors","parameters":{"container'
+    'Color":{"type":"value","valueType":"Color"},"conte'
+    'ntColor":{"type":"value","valueType":"Color"},"dis'
+    'abledContainerColor":{"type":"value","valueType":"'
+    'Color"},"disabledContentColor":{"type":"value","va'
+    'lueType":"Color"}},"since":"1.11.0"},"buttonElevat'
+    'ion":{"family":"ButtonElevation","parameters":{"de'
+    'faultElevation":{"minimum":0,"type":"value","value'
+    'Type":"Dp"},"disabledElevation":{"minimum":0,"type'
+    '":"value","valueType":"Dp"},"focusedElevation":{"m'
+    'inimum":0,"type":"value","valueType":"Dp"},"hovere'
+    'dElevation":{"minimum":0,"type":"value","valueType'
+    '":"Dp"},"pressedElevation":{"minimum":0,"type":"va'
+    'lue","valueType":"Dp"}},"since":"1.11.0"},"cardCol'
+    'ors":{"family":"CardColors","parameters":{"contain'
+    'erColor":{"type":"value","valueType":"Color"},"dis'
+    'abledContainerColor":{"type":"value","valueType":"'
+    'Color"}},"since":"1.13.0"},"cardElevation":{"famil'
+    'y":"CardElevation","parameters":{"defaultElevation'
+    '":{"type":"value","valueType":"Dp"},"disabledEleva'
+    'tion":{"type":"value","valueType":"Dp"},"draggedEl'
+    'evation":{"type":"value","valueType":"Dp"},"focuse'
+    'dElevation":{"type":"value","valueType":"Dp"},"hov'
+    'eredElevation":{"type":"value","valueType":"Dp"},"'
+    'pressedElevation":{"type":"value","valueType":"Dp"'
+    '}},"since":"1.13.0"},"centerAlignedTopAppBarColors'
+    '":{"family":"TopAppBarColors","parameters":{"actio'
+    'nIconContentColor":{"type":"value","valueType":"Co'
+    'lor"},"containerColor":{"type":"value","valueType"'
+    ':"Color"},"navigationIconContentColor":{"type":"va'
+    'lue","valueType":"Color"},"scrolledContainerColor"'
+    ':{"type":"value","valueType":"Color"},"titleConten'
+    'tColor":{"type":"value","valueType":"Color"}},"sin'
+    'ce":"1.13.0"},"checkboxColors":{"family":"Checkbox'
+    'Colors","parameters":{"checkedColor":{"type":"valu'
+    'e","valueType":"Color"},"checkmarkColor":{"type":"'
+    'value","valueType":"Color"},"disabledCheckedColor"'
+    ':{"type":"value","valueType":"Color"},"disabledInd'
+    'eterminateColor":{"type":"value","valueType":"Colo'
+    'r"},"disabledUncheckedColor":{"type":"value","valu'
+    'eType":"Color"},"uncheckedColor":{"type":"value","'
+    'valueType":"Color"}},"since":"1.13.0"},"datePicker'
+    'Colors":{"family":"DatePickerColors","parameters":'
+    '{"containerColor":{"type":"value","valueType":"Col'
+    'or"},"currentYearContentColor":{"type":"value","va'
+    'lueType":"Color"},"dateTextFieldColors":{"nullable'
+    '":true,"type":"value","valueType":"TextFieldColors'
+    '"},"dayContentColor":{"type":"value","valueType":"'
+    'Color"},"dayInSelectionRangeContainerColor":{"type'
+    '":"value","valueType":"Color"},"dayInSelectionRang'
+    'eContentColor":{"type":"value","valueType":"Color"'
+    '},"disabledDayContentColor":{"type":"value","value'
+    'Type":"Color"},"disabledSelectedDayContainerColor"'
+    ':{"type":"value","valueType":"Color"},"disabledSel'
+    'ectedDayContentColor":{"type":"value","valueType":'
+    '"Color"},"disabledSelectedYearContainerColor":{"ty'
+    'pe":"value","valueType":"Color"},"disabledSelected'
+    'YearContentColor":{"type":"value","valueType":"Col'
+    'or"},"disabledYearContentColor":{"type":"value","v'
+    'alueType":"Color"},"dividerColor":{"type":"value",'
+    '"valueType":"Color"},"headlineContentColor":{"type'
+    '":"value","valueType":"Color"},"navigationContentC'
+    'olor":{"type":"value","valueType":"Color"},"select'
+    'edDayContainerColor":{"type":"value","valueType":"'
+    'Color"},"selectedDayContentColor":{"type":"value",'
+    '"valueType":"Color"},"selectedYearContainerColor":'
+    '{"type":"value","valueType":"Color"},"selectedYear'
+    'ContentColor":{"type":"value","valueType":"Color"}'
+    ',"subheadContentColor":{"type":"value","valueType"'
+    ':"Color"},"titleContentColor":{"type":"value","val'
+    'ueType":"Color"},"todayContentColor":{"type":"valu'
+    'e","valueType":"Color"},"todayDateBorderColor":{"t'
+    'ype":"value","valueType":"Color"},"weekdayContentC'
+    'olor":{"type":"value","valueType":"Color"},"yearCo'
+    'ntentColor":{"type":"value","valueType":"Color"}},'
+    '"since":"1.13.0"},"elevatedAssistChipColors":{"fam'
+    'ily":"ChipColors","parameters":{"containerColor":{'
+    '"type":"value","valueType":"Color"},"disabledConta'
+    'inerColor":{"type":"value","valueType":"Color"},"d'
+    'isabledLabelColor":{"type":"value","valueType":"Co'
+    'lor"},"disabledLeadingIconContentColor":{"type":"v'
+    'alue","valueType":"Color"},"disabledTrailingIconCo'
+    'ntentColor":{"type":"value","valueType":"Color"},"'
+    'labelColor":{"type":"value","valueType":"Color"},"'
+    'leadingIconContentColor":{"type":"value","valueTyp'
+    'e":"Color"},"trailingIconContentColor":{"type":"va'
+    'lue","valueType":"Color"}},"since":"1.13.0"},"elev'
+    'atedAssistChipElevation":{"family":"ChipElevation"'
+    ',"parameters":{"disabledElevation":{"type":"value"'
+    ',"valueType":"Dp"},"draggedElevation":{"type":"val'
+    'ue","valueType":"Dp"},"elevation":{"type":"value",'
+    '"valueType":"Dp"},"focusedElevation":{"type":"valu'
+    'e","valueType":"Dp"},"hoveredElevation":{"type":"v'
+    'alue","valueType":"Dp"},"pressedElevation":{"type"'
+    ':"value","valueType":"Dp"}},"since":"1.13.0"},"ele'
+    'vatedCardColors":{"family":"CardColors","parameter'
+    's":{"containerColor":{"type":"value","valueType":"'
+    'Color"},"disabledContainerColor":{"type":"value","'
+    'valueType":"Color"}},"since":"1.13.0"},"elevatedCa'
+    'rdElevation":{"family":"CardElevation","parameters'
+    '":{"defaultElevation":{"type":"value","valueType":'
+    '"Dp"},"disabledElevation":{"type":"value","valueTy'
+    'pe":"Dp"},"draggedElevation":{"type":"value","valu'
+    'eType":"Dp"},"focusedElevation":{"type":"value","v'
+    'alueType":"Dp"},"hoveredElevation":{"type":"value"'
+    ',"valueType":"Dp"},"pressedElevation":{"type":"val'
+    'ue","valueType":"Dp"}},"since":"1.13.0"},"elevated'
+    'FilterChipColors":{"family":"SelectableChipColors"'
+    ',"parameters":{"containerColor":{"type":"value","v'
+    'alueType":"Color"},"disabledContainerColor":{"type'
+    '":"value","valueType":"Color"},"disabledLabelColor'
+    '":{"type":"value","valueType":"Color"},"disabledLe'
+    'adingIconColor":{"type":"value","valueType":"Color'
+    '"},"disabledSelectedContainerColor":{"type":"value'
+    '","valueType":"Color"},"disabledTrailingIconColor"'
+    ':{"type":"value","valueType":"Color"},"iconColor":'
+    '{"type":"value","valueType":"Color"},"labelColor":'
+    '{"type":"value","valueType":"Color"},"selectedCont'
+    'ainerColor":{"type":"value","valueType":"Color"},"'
+    'selectedLabelColor":{"type":"value","valueType":"C'
+    'olor"},"selectedLeadingIconColor":{"type":"value",'
+    '"valueType":"Color"},"selectedTrailingIconColor":{'
+    '"type":"value","valueType":"Color"}},"since":"1.13'
+    '.0"},"elevatedFilterChipElevation":{"family":"Sele'
+    'ctableChipElevation","parameters":{"disabledElevat'
+    'ion":{"type":"value","valueType":"Dp"},"draggedEle'
+    'vation":{"type":"value","valueType":"Dp"},"elevati'
+    'on":{"type":"value","valueType":"Dp"},"focusedElev'
+    'ation":{"type":"value","valueType":"Dp"},"hoveredE'
+    'levation":{"type":"value","valueType":"Dp"},"press'
+    'edElevation":{"type":"value","valueType":"Dp"}},"s'
+    'ince":"1.13.0"},"elevatedSuggestionChipColors":{"f'
+    'amily":"ChipColors","parameters":{"containerColor"'
+    ':{"type":"value","valueType":"Color"},"disabledCon'
+    'tainerColor":{"type":"value","valueType":"Color"},'
+    '"disabledIconContentColor":{"type":"value","valueT'
+    'ype":"Color"},"disabledLabelColor":{"type":"value"'
+    ',"valueType":"Color"},"iconContentColor":{"type":"'
+    'value","valueType":"Color"},"labelColor":{"type":"'
+    'value","valueType":"Color"}},"since":"1.13.0"},"el'
+    'evatedSuggestionChipElevation":{"family":"ChipElev'
+    'ation","parameters":{"disabledElevation":{"type":"'
+    'value","valueType":"Dp"},"draggedElevation":{"type'
+    '":"value","valueType":"Dp"},"elevation":{"type":"v'
+    'alue","valueType":"Dp"},"focusedElevation":{"type"'
+    ':"value","valueType":"Dp"},"hoveredElevation":{"ty'
+    'pe":"value","valueType":"Dp"},"pressedElevation":{'
+    '"type":"value","valueType":"Dp"}},"since":"1.13.0"'
+    '},"exposedDropdownMenuOutlinedTextFieldColors":{"f'
+    'amily":"TextFieldColors","parameters":{"disabledCo'
+    'ntainerColor":{"type":"value","valueType":"Color"}'
+    ',"errorContainerColor":{"type":"value","valueType"'
+    ':"Color"},"focusedContainerColor":{"type":"value",'
+    '"valueType":"Color"},"unfocusedContainerColor":{"t'
+    'ype":"value","valueType":"Color"}},"since":"1.13.0'
+    '"},"filledIconButtonColors":{"family":"IconButtonC'
+    'olors","parameters":{"containerColor":{"type":"val'
+    'ue","valueType":"Color"},"disabledContainerColor":'
+    '{"type":"value","valueType":"Color"},"disabledCont'
+    'entColor":{"type":"value","valueType":"Color"}},"s'
+    'ince":"1.13.0"},"filledIconToggleButtonColors":{"f'
+    'amily":"IconToggleButtonColors","parameters":{"che'
+    'ckedContainerColor":{"type":"value","valueType":"C'
+    'olor"},"containerColor":{"type":"value","valueType'
+    '":"Color"},"contentColor":{"type":"value","valueTy'
+    'pe":"Color"},"disabledContainerColor":{"type":"val'
+    'ue","valueType":"Color"},"disabledContentColor":{"'
+    'type":"value","valueType":"Color"}},"since":"1.13.'
+    '0"},"filledTonalIconButtonColors":{"family":"IconB'
+    'uttonColors","parameters":{"containerColor":{"type'
+    '":"value","valueType":"Color"},"disabledContainerC'
+    'olor":{"type":"value","valueType":"Color"},"disabl'
+    'edContentColor":{"type":"value","valueType":"Color'
+    '"}},"since":"1.13.0"},"filledTonalIconToggleButton'
+    'Colors":{"family":"IconToggleButtonColors","parame'
+    'ters":{"checkedContainerColor":{"type":"value","va'
+    'lueType":"Color"},"checkedContentColor":{"type":"v'
+    'alue","valueType":"Color"},"containerColor":{"type'
+    '":"value","valueType":"Color"},"disabledContainerC'
+    'olor":{"type":"value","valueType":"Color"},"disabl'
+    'edContentColor":{"type":"value","valueType":"Color'
+    '"}},"since":"1.13.0"},"filterChipColors":{"family"'
+    ':"SelectableChipColors","parameters":{"containerCo'
+    'lor":{"type":"value","valueType":"Color"},"disable'
+    'dContainerColor":{"type":"value","valueType":"Colo'
+    'r"},"disabledLabelColor":{"type":"value","valueTyp'
+    'e":"Color"},"disabledLeadingIconColor":{"type":"va'
+    'lue","valueType":"Color"},"disabledSelectedContain'
+    'erColor":{"type":"value","valueType":"Color"},"dis'
+    'abledTrailingIconColor":{"type":"value","valueType'
+    '":"Color"},"iconColor":{"type":"value","valueType"'
+    ':"Color"},"labelColor":{"type":"value","valueType"'
+    ':"Color"},"selectedContainerColor":{"type":"value"'
+    ',"valueType":"Color"},"selectedLabelColor":{"type"'
+    ':"value","valueType":"Color"},"selectedLeadingIcon'
+    'Color":{"type":"value","valueType":"Color"},"selec'
+    'tedTrailingIconColor":{"type":"value","valueType":'
+    '"Color"}},"since":"1.13.0"},"filterChipElevation":'
+    '{"family":"SelectableChipElevation","parameters":{'
+    '"draggedElevation":{"type":"value","valueType":"Dp'
+    '"},"elevation":{"type":"value","valueType":"Dp"},"'
+    'focusedElevation":{"type":"value","valueType":"Dp"'
+    '},"hoveredElevation":{"type":"value","valueType":"'
+    'Dp"},"pressedElevation":{"type":"value","valueType'
+    '":"Dp"}},"since":"1.13.0"},"floatingActionButtonEl'
+    'evation":{"family":"FloatingActionButtonElevation"'
+    ',"parameters":{"defaultElevation":{"type":"value",'
+    '"valueType":"Dp"},"focusedElevation":{"type":"valu'
+    'e","valueType":"Dp"},"hoveredElevation":{"type":"v'
+    'alue","valueType":"Dp"},"pressedElevation":{"type"'
+    ':"value","valueType":"Dp"}},"since":"1.13.0"},"hor'
+    'izontalGradient":{"family":"Brush","parameters":{"'
+    'colors":{"items":{"type":"value","valueType":"Colo'
+    'r"},"minItems":2,"required":true,"type":"list"},"e'
+    'ndX":{"type":"float"},"startX":{"type":"float"}},"'
+    'since":"1.11.0"},"iconButtonColors":{"family":"Ico'
+    'nButtonColors","parameters":{"containerColor":{"ty'
+    'pe":"value","valueType":"Color"},"contentColor":{"'
+    'type":"value","valueType":"Color"},"disabledContai'
+    'nerColor":{"type":"value","valueType":"Color"}},"s'
+    'ince":"1.13.0"},"iconToggleButtonColors":{"family"'
+    ':"IconToggleButtonColors","parameters":{"checkedCo'
+    'ntainerColor":{"type":"value","valueType":"Color"}'
+    ',"checkedContentColor":{"type":"value","valueType"'
+    ':"Color"},"containerColor":{"type":"value","valueT'
+    'ype":"Color"},"contentColor":{"type":"value","valu'
+    'eType":"Color"},"disabledContainerColor":{"type":"'
+    'value","valueType":"Color"}},"since":"1.13.0"},"in'
+    'putChipColors":{"family":"SelectableChipColors","p'
+    'arameters":{"containerColor":{"type":"value","valu'
+    'eType":"Color"},"disabledContainerColor":{"type":"'
+    'value","valueType":"Color"},"disabledLabelColor":{'
+    '"type":"value","valueType":"Color"},"disabledLeadi'
+    'ngIconColor":{"type":"value","valueType":"Color"},'
+    '"disabledSelectedContainerColor":{"type":"value","'
+    'valueType":"Color"},"disabledTrailingIconColor":{"'
+    'type":"value","valueType":"Color"},"labelColor":{"'
+    'type":"value","valueType":"Color"},"leadingIconCol'
+    'or":{"type":"value","valueType":"Color"},"selected'
+    'ContainerColor":{"type":"value","valueType":"Color'
+    '"},"selectedLabelColor":{"type":"value","valueType'
+    '":"Color"},"selectedLeadingIconColor":{"type":"val'
+    'ue","valueType":"Color"},"selectedTrailingIconColo'
+    'r":{"type":"value","valueType":"Color"},"trailingI'
+    'conColor":{"type":"value","valueType":"Color"}},"s'
+    'ince":"1.13.0"},"inputChipElevation":{"family":"Se'
+    'lectableChipElevation","parameters":{"draggedEleva'
+    'tion":{"type":"value","valueType":"Dp"},"elevation'
+    '":{"type":"value","valueType":"Dp"}},"since":"1.13'
+    '.0"},"itemColors":{"family":"MenuItemColors","para'
+    'meters":{"disabledLeadingIconColor":{"type":"value'
+    '","valueType":"Color"},"disabledTextColor":{"type"'
+    ':"value","valueType":"Color"},"disabledTrailingIco'
+    'nColor":{"type":"value","valueType":"Color"},"lead'
+    'ingIconColor":{"type":"value","valueType":"Color"}'
+    ',"textColor":{"type":"value","valueType":"Color"},'
+    '"trailingIconColor":{"type":"value","valueType":"C'
+    'olor"}},"since":"1.13.0"},"largeTopAppBarColors":{'
+    '"family":"TopAppBarColors","parameters":{"actionIc'
+    'onContentColor":{"type":"value","valueType":"Color'
+    '"},"containerColor":{"type":"value","valueType":"C'
+    'olor"},"navigationIconContentColor":{"type":"value'
+    '","valueType":"Color"},"scrolledContainerColor":{"'
+    'type":"value","valueType":"Color"},"titleContentCo'
+    'lor":{"type":"value","valueType":"Color"}},"since"'
+    ':"1.13.0"},"linearGradient":{"family":"Brush","par'
+    'ameters":{"colors":{"items":{"type":"value","value'
+    'Type":"Color"},"minItems":2,"required":true,"type"'
+    ':"list"},"end":{"type":"value","valueType":"Offset'
+    '"},"start":{"type":"value","valueType":"Offset"}},'
+    '"since":"1.11.0"},"loweredElevation":{"family":"Fl'
+    'oatingActionButtonElevation","parameters":{"defaul'
+    'tElevation":{"type":"value","valueType":"Dp"},"foc'
+    'usedElevation":{"type":"value","valueType":"Dp"},"'
+    'hoveredElevation":{"type":"value","valueType":"Dp"'
+    '},"pressedElevation":{"type":"value","valueType":"'
+    'Dp"}},"since":"1.13.0"},"mediumTopAppBarColors":{"'
+    'family":"TopAppBarColors","parameters":{"actionIco'
+    'nContentColor":{"type":"value","valueType":"Color"'
+    '},"containerColor":{"type":"value","valueType":"Co'
+    'lor"},"navigationIconContentColor":{"type":"value"'
+    ',"valueType":"Color"},"scrolledContainerColor":{"t'
+    'ype":"value","valueType":"Color"},"titleContentCol'
+    'or":{"type":"value","valueType":"Color"}},"since":'
+    '"1.13.0"},"navigationBarItemColors":{"family":"Nav'
+    'igationBarItemColors","parameters":{"disabledIconC'
+    'olor":{"type":"value","valueType":"Color"},"disabl'
+    'edTextColor":{"type":"value","valueType":"Color"},'
+    '"indicatorColor":{"type":"value","valueType":"Colo'
+    'r"},"selectedIconColor":{"type":"value","valueType'
+    '":"Color"},"selectedTextColor":{"type":"value","va'
+    'lueType":"Color"},"unselectedIconColor":{"type":"v'
+    'alue","valueType":"Color"},"unselectedTextColor":{'
+    '"type":"value","valueType":"Color"}},"since":"1.13'
+    '.0"},"outlinedCardColors":{"family":"CardColors","'
+    'parameters":{"containerColor":{"type":"value","val'
+    'ueType":"Color"},"disabledContainerColor":{"type":'
+    '"value","valueType":"Color"}},"since":"1.13.0"},"o'
+    'utlinedCardElevation":{"family":"CardElevation","p'
+    'arameters":{"defaultElevation":{"type":"value","va'
+    'lueType":"Dp"},"disabledElevation":{"type":"value"'
+    ',"valueType":"Dp"},"draggedElevation":{"type":"val'
+    'ue","valueType":"Dp"}},"since":"1.13.0"},"outlined'
+    'IconButtonColors":{"family":"IconButtonColors","pa'
+    'rameters":{"containerColor":{"type":"value","value'
+    'Type":"Color"},"contentColor":{"type":"value","val'
+    'ueType":"Color"},"disabledContainerColor":{"type":'
+    '"value","valueType":"Color"}},"since":"1.13.0"},"o'
+    'utlinedIconToggleButtonColors":{"family":"IconTogg'
+    'leButtonColors","parameters":{"checkedContainerCol'
+    'or":{"type":"value","valueType":"Color"},"containe'
+    'rColor":{"type":"value","valueType":"Color"},"cont'
+    'entColor":{"type":"value","valueType":"Color"},"di'
+    'sabledContainerColor":{"type":"value","valueType":'
+    '"Color"}},"since":"1.13.0"},"outlinedTextFieldColo'
+    'rs":{"family":"TextFieldColors","parameters":{"cur'
+    'sorColor":{"type":"value","valueType":"Color"},"di'
+    'sabledBorderColor":{"type":"value","valueType":"Co'
+    'lor"},"disabledContainerColor":{"type":"value","va'
+    'lueType":"Color"},"disabledLabelColor":{"type":"va'
+    'lue","valueType":"Color"},"disabledLeadingIconColo'
+    'r":{"type":"value","valueType":"Color"},"disabledP'
+    'laceholderColor":{"type":"value","valueType":"Colo'
+    'r"},"disabledPrefixColor":{"type":"value","valueTy'
+    'pe":"Color"},"disabledSuffixColor":{"type":"value"'
+    ',"valueType":"Color"},"disabledSupportingTextColor'
+    '":{"type":"value","valueType":"Color"},"disabledTe'
+    'xtColor":{"type":"value","valueType":"Color"},"dis'
+    'abledTrailingIconColor":{"type":"value","valueType'
+    '":"Color"},"errorBorderColor":{"type":"value","val'
+    'ueType":"Color"},"errorContainerColor":{"type":"va'
+    'lue","valueType":"Color"},"errorCursorColor":{"typ'
+    'e":"value","valueType":"Color"},"errorLabelColor":'
+    '{"type":"value","valueType":"Color"},"errorLeading'
+    'IconColor":{"type":"value","valueType":"Color"},"e'
+    'rrorPlaceholderColor":{"type":"value","valueType":'
+    '"Color"},"errorPrefixColor":{"type":"value","value'
+    'Type":"Color"},"errorSuffixColor":{"type":"value",'
+    '"valueType":"Color"},"errorSupportingTextColor":{"'
+    'type":"value","valueType":"Color"},"errorTextColor'
+    '":{"type":"value","valueType":"Color"},"errorTrail'
+    'ingIconColor":{"type":"value","valueType":"Color"}'
+    ',"focusedBorderColor":{"type":"value","valueType":'
+    '"Color"},"focusedContainerColor":{"type":"value","'
+    'valueType":"Color"},"focusedLabelColor":{"type":"v'
+    'alue","valueType":"Color"},"focusedLeadingIconColo'
+    'r":{"type":"value","valueType":"Color"},"focusedPl'
+    'aceholderColor":{"type":"value","valueType":"Color'
+    '"},"focusedPrefixColor":{"type":"value","valueType'
+    '":"Color"},"focusedSuffixColor":{"type":"value","v'
+    'alueType":"Color"},"focusedSupportingTextColor":{"'
+    'type":"value","valueType":"Color"},"focusedTextCol'
+    'or":{"type":"value","valueType":"Color"},"focusedT'
+    'railingIconColor":{"type":"value","valueType":"Col'
+    'or"},"unfocusedBorderColor":{"type":"value","value'
+    'Type":"Color"},"unfocusedContainerColor":{"type":"'
+    'value","valueType":"Color"},"unfocusedLabelColor":'
+    '{"type":"value","valueType":"Color"},"unfocusedLea'
+    'dingIconColor":{"type":"value","valueType":"Color"'
+    '},"unfocusedPlaceholderColor":{"type":"value","val'
+    'ueType":"Color"},"unfocusedPrefixColor":{"type":"v'
+    'alue","valueType":"Color"},"unfocusedSuffixColor":'
+    '{"type":"value","valueType":"Color"},"unfocusedSup'
+    'portingTextColor":{"type":"value","valueType":"Col'
+    'or"},"unfocusedTextColor":{"type":"value","valueTy'
+    'pe":"Color"},"unfocusedTrailingIconColor":{"type":'
+    '"value","valueType":"Color"}},"since":"1.13.0"},"r'
+    'adioButtonColors":{"family":"RadioButtonColors","p'
+    'arameters":{"disabledSelectedColor":{"type":"value'
+    '","valueType":"Color"},"disabledUnselectedColor":{'
+    '"type":"value","valueType":"Color"},"selectedColor'
+    '":{"type":"value","valueType":"Color"},"unselected'
+    'Color":{"type":"value","valueType":"Color"}},"sinc'
+    'e":"1.13.0"},"richTooltipColors":{"family":"RichTo'
+    'oltipColors","parameters":{"actionContentColor":{"'
+    'type":"value","valueType":"Color"},"containerColor'
+    '":{"type":"value","valueType":"Color"},"contentCol'
+    'or":{"type":"value","valueType":"Color"},"titleCon'
+    'tentColor":{"type":"value","valueType":"Color"}},"'
+    'since":"1.13.0"},"segmentedButtonColors":{"family"'
+    ':"SegmentedButtonColors","parameters":{"activeBord'
+    'erColor":{"type":"value","valueType":"Color"},"act'
+    'iveContainerColor":{"type":"value","valueType":"Co'
+    'lor"},"activeContentColor":{"type":"value","valueT'
+    'ype":"Color"},"disabledActiveBorderColor":{"type":'
+    '"value","valueType":"Color"},"disabledActiveContai'
+    'nerColor":{"type":"value","valueType":"Color"},"di'
+    'sabledActiveContentColor":{"type":"value","valueTy'
+    'pe":"Color"},"disabledInactiveBorderColor":{"type"'
+    ':"value","valueType":"Color"},"disabledInactiveCon'
+    'tainerColor":{"type":"value","valueType":"Color"},'
+    '"disabledInactiveContentColor":{"type":"value","va'
+    'lueType":"Color"},"inactiveBorderColor":{"type":"v'
+    'alue","valueType":"Color"},"inactiveContainerColor'
+    '":{"type":"value","valueType":"Color"},"inactiveCo'
+    'ntentColor":{"type":"value","valueType":"Color"}},'
+    '"since":"1.13.0"},"sliderColors":{"family":"Slider'
+    'Colors","parameters":{"activeTickColor":{"type":"v'
+    'alue","valueType":"Color"},"activeTrackColor":{"ty'
+    'pe":"value","valueType":"Color"},"disabledActiveTi'
+    'ckColor":{"type":"value","valueType":"Color"},"dis'
+    'abledActiveTrackColor":{"type":"value","valueType"'
+    ':"Color"},"disabledInactiveTickColor":{"type":"val'
+    'ue","valueType":"Color"},"disabledInactiveTrackCol'
+    'or":{"type":"value","valueType":"Color"},"disabled'
+    'ThumbColor":{"type":"value","valueType":"Color"},"'
+    'inactiveTickColor":{"type":"value","valueType":"Co'
+    'lor"},"inactiveTrackColor":{"type":"value","valueT'
+    'ype":"Color"},"thumbColor":{"type":"value","valueT'
+    'ype":"Color"}},"since":"1.13.0"},"suggestionChipCo'
+    'lors":{"family":"ChipColors","parameters":{"contai'
+    'nerColor":{"type":"value","valueType":"Color"},"di'
+    'sabledContainerColor":{"type":"value","valueType":'
+    '"Color"},"disabledIconContentColor":{"type":"value'
+    '","valueType":"Color"},"disabledLabelColor":{"type'
+    '":"value","valueType":"Color"},"iconContentColor":'
+    '{"type":"value","valueType":"Color"},"labelColor":'
+    '{"type":"value","valueType":"Color"}},"since":"1.1'
+    '3.0"},"suggestionChipElevation":{"family":"ChipEle'
+    'vation","parameters":{"draggedElevation":{"type":"'
+    'value","valueType":"Dp"},"elevation":{"type":"valu'
+    'e","valueType":"Dp"}},"since":"1.13.0"},"switchCol'
+    'ors":{"family":"SwitchColors","parameters":{"check'
+    'edBorderColor":{"type":"value","valueType":"Color"'
+    '},"disabledCheckedBorderColor":{"type":"value","va'
+    'lueType":"Color"}},"since":"1.13.0"},"textFieldCol'
+    'ors":{"family":"TextFieldColors","parameters":{"cu'
+    'rsorColor":{"type":"value","valueType":"Color"},"d'
+    'isabledContainerColor":{"type":"value","valueType"'
+    ':"Color"},"disabledIndicatorColor":{"type":"value"'
+    ',"valueType":"Color"},"disabledLabelColor":{"type"'
+    ':"value","valueType":"Color"},"disabledLeadingIcon'
     'Color":{"type":"value","valueType":"Color"},"disab'
-    'ledContentColor":{"type":"value","valueType":"Colo'
-    'r"}},"since":"1.11.0"},"buttonElevation":{"family"'
-    ':"ButtonElevation","parameters":{"defaultElevation'
-    '":{"minimum":0,"type":"value","valueType":"Dp"},"d'
-    'isabledElevation":{"minimum":0,"type":"value","val'
-    'ueType":"Dp"},"focusedElevation":{"minimum":0,"typ'
-    'e":"value","valueType":"Dp"},"hoveredElevation":{"'
-    'minimum":0,"type":"value","valueType":"Dp"},"press'
-    'edElevation":{"minimum":0,"type":"value","valueTyp'
-    'e":"Dp"}},"since":"1.11.0"},"horizontalGradient":{'
-    '"family":"Brush","parameters":{"colors":{"items":{'
-    '"type":"value","valueType":"Color"},"minItems":2,"'
-    'required":true,"type":"list"},"endX":{"type":"floa'
-    't"},"startX":{"type":"float"}},"since":"1.11.0"},"'
-    'linearGradient":{"family":"Brush","parameters":{"c'
-    'olors":{"items":{"type":"value","valueType":"Color'
-    '"},"minItems":2,"required":true,"type":"list"},"en'
-    'd":{"type":"value","valueType":"Offset"},"start":{'
-    '"type":"value","valueType":"Offset"}},"since":"1.1'
-    '1.0"},"verticalGradient":{"family":"Brush","parame'
-    'ters":{"colors":{"items":{"type":"value","valueTyp'
-    'e":"Color"},"minItems":2,"required":true,"type":"l'
-    'ist"},"endY":{"type":"float"},"startY":{"type":"fl'
-    'oat"}},"since":"1.11.0"}}'
+    'ledPlaceholderColor":{"type":"value","valueType":"'
+    'Color"},"disabledPrefixColor":{"type":"value","val'
+    'ueType":"Color"},"disabledSuffixColor":{"type":"va'
+    'lue","valueType":"Color"},"disabledSupportingTextC'
+    'olor":{"type":"value","valueType":"Color"},"disabl'
+    'edTextColor":{"type":"value","valueType":"Color"},'
+    '"disabledTrailingIconColor":{"type":"value","value'
+    'Type":"Color"},"errorContainerColor":{"type":"valu'
+    'e","valueType":"Color"},"errorCursorColor":{"type"'
+    ':"value","valueType":"Color"},"errorIndicatorColor'
+    '":{"type":"value","valueType":"Color"},"errorLabel'
+    'Color":{"type":"value","valueType":"Color"},"error'
+    'LeadingIconColor":{"type":"value","valueType":"Col'
+    'or"},"errorPlaceholderColor":{"type":"value","valu'
+    'eType":"Color"},"errorPrefixColor":{"type":"value"'
+    ',"valueType":"Color"},"errorSuffixColor":{"type":"'
+    'value","valueType":"Color"},"errorSupportingTextCo'
+    'lor":{"type":"value","valueType":"Color"},"errorTe'
+    'xtColor":{"type":"value","valueType":"Color"},"err'
+    'orTrailingIconColor":{"type":"value","valueType":"'
+    'Color"},"focusedContainerColor":{"type":"value","v'
+    'alueType":"Color"},"focusedIndicatorColor":{"type"'
+    ':"value","valueType":"Color"},"focusedLabelColor":'
+    '{"type":"value","valueType":"Color"},"focusedLeadi'
+    'ngIconColor":{"type":"value","valueType":"Color"},'
+    '"focusedPlaceholderColor":{"type":"value","valueTy'
+    'pe":"Color"},"focusedPrefixColor":{"type":"value",'
+    '"valueType":"Color"},"focusedSuffixColor":{"type":'
+    '"value","valueType":"Color"},"focusedSupportingTex'
+    'tColor":{"type":"value","valueType":"Color"},"focu'
+    'sedTextColor":{"type":"value","valueType":"Color"}'
+    ',"focusedTrailingIconColor":{"type":"value","value'
+    'Type":"Color"},"unfocusedContainerColor":{"type":"'
+    'value","valueType":"Color"},"unfocusedIndicatorCol'
+    'or":{"type":"value","valueType":"Color"},"unfocuse'
+    'dLabelColor":{"type":"value","valueType":"Color"},'
+    '"unfocusedLeadingIconColor":{"type":"value","value'
+    'Type":"Color"},"unfocusedPlaceholderColor":{"type"'
+    ':"value","valueType":"Color"},"unfocusedPrefixColo'
+    'r":{"type":"value","valueType":"Color"},"unfocused'
+    'SuffixColor":{"type":"value","valueType":"Color"},'
+    '"unfocusedSupportingTextColor":{"type":"value","va'
+    'lueType":"Color"},"unfocusedTextColor":{"type":"va'
+    'lue","valueType":"Color"},"unfocusedTrailingIconCo'
+    'lor":{"type":"value","valueType":"Color"}},"since"'
+    ':"1.13.0"},"timePickerColors":{"family":"TimePicke'
+    'rColors","parameters":{"clockDialColor":{"type":"v'
+    'alue","valueType":"Color"},"clockDialSelectedConte'
+    'ntColor":{"type":"value","valueType":"Color"},"clo'
+    'ckDialUnselectedContentColor":{"type":"value","val'
+    'ueType":"Color"},"containerColor":{"type":"value",'
+    '"valueType":"Color"},"periodSelectorBorderColor":{'
+    '"type":"value","valueType":"Color"},"periodSelecto'
+    'rSelectedContainerColor":{"type":"value","valueTyp'
+    'e":"Color"},"periodSelectorSelectedContentColor":{'
+    '"type":"value","valueType":"Color"},"periodSelecto'
+    'rUnselectedContainerColor":{"type":"value","valueT'
+    'ype":"Color"},"periodSelectorUnselectedContentColo'
+    'r":{"type":"value","valueType":"Color"},"selectorC'
+    'olor":{"type":"value","valueType":"Color"},"timeSe'
+    'lectorSelectedContainerColor":{"type":"value","val'
+    'ueType":"Color"},"timeSelectorSelectedContentColor'
+    '":{"type":"value","valueType":"Color"},"timeSelect'
+    'orUnselectedContainerColor":{"type":"value","value'
+    'Type":"Color"},"timeSelectorUnselectedContentColor'
+    '":{"type":"value","valueType":"Color"}},"since":"1'
+    '.13.0"},"topAppBarColors":{"family":"TopAppBarColo'
+    'rs","parameters":{"actionIconContentColor":{"type"'
+    ':"value","valueType":"Color"},"containerColor":{"t'
+    'ype":"value","valueType":"Color"},"navigationIconC'
+    'ontentColor":{"type":"value","valueType":"Color"},'
+    '"scrolledContainerColor":{"type":"value","valueTyp'
+    'e":"Color"},"titleContentColor":{"type":"value","v'
+    'alueType":"Color"}},"since":"1.13.0"},"verticalGra'
+    'dient":{"family":"Brush","parameters":{"colors":{"'
+    'items":{"type":"value","valueType":"Color"},"minIt'
+    'ems":2,"required":true,"type":"list"},"endY":{"typ'
+    'e":"float"},"startY":{"type":"float"}},"since":"1.'
+    '11.0"}}'
 )
 
 
@@ -254,6 +845,52 @@ def Dp(
     )
 
 
+def DpOffset(
+    x: JsonValue,
+    y: JsonValue,
+) -> dict[str, JsonValue]:
+    """Construct DpOffset data for native evaluation.
+
+    Args:
+        x: Native x argument.
+        y: Native y argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "DpOffset",
+        {
+            "x": x,
+            "y": y,
+        },
+        DEFINITIONS,
+    )
+
+
+def DpSize(
+    width: JsonValue,
+    height: JsonValue,
+) -> dict[str, JsonValue]:
+    """Construct DpSize data for native evaluation.
+
+    Args:
+        width: Native width argument.
+        height: Native height argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "DpSize",
+        {
+            "width": width,
+            "height": height,
+        },
+        DEFINITIONS,
+    )
+
+
 def Em(
     value: float,
 ) -> dict[str, JsonValue]:
@@ -274,6 +911,26 @@ def Em(
     )
 
 
+def FabPosition(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct FabPosition data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "FabPosition",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
 def FontFamily(
     name: str,
 ) -> dict[str, JsonValue]:
@@ -287,6 +944,26 @@ def FontFamily(
     """
     return construct(
         "FontFamily",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
+def FontStyle(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct FontStyle data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "FontStyle",
         {
             "name": name,
         },
@@ -449,6 +1126,86 @@ def Sp(
     )
 
 
+def StrokeCap(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct StrokeCap data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "StrokeCap",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
+def TextAlign(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct TextAlign data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "TextAlign",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
+def TextDecoration(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct TextDecoration data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "TextDecoration",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
+def TextOverflow(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct TextOverflow data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "TextOverflow",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
 def TextStyle(
     color: JsonValue | _Unset = UNSET,
     font_size: JsonValue | _Unset = UNSET,
@@ -541,6 +1298,26 @@ def ThemeTypography(
     )
 
 
+def TimePickerLayoutType(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct TimePickerLayoutType data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "TimePickerLayoutType",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
 def ToggleableState(
     name: str,
 ) -> dict[str, JsonValue]:
@@ -585,6 +1362,101 @@ def WindowInsets(
             "top": top,
             "right": right,
             "bottom": bottom,
+        },
+        DEFINITIONS,
+    )
+
+
+def assistChipColors(
+    container_color: JsonValue | _Unset = UNSET,
+    label_color: JsonValue | _Unset = UNSET,
+    leading_icon_content_color: JsonValue | _Unset = UNSET,
+    trailing_icon_content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    disabled_leading_icon_content_color: JsonValue | _Unset = UNSET,
+    disabled_trailing_icon_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct ChipColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        label_color: Native labelColor argument.
+        leading_icon_content_color: Native leadingIconContentColor argument.
+        trailing_icon_content_color: Native trailingIconContentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        disabled_leading_icon_content_color: Native disabledLeadingIconContentColor
+            argument.
+        disabled_trailing_icon_content_color: Native disabledTrailingIconContentColor
+            argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "assistChipColors",
+        {
+            "containerColor": container_color,
+            "labelColor": label_color,
+            "leadingIconContentColor": leading_icon_content_color,
+            "trailingIconContentColor": trailing_icon_content_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledLabelColor": disabled_label_color,
+            "disabledLeadingIconContentColor": disabled_leading_icon_content_color,
+            "disabledTrailingIconContentColor": disabled_trailing_icon_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def assistChipElevation(
+    elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct ChipElevation data for native evaluation.
+
+    Args:
+        elevation: Native elevation argument.
+        dragged_elevation: Native draggedElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "assistChipElevation",
+        {
+            "elevation": elevation,
+            "draggedElevation": dragged_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def bottomAppBarFabElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct FloatingActionButtonElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "bottomAppBarFabElevation",
+        {
+            "defaultElevation": default_elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
         },
         DEFINITIONS,
     )
@@ -651,6 +1523,786 @@ def buttonElevation(
     )
 
 
+def cardColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "cardColors",
+        {
+            "containerColor": container_color,
+            "disabledContainerColor": disabled_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def cardElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+    disabled_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+        dragged_elevation: Native draggedElevation argument.
+        disabled_elevation: Native disabledElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "cardElevation",
+        {
+            "defaultElevation": default_elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+            "draggedElevation": dragged_elevation,
+            "disabledElevation": disabled_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def centerAlignedTopAppBarColors(
+    container_color: JsonValue | _Unset = UNSET,
+    scrolled_container_color: JsonValue | _Unset = UNSET,
+    navigation_icon_content_color: JsonValue | _Unset = UNSET,
+    title_content_color: JsonValue | _Unset = UNSET,
+    action_icon_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TopAppBarColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        scrolled_container_color: Native scrolledContainerColor argument.
+        navigation_icon_content_color: Native navigationIconContentColor argument.
+        title_content_color: Native titleContentColor argument.
+        action_icon_content_color: Native actionIconContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "centerAlignedTopAppBarColors",
+        {
+            "containerColor": container_color,
+            "scrolledContainerColor": scrolled_container_color,
+            "navigationIconContentColor": navigation_icon_content_color,
+            "titleContentColor": title_content_color,
+            "actionIconContentColor": action_icon_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def checkboxColors(
+    checked_color: JsonValue | _Unset = UNSET,
+    unchecked_color: JsonValue | _Unset = UNSET,
+    checkmark_color: JsonValue | _Unset = UNSET,
+    disabled_checked_color: JsonValue | _Unset = UNSET,
+    disabled_unchecked_color: JsonValue | _Unset = UNSET,
+    disabled_indeterminate_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CheckboxColors data for native evaluation.
+
+    Args:
+        checked_color: Native checkedColor argument.
+        unchecked_color: Native uncheckedColor argument.
+        checkmark_color: Native checkmarkColor argument.
+        disabled_checked_color: Native disabledCheckedColor argument.
+        disabled_unchecked_color: Native disabledUncheckedColor argument.
+        disabled_indeterminate_color: Native disabledIndeterminateColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "checkboxColors",
+        {
+            "checkedColor": checked_color,
+            "uncheckedColor": unchecked_color,
+            "checkmarkColor": checkmark_color,
+            "disabledCheckedColor": disabled_checked_color,
+            "disabledUncheckedColor": disabled_unchecked_color,
+            "disabledIndeterminateColor": disabled_indeterminate_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def datePickerColors(
+    container_color: JsonValue | _Unset = UNSET,
+    title_content_color: JsonValue | _Unset = UNSET,
+    headline_content_color: JsonValue | _Unset = UNSET,
+    weekday_content_color: JsonValue | _Unset = UNSET,
+    subhead_content_color: JsonValue | _Unset = UNSET,
+    navigation_content_color: JsonValue | _Unset = UNSET,
+    year_content_color: JsonValue | _Unset = UNSET,
+    disabled_year_content_color: JsonValue | _Unset = UNSET,
+    current_year_content_color: JsonValue | _Unset = UNSET,
+    selected_year_content_color: JsonValue | _Unset = UNSET,
+    disabled_selected_year_content_color: JsonValue | _Unset = UNSET,
+    selected_year_container_color: JsonValue | _Unset = UNSET,
+    disabled_selected_year_container_color: JsonValue | _Unset = UNSET,
+    day_content_color: JsonValue | _Unset = UNSET,
+    disabled_day_content_color: JsonValue | _Unset = UNSET,
+    selected_day_content_color: JsonValue | _Unset = UNSET,
+    disabled_selected_day_content_color: JsonValue | _Unset = UNSET,
+    selected_day_container_color: JsonValue | _Unset = UNSET,
+    disabled_selected_day_container_color: JsonValue | _Unset = UNSET,
+    today_content_color: JsonValue | _Unset = UNSET,
+    today_date_border_color: JsonValue | _Unset = UNSET,
+    day_in_selection_range_content_color: JsonValue | _Unset = UNSET,
+    day_in_selection_range_container_color: JsonValue | _Unset = UNSET,
+    divider_color: JsonValue | _Unset = UNSET,
+    date_text_field_colors: JsonValue | None | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct DatePickerColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        title_content_color: Native titleContentColor argument.
+        headline_content_color: Native headlineContentColor argument.
+        weekday_content_color: Native weekdayContentColor argument.
+        subhead_content_color: Native subheadContentColor argument.
+        navigation_content_color: Native navigationContentColor argument.
+        year_content_color: Native yearContentColor argument.
+        disabled_year_content_color: Native disabledYearContentColor argument.
+        current_year_content_color: Native currentYearContentColor argument.
+        selected_year_content_color: Native selectedYearContentColor argument.
+        disabled_selected_year_content_color: Native disabledSelectedYearContentColor
+            argument.
+        selected_year_container_color: Native selectedYearContainerColor argument.
+        disabled_selected_year_container_color: Native
+            disabledSelectedYearContainerColor argument.
+        day_content_color: Native dayContentColor argument.
+        disabled_day_content_color: Native disabledDayContentColor argument.
+        selected_day_content_color: Native selectedDayContentColor argument.
+        disabled_selected_day_content_color: Native disabledSelectedDayContentColor
+            argument.
+        selected_day_container_color: Native selectedDayContainerColor argument.
+        disabled_selected_day_container_color: Native disabledSelectedDayContainerColor
+            argument.
+        today_content_color: Native todayContentColor argument.
+        today_date_border_color: Native todayDateBorderColor argument.
+        day_in_selection_range_content_color: Native dayInSelectionRangeContentColor
+            argument.
+        day_in_selection_range_container_color: Native dayInSelectionRangeContainerColor
+            argument.
+        divider_color: Native dividerColor argument.
+        date_text_field_colors: Native dateTextFieldColors argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "datePickerColors",
+        {
+            "containerColor": container_color,
+            "titleContentColor": title_content_color,
+            "headlineContentColor": headline_content_color,
+            "weekdayContentColor": weekday_content_color,
+            "subheadContentColor": subhead_content_color,
+            "navigationContentColor": navigation_content_color,
+            "yearContentColor": year_content_color,
+            "disabledYearContentColor": disabled_year_content_color,
+            "currentYearContentColor": current_year_content_color,
+            "selectedYearContentColor": selected_year_content_color,
+            "disabledSelectedYearContentColor": disabled_selected_year_content_color,
+            "selectedYearContainerColor": selected_year_container_color,
+            "disabledSelectedYearContainerColor": (
+                disabled_selected_year_container_color
+            ),
+            "dayContentColor": day_content_color,
+            "disabledDayContentColor": disabled_day_content_color,
+            "selectedDayContentColor": selected_day_content_color,
+            "disabledSelectedDayContentColor": disabled_selected_day_content_color,
+            "selectedDayContainerColor": selected_day_container_color,
+            "disabledSelectedDayContainerColor": disabled_selected_day_container_color,
+            "todayContentColor": today_content_color,
+            "todayDateBorderColor": today_date_border_color,
+            "dayInSelectionRangeContentColor": day_in_selection_range_content_color,
+            "dayInSelectionRangeContainerColor": day_in_selection_range_container_color,
+            "dividerColor": divider_color,
+            "dateTextFieldColors": date_text_field_colors,
+        },
+        DEFINITIONS,
+    )
+
+
+def elevatedAssistChipColors(
+    container_color: JsonValue | _Unset = UNSET,
+    label_color: JsonValue | _Unset = UNSET,
+    leading_icon_content_color: JsonValue | _Unset = UNSET,
+    trailing_icon_content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    disabled_leading_icon_content_color: JsonValue | _Unset = UNSET,
+    disabled_trailing_icon_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct ChipColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        label_color: Native labelColor argument.
+        leading_icon_content_color: Native leadingIconContentColor argument.
+        trailing_icon_content_color: Native trailingIconContentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        disabled_leading_icon_content_color: Native disabledLeadingIconContentColor
+            argument.
+        disabled_trailing_icon_content_color: Native disabledTrailingIconContentColor
+            argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "elevatedAssistChipColors",
+        {
+            "containerColor": container_color,
+            "labelColor": label_color,
+            "leadingIconContentColor": leading_icon_content_color,
+            "trailingIconContentColor": trailing_icon_content_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledLabelColor": disabled_label_color,
+            "disabledLeadingIconContentColor": disabled_leading_icon_content_color,
+            "disabledTrailingIconContentColor": disabled_trailing_icon_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def elevatedAssistChipElevation(
+    elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+    disabled_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct ChipElevation data for native evaluation.
+
+    Args:
+        elevation: Native elevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+        dragged_elevation: Native draggedElevation argument.
+        disabled_elevation: Native disabledElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "elevatedAssistChipElevation",
+        {
+            "elevation": elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+            "draggedElevation": dragged_elevation,
+            "disabledElevation": disabled_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def elevatedCardColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "elevatedCardColors",
+        {
+            "containerColor": container_color,
+            "disabledContainerColor": disabled_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def elevatedCardElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+    disabled_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+        dragged_elevation: Native draggedElevation argument.
+        disabled_elevation: Native disabledElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "elevatedCardElevation",
+        {
+            "defaultElevation": default_elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+            "draggedElevation": dragged_elevation,
+            "disabledElevation": disabled_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def elevatedFilterChipColors(
+    container_color: JsonValue | _Unset = UNSET,
+    label_color: JsonValue | _Unset = UNSET,
+    icon_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    disabled_leading_icon_color: JsonValue | _Unset = UNSET,
+    disabled_trailing_icon_color: JsonValue | _Unset = UNSET,
+    selected_container_color: JsonValue | _Unset = UNSET,
+    disabled_selected_container_color: JsonValue | _Unset = UNSET,
+    selected_label_color: JsonValue | _Unset = UNSET,
+    selected_leading_icon_color: JsonValue | _Unset = UNSET,
+    selected_trailing_icon_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SelectableChipColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        label_color: Native labelColor argument.
+        icon_color: Native iconColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        disabled_leading_icon_color: Native disabledLeadingIconColor argument.
+        disabled_trailing_icon_color: Native disabledTrailingIconColor argument.
+        selected_container_color: Native selectedContainerColor argument.
+        disabled_selected_container_color: Native disabledSelectedContainerColor
+            argument.
+        selected_label_color: Native selectedLabelColor argument.
+        selected_leading_icon_color: Native selectedLeadingIconColor argument.
+        selected_trailing_icon_color: Native selectedTrailingIconColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "elevatedFilterChipColors",
+        {
+            "containerColor": container_color,
+            "labelColor": label_color,
+            "iconColor": icon_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledLabelColor": disabled_label_color,
+            "disabledLeadingIconColor": disabled_leading_icon_color,
+            "disabledTrailingIconColor": disabled_trailing_icon_color,
+            "selectedContainerColor": selected_container_color,
+            "disabledSelectedContainerColor": disabled_selected_container_color,
+            "selectedLabelColor": selected_label_color,
+            "selectedLeadingIconColor": selected_leading_icon_color,
+            "selectedTrailingIconColor": selected_trailing_icon_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def elevatedFilterChipElevation(
+    elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+    disabled_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SelectableChipElevation data for native evaluation.
+
+    Args:
+        elevation: Native elevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+        dragged_elevation: Native draggedElevation argument.
+        disabled_elevation: Native disabledElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "elevatedFilterChipElevation",
+        {
+            "elevation": elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+            "draggedElevation": dragged_elevation,
+            "disabledElevation": disabled_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def elevatedSuggestionChipColors(
+    container_color: JsonValue | _Unset = UNSET,
+    label_color: JsonValue | _Unset = UNSET,
+    icon_content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    disabled_icon_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct ChipColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        label_color: Native labelColor argument.
+        icon_content_color: Native iconContentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        disabled_icon_content_color: Native disabledIconContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "elevatedSuggestionChipColors",
+        {
+            "containerColor": container_color,
+            "labelColor": label_color,
+            "iconContentColor": icon_content_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledLabelColor": disabled_label_color,
+            "disabledIconContentColor": disabled_icon_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def elevatedSuggestionChipElevation(
+    elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+    disabled_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct ChipElevation data for native evaluation.
+
+    Args:
+        elevation: Native elevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+        dragged_elevation: Native draggedElevation argument.
+        disabled_elevation: Native disabledElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "elevatedSuggestionChipElevation",
+        {
+            "elevation": elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+            "draggedElevation": dragged_elevation,
+            "disabledElevation": disabled_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def exposedDropdownMenuOutlinedTextFieldColors(
+    focused_container_color: JsonValue | _Unset = UNSET,
+    unfocused_container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    error_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TextFieldColors data for native evaluation.
+
+    Args:
+        focused_container_color: Native focusedContainerColor argument.
+        unfocused_container_color: Native unfocusedContainerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        error_container_color: Native errorContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "exposedDropdownMenuOutlinedTextFieldColors",
+        {
+            "focusedContainerColor": focused_container_color,
+            "unfocusedContainerColor": unfocused_container_color,
+            "disabledContainerColor": disabled_container_color,
+            "errorContainerColor": error_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def filledIconButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_content_color: Native disabledContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "filledIconButtonColors",
+        {
+            "containerColor": container_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledContentColor": disabled_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def filledIconToggleButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_content_color: JsonValue | _Unset = UNSET,
+    checked_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconToggleButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        content_color: Native contentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_content_color: Native disabledContentColor argument.
+        checked_container_color: Native checkedContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "filledIconToggleButtonColors",
+        {
+            "containerColor": container_color,
+            "contentColor": content_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledContentColor": disabled_content_color,
+            "checkedContainerColor": checked_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def filledTonalIconButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_content_color: Native disabledContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "filledTonalIconButtonColors",
+        {
+            "containerColor": container_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledContentColor": disabled_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def filledTonalIconToggleButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_content_color: JsonValue | _Unset = UNSET,
+    checked_container_color: JsonValue | _Unset = UNSET,
+    checked_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconToggleButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_content_color: Native disabledContentColor argument.
+        checked_container_color: Native checkedContainerColor argument.
+        checked_content_color: Native checkedContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "filledTonalIconToggleButtonColors",
+        {
+            "containerColor": container_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledContentColor": disabled_content_color,
+            "checkedContainerColor": checked_container_color,
+            "checkedContentColor": checked_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def filterChipColors(
+    container_color: JsonValue | _Unset = UNSET,
+    label_color: JsonValue | _Unset = UNSET,
+    icon_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    disabled_leading_icon_color: JsonValue | _Unset = UNSET,
+    disabled_trailing_icon_color: JsonValue | _Unset = UNSET,
+    selected_container_color: JsonValue | _Unset = UNSET,
+    disabled_selected_container_color: JsonValue | _Unset = UNSET,
+    selected_label_color: JsonValue | _Unset = UNSET,
+    selected_leading_icon_color: JsonValue | _Unset = UNSET,
+    selected_trailing_icon_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SelectableChipColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        label_color: Native labelColor argument.
+        icon_color: Native iconColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        disabled_leading_icon_color: Native disabledLeadingIconColor argument.
+        disabled_trailing_icon_color: Native disabledTrailingIconColor argument.
+        selected_container_color: Native selectedContainerColor argument.
+        disabled_selected_container_color: Native disabledSelectedContainerColor
+            argument.
+        selected_label_color: Native selectedLabelColor argument.
+        selected_leading_icon_color: Native selectedLeadingIconColor argument.
+        selected_trailing_icon_color: Native selectedTrailingIconColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "filterChipColors",
+        {
+            "containerColor": container_color,
+            "labelColor": label_color,
+            "iconColor": icon_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledLabelColor": disabled_label_color,
+            "disabledLeadingIconColor": disabled_leading_icon_color,
+            "disabledTrailingIconColor": disabled_trailing_icon_color,
+            "selectedContainerColor": selected_container_color,
+            "disabledSelectedContainerColor": disabled_selected_container_color,
+            "selectedLabelColor": selected_label_color,
+            "selectedLeadingIconColor": selected_leading_icon_color,
+            "selectedTrailingIconColor": selected_trailing_icon_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def filterChipElevation(
+    elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SelectableChipElevation data for native evaluation.
+
+    Args:
+        elevation: Native elevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+        dragged_elevation: Native draggedElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "filterChipElevation",
+        {
+            "elevation": elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+            "draggedElevation": dragged_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def floatingActionButtonElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct FloatingActionButtonElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "floatingActionButtonElevation",
+        {
+            "defaultElevation": default_elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
 def horizontalGradient(
     colors: JsonValue,
     start_x: float | _Unset = UNSET,
@@ -677,6 +2329,211 @@ def horizontalGradient(
     )
 
 
+def iconButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        content_color: Native contentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "iconButtonColors",
+        {
+            "containerColor": container_color,
+            "contentColor": content_color,
+            "disabledContainerColor": disabled_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def iconToggleButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    checked_container_color: JsonValue | _Unset = UNSET,
+    checked_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconToggleButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        content_color: Native contentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        checked_container_color: Native checkedContainerColor argument.
+        checked_content_color: Native checkedContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "iconToggleButtonColors",
+        {
+            "containerColor": container_color,
+            "contentColor": content_color,
+            "disabledContainerColor": disabled_container_color,
+            "checkedContainerColor": checked_container_color,
+            "checkedContentColor": checked_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def inputChipColors(
+    container_color: JsonValue | _Unset = UNSET,
+    label_color: JsonValue | _Unset = UNSET,
+    leading_icon_color: JsonValue | _Unset = UNSET,
+    trailing_icon_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    disabled_leading_icon_color: JsonValue | _Unset = UNSET,
+    disabled_trailing_icon_color: JsonValue | _Unset = UNSET,
+    selected_container_color: JsonValue | _Unset = UNSET,
+    disabled_selected_container_color: JsonValue | _Unset = UNSET,
+    selected_label_color: JsonValue | _Unset = UNSET,
+    selected_leading_icon_color: JsonValue | _Unset = UNSET,
+    selected_trailing_icon_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SelectableChipColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        label_color: Native labelColor argument.
+        leading_icon_color: Native leadingIconColor argument.
+        trailing_icon_color: Native trailingIconColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        disabled_leading_icon_color: Native disabledLeadingIconColor argument.
+        disabled_trailing_icon_color: Native disabledTrailingIconColor argument.
+        selected_container_color: Native selectedContainerColor argument.
+        disabled_selected_container_color: Native disabledSelectedContainerColor
+            argument.
+        selected_label_color: Native selectedLabelColor argument.
+        selected_leading_icon_color: Native selectedLeadingIconColor argument.
+        selected_trailing_icon_color: Native selectedTrailingIconColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "inputChipColors",
+        {
+            "containerColor": container_color,
+            "labelColor": label_color,
+            "leadingIconColor": leading_icon_color,
+            "trailingIconColor": trailing_icon_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledLabelColor": disabled_label_color,
+            "disabledLeadingIconColor": disabled_leading_icon_color,
+            "disabledTrailingIconColor": disabled_trailing_icon_color,
+            "selectedContainerColor": selected_container_color,
+            "disabledSelectedContainerColor": disabled_selected_container_color,
+            "selectedLabelColor": selected_label_color,
+            "selectedLeadingIconColor": selected_leading_icon_color,
+            "selectedTrailingIconColor": selected_trailing_icon_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def inputChipElevation(
+    elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SelectableChipElevation data for native evaluation.
+
+    Args:
+        elevation: Native elevation argument.
+        dragged_elevation: Native draggedElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "inputChipElevation",
+        {
+            "elevation": elevation,
+            "draggedElevation": dragged_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def itemColors(
+    text_color: JsonValue | _Unset = UNSET,
+    leading_icon_color: JsonValue | _Unset = UNSET,
+    trailing_icon_color: JsonValue | _Unset = UNSET,
+    disabled_text_color: JsonValue | _Unset = UNSET,
+    disabled_leading_icon_color: JsonValue | _Unset = UNSET,
+    disabled_trailing_icon_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct MenuItemColors data for native evaluation.
+
+    Args:
+        text_color: Native textColor argument.
+        leading_icon_color: Native leadingIconColor argument.
+        trailing_icon_color: Native trailingIconColor argument.
+        disabled_text_color: Native disabledTextColor argument.
+        disabled_leading_icon_color: Native disabledLeadingIconColor argument.
+        disabled_trailing_icon_color: Native disabledTrailingIconColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "itemColors",
+        {
+            "textColor": text_color,
+            "leadingIconColor": leading_icon_color,
+            "trailingIconColor": trailing_icon_color,
+            "disabledTextColor": disabled_text_color,
+            "disabledLeadingIconColor": disabled_leading_icon_color,
+            "disabledTrailingIconColor": disabled_trailing_icon_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def largeTopAppBarColors(
+    container_color: JsonValue | _Unset = UNSET,
+    scrolled_container_color: JsonValue | _Unset = UNSET,
+    navigation_icon_content_color: JsonValue | _Unset = UNSET,
+    title_content_color: JsonValue | _Unset = UNSET,
+    action_icon_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TopAppBarColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        scrolled_container_color: Native scrolledContainerColor argument.
+        navigation_icon_content_color: Native navigationIconContentColor argument.
+        title_content_color: Native titleContentColor argument.
+        action_icon_content_color: Native actionIconContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "largeTopAppBarColors",
+        {
+            "containerColor": container_color,
+            "scrolledContainerColor": scrolled_container_color,
+            "navigationIconContentColor": navigation_icon_content_color,
+            "titleContentColor": title_content_color,
+            "actionIconContentColor": action_icon_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
 def linearGradient(
     colors: JsonValue,
     start: JsonValue | _Unset = UNSET,
@@ -698,6 +2555,850 @@ def linearGradient(
             "colors": colors,
             "start": start,
             "end": end,
+        },
+        DEFINITIONS,
+    )
+
+
+def loweredElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct FloatingActionButtonElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "loweredElevation",
+        {
+            "defaultElevation": default_elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def mediumTopAppBarColors(
+    container_color: JsonValue | _Unset = UNSET,
+    scrolled_container_color: JsonValue | _Unset = UNSET,
+    navigation_icon_content_color: JsonValue | _Unset = UNSET,
+    title_content_color: JsonValue | _Unset = UNSET,
+    action_icon_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TopAppBarColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        scrolled_container_color: Native scrolledContainerColor argument.
+        navigation_icon_content_color: Native navigationIconContentColor argument.
+        title_content_color: Native titleContentColor argument.
+        action_icon_content_color: Native actionIconContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "mediumTopAppBarColors",
+        {
+            "containerColor": container_color,
+            "scrolledContainerColor": scrolled_container_color,
+            "navigationIconContentColor": navigation_icon_content_color,
+            "titleContentColor": title_content_color,
+            "actionIconContentColor": action_icon_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def navigationBarItemColors(
+    selected_icon_color: JsonValue | _Unset = UNSET,
+    selected_text_color: JsonValue | _Unset = UNSET,
+    indicator_color: JsonValue | _Unset = UNSET,
+    unselected_icon_color: JsonValue | _Unset = UNSET,
+    unselected_text_color: JsonValue | _Unset = UNSET,
+    disabled_icon_color: JsonValue | _Unset = UNSET,
+    disabled_text_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct NavigationBarItemColors data for native evaluation.
+
+    Args:
+        selected_icon_color: Native selectedIconColor argument.
+        selected_text_color: Native selectedTextColor argument.
+        indicator_color: Native indicatorColor argument.
+        unselected_icon_color: Native unselectedIconColor argument.
+        unselected_text_color: Native unselectedTextColor argument.
+        disabled_icon_color: Native disabledIconColor argument.
+        disabled_text_color: Native disabledTextColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "navigationBarItemColors",
+        {
+            "selectedIconColor": selected_icon_color,
+            "selectedTextColor": selected_text_color,
+            "indicatorColor": indicator_color,
+            "unselectedIconColor": unselected_icon_color,
+            "unselectedTextColor": unselected_text_color,
+            "disabledIconColor": disabled_icon_color,
+            "disabledTextColor": disabled_text_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def outlinedCardColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "outlinedCardColors",
+        {
+            "containerColor": container_color,
+            "disabledContainerColor": disabled_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def outlinedCardElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+    disabled_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        dragged_elevation: Native draggedElevation argument.
+        disabled_elevation: Native disabledElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "outlinedCardElevation",
+        {
+            "defaultElevation": default_elevation,
+            "draggedElevation": dragged_elevation,
+            "disabledElevation": disabled_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def outlinedIconButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        content_color: Native contentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "outlinedIconButtonColors",
+        {
+            "containerColor": container_color,
+            "contentColor": content_color,
+            "disabledContainerColor": disabled_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def outlinedIconToggleButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    checked_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconToggleButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        content_color: Native contentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        checked_container_color: Native checkedContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "outlinedIconToggleButtonColors",
+        {
+            "containerColor": container_color,
+            "contentColor": content_color,
+            "disabledContainerColor": disabled_container_color,
+            "checkedContainerColor": checked_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def outlinedTextFieldColors(
+    focused_text_color: JsonValue | _Unset = UNSET,
+    unfocused_text_color: JsonValue | _Unset = UNSET,
+    disabled_text_color: JsonValue | _Unset = UNSET,
+    error_text_color: JsonValue | _Unset = UNSET,
+    focused_container_color: JsonValue | _Unset = UNSET,
+    unfocused_container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    error_container_color: JsonValue | _Unset = UNSET,
+    cursor_color: JsonValue | _Unset = UNSET,
+    error_cursor_color: JsonValue | _Unset = UNSET,
+    focused_border_color: JsonValue | _Unset = UNSET,
+    unfocused_border_color: JsonValue | _Unset = UNSET,
+    disabled_border_color: JsonValue | _Unset = UNSET,
+    error_border_color: JsonValue | _Unset = UNSET,
+    focused_leading_icon_color: JsonValue | _Unset = UNSET,
+    unfocused_leading_icon_color: JsonValue | _Unset = UNSET,
+    disabled_leading_icon_color: JsonValue | _Unset = UNSET,
+    error_leading_icon_color: JsonValue | _Unset = UNSET,
+    focused_trailing_icon_color: JsonValue | _Unset = UNSET,
+    unfocused_trailing_icon_color: JsonValue | _Unset = UNSET,
+    disabled_trailing_icon_color: JsonValue | _Unset = UNSET,
+    error_trailing_icon_color: JsonValue | _Unset = UNSET,
+    focused_label_color: JsonValue | _Unset = UNSET,
+    unfocused_label_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    error_label_color: JsonValue | _Unset = UNSET,
+    focused_placeholder_color: JsonValue | _Unset = UNSET,
+    unfocused_placeholder_color: JsonValue | _Unset = UNSET,
+    disabled_placeholder_color: JsonValue | _Unset = UNSET,
+    error_placeholder_color: JsonValue | _Unset = UNSET,
+    focused_supporting_text_color: JsonValue | _Unset = UNSET,
+    unfocused_supporting_text_color: JsonValue | _Unset = UNSET,
+    disabled_supporting_text_color: JsonValue | _Unset = UNSET,
+    error_supporting_text_color: JsonValue | _Unset = UNSET,
+    focused_prefix_color: JsonValue | _Unset = UNSET,
+    unfocused_prefix_color: JsonValue | _Unset = UNSET,
+    disabled_prefix_color: JsonValue | _Unset = UNSET,
+    error_prefix_color: JsonValue | _Unset = UNSET,
+    focused_suffix_color: JsonValue | _Unset = UNSET,
+    unfocused_suffix_color: JsonValue | _Unset = UNSET,
+    disabled_suffix_color: JsonValue | _Unset = UNSET,
+    error_suffix_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TextFieldColors data for native evaluation.
+
+    Args:
+        focused_text_color: Native focusedTextColor argument.
+        unfocused_text_color: Native unfocusedTextColor argument.
+        disabled_text_color: Native disabledTextColor argument.
+        error_text_color: Native errorTextColor argument.
+        focused_container_color: Native focusedContainerColor argument.
+        unfocused_container_color: Native unfocusedContainerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        error_container_color: Native errorContainerColor argument.
+        cursor_color: Native cursorColor argument.
+        error_cursor_color: Native errorCursorColor argument.
+        focused_border_color: Native focusedBorderColor argument.
+        unfocused_border_color: Native unfocusedBorderColor argument.
+        disabled_border_color: Native disabledBorderColor argument.
+        error_border_color: Native errorBorderColor argument.
+        focused_leading_icon_color: Native focusedLeadingIconColor argument.
+        unfocused_leading_icon_color: Native unfocusedLeadingIconColor argument.
+        disabled_leading_icon_color: Native disabledLeadingIconColor argument.
+        error_leading_icon_color: Native errorLeadingIconColor argument.
+        focused_trailing_icon_color: Native focusedTrailingIconColor argument.
+        unfocused_trailing_icon_color: Native unfocusedTrailingIconColor argument.
+        disabled_trailing_icon_color: Native disabledTrailingIconColor argument.
+        error_trailing_icon_color: Native errorTrailingIconColor argument.
+        focused_label_color: Native focusedLabelColor argument.
+        unfocused_label_color: Native unfocusedLabelColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        error_label_color: Native errorLabelColor argument.
+        focused_placeholder_color: Native focusedPlaceholderColor argument.
+        unfocused_placeholder_color: Native unfocusedPlaceholderColor argument.
+        disabled_placeholder_color: Native disabledPlaceholderColor argument.
+        error_placeholder_color: Native errorPlaceholderColor argument.
+        focused_supporting_text_color: Native focusedSupportingTextColor argument.
+        unfocused_supporting_text_color: Native unfocusedSupportingTextColor argument.
+        disabled_supporting_text_color: Native disabledSupportingTextColor argument.
+        error_supporting_text_color: Native errorSupportingTextColor argument.
+        focused_prefix_color: Native focusedPrefixColor argument.
+        unfocused_prefix_color: Native unfocusedPrefixColor argument.
+        disabled_prefix_color: Native disabledPrefixColor argument.
+        error_prefix_color: Native errorPrefixColor argument.
+        focused_suffix_color: Native focusedSuffixColor argument.
+        unfocused_suffix_color: Native unfocusedSuffixColor argument.
+        disabled_suffix_color: Native disabledSuffixColor argument.
+        error_suffix_color: Native errorSuffixColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "outlinedTextFieldColors",
+        {
+            "focusedTextColor": focused_text_color,
+            "unfocusedTextColor": unfocused_text_color,
+            "disabledTextColor": disabled_text_color,
+            "errorTextColor": error_text_color,
+            "focusedContainerColor": focused_container_color,
+            "unfocusedContainerColor": unfocused_container_color,
+            "disabledContainerColor": disabled_container_color,
+            "errorContainerColor": error_container_color,
+            "cursorColor": cursor_color,
+            "errorCursorColor": error_cursor_color,
+            "focusedBorderColor": focused_border_color,
+            "unfocusedBorderColor": unfocused_border_color,
+            "disabledBorderColor": disabled_border_color,
+            "errorBorderColor": error_border_color,
+            "focusedLeadingIconColor": focused_leading_icon_color,
+            "unfocusedLeadingIconColor": unfocused_leading_icon_color,
+            "disabledLeadingIconColor": disabled_leading_icon_color,
+            "errorLeadingIconColor": error_leading_icon_color,
+            "focusedTrailingIconColor": focused_trailing_icon_color,
+            "unfocusedTrailingIconColor": unfocused_trailing_icon_color,
+            "disabledTrailingIconColor": disabled_trailing_icon_color,
+            "errorTrailingIconColor": error_trailing_icon_color,
+            "focusedLabelColor": focused_label_color,
+            "unfocusedLabelColor": unfocused_label_color,
+            "disabledLabelColor": disabled_label_color,
+            "errorLabelColor": error_label_color,
+            "focusedPlaceholderColor": focused_placeholder_color,
+            "unfocusedPlaceholderColor": unfocused_placeholder_color,
+            "disabledPlaceholderColor": disabled_placeholder_color,
+            "errorPlaceholderColor": error_placeholder_color,
+            "focusedSupportingTextColor": focused_supporting_text_color,
+            "unfocusedSupportingTextColor": unfocused_supporting_text_color,
+            "disabledSupportingTextColor": disabled_supporting_text_color,
+            "errorSupportingTextColor": error_supporting_text_color,
+            "focusedPrefixColor": focused_prefix_color,
+            "unfocusedPrefixColor": unfocused_prefix_color,
+            "disabledPrefixColor": disabled_prefix_color,
+            "errorPrefixColor": error_prefix_color,
+            "focusedSuffixColor": focused_suffix_color,
+            "unfocusedSuffixColor": unfocused_suffix_color,
+            "disabledSuffixColor": disabled_suffix_color,
+            "errorSuffixColor": error_suffix_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def radioButtonColors(
+    selected_color: JsonValue | _Unset = UNSET,
+    unselected_color: JsonValue | _Unset = UNSET,
+    disabled_selected_color: JsonValue | _Unset = UNSET,
+    disabled_unselected_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct RadioButtonColors data for native evaluation.
+
+    Args:
+        selected_color: Native selectedColor argument.
+        unselected_color: Native unselectedColor argument.
+        disabled_selected_color: Native disabledSelectedColor argument.
+        disabled_unselected_color: Native disabledUnselectedColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "radioButtonColors",
+        {
+            "selectedColor": selected_color,
+            "unselectedColor": unselected_color,
+            "disabledSelectedColor": disabled_selected_color,
+            "disabledUnselectedColor": disabled_unselected_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def richTooltipColors(
+    container_color: JsonValue | _Unset = UNSET,
+    content_color: JsonValue | _Unset = UNSET,
+    title_content_color: JsonValue | _Unset = UNSET,
+    action_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct RichTooltipColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        content_color: Native contentColor argument.
+        title_content_color: Native titleContentColor argument.
+        action_content_color: Native actionContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "richTooltipColors",
+        {
+            "containerColor": container_color,
+            "contentColor": content_color,
+            "titleContentColor": title_content_color,
+            "actionContentColor": action_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def segmentedButtonColors(
+    active_container_color: JsonValue | _Unset = UNSET,
+    active_content_color: JsonValue | _Unset = UNSET,
+    active_border_color: JsonValue | _Unset = UNSET,
+    inactive_container_color: JsonValue | _Unset = UNSET,
+    inactive_content_color: JsonValue | _Unset = UNSET,
+    inactive_border_color: JsonValue | _Unset = UNSET,
+    disabled_active_container_color: JsonValue | _Unset = UNSET,
+    disabled_active_content_color: JsonValue | _Unset = UNSET,
+    disabled_active_border_color: JsonValue | _Unset = UNSET,
+    disabled_inactive_container_color: JsonValue | _Unset = UNSET,
+    disabled_inactive_content_color: JsonValue | _Unset = UNSET,
+    disabled_inactive_border_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SegmentedButtonColors data for native evaluation.
+
+    Args:
+        active_container_color: Native activeContainerColor argument.
+        active_content_color: Native activeContentColor argument.
+        active_border_color: Native activeBorderColor argument.
+        inactive_container_color: Native inactiveContainerColor argument.
+        inactive_content_color: Native inactiveContentColor argument.
+        inactive_border_color: Native inactiveBorderColor argument.
+        disabled_active_container_color: Native disabledActiveContainerColor argument.
+        disabled_active_content_color: Native disabledActiveContentColor argument.
+        disabled_active_border_color: Native disabledActiveBorderColor argument.
+        disabled_inactive_container_color: Native disabledInactiveContainerColor
+            argument.
+        disabled_inactive_content_color: Native disabledInactiveContentColor argument.
+        disabled_inactive_border_color: Native disabledInactiveBorderColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "segmentedButtonColors",
+        {
+            "activeContainerColor": active_container_color,
+            "activeContentColor": active_content_color,
+            "activeBorderColor": active_border_color,
+            "inactiveContainerColor": inactive_container_color,
+            "inactiveContentColor": inactive_content_color,
+            "inactiveBorderColor": inactive_border_color,
+            "disabledActiveContainerColor": disabled_active_container_color,
+            "disabledActiveContentColor": disabled_active_content_color,
+            "disabledActiveBorderColor": disabled_active_border_color,
+            "disabledInactiveContainerColor": disabled_inactive_container_color,
+            "disabledInactiveContentColor": disabled_inactive_content_color,
+            "disabledInactiveBorderColor": disabled_inactive_border_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def sliderColors(
+    thumb_color: JsonValue | _Unset = UNSET,
+    active_track_color: JsonValue | _Unset = UNSET,
+    active_tick_color: JsonValue | _Unset = UNSET,
+    inactive_track_color: JsonValue | _Unset = UNSET,
+    inactive_tick_color: JsonValue | _Unset = UNSET,
+    disabled_thumb_color: JsonValue | _Unset = UNSET,
+    disabled_active_track_color: JsonValue | _Unset = UNSET,
+    disabled_active_tick_color: JsonValue | _Unset = UNSET,
+    disabled_inactive_track_color: JsonValue | _Unset = UNSET,
+    disabled_inactive_tick_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SliderColors data for native evaluation.
+
+    Args:
+        thumb_color: Native thumbColor argument.
+        active_track_color: Native activeTrackColor argument.
+        active_tick_color: Native activeTickColor argument.
+        inactive_track_color: Native inactiveTrackColor argument.
+        inactive_tick_color: Native inactiveTickColor argument.
+        disabled_thumb_color: Native disabledThumbColor argument.
+        disabled_active_track_color: Native disabledActiveTrackColor argument.
+        disabled_active_tick_color: Native disabledActiveTickColor argument.
+        disabled_inactive_track_color: Native disabledInactiveTrackColor argument.
+        disabled_inactive_tick_color: Native disabledInactiveTickColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "sliderColors",
+        {
+            "thumbColor": thumb_color,
+            "activeTrackColor": active_track_color,
+            "activeTickColor": active_tick_color,
+            "inactiveTrackColor": inactive_track_color,
+            "inactiveTickColor": inactive_tick_color,
+            "disabledThumbColor": disabled_thumb_color,
+            "disabledActiveTrackColor": disabled_active_track_color,
+            "disabledActiveTickColor": disabled_active_tick_color,
+            "disabledInactiveTrackColor": disabled_inactive_track_color,
+            "disabledInactiveTickColor": disabled_inactive_tick_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def suggestionChipColors(
+    container_color: JsonValue | _Unset = UNSET,
+    label_color: JsonValue | _Unset = UNSET,
+    icon_content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    disabled_icon_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct ChipColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        label_color: Native labelColor argument.
+        icon_content_color: Native iconContentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        disabled_icon_content_color: Native disabledIconContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "suggestionChipColors",
+        {
+            "containerColor": container_color,
+            "labelColor": label_color,
+            "iconContentColor": icon_content_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledLabelColor": disabled_label_color,
+            "disabledIconContentColor": disabled_icon_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def suggestionChipElevation(
+    elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct ChipElevation data for native evaluation.
+
+    Args:
+        elevation: Native elevation argument.
+        dragged_elevation: Native draggedElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "suggestionChipElevation",
+        {
+            "elevation": elevation,
+            "draggedElevation": dragged_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def switchColors(
+    checked_border_color: JsonValue | _Unset = UNSET,
+    disabled_checked_border_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SwitchColors data for native evaluation.
+
+    Args:
+        checked_border_color: Native checkedBorderColor argument.
+        disabled_checked_border_color: Native disabledCheckedBorderColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "switchColors",
+        {
+            "checkedBorderColor": checked_border_color,
+            "disabledCheckedBorderColor": disabled_checked_border_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def textFieldColors(
+    focused_text_color: JsonValue | _Unset = UNSET,
+    unfocused_text_color: JsonValue | _Unset = UNSET,
+    disabled_text_color: JsonValue | _Unset = UNSET,
+    error_text_color: JsonValue | _Unset = UNSET,
+    focused_container_color: JsonValue | _Unset = UNSET,
+    unfocused_container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    error_container_color: JsonValue | _Unset = UNSET,
+    cursor_color: JsonValue | _Unset = UNSET,
+    error_cursor_color: JsonValue | _Unset = UNSET,
+    focused_indicator_color: JsonValue | _Unset = UNSET,
+    unfocused_indicator_color: JsonValue | _Unset = UNSET,
+    disabled_indicator_color: JsonValue | _Unset = UNSET,
+    error_indicator_color: JsonValue | _Unset = UNSET,
+    focused_leading_icon_color: JsonValue | _Unset = UNSET,
+    unfocused_leading_icon_color: JsonValue | _Unset = UNSET,
+    disabled_leading_icon_color: JsonValue | _Unset = UNSET,
+    error_leading_icon_color: JsonValue | _Unset = UNSET,
+    focused_trailing_icon_color: JsonValue | _Unset = UNSET,
+    unfocused_trailing_icon_color: JsonValue | _Unset = UNSET,
+    disabled_trailing_icon_color: JsonValue | _Unset = UNSET,
+    error_trailing_icon_color: JsonValue | _Unset = UNSET,
+    focused_label_color: JsonValue | _Unset = UNSET,
+    unfocused_label_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    error_label_color: JsonValue | _Unset = UNSET,
+    focused_placeholder_color: JsonValue | _Unset = UNSET,
+    unfocused_placeholder_color: JsonValue | _Unset = UNSET,
+    disabled_placeholder_color: JsonValue | _Unset = UNSET,
+    error_placeholder_color: JsonValue | _Unset = UNSET,
+    focused_supporting_text_color: JsonValue | _Unset = UNSET,
+    unfocused_supporting_text_color: JsonValue | _Unset = UNSET,
+    disabled_supporting_text_color: JsonValue | _Unset = UNSET,
+    error_supporting_text_color: JsonValue | _Unset = UNSET,
+    focused_prefix_color: JsonValue | _Unset = UNSET,
+    unfocused_prefix_color: JsonValue | _Unset = UNSET,
+    disabled_prefix_color: JsonValue | _Unset = UNSET,
+    error_prefix_color: JsonValue | _Unset = UNSET,
+    focused_suffix_color: JsonValue | _Unset = UNSET,
+    unfocused_suffix_color: JsonValue | _Unset = UNSET,
+    disabled_suffix_color: JsonValue | _Unset = UNSET,
+    error_suffix_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TextFieldColors data for native evaluation.
+
+    Args:
+        focused_text_color: Native focusedTextColor argument.
+        unfocused_text_color: Native unfocusedTextColor argument.
+        disabled_text_color: Native disabledTextColor argument.
+        error_text_color: Native errorTextColor argument.
+        focused_container_color: Native focusedContainerColor argument.
+        unfocused_container_color: Native unfocusedContainerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        error_container_color: Native errorContainerColor argument.
+        cursor_color: Native cursorColor argument.
+        error_cursor_color: Native errorCursorColor argument.
+        focused_indicator_color: Native focusedIndicatorColor argument.
+        unfocused_indicator_color: Native unfocusedIndicatorColor argument.
+        disabled_indicator_color: Native disabledIndicatorColor argument.
+        error_indicator_color: Native errorIndicatorColor argument.
+        focused_leading_icon_color: Native focusedLeadingIconColor argument.
+        unfocused_leading_icon_color: Native unfocusedLeadingIconColor argument.
+        disabled_leading_icon_color: Native disabledLeadingIconColor argument.
+        error_leading_icon_color: Native errorLeadingIconColor argument.
+        focused_trailing_icon_color: Native focusedTrailingIconColor argument.
+        unfocused_trailing_icon_color: Native unfocusedTrailingIconColor argument.
+        disabled_trailing_icon_color: Native disabledTrailingIconColor argument.
+        error_trailing_icon_color: Native errorTrailingIconColor argument.
+        focused_label_color: Native focusedLabelColor argument.
+        unfocused_label_color: Native unfocusedLabelColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        error_label_color: Native errorLabelColor argument.
+        focused_placeholder_color: Native focusedPlaceholderColor argument.
+        unfocused_placeholder_color: Native unfocusedPlaceholderColor argument.
+        disabled_placeholder_color: Native disabledPlaceholderColor argument.
+        error_placeholder_color: Native errorPlaceholderColor argument.
+        focused_supporting_text_color: Native focusedSupportingTextColor argument.
+        unfocused_supporting_text_color: Native unfocusedSupportingTextColor argument.
+        disabled_supporting_text_color: Native disabledSupportingTextColor argument.
+        error_supporting_text_color: Native errorSupportingTextColor argument.
+        focused_prefix_color: Native focusedPrefixColor argument.
+        unfocused_prefix_color: Native unfocusedPrefixColor argument.
+        disabled_prefix_color: Native disabledPrefixColor argument.
+        error_prefix_color: Native errorPrefixColor argument.
+        focused_suffix_color: Native focusedSuffixColor argument.
+        unfocused_suffix_color: Native unfocusedSuffixColor argument.
+        disabled_suffix_color: Native disabledSuffixColor argument.
+        error_suffix_color: Native errorSuffixColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "textFieldColors",
+        {
+            "focusedTextColor": focused_text_color,
+            "unfocusedTextColor": unfocused_text_color,
+            "disabledTextColor": disabled_text_color,
+            "errorTextColor": error_text_color,
+            "focusedContainerColor": focused_container_color,
+            "unfocusedContainerColor": unfocused_container_color,
+            "disabledContainerColor": disabled_container_color,
+            "errorContainerColor": error_container_color,
+            "cursorColor": cursor_color,
+            "errorCursorColor": error_cursor_color,
+            "focusedIndicatorColor": focused_indicator_color,
+            "unfocusedIndicatorColor": unfocused_indicator_color,
+            "disabledIndicatorColor": disabled_indicator_color,
+            "errorIndicatorColor": error_indicator_color,
+            "focusedLeadingIconColor": focused_leading_icon_color,
+            "unfocusedLeadingIconColor": unfocused_leading_icon_color,
+            "disabledLeadingIconColor": disabled_leading_icon_color,
+            "errorLeadingIconColor": error_leading_icon_color,
+            "focusedTrailingIconColor": focused_trailing_icon_color,
+            "unfocusedTrailingIconColor": unfocused_trailing_icon_color,
+            "disabledTrailingIconColor": disabled_trailing_icon_color,
+            "errorTrailingIconColor": error_trailing_icon_color,
+            "focusedLabelColor": focused_label_color,
+            "unfocusedLabelColor": unfocused_label_color,
+            "disabledLabelColor": disabled_label_color,
+            "errorLabelColor": error_label_color,
+            "focusedPlaceholderColor": focused_placeholder_color,
+            "unfocusedPlaceholderColor": unfocused_placeholder_color,
+            "disabledPlaceholderColor": disabled_placeholder_color,
+            "errorPlaceholderColor": error_placeholder_color,
+            "focusedSupportingTextColor": focused_supporting_text_color,
+            "unfocusedSupportingTextColor": unfocused_supporting_text_color,
+            "disabledSupportingTextColor": disabled_supporting_text_color,
+            "errorSupportingTextColor": error_supporting_text_color,
+            "focusedPrefixColor": focused_prefix_color,
+            "unfocusedPrefixColor": unfocused_prefix_color,
+            "disabledPrefixColor": disabled_prefix_color,
+            "errorPrefixColor": error_prefix_color,
+            "focusedSuffixColor": focused_suffix_color,
+            "unfocusedSuffixColor": unfocused_suffix_color,
+            "disabledSuffixColor": disabled_suffix_color,
+            "errorSuffixColor": error_suffix_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def timePickerColors(
+    clock_dial_color: JsonValue | _Unset = UNSET,
+    clock_dial_selected_content_color: JsonValue | _Unset = UNSET,
+    clock_dial_unselected_content_color: JsonValue | _Unset = UNSET,
+    selector_color: JsonValue | _Unset = UNSET,
+    container_color: JsonValue | _Unset = UNSET,
+    period_selector_border_color: JsonValue | _Unset = UNSET,
+    period_selector_selected_container_color: JsonValue | _Unset = UNSET,
+    period_selector_unselected_container_color: JsonValue | _Unset = UNSET,
+    period_selector_selected_content_color: JsonValue | _Unset = UNSET,
+    period_selector_unselected_content_color: JsonValue | _Unset = UNSET,
+    time_selector_selected_container_color: JsonValue | _Unset = UNSET,
+    time_selector_unselected_container_color: JsonValue | _Unset = UNSET,
+    time_selector_selected_content_color: JsonValue | _Unset = UNSET,
+    time_selector_unselected_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TimePickerColors data for native evaluation.
+
+    Args:
+        clock_dial_color: Native clockDialColor argument.
+        clock_dial_selected_content_color: Native clockDialSelectedContentColor
+            argument.
+        clock_dial_unselected_content_color: Native clockDialUnselectedContentColor
+            argument.
+        selector_color: Native selectorColor argument.
+        container_color: Native containerColor argument.
+        period_selector_border_color: Native periodSelectorBorderColor argument.
+        period_selector_selected_container_color: Native
+            periodSelectorSelectedContainerColor argument.
+        period_selector_unselected_container_color: Native
+            periodSelectorUnselectedContainerColor argument.
+        period_selector_selected_content_color: Native
+            periodSelectorSelectedContentColor argument.
+        period_selector_unselected_content_color: Native
+            periodSelectorUnselectedContentColor argument.
+        time_selector_selected_container_color: Native
+            timeSelectorSelectedContainerColor argument.
+        time_selector_unselected_container_color: Native
+            timeSelectorUnselectedContainerColor argument.
+        time_selector_selected_content_color: Native timeSelectorSelectedContentColor
+            argument.
+        time_selector_unselected_content_color: Native
+            timeSelectorUnselectedContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "timePickerColors",
+        {
+            "clockDialColor": clock_dial_color,
+            "clockDialSelectedContentColor": clock_dial_selected_content_color,
+            "clockDialUnselectedContentColor": clock_dial_unselected_content_color,
+            "selectorColor": selector_color,
+            "containerColor": container_color,
+            "periodSelectorBorderColor": period_selector_border_color,
+            "periodSelectorSelectedContainerColor": (
+                period_selector_selected_container_color
+            ),
+            "periodSelectorUnselectedContainerColor": (
+                period_selector_unselected_container_color
+            ),
+            "periodSelectorSelectedContentColor": (
+                period_selector_selected_content_color
+            ),
+            "periodSelectorUnselectedContentColor": (
+                period_selector_unselected_content_color
+            ),
+            "timeSelectorSelectedContainerColor": (
+                time_selector_selected_container_color
+            ),
+            "timeSelectorUnselectedContainerColor": (
+                time_selector_unselected_container_color
+            ),
+            "timeSelectorSelectedContentColor": time_selector_selected_content_color,
+            "timeSelectorUnselectedContentColor": (
+                time_selector_unselected_content_color
+            ),
+        },
+        DEFINITIONS,
+    )
+
+
+def topAppBarColors(
+    container_color: JsonValue | _Unset = UNSET,
+    scrolled_container_color: JsonValue | _Unset = UNSET,
+    navigation_icon_content_color: JsonValue | _Unset = UNSET,
+    title_content_color: JsonValue | _Unset = UNSET,
+    action_icon_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TopAppBarColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        scrolled_container_color: Native scrolledContainerColor argument.
+        navigation_icon_content_color: Native navigationIconContentColor argument.
+        title_content_color: Native titleContentColor argument.
+        action_icon_content_color: Native actionIconContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "topAppBarColors",
+        {
+            "containerColor": container_color,
+            "scrolledContainerColor": scrolled_container_color,
+            "navigationIconContentColor": navigation_icon_content_color,
+            "titleContentColor": title_content_color,
+            "actionIconContentColor": action_icon_content_color,
         },
         DEFINITIONS,
     )

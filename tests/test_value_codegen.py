@@ -80,6 +80,33 @@ def test_codegen_refuses_untyped_native_defaults(tmp_path: Path, monkeypatch) ->
         main.load_registry()
 
 
+def test_codegen_refuses_a_repeated_schema_version(tmp_path: Path, monkeypatch) -> None:
+    from pycompose.schema.codegen import main
+
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry["supportedSchemaVersions"].append(registry["schemaVersion"])
+    path = tmp_path / "components.json"
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match="must be unique"):
+        main.load_registry()
+
+
+def test_codegen_refuses_unproven_opt_in_markers(tmp_path: Path, monkeypatch) -> None:
+    from pycompose.schema.codegen import main
+
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry["valueTypes"]["checkboxColors"]["optIn"] = [
+        "androidx.compose.material3.ExperimentalMaterial3Api",
+        "androidx.compose.material3.ExperimentalMaterial3Api",
+    ]
+    path = tmp_path / "components.json"
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match="optIn must be sorted"):
+        main.load_registry()
+
+
 def test_value_runtime_contract_excludes_native_build_metadata() -> None:
     registry = json.loads((ROOT / "schema/components.json").read_text())
     python = render_python(registry)
@@ -109,6 +136,10 @@ def test_approved_value_families_reach_every_generated_artifact() -> None:
     native = render_native(registry)
     assert '"On" -> androidx.compose.ui.state.ToggleableState.On' in native
     assert "androidx.compose.foundation.BorderStroke(" in native
+    marker = "@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)"
+    assert f"{marker}\n    fun datePickerColors(value: JsonElement)" in native
+    assert f"{marker}\n    fun datePickerColors(value: DatePickerColorsValue)" in native
+    assert f"{marker}\n    fun checkboxColors" not in native
 
 
 def test_generated_kotlin_contract_reports_the_approved_schema_version() -> None:

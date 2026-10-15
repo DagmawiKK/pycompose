@@ -209,6 +209,22 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": "1.13.0"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "root": {
+            "$ref": "#/definitions/V_1_13_0_Node"
+          }
+        }
+      }
     }
   ],
   "definitions": {
@@ -810,6 +826,71 @@
         }
       ]
     },
+    "Family_CardColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_cardColors"
+        },
+        {
+          "$ref": "#/definitions/Value_elevatedCardColors"
+        },
+        {
+          "$ref": "#/definitions/Value_outlinedCardColors"
+        }
+      ]
+    },
+    "Family_CardElevation": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_cardElevation"
+        },
+        {
+          "$ref": "#/definitions/Value_elevatedCardElevation"
+        },
+        {
+          "$ref": "#/definitions/Value_outlinedCardElevation"
+        }
+      ]
+    },
+    "Family_CheckboxColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_checkboxColors"
+        }
+      ]
+    },
+    "Family_ChipColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_assistChipColors"
+        },
+        {
+          "$ref": "#/definitions/Value_elevatedAssistChipColors"
+        },
+        {
+          "$ref": "#/definitions/Value_elevatedSuggestionChipColors"
+        },
+        {
+          "$ref": "#/definitions/Value_suggestionChipColors"
+        }
+      ]
+    },
+    "Family_ChipElevation": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_assistChipElevation"
+        },
+        {
+          "$ref": "#/definitions/Value_elevatedAssistChipElevation"
+        },
+        {
+          "$ref": "#/definitions/Value_elevatedSuggestionChipElevation"
+        },
+        {
+          "$ref": "#/definitions/Value_suggestionChipElevation"
+        }
+      ]
+    },
     "Family_Color": {
       "oneOf": [
         {
@@ -820,10 +901,51 @@
         }
       ]
     },
+    "Family_DatePickerColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_datePickerColors"
+        }
+      ]
+    },
     "Family_Dp": {
       "oneOf": [
         {
           "$ref": "#/definitions/Value_Dp"
+        }
+      ]
+    },
+    "Family_DpOffset": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_DpOffset"
+        }
+      ]
+    },
+    "Family_DpSize": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_DpSize"
+        }
+      ]
+    },
+    "Family_FabPosition": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_FabPosition"
+        }
+      ]
+    },
+    "Family_FloatingActionButtonElevation": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_bottomAppBarFabElevation"
+        },
+        {
+          "$ref": "#/definitions/Value_floatingActionButtonElevation"
+        },
+        {
+          "$ref": "#/definitions/Value_loweredElevation"
         }
       ]
     },
@@ -834,10 +956,63 @@
         }
       ]
     },
+    "Family_FontStyle": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_FontStyle"
+        }
+      ]
+    },
     "Family_FontWeight": {
       "oneOf": [
         {
           "$ref": "#/definitions/Value_FontWeight"
+        }
+      ]
+    },
+    "Family_IconButtonColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_filledIconButtonColors"
+        },
+        {
+          "$ref": "#/definitions/Value_filledTonalIconButtonColors"
+        },
+        {
+          "$ref": "#/definitions/Value_iconButtonColors"
+        },
+        {
+          "$ref": "#/definitions/Value_outlinedIconButtonColors"
+        }
+      ]
+    },
+    "Family_IconToggleButtonColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_filledIconToggleButtonColors"
+        },
+        {
+          "$ref": "#/definitions/Value_filledTonalIconToggleButtonColors"
+        },
+        {
+          "$ref": "#/definitions/Value_iconToggleButtonColors"
+        },
+        {
+          "$ref": "#/definitions/Value_outlinedIconToggleButtonColors"
+        }
+      ]
+    },
+    "Family_MenuItemColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_itemColors"
+        }
+      ]
+    },
+    "Family_NavigationBarItemColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_navigationBarItemColors"
         }
       ]
     },
@@ -852,6 +1027,53 @@
       "oneOf": [
         {
           "$ref": "#/definitions/Value_PaddingValues"
+        }
+      ]
+    },
+    "Family_RadioButtonColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_radioButtonColors"
+        }
+      ]
+    },
+    "Family_RichTooltipColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_richTooltipColors"
+        }
+      ]
+    },
+    "Family_SegmentedButtonColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_segmentedButtonColors"
+        }
+      ]
+    },
+    "Family_SelectableChipColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_elevatedFilterChipColors"
+        },
+        {
+          "$ref": "#/definitions/Value_filterChipColors"
+        },
+        {
+          "$ref": "#/definitions/Value_inputChipColors"
+        }
+      ]
+    },
+    "Family_SelectableChipElevation": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_elevatedFilterChipElevation"
+        },
+        {
+          "$ref": "#/definitions/Value_filterChipElevation"
+        },
+        {
+          "$ref": "#/definitions/Value_inputChipElevation"
         }
       ]
     },
@@ -875,6 +1097,61 @@
         }
       ]
     },
+    "Family_SliderColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_sliderColors"
+        }
+      ]
+    },
+    "Family_StrokeCap": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_StrokeCap"
+        }
+      ]
+    },
+    "Family_SwitchColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_switchColors"
+        }
+      ]
+    },
+    "Family_TextAlign": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_TextAlign"
+        }
+      ]
+    },
+    "Family_TextDecoration": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_TextDecoration"
+        }
+      ]
+    },
+    "Family_TextFieldColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_exposedDropdownMenuOutlinedTextFieldColors"
+        },
+        {
+          "$ref": "#/definitions/Value_outlinedTextFieldColors"
+        },
+        {
+          "$ref": "#/definitions/Value_textFieldColors"
+        }
+      ]
+    },
+    "Family_TextOverflow": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_TextOverflow"
+        }
+      ]
+    },
     "Family_TextStyle": {
       "oneOf": [
         {
@@ -895,10 +1172,40 @@
         }
       ]
     },
+    "Family_TimePickerColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_timePickerColors"
+        }
+      ]
+    },
+    "Family_TimePickerLayoutType": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_TimePickerLayoutType"
+        }
+      ]
+    },
     "Family_ToggleableState": {
       "oneOf": [
         {
           "$ref": "#/definitions/Value_ToggleableState"
+        }
+      ]
+    },
+    "Family_TopAppBarColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_centerAlignedTopAppBarColors"
+        },
+        {
+          "$ref": "#/definitions/Value_largeTopAppBarColors"
+        },
+        {
+          "$ref": "#/definitions/Value_mediumTopAppBarColors"
+        },
+        {
+          "$ref": "#/definitions/Value_topAppBarColors"
         }
       ]
     },
@@ -4267,6 +4574,885 @@
                 "operations": {
                   "items": {
                     "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onSelectionChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selection": {
+              "type": "integer"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_Box": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topStart"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Box"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_Button": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onClick",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Button"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_Checkbox": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Checkbox"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_Column": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "horizontalAlignment": {
+              "default": "start",
+              "enum": [
+                "center",
+                "end",
+                "start"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Column"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_FilterChip": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "label",
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilterChip"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_Image": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "resource": {
+              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "required": [
+            "resource"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Image"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_LazyColumn": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyColumn"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "brush": {
+              "$ref": "#/definitions/Family_Brush"
+            },
+            "type": {
+              "const": "background"
+            }
+          },
+          "required": [
+            "type",
+            "brush"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "circle",
+                    "rectangle",
+                    "rounded"
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Family_Shape"
+                }
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_PaddingValues"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_Dp"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_Dp"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "insets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            },
+            "type": {
+              "const": "windowInsetsPadding"
+            }
+          },
+          "required": [
+            "type",
+            "insets"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "V_1_13_0_Node": {
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/V_1_13_0_Box"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_Button"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_Checkbox"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_Column"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_FilterChip"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_Image"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_LazyColumn"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_Row"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_Scaffold"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_Spacer"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_Text"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_TextButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_13_0_TextField"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/definitions/V_1_13_0_Node"
+          },
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "props": {
+          "type": "object"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "props"
+      ],
+      "type": "object"
+    },
+    "V_1_13_0_Row": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalAlignment": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Row"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_Scaffold": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Scaffold"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_Spacer": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Spacer"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_Text": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "fontResource": {
+              "pattern": "^(@(font)/[a-z][a-z0-9_]*)(?![\\s\\S])",
+              "type": "string"
+            },
+            "locale": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "resource": {
+              "pattern": "^(@(string)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            },
+            "style": {
+              "anyOf": [
+                {
+                  "default": "bodyMedium",
+                  "enum": [
+                    "bodyLarge",
+                    "bodyMedium",
+                    "bodySmall",
+                    "headlineMedium",
+                    "titleLarge",
+                    "titleMedium",
+                    "titleSmall"
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Family_TextStyle"
+                }
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Text"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_TextButton": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onClick",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_13_0_TextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -10915,6 +12101,46 @@
       ],
       "type": "object"
     },
+    "Value_DpOffset": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "DpOffset"
+        },
+        "x": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "y": {
+          "$ref": "#/definitions/Family_Dp"
+        }
+      },
+      "required": [
+        "type",
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "Value_DpSize": {
+      "additionalProperties": false,
+      "properties": {
+        "height": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "DpSize"
+        },
+        "width": {
+          "$ref": "#/definitions/Family_Dp"
+        }
+      },
+      "required": [
+        "type",
+        "width",
+        "height"
+      ],
+      "type": "object"
+    },
     "Value_Em": {
       "additionalProperties": false,
       "properties": {
@@ -10950,6 +12176,28 @@
       ],
       "type": "object"
     },
+    "Value_FabPosition": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Center",
+            "End",
+            "EndOverlay",
+            "Start"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "FabPosition"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
     "Value_FontFamily": {
       "additionalProperties": false,
       "properties": {
@@ -10965,6 +12213,26 @@
         },
         "type": {
           "const": "FontFamily"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_FontStyle": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Italic",
+            "Normal"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "FontStyle"
         }
       },
       "required": [
@@ -11255,6 +12523,94 @@
       ],
       "type": "object"
     },
+    "Value_StrokeCap": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Butt",
+            "Round",
+            "Square"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "StrokeCap"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_TextAlign": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Center",
+            "End",
+            "Justify",
+            "Left",
+            "Right",
+            "Start",
+            "Unspecified"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "TextAlign"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_TextDecoration": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "LineThrough",
+            "None",
+            "Underline"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "TextDecoration"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_TextOverflow": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Clip",
+            "Ellipsis",
+            "Visible"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "TextOverflow"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
     "Value_TextStyle": {
       "additionalProperties": false,
       "properties": {
@@ -11417,6 +12773,26 @@
       ],
       "type": "object"
     },
+    "Value_TimePickerLayoutType": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Horizontal",
+            "Vertical"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "TimePickerLayoutType"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
     "Value_ToggleableState": {
       "additionalProperties": false,
       "properties": {
@@ -11499,6 +12875,84 @@
         },
         "type": {
           "const": "WindowInsets"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_assistChipColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLeadingIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTrailingIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "labelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "leadingIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "trailingIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "assistChipColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_assistChipElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "draggedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "elevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "assistChipElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_bottomAppBarFabElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "defaultElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "focusedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "hoveredElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "pressedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "bottomAppBarFabElevation"
         }
       },
       "required": [
@@ -11612,6 +13066,676 @@
       ],
       "type": "object"
     },
+    "Value_cardColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "cardColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_cardElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "defaultElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "disabledElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "draggedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "focusedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "hoveredElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "pressedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "cardElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_centerAlignedTopAppBarColors": {
+      "additionalProperties": false,
+      "properties": {
+        "actionIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "navigationIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "scrolledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "titleContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "centerAlignedTopAppBarColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_checkboxColors": {
+      "additionalProperties": false,
+      "properties": {
+        "checkedColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "checkmarkColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledCheckedColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledIndeterminateColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledUncheckedColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "checkboxColors"
+        },
+        "uncheckedColor": {
+          "$ref": "#/definitions/Family_Color"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_datePickerColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "currentYearContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "dateTextFieldColors": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dayContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "dayInSelectionRangeContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "dayInSelectionRangeContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledDayContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSelectedDayContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSelectedDayContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSelectedYearContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSelectedYearContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledYearContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "dividerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "headlineContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "navigationContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedDayContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedDayContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedYearContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedYearContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "subheadContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "titleContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "todayContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "todayDateBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "datePickerColors"
+        },
+        "weekdayContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "yearContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_elevatedAssistChipColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLeadingIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTrailingIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "labelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "leadingIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "trailingIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "elevatedAssistChipColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_elevatedAssistChipElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "disabledElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "draggedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "elevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "focusedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "hoveredElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "pressedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "elevatedAssistChipElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_elevatedCardColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "elevatedCardColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_elevatedCardElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "defaultElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "disabledElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "draggedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "focusedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "hoveredElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "pressedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "elevatedCardElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_elevatedFilterChipColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSelectedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "iconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "labelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "elevatedFilterChipColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_elevatedFilterChipElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "disabledElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "draggedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "elevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "focusedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "hoveredElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "pressedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "elevatedFilterChipElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_elevatedSuggestionChipColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "iconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "labelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "elevatedSuggestionChipColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_elevatedSuggestionChipElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "disabledElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "draggedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "elevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "focusedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "hoveredElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "pressedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "elevatedSuggestionChipElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_exposedDropdownMenuOutlinedTextFieldColors": {
+      "additionalProperties": false,
+      "properties": {
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "exposedDropdownMenuOutlinedTextFieldColors"
+        },
+        "unfocusedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_filledIconButtonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "filledIconButtonColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_filledIconToggleButtonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "checkedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "contentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "filledIconToggleButtonColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_filledTonalIconButtonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "filledTonalIconButtonColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_filledTonalIconToggleButtonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "checkedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "checkedContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "filledTonalIconToggleButtonColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_filterChipColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSelectedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "iconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "labelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "filterChipColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_filterChipElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "draggedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "elevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "focusedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "hoveredElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "pressedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "filterChipElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_floatingActionButtonElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "defaultElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "focusedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "hoveredElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "pressedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "floatingActionButtonElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
     "Value_horizontalGradient": {
       "additionalProperties": false,
       "properties": {
@@ -11676,6 +13800,180 @@
       ],
       "type": "object"
     },
+    "Value_iconButtonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "contentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "iconButtonColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_iconToggleButtonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "checkedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "checkedContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "contentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "iconToggleButtonColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_inputChipColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSelectedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "labelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "leadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "trailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "inputChipColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_inputChipElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "draggedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "elevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "inputChipElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_itemColors": {
+      "additionalProperties": false,
+      "properties": {
+        "disabledLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "leadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "textColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "trailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "itemColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_largeTopAppBarColors": {
+      "additionalProperties": false,
+      "properties": {
+        "actionIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "navigationIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "scrolledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "titleContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "largeTopAppBarColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
     "Value_linearGradient": {
       "additionalProperties": false,
       "properties": {
@@ -11699,6 +13997,735 @@
       "required": [
         "type",
         "colors"
+      ],
+      "type": "object"
+    },
+    "Value_loweredElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "defaultElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "focusedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "hoveredElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "pressedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "loweredElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_mediumTopAppBarColors": {
+      "additionalProperties": false,
+      "properties": {
+        "actionIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "navigationIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "scrolledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "titleContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "mediumTopAppBarColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_navigationBarItemColors": {
+      "additionalProperties": false,
+      "properties": {
+        "disabledIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "indicatorColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "navigationBarItemColors"
+        },
+        "unselectedIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unselectedTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_outlinedCardColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "outlinedCardColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_outlinedCardElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "defaultElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "disabledElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "draggedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "outlinedCardElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_outlinedIconButtonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "contentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "outlinedIconButtonColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_outlinedIconToggleButtonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "checkedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "contentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "outlinedIconToggleButtonColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_outlinedTextFieldColors": {
+      "additionalProperties": false,
+      "properties": {
+        "cursorColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledPlaceholderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledPrefixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSuffixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSupportingTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorCursorColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorPlaceholderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorPrefixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorSuffixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorSupportingTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedPlaceholderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedPrefixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedSuffixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedSupportingTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "outlinedTextFieldColors"
+        },
+        "unfocusedBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedPlaceholderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedPrefixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedSuffixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedSupportingTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_radioButtonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "disabledSelectedColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledUnselectedColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectedColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "radioButtonColors"
+        },
+        "unselectedColor": {
+          "$ref": "#/definitions/Family_Color"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_richTooltipColors": {
+      "additionalProperties": false,
+      "properties": {
+        "actionContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "contentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "titleContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "richTooltipColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_segmentedButtonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "activeBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "activeContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "activeContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledActiveBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledActiveContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledActiveContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledInactiveBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledInactiveContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledInactiveContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inactiveBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inactiveContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inactiveContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "segmentedButtonColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_sliderColors": {
+      "additionalProperties": false,
+      "properties": {
+        "activeTickColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "activeTrackColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledActiveTickColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledActiveTrackColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledInactiveTickColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledInactiveTrackColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledThumbColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inactiveTickColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inactiveTrackColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "thumbColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "sliderColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_suggestionChipColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "iconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "labelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "suggestionChipColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_suggestionChipElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "draggedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "elevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "suggestionChipElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_switchColors": {
+      "additionalProperties": false,
+      "properties": {
+        "checkedBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledCheckedBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "switchColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_textFieldColors": {
+      "additionalProperties": false,
+      "properties": {
+        "cursorColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledIndicatorColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledPlaceholderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledPrefixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSuffixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledSupportingTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorCursorColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorIndicatorColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorPlaceholderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorPrefixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorSuffixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorSupportingTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedIndicatorColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedPlaceholderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedPrefixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedSuffixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedSupportingTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "focusedTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "textFieldColors"
+        },
+        "unfocusedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedIndicatorColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedLabelColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedLeadingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedPlaceholderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedPrefixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedSuffixColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedSupportingTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedTextColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "unfocusedTrailingIconColor": {
+          "$ref": "#/definitions/Family_Color"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_timePickerColors": {
+      "additionalProperties": false,
+      "properties": {
+        "clockDialColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "clockDialSelectedContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "clockDialUnselectedContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "periodSelectorBorderColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "periodSelectorSelectedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "periodSelectorSelectedContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "periodSelectorUnselectedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "periodSelectorUnselectedContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "selectorColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "timeSelectorSelectedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "timeSelectorSelectedContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "timeSelectorUnselectedContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "timeSelectorUnselectedContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "timePickerColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_topAppBarColors": {
+      "additionalProperties": false,
+      "properties": {
+        "actionIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "navigationIconContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "scrolledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "titleContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "topAppBarColors"
+        }
+      },
+      "required": [
+        "type"
       ],
       "type": "object"
     },
@@ -11785,7 +14812,8 @@
         "1.9.0",
         "1.10.0",
         "1.11.0",
-        "1.12.0"
+        "1.12.0",
+        "1.13.0"
       ]
     },
     "version": {

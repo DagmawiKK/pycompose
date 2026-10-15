@@ -18,9 +18,9 @@ def render_default(expression: dict[str, Any], imports: set[str]) -> str:
 
     The vocabulary is closed and mirrors ``android/tools/SourceDefaults.kt``:
     literals, public properties, singleton objects, extension properties over a
-    literal receiver, and zero-argument public calls. A call carrying arguments
-    would smuggle per-binding Kotlin back into the schema, so it is refused rather
-    than rendered.
+    literal receiver, public member reads on an already-representable receiver,
+    and zero-argument public calls. A call carrying arguments would smuggle
+    per-binding Kotlin back into the schema, so it is refused rather than rendered.
 
     Args:
         expression: Compiler-resolved default evidence.
@@ -36,11 +36,12 @@ def render_default(expression: dict[str, Any], imports: set[str]) -> str:
     if kind == "literal":
         _keys(expression, {"kind", "type", "value"})
         return _literal(expression["value"], expression["type"])
-    if kind in {"property", "object", "extensionProperty", "call"}:
+    if kind in {"property", "object", "extensionProperty", "memberProperty", "call"}:
         fields = {
             "property": set(),
             "object": set(),
             "extensionProperty": {"receiver"},
+            "memberProperty": {"receiver"},
             "call": set(),
         }[kind]
         _keys(expression, {"kind", "symbol", *fields})
@@ -53,6 +54,9 @@ def render_default(expression: dict[str, Any], imports: set[str]) -> str:
             alias = "default_" + symbol.replace(".", "_")
             imports.add(f"import {symbol} as {alias}")
             return f"({render_default(expression['receiver'], imports)}).{alias}"
+        if kind == "memberProperty":
+            member = symbol.rsplit(".", 1)[1]
+            return f"({render_default(expression['receiver'], imports)}).{member}"
         return f"{symbol}()"
     raise ValueError(f"unsupported native default: {kind}")
 

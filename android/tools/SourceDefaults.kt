@@ -125,34 +125,81 @@ private class Defaults(private val context: BindingContext) {
         val property = target as? PropertyDescriptor
             ?: error("default is not a resolved property")
         check(!property.isVar) { "mutable default reference" }
-        if (property.extensionReceiverParameter == null) staticQualifier(node)
+        val receiver = (node as? KtDotQualifiedExpression)?.receiverExpression
+        val qualifier =
+            receiver != null && context[BindingContext.QUALIFIER, receiver] != null
+        requireStaticQualifier(property, receiver, qualifier, node)
         // A property reference is only safe when it really is the value the
         // parameter declares; anything else is a protocol, not a default.
         check(KotlinTypeChecker.DEFAULT.equalTypes(property.type, type)) {
             "default ${property.symbol()} is not a ${type.classifier()}"
         }
-        return if (!property.exported()) {
-            // Internal immutable token aliases may be reduced from the pinned
-            // source, never referenced from shipped Kotlin. Do not execute
-            // arbitrary getters or turn their bodies into expression strings.
-            token(property)
-        } else if (resolving.isNotEmpty() && property.isConst) {
-            literal(node, type)
-        } else if (property.extensionReceiverParameter != null) {
+        return memberValue(property, receiver, qualifier, node, type)
+    }
+
+    /**
+     * Keep reduction and rendering behind a static qualifier.
+     *
+     * A non-extension member read is reduced to its initializer (tokens) or
+     * rendered (composed values); reducing is only sound behind a static
+     * qualifier, so anything else must stay out of token resolution.
+     */
+    private fun requireStaticQualifier(
+        property: PropertyDescriptor,
+        receiver: KtExpression?,
+        qualifier: Boolean,
+        node: KtExpression,
+    ) {
+        val staticAccess = receiver == null || qualifier
+        if (property.extensionReceiverParameter == null &&
+            (staticAccess || resolving.isNotEmpty())
+        ) {
+            staticQualifier(node)
+        }
+    }
+
+    /** Render or reduce a member read whose receiver and type already passed. */
+    private fun memberValue(
+        property: PropertyDescriptor,
+        receiver: KtExpression?,
+        qualifier: Boolean,
+        node: KtExpression,
+        type: KotlinType,
+    ): Map<String, Any?> = when {
+        // Internal immutable token aliases may be reduced from the pinned
+        // source, never referenced from shipped Kotlin. Do not execute
+        // arbitrary getters or turn their bodies into expression strings.
+        !property.exported() -> token(property)
+        resolving.isNotEmpty() && property.isConst -> literal(node, type)
+        property.extensionReceiverParameter != null -> {
             val symbol = property.symbol()
             check(resolving.isEmpty() || symbol in TOKEN_UNIT_CONVERSIONS) {
                 "unproven conversion in token initializer"
             }
-            val receiver = (node as? KtDotQualifiedExpression)?.receiverExpression
-                ?: error("implicit extension receiver in default")
             mapOf(
                 "kind" to "extensionProperty",
                 "symbol" to symbol,
+                "receiver" to expression(
+                    receiver ?: error("implicit extension receiver in default"),
+                ),
+            )
+        }
+        receiver != null && !qualifier -> {
+            // A public member read on an already-representable receiver, such as
+            // MaterialTheme.colorScheme.primary. The chain stays native and is
+            // evaluated during composition; nothing here is pre-resolved.
+            check(resolving.isEmpty()) { "computed reference in token initializer" }
+            mapOf(
+                "kind" to "memberProperty",
+                "symbol" to property.symbol(),
                 "receiver" to expression(receiver),
             )
-        } else {
+        }
+        else -> {
             check(resolving.isEmpty()) { "computed reference in token initializer" }
-            check(property.staticReceiver()) { "instance property default: ${property.symbol()}" }
+            check(property.staticReceiver()) {
+                "instance property default: ${property.symbol()}"
+            }
             mapOf("kind" to "property", "symbol" to property.symbol())
         }
     }
@@ -196,7 +243,8 @@ private class Defaults(private val context: BindingContext) {
         // Only a zero-argument call is a reusable policy. Anything with
         // arguments would smuggle per-binding Kotlin back into the schema.
         check(
-            call.valueArguments.isEmpty() && call.lambdaArguments.isEmpty() &&
+            call.valueArguments.isEmpty() &&
+                call.lambdaArguments.isEmpty() &&
                 resolved.valueArguments.values.all { it.arguments.isEmpty() },
         ) { "default call takes arguments" }
         val symbol = if (target is ConstructorDescriptor) {

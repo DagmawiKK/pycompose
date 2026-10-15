@@ -16,16 +16,26 @@ fun hex(bytes: ByteArray): String {
     return digest.joinToString("") { "%02x".format(it) }
 }
 
-/** Every approved value binding; every pinned UI overload is requested below. */
-fun approvedNames(schema: File): String {
+/** Approved bindings by exact source identity, plus names bound by no source yet. */
+fun approvedBindings(schema: File): Pair<List<String>, List<String>> {
     val registry = JsonSlurper().parse(schema) as Map<*, *>
     val values = registry["valueTypes"] as Map<*, *>
-    return values.entries
-        .map { (name, spec) ->
-            val bound = (spec as Map<*, *>?)?.containsKey("family") == true
-            if (bound) name else null
-        }.filterNotNull()
-        .joinToString(",")
+    val names = mutableListOf<String>()
+    val sources = mutableListOf<String>()
+    values.entries.forEach { (name, raw) ->
+        val spec = raw as? Map<*, *> ?: return@forEach
+        if (spec["family"] == null) return@forEach
+        val source = spec["source"] as? Map<*, *>
+        if (source == null) {
+            names.add(name.toString())
+        } else {
+            sources.add(
+                listOf("owner", "jvmName", "descriptor")
+                    .joinToString("|") { source[it].toString() },
+            )
+        }
+    }
+    return names to sources
 }
 
 tasks.register("dumpComposeDefaults") {
@@ -35,12 +45,19 @@ tasks.register("dumpComposeDefaults") {
     val schema = rootProject.file("../schema/components.json")
     val tool = rootProject.file("tools/SourceDefaults.kt")
     val output = layout.buildDirectory.dir("compose-api")
+    val bound = providers.provider { approvedBindings(schema) }
     val names =
         providers.provider {
-            val override = providers.gradleProperty("composeValueNames").orNull
-            override ?: approvedNames(schema)
+            providers.gradleProperty("composeValueNames").orNull
+                ?: bound.get().first.joinToString(",")
+        }
+    val sources =
+        providers.provider {
+            providers.gradleProperty("composeValueNames").orNull?.let { "" }
+                ?: bound.get().second.joinToString(",")
         }
     inputs.property("names", names)
+    inputs.property("sources", sources)
     inputs.file(schema)
     inputs.file(tool)
 
@@ -53,13 +70,20 @@ tasks.register("dumpComposeDefaults") {
         @Suppress("UNCHECKED_CAST")
         val records = inventory["declarations"] as List<Map<String, Any?>>
         val requested = names.get().split(',').toSet()
+        val identities = sources.get().split(',').toSet()
         val targets =
             records.filter { record ->
                 val owner = record["owner"].toString().substringAfterLast('.')
+                val jvm = record["jvm"] as Map<*, *>
+                val identity =
+                    listOf(record["owner"], jvm["name"], jvm["descriptor"])
+                        .joinToString("|")
                 val supported = record["disposition"] == "support"
                 val named = requested.contains(record["name"].toString())
                 val constructed = record["name"] == "<init>" && requested.contains(owner)
-                record["disposition"] == "ui" || supported && (named || constructed)
+                record["disposition"] == "ui" ||
+                    supported &&
+                    (named || constructed || identities.contains(identity))
             }
         check(targets.isNotEmpty()) { "No matching public declarations" }
 

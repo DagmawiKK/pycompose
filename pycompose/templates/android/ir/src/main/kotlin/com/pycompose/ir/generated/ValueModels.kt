@@ -24,27 +24,87 @@ sealed interface ButtonColorsValue
 
 sealed interface ButtonElevationValue
 
+sealed interface CardColorsValue
+
+sealed interface CardElevationValue
+
+sealed interface CheckboxColorsValue
+
+sealed interface ChipColorsValue
+
+sealed interface ChipElevationValue
+
 sealed interface ColorValue
+
+sealed interface DatePickerColorsValue
 
 sealed interface DpValue
 
+sealed interface DpOffsetValue
+
+sealed interface DpSizeValue
+
+sealed interface FabPositionValue
+
+sealed interface FloatingActionButtonElevationValue
+
 sealed interface FontFamilyValue
 
+sealed interface FontStyleValue
+
 sealed interface FontWeightValue
+
+sealed interface IconButtonColorsValue
+
+sealed interface IconToggleButtonColorsValue
+
+sealed interface MenuItemColorsValue
+
+sealed interface NavigationBarItemColorsValue
 
 sealed interface OffsetValue
 
 sealed interface PaddingValuesValue
 
+sealed interface RadioButtonColorsValue
+
+sealed interface RichTooltipColorsValue
+
+sealed interface SegmentedButtonColorsValue
+
+sealed interface SelectableChipColorsValue
+
+sealed interface SelectableChipElevationValue
+
 sealed interface ShapeValue
 
 sealed interface SizeValue
+
+sealed interface SliderColorsValue
+
+sealed interface StrokeCapValue
+
+sealed interface SwitchColorsValue
+
+sealed interface TextAlignValue
+
+sealed interface TextDecorationValue
+
+sealed interface TextFieldColorsValue
+
+sealed interface TextOverflowValue
 
 sealed interface TextStyleValue
 
 sealed interface TextUnitValue
 
+sealed interface TimePickerColorsValue
+
+sealed interface TimePickerLayoutTypeValue
+
 sealed interface ToggleableStateValue
+
+sealed interface TopAppBarColorsValue
 
 sealed interface WindowInsetsValue
 
@@ -74,15 +134,37 @@ data class WireDp(
     val value: Double,
 ) : DpValue
 
+data class WireDpOffset(
+    val supplied: Set<String>,
+    val x: DpValue,
+    val y: DpValue,
+) : DpOffsetValue
+
+data class WireDpSize(
+    val supplied: Set<String>,
+    val width: DpValue,
+    val height: DpValue,
+) : DpSizeValue
+
 data class WireEm(
     val supplied: Set<String>,
     val value: Double,
 ) : TextUnitValue
 
+data class WireFabPosition(
+    val supplied: Set<String>,
+    val name: String,
+) : FabPositionValue
+
 data class WireFontFamily(
     val supplied: Set<String>,
     val name: String,
 ) : FontFamilyValue
+
+data class WireFontStyle(
+    val supplied: Set<String>,
+    val name: String,
+) : FontStyleValue
 
 data class WireFontWeight(
     val supplied: Set<String>,
@@ -124,6 +206,26 @@ data class WireSp(
     val value: Double,
 ) : TextUnitValue
 
+data class WireStrokeCap(
+    val supplied: Set<String>,
+    val name: String,
+) : StrokeCapValue
+
+data class WireTextAlign(
+    val supplied: Set<String>,
+    val name: String,
+) : TextAlignValue
+
+data class WireTextDecoration(
+    val supplied: Set<String>,
+    val name: String,
+) : TextDecorationValue
+
+data class WireTextOverflow(
+    val supplied: Set<String>,
+    val name: String,
+) : TextOverflowValue
+
 data class WireTextStyle(
     val supplied: Set<String>,
     val color: ColorValue? = null,
@@ -148,6 +250,11 @@ data class WireThemeTypography(
     val name: String,
 ) : TextStyleValue
 
+data class WireTimePickerLayoutType(
+    val supplied: Set<String>,
+    val name: String,
+) : TimePickerLayoutTypeValue
+
 data class WireToggleableState(
     val supplied: Set<String>,
     val name: String,
@@ -160,6 +267,32 @@ data class WireWindowInsets(
     val right: DpValue? = null,
     val bottom: DpValue? = null,
 ) : WindowInsetsValue
+
+data class WireassistChipColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val labelColor: ColorValue? = null,
+    val leadingIconContentColor: ColorValue? = null,
+    val trailingIconContentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledLabelColor: ColorValue? = null,
+    val disabledLeadingIconContentColor: ColorValue? = null,
+    val disabledTrailingIconContentColor: ColorValue? = null,
+) : ChipColorsValue
+
+data class WireassistChipElevation(
+    val supplied: Set<String>,
+    val elevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+) : ChipElevationValue
+
+data class WirebottomAppBarFabElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+) : FloatingActionButtonElevationValue
 
 data class WirebuttonColors(
     val supplied: Set<String>,
@@ -178,6 +311,227 @@ data class WirebuttonElevation(
     val disabledElevation: DpValue? = null,
 ) : ButtonElevationValue
 
+data class WirecardColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+) : CardColorsValue
+
+data class WirecardElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+    val disabledElevation: DpValue? = null,
+) : CardElevationValue
+
+data class WirecenterAlignedTopAppBarColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val scrolledContainerColor: ColorValue? = null,
+    val navigationIconContentColor: ColorValue? = null,
+    val titleContentColor: ColorValue? = null,
+    val actionIconContentColor: ColorValue? = null,
+) : TopAppBarColorsValue
+
+data class WirecheckboxColors(
+    val supplied: Set<String>,
+    val checkedColor: ColorValue? = null,
+    val uncheckedColor: ColorValue? = null,
+    val checkmarkColor: ColorValue? = null,
+    val disabledCheckedColor: ColorValue? = null,
+    val disabledUncheckedColor: ColorValue? = null,
+    val disabledIndeterminateColor: ColorValue? = null,
+) : CheckboxColorsValue
+
+data class WiredatePickerColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val titleContentColor: ColorValue? = null,
+    val headlineContentColor: ColorValue? = null,
+    val weekdayContentColor: ColorValue? = null,
+    val subheadContentColor: ColorValue? = null,
+    val navigationContentColor: ColorValue? = null,
+    val yearContentColor: ColorValue? = null,
+    val disabledYearContentColor: ColorValue? = null,
+    val currentYearContentColor: ColorValue? = null,
+    val selectedYearContentColor: ColorValue? = null,
+    val disabledSelectedYearContentColor: ColorValue? = null,
+    val selectedYearContainerColor: ColorValue? = null,
+    val disabledSelectedYearContainerColor: ColorValue? = null,
+    val dayContentColor: ColorValue? = null,
+    val disabledDayContentColor: ColorValue? = null,
+    val selectedDayContentColor: ColorValue? = null,
+    val disabledSelectedDayContentColor: ColorValue? = null,
+    val selectedDayContainerColor: ColorValue? = null,
+    val disabledSelectedDayContainerColor: ColorValue? = null,
+    val todayContentColor: ColorValue? = null,
+    val todayDateBorderColor: ColorValue? = null,
+    val dayInSelectionRangeContentColor: ColorValue? = null,
+    val dayInSelectionRangeContainerColor: ColorValue? = null,
+    val dividerColor: ColorValue? = null,
+    val dateTextFieldColors: TextFieldColorsValue? = null,
+) : DatePickerColorsValue
+
+data class WireelevatedAssistChipColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val labelColor: ColorValue? = null,
+    val leadingIconContentColor: ColorValue? = null,
+    val trailingIconContentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledLabelColor: ColorValue? = null,
+    val disabledLeadingIconContentColor: ColorValue? = null,
+    val disabledTrailingIconContentColor: ColorValue? = null,
+) : ChipColorsValue
+
+data class WireelevatedAssistChipElevation(
+    val supplied: Set<String>,
+    val elevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+    val disabledElevation: DpValue? = null,
+) : ChipElevationValue
+
+data class WireelevatedCardColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+) : CardColorsValue
+
+data class WireelevatedCardElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+    val disabledElevation: DpValue? = null,
+) : CardElevationValue
+
+data class WireelevatedFilterChipColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val labelColor: ColorValue? = null,
+    val iconColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledLabelColor: ColorValue? = null,
+    val disabledLeadingIconColor: ColorValue? = null,
+    val disabledTrailingIconColor: ColorValue? = null,
+    val selectedContainerColor: ColorValue? = null,
+    val disabledSelectedContainerColor: ColorValue? = null,
+    val selectedLabelColor: ColorValue? = null,
+    val selectedLeadingIconColor: ColorValue? = null,
+    val selectedTrailingIconColor: ColorValue? = null,
+) : SelectableChipColorsValue
+
+data class WireelevatedFilterChipElevation(
+    val supplied: Set<String>,
+    val elevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+    val disabledElevation: DpValue? = null,
+) : SelectableChipElevationValue
+
+data class WireelevatedSuggestionChipColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val labelColor: ColorValue? = null,
+    val iconContentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledLabelColor: ColorValue? = null,
+    val disabledIconContentColor: ColorValue? = null,
+) : ChipColorsValue
+
+data class WireelevatedSuggestionChipElevation(
+    val supplied: Set<String>,
+    val elevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+    val disabledElevation: DpValue? = null,
+) : ChipElevationValue
+
+data class WireexposedDropdownMenuOutlinedTextFieldColors(
+    val supplied: Set<String>,
+    val focusedContainerColor: ColorValue? = null,
+    val unfocusedContainerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val errorContainerColor: ColorValue? = null,
+) : TextFieldColorsValue
+
+data class WirefilledIconButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledContentColor: ColorValue? = null,
+) : IconButtonColorsValue
+
+data class WirefilledIconToggleButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val contentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledContentColor: ColorValue? = null,
+    val checkedContainerColor: ColorValue? = null,
+) : IconToggleButtonColorsValue
+
+data class WirefilledTonalIconButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledContentColor: ColorValue? = null,
+) : IconButtonColorsValue
+
+data class WirefilledTonalIconToggleButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledContentColor: ColorValue? = null,
+    val checkedContainerColor: ColorValue? = null,
+    val checkedContentColor: ColorValue? = null,
+) : IconToggleButtonColorsValue
+
+data class WirefilterChipColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val labelColor: ColorValue? = null,
+    val iconColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledLabelColor: ColorValue? = null,
+    val disabledLeadingIconColor: ColorValue? = null,
+    val disabledTrailingIconColor: ColorValue? = null,
+    val selectedContainerColor: ColorValue? = null,
+    val disabledSelectedContainerColor: ColorValue? = null,
+    val selectedLabelColor: ColorValue? = null,
+    val selectedLeadingIconColor: ColorValue? = null,
+    val selectedTrailingIconColor: ColorValue? = null,
+) : SelectableChipColorsValue
+
+data class WirefilterChipElevation(
+    val supplied: Set<String>,
+    val elevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+) : SelectableChipElevationValue
+
+data class WirefloatingActionButtonElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+) : FloatingActionButtonElevationValue
+
 data class WirehorizontalGradient(
     val supplied: Set<String>,
     val colors: List<ColorValue>,
@@ -185,12 +539,313 @@ data class WirehorizontalGradient(
     val endX: Double? = null,
 ) : BrushValue
 
+data class WireiconButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val contentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+) : IconButtonColorsValue
+
+data class WireiconToggleButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val contentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val checkedContainerColor: ColorValue? = null,
+    val checkedContentColor: ColorValue? = null,
+) : IconToggleButtonColorsValue
+
+data class WireinputChipColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val labelColor: ColorValue? = null,
+    val leadingIconColor: ColorValue? = null,
+    val trailingIconColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledLabelColor: ColorValue? = null,
+    val disabledLeadingIconColor: ColorValue? = null,
+    val disabledTrailingIconColor: ColorValue? = null,
+    val selectedContainerColor: ColorValue? = null,
+    val disabledSelectedContainerColor: ColorValue? = null,
+    val selectedLabelColor: ColorValue? = null,
+    val selectedLeadingIconColor: ColorValue? = null,
+    val selectedTrailingIconColor: ColorValue? = null,
+) : SelectableChipColorsValue
+
+data class WireinputChipElevation(
+    val supplied: Set<String>,
+    val elevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+) : SelectableChipElevationValue
+
+data class WireitemColors(
+    val supplied: Set<String>,
+    val textColor: ColorValue? = null,
+    val leadingIconColor: ColorValue? = null,
+    val trailingIconColor: ColorValue? = null,
+    val disabledTextColor: ColorValue? = null,
+    val disabledLeadingIconColor: ColorValue? = null,
+    val disabledTrailingIconColor: ColorValue? = null,
+) : MenuItemColorsValue
+
+data class WirelargeTopAppBarColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val scrolledContainerColor: ColorValue? = null,
+    val navigationIconContentColor: ColorValue? = null,
+    val titleContentColor: ColorValue? = null,
+    val actionIconContentColor: ColorValue? = null,
+) : TopAppBarColorsValue
+
 data class WirelinearGradient(
     val supplied: Set<String>,
     val colors: List<ColorValue>,
     val start: OffsetValue? = null,
     val end: OffsetValue? = null,
 ) : BrushValue
+
+data class WireloweredElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+) : FloatingActionButtonElevationValue
+
+data class WiremediumTopAppBarColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val scrolledContainerColor: ColorValue? = null,
+    val navigationIconContentColor: ColorValue? = null,
+    val titleContentColor: ColorValue? = null,
+    val actionIconContentColor: ColorValue? = null,
+) : TopAppBarColorsValue
+
+data class WirenavigationBarItemColors(
+    val supplied: Set<String>,
+    val selectedIconColor: ColorValue? = null,
+    val selectedTextColor: ColorValue? = null,
+    val indicatorColor: ColorValue? = null,
+    val unselectedIconColor: ColorValue? = null,
+    val unselectedTextColor: ColorValue? = null,
+    val disabledIconColor: ColorValue? = null,
+    val disabledTextColor: ColorValue? = null,
+) : NavigationBarItemColorsValue
+
+data class WireoutlinedCardColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+) : CardColorsValue
+
+data class WireoutlinedCardElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+    val disabledElevation: DpValue? = null,
+) : CardElevationValue
+
+data class WireoutlinedIconButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val contentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+) : IconButtonColorsValue
+
+data class WireoutlinedIconToggleButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val contentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val checkedContainerColor: ColorValue? = null,
+) : IconToggleButtonColorsValue
+
+data class WireoutlinedTextFieldColors(
+    val supplied: Set<String>,
+    val focusedTextColor: ColorValue? = null,
+    val unfocusedTextColor: ColorValue? = null,
+    val disabledTextColor: ColorValue? = null,
+    val errorTextColor: ColorValue? = null,
+    val focusedContainerColor: ColorValue? = null,
+    val unfocusedContainerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val errorContainerColor: ColorValue? = null,
+    val cursorColor: ColorValue? = null,
+    val errorCursorColor: ColorValue? = null,
+    val focusedBorderColor: ColorValue? = null,
+    val unfocusedBorderColor: ColorValue? = null,
+    val disabledBorderColor: ColorValue? = null,
+    val errorBorderColor: ColorValue? = null,
+    val focusedLeadingIconColor: ColorValue? = null,
+    val unfocusedLeadingIconColor: ColorValue? = null,
+    val disabledLeadingIconColor: ColorValue? = null,
+    val errorLeadingIconColor: ColorValue? = null,
+    val focusedTrailingIconColor: ColorValue? = null,
+    val unfocusedTrailingIconColor: ColorValue? = null,
+    val disabledTrailingIconColor: ColorValue? = null,
+    val errorTrailingIconColor: ColorValue? = null,
+    val focusedLabelColor: ColorValue? = null,
+    val unfocusedLabelColor: ColorValue? = null,
+    val disabledLabelColor: ColorValue? = null,
+    val errorLabelColor: ColorValue? = null,
+    val focusedPlaceholderColor: ColorValue? = null,
+    val unfocusedPlaceholderColor: ColorValue? = null,
+    val disabledPlaceholderColor: ColorValue? = null,
+    val errorPlaceholderColor: ColorValue? = null,
+    val focusedSupportingTextColor: ColorValue? = null,
+    val unfocusedSupportingTextColor: ColorValue? = null,
+    val disabledSupportingTextColor: ColorValue? = null,
+    val errorSupportingTextColor: ColorValue? = null,
+    val focusedPrefixColor: ColorValue? = null,
+    val unfocusedPrefixColor: ColorValue? = null,
+    val disabledPrefixColor: ColorValue? = null,
+    val errorPrefixColor: ColorValue? = null,
+    val focusedSuffixColor: ColorValue? = null,
+    val unfocusedSuffixColor: ColorValue? = null,
+    val disabledSuffixColor: ColorValue? = null,
+    val errorSuffixColor: ColorValue? = null,
+) : TextFieldColorsValue
+
+data class WireradioButtonColors(
+    val supplied: Set<String>,
+    val selectedColor: ColorValue? = null,
+    val unselectedColor: ColorValue? = null,
+    val disabledSelectedColor: ColorValue? = null,
+    val disabledUnselectedColor: ColorValue? = null,
+) : RadioButtonColorsValue
+
+data class WirerichTooltipColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val contentColor: ColorValue? = null,
+    val titleContentColor: ColorValue? = null,
+    val actionContentColor: ColorValue? = null,
+) : RichTooltipColorsValue
+
+data class WiresegmentedButtonColors(
+    val supplied: Set<String>,
+    val activeContainerColor: ColorValue? = null,
+    val activeContentColor: ColorValue? = null,
+    val activeBorderColor: ColorValue? = null,
+    val inactiveContainerColor: ColorValue? = null,
+    val inactiveContentColor: ColorValue? = null,
+    val inactiveBorderColor: ColorValue? = null,
+    val disabledActiveContainerColor: ColorValue? = null,
+    val disabledActiveContentColor: ColorValue? = null,
+    val disabledActiveBorderColor: ColorValue? = null,
+    val disabledInactiveContainerColor: ColorValue? = null,
+    val disabledInactiveContentColor: ColorValue? = null,
+    val disabledInactiveBorderColor: ColorValue? = null,
+) : SegmentedButtonColorsValue
+
+data class WiresliderColors(
+    val supplied: Set<String>,
+    val thumbColor: ColorValue? = null,
+    val activeTrackColor: ColorValue? = null,
+    val activeTickColor: ColorValue? = null,
+    val inactiveTrackColor: ColorValue? = null,
+    val inactiveTickColor: ColorValue? = null,
+    val disabledThumbColor: ColorValue? = null,
+    val disabledActiveTrackColor: ColorValue? = null,
+    val disabledActiveTickColor: ColorValue? = null,
+    val disabledInactiveTrackColor: ColorValue? = null,
+    val disabledInactiveTickColor: ColorValue? = null,
+) : SliderColorsValue
+
+data class WiresuggestionChipColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val labelColor: ColorValue? = null,
+    val iconContentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledLabelColor: ColorValue? = null,
+    val disabledIconContentColor: ColorValue? = null,
+) : ChipColorsValue
+
+data class WiresuggestionChipElevation(
+    val supplied: Set<String>,
+    val elevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+) : ChipElevationValue
+
+data class WireswitchColors(
+    val supplied: Set<String>,
+    val checkedBorderColor: ColorValue? = null,
+    val disabledCheckedBorderColor: ColorValue? = null,
+) : SwitchColorsValue
+
+data class WiretextFieldColors(
+    val supplied: Set<String>,
+    val focusedTextColor: ColorValue? = null,
+    val unfocusedTextColor: ColorValue? = null,
+    val disabledTextColor: ColorValue? = null,
+    val errorTextColor: ColorValue? = null,
+    val focusedContainerColor: ColorValue? = null,
+    val unfocusedContainerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val errorContainerColor: ColorValue? = null,
+    val cursorColor: ColorValue? = null,
+    val errorCursorColor: ColorValue? = null,
+    val focusedIndicatorColor: ColorValue? = null,
+    val unfocusedIndicatorColor: ColorValue? = null,
+    val disabledIndicatorColor: ColorValue? = null,
+    val errorIndicatorColor: ColorValue? = null,
+    val focusedLeadingIconColor: ColorValue? = null,
+    val unfocusedLeadingIconColor: ColorValue? = null,
+    val disabledLeadingIconColor: ColorValue? = null,
+    val errorLeadingIconColor: ColorValue? = null,
+    val focusedTrailingIconColor: ColorValue? = null,
+    val unfocusedTrailingIconColor: ColorValue? = null,
+    val disabledTrailingIconColor: ColorValue? = null,
+    val errorTrailingIconColor: ColorValue? = null,
+    val focusedLabelColor: ColorValue? = null,
+    val unfocusedLabelColor: ColorValue? = null,
+    val disabledLabelColor: ColorValue? = null,
+    val errorLabelColor: ColorValue? = null,
+    val focusedPlaceholderColor: ColorValue? = null,
+    val unfocusedPlaceholderColor: ColorValue? = null,
+    val disabledPlaceholderColor: ColorValue? = null,
+    val errorPlaceholderColor: ColorValue? = null,
+    val focusedSupportingTextColor: ColorValue? = null,
+    val unfocusedSupportingTextColor: ColorValue? = null,
+    val disabledSupportingTextColor: ColorValue? = null,
+    val errorSupportingTextColor: ColorValue? = null,
+    val focusedPrefixColor: ColorValue? = null,
+    val unfocusedPrefixColor: ColorValue? = null,
+    val disabledPrefixColor: ColorValue? = null,
+    val errorPrefixColor: ColorValue? = null,
+    val focusedSuffixColor: ColorValue? = null,
+    val unfocusedSuffixColor: ColorValue? = null,
+    val disabledSuffixColor: ColorValue? = null,
+    val errorSuffixColor: ColorValue? = null,
+) : TextFieldColorsValue
+
+data class WiretimePickerColors(
+    val supplied: Set<String>,
+    val clockDialColor: ColorValue? = null,
+    val clockDialSelectedContentColor: ColorValue? = null,
+    val clockDialUnselectedContentColor: ColorValue? = null,
+    val selectorColor: ColorValue? = null,
+    val containerColor: ColorValue? = null,
+    val periodSelectorBorderColor: ColorValue? = null,
+    val periodSelectorSelectedContainerColor: ColorValue? = null,
+    val periodSelectorUnselectedContainerColor: ColorValue? = null,
+    val periodSelectorSelectedContentColor: ColorValue? = null,
+    val periodSelectorUnselectedContentColor: ColorValue? = null,
+    val timeSelectorSelectedContainerColor: ColorValue? = null,
+    val timeSelectorUnselectedContainerColor: ColorValue? = null,
+    val timeSelectorSelectedContentColor: ColorValue? = null,
+    val timeSelectorUnselectedContentColor: ColorValue? = null,
+) : TimePickerColorsValue
+
+data class WiretopAppBarColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val scrolledContainerColor: ColorValue? = null,
+    val navigationIconContentColor: ColorValue? = null,
+    val titleContentColor: ColorValue? = null,
+    val actionIconContentColor: ColorValue? = null,
+) : TopAppBarColorsValue
 
 data class WireverticalGradient(
     val supplied: Set<String>,
@@ -200,7 +855,7 @@ data class WireverticalGradient(
 ) : BrushValue
 
 object ValueContract {
-    const val SCHEMA_VERSION = "1.12.0"
+    const val SCHEMA_VERSION = "1.13.0"
     private val json = Json { classDiscriminator = "type" }
     val specs: JsonObject = json.parseToJsonElement(
         "{\"AnnotatedString\":{\"family\":\"AnnotatedString\",\"parameters\":" +
@@ -214,87 +869,531 @@ object ValueContract {
         "ly\":\"Shape\",\"parameters\":{\"size\":{\"minimum\":0,\"required\":tru" +
         "e,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Dp\":{" +
         "\"family\":\"Dp\",\"parameters\":{\"value\":{\"required\":true,\"type\":" +
-        "\"float\"}},\"since\":\"1.11.0\"},\"Em\":{\"family\":\"TextUnit\",\"param" +
-        "eters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1" +
-        ".11.0\"},\"FontFamily\":{\"family\":\"FontFamily\",\"parameters\":{\"n" +
-        "ame\":{\"required\":true,\"type\":\"string\",\"values\":[\"Cursive\",\"D" +
-        "efault\",\"Monospace\",\"SansSerif\",\"Serif\"]}},\"since\":\"1.11.0\"}" +
-        ",\"FontWeight\":{\"family\":\"FontWeight\",\"parameters\":{\"weight\":" +
-        "{\"maximum\":1000,\"minimum\":1,\"required\":true,\"type\":\"int\"}},\"" +
-        "since\":\"1.11.0\"},\"Offset\":{\"family\":\"Offset\",\"parameters\":{\"" +
-        "x\":{\"required\":true,\"type\":\"float\"},\"y\":{\"required\":true,\"ty" +
-        "pe\":\"float\"}},\"since\":\"1.11.0\"},\"PaddingValues\":{\"family\":\"P" +
-        "addingValues\",\"parameters\":{\"bottom\":{\"minimum\":0,\"type\":\"va" +
-        "lue\",\"valueType\":\"Dp\"},\"end\":{\"minimum\":0,\"type\":\"value\",\"va" +
-        "lueType\":\"Dp\"},\"start\":{\"minimum\":0,\"type\":\"value\",\"valueTyp" +
-        "e\":\"Dp\"},\"top\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}" +
-        "},\"since\":\"1.11.0\"},\"RoundedCornerShape\":{\"family\":\"Shape\",\"" +
-        "parameters\":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"val" +
-        "ue\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Size\":{\"family\":\"S" +
-        "ize\",\"parameters\":{\"height\":{\"minimum\":0,\"required\":true,\"ty" +
-        "pe\":\"float\"},\"width\":{\"minimum\":0,\"required\":true,\"type\":\"fl" +
-        "oat\"}},\"since\":\"1.11.0\"},\"SolidColor\":{\"family\":\"Brush\",\"par" +
-        "ameters\":{\"value\":{\"required\":true,\"type\":\"value\",\"valueType" +
-        "\":\"Color\"}},\"since\":\"1.11.0\"},\"Sp\":{\"family\":\"TextUnit\",\"par" +
-        "ameters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":" +
-        "\"1.11.0\"},\"TextStyle\":{\"family\":\"TextStyle\",\"parameters\":{\"c" +
-        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"fontFamily\":{\"nu" +
-        "llable\":true,\"type\":\"value\",\"valueType\":\"FontFamily\"},\"fontS" +
-        "ize\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"TextUnit\"},\"fo" +
-        "ntWeight\":{\"nullable\":true,\"type\":\"value\",\"valueType\":\"FontW" +
-        "eight\"},\"letterSpacing\":{\"type\":\"value\",\"valueType\":\"TextUni" +
-        "t\"}},\"since\":\"1.11.0\"},\"ThemeColor\":{\"family\":\"Color\",\"param" +
-        "eters\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"b" +
-        "ackground\",\"error\",\"errorContainer\",\"inverseOnSurface\",\"inve" +
-        "rsePrimary\",\"inverseSurface\",\"onBackground\",\"onError\",\"onErr" +
-        "orContainer\",\"onPrimary\",\"onPrimaryContainer\",\"onSecondary\"," +
-        "\"onSecondaryContainer\",\"onSurface\",\"onSurfaceVariant\",\"onTer" +
-        "tiary\",\"onTertiaryContainer\",\"outline\",\"outlineVariant\",\"pri" +
-        "mary\",\"primaryContainer\",\"scrim\",\"secondary\",\"secondaryConta" +
-        "iner\",\"surface\",\"surfaceBright\",\"surfaceContainer\",\"surfaceC" +
-        "ontainerHigh\",\"surfaceContainerHighest\",\"surfaceContainerLow" +
-        "\",\"surfaceContainerLowest\",\"surfaceDim\",\"surfaceTint\",\"surfa" +
-        "ceVariant\",\"tertiary\",\"tertiaryContainer\"]}},\"since\":\"1.11.0" +
-        "\"},\"ThemeShape\":{\"family\":\"Shape\",\"parameters\":{\"name\":{\"req" +
-        "uired\":true,\"type\":\"string\",\"values\":[\"extraLarge\",\"extraSma" +
-        "ll\",\"large\",\"medium\",\"small\"]}},\"since\":\"1.11.0\"},\"ThemeTypo" +
-        "graphy\":{\"family\":\"TextStyle\",\"parameters\":{\"name\":{\"require" +
-        "d\":true,\"type\":\"string\",\"values\":[\"bodyLarge\",\"bodyMedium\",\"" +
-        "bodySmall\",\"displayLarge\",\"displayMedium\",\"displaySmall\",\"he" +
-        "adlineLarge\",\"headlineMedium\",\"headlineSmall\",\"labelLarge\",\"" +
-        "labelMedium\",\"labelSmall\",\"titleLarge\",\"titleMedium\",\"titleS" +
-        "mall\"]}},\"since\":\"1.11.0\"},\"ToggleableState\":{\"family\":\"Togg" +
-        "leableState\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"s" +
-        "tring\",\"values\":[\"Indeterminate\",\"Off\",\"On\"]}},\"since\":\"1.12" +
-        ".0\"},\"WindowInsets\":{\"family\":\"WindowInsets\",\"parameters\":{\"" +
-        "bottom\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"left\"" +
-        ":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"right\":{\"min" +
-        "imum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\":{\"minimum\":0," +
-        "\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"buttonC" +
-        "olors\":{\"family\":\"ButtonColors\",\"parameters\":{\"containerColo" +
-        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"contentColor\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"},\"disabledContentColor\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"},\"button" +
-        "Elevation\":{\"family\":\"ButtonElevation\",\"parameters\":{\"defaul" +
-        "tElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"d" +
-        "isabledElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"D" +
-        "p\"},\"focusedElevation\":{\"minimum\":0,\"type\":\"value\",\"valueTyp" +
-        "e\":\"Dp\"},\"hoveredElevation\":{\"minimum\":0,\"type\":\"value\",\"val" +
-        "ueType\":\"Dp\"},\"pressedElevation\":{\"minimum\":0,\"type\":\"value\"" +
-        ",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"horizontalGradient\":{" +
-        "\"family\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"va" +
-        "lue\",\"valueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type" +
-        "\":\"list\"},\"endX\":{\"type\":\"float\"},\"startX\":{\"type\":\"float\"}}" +
-        ",\"since\":\"1.11.0\"},\"linearGradient\":{\"family\":\"Brush\",\"param" +
-        "eters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Color" +
-        "\"},\"minItems\":2,\"required\":true,\"type\":\"list\"},\"end\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Offset\"},\"start\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Offset\"}},\"since\":\"1.11.0\"},\"verticalGradient\":{\"fam" +
-        "ily\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"value\"" +
-        ",\"valueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":\"l" +
-        "ist\"},\"endY\":{\"type\":\"float\"},\"startY\":{\"type\":\"float\"}},\"si" +
-        "nce\":\"1.11.0\"}}"
+        "\"float\"}},\"since\":\"1.11.0\"},\"DpOffset\":{\"family\":\"DpOffset\"," +
+        "\"parameters\":{\"x\":{\"required\":true,\"type\":\"value\",\"valueType" +
+        "\":\"Dp\"},\"y\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"" +
+        "}},\"since\":\"1.13.0\"},\"DpSize\":{\"family\":\"DpSize\",\"parameters" +
+        "\":{\"height\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"" +
+        "},\"width\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"}}" +
+        ",\"since\":\"1.13.0\"},\"Em\":{\"family\":\"TextUnit\",\"parameters\":{\"" +
+        "value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"" +
+        "FabPosition\":{\"family\":\"FabPosition\",\"parameters\":{\"name\":{\"" +
+        "required\":true,\"type\":\"string\",\"values\":[\"Center\",\"End\",\"End" +
+        "Overlay\",\"Start\"]}},\"since\":\"1.13.0\"},\"FontFamily\":{\"family\"" +
+        ":\"FontFamily\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"" +
+        "string\",\"values\":[\"Cursive\",\"Default\",\"Monospace\",\"SansSerif" +
+        "\",\"Serif\"]}},\"since\":\"1.11.0\"},\"FontStyle\":{\"family\":\"FontSt" +
+        "yle\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"" +
+        "values\":[\"Italic\",\"Normal\"]}},\"since\":\"1.13.0\"},\"FontWeight\"" +
+        ":{\"family\":\"FontWeight\",\"parameters\":{\"weight\":{\"maximum\":10" +
+        "00,\"minimum\":1,\"required\":true,\"type\":\"int\"}},\"since\":\"1.11." +
+        "0\"},\"Offset\":{\"family\":\"Offset\",\"parameters\":{\"x\":{\"required" +
+        "\":true,\"type\":\"float\"},\"y\":{\"required\":true,\"type\":\"float\"}}" +
+        ",\"since\":\"1.11.0\"},\"PaddingValues\":{\"family\":\"PaddingValues\"" +
+        ",\"parameters\":{\"bottom\":{\"minimum\":0,\"type\":\"value\",\"valueTy" +
+        "pe\":\"Dp\"},\"end\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"" +
+        "},\"start\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top" +
+        "\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1." +
+        "11.0\"},\"RoundedCornerShape\":{\"family\":\"Shape\",\"parameters\":{" +
+        "\"size\":{\"minimum\":0,\"required\":true,\"type\":\"value\",\"valueTyp" +
+        "e\":\"Dp\"}},\"since\":\"1.11.0\"},\"Size\":{\"family\":\"Size\",\"paramet" +
+        "ers\":{\"height\":{\"minimum\":0,\"required\":true,\"type\":\"float\"}," +
+        "\"width\":{\"minimum\":0,\"required\":true,\"type\":\"float\"}},\"since" +
+        "\":\"1.11.0\"},\"SolidColor\":{\"family\":\"Brush\",\"parameters\":{\"va" +
+        "lue\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Color\"}},\"" +
+        "since\":\"1.11.0\"},\"Sp\":{\"family\":\"TextUnit\",\"parameters\":{\"va" +
+        "lue\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"St" +
+        "rokeCap\":{\"family\":\"StrokeCap\",\"parameters\":{\"name\":{\"requir" +
+        "ed\":true,\"type\":\"string\",\"values\":[\"Butt\",\"Round\",\"Square\"]}" +
+        "},\"since\":\"1.13.0\"},\"TextAlign\":{\"family\":\"TextAlign\",\"param" +
+        "eters\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"C" +
+        "enter\",\"End\",\"Justify\",\"Left\",\"Right\",\"Start\",\"Unspecified\"]" +
+        "}},\"since\":\"1.13.0\"},\"TextDecoration\":{\"family\":\"TextDecorat" +
+        "ion\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"" +
+        "values\":[\"LineThrough\",\"None\",\"Underline\"]}},\"since\":\"1.13.0" +
+        "\"},\"TextOverflow\":{\"family\":\"TextOverflow\",\"parameters\":{\"na" +
+        "me\":{\"required\":true,\"type\":\"string\",\"values\":[\"Clip\",\"Ellip" +
+        "sis\",\"Visible\"]}},\"since\":\"1.13.0\"},\"TextStyle\":{\"family\":\"T" +
+        "extStyle\",\"parameters\":{\"color\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"},\"fontFamily\":{\"nullable\":true,\"type\":\"value\",\"value" +
+        "Type\":\"FontFamily\"},\"fontSize\":{\"minimum\":0,\"type\":\"value\",\"" +
+        "valueType\":\"TextUnit\"},\"fontWeight\":{\"nullable\":true,\"type\":" +
+        "\"value\",\"valueType\":\"FontWeight\"},\"letterSpacing\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"TextUnit\"}},\"since\":\"1.11.0\"},\"ThemeColor" +
+        "\":{\"family\":\"Color\",\"parameters\":{\"name\":{\"required\":true,\"t" +
+        "ype\":\"string\",\"values\":[\"background\",\"error\",\"errorContainer" +
+        "\",\"inverseOnSurface\",\"inversePrimary\",\"inverseSurface\",\"onBa" +
+        "ckground\",\"onError\",\"onErrorContainer\",\"onPrimary\",\"onPrimar" +
+        "yContainer\",\"onSecondary\",\"onSecondaryContainer\",\"onSurface\"" +
+        ",\"onSurfaceVariant\",\"onTertiary\",\"onTertiaryContainer\",\"outl" +
+        "ine\",\"outlineVariant\",\"primary\",\"primaryContainer\",\"scrim\",\"" +
+        "secondary\",\"secondaryContainer\",\"surface\",\"surfaceBright\",\"s" +
+        "urfaceContainer\",\"surfaceContainerHigh\",\"surfaceContainerHig" +
+        "hest\",\"surfaceContainerLow\",\"surfaceContainerLowest\",\"surfac" +
+        "eDim\",\"surfaceTint\",\"surfaceVariant\",\"tertiary\",\"tertiaryCon" +
+        "tainer\"]}},\"since\":\"1.11.0\"},\"ThemeShape\":{\"family\":\"Shape\"," +
+        "\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"value" +
+        "s\":[\"extraLarge\",\"extraSmall\",\"large\",\"medium\",\"small\"]}},\"s" +
+        "ince\":\"1.11.0\"},\"ThemeTypography\":{\"family\":\"TextStyle\",\"par" +
+        "ameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[" +
+        "\"bodyLarge\",\"bodyMedium\",\"bodySmall\",\"displayLarge\",\"display" +
+        "Medium\",\"displaySmall\",\"headlineLarge\",\"headlineMedium\",\"hea" +
+        "dlineSmall\",\"labelLarge\",\"labelMedium\",\"labelSmall\",\"titleLa" +
+        "rge\",\"titleMedium\",\"titleSmall\"]}},\"since\":\"1.11.0\"},\"TimePi" +
+        "ckerLayoutType\":{\"family\":\"TimePickerLayoutType\",\"parameters" +
+        "\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"Horizo" +
+        "ntal\",\"Vertical\"]}},\"since\":\"1.13.0\"},\"ToggleableState\":{\"fa" +
+        "mily\":\"ToggleableState\",\"parameters\":{\"name\":{\"required\":tru" +
+        "e,\"type\":\"string\",\"values\":[\"Indeterminate\",\"Off\",\"On\"]}},\"s" +
+        "ince\":\"1.12.0\"},\"WindowInsets\":{\"family\":\"WindowInsets\",\"par" +
+        "ameters\":{\"bottom\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"" +
+        "Dp\"},\"left\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"r" +
+        "ight\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\":{\"" +
+        "minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0" +
+        "\"},\"assistChipColors\":{\"family\":\"ChipColors\",\"parameters\":{\"" +
+        "containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
+        "edContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disa" +
+        "bledLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
+        "edLeadingIconContentColor\":{\"type\":\"value\",\"valueType\":\"Colo" +
+        "r\"},\"disabledTrailingIconContentColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"},\"leadingIconContentColor\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"},\"trailingIconContentColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"}},\"since\":\"1.13.0\"},\"assistChipElevation\":{\"fami" +
+        "ly\":\"ChipElevation\",\"parameters\":{\"draggedElevation\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Dp\"}},\"since\":\"1.13.0\"},\"bottomAppBarFabElevation\":{" +
+        "\"family\":\"FloatingActionButtonElevation\",\"parameters\":{\"defa" +
+        "ultElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElev" +
+        "ation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":" +
+        "{\"type\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"buttonColors\"" +
+        ":{\"family\":\"ButtonColors\",\"parameters\":{\"containerColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"contentColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"disabledContentColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"},\"buttonElevat" +
+        "ion\":{\"family\":\"ButtonElevation\",\"parameters\":{\"defaultEleva" +
+        "tion\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"disable" +
+        "dElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"f" +
+        "ocusedElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp" +
+        "\"},\"hoveredElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType" +
+        "\":\"Dp\"},\"pressedElevation\":{\"minimum\":0,\"type\":\"value\",\"valu" +
+        "eType\":\"Dp\"}},\"since\":\"1.11.0\"},\"cardColors\":{\"family\":\"Card" +
+        "Colors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"va" +
+        "lueType\":\"Color\"}},\"since\":\"1.13.0\"},\"cardElevation\":{\"famil" +
+        "y\":\"CardElevation\",\"parameters\":{\"defaultElevation\":{\"type\":" +
+        "\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"type\":\"value" +
+        "\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"valueType\":" +
+        "\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"" +
+        "pressedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\"" +
+        ":\"1.13.0\"},\"centerAlignedTopAppBarColors\":{\"family\":\"TopAppB" +
+        "arColors\",\"parameters\":{\"actionIconContentColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"containerColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"navigationIconContentColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"scrolledContainerColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"titleContentColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"checkboxColors\"" +
+        ":{\"family\":\"CheckboxColors\",\"parameters\":{\"checkedColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"checkmarkColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"disabledCheckedColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"disabledIndeterminateColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"disabledUncheckedColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"uncheckedColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"datePicker" +
+        "Colors\":{\"family\":\"DatePickerColors\",\"parameters\":{\"containe" +
+        "rColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"currentYearCon" +
+        "tentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"dateTextFie" +
+        "ldColors\":{\"nullable\":true,\"type\":\"value\",\"valueType\":\"TextF" +
+        "ieldColors\"},\"dayContentColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"},\"dayInSelectionRangeContainerColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"dayInSelectionRangeContentColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"disabledDayContentColor\":{\"" +
+        "type\":\"value\",\"valueType\":\"Color\"},\"disabledSelectedDayConta" +
+        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledSel" +
+        "ectedDayContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
+        "disabledSelectedYearContainerColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"},\"disabledSelectedYearContentColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"disabledYearContentColor\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"},\"dividerColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"headlineContentColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"navigationContentColor\":{\"type\":\"value" +
+        "\",\"valueType\":\"Color\"},\"selectedDayContainerColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"selectedDayContentColor\":{\"type" +
+        "\":\"value\",\"valueType\":\"Color\"},\"selectedYearContainerColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"selectedYearContentCol" +
+        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"subheadContentColo" +
+        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"titleContentColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"todayContentColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"todayDateBorderColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"weekdayContentColor\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Color\"},\"yearContentColor\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedAss" +
+        "istChipColors\":{\"family\":\"ChipColors\",\"parameters\":{\"contain" +
+        "erColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledConta" +
+        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledLab" +
+        "elColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledLeadi" +
+        "ngIconContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"di" +
+        "sabledTrailingIconContentColor\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
+        "leadingIconContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
+        "},\"trailingIconContentColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"}},\"since\":\"1.13.0\"},\"elevatedAssistChipElevation\":{\"fam" +
+        "ily\":\"ChipElevation\",\"parameters\":{\"disabledElevation\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Dp\"},\"elevation\":{\"type\":\"value\",\"valueType" +
+        "\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}" +
+        ",\"hoveredElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"press" +
+        "edElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.1" +
+        "3.0\"},\"elevatedCardColors\":{\"family\":\"CardColors\",\"parameter" +
+        "s\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"d" +
+        "isabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}" +
+        ",\"since\":\"1.13.0\"},\"elevatedCardElevation\":{\"family\":\"CardEl" +
+        "evation\",\"parameters\":{\"defaultElevation\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Dp\"},\"disabledElevation\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valueType\":\"Dp" +
+        "\"},\"focusedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hov" +
+        "eredElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"pressedEle" +
+        "vation\":{\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"}" +
+        ",\"elevatedFilterChipColors\":{\"family\":\"SelectableChipColors\"" +
+        ",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"disabledLabelColor\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"},\"disabledLeadingIconColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"},\"disabledSelectedContainerColor\":{\"type\":\"value" +
+        "\",\"valueType\":\"Color\"},\"disabledTrailingIconColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"iconColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"},\"selectedContainerColor\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"},\"selectedLabelColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"},\"selectedLeadingIconColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"selectedTrailingIconColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedFilterChipElevat" +
+        "ion\":{\"family\":\"SelectableChipElevation\",\"parameters\":{\"disa" +
+        "bledElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"draggedEle" +
+        "vation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"type" +
+        "\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"valu" +
+        "e\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Dp\"}},\"since\":\"1.13.0\"},\"elevatedSuggestionChipColors\":{\"f" +
+        "amily\":\"ChipColors\",\"parameters\":{\"containerColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Color\"},\"disabledIconContentColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"disabledLabelColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"iconContentColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"va" +
+        "lueType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedSuggestionChip" +
+        "Elevation\":{\"family\":\"ChipElevation\",\"parameters\":{\"disabled" +
+        "Elevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"draggedElevati" +
+        "on\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"" +
+        "valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"Dp" +
+        "\"}},\"since\":\"1.13.0\"},\"exposedDropdownMenuOutlinedTextFieldC" +
+        "olors\":{\"family\":\"TextFieldColors\",\"parameters\":{\"disabledCo" +
+        "ntainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorCon" +
+        "tainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedCo" +
+        "ntainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocuse" +
+        "dContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"sinc" +
+        "e\":\"1.13.0\"},\"filledIconButtonColors\":{\"family\":\"IconButtonC" +
+        "olors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"value" +
+        "Type\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"disabledContentColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"}},\"since\":\"1.13.0\"},\"filledIconToggleButtonC" +
+        "olors\":{\"family\":\"IconToggleButtonColors\",\"parameters\":{\"che" +
+        "ckedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"co" +
+        "ntainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"contentC" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledContaine" +
+        "rColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledConten" +
+        "tColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13." +
+        "0\"},\"filledTonalIconButtonColors\":{\"family\":\"IconButtonColor" +
+        "s\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"},\"disabledContentColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"}},\"since\":\"1.13.0\"},\"filledTonalIconToggleButton" +
+        "Colors\":{\"family\":\"IconToggleButtonColors\",\"parameters\":{\"ch" +
+        "eckedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"c" +
+        "heckedContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"co" +
+        "ntainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabled" +
+        "ContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
+        "edContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since" +
+        "\":\"1.13.0\"},\"filterChipColors\":{\"family\":\"SelectableChipColo" +
+        "rs\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Color\"},\"disabledLabelColor\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Color\"},\"disabledLeadingIconColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"disabledSelectedContainerColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"disabledTrailingIconColor\":{\"type" +
+        "\":\"value\",\"valueType\":\"Color\"},\"iconColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"selectedContainerColor\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Color\"},\"selectedLabelColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"selectedLeadingIconColor\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Color\"},\"selectedTrailingIconColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"}},\"since\":\"1.13.0\"},\"filterChipElevation\":" +
+        "{\"family\":\"SelectableChipElevation\",\"parameters\":{\"draggedEl" +
+        "evation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"va" +
+        "lueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType" +
+        "\":\"Dp\"}},\"since\":\"1.13.0\"},\"floatingActionButtonElevation\":{" +
+        "\"family\":\"FloatingActionButtonElevation\",\"parameters\":{\"defa" +
+        "ultElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElev" +
+        "ation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":" +
+        "{\"type\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"horizontalGra" +
+        "dient\":{\"family\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"minItems\":2,\"required\":tr" +
+        "ue,\"type\":\"list\"},\"endX\":{\"type\":\"float\"},\"startX\":{\"type\":\"" +
+        "float\"}},\"since\":\"1.11.0\"},\"iconButtonColors\":{\"family\":\"Ico" +
+        "nButtonColors\",\"parameters\":{\"containerColor\":{\"type\":\"value" +
+        "\",\"valueType\":\"Color\"},\"contentColor\":{\"type\":\"value\",\"value" +
+        "Type\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"}},\"since\":\"1.13.0\"},\"iconToggleButtonColors\"" +
+        ":{\"family\":\"IconToggleButtonColors\",\"parameters\":{\"checkedCo" +
+        "ntainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"checkedC" +
+        "ontentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"container" +
+        "Color\":{\"type\":\"value\",\"valueType\":\"Color\"},\"contentColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\"" +
+        ":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"in" +
+        "putChipColors\":{\"family\":\"SelectableChipColors\",\"parameters\"" +
+        ":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"dis" +
+        "abledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"d" +
+        "isabledLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"dis" +
+        "abledLeadingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"disabledSelectedContainerColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"disabledTrailingIconColor\":{\"type\":\"value\",\"value" +
+        "Type\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"leadingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        ",\"selectedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color" +
+        "\"},\"selectedLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        ",\"selectedLeadingIconColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"selectedTrailingIconColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"trailingIconColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"}},\"since\":\"1.13.0\"},\"inputChipElevation\":{\"family\":\"Se" +
+        "lectableChipElevation\",\"parameters\":{\"draggedElevation\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"itemColors\":{\"family\":\"M" +
+        "enuItemColors\",\"parameters\":{\"disabledLeadingIconColor\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Color\"},\"disabledTextColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Color\"},\"disabledTrailingIconColor\":{\"" +
+        "type\":\"value\",\"valueType\":\"Color\"},\"leadingIconColor\":{\"type" +
+        "\":\"value\",\"valueType\":\"Color\"},\"textColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"trailingIconColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"}},\"since\":\"1.13.0\"},\"largeTopAppBarColors\":{" +
+        "\"family\":\"TopAppBarColors\",\"parameters\":{\"actionIconContentC" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"containerColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"navigationIconContentC" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"scrolledContaine" +
+        "rColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"titleContentCo" +
+        "lor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"}" +
+        ",\"linearGradient\":{\"family\":\"Brush\",\"parameters\":{\"colors\":{" +
+        "\"items\":{\"type\":\"value\",\"valueType\":\"Color\"},\"minItems\":2,\"r" +
+        "equired\":true,\"type\":\"list\"},\"end\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Offset\"},\"start\":{\"type\":\"value\",\"valueType\":\"Offset\"}}," +
+        "\"since\":\"1.11.0\"},\"loweredElevation\":{\"family\":\"FloatingActi" +
+        "onButtonElevation\",\"parameters\":{\"defaultElevation\":{\"type\":" +
+        "\"value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\"" +
+        ",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"value" +
+        "Type\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"" +
+        "Dp\"}},\"since\":\"1.13.0\"},\"mediumTopAppBarColors\":{\"family\":\"T" +
+        "opAppBarColors\",\"parameters\":{\"actionIconContentColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"containerColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"navigationIconContentColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"scrolledContainerColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"titleContentColor\":{\"type" +
+        "\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"navigatio" +
+        "nBarItemColors\":{\"family\":\"NavigationBarItemColors\",\"paramet" +
+        "ers\":{\"disabledIconColor\":{\"type\":\"value\",\"valueType\":\"Color" +
+        "\"},\"disabledTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"indicatorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"selec" +
+        "tedIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"selected" +
+        "TextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselectedI" +
+        "conColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselectedTe" +
+        "xtColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13" +
+        ".0\"},\"outlinedCardColors\":{\"family\":\"CardColors\",\"parameters" +
+        "\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"di" +
+        "sabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}," +
+        "\"since\":\"1.13.0\"},\"outlinedCardElevation\":{\"family\":\"CardEle" +
+        "vation\",\"parameters\":{\"defaultElevation\":{\"type\":\"value\",\"va" +
+        "lueType\":\"Dp\"},\"disabledElevation\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"" +
+        "}},\"since\":\"1.13.0\"},\"outlinedIconButtonColors\":{\"family\":\"I" +
+        "conButtonColors\",\"parameters\":{\"containerColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"contentColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"}},\"since\":\"1.13.0\"},\"outlinedIconToggleBut" +
+        "tonColors\":{\"family\":\"IconToggleButtonColors\",\"parameters\":{" +
+        "\"checkedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        ",\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"cont" +
+        "entColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledCont" +
+        "ainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1" +
+        ".13.0\"},\"outlinedTextFieldColors\":{\"family\":\"TextFieldColors" +
+        "\",\"parameters\":{\"cursorColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"},\"disabledBorderColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"},\"disabledLabelColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"},\"disabledLeadingIconColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"disabledPlaceholderColor\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Color\"},\"disabledPrefixColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"},\"disabledSuffixColor\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Color\"},\"disabledSupportingTextColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"disabledTextColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"disabledTrailingIconColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"errorBorderColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"errorContainerColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"errorCursorColor\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Color\"},\"errorLabelColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"},\"errorLeadingIconColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"},\"errorPlaceholderColor\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"},\"errorPrefixColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"errorSuffixColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        ",\"errorSupportingTextColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"errorTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
+        "errorTrailingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        ",\"focusedBorderColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
+        "focusedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"focusedLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"fo" +
+        "cusedLeadingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"focusedPlaceholderColor\":{\"type\":\"value\",\"valueType\":\"Color" +
+        "\"},\"focusedPrefixColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        ",\"focusedSuffixColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
+        "focusedSupportingTextColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"focusedTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        ",\"focusedTrailingIconColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"unfocusedBorderColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"unfocusedContainerColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"},\"unfocusedLabelColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"},\"unfocusedLeadingIconColor\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Color\"},\"unfocusedPlaceholderColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"unfocusedPrefixColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"unfocusedSuffixColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"unfocusedSupportingTextColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"unfocusedTextColor\":{\"type\":\"value" +
+        "\",\"valueType\":\"Color\"},\"unfocusedTrailingIconColor\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"radioButton" +
+        "Colors\":{\"family\":\"RadioButtonColors\",\"parameters\":{\"disable" +
+        "dSelectedColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
+        "edUnselectedColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"sel" +
+        "ectedColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselected" +
+        "Color\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0" +
+        "\"},\"richTooltipColors\":{\"family\":\"RichTooltipColors\",\"parame" +
+        "ters\":{\"actionContentColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
+        "contentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"titleCon" +
+        "tentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1." +
+        "13.0\"},\"segmentedButtonColors\":{\"family\":\"SegmentedButtonCol" +
+        "ors\",\"parameters\":{\"activeBorderColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"activeContainerColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"activeContentColor\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Color\"},\"disabledActiveBorderColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"disabledActiveContainerColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"},\"disabledActiveContentColor\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Color\"},\"disabledInactiveBorderColo" +
+        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledInactiveCon" +
+        "tainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledI" +
+        "nactiveContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"i" +
+        "nactiveBorderColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"in" +
+        "activeContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
+        "inactiveContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}," +
+        "\"since\":\"1.13.0\"},\"sliderColors\":{\"family\":\"SliderColors\",\"p" +
+        "arameters\":{\"activeTickColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"},\"activeTrackColor\":{\"type\":\"value\",\"valueType\":\"Color" +
+        "\"},\"disabledActiveTickColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"},\"disabledActiveTrackColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"disabledInactiveTickColor\":{\"type\":\"value\",\"value" +
+        "Type\":\"Color\"},\"disabledInactiveTrackColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"disabledThumbColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"inactiveTickColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"inactiveTrackColor\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Color\"},\"thumbColor\":{\"type\":\"value\",\"valueType\":\"Colo" +
+        "r\"}},\"since\":\"1.13.0\"},\"suggestionChipColors\":{\"family\":\"Chi" +
+        "pColors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"disabledIconContentColor\":{\"type\":\"value" +
+        "\",\"valueType\":\"Color\"},\"disabledLabelColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"iconContentColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"}},\"since\":\"1.13.0\"},\"suggestionChipElevation\":{\"family" +
+        "\":\"ChipElevation\",\"parameters\":{\"draggedElevation\":{\"type\":\"" +
+        "value\",\"valueType\":\"Dp\"},\"elevation\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Dp\"}},\"since\":\"1.13.0\"},\"switchColors\":{\"family\":\"Swit" +
+        "chColors\",\"parameters\":{\"checkedBorderColor\":{\"type\":\"value\"" +
+        ",\"valueType\":\"Color\"},\"disabledCheckedBorderColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"textFieldCol" +
+        "ors\":{\"family\":\"TextFieldColors\",\"parameters\":{\"cursorColor\"" +
+        ":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColo" +
+        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledIndicatorCo" +
+        "lor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledLabelColo" +
+        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledLeadingIcon" +
+        "Color\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledPlaceho" +
+        "lderColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledPre" +
+        "fixColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledSuff" +
+        "ixColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledSuppo" +
+        "rtingTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
+        "edTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledT" +
+        "railingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"erro" +
+        "rContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"error" +
+        "CursorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorIndi" +
+        "catorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorLabel" +
+        "Color\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorLeadingIco" +
+        "nColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorPlacehold" +
+        "erColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorPrefixCo" +
+        "lor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorSuffixColor\"" +
+        ":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorSupportingTextCo" +
+        "lor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorTextColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"errorTrailingIconColor\"" +
+        ":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedContainerColor" +
+        "\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedIndicatorColo" +
+        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedLabelColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedLeadingIconColo" +
+        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedPlaceholderC" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedPrefixCol" +
+        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedSuffixColor" +
+        "\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedSupportingTex" +
+        "tColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedTextCol" +
+        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedTrailingIco" +
+        "nColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocusedConta" +
+        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocusedIn" +
+        "dicatorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocuse" +
+        "dLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocused" +
+        "LeadingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfo" +
+        "cusedPlaceholderColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"unfocusedPrefixColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"unfocusedSuffixColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"unfocusedSupportingTextColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"},\"unfocusedTextColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"},\"unfocusedTrailingIconColor\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Color\"}},\"since\":\"1.13.0\"},\"timePickerColors\":{\"family\":" +
+        "\"TimePickerColors\",\"parameters\":{\"clockDialColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"},\"clockDialSelectedContentColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"clockDialUnselectedCont" +
+        "entColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"containerCol" +
+        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"periodSelectorBord" +
+        "erColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"periodSelecto" +
+        "rSelectedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
+        "},\"periodSelectorSelectedContentColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"periodSelectorUnselectedContainerColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"periodSelectorUnselectedC" +
+        "ontentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"selectorC" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"timeSelectorSele" +
+        "ctedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"ti" +
+        "meSelectorSelectedContentColor\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"},\"timeSelectorUnselectedContainerColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"timeSelectorUnselectedContentColor" +
+        "\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"t" +
+        "opAppBarColors\":{\"family\":\"TopAppBarColors\",\"parameters\":{\"a" +
+        "ctionIconContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"navig" +
+        "ationIconContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"scrolledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
+        "},\"titleContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}," +
+        "\"since\":\"1.13.0\"},\"verticalGradient\":{\"family\":\"Brush\",\"para" +
+        "meters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Colo" +
+        "r\"},\"minItems\":2,\"required\":true,\"type\":\"list\"},\"endY\":{\"typ" +
+        "e\":\"float\"},\"startY\":{\"type\":\"float\"}},\"since\":\"1.11.0\"}}"
     ).jsonObject
 
     fun readAnnotatedString(value: JsonElement): AnnotatedStringValue {
@@ -383,6 +1482,162 @@ object ValueContract {
         }
     }
 
+    fun readCardColors(value: JsonElement): CardColorsValue {
+        ValueParser.validate(value, "CardColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "cardColors" -> WirecardColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "elevatedCardColors" -> WireelevatedCardColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "outlinedCardColors" -> WireoutlinedCardColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readCardElevation(value: JsonElement): CardElevationValue {
+        ValueParser.validate(value, "CardElevation", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "cardElevation" -> WirecardElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                disabledElevation = data["disabledElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "elevatedCardElevation" -> WireelevatedCardElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                disabledElevation = data["disabledElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "outlinedCardElevation" -> WireoutlinedCardElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                disabledElevation = data["disabledElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readCheckboxColors(value: JsonElement): CheckboxColorsValue {
+        ValueParser.validate(value, "CheckboxColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "checkboxColors" -> WirecheckboxColors(
+                supplied = data.keys,
+                checkedColor = data["checkedColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                uncheckedColor = data["uncheckedColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                checkmarkColor = data["checkmarkColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledCheckedColor = data["disabledCheckedColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledUncheckedColor = data["disabledUncheckedColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledIndeterminateColor = data["disabledIndeterminateColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readChipColors(value: JsonElement): ChipColorsValue {
+        ValueParser.validate(value, "ChipColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "assistChipColors" -> WireassistChipColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                labelColor = data["labelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                leadingIconContentColor = data["leadingIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                trailingIconContentColor = data["trailingIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLabelColor = data["disabledLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLeadingIconContentColor = data["disabledLeadingIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTrailingIconContentColor = data["disabledTrailingIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "elevatedAssistChipColors" -> WireelevatedAssistChipColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                labelColor = data["labelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                leadingIconContentColor = data["leadingIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                trailingIconContentColor = data["trailingIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLabelColor = data["disabledLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLeadingIconContentColor = data["disabledLeadingIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTrailingIconContentColor = data["disabledTrailingIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "elevatedSuggestionChipColors" -> WireelevatedSuggestionChipColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                labelColor = data["labelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                iconContentColor = data["iconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLabelColor = data["disabledLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledIconContentColor = data["disabledIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "suggestionChipColors" -> WiresuggestionChipColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                labelColor = data["labelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                iconContentColor = data["iconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLabelColor = data["disabledLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledIconContentColor = data["disabledIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readChipElevation(value: JsonElement): ChipElevationValue {
+        ValueParser.validate(value, "ChipElevation", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "assistChipElevation" -> WireassistChipElevation(
+                supplied = data.keys,
+                elevation = data["elevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "elevatedAssistChipElevation" -> WireelevatedAssistChipElevation(
+                supplied = data.keys,
+                elevation = data["elevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                disabledElevation = data["disabledElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "elevatedSuggestionChipElevation" -> WireelevatedSuggestionChipElevation(
+                supplied = data.keys,
+                elevation = data["elevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                disabledElevation = data["disabledElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "suggestionChipElevation" -> WiresuggestionChipElevation(
+                supplied = data.keys,
+                elevation = data["elevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
     fun readColor(value: JsonElement): ColorValue {
         ValueParser.validate(value, "Color", specs).getOrThrow()
         val data = value.jsonObject
@@ -394,6 +1649,42 @@ object ValueContract {
             "ThemeColor" -> WireThemeColor(
                 supplied = data.keys,
                 name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readDatePickerColors(value: JsonElement): DatePickerColorsValue {
+        ValueParser.validate(value, "DatePickerColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "datePickerColors" -> WiredatePickerColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                titleContentColor = data["titleContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                headlineContentColor = data["headlineContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                weekdayContentColor = data["weekdayContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                subheadContentColor = data["subheadContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                navigationContentColor = data["navigationContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                yearContentColor = data["yearContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledYearContentColor = data["disabledYearContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                currentYearContentColor = data["currentYearContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedYearContentColor = data["selectedYearContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSelectedYearContentColor = data["disabledSelectedYearContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedYearContainerColor = data["selectedYearContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSelectedYearContainerColor = data["disabledSelectedYearContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                dayContentColor = data["dayContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledDayContentColor = data["disabledDayContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedDayContentColor = data["selectedDayContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSelectedDayContentColor = data["disabledSelectedDayContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedDayContainerColor = data["selectedDayContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSelectedDayContainerColor = data["disabledSelectedDayContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                todayContentColor = data["todayContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                todayDateBorderColor = data["todayDateBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                dayInSelectionRangeContentColor = data["dayInSelectionRangeContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                dayInSelectionRangeContainerColor = data["dayInSelectionRangeContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                dividerColor = data["dividerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                dateTextFieldColors = data["dateTextFieldColors"]?.takeUnless { it == JsonNull }?.let { item -> readTextFieldColors(item) },
             )
             else -> error("Unknown value constructor")
         }
@@ -411,11 +1702,90 @@ object ValueContract {
         }
     }
 
+    fun readDpOffset(value: JsonElement): DpOffsetValue {
+        ValueParser.validate(value, "DpOffset", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "DpOffset" -> WireDpOffset(
+                supplied = data.keys,
+                x = readDp(data.getValue("x")),
+                y = readDp(data.getValue("y")),
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readDpSize(value: JsonElement): DpSizeValue {
+        ValueParser.validate(value, "DpSize", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "DpSize" -> WireDpSize(
+                supplied = data.keys,
+                width = readDp(data.getValue("width")),
+                height = readDp(data.getValue("height")),
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readFabPosition(value: JsonElement): FabPositionValue {
+        ValueParser.validate(value, "FabPosition", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "FabPosition" -> WireFabPosition(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readFloatingActionButtonElevation(value: JsonElement): FloatingActionButtonElevationValue {
+        ValueParser.validate(value, "FloatingActionButtonElevation", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "bottomAppBarFabElevation" -> WirebottomAppBarFabElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "floatingActionButtonElevation" -> WirefloatingActionButtonElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "loweredElevation" -> WireloweredElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
     fun readFontFamily(value: JsonElement): FontFamilyValue {
         ValueParser.validate(value, "FontFamily", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "FontFamily" -> WireFontFamily(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readFontStyle(value: JsonElement): FontStyleValue {
+        ValueParser.validate(value, "FontStyle", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "FontStyle" -> WireFontStyle(
                 supplied = data.keys,
                 name = data.getValue("name").jsonPrimitive.content,
             )
@@ -430,6 +1800,112 @@ object ValueContract {
             "FontWeight" -> WireFontWeight(
                 supplied = data.keys,
                 weight = data.getValue("weight").jsonPrimitive.int,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readIconButtonColors(value: JsonElement): IconButtonColorsValue {
+        ValueParser.validate(value, "IconButtonColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "filledIconButtonColors" -> WirefilledIconButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContentColor = data["disabledContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "filledTonalIconButtonColors" -> WirefilledTonalIconButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContentColor = data["disabledContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "iconButtonColors" -> WireiconButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                contentColor = data["contentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "outlinedIconButtonColors" -> WireoutlinedIconButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                contentColor = data["contentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readIconToggleButtonColors(value: JsonElement): IconToggleButtonColorsValue {
+        ValueParser.validate(value, "IconToggleButtonColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "filledIconToggleButtonColors" -> WirefilledIconToggleButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                contentColor = data["contentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContentColor = data["disabledContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                checkedContainerColor = data["checkedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "filledTonalIconToggleButtonColors" -> WirefilledTonalIconToggleButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContentColor = data["disabledContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                checkedContainerColor = data["checkedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                checkedContentColor = data["checkedContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "iconToggleButtonColors" -> WireiconToggleButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                contentColor = data["contentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                checkedContainerColor = data["checkedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                checkedContentColor = data["checkedContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "outlinedIconToggleButtonColors" -> WireoutlinedIconToggleButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                contentColor = data["contentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                checkedContainerColor = data["checkedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readMenuItemColors(value: JsonElement): MenuItemColorsValue {
+        ValueParser.validate(value, "MenuItemColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "itemColors" -> WireitemColors(
+                supplied = data.keys,
+                textColor = data["textColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                leadingIconColor = data["leadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                trailingIconColor = data["trailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTextColor = data["disabledTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLeadingIconColor = data["disabledLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTrailingIconColor = data["disabledTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readNavigationBarItemColors(value: JsonElement): NavigationBarItemColorsValue {
+        ValueParser.validate(value, "NavigationBarItemColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "navigationBarItemColors" -> WirenavigationBarItemColors(
+                supplied = data.keys,
+                selectedIconColor = data["selectedIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedTextColor = data["selectedTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                indicatorColor = data["indicatorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unselectedIconColor = data["unselectedIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unselectedTextColor = data["unselectedTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledIconColor = data["disabledIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTextColor = data["disabledTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
             )
             else -> error("Unknown value constructor")
         }
@@ -463,6 +1939,143 @@ object ValueContract {
         }
     }
 
+    fun readRadioButtonColors(value: JsonElement): RadioButtonColorsValue {
+        ValueParser.validate(value, "RadioButtonColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "radioButtonColors" -> WireradioButtonColors(
+                supplied = data.keys,
+                selectedColor = data["selectedColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unselectedColor = data["unselectedColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSelectedColor = data["disabledSelectedColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledUnselectedColor = data["disabledUnselectedColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readRichTooltipColors(value: JsonElement): RichTooltipColorsValue {
+        ValueParser.validate(value, "RichTooltipColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "richTooltipColors" -> WirerichTooltipColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                contentColor = data["contentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                titleContentColor = data["titleContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                actionContentColor = data["actionContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readSegmentedButtonColors(value: JsonElement): SegmentedButtonColorsValue {
+        ValueParser.validate(value, "SegmentedButtonColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "segmentedButtonColors" -> WiresegmentedButtonColors(
+                supplied = data.keys,
+                activeContainerColor = data["activeContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                activeContentColor = data["activeContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                activeBorderColor = data["activeBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inactiveContainerColor = data["inactiveContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inactiveContentColor = data["inactiveContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inactiveBorderColor = data["inactiveBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledActiveContainerColor = data["disabledActiveContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledActiveContentColor = data["disabledActiveContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledActiveBorderColor = data["disabledActiveBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledInactiveContainerColor = data["disabledInactiveContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledInactiveContentColor = data["disabledInactiveContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledInactiveBorderColor = data["disabledInactiveBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readSelectableChipColors(value: JsonElement): SelectableChipColorsValue {
+        ValueParser.validate(value, "SelectableChipColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "elevatedFilterChipColors" -> WireelevatedFilterChipColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                labelColor = data["labelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                iconColor = data["iconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLabelColor = data["disabledLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLeadingIconColor = data["disabledLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTrailingIconColor = data["disabledTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedContainerColor = data["selectedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSelectedContainerColor = data["disabledSelectedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedLabelColor = data["selectedLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedLeadingIconColor = data["selectedLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedTrailingIconColor = data["selectedTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "filterChipColors" -> WirefilterChipColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                labelColor = data["labelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                iconColor = data["iconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLabelColor = data["disabledLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLeadingIconColor = data["disabledLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTrailingIconColor = data["disabledTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedContainerColor = data["selectedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSelectedContainerColor = data["disabledSelectedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedLabelColor = data["selectedLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedLeadingIconColor = data["selectedLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedTrailingIconColor = data["selectedTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "inputChipColors" -> WireinputChipColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                labelColor = data["labelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                leadingIconColor = data["leadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                trailingIconColor = data["trailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLabelColor = data["disabledLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLeadingIconColor = data["disabledLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTrailingIconColor = data["disabledTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedContainerColor = data["selectedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSelectedContainerColor = data["disabledSelectedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedLabelColor = data["selectedLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedLeadingIconColor = data["selectedLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedTrailingIconColor = data["selectedTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readSelectableChipElevation(value: JsonElement): SelectableChipElevationValue {
+        ValueParser.validate(value, "SelectableChipElevation", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "elevatedFilterChipElevation" -> WireelevatedFilterChipElevation(
+                supplied = data.keys,
+                elevation = data["elevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                disabledElevation = data["disabledElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "filterChipElevation" -> WirefilterChipElevation(
+                supplied = data.keys,
+                elevation = data["elevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "inputChipElevation" -> WireinputChipElevation(
+                supplied = data.keys,
+                elevation = data["elevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
     fun readShape(value: JsonElement): ShapeValue {
         ValueParser.validate(value, "Shape", specs).getOrThrow()
         val data = value.jsonObject
@@ -491,6 +2104,193 @@ object ValueContract {
                 supplied = data.keys,
                 width = data.getValue("width").jsonPrimitive.double,
                 height = data.getValue("height").jsonPrimitive.double,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readSliderColors(value: JsonElement): SliderColorsValue {
+        ValueParser.validate(value, "SliderColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "sliderColors" -> WiresliderColors(
+                supplied = data.keys,
+                thumbColor = data["thumbColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                activeTrackColor = data["activeTrackColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                activeTickColor = data["activeTickColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inactiveTrackColor = data["inactiveTrackColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inactiveTickColor = data["inactiveTickColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledThumbColor = data["disabledThumbColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledActiveTrackColor = data["disabledActiveTrackColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledActiveTickColor = data["disabledActiveTickColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledInactiveTrackColor = data["disabledInactiveTrackColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledInactiveTickColor = data["disabledInactiveTickColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readStrokeCap(value: JsonElement): StrokeCapValue {
+        ValueParser.validate(value, "StrokeCap", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "StrokeCap" -> WireStrokeCap(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readSwitchColors(value: JsonElement): SwitchColorsValue {
+        ValueParser.validate(value, "SwitchColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "switchColors" -> WireswitchColors(
+                supplied = data.keys,
+                checkedBorderColor = data["checkedBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledCheckedBorderColor = data["disabledCheckedBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readTextAlign(value: JsonElement): TextAlignValue {
+        ValueParser.validate(value, "TextAlign", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "TextAlign" -> WireTextAlign(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readTextDecoration(value: JsonElement): TextDecorationValue {
+        ValueParser.validate(value, "TextDecoration", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "TextDecoration" -> WireTextDecoration(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readTextFieldColors(value: JsonElement): TextFieldColorsValue {
+        ValueParser.validate(value, "TextFieldColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "exposedDropdownMenuOutlinedTextFieldColors" -> WireexposedDropdownMenuOutlinedTextFieldColors(
+                supplied = data.keys,
+                focusedContainerColor = data["focusedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedContainerColor = data["unfocusedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorContainerColor = data["errorContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "outlinedTextFieldColors" -> WireoutlinedTextFieldColors(
+                supplied = data.keys,
+                focusedTextColor = data["focusedTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedTextColor = data["unfocusedTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTextColor = data["disabledTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorTextColor = data["errorTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedContainerColor = data["focusedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedContainerColor = data["unfocusedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorContainerColor = data["errorContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                cursorColor = data["cursorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorCursorColor = data["errorCursorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedBorderColor = data["focusedBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedBorderColor = data["unfocusedBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledBorderColor = data["disabledBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorBorderColor = data["errorBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedLeadingIconColor = data["focusedLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedLeadingIconColor = data["unfocusedLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLeadingIconColor = data["disabledLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorLeadingIconColor = data["errorLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedTrailingIconColor = data["focusedTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedTrailingIconColor = data["unfocusedTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTrailingIconColor = data["disabledTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorTrailingIconColor = data["errorTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedLabelColor = data["focusedLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedLabelColor = data["unfocusedLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLabelColor = data["disabledLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorLabelColor = data["errorLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedPlaceholderColor = data["focusedPlaceholderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedPlaceholderColor = data["unfocusedPlaceholderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledPlaceholderColor = data["disabledPlaceholderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorPlaceholderColor = data["errorPlaceholderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedSupportingTextColor = data["focusedSupportingTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedSupportingTextColor = data["unfocusedSupportingTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSupportingTextColor = data["disabledSupportingTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorSupportingTextColor = data["errorSupportingTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedPrefixColor = data["focusedPrefixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedPrefixColor = data["unfocusedPrefixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledPrefixColor = data["disabledPrefixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorPrefixColor = data["errorPrefixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedSuffixColor = data["focusedSuffixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedSuffixColor = data["unfocusedSuffixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSuffixColor = data["disabledSuffixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorSuffixColor = data["errorSuffixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "textFieldColors" -> WiretextFieldColors(
+                supplied = data.keys,
+                focusedTextColor = data["focusedTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedTextColor = data["unfocusedTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTextColor = data["disabledTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorTextColor = data["errorTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedContainerColor = data["focusedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedContainerColor = data["unfocusedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorContainerColor = data["errorContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                cursorColor = data["cursorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorCursorColor = data["errorCursorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedIndicatorColor = data["focusedIndicatorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedIndicatorColor = data["unfocusedIndicatorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledIndicatorColor = data["disabledIndicatorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorIndicatorColor = data["errorIndicatorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedLeadingIconColor = data["focusedLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedLeadingIconColor = data["unfocusedLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLeadingIconColor = data["disabledLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorLeadingIconColor = data["errorLeadingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedTrailingIconColor = data["focusedTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedTrailingIconColor = data["unfocusedTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTrailingIconColor = data["disabledTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorTrailingIconColor = data["errorTrailingIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedLabelColor = data["focusedLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedLabelColor = data["unfocusedLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledLabelColor = data["disabledLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorLabelColor = data["errorLabelColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedPlaceholderColor = data["focusedPlaceholderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedPlaceholderColor = data["unfocusedPlaceholderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledPlaceholderColor = data["disabledPlaceholderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorPlaceholderColor = data["errorPlaceholderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedSupportingTextColor = data["focusedSupportingTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedSupportingTextColor = data["unfocusedSupportingTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSupportingTextColor = data["disabledSupportingTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorSupportingTextColor = data["errorSupportingTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedPrefixColor = data["focusedPrefixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedPrefixColor = data["unfocusedPrefixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledPrefixColor = data["disabledPrefixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorPrefixColor = data["errorPrefixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                focusedSuffixColor = data["focusedSuffixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unfocusedSuffixColor = data["unfocusedSuffixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledSuffixColor = data["disabledSuffixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorSuffixColor = data["errorSuffixColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readTextOverflow(value: JsonElement): TextOverflowValue {
+        ValueParser.validate(value, "TextOverflow", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "TextOverflow" -> WireTextOverflow(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
             )
             else -> error("Unknown value constructor")
         }
@@ -532,6 +2332,43 @@ object ValueContract {
         }
     }
 
+    fun readTimePickerColors(value: JsonElement): TimePickerColorsValue {
+        ValueParser.validate(value, "TimePickerColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "timePickerColors" -> WiretimePickerColors(
+                supplied = data.keys,
+                clockDialColor = data["clockDialColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                clockDialSelectedContentColor = data["clockDialSelectedContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                clockDialUnselectedContentColor = data["clockDialUnselectedContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectorColor = data["selectorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                periodSelectorBorderColor = data["periodSelectorBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                periodSelectorSelectedContainerColor = data["periodSelectorSelectedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                periodSelectorUnselectedContainerColor = data["periodSelectorUnselectedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                periodSelectorSelectedContentColor = data["periodSelectorSelectedContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                periodSelectorUnselectedContentColor = data["periodSelectorUnselectedContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                timeSelectorSelectedContainerColor = data["timeSelectorSelectedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                timeSelectorUnselectedContainerColor = data["timeSelectorUnselectedContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                timeSelectorSelectedContentColor = data["timeSelectorSelectedContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                timeSelectorUnselectedContentColor = data["timeSelectorUnselectedContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readTimePickerLayoutType(value: JsonElement): TimePickerLayoutTypeValue {
+        ValueParser.validate(value, "TimePickerLayoutType", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "TimePickerLayoutType" -> WireTimePickerLayoutType(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
     fun readToggleableState(value: JsonElement): ToggleableStateValue {
         ValueParser.validate(value, "ToggleableState", specs).getOrThrow()
         val data = value.jsonObject
@@ -539,6 +2376,46 @@ object ValueContract {
             "ToggleableState" -> WireToggleableState(
                 supplied = data.keys,
                 name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readTopAppBarColors(value: JsonElement): TopAppBarColorsValue {
+        ValueParser.validate(value, "TopAppBarColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "centerAlignedTopAppBarColors" -> WirecenterAlignedTopAppBarColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                scrolledContainerColor = data["scrolledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                navigationIconContentColor = data["navigationIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                titleContentColor = data["titleContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                actionIconContentColor = data["actionIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "largeTopAppBarColors" -> WirelargeTopAppBarColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                scrolledContainerColor = data["scrolledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                navigationIconContentColor = data["navigationIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                titleContentColor = data["titleContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                actionIconContentColor = data["actionIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "mediumTopAppBarColors" -> WiremediumTopAppBarColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                scrolledContainerColor = data["scrolledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                navigationIconContentColor = data["navigationIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                titleContentColor = data["titleContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                actionIconContentColor = data["actionIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "topAppBarColors" -> WiretopAppBarColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                scrolledContainerColor = data["scrolledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                navigationIconContentColor = data["navigationIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                titleContentColor = data["titleContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                actionIconContentColor = data["actionIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
             )
             else -> error("Unknown value constructor")
         }

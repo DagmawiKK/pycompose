@@ -11,17 +11,47 @@ import com.pycompose.ir.generated.BorderStrokeValue
 import com.pycompose.ir.generated.BrushValue
 import com.pycompose.ir.generated.ButtonColorsValue
 import com.pycompose.ir.generated.ButtonElevationValue
+import com.pycompose.ir.generated.CardColorsValue
+import com.pycompose.ir.generated.CardElevationValue
+import com.pycompose.ir.generated.CheckboxColorsValue
+import com.pycompose.ir.generated.ChipColorsValue
+import com.pycompose.ir.generated.ChipElevationValue
 import com.pycompose.ir.generated.ColorValue
+import com.pycompose.ir.generated.DatePickerColorsValue
 import com.pycompose.ir.generated.DpValue
+import com.pycompose.ir.generated.DpOffsetValue
+import com.pycompose.ir.generated.DpSizeValue
+import com.pycompose.ir.generated.FabPositionValue
+import com.pycompose.ir.generated.FloatingActionButtonElevationValue
 import com.pycompose.ir.generated.FontFamilyValue
+import com.pycompose.ir.generated.FontStyleValue
 import com.pycompose.ir.generated.FontWeightValue
+import com.pycompose.ir.generated.IconButtonColorsValue
+import com.pycompose.ir.generated.IconToggleButtonColorsValue
+import com.pycompose.ir.generated.MenuItemColorsValue
+import com.pycompose.ir.generated.NavigationBarItemColorsValue
 import com.pycompose.ir.generated.OffsetValue
 import com.pycompose.ir.generated.PaddingValuesValue
+import com.pycompose.ir.generated.RadioButtonColorsValue
+import com.pycompose.ir.generated.RichTooltipColorsValue
+import com.pycompose.ir.generated.SegmentedButtonColorsValue
+import com.pycompose.ir.generated.SelectableChipColorsValue
+import com.pycompose.ir.generated.SelectableChipElevationValue
 import com.pycompose.ir.generated.ShapeValue
 import com.pycompose.ir.generated.SizeValue
+import com.pycompose.ir.generated.SliderColorsValue
+import com.pycompose.ir.generated.StrokeCapValue
+import com.pycompose.ir.generated.SwitchColorsValue
+import com.pycompose.ir.generated.TextAlignValue
+import com.pycompose.ir.generated.TextDecorationValue
+import com.pycompose.ir.generated.TextFieldColorsValue
+import com.pycompose.ir.generated.TextOverflowValue
 import com.pycompose.ir.generated.TextStyleValue
 import com.pycompose.ir.generated.TextUnitValue
+import com.pycompose.ir.generated.TimePickerColorsValue
+import com.pycompose.ir.generated.TimePickerLayoutTypeValue
 import com.pycompose.ir.generated.ToggleableStateValue
+import com.pycompose.ir.generated.TopAppBarColorsValue
 import com.pycompose.ir.generated.WindowInsetsValue
 import com.pycompose.ir.generated.ValueContract
 import com.pycompose.ir.generated.WireAnnotatedString
@@ -29,8 +59,12 @@ import com.pycompose.ir.generated.WireBorderStroke
 import com.pycompose.ir.generated.WireColor
 import com.pycompose.ir.generated.WireCutCornerShape
 import com.pycompose.ir.generated.WireDp
+import com.pycompose.ir.generated.WireDpOffset
+import com.pycompose.ir.generated.WireDpSize
 import com.pycompose.ir.generated.WireEm
+import com.pycompose.ir.generated.WireFabPosition
 import com.pycompose.ir.generated.WireFontFamily
+import com.pycompose.ir.generated.WireFontStyle
 import com.pycompose.ir.generated.WireFontWeight
 import com.pycompose.ir.generated.WireOffset
 import com.pycompose.ir.generated.WirePaddingValues
@@ -38,16 +72,69 @@ import com.pycompose.ir.generated.WireRoundedCornerShape
 import com.pycompose.ir.generated.WireSize
 import com.pycompose.ir.generated.WireSolidColor
 import com.pycompose.ir.generated.WireSp
+import com.pycompose.ir.generated.WireStrokeCap
+import com.pycompose.ir.generated.WireTextAlign
+import com.pycompose.ir.generated.WireTextDecoration
+import com.pycompose.ir.generated.WireTextOverflow
 import com.pycompose.ir.generated.WireTextStyle
 import com.pycompose.ir.generated.WireThemeColor
 import com.pycompose.ir.generated.WireThemeShape
 import com.pycompose.ir.generated.WireThemeTypography
+import com.pycompose.ir.generated.WireTimePickerLayoutType
 import com.pycompose.ir.generated.WireToggleableState
 import com.pycompose.ir.generated.WireWindowInsets
+import com.pycompose.ir.generated.WireassistChipColors
+import com.pycompose.ir.generated.WireassistChipElevation
+import com.pycompose.ir.generated.WirebottomAppBarFabElevation
 import com.pycompose.ir.generated.WirebuttonColors
 import com.pycompose.ir.generated.WirebuttonElevation
+import com.pycompose.ir.generated.WirecardColors
+import com.pycompose.ir.generated.WirecardElevation
+import com.pycompose.ir.generated.WirecenterAlignedTopAppBarColors
+import com.pycompose.ir.generated.WirecheckboxColors
+import com.pycompose.ir.generated.WiredatePickerColors
+import com.pycompose.ir.generated.WireelevatedAssistChipColors
+import com.pycompose.ir.generated.WireelevatedAssistChipElevation
+import com.pycompose.ir.generated.WireelevatedCardColors
+import com.pycompose.ir.generated.WireelevatedCardElevation
+import com.pycompose.ir.generated.WireelevatedFilterChipColors
+import com.pycompose.ir.generated.WireelevatedFilterChipElevation
+import com.pycompose.ir.generated.WireelevatedSuggestionChipColors
+import com.pycompose.ir.generated.WireelevatedSuggestionChipElevation
+import com.pycompose.ir.generated.WireexposedDropdownMenuOutlinedTextFieldColors
+import com.pycompose.ir.generated.WirefilledIconButtonColors
+import com.pycompose.ir.generated.WirefilledIconToggleButtonColors
+import com.pycompose.ir.generated.WirefilledTonalIconButtonColors
+import com.pycompose.ir.generated.WirefilledTonalIconToggleButtonColors
+import com.pycompose.ir.generated.WirefilterChipColors
+import com.pycompose.ir.generated.WirefilterChipElevation
+import com.pycompose.ir.generated.WirefloatingActionButtonElevation
 import com.pycompose.ir.generated.WirehorizontalGradient
+import com.pycompose.ir.generated.WireiconButtonColors
+import com.pycompose.ir.generated.WireiconToggleButtonColors
+import com.pycompose.ir.generated.WireinputChipColors
+import com.pycompose.ir.generated.WireinputChipElevation
+import com.pycompose.ir.generated.WireitemColors
+import com.pycompose.ir.generated.WirelargeTopAppBarColors
 import com.pycompose.ir.generated.WirelinearGradient
+import com.pycompose.ir.generated.WireloweredElevation
+import com.pycompose.ir.generated.WiremediumTopAppBarColors
+import com.pycompose.ir.generated.WirenavigationBarItemColors
+import com.pycompose.ir.generated.WireoutlinedCardColors
+import com.pycompose.ir.generated.WireoutlinedCardElevation
+import com.pycompose.ir.generated.WireoutlinedIconButtonColors
+import com.pycompose.ir.generated.WireoutlinedIconToggleButtonColors
+import com.pycompose.ir.generated.WireoutlinedTextFieldColors
+import com.pycompose.ir.generated.WireradioButtonColors
+import com.pycompose.ir.generated.WirerichTooltipColors
+import com.pycompose.ir.generated.WiresegmentedButtonColors
+import com.pycompose.ir.generated.WiresliderColors
+import com.pycompose.ir.generated.WiresuggestionChipColors
+import com.pycompose.ir.generated.WiresuggestionChipElevation
+import com.pycompose.ir.generated.WireswitchColors
+import com.pycompose.ir.generated.WiretextFieldColors
+import com.pycompose.ir.generated.WiretimePickerColors
+import com.pycompose.ir.generated.WiretopAppBarColors
 import com.pycompose.ir.generated.WireverticalGradient
 
 object ValueResolver {
@@ -161,6 +248,192 @@ object ValueResolver {
         }
 
     @Composable
+    fun cardColors(value: JsonElement): Result<androidx.compose.material3.CardColors> {
+        val parsed = runCatching { ValueContract.readCardColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(cardColors(parsed))
+    }
+
+    @Composable
+    fun cardColors(value: CardColorsValue): androidx.compose.material3.CardColors =
+        when (value) {
+            is WirecardColors -> {
+                androidx.compose.material3.CardDefaults.cardColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireelevatedCardColors -> {
+                androidx.compose.material3.CardDefaults.elevatedCardColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireoutlinedCardColors -> {
+                androidx.compose.material3.CardDefaults.outlinedCardColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun cardElevation(value: JsonElement): Result<androidx.compose.material3.CardElevation> {
+        val parsed = runCatching { ValueContract.readCardElevation(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(cardElevation(parsed))
+    }
+
+    @Composable
+    fun cardElevation(value: CardElevationValue): androidx.compose.material3.CardElevation =
+        when (value) {
+            is WirecardElevation -> {
+                androidx.compose.material3.CardDefaults.cardElevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WireelevatedCardElevation -> {
+                androidx.compose.material3.CardDefaults.elevatedCardElevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WireoutlinedCardElevation -> {
+                androidx.compose.material3.CardDefaults.outlinedCardElevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+        }
+
+    @Composable
+    fun checkboxColors(value: JsonElement): Result<androidx.compose.material3.CheckboxColors> {
+        val parsed = runCatching { ValueContract.readCheckboxColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(checkboxColors(parsed))
+    }
+
+    @Composable
+    fun checkboxColors(value: CheckboxColorsValue): androidx.compose.material3.CheckboxColors =
+        when (value) {
+            is WirecheckboxColors -> {
+                androidx.compose.material3.CheckboxDefaults.colors(
+                    checkedColor = if ("checkedColor" in value.supplied) value.checkedColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    uncheckedColor = if ("uncheckedColor" in value.supplied) value.uncheckedColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    checkmarkColor = if ("checkmarkColor" in value.supplied) value.checkmarkColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledCheckedColor = if ("disabledCheckedColor" in value.supplied) value.disabledCheckedColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledUncheckedColor = if ("disabledUncheckedColor" in value.supplied) value.disabledUncheckedColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledIndeterminateColor = if ("disabledIndeterminateColor" in value.supplied) value.disabledIndeterminateColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun chipColors(value: JsonElement): Result<androidx.compose.material3.ChipColors> {
+        val parsed = runCatching { ValueContract.readChipColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(chipColors(parsed))
+    }
+
+    @Composable
+    fun chipColors(value: ChipColorsValue): androidx.compose.material3.ChipColors =
+        when (value) {
+            is WireassistChipColors -> {
+                androidx.compose.material3.AssistChipDefaults.assistChipColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    labelColor = if ("labelColor" in value.supplied) value.labelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    leadingIconContentColor = if ("leadingIconContentColor" in value.supplied) value.leadingIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    trailingIconContentColor = if ("trailingIconContentColor" in value.supplied) value.trailingIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLeadingIconContentColor = if ("disabledLeadingIconContentColor" in value.supplied) value.disabledLeadingIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTrailingIconContentColor = if ("disabledTrailingIconContentColor" in value.supplied) value.disabledTrailingIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireelevatedAssistChipColors -> {
+                androidx.compose.material3.AssistChipDefaults.elevatedAssistChipColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    labelColor = if ("labelColor" in value.supplied) value.labelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    leadingIconContentColor = if ("leadingIconContentColor" in value.supplied) value.leadingIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    trailingIconContentColor = if ("trailingIconContentColor" in value.supplied) value.trailingIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLeadingIconContentColor = if ("disabledLeadingIconContentColor" in value.supplied) value.disabledLeadingIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTrailingIconContentColor = if ("disabledTrailingIconContentColor" in value.supplied) value.disabledTrailingIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireelevatedSuggestionChipColors -> {
+                androidx.compose.material3.SuggestionChipDefaults.elevatedSuggestionChipColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    labelColor = if ("labelColor" in value.supplied) value.labelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    iconContentColor = if ("iconContentColor" in value.supplied) value.iconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledIconContentColor = if ("disabledIconContentColor" in value.supplied) value.disabledIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WiresuggestionChipColors -> {
+                androidx.compose.material3.SuggestionChipDefaults.suggestionChipColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    labelColor = if ("labelColor" in value.supplied) value.labelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    iconContentColor = if ("iconContentColor" in value.supplied) value.iconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledIconContentColor = if ("disabledIconContentColor" in value.supplied) value.disabledIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun chipElevation(value: JsonElement): Result<androidx.compose.material3.ChipElevation> {
+        val parsed = runCatching { ValueContract.readChipElevation(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(chipElevation(parsed))
+    }
+
+    @Composable
+    fun chipElevation(value: ChipElevationValue): androidx.compose.material3.ChipElevation =
+        when (value) {
+            is WireassistChipElevation -> {
+                androidx.compose.material3.AssistChipDefaults.assistChipElevation(
+                    elevation = if ("elevation" in value.supplied) value.elevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WireelevatedAssistChipElevation -> {
+                androidx.compose.material3.AssistChipDefaults.elevatedAssistChipElevation(
+                    elevation = if ("elevation" in value.supplied) value.elevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WireelevatedSuggestionChipElevation -> {
+                androidx.compose.material3.SuggestionChipDefaults.elevatedSuggestionChipElevation(
+                    elevation = if ("elevation" in value.supplied) value.elevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WiresuggestionChipElevation -> {
+                androidx.compose.material3.SuggestionChipDefaults.suggestionChipElevation(
+                    elevation = if ("elevation" in value.supplied) value.elevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+        }
+
+    @Composable
     fun color(value: JsonElement): Result<androidx.compose.ui.graphics.Color> {
         val parsed = runCatching { ValueContract.readColor(value) }.getOrElse { return Result.failure(it) }
         return Result.success(color(parsed))
@@ -218,6 +491,48 @@ object ValueResolver {
         }
 
     @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun datePickerColors(value: JsonElement): Result<androidx.compose.material3.DatePickerColors> {
+        val parsed = runCatching { ValueContract.readDatePickerColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(datePickerColors(parsed))
+    }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun datePickerColors(value: DatePickerColorsValue): androidx.compose.material3.DatePickerColors =
+        when (value) {
+            is WiredatePickerColors -> {
+                androidx.compose.material3.DatePickerDefaults.colors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    titleContentColor = if ("titleContentColor" in value.supplied) value.titleContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    headlineContentColor = if ("headlineContentColor" in value.supplied) value.headlineContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    weekdayContentColor = if ("weekdayContentColor" in value.supplied) value.weekdayContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    subheadContentColor = if ("subheadContentColor" in value.supplied) value.subheadContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    navigationContentColor = if ("navigationContentColor" in value.supplied) value.navigationContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    yearContentColor = if ("yearContentColor" in value.supplied) value.yearContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledYearContentColor = if ("disabledYearContentColor" in value.supplied) value.disabledYearContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    currentYearContentColor = if ("currentYearContentColor" in value.supplied) value.currentYearContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedYearContentColor = if ("selectedYearContentColor" in value.supplied) value.selectedYearContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSelectedYearContentColor = if ("disabledSelectedYearContentColor" in value.supplied) value.disabledSelectedYearContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedYearContainerColor = if ("selectedYearContainerColor" in value.supplied) value.selectedYearContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSelectedYearContainerColor = if ("disabledSelectedYearContainerColor" in value.supplied) value.disabledSelectedYearContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    dayContentColor = if ("dayContentColor" in value.supplied) value.dayContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledDayContentColor = if ("disabledDayContentColor" in value.supplied) value.disabledDayContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedDayContentColor = if ("selectedDayContentColor" in value.supplied) value.selectedDayContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSelectedDayContentColor = if ("disabledSelectedDayContentColor" in value.supplied) value.disabledSelectedDayContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedDayContainerColor = if ("selectedDayContainerColor" in value.supplied) value.selectedDayContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSelectedDayContainerColor = if ("disabledSelectedDayContainerColor" in value.supplied) value.disabledSelectedDayContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    todayContentColor = if ("todayContentColor" in value.supplied) value.todayContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    todayDateBorderColor = if ("todayDateBorderColor" in value.supplied) value.todayDateBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    dayInSelectionRangeContentColor = if ("dayInSelectionRangeContentColor" in value.supplied) value.dayInSelectionRangeContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    dayInSelectionRangeContainerColor = if ("dayInSelectionRangeContainerColor" in value.supplied) value.dayInSelectionRangeContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    dividerColor = if ("dividerColor" in value.supplied) value.dividerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    dateTextFieldColors = if ("dateTextFieldColors" in value.supplied) value.dateTextFieldColors?.let { item -> textFieldColors(item) } else null,
+                )
+            }
+        }
+
+    @Composable
     fun dp(value: JsonElement): Result<androidx.compose.ui.unit.Dp> {
         val parsed = runCatching { ValueContract.readDp(value) }.getOrElse { return Result.failure(it) }
         return Result.success(dp(parsed))
@@ -229,6 +544,95 @@ object ValueResolver {
             is WireDp -> {
                 androidx.compose.ui.unit.Dp(
                     value = value.value.toFloat(),
+                )
+            }
+        }
+
+    @Composable
+    fun dpOffset(value: JsonElement): Result<androidx.compose.ui.unit.DpOffset> {
+        val parsed = runCatching { ValueContract.readDpOffset(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(dpOffset(parsed))
+    }
+
+    @Composable
+    fun dpOffset(value: DpOffsetValue): androidx.compose.ui.unit.DpOffset =
+        when (value) {
+            is WireDpOffset -> {
+                androidx.compose.ui.unit.DpOffset(
+                    x = dp(value.x),
+                    y = dp(value.y),
+                )
+            }
+        }
+
+    @Composable
+    fun dpSize(value: JsonElement): Result<androidx.compose.ui.unit.DpSize> {
+        val parsed = runCatching { ValueContract.readDpSize(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(dpSize(parsed))
+    }
+
+    @Composable
+    fun dpSize(value: DpSizeValue): androidx.compose.ui.unit.DpSize =
+        when (value) {
+            is WireDpSize -> {
+                androidx.compose.ui.unit.DpSize(
+                    width = dp(value.width),
+                    height = dp(value.height),
+                )
+            }
+        }
+
+    @Composable
+    fun fabPosition(value: JsonElement): Result<androidx.compose.material3.FabPosition> {
+        val parsed = runCatching { ValueContract.readFabPosition(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(fabPosition(parsed))
+    }
+
+    @Composable
+    fun fabPosition(value: FabPositionValue): androidx.compose.material3.FabPosition =
+        when (value) {
+            is WireFabPosition -> {
+                when (value.name) {
+                    "Center" -> androidx.compose.material3.FabPosition.Center
+                    "End" -> androidx.compose.material3.FabPosition.End
+                    "EndOverlay" -> androidx.compose.material3.FabPosition.EndOverlay
+                    "Start" -> androidx.compose.material3.FabPosition.Start
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun floatingActionButtonElevation(value: JsonElement): Result<androidx.compose.material3.FloatingActionButtonElevation> {
+        val parsed = runCatching { ValueContract.readFloatingActionButtonElevation(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(floatingActionButtonElevation(parsed))
+    }
+
+    @Composable
+    fun floatingActionButtonElevation(value: FloatingActionButtonElevationValue): androidx.compose.material3.FloatingActionButtonElevation =
+        when (value) {
+            is WirebottomAppBarFabElevation -> {
+                androidx.compose.material3.FloatingActionButtonDefaults.bottomAppBarFabElevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WirefloatingActionButtonElevation -> {
+                androidx.compose.material3.FloatingActionButtonDefaults.elevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WireloweredElevation -> {
+                androidx.compose.material3.FloatingActionButtonDefaults.loweredElevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).default_androidx_compose_ui_unit_dp,
                 )
             }
         }
@@ -255,6 +659,24 @@ object ValueResolver {
         }
 
     @Composable
+    fun fontStyle(value: JsonElement): Result<androidx.compose.ui.text.font.FontStyle> {
+        val parsed = runCatching { ValueContract.readFontStyle(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(fontStyle(parsed))
+    }
+
+    @Composable
+    fun fontStyle(value: FontStyleValue): androidx.compose.ui.text.font.FontStyle =
+        when (value) {
+            is WireFontStyle -> {
+                when (value.name) {
+                    "Italic" -> androidx.compose.ui.text.font.FontStyle.Italic
+                    "Normal" -> androidx.compose.ui.text.font.FontStyle.Normal
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
     fun fontWeight(value: JsonElement): Result<androidx.compose.ui.text.font.FontWeight> {
         val parsed = runCatching { ValueContract.readFontWeight(value) }.getOrElse { return Result.failure(it) }
         return Result.success(fontWeight(parsed))
@@ -266,6 +688,134 @@ object ValueResolver {
             is WireFontWeight -> {
                 androidx.compose.ui.text.font.FontWeight(
                     weight = value.weight,
+                )
+            }
+        }
+
+    @Composable
+    fun iconButtonColors(value: JsonElement): Result<androidx.compose.material3.IconButtonColors> {
+        val parsed = runCatching { ValueContract.readIconButtonColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(iconButtonColors(parsed))
+    }
+
+    @Composable
+    fun iconButtonColors(value: IconButtonColorsValue): androidx.compose.material3.IconButtonColors =
+        when (value) {
+            is WirefilledIconButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContentColor = if ("disabledContentColor" in value.supplied) value.disabledContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WirefilledTonalIconButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.filledTonalIconButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContentColor = if ("disabledContentColor" in value.supplied) value.disabledContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireiconButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.iconButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else (androidx.compose.material3.LocalContentColor).current,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireoutlinedIconButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.outlinedIconButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else (androidx.compose.material3.LocalContentColor).current,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun iconToggleButtonColors(value: JsonElement): Result<androidx.compose.material3.IconToggleButtonColors> {
+        val parsed = runCatching { ValueContract.readIconToggleButtonColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(iconToggleButtonColors(parsed))
+    }
+
+    @Composable
+    fun iconToggleButtonColors(value: IconToggleButtonColorsValue): androidx.compose.material3.IconToggleButtonColors =
+        when (value) {
+            is WirefilledIconToggleButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.filledIconToggleButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContentColor = if ("disabledContentColor" in value.supplied) value.disabledContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    checkedContainerColor = if ("checkedContainerColor" in value.supplied) value.checkedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WirefilledTonalIconToggleButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.filledTonalIconToggleButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContentColor = if ("disabledContentColor" in value.supplied) value.disabledContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    checkedContainerColor = if ("checkedContainerColor" in value.supplied) value.checkedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    checkedContentColor = if ("checkedContentColor" in value.supplied) value.checkedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireiconToggleButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.iconToggleButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else (androidx.compose.material3.LocalContentColor).current,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    checkedContainerColor = if ("checkedContainerColor" in value.supplied) value.checkedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    checkedContentColor = if ("checkedContentColor" in value.supplied) value.checkedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireoutlinedIconToggleButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.outlinedIconToggleButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else (androidx.compose.material3.LocalContentColor).current,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    checkedContainerColor = if ("checkedContainerColor" in value.supplied) value.checkedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun menuItemColors(value: JsonElement): Result<androidx.compose.material3.MenuItemColors> {
+        val parsed = runCatching { ValueContract.readMenuItemColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(menuItemColors(parsed))
+    }
+
+    @Composable
+    fun menuItemColors(value: MenuItemColorsValue): androidx.compose.material3.MenuItemColors =
+        when (value) {
+            is WireitemColors -> {
+                androidx.compose.material3.MenuDefaults.itemColors(
+                    textColor = if ("textColor" in value.supplied) value.textColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    leadingIconColor = if ("leadingIconColor" in value.supplied) value.leadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    trailingIconColor = if ("trailingIconColor" in value.supplied) value.trailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTextColor = if ("disabledTextColor" in value.supplied) value.disabledTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLeadingIconColor = if ("disabledLeadingIconColor" in value.supplied) value.disabledLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTrailingIconColor = if ("disabledTrailingIconColor" in value.supplied) value.disabledTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun navigationBarItemColors(value: JsonElement): Result<androidx.compose.material3.NavigationBarItemColors> {
+        val parsed = runCatching { ValueContract.readNavigationBarItemColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(navigationBarItemColors(parsed))
+    }
+
+    @Composable
+    fun navigationBarItemColors(value: NavigationBarItemColorsValue): androidx.compose.material3.NavigationBarItemColors =
+        when (value) {
+            is WirenavigationBarItemColors -> {
+                androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = if ("selectedIconColor" in value.supplied) value.selectedIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedTextColor = if ("selectedTextColor" in value.supplied) value.selectedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    indicatorColor = if ("indicatorColor" in value.supplied) value.indicatorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unselectedIconColor = if ("unselectedIconColor" in value.supplied) value.unselectedIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unselectedTextColor = if ("unselectedTextColor" in value.supplied) value.unselectedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledIconColor = if ("disabledIconColor" in value.supplied) value.disabledIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTextColor = if ("disabledTextColor" in value.supplied) value.disabledTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
             }
         }
@@ -302,6 +852,169 @@ object ValueResolver {
                     top = if ("top" in value.supplied) value.top?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
                     end = if ("end" in value.supplied) value.end?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
                     bottom = if ("bottom" in value.supplied) value.bottom?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+        }
+
+    @Composable
+    fun radioButtonColors(value: JsonElement): Result<androidx.compose.material3.RadioButtonColors> {
+        val parsed = runCatching { ValueContract.readRadioButtonColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(radioButtonColors(parsed))
+    }
+
+    @Composable
+    fun radioButtonColors(value: RadioButtonColorsValue): androidx.compose.material3.RadioButtonColors =
+        when (value) {
+            is WireradioButtonColors -> {
+                androidx.compose.material3.RadioButtonDefaults.colors(
+                    selectedColor = if ("selectedColor" in value.supplied) value.selectedColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unselectedColor = if ("unselectedColor" in value.supplied) value.unselectedColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSelectedColor = if ("disabledSelectedColor" in value.supplied) value.disabledSelectedColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledUnselectedColor = if ("disabledUnselectedColor" in value.supplied) value.disabledUnselectedColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun richTooltipColors(value: JsonElement): Result<androidx.compose.material3.RichTooltipColors> {
+        val parsed = runCatching { ValueContract.readRichTooltipColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(richTooltipColors(parsed))
+    }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun richTooltipColors(value: RichTooltipColorsValue): androidx.compose.material3.RichTooltipColors =
+        when (value) {
+            is WirerichTooltipColors -> {
+                androidx.compose.material3.TooltipDefaults.richTooltipColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    titleContentColor = if ("titleContentColor" in value.supplied) value.titleContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    actionContentColor = if ("actionContentColor" in value.supplied) value.actionContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun segmentedButtonColors(value: JsonElement): Result<androidx.compose.material3.SegmentedButtonColors> {
+        val parsed = runCatching { ValueContract.readSegmentedButtonColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(segmentedButtonColors(parsed))
+    }
+
+    @Composable
+    fun segmentedButtonColors(value: SegmentedButtonColorsValue): androidx.compose.material3.SegmentedButtonColors =
+        when (value) {
+            is WiresegmentedButtonColors -> {
+                androidx.compose.material3.SegmentedButtonDefaults.colors(
+                    activeContainerColor = if ("activeContainerColor" in value.supplied) value.activeContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    activeContentColor = if ("activeContentColor" in value.supplied) value.activeContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    activeBorderColor = if ("activeBorderColor" in value.supplied) value.activeBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    inactiveContainerColor = if ("inactiveContainerColor" in value.supplied) value.inactiveContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    inactiveContentColor = if ("inactiveContentColor" in value.supplied) value.inactiveContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    inactiveBorderColor = if ("inactiveBorderColor" in value.supplied) value.inactiveBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledActiveContainerColor = if ("disabledActiveContainerColor" in value.supplied) value.disabledActiveContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledActiveContentColor = if ("disabledActiveContentColor" in value.supplied) value.disabledActiveContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledActiveBorderColor = if ("disabledActiveBorderColor" in value.supplied) value.disabledActiveBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledInactiveContainerColor = if ("disabledInactiveContainerColor" in value.supplied) value.disabledInactiveContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledInactiveContentColor = if ("disabledInactiveContentColor" in value.supplied) value.disabledInactiveContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledInactiveBorderColor = if ("disabledInactiveBorderColor" in value.supplied) value.disabledInactiveBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun selectableChipColors(value: JsonElement): Result<androidx.compose.material3.SelectableChipColors> {
+        val parsed = runCatching { ValueContract.readSelectableChipColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(selectableChipColors(parsed))
+    }
+
+    @Composable
+    fun selectableChipColors(value: SelectableChipColorsValue): androidx.compose.material3.SelectableChipColors =
+        when (value) {
+            is WireelevatedFilterChipColors -> {
+                androidx.compose.material3.FilterChipDefaults.elevatedFilterChipColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    labelColor = if ("labelColor" in value.supplied) value.labelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    iconColor = if ("iconColor" in value.supplied) value.iconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLeadingIconColor = if ("disabledLeadingIconColor" in value.supplied) value.disabledLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTrailingIconColor = if ("disabledTrailingIconColor" in value.supplied) value.disabledTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedContainerColor = if ("selectedContainerColor" in value.supplied) value.selectedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSelectedContainerColor = if ("disabledSelectedContainerColor" in value.supplied) value.disabledSelectedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedLabelColor = if ("selectedLabelColor" in value.supplied) value.selectedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedLeadingIconColor = if ("selectedLeadingIconColor" in value.supplied) value.selectedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedTrailingIconColor = if ("selectedTrailingIconColor" in value.supplied) value.selectedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WirefilterChipColors -> {
+                androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    labelColor = if ("labelColor" in value.supplied) value.labelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    iconColor = if ("iconColor" in value.supplied) value.iconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLeadingIconColor = if ("disabledLeadingIconColor" in value.supplied) value.disabledLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTrailingIconColor = if ("disabledTrailingIconColor" in value.supplied) value.disabledTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedContainerColor = if ("selectedContainerColor" in value.supplied) value.selectedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSelectedContainerColor = if ("disabledSelectedContainerColor" in value.supplied) value.disabledSelectedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedLabelColor = if ("selectedLabelColor" in value.supplied) value.selectedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedLeadingIconColor = if ("selectedLeadingIconColor" in value.supplied) value.selectedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedTrailingIconColor = if ("selectedTrailingIconColor" in value.supplied) value.selectedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireinputChipColors -> {
+                androidx.compose.material3.InputChipDefaults.inputChipColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    labelColor = if ("labelColor" in value.supplied) value.labelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    leadingIconColor = if ("leadingIconColor" in value.supplied) value.leadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    trailingIconColor = if ("trailingIconColor" in value.supplied) value.trailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLeadingIconColor = if ("disabledLeadingIconColor" in value.supplied) value.disabledLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTrailingIconColor = if ("disabledTrailingIconColor" in value.supplied) value.disabledTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedContainerColor = if ("selectedContainerColor" in value.supplied) value.selectedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSelectedContainerColor = if ("disabledSelectedContainerColor" in value.supplied) value.disabledSelectedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedLabelColor = if ("selectedLabelColor" in value.supplied) value.selectedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedLeadingIconColor = if ("selectedLeadingIconColor" in value.supplied) value.selectedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedTrailingIconColor = if ("selectedTrailingIconColor" in value.supplied) value.selectedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun selectableChipElevation(value: JsonElement): Result<androidx.compose.material3.SelectableChipElevation> {
+        val parsed = runCatching { ValueContract.readSelectableChipElevation(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(selectableChipElevation(parsed))
+    }
+
+    @Composable
+    fun selectableChipElevation(value: SelectableChipElevationValue): androidx.compose.material3.SelectableChipElevation =
+        when (value) {
+            is WireelevatedFilterChipElevation -> {
+                androidx.compose.material3.FilterChipDefaults.elevatedFilterChipElevation(
+                    elevation = if ("elevation" in value.supplied) value.elevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WirefilterChipElevation -> {
+                androidx.compose.material3.FilterChipDefaults.filterChipElevation(
+                    elevation = if ("elevation" in value.supplied) value.elevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WireinputChipElevation -> {
+                androidx.compose.material3.InputChipDefaults.inputChipElevation(
+                    elevation = if ("elevation" in value.supplied) value.elevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
                 )
             }
         }
@@ -351,6 +1064,241 @@ object ValueResolver {
                     width = value.width.toFloat(),
                     height = value.height.toFloat(),
                 )
+            }
+        }
+
+    @Composable
+    fun sliderColors(value: JsonElement): Result<androidx.compose.material3.SliderColors> {
+        val parsed = runCatching { ValueContract.readSliderColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(sliderColors(parsed))
+    }
+
+    @Composable
+    fun sliderColors(value: SliderColorsValue): androidx.compose.material3.SliderColors =
+        when (value) {
+            is WiresliderColors -> {
+                androidx.compose.material3.SliderDefaults.colors(
+                    thumbColor = if ("thumbColor" in value.supplied) value.thumbColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    activeTrackColor = if ("activeTrackColor" in value.supplied) value.activeTrackColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    activeTickColor = if ("activeTickColor" in value.supplied) value.activeTickColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    inactiveTrackColor = if ("inactiveTrackColor" in value.supplied) value.inactiveTrackColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    inactiveTickColor = if ("inactiveTickColor" in value.supplied) value.inactiveTickColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledThumbColor = if ("disabledThumbColor" in value.supplied) value.disabledThumbColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledActiveTrackColor = if ("disabledActiveTrackColor" in value.supplied) value.disabledActiveTrackColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledActiveTickColor = if ("disabledActiveTickColor" in value.supplied) value.disabledActiveTickColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledInactiveTrackColor = if ("disabledInactiveTrackColor" in value.supplied) value.disabledInactiveTrackColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledInactiveTickColor = if ("disabledInactiveTickColor" in value.supplied) value.disabledInactiveTickColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun strokeCap(value: JsonElement): Result<androidx.compose.ui.graphics.StrokeCap> {
+        val parsed = runCatching { ValueContract.readStrokeCap(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(strokeCap(parsed))
+    }
+
+    @Composable
+    fun strokeCap(value: StrokeCapValue): androidx.compose.ui.graphics.StrokeCap =
+        when (value) {
+            is WireStrokeCap -> {
+                when (value.name) {
+                    "Butt" -> androidx.compose.ui.graphics.StrokeCap.Butt
+                    "Round" -> androidx.compose.ui.graphics.StrokeCap.Round
+                    "Square" -> androidx.compose.ui.graphics.StrokeCap.Square
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun switchColors(value: JsonElement): Result<androidx.compose.material3.SwitchColors> {
+        val parsed = runCatching { ValueContract.readSwitchColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(switchColors(parsed))
+    }
+
+    @Composable
+    fun switchColors(value: SwitchColorsValue): androidx.compose.material3.SwitchColors =
+        when (value) {
+            is WireswitchColors -> {
+                androidx.compose.material3.SwitchDefaults.colors(
+                    checkedBorderColor = if ("checkedBorderColor" in value.supplied) value.checkedBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                    disabledCheckedBorderColor = if ("disabledCheckedBorderColor" in value.supplied) value.disabledCheckedBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                )
+            }
+        }
+
+    @Composable
+    fun textAlign(value: JsonElement): Result<androidx.compose.ui.text.style.TextAlign> {
+        val parsed = runCatching { ValueContract.readTextAlign(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(textAlign(parsed))
+    }
+
+    @Composable
+    fun textAlign(value: TextAlignValue): androidx.compose.ui.text.style.TextAlign =
+        when (value) {
+            is WireTextAlign -> {
+                when (value.name) {
+                    "Center" -> androidx.compose.ui.text.style.TextAlign.Center
+                    "End" -> androidx.compose.ui.text.style.TextAlign.End
+                    "Justify" -> androidx.compose.ui.text.style.TextAlign.Justify
+                    "Left" -> androidx.compose.ui.text.style.TextAlign.Left
+                    "Right" -> androidx.compose.ui.text.style.TextAlign.Right
+                    "Start" -> androidx.compose.ui.text.style.TextAlign.Start
+                    "Unspecified" -> androidx.compose.ui.text.style.TextAlign.Unspecified
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun textDecoration(value: JsonElement): Result<androidx.compose.ui.text.style.TextDecoration> {
+        val parsed = runCatching { ValueContract.readTextDecoration(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(textDecoration(parsed))
+    }
+
+    @Composable
+    fun textDecoration(value: TextDecorationValue): androidx.compose.ui.text.style.TextDecoration =
+        when (value) {
+            is WireTextDecoration -> {
+                when (value.name) {
+                    "LineThrough" -> androidx.compose.ui.text.style.TextDecoration.LineThrough
+                    "None" -> androidx.compose.ui.text.style.TextDecoration.None
+                    "Underline" -> androidx.compose.ui.text.style.TextDecoration.Underline
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun textFieldColors(value: JsonElement): Result<androidx.compose.material3.TextFieldColors> {
+        val parsed = runCatching { ValueContract.readTextFieldColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(textFieldColors(parsed))
+    }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun textFieldColors(value: TextFieldColorsValue): androidx.compose.material3.TextFieldColors =
+        when (value) {
+            is WireexposedDropdownMenuOutlinedTextFieldColors -> {
+                androidx.compose.material3.ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                    focusedContainerColor = if ("focusedContainerColor" in value.supplied) value.focusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                    unfocusedContainerColor = if ("unfocusedContainerColor" in value.supplied) value.unfocusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                    errorContainerColor = if ("errorContainerColor" in value.supplied) value.errorContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                )
+            }
+            is WireoutlinedTextFieldColors -> {
+                androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = if ("focusedTextColor" in value.supplied) value.focusedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedTextColor = if ("unfocusedTextColor" in value.supplied) value.unfocusedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTextColor = if ("disabledTextColor" in value.supplied) value.disabledTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorTextColor = if ("errorTextColor" in value.supplied) value.errorTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedContainerColor = if ("focusedContainerColor" in value.supplied) value.focusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedContainerColor = if ("unfocusedContainerColor" in value.supplied) value.unfocusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorContainerColor = if ("errorContainerColor" in value.supplied) value.errorContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    cursorColor = if ("cursorColor" in value.supplied) value.cursorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorCursorColor = if ("errorCursorColor" in value.supplied) value.errorCursorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedBorderColor = if ("focusedBorderColor" in value.supplied) value.focusedBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedBorderColor = if ("unfocusedBorderColor" in value.supplied) value.unfocusedBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledBorderColor = if ("disabledBorderColor" in value.supplied) value.disabledBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorBorderColor = if ("errorBorderColor" in value.supplied) value.errorBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedLeadingIconColor = if ("focusedLeadingIconColor" in value.supplied) value.focusedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedLeadingIconColor = if ("unfocusedLeadingIconColor" in value.supplied) value.unfocusedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLeadingIconColor = if ("disabledLeadingIconColor" in value.supplied) value.disabledLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorLeadingIconColor = if ("errorLeadingIconColor" in value.supplied) value.errorLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedTrailingIconColor = if ("focusedTrailingIconColor" in value.supplied) value.focusedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedTrailingIconColor = if ("unfocusedTrailingIconColor" in value.supplied) value.unfocusedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTrailingIconColor = if ("disabledTrailingIconColor" in value.supplied) value.disabledTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorTrailingIconColor = if ("errorTrailingIconColor" in value.supplied) value.errorTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedLabelColor = if ("focusedLabelColor" in value.supplied) value.focusedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedLabelColor = if ("unfocusedLabelColor" in value.supplied) value.unfocusedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorLabelColor = if ("errorLabelColor" in value.supplied) value.errorLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedPlaceholderColor = if ("focusedPlaceholderColor" in value.supplied) value.focusedPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedPlaceholderColor = if ("unfocusedPlaceholderColor" in value.supplied) value.unfocusedPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledPlaceholderColor = if ("disabledPlaceholderColor" in value.supplied) value.disabledPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorPlaceholderColor = if ("errorPlaceholderColor" in value.supplied) value.errorPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedSupportingTextColor = if ("focusedSupportingTextColor" in value.supplied) value.focusedSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedSupportingTextColor = if ("unfocusedSupportingTextColor" in value.supplied) value.unfocusedSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSupportingTextColor = if ("disabledSupportingTextColor" in value.supplied) value.disabledSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorSupportingTextColor = if ("errorSupportingTextColor" in value.supplied) value.errorSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedPrefixColor = if ("focusedPrefixColor" in value.supplied) value.focusedPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedPrefixColor = if ("unfocusedPrefixColor" in value.supplied) value.unfocusedPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledPrefixColor = if ("disabledPrefixColor" in value.supplied) value.disabledPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorPrefixColor = if ("errorPrefixColor" in value.supplied) value.errorPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedSuffixColor = if ("focusedSuffixColor" in value.supplied) value.focusedSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedSuffixColor = if ("unfocusedSuffixColor" in value.supplied) value.unfocusedSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSuffixColor = if ("disabledSuffixColor" in value.supplied) value.disabledSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorSuffixColor = if ("errorSuffixColor" in value.supplied) value.errorSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WiretextFieldColors -> {
+                androidx.compose.material3.TextFieldDefaults.colors(
+                    focusedTextColor = if ("focusedTextColor" in value.supplied) value.focusedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedTextColor = if ("unfocusedTextColor" in value.supplied) value.unfocusedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTextColor = if ("disabledTextColor" in value.supplied) value.disabledTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorTextColor = if ("errorTextColor" in value.supplied) value.errorTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedContainerColor = if ("focusedContainerColor" in value.supplied) value.focusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedContainerColor = if ("unfocusedContainerColor" in value.supplied) value.unfocusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorContainerColor = if ("errorContainerColor" in value.supplied) value.errorContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    cursorColor = if ("cursorColor" in value.supplied) value.cursorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorCursorColor = if ("errorCursorColor" in value.supplied) value.errorCursorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedIndicatorColor = if ("focusedIndicatorColor" in value.supplied) value.focusedIndicatorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedIndicatorColor = if ("unfocusedIndicatorColor" in value.supplied) value.unfocusedIndicatorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledIndicatorColor = if ("disabledIndicatorColor" in value.supplied) value.disabledIndicatorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorIndicatorColor = if ("errorIndicatorColor" in value.supplied) value.errorIndicatorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedLeadingIconColor = if ("focusedLeadingIconColor" in value.supplied) value.focusedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedLeadingIconColor = if ("unfocusedLeadingIconColor" in value.supplied) value.unfocusedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLeadingIconColor = if ("disabledLeadingIconColor" in value.supplied) value.disabledLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorLeadingIconColor = if ("errorLeadingIconColor" in value.supplied) value.errorLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedTrailingIconColor = if ("focusedTrailingIconColor" in value.supplied) value.focusedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedTrailingIconColor = if ("unfocusedTrailingIconColor" in value.supplied) value.unfocusedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTrailingIconColor = if ("disabledTrailingIconColor" in value.supplied) value.disabledTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorTrailingIconColor = if ("errorTrailingIconColor" in value.supplied) value.errorTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedLabelColor = if ("focusedLabelColor" in value.supplied) value.focusedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedLabelColor = if ("unfocusedLabelColor" in value.supplied) value.unfocusedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorLabelColor = if ("errorLabelColor" in value.supplied) value.errorLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedPlaceholderColor = if ("focusedPlaceholderColor" in value.supplied) value.focusedPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedPlaceholderColor = if ("unfocusedPlaceholderColor" in value.supplied) value.unfocusedPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledPlaceholderColor = if ("disabledPlaceholderColor" in value.supplied) value.disabledPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorPlaceholderColor = if ("errorPlaceholderColor" in value.supplied) value.errorPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedSupportingTextColor = if ("focusedSupportingTextColor" in value.supplied) value.focusedSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedSupportingTextColor = if ("unfocusedSupportingTextColor" in value.supplied) value.unfocusedSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSupportingTextColor = if ("disabledSupportingTextColor" in value.supplied) value.disabledSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorSupportingTextColor = if ("errorSupportingTextColor" in value.supplied) value.errorSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedPrefixColor = if ("focusedPrefixColor" in value.supplied) value.focusedPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedPrefixColor = if ("unfocusedPrefixColor" in value.supplied) value.unfocusedPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledPrefixColor = if ("disabledPrefixColor" in value.supplied) value.disabledPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorPrefixColor = if ("errorPrefixColor" in value.supplied) value.errorPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedSuffixColor = if ("focusedSuffixColor" in value.supplied) value.focusedSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedSuffixColor = if ("unfocusedSuffixColor" in value.supplied) value.unfocusedSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSuffixColor = if ("disabledSuffixColor" in value.supplied) value.disabledSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorSuffixColor = if ("errorSuffixColor" in value.supplied) value.errorSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun textOverflow(value: JsonElement): Result<androidx.compose.ui.text.style.TextOverflow> {
+        val parsed = runCatching { ValueContract.readTextOverflow(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(textOverflow(parsed))
+    }
+
+    @Composable
+    fun textOverflow(value: TextOverflowValue): androidx.compose.ui.text.style.TextOverflow =
+        when (value) {
+            is WireTextOverflow -> {
+                when (value.name) {
+                    "Clip" -> androidx.compose.ui.text.style.TextOverflow.Clip
+                    "Ellipsis" -> androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    "Visible" -> androidx.compose.ui.text.style.TextOverflow.Visible
+                    else -> error("Unknown native constant")
+                }
             }
         }
 
@@ -412,6 +1360,57 @@ object ValueResolver {
         }
 
     @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun timePickerColors(value: JsonElement): Result<androidx.compose.material3.TimePickerColors> {
+        val parsed = runCatching { ValueContract.readTimePickerColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(timePickerColors(parsed))
+    }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun timePickerColors(value: TimePickerColorsValue): androidx.compose.material3.TimePickerColors =
+        when (value) {
+            is WiretimePickerColors -> {
+                androidx.compose.material3.TimePickerDefaults.colors(
+                    clockDialColor = if ("clockDialColor" in value.supplied) value.clockDialColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    clockDialSelectedContentColor = if ("clockDialSelectedContentColor" in value.supplied) value.clockDialSelectedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    clockDialUnselectedContentColor = if ("clockDialUnselectedContentColor" in value.supplied) value.clockDialUnselectedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectorColor = if ("selectorColor" in value.supplied) value.selectorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    periodSelectorBorderColor = if ("periodSelectorBorderColor" in value.supplied) value.periodSelectorBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    periodSelectorSelectedContainerColor = if ("periodSelectorSelectedContainerColor" in value.supplied) value.periodSelectorSelectedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    periodSelectorUnselectedContainerColor = if ("periodSelectorUnselectedContainerColor" in value.supplied) value.periodSelectorUnselectedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    periodSelectorSelectedContentColor = if ("periodSelectorSelectedContentColor" in value.supplied) value.periodSelectorSelectedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    periodSelectorUnselectedContentColor = if ("periodSelectorUnselectedContentColor" in value.supplied) value.periodSelectorUnselectedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    timeSelectorSelectedContainerColor = if ("timeSelectorSelectedContainerColor" in value.supplied) value.timeSelectorSelectedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    timeSelectorUnselectedContainerColor = if ("timeSelectorUnselectedContainerColor" in value.supplied) value.timeSelectorUnselectedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    timeSelectorSelectedContentColor = if ("timeSelectorSelectedContentColor" in value.supplied) value.timeSelectorSelectedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    timeSelectorUnselectedContentColor = if ("timeSelectorUnselectedContentColor" in value.supplied) value.timeSelectorUnselectedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun timePickerLayoutType(value: JsonElement): Result<androidx.compose.material3.TimePickerLayoutType> {
+        val parsed = runCatching { ValueContract.readTimePickerLayoutType(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(timePickerLayoutType(parsed))
+    }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun timePickerLayoutType(value: TimePickerLayoutTypeValue): androidx.compose.material3.TimePickerLayoutType =
+        when (value) {
+            is WireTimePickerLayoutType -> {
+                when (value.name) {
+                    "Horizontal" -> androidx.compose.material3.TimePickerLayoutType.Horizontal
+                    "Vertical" -> androidx.compose.material3.TimePickerLayoutType.Vertical
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
     fun toggleableState(value: JsonElement): Result<androidx.compose.ui.state.ToggleableState> {
         val parsed = runCatching { ValueContract.readToggleableState(value) }.getOrElse { return Result.failure(it) }
         return Result.success(toggleableState(parsed))
@@ -427,6 +1426,55 @@ object ValueResolver {
                     "On" -> androidx.compose.ui.state.ToggleableState.On
                     else -> error("Unknown native constant")
                 }
+            }
+        }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun topAppBarColors(value: JsonElement): Result<androidx.compose.material3.TopAppBarColors> {
+        val parsed = runCatching { ValueContract.readTopAppBarColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(topAppBarColors(parsed))
+    }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun topAppBarColors(value: TopAppBarColorsValue): androidx.compose.material3.TopAppBarColors =
+        when (value) {
+            is WirecenterAlignedTopAppBarColors -> {
+                androidx.compose.material3.TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    scrolledContainerColor = if ("scrolledContainerColor" in value.supplied) value.scrolledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    navigationIconContentColor = if ("navigationIconContentColor" in value.supplied) value.navigationIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    titleContentColor = if ("titleContentColor" in value.supplied) value.titleContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    actionIconContentColor = if ("actionIconContentColor" in value.supplied) value.actionIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WirelargeTopAppBarColors -> {
+                androidx.compose.material3.TopAppBarDefaults.largeTopAppBarColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    scrolledContainerColor = if ("scrolledContainerColor" in value.supplied) value.scrolledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    navigationIconContentColor = if ("navigationIconContentColor" in value.supplied) value.navigationIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    titleContentColor = if ("titleContentColor" in value.supplied) value.titleContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    actionIconContentColor = if ("actionIconContentColor" in value.supplied) value.actionIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WiremediumTopAppBarColors -> {
+                androidx.compose.material3.TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    scrolledContainerColor = if ("scrolledContainerColor" in value.supplied) value.scrolledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    navigationIconContentColor = if ("navigationIconContentColor" in value.supplied) value.navigationIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    titleContentColor = if ("titleContentColor" in value.supplied) value.titleContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    actionIconContentColor = if ("actionIconContentColor" in value.supplied) value.actionIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WiretopAppBarColors -> {
+                androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    scrolledContainerColor = if ("scrolledContainerColor" in value.supplied) value.scrolledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    navigationIconContentColor = if ("navigationIconContentColor" in value.supplied) value.navigationIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    titleContentColor = if ("titleContentColor" in value.supplied) value.titleContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    actionIconContentColor = if ("actionIconContentColor" in value.supplied) value.actionIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
             }
         }
 

@@ -331,6 +331,48 @@ def _require(condition: bool, message: str) -> None:
         raise ValueError(message)
 
 
+def opt_in_markers(found: Inventory) -> set[str]:
+    """Report every opt-in annotation the pin itself declares.
+
+    The set is derived from the artifact, never listed by hand: an annotation
+    class only counts when the pinned compiler says it is annotated with
+    ``kotlin.RequiresOptIn``.
+
+    Args:
+        found: The validated inventory of the current pin.
+
+    Returns:
+        The fully qualified, dotted annotation classes the pin declares.
+    """
+    return {
+        declaration.owner
+        for declaration in found.declarations
+        if declaration.document.get("classKind") == "ANNOTATION_CLASS"
+        and "kotlin/RequiresOptIn" in declaration.annotations
+    }
+
+
+def required_opt_ins(declaration: Declaration, markers: set[str]) -> set[str]:
+    """Report which of a declaration's annotations are opt-in markers.
+
+    Annotation evidence is slash-separated (``androidx/compose/...``) while the
+    schema records Kotlin symbols with dots, so the comparison normalizes once
+    here instead of at every call site.
+
+    Args:
+        declaration: One pinned declaration.
+        markers: The pin's opt-in annotation classes, dotted.
+
+    Returns:
+        The dotted markers a native call site must opt in to.
+    """
+    return {
+        name.replace("/", ".")
+        for name in declaration.annotations
+        if name.replace("/", ".") in markers
+    }
+
+
 UNRESOLVED = {"kind": "unsupported", "reason": "source could not be pinned"}
 """Reported per binding, so one ambiguous declaration never blinds the catalog."""
 

@@ -195,6 +195,8 @@ def _validate_versions(registry: dict[str, Any]) -> None:
         _die("supportedSchemaVersions must include the current schema")
     for version in supported:
         _require_semver(version, "supportedSchemaVersions")
+    if len(set(supported)) != len(supported):
+        _die("supportedSchemaVersions must be unique")
     if max(supported, key=_version_key) != registry["schemaVersion"]:
         _die("schemaVersion must be the newest supported schema")
     for spec in registry["components"].values():

@@ -31,6 +31,8 @@ from schema.classpath_dump import (
     Inventory,
     KotlinType,
     inventory,
+    opt_in_markers,
+    required_opt_ins,
 )
 
 SCALARS = {
@@ -45,12 +47,17 @@ ROLES = {"scalar", "record", "factory", "constant", "reference"}
 OBJECT_KINDS = {"OBJECT", "COMPANION_OBJECT"}
 """A companion object is as callable as an object; both are static holders."""
 POLICIES = {
-    "androidx/compose/ui/unit/Dp": {"minimum": 0},
     "androidx/compose/ui/geometry/Size": {"minimum": 0},
     "androidx/compose/foundation/layout/PaddingValues": {"minimum": 0},
     "androidx/compose/foundation/layout/WindowInsets": {"minimum": 0},
 }
-"""Small reusable per-family rules. Anything else is reported, never guessed."""
+"""Small reusable per-family rules. Anything else is reported, never guessed.
+
+``Dp`` deliberately carries no bounds here: offsets and sizes are signed in
+Compose, so a blanket floor would refuse legal values. Non-negative floors that
+really are semantics stay as approved, preserved facts on the entries that
+declare them.
+"""
 
 
 def ancestors(found: Inventory) -> dict[str, set[str]]:
@@ -158,6 +165,7 @@ def propose_value(
     role: str | None = None,
     approved_family: str | None = None,
     surface: tuple[str, ...] | None = None,
+    opt_ins: set[str] = frozenset(),
 ) -> dict[str, Any]:
     """Derive an ordinary constructor/factory using reusable type/default policies.
 
@@ -170,6 +178,8 @@ def propose_value(
         approved_family: An approved family to preserve, so values stay
             interchangeable where the wire treats them alike.
         surface: Approved parameter names. Other optional arguments remain native.
+        opt_ins: The pin's opt-in markers; the entry carries the ones this
+            declaration requires, so a generated call site can opt in exactly.
 
     Returns:
         A value descriptor that is a drop-in candidate for ``valueTypes``.
@@ -218,12 +228,14 @@ def propose_value(
         source.owner.replace("$", ".") if source.dispatch_receiver else source.package
     )
     call = native_type if constructor else owner + "." + source.name
+    required = sorted(required_opt_ins(source, opt_ins))
     result = {
         "family": approved_family or family,
         "kind": _role(constructor, parameters, role),
         "kotlinType": native_type,
         "since": since,
         "source": identity(source),
+        **({"optIn": required} if required else {}),
         "parameters": parameters,
         "native": {"call": call},
     }
@@ -259,6 +271,7 @@ def propose_members(
     *,
     since: str,
     prefix: str = "",
+    opt_ins: set[str] = frozenset(),
 ) -> dict[str, Any]:
     """Propose a named-member binding: every public member of ``owner`` in ``family``.
 
@@ -272,6 +285,7 @@ def propose_members(
         family: An approved descriptor providing the wire family and Kotlin type.
         since: Schema version that introduced the binding.
         prefix: Optional native qualifier, e.g. a ``MaterialTheme`` holder.
+        opt_ins: The pin's opt-in markers; a member that needs one contributes it.
 
     Returns:
         A ``constant`` descriptor keyed by member name.
@@ -281,6 +295,7 @@ def propose_members(
             be an empty enumeration presented as support.
     """
     members = set()
+    required: set[str] = set()
     hierarchy = ancestors(found)
     dotted = owner.replace("/", ".")
     entries = set()
@@ -300,6 +315,7 @@ def propose_members(
         if declaration.context_receivers or declaration.receiver:
             continue
         members.add(declaration.name)
+        required |= required_opt_ins(declaration, opt_ins)
     if not members and not entries:
         raise ValueError(f"no public {family['family']} members on {owner}")
     described = (
@@ -315,6 +331,7 @@ def propose_members(
         "kotlinType": family["kotlinType"],
         "since": since,
         "source": {"owner": owner, "members": described},
+        **({"optIn": sorted(required)} if required else {}),
         "parameters": {
             "name": {
                 "type": "string",
@@ -502,13 +519,14 @@ def bind(
     """Propose one approved binding against the current pin, or explain the refusal."""
     approved = registry["valueTypes"].get(name, {})
     since = approved.get("since", registry["schemaVersion"])
+    markers = opt_in_markers(found)
     try:
         if name in MEMBERS:
             owner, prefix = MEMBERS[name]
             return {
                 "name": name,
                 "proposal": propose_members(
-                    found, owner, approved, since=since, prefix=prefix
+                    found, owner, approved, since=since, prefix=prefix, opt_ins=markers
                 ),
             }
         if name in EXTENSIONS:
@@ -541,6 +559,7 @@ def bind(
                 surface=tuple(approved["parameters"])
                 if "parameters" in approved
                 else None,
+                opt_ins=markers,
             )
             if "kotlinType" in approved:
                 if not assignable(found, approved, source.return_type.classifier):
@@ -596,6 +615,16 @@ MEMBERS = {
     ),
     "FontFamily": ("androidx/compose/ui/text/font/FontFamily$Companion", ""),
     "ToggleableState": ("androidx/compose/ui/state/ToggleableState", ""),
+    "StrokeCap": ("androidx/compose/ui/graphics/StrokeCap$Companion", ""),
+    "TextAlign": ("androidx/compose/ui/text/style/TextAlign$Companion", ""),
+    "TextDecoration": ("androidx/compose/ui/text/style/TextDecoration$Companion", ""),
+    "TextOverflow": ("androidx/compose/ui/text/style/TextOverflow$Companion", ""),
+    "FontStyle": ("androidx/compose/ui/text/font/FontStyle$Companion", ""),
+    "FabPosition": ("androidx/compose/material3/FabPosition$Companion", ""),
+    "TimePickerLayoutType": (
+        "androidx/compose/material3/TimePickerLayoutType$Companion",
+        "",
+    ),
 }
 """Bindings whose wire vocabulary is the public member set of one class.
 

@@ -598,11 +598,18 @@ def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -
         # A refresh reproduces the approved compiler-resolved facts exactly;
         # semantic policy such as ARGB bounds is preserved, not regenerated.
         assert item["proposal"] == approved
-    assert len(derived) == len(results) == 25
+    assert len(derived) == len(results) == 82
     specs = {item["name"]: item["proposal"] for item in derived}
     assert specs["RoundedCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
     assert specs["CutCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
     assert specs["SolidColor"]["kotlinType"] == "androidx.compose.ui.graphics.Brush"
+    assert specs["datePickerColors"]["optIn"] == [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+    ]
+    assert "optIn" not in specs["checkboxColors"]
+    assert specs["TimePickerLayoutType"]["optIn"] == [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+    ]
     assert len(specs["ThemeColor"]["parameters"]["name"]["values"]) == 36
     assert len(specs["ThemeTypography"]["parameters"]["name"]["values"]) == 15
     assert len(specs["ThemeShape"]["parameters"]["name"]["values"]) == 5
@@ -620,6 +627,34 @@ def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -
         assert specs[name]["omitted"]["tileMode"]["hasDefault"] is True
     assert "defaultNative" not in json.dumps(specs)
     assert compare_values(registry, found, evidence) == []
+
+
+def test_opt_in_evidence_comes_from_the_pin(native_document) -> None:
+    from schema.classpath_dump import inventory, opt_in_markers, required_opt_ins
+
+    assert native_document["provenance"]["compiler"] == "2.0.21"
+    found = inventory(DUMP)
+    markers = opt_in_markers(found)
+    # The pin declares its own opt-in markers; nothing here is listed by hand.
+    assert "androidx.compose.material3.ExperimentalMaterial3Api" in markers
+    assert "kotlin.RequiresOptIn" not in markers
+    experimental = next(
+        declaration
+        for declaration in found.declarations
+        if declaration.owner == "androidx.compose.material3.TooltipDefaults"
+        and declaration.name == "richTooltipColors"
+    )
+    stable = next(
+        declaration
+        for declaration in found.declarations
+        if declaration.owner == "androidx.compose.material3.CheckboxDefaults"
+        and declaration.name == "colors"
+        and declaration.parameters
+    )
+    assert required_opt_ins(experimental, markers) == {
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+    }
+    assert required_opt_ins(stable, markers) == set()
 
 
 def test_release_drift_is_reported_instead_of_silently_accepted(

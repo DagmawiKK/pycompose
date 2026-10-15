@@ -55,3 +55,14 @@ def test_registry_rejects_malformed_registry() -> None:
     raw["components"]["Text"]["children"] = {"allowed": "yes"}
     with pytest.raises(ComponentRegistryError):
         Registry.from_mapping(raw)
+
+
+def test_registry_rejects_a_repeated_schema_version() -> None:
+    raw = _raw()
+    raw["supportedSchemaVersions"] = [
+        *raw["supportedSchemaVersions"],
+        raw["schemaVersion"],
+    ]
+    with pytest.raises(ComponentRegistryError) as excinfo:
+        Registry.from_mapping(raw)
+    assert "unique" in str(excinfo.value)
