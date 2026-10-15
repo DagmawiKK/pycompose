@@ -3,7 +3,7 @@ import groovy.json.JsonSlurper
 import java.security.MessageDigest
 
 // Development-only evidence: pinned Compose sources, compiled to typed defaults.
-// Neither this compiler nor its output ships; see tools/schema/SourceDefaults.kt.
+// Neither this compiler nor its output ships; see tools/SourceDefaults.kt.
 val sourceCompiler = configurations.create("composeSourceCompiler")
 
 dependencies {
@@ -22,7 +22,7 @@ fun approvedNames(schema: File): String {
     val values = registry["valueTypes"] as Map<*, *>
     return values.entries
         .map { (name, spec) ->
-            val bound = (spec as Map<*, *>?)?.containsKey("source") == true
+            val bound = (spec as Map<*, *>?)?.containsKey("family") == true
             if (bound) name else null
         }.filterNotNull()
         .joinToString(",")
@@ -33,7 +33,7 @@ tasks.register("dumpComposeDefaults") {
     description = "Resolve pinned source defaults as typed, non-executable evidence."
     dependsOn("dumpComposeApi")
     val schema = rootProject.file("../schema/components.json")
-    val tool = rootProject.file("../tools/schema/SourceDefaults.kt")
+    val tool = rootProject.file("tools/SourceDefaults.kt")
     val output = layout.buildDirectory.dir("compose-api")
     val names =
         providers.provider {
@@ -111,6 +111,9 @@ tasks.register("dumpComposeDefaults") {
                     "sources" to archives,
                     "targets" to targets,
                     "classpath" to nativeClasspath.map { it.absolutePath },
+                    "compilerClasspath" to sourceCompiler.files.map { it.absolutePath },
+                    "javaExecutable" to
+                        File(System.getProperty("java.home"), "bin/java").absolutePath,
                 ),
             ),
         )

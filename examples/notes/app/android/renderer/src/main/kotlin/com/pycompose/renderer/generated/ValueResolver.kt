@@ -4,6 +4,7 @@ package com.pycompose.renderer.generated
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.dp as default_androidx_compose_ui_unit_dp
 import kotlinx.serialization.json.JsonElement
 import com.pycompose.ir.generated.BrushValue
 import com.pycompose.ir.generated.ButtonColorsValue
@@ -57,24 +58,24 @@ object ValueResolver {
                 )
             }
             is WirehorizontalGradient -> {
-                androidx.compose.ui.graphics.Brush.horizontalGradient(
+                androidx.compose.ui.graphics.Brush.Companion.horizontalGradient(
                     colors = value.colors.map { element -> color(element) },
-                    startX = if ("startX" in value.supplied) value.startX?.let { item -> item.toFloat() }!! else 0f,
-                    endX = if ("endX" in value.supplied) value.endX?.let { item -> item.toFloat() }!! else Float.POSITIVE_INFINITY,
+                    startX = if ("startX" in value.supplied) value.startX?.let { item -> item.toFloat() }!! else 0.0f,
+                    endX = if ("endX" in value.supplied) value.endX?.let { item -> item.toFloat() }!! else kotlin.Float.Companion.POSITIVE_INFINITY,
                 )
             }
             is WirelinearGradient -> {
-                androidx.compose.ui.graphics.Brush.linearGradient(
+                androidx.compose.ui.graphics.Brush.Companion.linearGradient(
                     colors = value.colors.map { element -> color(element) },
-                    start = if ("start" in value.supplied) value.start?.let { item -> offset(item) }!! else androidx.compose.ui.geometry.Offset.Zero,
-                    end = if ("end" in value.supplied) value.end?.let { item -> offset(item) }!! else androidx.compose.ui.geometry.Offset.Infinite,
+                    start = if ("start" in value.supplied) value.start?.let { item -> offset(item) }!! else androidx.compose.ui.geometry.Offset.Companion.Zero,
+                    end = if ("end" in value.supplied) value.end?.let { item -> offset(item) }!! else androidx.compose.ui.geometry.Offset.Companion.Infinite,
                 )
             }
             is WireverticalGradient -> {
-                androidx.compose.ui.graphics.Brush.verticalGradient(
+                androidx.compose.ui.graphics.Brush.Companion.verticalGradient(
                     colors = value.colors.map { element -> color(element) },
-                    startY = if ("startY" in value.supplied) value.startY?.let { item -> item.toFloat() }!! else 0f,
-                    endY = if ("endY" in value.supplied) value.endY?.let { item -> item.toFloat() }!! else Float.POSITIVE_INFINITY,
+                    startY = if ("startY" in value.supplied) value.startY?.let { item -> item.toFloat() }!! else 0.0f,
+                    endY = if ("endY" in value.supplied) value.endY?.let { item -> item.toFloat() }!! else kotlin.Float.Companion.POSITIVE_INFINITY,
                 )
             }
         }
@@ -109,11 +110,11 @@ object ValueResolver {
         when (value) {
             is WirebuttonElevation -> {
                 androidx.compose.material3.ButtonDefaults.buttonElevation(
-                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
-                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
-                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
-                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(1f),
-                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
                 )
             }
         }
@@ -134,42 +135,42 @@ object ValueResolver {
             }
             is WireThemeColor -> {
                 when (value.name) {
-                    "primary" -> androidx.compose.material3.MaterialTheme.colorScheme.primary
-                    "onPrimary" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimary
-                    "primaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer
-                    "onPrimaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryContainer
-                    "inversePrimary" -> androidx.compose.material3.MaterialTheme.colorScheme.inversePrimary
-                    "secondary" -> androidx.compose.material3.MaterialTheme.colorScheme.secondary
-                    "onSecondary" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondary
-                    "secondaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryContainer
-                    "onSecondaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryContainer
-                    "tertiary" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiary
-                    "onTertiary" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiary
-                    "tertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryContainer
-                    "onTertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryContainer
                     "background" -> androidx.compose.material3.MaterialTheme.colorScheme.background
-                    "onBackground" -> androidx.compose.material3.MaterialTheme.colorScheme.onBackground
-                    "surface" -> androidx.compose.material3.MaterialTheme.colorScheme.surface
-                    "onSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.onSurface
-                    "surfaceVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant
-                    "onSurfaceVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
-                    "surfaceTint" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceTint
-                    "inverseSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.inverseSurface
-                    "inverseOnSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface
                     "error" -> androidx.compose.material3.MaterialTheme.colorScheme.error
-                    "onError" -> androidx.compose.material3.MaterialTheme.colorScheme.onError
                     "errorContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.errorContainer
+                    "inverseOnSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface
+                    "inversePrimary" -> androidx.compose.material3.MaterialTheme.colorScheme.inversePrimary
+                    "inverseSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.inverseSurface
+                    "onBackground" -> androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+                    "onError" -> androidx.compose.material3.MaterialTheme.colorScheme.onError
                     "onErrorContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onErrorContainer
+                    "onPrimary" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimary
+                    "onPrimaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryContainer
+                    "onSecondary" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondary
+                    "onSecondaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryContainer
+                    "onSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+                    "onSurfaceVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+                    "onTertiary" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiary
+                    "onTertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryContainer
                     "outline" -> androidx.compose.material3.MaterialTheme.colorScheme.outline
                     "outlineVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.outlineVariant
+                    "primary" -> androidx.compose.material3.MaterialTheme.colorScheme.primary
+                    "primaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer
                     "scrim" -> androidx.compose.material3.MaterialTheme.colorScheme.scrim
+                    "secondary" -> androidx.compose.material3.MaterialTheme.colorScheme.secondary
+                    "secondaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryContainer
+                    "surface" -> androidx.compose.material3.MaterialTheme.colorScheme.surface
                     "surfaceBright" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceBright
-                    "surfaceDim" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceDim
                     "surfaceContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainer
                     "surfaceContainerHigh" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerHigh
                     "surfaceContainerHighest" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerHighest
                     "surfaceContainerLow" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerLow
                     "surfaceContainerLowest" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerLowest
+                    "surfaceDim" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceDim
+                    "surfaceTint" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceTint
+                    "surfaceVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant
+                    "tertiary" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiary
+                    "tertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryContainer
                     else -> error("Unknown native constant")
                 }
             }
@@ -202,11 +203,11 @@ object ValueResolver {
         when (value) {
             is WireFontFamily -> {
                 when (value.name) {
+                    "Cursive" -> androidx.compose.ui.text.font.FontFamily.Cursive
                     "Default" -> androidx.compose.ui.text.font.FontFamily.Default
+                    "Monospace" -> androidx.compose.ui.text.font.FontFamily.Monospace
                     "SansSerif" -> androidx.compose.ui.text.font.FontFamily.SansSerif
                     "Serif" -> androidx.compose.ui.text.font.FontFamily.Serif
-                    "Monospace" -> androidx.compose.ui.text.font.FontFamily.Monospace
-                    "Cursive" -> androidx.compose.ui.text.font.FontFamily.Cursive
                     else -> error("Unknown native constant")
                 }
             }
@@ -256,10 +257,10 @@ object ValueResolver {
         when (value) {
             is WirePaddingValues -> {
                 androidx.compose.foundation.layout.PaddingValues(
-                    start = if ("start" in value.supplied) value.start?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
-                    top = if ("top" in value.supplied) value.top?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
-                    end = if ("end" in value.supplied) value.end?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
-                    bottom = if ("bottom" in value.supplied) value.bottom?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
+                    start = if ("start" in value.supplied) value.start?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    top = if ("top" in value.supplied) value.top?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    end = if ("end" in value.supplied) value.end?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    bottom = if ("bottom" in value.supplied) value.bottom?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
                 )
             }
         }
@@ -285,11 +286,11 @@ object ValueResolver {
             }
             is WireThemeShape -> {
                 when (value.name) {
-                    "extraSmall" -> androidx.compose.material3.MaterialTheme.shapes.extraSmall
-                    "small" -> androidx.compose.material3.MaterialTheme.shapes.small
-                    "medium" -> androidx.compose.material3.MaterialTheme.shapes.medium
-                    "large" -> androidx.compose.material3.MaterialTheme.shapes.large
                     "extraLarge" -> androidx.compose.material3.MaterialTheme.shapes.extraLarge
+                    "extraSmall" -> androidx.compose.material3.MaterialTheme.shapes.extraSmall
+                    "large" -> androidx.compose.material3.MaterialTheme.shapes.large
+                    "medium" -> androidx.compose.material3.MaterialTheme.shapes.medium
+                    "small" -> androidx.compose.material3.MaterialTheme.shapes.small
                     else -> error("Unknown native constant")
                 }
             }
@@ -305,32 +306,31 @@ object ValueResolver {
     fun textStyle(value: TextStyleValue): androidx.compose.ui.text.TextStyle =
         when (value) {
             is WireTextStyle -> {
-                val defaults = androidx.compose.ui.text.TextStyle()
                 androidx.compose.ui.text.TextStyle(
-                    color = if ("color" in value.supplied) value.color?.let { item -> color(item) }!! else defaults.color,
-                    fontSize = if ("fontSize" in value.supplied) value.fontSize?.let { item -> textUnit(item) }!! else defaults.fontSize,
-                    letterSpacing = if ("letterSpacing" in value.supplied) value.letterSpacing?.let { item -> textUnit(item) }!! else defaults.letterSpacing,
-                    fontFamily = if ("fontFamily" in value.supplied) value.fontFamily?.let { item -> fontFamily(item) } else defaults.fontFamily,
-                    fontWeight = if ("fontWeight" in value.supplied) value.fontWeight?.let { item -> fontWeight(item) } else defaults.fontWeight,
+                    color = if ("color" in value.supplied) value.color?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    fontSize = if ("fontSize" in value.supplied) value.fontSize?.let { item -> textUnit(item) }!! else androidx.compose.ui.unit.TextUnit.Companion.Unspecified,
+                    letterSpacing = if ("letterSpacing" in value.supplied) value.letterSpacing?.let { item -> textUnit(item) }!! else androidx.compose.ui.unit.TextUnit.Companion.Unspecified,
+                    fontFamily = if ("fontFamily" in value.supplied) value.fontFamily?.let { item -> fontFamily(item) } else null,
+                    fontWeight = if ("fontWeight" in value.supplied) value.fontWeight?.let { item -> fontWeight(item) } else null,
                 )
             }
             is WireThemeTypography -> {
                 when (value.name) {
+                    "bodyLarge" -> androidx.compose.material3.MaterialTheme.typography.bodyLarge
+                    "bodyMedium" -> androidx.compose.material3.MaterialTheme.typography.bodyMedium
+                    "bodySmall" -> androidx.compose.material3.MaterialTheme.typography.bodySmall
                     "displayLarge" -> androidx.compose.material3.MaterialTheme.typography.displayLarge
                     "displayMedium" -> androidx.compose.material3.MaterialTheme.typography.displayMedium
                     "displaySmall" -> androidx.compose.material3.MaterialTheme.typography.displaySmall
                     "headlineLarge" -> androidx.compose.material3.MaterialTheme.typography.headlineLarge
                     "headlineMedium" -> androidx.compose.material3.MaterialTheme.typography.headlineMedium
                     "headlineSmall" -> androidx.compose.material3.MaterialTheme.typography.headlineSmall
-                    "titleLarge" -> androidx.compose.material3.MaterialTheme.typography.titleLarge
-                    "titleMedium" -> androidx.compose.material3.MaterialTheme.typography.titleMedium
-                    "titleSmall" -> androidx.compose.material3.MaterialTheme.typography.titleSmall
-                    "bodyLarge" -> androidx.compose.material3.MaterialTheme.typography.bodyLarge
-                    "bodyMedium" -> androidx.compose.material3.MaterialTheme.typography.bodyMedium
-                    "bodySmall" -> androidx.compose.material3.MaterialTheme.typography.bodySmall
                     "labelLarge" -> androidx.compose.material3.MaterialTheme.typography.labelLarge
                     "labelMedium" -> androidx.compose.material3.MaterialTheme.typography.labelMedium
                     "labelSmall" -> androidx.compose.material3.MaterialTheme.typography.labelSmall
+                    "titleLarge" -> androidx.compose.material3.MaterialTheme.typography.titleLarge
+                    "titleMedium" -> androidx.compose.material3.MaterialTheme.typography.titleMedium
+                    "titleSmall" -> androidx.compose.material3.MaterialTheme.typography.titleSmall
                     else -> error("Unknown native constant")
                 }
             }
@@ -364,10 +364,10 @@ object ValueResolver {
         when (value) {
             is WireWindowInsets -> {
                 androidx.compose.foundation.layout.WindowInsets(
-                    left = if ("left" in value.supplied) value.left?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
-                    top = if ("top" in value.supplied) value.top?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
-                    right = if ("right" in value.supplied) value.right?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
-                    bottom = if ("bottom" in value.supplied) value.bottom?.let { item -> dp(item) }!! else androidx.compose.ui.unit.Dp(0f),
+                    left = if ("left" in value.supplied) value.left?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    top = if ("top" in value.supplied) value.top?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    right = if ("right" in value.supplied) value.right?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    bottom = if ("bottom" in value.supplied) value.bottom?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
                 )
             }
         }

@@ -190,8 +190,8 @@ object ValueContract {
         "0\"},\"Em\":{\"family\":\"TextUnit\",\"parameters\":{\"value\":{\"requir" +
         "ed\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"FontFamily\":{\"f" +
         "amily\":\"FontFamily\",\"parameters\":{\"name\":{\"required\":true,\"t" +
-        "ype\":\"string\",\"values\":[\"Default\",\"SansSerif\",\"Serif\",\"Monos" +
-        "pace\",\"Cursive\"]}},\"since\":\"1.11.0\"},\"FontWeight\":{\"family\":" +
+        "ype\":\"string\",\"values\":[\"Cursive\",\"Default\",\"Monospace\",\"San" +
+        "sSerif\",\"Serif\"]}},\"since\":\"1.11.0\"},\"FontWeight\":{\"family\":" +
         "\"FontWeight\",\"parameters\":{\"weight\":{\"maximum\":1000,\"minimum" +
         "\":1,\"required\":true,\"type\":\"int\"}},\"since\":\"1.11.0\"},\"Offset" +
         "\":{\"family\":\"Offset\",\"parameters\":{\"x\":{\"required\":true,\"typ" +
@@ -217,25 +217,25 @@ object ValueContract {
         "ue,\"type\":\"value\",\"valueType\":\"FontWeight\"},\"letterSpacing\":" +
         "{\"type\":\"value\",\"valueType\":\"TextUnit\"}},\"since\":\"1.11.0\"},\"" +
         "ThemeColor\":{\"family\":\"Color\",\"parameters\":{\"name\":{\"require" +
-        "d\":true,\"type\":\"string\",\"values\":[\"primary\",\"onPrimary\",\"pri" +
-        "maryContainer\",\"onPrimaryContainer\",\"inversePrimary\",\"second" +
-        "ary\",\"onSecondary\",\"secondaryContainer\",\"onSecondaryContaine" +
-        "r\",\"tertiary\",\"onTertiary\",\"tertiaryContainer\",\"onTertiaryCo" +
-        "ntainer\",\"background\",\"onBackground\",\"surface\",\"onSurface\",\"" +
-        "surfaceVariant\",\"onSurfaceVariant\",\"surfaceTint\",\"inverseSur" +
-        "face\",\"inverseOnSurface\",\"error\",\"onError\",\"errorContainer\"," +
-        "\"onErrorContainer\",\"outline\",\"outlineVariant\",\"scrim\",\"surfa" +
-        "ceBright\",\"surfaceDim\",\"surfaceContainer\",\"surfaceContainerH" +
-        "igh\",\"surfaceContainerHighest\",\"surfaceContainerLow\",\"surfac" +
-        "eContainerLowest\"]}},\"since\":\"1.11.0\"},\"ThemeShape\":{\"family" +
+        "d\":true,\"type\":\"string\",\"values\":[\"background\",\"error\",\"erro" +
+        "rContainer\",\"inverseOnSurface\",\"inversePrimary\",\"inverseSurf" +
+        "ace\",\"onBackground\",\"onError\",\"onErrorContainer\",\"onPrimary\"" +
+        ",\"onPrimaryContainer\",\"onSecondary\",\"onSecondaryContainer\",\"" +
+        "onSurface\",\"onSurfaceVariant\",\"onTertiary\",\"onTertiaryContai" +
+        "ner\",\"outline\",\"outlineVariant\",\"primary\",\"primaryContainer\"" +
+        ",\"scrim\",\"secondary\",\"secondaryContainer\",\"surface\",\"surface" +
+        "Bright\",\"surfaceContainer\",\"surfaceContainerHigh\",\"surfaceCo" +
+        "ntainerHighest\",\"surfaceContainerLow\",\"surfaceContainerLowes" +
+        "t\",\"surfaceDim\",\"surfaceTint\",\"surfaceVariant\",\"tertiary\",\"t" +
+        "ertiaryContainer\"]}},\"since\":\"1.11.0\"},\"ThemeShape\":{\"family" +
         "\":\"Shape\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"stri" +
-        "ng\",\"values\":[\"extraSmall\",\"small\",\"medium\",\"large\",\"extraLa" +
-        "rge\"]}},\"since\":\"1.11.0\"},\"ThemeTypography\":{\"family\":\"TextS" +
+        "ng\",\"values\":[\"extraLarge\",\"extraSmall\",\"large\",\"medium\",\"sm" +
+        "all\"]}},\"since\":\"1.11.0\"},\"ThemeTypography\":{\"family\":\"TextS" +
         "tyle\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\"," +
-        "\"values\":[\"displayLarge\",\"displayMedium\",\"displaySmall\",\"hea" +
-        "dlineLarge\",\"headlineMedium\",\"headlineSmall\",\"titleLarge\",\"t" +
-        "itleMedium\",\"titleSmall\",\"bodyLarge\",\"bodyMedium\",\"bodySmall" +
-        "\",\"labelLarge\",\"labelMedium\",\"labelSmall\"]}},\"since\":\"1.11.0" +
+        "\"values\":[\"bodyLarge\",\"bodyMedium\",\"bodySmall\",\"displayLarge" +
+        "\",\"displayMedium\",\"displaySmall\",\"headlineLarge\",\"headlineMe" +
+        "dium\",\"headlineSmall\",\"labelLarge\",\"labelMedium\",\"labelSmall" +
+        "\",\"titleLarge\",\"titleMedium\",\"titleSmall\"]}},\"since\":\"1.11.0" +
         "\"},\"WindowInsets\":{\"family\":\"WindowInsets\",\"parameters\":{\"bo" +
         "ttom\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"left\":{" +
         "\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"right\":{\"minim" +

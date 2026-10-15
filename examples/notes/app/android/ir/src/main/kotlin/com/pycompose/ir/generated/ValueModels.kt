@@ -182,8 +182,8 @@ object ValueContract {
         "0\"},\"Em\":{\"family\":\"TextUnit\",\"parameters\":{\"value\":{\"requir" +
         "ed\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"FontFamily\":{\"f" +
         "amily\":\"FontFamily\",\"parameters\":{\"name\":{\"required\":true,\"t" +
-        "ype\":\"string\",\"values\":[\"Default\",\"SansSerif\",\"Serif\",\"Monos" +
-        "pace\",\"Cursive\"]}},\"since\":\"1.11.0\"},\"FontWeight\":{\"family\":" +
+        "ype\":\"string\",\"values\":[\"Cursive\",\"Default\",\"Monospace\",\"San" +
+        "sSerif\",\"Serif\"]}},\"since\":\"1.11.0\"},\"FontWeight\":{\"family\":" +
         "\"FontWeight\",\"parameters\":{\"weight\":{\"maximum\":1000,\"minimum" +
         "\":1,\"required\":true,\"type\":\"int\"}},\"since\":\"1.11.0\"},\"Offset" +
         "\":{\"family\":\"Offset\",\"parameters\":{\"x\":{\"required\":true,\"typ" +
@@ -206,25 +206,25 @@ object ValueContract {
         "\":{\"nullable\":true,\"type\":\"value\",\"valueType\":\"FontWeight\"}," +
         "\"letterSpacing\":{\"type\":\"value\",\"valueType\":\"TextUnit\"}},\"si" +
         "nce\":\"1.11.0\"},\"ThemeColor\":{\"family\":\"Color\",\"parameters\":{" +
-        "\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"primary\"," +
-        "\"onPrimary\",\"primaryContainer\",\"onPrimaryContainer\",\"inverse" +
-        "Primary\",\"secondary\",\"onSecondary\",\"secondaryContainer\",\"onS" +
-        "econdaryContainer\",\"tertiary\",\"onTertiary\",\"tertiaryContaine" +
-        "r\",\"onTertiaryContainer\",\"background\",\"onBackground\",\"surfac" +
-        "e\",\"onSurface\",\"surfaceVariant\",\"onSurfaceVariant\",\"surfaceT" +
-        "int\",\"inverseSurface\",\"inverseOnSurface\",\"error\",\"onError\",\"" +
-        "errorContainer\",\"onErrorContainer\",\"outline\",\"outlineVariant" +
-        "\",\"scrim\",\"surfaceBright\",\"surfaceDim\",\"surfaceContainer\",\"s" +
-        "urfaceContainerHigh\",\"surfaceContainerHighest\",\"surfaceConta" +
-        "inerLow\",\"surfaceContainerLowest\"]}},\"since\":\"1.11.0\"},\"Them" +
+        "\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"backgroun" +
+        "d\",\"error\",\"errorContainer\",\"inverseOnSurface\",\"inversePrima" +
+        "ry\",\"inverseSurface\",\"onBackground\",\"onError\",\"onErrorContai" +
+        "ner\",\"onPrimary\",\"onPrimaryContainer\",\"onSecondary\",\"onSecon" +
+        "daryContainer\",\"onSurface\",\"onSurfaceVariant\",\"onTertiary\",\"" +
+        "onTertiaryContainer\",\"outline\",\"outlineVariant\",\"primary\",\"p" +
+        "rimaryContainer\",\"scrim\",\"secondary\",\"secondaryContainer\",\"s" +
+        "urface\",\"surfaceBright\",\"surfaceContainer\",\"surfaceContainer" +
+        "High\",\"surfaceContainerHighest\",\"surfaceContainerLow\",\"surfa" +
+        "ceContainerLowest\",\"surfaceDim\",\"surfaceTint\",\"surfaceVarian" +
+        "t\",\"tertiary\",\"tertiaryContainer\"]}},\"since\":\"1.11.0\"},\"Them" +
         "eShape\":{\"family\":\"Shape\",\"parameters\":{\"name\":{\"required\":t" +
-        "rue,\"type\":\"string\",\"values\":[\"extraSmall\",\"small\",\"medium\"," +
-        "\"large\",\"extraLarge\"]}},\"since\":\"1.11.0\"},\"ThemeTypography\":" +
+        "rue,\"type\":\"string\",\"values\":[\"extraLarge\",\"extraSmall\",\"lar" +
+        "ge\",\"medium\",\"small\"]}},\"since\":\"1.11.0\"},\"ThemeTypography\":" +
         "{\"family\":\"TextStyle\",\"parameters\":{\"name\":{\"required\":true," +
-        "\"type\":\"string\",\"values\":[\"displayLarge\",\"displayMedium\",\"di" +
-        "splaySmall\",\"headlineLarge\",\"headlineMedium\",\"headlineSmall\"" +
-        ",\"titleLarge\",\"titleMedium\",\"titleSmall\",\"bodyLarge\",\"bodyMe" +
-        "dium\",\"bodySmall\",\"labelLarge\",\"labelMedium\",\"labelSmall\"]}}" +
+        "\"type\":\"string\",\"values\":[\"bodyLarge\",\"bodyMedium\",\"bodySmal" +
+        "l\",\"displayLarge\",\"displayMedium\",\"displaySmall\",\"headlineLa" +
+        "rge\",\"headlineMedium\",\"headlineSmall\",\"labelLarge\",\"labelMed" +
+        "ium\",\"labelSmall\",\"titleLarge\",\"titleMedium\",\"titleSmall\"]}}" +
         ",\"since\":\"1.11.0\"},\"WindowInsets\":{\"family\":\"WindowInsets\",\"" +
         "parameters\":{\"bottom\":{\"minimum\":0,\"type\":\"value\",\"valueType" +
         "\":\"Dp\"},\"left\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}" +

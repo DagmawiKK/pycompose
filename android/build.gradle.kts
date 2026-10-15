@@ -63,8 +63,9 @@ subprojects {
 
 spotless {
     kotlin {
-        target("architecture/src/**/*.kt")
-        ktlint("1.3.1")
+        target("architecture/src/**/*.kt", "tools/*.kt")
+        // Detekt enforces 100 columns; ktlint 1.3.1 fails to converge on this compiler AST code.
+        ktlint("1.3.1").editorConfigOverride(mapOf("ktlint_standard_max-line-length" to "disabled"))
     }
     kotlinGradle {
         target("*.gradle.kts")
@@ -75,7 +76,7 @@ spotless {
 detekt {
     buildUponDefaultConfig = true
     config.setFrom(files("config/detekt.yml"))
-    source.setFrom(files("architecture/src/test/kotlin"))
+    source.setFrom(files("architecture/src/test/kotlin", "tools"))
 }
 
 tasks.register("testDebugUnitTest") {

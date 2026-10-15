@@ -30,7 +30,7 @@ def validate_definitions(registry: dict[str, Any]) -> None:
             if not field.isidentifier() or keyword.iskeyword(to_snake_case(field)):
                 _die(f"invalid value parameter: {name}.{field}")
             _validate_rule(rule, families)
-            _validate_default(name, field, rule, spec["native"])
+            _validate_default(name, field, rule)
     for section in ("components", "modifiers"):
         for spec in registry.get(section, {}).values():
             for prop in spec["props"].values():
@@ -40,9 +40,7 @@ def validate_definitions(registry: dict[str, Any]) -> None:
                     _die("value props need a valueType")
 
 
-def _validate_default(
-    name: str, field: str, rule: dict[str, Any], native: dict[str, Any]
-) -> None:
+def _validate_default(name: str, field: str, rule: dict[str, Any]) -> None:
     """Every optional parameter needs a default; only typed evidence is accepted."""
     from pycompose.schema.codegen.main import _die
 
@@ -51,9 +49,7 @@ def _validate_default(
             render_default(rule["default"], set())
         except ValueError as exc:
             _die(f"{name}.{field}: {exc}")
-    elif not rule.get("required") and not (
-        "defaultNative" in rule or {"defaults"} & set(native)
-    ):
+    elif not rule.get("required"):
         _die(f"missing native default provider: {name}.{field}")
 
 
@@ -383,8 +379,6 @@ def render_native(registry: dict[str, Any]) -> str:
                 continue
             native = spec["native"]
             lines.append(f"            is Wire{name} -> {{")
-            if "defaults" in native:
-                lines.append(f"                val defaults = {native['defaults']}")
             if "constants" in native or "propertyOwner" in native:
                 choices = native.get("constants") or {
                     key: native["propertyOwner"] + "." + key
@@ -418,10 +412,7 @@ def render_native(registry: dict[str, Any]) -> str:
                     else:
                         expression = _decode_parameter(source, rule)
                     if not rule.get("required"):
-                        fallback = defaults.get(
-                            (name, field),
-                            rule.get("defaultNative", f"defaults.{field}"),
-                        )
+                        fallback = defaults[name, field]
                         present = expression + ("" if rule.get("nullable") else "!!")
                         expression = (
                             f'if ("{field}" in value.supplied) '

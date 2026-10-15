@@ -16,7 +16,7 @@ SYMBOL = re.compile(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+")
 def render_default(expression: dict[str, Any], imports: set[str]) -> str:
     """Validate and render one typed expression, collecting extension imports.
 
-    The vocabulary is closed and mirrors ``tools/schema/SourceDefaults.kt``:
+    The vocabulary is closed and mirrors ``android/tools/SourceDefaults.kt``:
     literals, public properties, extension properties over a literal receiver, and
     zero-argument public calls. A call carrying arguments would smuggle per-binding
     Kotlin back into the schema, so it is refused rather than rendered.

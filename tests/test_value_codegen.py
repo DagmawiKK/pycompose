@@ -66,6 +66,20 @@ def test_explicit_value_imports_are_kept_in_app_slice(tmp_path: Path) -> None:
     )
 
 
+def test_codegen_refuses_untyped_native_defaults(tmp_path: Path, monkeypatch) -> None:
+    from pycompose.schema.codegen import main
+
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    rule = registry["valueTypes"]["buttonElevation"]["parameters"]["defaultElevation"]
+    rule.pop("default")
+    rule["defaultNative"] = "arbitrary.native.Expression()"
+    path = tmp_path / "components.json"
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match="missing native default provider"):
+        main.load_registry()
+
+
 def test_value_runtime_contract_excludes_native_build_metadata() -> None:
     registry = json.loads((ROOT / "schema/components.json").read_text())
     python = render_python(registry)

@@ -59,10 +59,7 @@ class ArchitectureTest {
 
     private fun boundaryCondition(): ArchCondition<JavaClass> =
         object : ArchCondition<JavaClass>("respect renderer and bridge dependency boundaries") {
-            override fun check(
-                item: JavaClass,
-                events: ConditionEvents,
-            ) {
+            override fun check(item: JavaClass, events: ConditionEvents) {
                 val renderer = item.packageName.startsWith("com.pycompose.renderer")
                 val bridge = item.packageName.startsWith("com.pycompose.host.bridge")
                 item.directDependenciesFromSelf.forEach { dependency ->

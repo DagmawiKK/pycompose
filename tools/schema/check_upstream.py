@@ -11,9 +11,9 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from schema.classpath_dump import DUMP_DIR, Inventory, inventory, source_defaults
-from schema.propose import identity, propose_value, select
+from schema.propose import refresh
 
-DERIVED = ("source", "kotlinType", "native")
+DERIVED = ("source", "kotlinType", "native", "omitted")
 """Fields the pinned compiler alone decides; approved policy only adds."""
 DRIFT = "pinned proposal differs from approved binding; review before applying"
 
@@ -32,6 +32,7 @@ def _derived(spec: dict[str, Any]) -> dict[str, Any]:
                     "nullable",
                     "default",
                     "items",
+                    "values",
                 )
                 if key in rule
             }
@@ -63,34 +64,30 @@ def compare(registry: dict[str, Any], found: Inventory) -> list[str]:
 def compare_values(
     registry: dict[str, Any], found: Inventory, evidence: dict
 ) -> list[str]:
-    """Check derived bindings; hand-maintained policy is reported, not judged."""
+    """Re-derive every binding the same way ``--refresh`` does, and compare.
+
+    Sharing one derivation is deliberate: a drift check that re-implements the
+    proposal rules would disagree with the proposer at exactly the moment a
+    release changes something.
+
+    Args:
+        registry: The approved catalog.
+        found: The validated inventory of the current pin.
+        evidence: Compiler-resolved defaults keyed by JVM identity.
+
+    Returns:
+        One message per binding whose pinned derivation no longer matches.
+    """
     errors = []
-    values = {n: s for n, s in registry["valueTypes"].items() if "family" in s}
-    families = {s["kotlinType"].replace(".", "/"): s["family"] for s in values.values()}
-    for name, spec in values.items():
+    for item in refresh(found, evidence, registry):
+        name = item["name"]
+        spec = registry["valueTypes"][name]
         if "source" not in spec:
-            continue  # Legacy descriptors remain explicit policy, not derived coverage.
-        matches = select(found, spec["source"], name)
-        if len(matches) != 1 or identity(matches[0]) != spec["source"]:
-            errors.append(
-                f"{name}: approved JVM symbol is missing or ambiguous at this pin"
-            )
+            continue  # Explicit policy is reviewed, not re-derived.
+        if "proposal" not in item:
+            errors.append(f"{name}: {item.get('unsupported', 'no proposal')}")
             continue
-        source = matches[0]
-        try:
-            derived = propose_value(
-                source,
-                since=spec["since"],
-                families=families,
-                defaults=evidence.get(
-                    (source.owner, source.jvm_name, source.jvm_descriptor)
-                ),
-                role=spec.get("kind"),
-            )
-        except ValueError as exc:
-            errors.append(f"{name}: {exc}")
-            continue
-        if _derived(derived) != _derived(spec):
+        if _derived(item["proposal"]) != _derived(spec):
             errors.append(f"{name}: {DRIFT}")
     return errors
 

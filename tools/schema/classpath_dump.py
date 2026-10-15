@@ -338,7 +338,9 @@ def source_defaults(
     _require(
         data["toolHash"]
         == hashlib.sha256(
-            Path(__file__).with_name("SourceDefaults.kt").read_bytes()
+            (
+                Path(__file__).resolve().parents[2] / "android/tools/SourceDefaults.kt"
+            ).read_bytes()
         ).hexdigest(),
         "stale source compiler; rerun dumpComposeDefaults",
     )

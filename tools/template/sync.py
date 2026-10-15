@@ -26,6 +26,7 @@ EXCLUDED = frozenset(
         # app is handed generated code, and never regenerates the catalog.
         "dump-compose-api.gradle.kts",
         "dump-compose-defaults.gradle.kts",
+        "tools",
     }
 )
 

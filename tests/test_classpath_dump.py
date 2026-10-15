@@ -374,13 +374,12 @@ def test_pinned_source_defaults_generate_native_factories(native_document) -> No
     assert "defaultNative" not in json.dumps(spec)
 
 
-def test_defaults_the_compiler_cannot_pin_are_refused_not_guessed(
+def test_internal_immutable_tokens_reduce_to_public_typed_defaults(
     native_document,
 ) -> None:
     assert native_document["provenance"]["compiler"] == "2.0.21"
-    # Material3 keeps these defaults in a non-public token object, so the
-    # compiler must refuse them rather than couple generated code to API that
-    # may change without notice.
+    # Resolve the immutable initializer chain, without referencing internal API
+    # or transcribing token values into binding policy.
     resolve = ["--console=plain", "-PcomposeValueNames=buttonElevation"]
     try:
         result = subprocess.run(
@@ -391,7 +390,7 @@ def test_defaults_the_compiler_cannot_pin_are_refused_not_guessed(
             check=False,
         )
         assert result.returncode == 0, result.stdout + result.stderr
-        assert_refuses_token_defaults()
+        assert_resolves_token_defaults()
     finally:
         # Restore the catalog-wide evidence the other seams depend on.
         subprocess.run(
@@ -403,8 +402,8 @@ def test_defaults_the_compiler_cannot_pin_are_refused_not_guessed(
         )
 
 
-def assert_refuses_token_defaults() -> None:
-    """A non-public default must be refused, never guessed at."""
+def assert_resolves_token_defaults() -> None:
+    """Pinned immutable elevation tokens reduce to 0/1 dp, not internal symbols."""
     from schema.classpath_dump import inventory, source_defaults
     from schema.propose import propose_value
 
@@ -412,23 +411,126 @@ def assert_refuses_token_defaults() -> None:
     defaults = source_defaults(DUMP)
     source = next(d for d in found.declarations if d.name == "buttonElevation")
     key = (source.owner, source.jvm_name, source.jvm_descriptor)
-    assert all(
-        rule["kind"] == "unsupported" and "non-public" in rule["reason"]
-        for rule in defaults[key].values()
+    spec = propose_value(
+        source,
+        since="1.11.0",
+        families={"androidx/compose/ui/unit/Dp": "Dp"},
+        defaults=defaults[key],
     )
-    with pytest.raises(ValueError, match="non-public"):
-        propose_value(
-            source,
-            since="1.11.0",
-            families={"androidx/compose/ui/unit/Dp": "Dp"},
-            defaults=defaults[key],
+    assert "tokens" not in json.dumps(spec["parameters"])
+    for name, rule in spec["parameters"].items():
+        assert rule["default"] == {
+            "kind": "extensionProperty",
+            "symbol": "androidx.compose.ui.unit.dp",
+            "receiver": {
+                "kind": "literal",
+                "type": "kotlin/Double",
+                "value": 1.0 if name == "hoveredElevation" else 0.0,
+            },
+        }
+
+
+@pytest.mark.parametrize(
+    ("initializer", "reason"),
+    [
+        (
+            "public fun nextValue(): Int = 1\ninternal val Frozen = nextValue()",
+            "call in token initializer",
+        ),
+        (
+            "public val computed: Int get() = 1\ninternal val Frozen = computed",
+            "computed reference in token initializer",
+        ),
+        ("internal val Frozen: Int get() = 1", "computed token default"),
+        ("internal var Frozen = 1", "mutable default reference"),
+        ("internal val Frozen by lazy { 1 }", "computed token default"),
+        (
+            "internal val Frozen: Int = Other\ninternal val Other: Int = Frozen",
+            "cyclic/deep token default",
+        ),
+        (
+            "internal object Tokens { val Fixed = 1 }\n"
+            'internal fun choose(): Tokens = error("must execute")\n'
+            "internal val Frozen = choose().Fixed",
+            "computed qualifier in default",
+        ),
+    ],
+)
+def test_unsafe_token_initializers_are_refused(
+    native_document, tmp_path, initializer, reason
+) -> None:
+    import zipfile
+
+    assert native_document["provenance"]["compiler"] == "2.0.21"
+    request_path = ROOT / DUMP / "source-request.json"
+    request = json.loads(request_path.read_text())
+    tool = ROOT / "android/tools/SourceDefaults.kt"
+    assert request["toolHash"] == hashlib.sha256(tool.read_bytes()).hexdigest()
+    archive = tmp_path / "probe-sources.jar"
+    with zipfile.ZipFile(archive, "w") as source:
+        source.writestr(
+            "Probe.kt",
+            "package probe\n"
+            + initializer
+            + "\npublic fun target(value: Int = Frozen): Int = value\n",
         )
-    registry = json.loads((ROOT / "schema/components.json").read_text())
-    assert "source" not in registry["valueTypes"]["buttonElevation"]
+    integer = type_doc("kotlin/Int")
+    request.update(
+        sources=[
+            {
+                "artifact": "fixture:probe:1",
+                "file": str(archive),
+                "sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+            }
+        ],
+        targets=[
+            declaration(
+                "target",
+                "(I)I",
+                artifact="fixture:probe:1",
+                owner="probe.ProbeKt",
+                package="probe",
+                disposition="support",
+                composable=False,
+                annotations={},
+                declarationKind="function",
+                sourceFile="Probe.kt",
+                returnType=integer,
+                parameters=[parameter("value", integer, has_default=True)],
+            )
+        ],
+    )
+    probe_request = tmp_path / "request.json"
+    probe_result = tmp_path / "result.json"
+    probe_request.write_text(json.dumps(request))
+    result = subprocess.run(
+        [
+            request["javaExecutable"],
+            "-cp",
+            os.pathsep.join(
+                [
+                    *request["compilerClasspath"],
+                    str(request_path.parent / "source-tool"),
+                ]
+            ),
+            "SourceDefaultsKt",
+            str(probe_request),
+            str(probe_result),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=60,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    record = json.loads(probe_result.read_text())["declarations"][0]
+    assert record["matched"] is True
+    assert record["defaults"]["value"]["kind"] == "unsupported"
+    assert reason in record["defaults"]["value"]["reason"]
 
 
 def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -> None:
-    from schema.check_upstream import _derived, compare_values
+    from schema.check_upstream import compare_values
     from schema.classpath_dump import inventory, source_defaults
     from schema.propose import refresh
 
@@ -448,9 +550,28 @@ def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -
         approved = registry["valueTypes"][item["name"]]
         # A refresh reproduces the approved compiler-resolved facts exactly;
         # semantic policy such as ARGB bounds is preserved, not regenerated.
-        assert _derived(item["proposal"]) == _derived(approved)
-    # Legacy policy is reported as such rather than counted as automated.
-    assert all(item.get("handwritten") for item in results if "proposal" not in item)
+        assert item["proposal"] == approved
+    assert len(derived) == len(results) == 22
+    specs = {item["name"]: item["proposal"] for item in derived}
+    assert specs["RoundedCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
+    assert specs["CutCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
+    assert specs["SolidColor"]["kotlinType"] == "androidx.compose.ui.graphics.Brush"
+    assert len(specs["ThemeColor"]["parameters"]["name"]["values"]) == 36
+    assert len(specs["ThemeTypography"]["parameters"]["name"]["values"]) == 15
+    assert len(specs["ThemeShape"]["parameters"]["name"]["values"]) == 5
+    assert len(specs["FontFamily"]["parameters"]["name"]["values"]) == 5
+    assert list(specs["TextStyle"]["parameters"]) == [
+        "color",
+        "fontSize",
+        "letterSpacing",
+        "fontFamily",
+        "fontWeight",
+    ]
+    assert len(specs["TextStyle"]["omitted"]) == 19
+    for name in ("horizontalGradient", "verticalGradient", "linearGradient"):
+        assert specs[name]["parameters"]["colors"]["items"]["valueType"] == "Color"
+        assert specs[name]["omitted"]["tileMode"]["hasDefault"] is True
+    assert "defaultNative" not in json.dumps(specs)
     assert compare_values(registry, found, evidence) == []
 
 
@@ -470,6 +591,82 @@ def test_release_drift_is_reported_instead_of_silently_accepted(
     ] = "androidx.compose.ui.graphics.Color.Companion.Red"
     errors = compare_values(registry, found, source_defaults(DUMP))
     assert errors == [f"buttonColors: {DRIFT}"]
+
+
+def test_named_member_and_omission_drift_require_review(native_document) -> None:
+    from dataclasses import replace
+
+    from schema.check_upstream import DRIFT, compare_values
+    from schema.classpath_dump import inventory, source_defaults
+
+    assert native_document["artifacts"]
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry["valueTypes"]["ThemeColor"]["parameters"]["name"]["values"].remove(
+        "primary"
+    )
+    registry["valueTypes"]["TextStyle"]["omitted"].pop("fontStyle")
+    errors = compare_values(registry, inventory(DUMP), source_defaults(DUMP))
+    assert set(errors) == {f"ThemeColor: {DRIFT}", f"TextStyle: {DRIFT}"}
+    found = inventory(DUMP)
+    changed = replace(
+        found,
+        declarations=tuple(
+            replace(d, return_type=replace(d.return_type, nullable=True))
+            if d.owner == "androidx.compose.material3.ColorScheme"
+            and d.name == "primary"
+            else d
+            for d in found.declarations
+        ),
+    )
+    errors = compare_values(registry, changed, source_defaults(DUMP))
+    assert any("ThemeColor:" in error and "nullable" in error for error in errors)
+
+
+def test_inline_value_overloads_are_not_collapsed_by_jvm_erasure(tmp_path) -> None:
+    from schema.classpath_dump import inventory
+    from schema.propose import bind
+
+    records = [
+        declaration(
+            name="RoundedCornerShape",
+            descriptor="(F)Landroidx/compose/ui/graphics/Shape;",
+            owner="androidx.compose.foundation.shape.RoundedCornerShapeKt",
+            package="androidx.compose.foundation.shape",
+            disposition="support",
+            composable=False,
+            declarationKind="function",
+            returnType=type_doc("androidx/compose/ui/graphics/Shape"),
+            parameters=[parameter("size", type_doc(classifier))],
+            jvm={
+                "name": jvm,
+                "descriptor": "(F)Landroidx/compose/ui/graphics/Shape;",
+                "matched": True,
+            },
+        )
+        for classifier, jvm in [
+            ("kotlin/Float", "RoundedCornerShape"),
+            ("androidx/compose/ui/unit/Dp", "RoundedCornerShape-dp"),
+        ]
+    ]
+    write_inventory(tmp_path, [declaration(), *records])
+    found = inventory(tmp_path)
+    assert len(found.declarations) == 3
+    registry = {
+        "schemaVersion": "1.11.0",
+        "valueTypes": {
+            "Dp": {"family": "Dp", "kotlinType": "androidx.compose.ui.unit.Dp"},
+            "RoundedCornerShape": {
+                "family": "Shape",
+                "kotlinType": "androidx.compose.ui.graphics.Shape",
+                "parameters": {
+                    "size": {"type": "value", "valueType": "Dp", "required": True}
+                },
+            },
+        },
+    }
+    result = bind(found, {}, registry, "RoundedCornerShape")
+    assert result["proposal"]["source"]["jvmName"] == "RoundedCornerShape-dp"
+    assert result["proposal"]["parameters"]["size"]["valueType"] == "Dp"
 
 
 def test_unused_pinned_constructor_is_generated_decoded_and_renders(
