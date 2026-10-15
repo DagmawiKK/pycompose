@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.11.0",
+  "schemaVersion": "1.12.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -12,7 +12,8 @@
     "1.8.0",
     "1.9.0",
     "1.10.0",
-    "1.11.0"
+    "1.11.0",
+    "1.12.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -1411,6 +1412,94 @@
       "shape": "value in dp",
       "covers": "Dp, TextUnit",
       "since": "1.8.0"
+    },
+    "ToggleableState": {
+        "family": "ToggleableState",
+        "kind": "constant",
+        "kotlinType": "androidx.compose.ui.state.ToggleableState",
+        "since": "1.12.0",
+        "source": {
+          "owner": "androidx/compose/ui/state/ToggleableState",
+          "members": "enum entries"
+        },
+        "parameters": {
+          "name": {
+            "type": "string",
+            "required": true,
+            "values": [
+              "Indeterminate",
+              "Off",
+              "On"
+            ]
+          }
+        },
+        "native": {
+          "constantParameter": "name",
+          "propertyOwner": "androidx.compose.ui.state.ToggleableState"
+        }
+    },
+    "BorderStroke": {
+        "family": "BorderStroke",
+        "kind": "record",
+        "kotlinType": "androidx.compose.foundation.BorderStroke",
+        "since": "1.12.0",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-android:1.7.7",
+          "owner": "androidx.compose.foundation.BorderStroke",
+          "name": "<init>",
+          "jvmName": "<init>",
+          "descriptor": "(FLandroidx/compose/ui/graphics/Brush;Lkotlin/jvm/internal/DefaultConstructorMarker;)V"
+        },
+        "parameters": {
+          "width": {
+            "type": "value",
+            "valueType": "Dp",
+            "minimum": 0,
+            "required": true
+          },
+          "brush": {
+            "type": "value",
+            "valueType": "Brush",
+            "required": true
+          }
+        },
+        "native": {
+          "call": "androidx.compose.foundation.BorderStroke"
+        }
+    },
+    "AnnotatedString": {
+        "family": "AnnotatedString",
+        "kind": "scalar",
+        "kotlinType": "androidx.compose.ui.text.AnnotatedString",
+        "since": "1.12.0",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-text-android:1.7.7",
+          "owner": "androidx.compose.ui.text.AnnotatedString",
+          "name": "<init>",
+          "jvmName": "<init>",
+          "descriptor": "(Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V"
+        },
+        "parameters": {
+          "text": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "native": {
+          "call": "androidx.compose.ui.text.AnnotatedString"
+        },
+        "omitted": {
+          "spanStyles": {
+            "type": "kotlin/collections/List",
+            "nullable": false,
+            "hasDefault": true
+          },
+          "paragraphStyles": {
+            "type": "kotlin/collections/List",
+            "nullable": false,
+            "hasDefault": true
+          }
+        }
     },
     "edges": {
       "encoding": "object",

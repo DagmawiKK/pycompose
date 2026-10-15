@@ -237,6 +237,12 @@ def _validate_callable(source: Declaration) -> None:
         raise ValueError("not a public, receiver-free value callable")
     if source.document.get("declarationKind") not in {"function", "constructor"}:
         raise ValueError("not a constructor or factory")
+    if source.document.get(
+        "declarationKind"
+    ) == "constructor" and source.class_modality in {"ABSTRACT", "SEALED"}:
+        # `Painter()` is a bytecode constructor no app can ever call, so a
+        # family built from it would compile nothing and mean nothing.
+        raise ValueError("class cannot be constructed")
     if (
         source.dispatch_receiver
         and source.document.get("classKind") not in OBJECT_KINDS
@@ -277,7 +283,10 @@ def propose_members(
     members = set()
     hierarchy = ancestors(found)
     dotted = owner.replace("/", ".")
+    entries = set()
     for declaration in found.declarations:
+        if declaration.owner == dotted:
+            entries.update(declaration.enum_entries)
         if declaration.owner != dotted or declaration.disposition != "support":
             continue
         if declaration.document.get("declarationKind") != "property":
@@ -291,19 +300,26 @@ def propose_members(
         if declaration.context_receivers or declaration.receiver:
             continue
         members.add(declaration.name)
-    if not members:
+    if not members and not entries:
         raise ValueError(f"no public {family['family']} members on {owner}")
+    described = (
+        "enum entries"
+        if entries and not members
+        else "public properties"
+        if members and not entries
+        else "enum entries and public properties"
+    )
     return {
         "family": family["family"],
         "kind": family.get("kind", "constant"),
         "kotlinType": family["kotlinType"],
         "since": since,
-        "source": {"owner": owner, "members": "public properties"},
+        "source": {"owner": owner, "members": described},
         "parameters": {
             "name": {
                 "type": "string",
                 "required": True,
-                "values": sorted(members),
+                "values": sorted(members | entries),
             }
         },
         "native": {
@@ -579,6 +595,7 @@ MEMBERS = {
         "androidx.compose.material3.MaterialTheme.shapes.",
     ),
     "FontFamily": ("androidx/compose/ui/text/font/FontFamily$Companion", ""),
+    "ToggleableState": ("androidx/compose/ui/state/ToggleableState", ""),
 }
 """Bindings whose wire vocabulary is the public member set of one class.
 

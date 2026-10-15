@@ -215,3 +215,35 @@ def test_float_boundaries_preserve_integer_precision_before_narrowing() -> None:
     with pytest.raises(IrValidationError):
         Dp(340282346638528859811704183484516925441)
     assert Dp(3.4028234663852886e38)["value"] == 3.4028234663852886e38
+
+
+def test_enum_border_and_annotated_families_validate_before_native_code() -> None:
+    from pycompose.core.values import validate_value
+    from pycompose.values import (
+        DEFINITIONS,
+        AnnotatedString,
+        BorderStroke,
+        Color,
+        Dp,
+        SolidColor,
+        ToggleableState,
+    )
+
+    assert AnnotatedString(text="Hi") == {"type": "AnnotatedString", "text": "Hi"}
+    assert ToggleableState(name="On") == {"type": "ToggleableState", "name": "On"}
+    assert BorderStroke(width=Dp(2), brush=SolidColor(value=Color(0xFF000000))) == {
+        "type": "BorderStroke",
+        "width": {"type": "Dp", "value": 2},
+        "brush": {
+            "type": "SolidColor",
+            "value": {"type": "Color", "color": 4278190080},
+        },
+    }
+    with pytest.raises(IrValidationError, match="unknown native constant"):
+        ToggleableState(name="Maybe")
+    with pytest.raises(IrValidationError, match="missing value field"):
+        validate_value(
+            {"type": "BorderStroke", "width": Dp(2)}, "BorderStroke", DEFINITIONS
+        )
+    with pytest.raises(IrValidationError, match="wrong value family"):
+        BorderStroke(width=Color(0xFF000000), brush=SolidColor(value=Color(0xFFFFFFFF)))

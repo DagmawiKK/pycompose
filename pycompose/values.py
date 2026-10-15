@@ -10,6 +10,8 @@ from pycompose.core.props import JsonValue
 from pycompose.core.values import UNSET, _Unset, construct
 
 __all__ = [
+    "AnnotatedString",
+    "BorderStroke",
     "Color",
     "CutCornerShape",
     "Dp",
@@ -26,6 +28,7 @@ __all__ = [
     "ThemeColor",
     "ThemeShape",
     "ThemeTypography",
+    "ToggleableState",
     "WindowInsets",
     "buttonColors",
     "buttonElevation",
@@ -35,107 +38,160 @@ __all__ = [
 ]
 
 DEFINITIONS: dict[str, dict[str, object]] = json.loads(
-    '{"Color":{"family":"Color","parameters":{"color":{'
-    '"maximum":4294967295,"minimum":0,"required":true,"'
-    'type":"long"}},"since":"1.11.0"},"CutCornerShape":'
-    '{"family":"Shape","parameters":{"size":{"minimum":'
-    '0,"required":true,"type":"value","valueType":"Dp"}'
-    '},"since":"1.11.0"},"Dp":{"family":"Dp","parameter'
-    's":{"value":{"required":true,"type":"float"}},"sin'
-    'ce":"1.11.0"},"Em":{"family":"TextUnit","parameter'
-    's":{"value":{"required":true,"type":"float"}},"sin'
-    'ce":"1.11.0"},"FontFamily":{"family":"FontFamily",'
-    '"parameters":{"name":{"required":true,"type":"stri'
-    'ng","values":["Cursive","Default","Monospace","San'
-    'sSerif","Serif"]}},"since":"1.11.0"},"FontWeight":'
-    '{"family":"FontWeight","parameters":{"weight":{"ma'
-    'ximum":1000,"minimum":1,"required":true,"type":"in'
-    't"}},"since":"1.11.0"},"Offset":{"family":"Offset"'
-    ',"parameters":{"x":{"required":true,"type":"float"'
-    '},"y":{"required":true,"type":"float"}},"since":"1'
-    '.11.0"},"PaddingValues":{"family":"PaddingValues",'
-    '"parameters":{"bottom":{"minimum":0,"type":"value"'
-    ',"valueType":"Dp"},"end":{"minimum":0,"type":"valu'
-    'e","valueType":"Dp"},"start":{"minimum":0,"type":"'
-    'value","valueType":"Dp"},"top":{"minimum":0,"type"'
-    ':"value","valueType":"Dp"}},"since":"1.11.0"},"Rou'
-    'ndedCornerShape":{"family":"Shape","parameters":{"'
-    'size":{"minimum":0,"required":true,"type":"value",'
-    '"valueType":"Dp"}},"since":"1.11.0"},"Size":{"fami'
-    'ly":"Size","parameters":{"height":{"minimum":0,"re'
-    'quired":true,"type":"float"},"width":{"minimum":0,'
-    '"required":true,"type":"float"}},"since":"1.11.0"}'
-    ',"SolidColor":{"family":"Brush","parameters":{"val'
-    'ue":{"required":true,"type":"value","valueType":"C'
-    'olor"}},"since":"1.11.0"},"Sp":{"family":"TextUnit'
-    '","parameters":{"value":{"required":true,"type":"f'
-    'loat"}},"since":"1.11.0"},"TextStyle":{"family":"T'
-    'extStyle","parameters":{"color":{"type":"value","v'
-    'alueType":"Color"},"fontFamily":{"nullable":true,"'
-    'type":"value","valueType":"FontFamily"},"fontSize"'
-    ':{"minimum":0,"type":"value","valueType":"TextUnit'
-    '"},"fontWeight":{"nullable":true,"type":"value","v'
-    'alueType":"FontWeight"},"letterSpacing":{"type":"v'
-    'alue","valueType":"TextUnit"}},"since":"1.11.0"},"'
-    'ThemeColor":{"family":"Color","parameters":{"name"'
-    ':{"required":true,"type":"string","values":["backg'
-    'round","error","errorContainer","inverseOnSurface"'
-    ',"inversePrimary","inverseSurface","onBackground",'
-    '"onError","onErrorContainer","onPrimary","onPrimar'
-    'yContainer","onSecondary","onSecondaryContainer","'
-    'onSurface","onSurfaceVariant","onTertiary","onTert'
-    'iaryContainer","outline","outlineVariant","primary'
-    '","primaryContainer","scrim","secondary","secondar'
-    'yContainer","surface","surfaceBright","surfaceCont'
-    'ainer","surfaceContainerHigh","surfaceContainerHig'
-    'hest","surfaceContainerLow","surfaceContainerLowes'
-    't","surfaceDim","surfaceTint","surfaceVariant","te'
-    'rtiary","tertiaryContainer"]}},"since":"1.11.0"},"'
-    'ThemeShape":{"family":"Shape","parameters":{"name"'
-    ':{"required":true,"type":"string","values":["extra'
-    'Large","extraSmall","large","medium","small"]}},"s'
-    'ince":"1.11.0"},"ThemeTypography":{"family":"TextS'
-    'tyle","parameters":{"name":{"required":true,"type"'
-    ':"string","values":["bodyLarge","bodyMedium","body'
-    'Small","displayLarge","displayMedium","displaySmal'
-    'l","headlineLarge","headlineMedium","headlineSmall'
-    '","labelLarge","labelMedium","labelSmall","titleLa'
-    'rge","titleMedium","titleSmall"]}},"since":"1.11.0'
-    '"},"WindowInsets":{"family":"WindowInsets","parame'
-    'ters":{"bottom":{"minimum":0,"type":"value","value'
-    'Type":"Dp"},"left":{"minimum":0,"type":"value","va'
-    'lueType":"Dp"},"right":{"minimum":0,"type":"value"'
-    ',"valueType":"Dp"},"top":{"minimum":0,"type":"valu'
-    'e","valueType":"Dp"}},"since":"1.11.0"},"buttonCol'
-    'ors":{"family":"ButtonColors","parameters":{"conta'
-    'inerColor":{"type":"value","valueType":"Color"},"c'
-    'ontentColor":{"type":"value","valueType":"Color"},'
-    '"disabledContainerColor":{"type":"value","valueTyp'
-    'e":"Color"},"disabledContentColor":{"type":"value"'
-    ',"valueType":"Color"}},"since":"1.11.0"},"buttonEl'
-    'evation":{"family":"ButtonElevation","parameters":'
-    '{"defaultElevation":{"minimum":0,"type":"value","v'
-    'alueType":"Dp"},"disabledElevation":{"minimum":0,"'
-    'type":"value","valueType":"Dp"},"focusedElevation"'
-    ':{"minimum":0,"type":"value","valueType":"Dp"},"ho'
-    'veredElevation":{"minimum":0,"type":"value","value'
-    'Type":"Dp"},"pressedElevation":{"minimum":0,"type"'
-    ':"value","valueType":"Dp"}},"since":"1.11.0"},"hor'
-    'izontalGradient":{"family":"Brush","parameters":{"'
-    'colors":{"items":{"type":"value","valueType":"Colo'
-    'r"},"minItems":2,"required":true,"type":"list"},"e'
-    'ndX":{"type":"float"},"startX":{"type":"float"}},"'
-    'since":"1.11.0"},"linearGradient":{"family":"Brush'
-    '","parameters":{"colors":{"items":{"type":"value",'
-    '"valueType":"Color"},"minItems":2,"required":true,'
-    '"type":"list"},"end":{"type":"value","valueType":"'
-    'Offset"},"start":{"type":"value","valueType":"Offs'
-    'et"}},"since":"1.11.0"},"verticalGradient":{"famil'
-    'y":"Brush","parameters":{"colors":{"items":{"type"'
-    ':"value","valueType":"Color"},"minItems":2,"requir'
-    'ed":true,"type":"list"},"endY":{"type":"float"},"s'
-    'tartY":{"type":"float"}},"since":"1.11.0"}}'
+    '{"AnnotatedString":{"family":"AnnotatedString","pa'
+    'rameters":{"text":{"required":true,"type":"string"'
+    '}},"since":"1.12.0"},"BorderStroke":{"family":"Bor'
+    'derStroke","parameters":{"brush":{"required":true,'
+    '"type":"value","valueType":"Brush"},"width":{"mini'
+    'mum":0,"required":true,"type":"value","valueType":'
+    '"Dp"}},"since":"1.12.0"},"Color":{"family":"Color"'
+    ',"parameters":{"color":{"maximum":4294967295,"mini'
+    'mum":0,"required":true,"type":"long"}},"since":"1.'
+    '11.0"},"CutCornerShape":{"family":"Shape","paramet'
+    'ers":{"size":{"minimum":0,"required":true,"type":"'
+    'value","valueType":"Dp"}},"since":"1.11.0"},"Dp":{'
+    '"family":"Dp","parameters":{"value":{"required":tr'
+    'ue,"type":"float"}},"since":"1.11.0"},"Em":{"famil'
+    'y":"TextUnit","parameters":{"value":{"required":tr'
+    'ue,"type":"float"}},"since":"1.11.0"},"FontFamily"'
+    ':{"family":"FontFamily","parameters":{"name":{"req'
+    'uired":true,"type":"string","values":["Cursive","D'
+    'efault","Monospace","SansSerif","Serif"]}},"since"'
+    ':"1.11.0"},"FontWeight":{"family":"FontWeight","pa'
+    'rameters":{"weight":{"maximum":1000,"minimum":1,"r'
+    'equired":true,"type":"int"}},"since":"1.11.0"},"Of'
+    'fset":{"family":"Offset","parameters":{"x":{"requi'
+    'red":true,"type":"float"},"y":{"required":true,"ty'
+    'pe":"float"}},"since":"1.11.0"},"PaddingValues":{"'
+    'family":"PaddingValues","parameters":{"bottom":{"m'
+    'inimum":0,"type":"value","valueType":"Dp"},"end":{'
+    '"minimum":0,"type":"value","valueType":"Dp"},"star'
+    't":{"minimum":0,"type":"value","valueType":"Dp"},"'
+    'top":{"minimum":0,"type":"value","valueType":"Dp"}'
+    '},"since":"1.11.0"},"RoundedCornerShape":{"family"'
+    ':"Shape","parameters":{"size":{"minimum":0,"requir'
+    'ed":true,"type":"value","valueType":"Dp"}},"since"'
+    ':"1.11.0"},"Size":{"family":"Size","parameters":{"'
+    'height":{"minimum":0,"required":true,"type":"float'
+    '"},"width":{"minimum":0,"required":true,"type":"fl'
+    'oat"}},"since":"1.11.0"},"SolidColor":{"family":"B'
+    'rush","parameters":{"value":{"required":true,"type'
+    '":"value","valueType":"Color"}},"since":"1.11.0"},'
+    '"Sp":{"family":"TextUnit","parameters":{"value":{"'
+    'required":true,"type":"float"}},"since":"1.11.0"},'
+    '"TextStyle":{"family":"TextStyle","parameters":{"c'
+    'olor":{"type":"value","valueType":"Color"},"fontFa'
+    'mily":{"nullable":true,"type":"value","valueType":'
+    '"FontFamily"},"fontSize":{"minimum":0,"type":"valu'
+    'e","valueType":"TextUnit"},"fontWeight":{"nullable'
+    '":true,"type":"value","valueType":"FontWeight"},"l'
+    'etterSpacing":{"type":"value","valueType":"TextUni'
+    't"}},"since":"1.11.0"},"ThemeColor":{"family":"Col'
+    'or","parameters":{"name":{"required":true,"type":"'
+    'string","values":["background","error","errorConta'
+    'iner","inverseOnSurface","inversePrimary","inverse'
+    'Surface","onBackground","onError","onErrorContaine'
+    'r","onPrimary","onPrimaryContainer","onSecondary",'
+    '"onSecondaryContainer","onSurface","onSurfaceVaria'
+    'nt","onTertiary","onTertiaryContainer","outline","'
+    'outlineVariant","primary","primaryContainer","scri'
+    'm","secondary","secondaryContainer","surface","sur'
+    'faceBright","surfaceContainer","surfaceContainerHi'
+    'gh","surfaceContainerHighest","surfaceContainerLow'
+    '","surfaceContainerLowest","surfaceDim","surfaceTi'
+    'nt","surfaceVariant","tertiary","tertiaryContainer'
+    '"]}},"since":"1.11.0"},"ThemeShape":{"family":"Sha'
+    'pe","parameters":{"name":{"required":true,"type":"'
+    'string","values":["extraLarge","extraSmall","large'
+    '","medium","small"]}},"since":"1.11.0"},"ThemeTypo'
+    'graphy":{"family":"TextStyle","parameters":{"name"'
+    ':{"required":true,"type":"string","values":["bodyL'
+    'arge","bodyMedium","bodySmall","displayLarge","dis'
+    'playMedium","displaySmall","headlineLarge","headli'
+    'neMedium","headlineSmall","labelLarge","labelMediu'
+    'm","labelSmall","titleLarge","titleMedium","titleS'
+    'mall"]}},"since":"1.11.0"},"ToggleableState":{"fam'
+    'ily":"ToggleableState","parameters":{"name":{"requ'
+    'ired":true,"type":"string","values":["Indeterminat'
+    'e","Off","On"]}},"since":"1.12.0"},"WindowInsets":'
+    '{"family":"WindowInsets","parameters":{"bottom":{"'
+    'minimum":0,"type":"value","valueType":"Dp"},"left"'
+    ':{"minimum":0,"type":"value","valueType":"Dp"},"ri'
+    'ght":{"minimum":0,"type":"value","valueType":"Dp"}'
+    ',"top":{"minimum":0,"type":"value","valueType":"Dp'
+    '"}},"since":"1.11.0"},"buttonColors":{"family":"Bu'
+    'ttonColors","parameters":{"containerColor":{"type"'
+    ':"value","valueType":"Color"},"contentColor":{"typ'
+    'e":"value","valueType":"Color"},"disabledContainer'
+    'Color":{"type":"value","valueType":"Color"},"disab'
+    'ledContentColor":{"type":"value","valueType":"Colo'
+    'r"}},"since":"1.11.0"},"buttonElevation":{"family"'
+    ':"ButtonElevation","parameters":{"defaultElevation'
+    '":{"minimum":0,"type":"value","valueType":"Dp"},"d'
+    'isabledElevation":{"minimum":0,"type":"value","val'
+    'ueType":"Dp"},"focusedElevation":{"minimum":0,"typ'
+    'e":"value","valueType":"Dp"},"hoveredElevation":{"'
+    'minimum":0,"type":"value","valueType":"Dp"},"press'
+    'edElevation":{"minimum":0,"type":"value","valueTyp'
+    'e":"Dp"}},"since":"1.11.0"},"horizontalGradient":{'
+    '"family":"Brush","parameters":{"colors":{"items":{'
+    '"type":"value","valueType":"Color"},"minItems":2,"'
+    'required":true,"type":"list"},"endX":{"type":"floa'
+    't"},"startX":{"type":"float"}},"since":"1.11.0"},"'
+    'linearGradient":{"family":"Brush","parameters":{"c'
+    'olors":{"items":{"type":"value","valueType":"Color'
+    '"},"minItems":2,"required":true,"type":"list"},"en'
+    'd":{"type":"value","valueType":"Offset"},"start":{'
+    '"type":"value","valueType":"Offset"}},"since":"1.1'
+    '1.0"},"verticalGradient":{"family":"Brush","parame'
+    'ters":{"colors":{"items":{"type":"value","valueTyp'
+    'e":"Color"},"minItems":2,"required":true,"type":"l'
+    'ist"},"endY":{"type":"float"},"startY":{"type":"fl'
+    'oat"}},"since":"1.11.0"}}'
 )
+
+
+def AnnotatedString(
+    text: str,
+) -> dict[str, JsonValue]:
+    """Construct AnnotatedString data for native evaluation.
+
+    Args:
+        text: Native text argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "AnnotatedString",
+        {
+            "text": text,
+        },
+        DEFINITIONS,
+    )
+
+
+def BorderStroke(
+    width: JsonValue,
+    brush: JsonValue,
+) -> dict[str, JsonValue]:
+    """Construct BorderStroke data for native evaluation.
+
+    Args:
+        width: Native width argument.
+        brush: Native brush argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "BorderStroke",
+        {
+            "width": width,
+            "brush": brush,
+        },
+        DEFINITIONS,
+    )
 
 
 def Color(
@@ -478,6 +534,26 @@ def ThemeTypography(
     """
     return construct(
         "ThemeTypography",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
+def ToggleableState(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct ToggleableState data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "ToggleableState",
         {
             "name": name,
         },

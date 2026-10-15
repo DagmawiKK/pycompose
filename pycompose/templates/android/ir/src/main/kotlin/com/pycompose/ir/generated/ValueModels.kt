@@ -14,6 +14,10 @@ import kotlinx.serialization.json.double
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonObject
 
+sealed interface AnnotatedStringValue
+
+sealed interface BorderStrokeValue
+
 sealed interface BrushValue
 
 sealed interface ButtonColorsValue
@@ -40,7 +44,20 @@ sealed interface TextStyleValue
 
 sealed interface TextUnitValue
 
+sealed interface ToggleableStateValue
+
 sealed interface WindowInsetsValue
+
+data class WireAnnotatedString(
+    val supplied: Set<String>,
+    val text: String,
+) : AnnotatedStringValue
+
+data class WireBorderStroke(
+    val supplied: Set<String>,
+    val width: DpValue,
+    val brush: BrushValue,
+) : BorderStrokeValue
 
 data class WireColor(
     val supplied: Set<String>,
@@ -131,6 +148,11 @@ data class WireThemeTypography(
     val name: String,
 ) : TextStyleValue
 
+data class WireToggleableState(
+    val supplied: Set<String>,
+    val name: String,
+) : ToggleableStateValue
+
 data class WireWindowInsets(
     val supplied: Set<String>,
     val left: DpValue? = null,
@@ -178,94 +200,127 @@ data class WireverticalGradient(
 ) : BrushValue
 
 object ValueContract {
-    const val SCHEMA_VERSION = "1.11.0"
+    const val SCHEMA_VERSION = "1.12.0"
     private val json = Json { classDiscriminator = "type" }
     val specs: JsonObject = json.parseToJsonElement(
-        "{\"Color\":{\"family\":\"Color\",\"parameters\":{\"color\":{\"maximum\":" +
-        "4294967295,\"minimum\":0,\"required\":true,\"type\":\"long\"}},\"sinc" +
-        "e\":\"1.11.0\"},\"CutCornerShape\":{\"family\":\"Shape\",\"parameters\"" +
-        ":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"value\",\"valueT" +
-        "ype\":\"Dp\"}},\"since\":\"1.11.0\"},\"Dp\":{\"family\":\"Dp\",\"parameter" +
-        "s\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11." +
-        "0\"},\"Em\":{\"family\":\"TextUnit\",\"parameters\":{\"value\":{\"requir" +
-        "ed\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"FontFamily\":{\"f" +
-        "amily\":\"FontFamily\",\"parameters\":{\"name\":{\"required\":true,\"t" +
-        "ype\":\"string\",\"values\":[\"Cursive\",\"Default\",\"Monospace\",\"San" +
-        "sSerif\",\"Serif\"]}},\"since\":\"1.11.0\"},\"FontWeight\":{\"family\":" +
-        "\"FontWeight\",\"parameters\":{\"weight\":{\"maximum\":1000,\"minimum" +
-        "\":1,\"required\":true,\"type\":\"int\"}},\"since\":\"1.11.0\"},\"Offset" +
-        "\":{\"family\":\"Offset\",\"parameters\":{\"x\":{\"required\":true,\"typ" +
-        "e\":\"float\"},\"y\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1" +
-        ".11.0\"},\"PaddingValues\":{\"family\":\"PaddingValues\",\"parameter" +
-        "s\":{\"bottom\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"" +
-        "end\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"start\":{" +
-        "\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\":{\"minimum" +
-        "\":0,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Rou" +
-        "ndedCornerShape\":{\"family\":\"Shape\",\"parameters\":{\"size\":{\"mi" +
-        "nimum\":0,\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"}},\"" +
-        "since\":\"1.11.0\"},\"Size\":{\"family\":\"Size\",\"parameters\":{\"heig" +
-        "ht\":{\"minimum\":0,\"required\":true,\"type\":\"float\"},\"width\":{\"m" +
-        "inimum\":0,\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"}" +
-        ",\"SolidColor\":{\"family\":\"Brush\",\"parameters\":{\"value\":{\"requ" +
-        "ired\":true,\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.1" +
-        "1.0\"},\"Sp\":{\"family\":\"TextUnit\",\"parameters\":{\"value\":{\"requ" +
-        "ired\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"TextStyle\":{\"" +
-        "family\":\"TextStyle\",\"parameters\":{\"color\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Color\"},\"fontFamily\":{\"nullable\":true,\"type\":\"val" +
-        "ue\",\"valueType\":\"FontFamily\"},\"fontSize\":{\"minimum\":0,\"type\"" +
-        ":\"value\",\"valueType\":\"TextUnit\"},\"fontWeight\":{\"nullable\":tr" +
-        "ue,\"type\":\"value\",\"valueType\":\"FontWeight\"},\"letterSpacing\":" +
-        "{\"type\":\"value\",\"valueType\":\"TextUnit\"}},\"since\":\"1.11.0\"},\"" +
-        "ThemeColor\":{\"family\":\"Color\",\"parameters\":{\"name\":{\"require" +
-        "d\":true,\"type\":\"string\",\"values\":[\"background\",\"error\",\"erro" +
-        "rContainer\",\"inverseOnSurface\",\"inversePrimary\",\"inverseSurf" +
-        "ace\",\"onBackground\",\"onError\",\"onErrorContainer\",\"onPrimary\"" +
-        ",\"onPrimaryContainer\",\"onSecondary\",\"onSecondaryContainer\",\"" +
-        "onSurface\",\"onSurfaceVariant\",\"onTertiary\",\"onTertiaryContai" +
-        "ner\",\"outline\",\"outlineVariant\",\"primary\",\"primaryContainer\"" +
-        ",\"scrim\",\"secondary\",\"secondaryContainer\",\"surface\",\"surface" +
-        "Bright\",\"surfaceContainer\",\"surfaceContainerHigh\",\"surfaceCo" +
-        "ntainerHighest\",\"surfaceContainerLow\",\"surfaceContainerLowes" +
-        "t\",\"surfaceDim\",\"surfaceTint\",\"surfaceVariant\",\"tertiary\",\"t" +
-        "ertiaryContainer\"]}},\"since\":\"1.11.0\"},\"ThemeShape\":{\"family" +
-        "\":\"Shape\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"stri" +
-        "ng\",\"values\":[\"extraLarge\",\"extraSmall\",\"large\",\"medium\",\"sm" +
-        "all\"]}},\"since\":\"1.11.0\"},\"ThemeTypography\":{\"family\":\"TextS" +
-        "tyle\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\"," +
-        "\"values\":[\"bodyLarge\",\"bodyMedium\",\"bodySmall\",\"displayLarge" +
-        "\",\"displayMedium\",\"displaySmall\",\"headlineLarge\",\"headlineMe" +
-        "dium\",\"headlineSmall\",\"labelLarge\",\"labelMedium\",\"labelSmall" +
-        "\",\"titleLarge\",\"titleMedium\",\"titleSmall\"]}},\"since\":\"1.11.0" +
-        "\"},\"WindowInsets\":{\"family\":\"WindowInsets\",\"parameters\":{\"bo" +
-        "ttom\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"left\":{" +
-        "\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"right\":{\"minim" +
-        "um\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\":{\"minimum\":0,\"t" +
-        "ype\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"buttonCol" +
-        "ors\":{\"family\":\"ButtonColors\",\"parameters\":{\"containerColor\"" +
-        ":{\"type\":\"value\",\"valueType\":\"Color\"},\"contentColor\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Color\"},\"disabledContentColor\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"},\"buttonEl" +
-        "evation\":{\"family\":\"ButtonElevation\",\"parameters\":{\"defaultE" +
-        "levation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"dis" +
-        "abledElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"" +
-        "},\"focusedElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\"" +
-        ":\"Dp\"},\"hoveredElevation\":{\"minimum\":0,\"type\":\"value\",\"value" +
-        "Type\":\"Dp\"},\"pressedElevation\":{\"minimum\":0,\"type\":\"value\",\"" +
-        "valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"horizontalGradient\":{\"f" +
-        "amily\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"valu" +
-        "e\",\"valueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":" +
-        "\"list\"},\"endX\":{\"type\":\"float\"},\"startX\":{\"type\":\"float\"}},\"" +
-        "since\":\"1.11.0\"},\"linearGradient\":{\"family\":\"Brush\",\"paramet" +
-        "ers\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
-        ",\"minItems\":2,\"required\":true,\"type\":\"list\"},\"end\":{\"type\":\"" +
-        "value\",\"valueType\":\"Offset\"},\"start\":{\"type\":\"value\",\"valueT" +
-        "ype\":\"Offset\"}},\"since\":\"1.11.0\"},\"verticalGradient\":{\"famil" +
-        "y\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"value\",\"" +
-        "valueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":\"lis" +
-        "t\"},\"endY\":{\"type\":\"float\"},\"startY\":{\"type\":\"float\"}},\"sinc" +
-        "e\":\"1.11.0\"}}"
+        "{\"AnnotatedString\":{\"family\":\"AnnotatedString\",\"parameters\":" +
+        "{\"text\":{\"required\":true,\"type\":\"string\"}},\"since\":\"1.12.0\"}" +
+        ",\"BorderStroke\":{\"family\":\"BorderStroke\",\"parameters\":{\"brus" +
+        "h\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Brush\"},\"wid" +
+        "th\":{\"minimum\":0,\"required\":true,\"type\":\"value\",\"valueType\":" +
+        "\"Dp\"}},\"since\":\"1.12.0\"},\"Color\":{\"family\":\"Color\",\"paramete" +
+        "rs\":{\"color\":{\"maximum\":4294967295,\"minimum\":0,\"required\":tr" +
+        "ue,\"type\":\"long\"}},\"since\":\"1.11.0\"},\"CutCornerShape\":{\"fami" +
+        "ly\":\"Shape\",\"parameters\":{\"size\":{\"minimum\":0,\"required\":tru" +
+        "e,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Dp\":{" +
+        "\"family\":\"Dp\",\"parameters\":{\"value\":{\"required\":true,\"type\":" +
+        "\"float\"}},\"since\":\"1.11.0\"},\"Em\":{\"family\":\"TextUnit\",\"param" +
+        "eters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1" +
+        ".11.0\"},\"FontFamily\":{\"family\":\"FontFamily\",\"parameters\":{\"n" +
+        "ame\":{\"required\":true,\"type\":\"string\",\"values\":[\"Cursive\",\"D" +
+        "efault\",\"Monospace\",\"SansSerif\",\"Serif\"]}},\"since\":\"1.11.0\"}" +
+        ",\"FontWeight\":{\"family\":\"FontWeight\",\"parameters\":{\"weight\":" +
+        "{\"maximum\":1000,\"minimum\":1,\"required\":true,\"type\":\"int\"}},\"" +
+        "since\":\"1.11.0\"},\"Offset\":{\"family\":\"Offset\",\"parameters\":{\"" +
+        "x\":{\"required\":true,\"type\":\"float\"},\"y\":{\"required\":true,\"ty" +
+        "pe\":\"float\"}},\"since\":\"1.11.0\"},\"PaddingValues\":{\"family\":\"P" +
+        "addingValues\",\"parameters\":{\"bottom\":{\"minimum\":0,\"type\":\"va" +
+        "lue\",\"valueType\":\"Dp\"},\"end\":{\"minimum\":0,\"type\":\"value\",\"va" +
+        "lueType\":\"Dp\"},\"start\":{\"minimum\":0,\"type\":\"value\",\"valueTyp" +
+        "e\":\"Dp\"},\"top\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}" +
+        "},\"since\":\"1.11.0\"},\"RoundedCornerShape\":{\"family\":\"Shape\",\"" +
+        "parameters\":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"val" +
+        "ue\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Size\":{\"family\":\"S" +
+        "ize\",\"parameters\":{\"height\":{\"minimum\":0,\"required\":true,\"ty" +
+        "pe\":\"float\"},\"width\":{\"minimum\":0,\"required\":true,\"type\":\"fl" +
+        "oat\"}},\"since\":\"1.11.0\"},\"SolidColor\":{\"family\":\"Brush\",\"par" +
+        "ameters\":{\"value\":{\"required\":true,\"type\":\"value\",\"valueType" +
+        "\":\"Color\"}},\"since\":\"1.11.0\"},\"Sp\":{\"family\":\"TextUnit\",\"par" +
+        "ameters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":" +
+        "\"1.11.0\"},\"TextStyle\":{\"family\":\"TextStyle\",\"parameters\":{\"c" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"fontFamily\":{\"nu" +
+        "llable\":true,\"type\":\"value\",\"valueType\":\"FontFamily\"},\"fontS" +
+        "ize\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"TextUnit\"},\"fo" +
+        "ntWeight\":{\"nullable\":true,\"type\":\"value\",\"valueType\":\"FontW" +
+        "eight\"},\"letterSpacing\":{\"type\":\"value\",\"valueType\":\"TextUni" +
+        "t\"}},\"since\":\"1.11.0\"},\"ThemeColor\":{\"family\":\"Color\",\"param" +
+        "eters\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"b" +
+        "ackground\",\"error\",\"errorContainer\",\"inverseOnSurface\",\"inve" +
+        "rsePrimary\",\"inverseSurface\",\"onBackground\",\"onError\",\"onErr" +
+        "orContainer\",\"onPrimary\",\"onPrimaryContainer\",\"onSecondary\"," +
+        "\"onSecondaryContainer\",\"onSurface\",\"onSurfaceVariant\",\"onTer" +
+        "tiary\",\"onTertiaryContainer\",\"outline\",\"outlineVariant\",\"pri" +
+        "mary\",\"primaryContainer\",\"scrim\",\"secondary\",\"secondaryConta" +
+        "iner\",\"surface\",\"surfaceBright\",\"surfaceContainer\",\"surfaceC" +
+        "ontainerHigh\",\"surfaceContainerHighest\",\"surfaceContainerLow" +
+        "\",\"surfaceContainerLowest\",\"surfaceDim\",\"surfaceTint\",\"surfa" +
+        "ceVariant\",\"tertiary\",\"tertiaryContainer\"]}},\"since\":\"1.11.0" +
+        "\"},\"ThemeShape\":{\"family\":\"Shape\",\"parameters\":{\"name\":{\"req" +
+        "uired\":true,\"type\":\"string\",\"values\":[\"extraLarge\",\"extraSma" +
+        "ll\",\"large\",\"medium\",\"small\"]}},\"since\":\"1.11.0\"},\"ThemeTypo" +
+        "graphy\":{\"family\":\"TextStyle\",\"parameters\":{\"name\":{\"require" +
+        "d\":true,\"type\":\"string\",\"values\":[\"bodyLarge\",\"bodyMedium\",\"" +
+        "bodySmall\",\"displayLarge\",\"displayMedium\",\"displaySmall\",\"he" +
+        "adlineLarge\",\"headlineMedium\",\"headlineSmall\",\"labelLarge\",\"" +
+        "labelMedium\",\"labelSmall\",\"titleLarge\",\"titleMedium\",\"titleS" +
+        "mall\"]}},\"since\":\"1.11.0\"},\"ToggleableState\":{\"family\":\"Togg" +
+        "leableState\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"s" +
+        "tring\",\"values\":[\"Indeterminate\",\"Off\",\"On\"]}},\"since\":\"1.12" +
+        ".0\"},\"WindowInsets\":{\"family\":\"WindowInsets\",\"parameters\":{\"" +
+        "bottom\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"left\"" +
+        ":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"right\":{\"min" +
+        "imum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\":{\"minimum\":0," +
+        "\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"buttonC" +
+        "olors\":{\"family\":\"ButtonColors\",\"parameters\":{\"containerColo" +
+        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"contentColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"disabledContentColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"},\"button" +
+        "Elevation\":{\"family\":\"ButtonElevation\",\"parameters\":{\"defaul" +
+        "tElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"d" +
+        "isabledElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"D" +
+        "p\"},\"focusedElevation\":{\"minimum\":0,\"type\":\"value\",\"valueTyp" +
+        "e\":\"Dp\"},\"hoveredElevation\":{\"minimum\":0,\"type\":\"value\",\"val" +
+        "ueType\":\"Dp\"},\"pressedElevation\":{\"minimum\":0,\"type\":\"value\"" +
+        ",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"horizontalGradient\":{" +
+        "\"family\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type" +
+        "\":\"list\"},\"endX\":{\"type\":\"float\"},\"startX\":{\"type\":\"float\"}}" +
+        ",\"since\":\"1.11.0\"},\"linearGradient\":{\"family\":\"Brush\",\"param" +
+        "eters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Color" +
+        "\"},\"minItems\":2,\"required\":true,\"type\":\"list\"},\"end\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Offset\"},\"start\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Offset\"}},\"since\":\"1.11.0\"},\"verticalGradient\":{\"fam" +
+        "ily\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"value\"" +
+        ",\"valueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":\"l" +
+        "ist\"},\"endY\":{\"type\":\"float\"},\"startY\":{\"type\":\"float\"}},\"si" +
+        "nce\":\"1.11.0\"}}"
     ).jsonObject
+
+    fun readAnnotatedString(value: JsonElement): AnnotatedStringValue {
+        ValueParser.validate(value, "AnnotatedString", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "AnnotatedString" -> WireAnnotatedString(
+                supplied = data.keys,
+                text = data.getValue("text").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readBorderStroke(value: JsonElement): BorderStrokeValue {
+        ValueParser.validate(value, "BorderStroke", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "BorderStroke" -> WireBorderStroke(
+                supplied = data.keys,
+                width = readDp(data.getValue("width")),
+                brush = readBrush(data.getValue("brush")),
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
 
     fun readBrush(value: JsonElement): BrushValue {
         ValueParser.validate(value, "Brush", specs).getOrThrow()
@@ -472,6 +527,18 @@ object ValueContract {
             "Sp" -> WireSp(
                 supplied = data.keys,
                 value = data.getValue("value").jsonPrimitive.double,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readToggleableState(value: JsonElement): ToggleableStateValue {
+        ValueParser.validate(value, "ToggleableState", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "ToggleableState" -> WireToggleableState(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
             )
             else -> error("Unknown value constructor")
         }

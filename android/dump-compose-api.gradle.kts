@@ -20,6 +20,7 @@ import kotlinx.metadata.jvm.setterSignature
 import kotlinx.metadata.jvm.signature
 import kotlinx.metadata.jvm.syntheticMethodForAnnotations
 import kotlinx.metadata.kind
+import kotlinx.metadata.modality
 import kotlinx.metadata.visibility
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.objectweb.asm.AnnotationVisitor
@@ -754,6 +755,10 @@ private class ApiExtractor(
                 mapOf(
                     "sourceFile" to classes[owner]?.sourceFile,
                     "classKind" to kmClass?.kind?.name,
+                    // Modality decides whether a constructor is callable at all:
+                    // an abstract class exposes one that can never be invoked.
+                    "classModality" to kmClass?.modality?.name,
+                    "enumEntries" to kmClass?.enumEntries.orEmpty(),
                     "enclosingTypeParameters" to
                         kmClass?.typeParameters.orEmpty().map {
                             it.document()

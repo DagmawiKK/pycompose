@@ -140,6 +140,18 @@ class Declaration:
     jvm_descriptor: str | None
     document: dict[str, Any]
 
+    @property
+    def class_modality(self) -> str | None:
+        """Kotlin modality of the owning class, when the declaration has one."""
+        modality = self.document.get("classModality")
+        return modality if isinstance(modality, str) else None
+
+    @property
+    def enum_entries(self) -> tuple[str, ...]:
+        """Entry names when the owner is an enum class, else nothing."""
+        entries = self.document.get("enumEntries")
+        return tuple(entries) if isinstance(entries, list) else ()
+
     @classmethod
     def read(cls, data: dict[str, Any]) -> Declaration:
         return cls(

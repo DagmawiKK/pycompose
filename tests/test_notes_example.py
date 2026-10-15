@@ -703,7 +703,7 @@ def test_every_snapshot_is_a_valid_canonical_ir(app: ModuleType) -> None:
     host.tap("set_title", "title", value="Check")
     host.tap("go_back", "back")
     snapshot = host.snapshot()
-    assert snapshot["schemaVersion"] == "1.11.0"
+    assert snapshot["schemaVersion"] == "1.12.0"
     assert "metadata" in snapshot
     assert host.error == ""
 

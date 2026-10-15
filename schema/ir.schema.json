@@ -193,6 +193,22 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": "1.12.0"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "root": {
+            "$ref": "#/definitions/V_1_12_0_Node"
+          }
+        }
+      }
     }
   ],
   "definitions": {
@@ -750,6 +766,20 @@
       },
       "type": "object"
     },
+    "Family_AnnotatedString": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_AnnotatedString"
+        }
+      ]
+    },
+    "Family_BorderStroke": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_BorderStroke"
+        }
+      ]
+    },
     "Family_Brush": {
       "oneOf": [
         {
@@ -862,6 +892,13 @@
         },
         {
           "$ref": "#/definitions/Value_Sp"
+        }
+      ]
+    },
+    "Family_ToggleableState": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_ToggleableState"
         }
       ]
     },
@@ -3351,6 +3388,885 @@
                 "operations": {
                   "items": {
                     "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onSelectionChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selection": {
+              "type": "integer"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_Box": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topStart"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Box"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_Button": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onClick",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Button"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_Checkbox": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Checkbox"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_Column": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "horizontalAlignment": {
+              "default": "start",
+              "enum": [
+                "center",
+                "end",
+                "start"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Column"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_FilterChip": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "label",
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilterChip"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_Image": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "resource": {
+              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "required": [
+            "resource"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Image"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_LazyColumn": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyColumn"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "brush": {
+              "$ref": "#/definitions/Family_Brush"
+            },
+            "type": {
+              "const": "background"
+            }
+          },
+          "required": [
+            "type",
+            "brush"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "circle",
+                    "rectangle",
+                    "rounded"
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Family_Shape"
+                }
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_PaddingValues"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_Dp"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_Dp"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "insets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            },
+            "type": {
+              "const": "windowInsetsPadding"
+            }
+          },
+          "required": [
+            "type",
+            "insets"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "V_1_12_0_Node": {
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/V_1_12_0_Box"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_Button"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_Checkbox"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_Column"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_FilterChip"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_Image"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_LazyColumn"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_Row"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_Scaffold"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_Spacer"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_Text"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_TextButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_12_0_TextField"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/definitions/V_1_12_0_Node"
+          },
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "props": {
+          "type": "object"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "props"
+      ],
+      "type": "object"
+    },
+    "V_1_12_0_Row": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalAlignment": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Row"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_Scaffold": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Scaffold"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_Spacer": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Spacer"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_Text": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "fontResource": {
+              "pattern": "^(@(font)/[a-z][a-z0-9_]*)(?![\\s\\S])",
+              "type": "string"
+            },
+            "locale": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "resource": {
+              "pattern": "^(@(string)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            },
+            "style": {
+              "anyOf": [
+                {
+                  "default": "bodyMedium",
+                  "enum": [
+                    "bodyLarge",
+                    "bodyMedium",
+                    "bodySmall",
+                    "headlineMedium",
+                    "titleLarge",
+                    "titleMedium",
+                    "titleSmall"
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Family_TextStyle"
+                }
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Text"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_TextButton": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onClick",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_12_0_TextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -9872,6 +10788,53 @@
       },
       "type": "object"
     },
+    "Value_AnnotatedString": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "const": "AnnotatedString"
+        }
+      },
+      "required": [
+        "type",
+        "text"
+      ],
+      "type": "object"
+    },
+    "Value_BorderStroke": {
+      "additionalProperties": false,
+      "properties": {
+        "brush": {
+          "$ref": "#/definitions/Family_Brush"
+        },
+        "type": {
+          "const": "BorderStroke"
+        },
+        "width": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "width",
+        "brush"
+      ],
+      "type": "object"
+    },
     "Value_Color": {
       "additionalProperties": false,
       "properties": {
@@ -10454,6 +11417,27 @@
       ],
       "type": "object"
     },
+    "Value_ToggleableState": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Indeterminate",
+            "Off",
+            "On"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "ToggleableState"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
     "Value_WindowInsets": {
       "additionalProperties": false,
       "properties": {
@@ -10800,7 +11784,8 @@
         "1.8.0",
         "1.9.0",
         "1.10.0",
-        "1.11.0"
+        "1.11.0",
+        "1.12.0"
       ]
     },
     "version": {

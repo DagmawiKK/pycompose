@@ -6,6 +6,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.dp as default_androidx_compose_ui_unit_dp
 import kotlinx.serialization.json.JsonElement
+import com.pycompose.ir.generated.AnnotatedStringValue
+import com.pycompose.ir.generated.BorderStrokeValue
 import com.pycompose.ir.generated.BrushValue
 import com.pycompose.ir.generated.ButtonColorsValue
 import com.pycompose.ir.generated.ButtonElevationValue
@@ -19,8 +21,11 @@ import com.pycompose.ir.generated.ShapeValue
 import com.pycompose.ir.generated.SizeValue
 import com.pycompose.ir.generated.TextStyleValue
 import com.pycompose.ir.generated.TextUnitValue
+import com.pycompose.ir.generated.ToggleableStateValue
 import com.pycompose.ir.generated.WindowInsetsValue
 import com.pycompose.ir.generated.ValueContract
+import com.pycompose.ir.generated.WireAnnotatedString
+import com.pycompose.ir.generated.WireBorderStroke
 import com.pycompose.ir.generated.WireColor
 import com.pycompose.ir.generated.WireCutCornerShape
 import com.pycompose.ir.generated.WireDp
@@ -37,6 +42,7 @@ import com.pycompose.ir.generated.WireTextStyle
 import com.pycompose.ir.generated.WireThemeColor
 import com.pycompose.ir.generated.WireThemeShape
 import com.pycompose.ir.generated.WireThemeTypography
+import com.pycompose.ir.generated.WireToggleableState
 import com.pycompose.ir.generated.WireWindowInsets
 import com.pycompose.ir.generated.WirebuttonColors
 import com.pycompose.ir.generated.WirebuttonElevation
@@ -45,6 +51,39 @@ import com.pycompose.ir.generated.WirelinearGradient
 import com.pycompose.ir.generated.WireverticalGradient
 
 object ValueResolver {
+    @Composable
+    fun annotatedString(value: JsonElement): Result<androidx.compose.ui.text.AnnotatedString> {
+        val parsed = runCatching { ValueContract.readAnnotatedString(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(annotatedString(parsed))
+    }
+
+    @Composable
+    fun annotatedString(value: AnnotatedStringValue): androidx.compose.ui.text.AnnotatedString =
+        when (value) {
+            is WireAnnotatedString -> {
+                androidx.compose.ui.text.AnnotatedString(
+                    text = value.text,
+                )
+            }
+        }
+
+    @Composable
+    fun borderStroke(value: JsonElement): Result<androidx.compose.foundation.BorderStroke> {
+        val parsed = runCatching { ValueContract.readBorderStroke(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(borderStroke(parsed))
+    }
+
+    @Composable
+    fun borderStroke(value: BorderStrokeValue): androidx.compose.foundation.BorderStroke =
+        when (value) {
+            is WireBorderStroke -> {
+                androidx.compose.foundation.BorderStroke(
+                    width = dp(value.width),
+                    brush = brush(value.brush),
+                )
+            }
+        }
+
     @Composable
     fun brush(value: JsonElement): Result<androidx.compose.ui.graphics.Brush> {
         val parsed = runCatching { ValueContract.readBrush(value) }.getOrElse { return Result.failure(it) }
@@ -369,6 +408,25 @@ object ValueResolver {
             }
             is WireSp -> {
                 value.value.toFloat().sp
+            }
+        }
+
+    @Composable
+    fun toggleableState(value: JsonElement): Result<androidx.compose.ui.state.ToggleableState> {
+        val parsed = runCatching { ValueContract.readToggleableState(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(toggleableState(parsed))
+    }
+
+    @Composable
+    fun toggleableState(value: ToggleableStateValue): androidx.compose.ui.state.ToggleableState =
+        when (value) {
+            is WireToggleableState -> {
+                when (value.name) {
+                    "Indeterminate" -> androidx.compose.ui.state.ToggleableState.Indeterminate
+                    "Off" -> androidx.compose.ui.state.ToggleableState.Off
+                    "On" -> androidx.compose.ui.state.ToggleableState.On
+                    else -> error("Unknown native constant")
+                }
             }
         }
 

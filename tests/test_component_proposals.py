@@ -64,6 +64,24 @@ def test_pinned_ui_defaults_cover_every_exact_overload(native_document):
     assert all((s.owner, s.jvm_name, s.jvm_descriptor) in defaults for s in found.ui)
 
 
+def test_pinned_unconstructible_types_and_enum_vocabularies(native_document) -> None:
+    from schema.classpath_dump import inventory, source_defaults
+    from schema.propose import bind
+
+    assert native_document["provenance"]["bom"] == "2025.01.01"
+    found = inventory(DUMP)
+    evidence = source_defaults(DUMP)
+    schema = json.loads(Path("schema/components.json").read_text())
+    empty = {"schemaVersion": "1.12.0", "valueTypes": {}}
+    # Painter is an abstract class: its bytecode constructor proves nothing an
+    # app can call, so it can never become a value family.
+    assert bind(found, evidence, empty, "Painter")["unsupported"] == (
+        "class cannot be constructed"
+    )
+    tristate = bind(found, evidence, schema, "ToggleableState")["proposal"]
+    assert tristate["parameters"]["name"]["values"] == ["Indeterminate", "Off", "On"]
+
+
 def test_pinned_denominator_separates_components_from_styling_hooks(native_document):
     from schema.classpath_dump import inventory, source_defaults
     from schema.components import propose_components
@@ -77,8 +95,8 @@ def test_pinned_denominator_separates_components_from_styling_hooks(native_docum
     assert report["coverage"]["components"] == {
         "names": 99,
         "overloads": 132,
-        "callPlan": 88,
-        "blocked": 44,
+        "callPlan": 90,
+        "blocked": 42,
     }
     assert report["coverage"]["hooks"] == {
         "names": 17,
@@ -88,6 +106,9 @@ def test_pinned_denominator_separates_components_from_styling_hooks(native_docum
     }
     hooks = {c["name"] for c in report["candidates"] if c["surface"] == "hook"}
     assert {"Thumb", "Container", "Indicator", "InputField"} <= hooks
+    # The approved value families closed their own gaps, and nothing else.
+    reasons = {entry["reason"] for entry in report["worklist"]}
+    assert not [r for r in reasons if "BorderStroke" in r or "ToggleableState" in r]
     # A member of a provided scope is app-composed, not a hook.
     assert "ExposedDropdownMenu" not in hooks
     assert (

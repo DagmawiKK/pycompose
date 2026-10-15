@@ -286,7 +286,7 @@ def render_models(registry: dict[str, Any]) -> str:
     lines.extend(
         [
             "object ValueContract {",
-            '    const val SCHEMA_VERSION = "1.11.0"',
+            f'    const val SCHEMA_VERSION = "{registry["schemaVersion"]}"',
             '    private val json = Json { classDiscriminator = "type" }',
             "    val specs: JsonObject = json.parseToJsonElement(",
         ]

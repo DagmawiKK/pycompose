@@ -87,3 +87,32 @@ def test_value_runtime_contract_excludes_native_build_metadata() -> None:
     assert "androidx.compose" not in python + models
     assert "defaultNative" not in python + models
     assert "androidx.compose" in render_native(registry)
+
+
+def test_approved_value_families_reach_every_generated_artifact() -> None:
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    specs = definitions(registry)
+    assert specs["ToggleableState"]["kind"] == "constant"
+    assert specs["BorderStroke"]["parameters"]["brush"]["valueType"] == "Brush"
+    assert specs["AnnotatedString"]["parameters"] == {
+        "text": {"type": "string", "required": True}
+    }
+    python = render_python(registry)
+    assert {"def ToggleableState(", "def BorderStroke(", "def AnnotatedString("} <= set(
+        python.splitlines()
+    )
+    models = render_models(registry)
+    assert all(
+        name in models
+        for name in ("WireToggleableState", "WireBorderStroke", "WireAnnotatedString")
+    )
+    native = render_native(registry)
+    assert '"On" -> androidx.compose.ui.state.ToggleableState.On' in native
+    assert "androidx.compose.foundation.BorderStroke(" in native
+
+
+def test_generated_kotlin_contract_reports_the_approved_schema_version() -> None:
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    assert f'const val SCHEMA_VERSION = "{registry["schemaVersion"]}"' in render_models(
+        registry
+    )

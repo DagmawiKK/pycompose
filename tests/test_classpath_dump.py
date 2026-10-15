@@ -327,6 +327,69 @@ def test_value_proposal_derives_an_unused_constructor_without_parameter_policy()
     assert proposal["family"] == "Rect"
 
 
+def test_value_proposal_refuses_a_constructor_no_app_can_call() -> None:
+    from schema.classpath_dump import Declaration
+    from schema.propose import propose_value
+
+    source = Declaration.read(
+        declaration(
+            name="<init>",
+            owner="androidx.compose.ui.graphics.painter.Painter",
+            disposition="support",
+            composable=False,
+            declarationKind="constructor",
+            classKind="CLASS",
+            classModality="ABSTRACT",
+            returnType=type_doc("androidx/compose/ui/graphics/painter/Painter"),
+        )
+    )
+    with pytest.raises(ValueError, match="class cannot be constructed"):
+        propose_value(source, since="1.12.0", families={})
+
+
+def test_member_proposal_reads_enum_entries_as_the_wire_vocabulary(tmp_path) -> None:
+    from schema.classpath_dump import inventory
+    from schema.propose import propose_members
+
+    write_inventory(
+        tmp_path,
+        [
+            declaration(),
+            declaration(
+                name="<init>",
+                owner="androidx.compose.ui.state.ToggleableState",
+                disposition="excluded",
+                visibility="PRIVATE",
+                composable=False,
+                declarationKind="constructor",
+                classKind="ENUM_CLASS",
+                classModality="FINAL",
+                enumEntries=["On", "Off", "Indeterminate"],
+                returnType=type_doc("androidx/compose/ui/state/ToggleableState"),
+            ),
+        ],
+    )
+    spec = propose_members(
+        inventory(tmp_path),
+        "androidx/compose/ui/state/ToggleableState",
+        {
+            "family": "ToggleableState",
+            "kind": "constant",
+            "kotlinType": "androidx.compose.ui.state.ToggleableState",
+        },
+        since="1.12.0",
+    )
+    assert spec["parameters"]["name"]["values"] == ["Indeterminate", "Off", "On"]
+    assert spec["source"] == {
+        "owner": "androidx/compose/ui/state/ToggleableState",
+        "members": "enum entries",
+    }
+    assert spec["native"] == {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.state.ToggleableState",
+    }
+
+
 def test_pinned_source_defaults_generate_native_factories(native_document) -> None:
     from schema.classpath_dump import inventory, source_defaults
     from schema.propose import propose_value
@@ -535,7 +598,7 @@ def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -
         # A refresh reproduces the approved compiler-resolved facts exactly;
         # semantic policy such as ARGB bounds is preserved, not regenerated.
         assert item["proposal"] == approved
-    assert len(derived) == len(results) == 22
+    assert len(derived) == len(results) == 25
     specs = {item["name"]: item["proposal"] for item in derived}
     assert specs["RoundedCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
     assert specs["CutCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
@@ -673,7 +736,7 @@ def test_unused_pinned_constructor_is_generated_decoded_and_renders(
     )
     spec = propose_value(source, since="1.11.0", families={})
     # Approval here is test-local: Rect is not added to the shipped catalog.
-    registry = {"valueTypes": {"Rect": spec}}
+    registry = {"schemaVersion": "1.12.0", "valueTypes": {"Rect": spec}}
     namespace = {}
     exec(render_python(registry), namespace)
     data = namespace["Rect"](1, 2, 11, 22)
