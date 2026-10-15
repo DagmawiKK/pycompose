@@ -6,6 +6,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.dp as default_androidx_compose_ui_unit_dp
 import kotlinx.serialization.json.JsonElement
+import com.pycompose.ir.generated.AlignmentValue
+import com.pycompose.ir.generated.AlignmentHorizontalValue
+import com.pycompose.ir.generated.AlignmentVerticalValue
 import com.pycompose.ir.generated.AnnotatedStringValue
 import com.pycompose.ir.generated.BorderStrokeValue
 import com.pycompose.ir.generated.BrushValue
@@ -18,6 +21,7 @@ import com.pycompose.ir.generated.ChipColorsValue
 import com.pycompose.ir.generated.ChipElevationValue
 import com.pycompose.ir.generated.ColorValue
 import com.pycompose.ir.generated.DatePickerColorsValue
+import com.pycompose.ir.generated.DisplayModeValue
 import com.pycompose.ir.generated.DpValue
 import com.pycompose.ir.generated.DpOffsetValue
 import com.pycompose.ir.generated.DpSizeValue
@@ -54,10 +58,14 @@ import com.pycompose.ir.generated.ToggleableStateValue
 import com.pycompose.ir.generated.TopAppBarColorsValue
 import com.pycompose.ir.generated.WindowInsetsValue
 import com.pycompose.ir.generated.ValueContract
+import com.pycompose.ir.generated.WireAlignment
+import com.pycompose.ir.generated.WireAlignmentHorizontal
+import com.pycompose.ir.generated.WireAlignmentVertical
 import com.pycompose.ir.generated.WireAnnotatedString
 import com.pycompose.ir.generated.WireBorderStroke
 import com.pycompose.ir.generated.WireColor
 import com.pycompose.ir.generated.WireCutCornerShape
+import com.pycompose.ir.generated.WireDisplayMode
 import com.pycompose.ir.generated.WireDp
 import com.pycompose.ir.generated.WireDpOffset
 import com.pycompose.ir.generated.WireDpSize
@@ -138,6 +146,77 @@ import com.pycompose.ir.generated.WiretopAppBarColors
 import com.pycompose.ir.generated.WireverticalGradient
 
 object ValueResolver {
+    @Composable
+    fun alignment(value: JsonElement): Result<androidx.compose.ui.Alignment> {
+        val parsed = runCatching { ValueContract.readAlignment(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(alignment(parsed))
+    }
+
+    @Composable
+    fun alignment(value: AlignmentValue): androidx.compose.ui.Alignment =
+        when (value) {
+            is WireAlignment -> {
+                when (value.name) {
+                    "BottomCenter" -> androidx.compose.ui.Alignment.BottomCenter
+                    "BottomEnd" -> androidx.compose.ui.Alignment.BottomEnd
+                    "BottomLeft" -> androidx.compose.ui.AbsoluteAlignment.BottomLeft
+                    "BottomRight" -> androidx.compose.ui.AbsoluteAlignment.BottomRight
+                    "BottomStart" -> androidx.compose.ui.Alignment.BottomStart
+                    "Center" -> androidx.compose.ui.Alignment.Center
+                    "CenterEnd" -> androidx.compose.ui.Alignment.CenterEnd
+                    "CenterLeft" -> androidx.compose.ui.AbsoluteAlignment.CenterLeft
+                    "CenterRight" -> androidx.compose.ui.AbsoluteAlignment.CenterRight
+                    "CenterStart" -> androidx.compose.ui.Alignment.CenterStart
+                    "TopCenter" -> androidx.compose.ui.Alignment.TopCenter
+                    "TopEnd" -> androidx.compose.ui.Alignment.TopEnd
+                    "TopLeft" -> androidx.compose.ui.AbsoluteAlignment.TopLeft
+                    "TopRight" -> androidx.compose.ui.AbsoluteAlignment.TopRight
+                    "TopStart" -> androidx.compose.ui.Alignment.TopStart
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun alignmentHorizontal(value: JsonElement): Result<androidx.compose.ui.Alignment.Horizontal> {
+        val parsed = runCatching { ValueContract.readAlignmentHorizontal(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(alignmentHorizontal(parsed))
+    }
+
+    @Composable
+    fun alignmentHorizontal(value: AlignmentHorizontalValue): androidx.compose.ui.Alignment.Horizontal =
+        when (value) {
+            is WireAlignmentHorizontal -> {
+                when (value.name) {
+                    "CenterHorizontally" -> androidx.compose.ui.Alignment.CenterHorizontally
+                    "End" -> androidx.compose.ui.Alignment.End
+                    "Left" -> androidx.compose.ui.AbsoluteAlignment.Left
+                    "Right" -> androidx.compose.ui.AbsoluteAlignment.Right
+                    "Start" -> androidx.compose.ui.Alignment.Start
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun alignmentVertical(value: JsonElement): Result<androidx.compose.ui.Alignment.Vertical> {
+        val parsed = runCatching { ValueContract.readAlignmentVertical(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(alignmentVertical(parsed))
+    }
+
+    @Composable
+    fun alignmentVertical(value: AlignmentVerticalValue): androidx.compose.ui.Alignment.Vertical =
+        when (value) {
+            is WireAlignmentVertical -> {
+                when (value.name) {
+                    "Bottom" -> androidx.compose.ui.Alignment.Bottom
+                    "CenterVertically" -> androidx.compose.ui.Alignment.CenterVertically
+                    "Top" -> androidx.compose.ui.Alignment.Top
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
     @Composable
     fun annotatedString(value: JsonElement): Result<androidx.compose.ui.text.AnnotatedString> {
         val parsed = runCatching { ValueContract.readAnnotatedString(value) }.getOrElse { return Result.failure(it) }
@@ -529,6 +608,26 @@ object ValueResolver {
                     dividerColor = if ("dividerColor" in value.supplied) value.dividerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     dateTextFieldColors = if ("dateTextFieldColors" in value.supplied) value.dateTextFieldColors?.let { item -> textFieldColors(item) } else null,
                 )
+            }
+        }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun displayMode(value: JsonElement): Result<androidx.compose.material3.DisplayMode> {
+        val parsed = runCatching { ValueContract.readDisplayMode(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(displayMode(parsed))
+    }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun displayMode(value: DisplayModeValue): androidx.compose.material3.DisplayMode =
+        when (value) {
+            is WireDisplayMode -> {
+                when (value.name) {
+                    "Input" -> androidx.compose.material3.DisplayMode.Input
+                    "Picker" -> androidx.compose.material3.DisplayMode.Picker
+                    else -> error("Unknown native constant")
+                }
             }
         }
 

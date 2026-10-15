@@ -28,7 +28,7 @@ from schema.classpath_dump import (
     inventory,
     source_defaults,
 )
-from schema.propose import SCALARS, identity, value_families
+from schema.propose import SCALARS, identity, source_name, value_families
 
 SCOPES = {
     "androidx/compose/foundation/layout/RowScope",
@@ -116,8 +116,8 @@ def _binding_rule(
         }
     elif value.classifier in SCALARS and not value.arguments:
         rule = {"policy": "scalar", "wireType": SCALARS[value.classifier]}
-    elif value.classifier in families and not value.arguments:
-        rule = {"policy": "value", "family": families[value.classifier]}
+    elif source_name(value.classifier) in families and not value.arguments:
+        rule = {"policy": "value", "family": families[source_name(value.classifier)]}
     else:
         raise ValueError(f"no wire policy for {value.classifier}")
     return rule

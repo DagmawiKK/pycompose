@@ -74,6 +74,7 @@ tasks.register("dumpComposeApi") {
     doLast {
         val artifacts = mutableListOf<Map<String, Any?>>()
         val declarations = mutableListOf<Map<String, Any?>>()
+        val classFacts = mutableListOf<Map<String, Any?>>()
         val diagnostics = mutableListOf<Map<String, Any?>>()
         val variants =
             rendererClasspath.incoming.artifacts.artifacts
@@ -113,7 +114,9 @@ tasks.register("dumpComposeApi") {
                     } else {
                         bytes
                     }
-                declarations.addAll(ApiExtractor(coordinate, diagnostics).extract(classes))
+                val extracted = ApiExtractor(coordinate, diagnostics).extract(classes)
+                declarations.addAll(extracted.declarations)
+                classFacts.addAll(extracted.classes)
             }
         val bomComponent =
             rendererClasspath.incoming.resolutionResult.allComponents
@@ -172,6 +175,10 @@ tasks.register("dumpComposeApi") {
                 "declarations" to
                     declarations.sortedBy {
                         "${it["owner"]}:${it["name"]}:${it["jvm"]}"
+                    },
+                "classes" to
+                    classFacts.sortedBy {
+                        "${it["owner"]}:${it["classKind"]}"
                     },
                 "diagnostics" to diagnostics.sortedBy { it["message"].toString() },
                 "bytecodeAudit" to
@@ -432,8 +439,14 @@ private class ApiExtractor(
     private val coordinate: String,
     private val diagnostics: MutableList<Map<String, Any?>>,
 ) {
+    /** One artifact's public API plus the class facts its hierarchy needs. */
+    class Extracted(
+        val declarations: List<Map<String, Any?>>,
+        val classes: List<Map<String, Any?>>,
+    )
+
     @OptIn(ExperimentalContextReceivers::class)
-    fun extract(bytes: ByteArray): List<Map<String, Any?>> {
+    fun extract(bytes: ByteArray): Extracted {
         val classes = sortedMapOf<String, ClassApi>()
         ZipInputStream(ByteArrayInputStream(bytes)).use { zip ->
             var entry = zip.nextEntry
@@ -459,20 +472,9 @@ private class ApiExtractor(
                     // classes are implementations, not additional public APIs.
                     else -> continue
                 }
-            val enclosing =
-                generateSequence(owner) {
-                    if ('$' in it) it.substringBeforeLast('$') else null
-                }.toList()
-            val classVisibility =
-                enclosing
-                    .mapNotNull {
-                        (metadata[it] as? KotlinClassMetadata.Class)?.kmClass?.visibility
-                    }.firstOrNull { it != Visibility.PUBLIC } ?: Visibility.PUBLIC
-            val classAnnotations =
-                enclosing
-                    .flatMap {
-                        classes[it]?.annotations.orEmpty().entries
-                    }.associate { it.toPair() }
+            val enclosing = enclosingChain(owner)
+            val classVisibility = visibilityOf(enclosing, metadata)
+            val classAnnotations = annotationsOf(enclosing, classes)
             val dispatchReceiver =
                 if (parsed is KotlinClassMetadata.Class) classType(owner).document() else null
             for (function in container.functions) {
@@ -748,25 +750,81 @@ private class ApiExtractor(
                     }
             }
         }
-        return declarations.map { declaration ->
-            val owner = declaration["owner"].toString().replace('.', '/')
-            val kmClass = (metadata[owner] as? KotlinClassMetadata.Class)?.kmClass
-            declaration +
+        // Declaration-free classes carry no members, but the wire still needs
+        // their hierarchy: Alignment.Vertical is only a subtype of Alignment
+        // because the class itself says so.
+        val classEvidence = mutableListOf<Map<String, Any?>>()
+        for ((owner, facts) in classes) {
+            val kmClass =
+                (metadata[owner] as? KotlinClassMetadata.Class)?.kmClass ?: continue
+            val chain = enclosingChain(owner)
+            classEvidence.add(
                 mapOf(
-                    "sourceFile" to classes[owner]?.sourceFile,
-                    "classKind" to kmClass?.kind?.name,
-                    // Modality decides whether a constructor is callable at all:
-                    // an abstract class exposes one that can never be invoked.
-                    "classModality" to kmClass?.modality?.name,
-                    "enumEntries" to kmClass?.enumEntries.orEmpty(),
-                    "enclosingTypeParameters" to
-                        kmClass?.typeParameters.orEmpty().map {
-                            it.document()
-                        },
-                    "classSupertypes" to kmClass?.supertypes.orEmpty().map { it.document() },
-                )
+                    "artifact" to coordinate,
+                    "owner" to owner.replace('/', '.'),
+                    // Metadata spelling: packages and nesting separated by '.',
+                    // which is exactly how a signature names the type.
+                    "classifier" to kmClass.name.replace('/', '.'),
+                    "package" to owner.substringBeforeLast('/').replace('/', '.'),
+                    "sourceFile" to facts.sourceFile,
+                    "classKind" to kmClass.kind.name,
+                    "classModality" to kmClass.modality?.name,
+                    "classVisibility" to visibilityOf(chain, metadata).name,
+                    "classSupertypes" to kmClass.supertypes.map { it.document() },
+                    "enumEntries" to kmClass.enumEntries,
+                    "annotations" to annotationsOf(chain, classes),
+                ),
+            )
         }
+        return Extracted(
+            declarations.map { declaration ->
+                val owner = declaration["owner"].toString().replace('.', '/')
+                val kmClass = (metadata[owner] as? KotlinClassMetadata.Class)?.kmClass
+                declaration +
+                    mapOf(
+                        "sourceFile" to classes[owner]?.sourceFile,
+                        "classKind" to kmClass?.kind?.name,
+                        // Modality decides whether a constructor is callable at
+                        // all: an abstract class exposes one that can never be
+                        // invoked.
+                        "classModality" to kmClass?.modality?.name,
+                        "enumEntries" to kmClass?.enumEntries.orEmpty(),
+                        "enclosingTypeParameters" to
+                            kmClass?.typeParameters.orEmpty().map {
+                                it.document()
+                            },
+                        "classSupertypes" to kmClass?.supertypes.orEmpty().map { it.document() },
+                    )
+            },
+            classEvidence,
+        )
     }
+
+    /** The class itself followed by every enclosing class or file facade. */
+    private fun enclosingChain(owner: String): List<String> =
+        generateSequence(owner) {
+            if ('$' in it) it.substringBeforeLast('$') else null
+        }.toList()
+
+    /** The most restrictive visibility anywhere in the enclosing chain. */
+    private fun visibilityOf(
+        chain: List<String>,
+        metadata: Map<String, KotlinClassMetadata?>,
+    ): Visibility =
+        chain
+            .mapNotNull {
+                (metadata[it] as? KotlinClassMetadata.Class)?.kmClass?.visibility
+            }.firstOrNull { it != Visibility.PUBLIC } ?: Visibility.PUBLIC
+
+    /** Annotations declared anywhere in the enclosing chain, minus stdlib noise. */
+    private fun annotationsOf(
+        chain: List<String>,
+        classes: Map<String, ClassApi>,
+    ): Map<String, MutableMap<String, Any?>> =
+        chain
+            .flatMap { classes[it]?.annotations.orEmpty().entries }
+            .associate { it.toPair() }
+            .filterKeys { it != "kotlin/Metadata" }
 }
 
 private fun classType(name: String): KmType =

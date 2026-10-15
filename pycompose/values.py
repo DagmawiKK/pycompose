@@ -10,10 +10,14 @@ from pycompose.core.props import JsonValue
 from pycompose.core.values import UNSET, _Unset, construct
 
 __all__ = [
+    "Alignment",
+    "AlignmentHorizontal",
+    "AlignmentVertical",
     "AnnotatedString",
     "BorderStroke",
     "Color",
     "CutCornerShape",
+    "DisplayMode",
     "Dp",
     "DpOffset",
     "DpSize",
@@ -95,18 +99,34 @@ __all__ = [
 ]
 
 DEFINITIONS: dict[str, dict[str, object]] = json.loads(
-    '{"AnnotatedString":{"family":"AnnotatedString","pa'
-    'rameters":{"text":{"required":true,"type":"string"'
-    '}},"since":"1.12.0"},"BorderStroke":{"family":"Bor'
-    'derStroke","parameters":{"brush":{"required":true,'
-    '"type":"value","valueType":"Brush"},"width":{"mini'
-    'mum":0,"required":true,"type":"value","valueType":'
-    '"Dp"}},"since":"1.12.0"},"Color":{"family":"Color"'
-    ',"parameters":{"color":{"maximum":4294967295,"mini'
-    'mum":0,"required":true,"type":"long"}},"since":"1.'
-    '11.0"},"CutCornerShape":{"family":"Shape","paramet'
-    'ers":{"size":{"minimum":0,"required":true,"type":"'
-    'value","valueType":"Dp"}},"since":"1.11.0"},"Dp":{'
+    '{"Alignment":{"family":"Alignment","parameters":{"'
+    'name":{"required":true,"type":"string","values":["'
+    'BottomCenter","BottomEnd","BottomLeft","BottomRigh'
+    't","BottomStart","Center","CenterEnd","CenterLeft"'
+    ',"CenterRight","CenterStart","TopCenter","TopEnd",'
+    '"TopLeft","TopRight","TopStart"]}},"since":"1.14.0'
+    '"},"AlignmentHorizontal":{"family":"AlignmentHoriz'
+    'ontal","parameters":{"name":{"required":true,"type'
+    '":"string","values":["CenterHorizontally","End","L'
+    'eft","Right","Start"]}},"since":"1.14.0"},"Alignme'
+    'ntVertical":{"family":"AlignmentVertical","paramet'
+    'ers":{"name":{"required":true,"type":"string","val'
+    'ues":["Bottom","CenterVertically","Top"]}},"since"'
+    ':"1.14.0"},"AnnotatedString":{"family":"AnnotatedS'
+    'tring","parameters":{"text":{"required":true,"type'
+    '":"string"}},"since":"1.12.0"},"BorderStroke":{"fa'
+    'mily":"BorderStroke","parameters":{"brush":{"requi'
+    'red":true,"type":"value","valueType":"Brush"},"wid'
+    'th":{"minimum":0,"required":true,"type":"value","v'
+    'alueType":"Dp"}},"since":"1.12.0"},"Color":{"famil'
+    'y":"Color","parameters":{"color":{"maximum":429496'
+    '7295,"minimum":0,"required":true,"type":"long"}},"'
+    'since":"1.11.0"},"CutCornerShape":{"family":"Shape'
+    '","parameters":{"size":{"minimum":0,"required":tru'
+    'e,"type":"value","valueType":"Dp"}},"since":"1.11.'
+    '0"},"DisplayMode":{"family":"DisplayMode","paramet'
+    'ers":{"name":{"required":true,"type":"string","val'
+    'ues":["Input","Picker"]}},"since":"1.14.0"},"Dp":{'
     '"family":"Dp","parameters":{"value":{"required":tr'
     'ue,"type":"float"}},"since":"1.11.0"},"DpOffset":{'
     '"family":"DpOffset","parameters":{"x":{"required":'
@@ -742,6 +762,66 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
 )
 
 
+def Alignment(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct Alignment data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "Alignment",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
+def AlignmentHorizontal(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct AlignmentHorizontal data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "AlignmentHorizontal",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
+def AlignmentVertical(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct AlignmentVertical data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "AlignmentVertical",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
 def AnnotatedString(
     text: str,
 ) -> dict[str, JsonValue]:
@@ -820,6 +900,26 @@ def CutCornerShape(
         "CutCornerShape",
         {
             "size": size,
+        },
+        DEFINITIONS,
+    )
+
+
+def DisplayMode(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct DisplayMode data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "DisplayMode",
+        {
+            "name": name,
         },
         DEFINITIONS,
     )

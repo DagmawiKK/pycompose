@@ -142,6 +142,46 @@ def test_approved_value_families_reach_every_generated_artifact() -> None:
     assert f"{marker}\n    fun checkboxColors" not in native
 
 
+def test_member_vocabularies_keep_each_holders_name() -> None:
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    specs = definitions(registry)
+    alignment = specs["Alignment"]
+    assert alignment["native"]["propertyOwner"] == "androidx.compose.ui.Alignment"
+    assert (
+        alignment["native"]["owners"]["TopLeft"]
+        == "androidx.compose.ui.AbsoluteAlignment"
+    )
+    # Alignment.Vertical is a sibling of Alignment, not a subtype: its members
+    # stay in their own family.
+    assert "Top" not in alignment["parameters"]["name"]["values"]
+    native = render_native(registry)
+    assert '"TopStart" -> androidx.compose.ui.Alignment.TopStart' in native
+    assert '"TopLeft" -> androidx.compose.ui.AbsoluteAlignment.TopLeft' in native
+    assert (
+        '"CenterVertically" -> androidx.compose.ui.Alignment.CenterVertically' in native
+    )
+
+
+def test_codegen_refuses_an_unproven_member_holder(tmp_path: Path, monkeypatch) -> None:
+    from pycompose.schema.codegen import main
+
+    path = tmp_path / "components.json"
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry["valueTypes"]["Alignment"]["native"]["owners"]["TopMost"] = (
+        "androidx.compose.ui.AbsoluteAlignment"
+    )
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match=r"owners.TopMost is not a value"):
+        main.load_registry()
+
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry["valueTypes"]["Alignment"]["native"]["owners"]["TopLeft"] = "not a holder"
+    path.write_text(json.dumps(registry))
+    with pytest.raises(SystemExit, match=r"owners.TopLeft is not a native holder"):
+        main.load_registry()
+
+
 def test_generated_kotlin_contract_reports_the_approved_schema_version() -> None:
     registry = json.loads((ROOT / "schema/components.json").read_text())
     assert f'const val SCHEMA_VERSION = "{registry["schemaVersion"]}"' in render_models(

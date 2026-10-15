@@ -185,12 +185,50 @@ class Declaration:
 
 
 @dataclass(frozen=True)
+class KotlinClass:
+    """One class the pin declares, including classes with no members of their own.
+
+    Declaration records carry their owner's hierarchy, so a class that declares
+    nothing never appears there. ``Alignment.Vertical`` is exactly that shape:
+    it is a sibling of ``Alignment``, and without its own record a member
+    vocabulary cannot tell an assignable type from a neighbouring one.
+    """
+
+    artifact: str
+    owner: str
+    classifier: str
+    package: str
+    class_kind: str
+    class_modality: str | None
+    visibility: str
+    supertypes: tuple[str, ...]
+    document: dict[str, Any]
+
+    @classmethod
+    def read(cls, data: dict[str, Any]) -> KotlinClass:
+        return cls(
+            artifact=data["artifact"],
+            owner=data["owner"],
+            classifier=data["classifier"],
+            package=data["package"],
+            class_kind=data["classKind"],
+            class_modality=data.get("classModality"),
+            visibility=data["classVisibility"],
+            supertypes=tuple(
+                node["classifier"] for node in data.get("classSupertypes") or []
+            ),
+            document=data,
+        )
+
+
+@dataclass(frozen=True)
 class Inventory:
-    """Artifact provenance and declarations, before any catalog approval."""
+    """Artifact provenance, declarations, and class facts, before any approval."""
 
     bom: str
     compiler: str
     declarations: tuple[Declaration, ...]
+    classes: tuple[KotlinClass, ...]
     document: dict[str, Any]
 
     @property
@@ -315,6 +353,7 @@ def inventory(directory: Path = DUMP_DIR) -> Inventory:
             bom=data["provenance"]["bom"],
             compiler=data["provenance"]["compiler"],
             declarations=declarations,
+            classes=tuple(KotlinClass.read(c) for c in data["classes"]),
             document=data,
         )
         _require(
@@ -518,6 +557,17 @@ def _validate_inventory(data: dict[str, Any]) -> None:
         )
         _require(identity not in identities, "duplicate JVM declaration")
         identities.add(identity)
+    classes = data["classes"]
+    _require(bool(classes), "inventory has no class evidence")
+    owners: set[str] = set()
+    for record in classes:
+        _require(record["artifact"] in artifacts, "class has no resolved artifact")
+        _require(record["owner"] not in owners, "duplicate class evidence")
+        owners.add(record["owner"])
+        _require(bool(record["classifier"]), "class evidence has no classifier")
+        _require(record["classVisibility"].isupper(), "class visibility is not a token")
+        for node in record["classSupertypes"]:
+            _validate_type(node)
 
 
 def _validate_declaration(record: dict[str, Any]) -> None:

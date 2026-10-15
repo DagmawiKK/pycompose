@@ -33,6 +33,7 @@ def validate_definitions(registry: dict[str, Any]) -> None:
             isinstance(marker, str) and marker for marker in markers
         ):
             _die(f"valueTypes.{name}.optIn must be sorted, unique annotation names")
+        _validate_holders(name, spec)
         for field, rule in spec["parameters"].items():
             if not field.isidentifier() or keyword.iskeyword(to_snake_case(field)):
                 _die(f"invalid value parameter: {name}.{field}")
@@ -45,6 +46,30 @@ def validate_definitions(registry: dict[str, Any]) -> None:
                     _die(f"unknown value family: {prop['valueType']}")
                 if prop["type"] == "value" and "valueType" not in prop:
                     _die("value props need a valueType")
+
+
+def _validate_holders(name: str, spec: dict[str, Any]) -> None:
+    """Fail generation when a constant's per-member holders are not exact."""
+    from pycompose.schema.codegen.main import _die
+
+    native = spec.get("native") or {}
+    if "owners" not in native:
+        return
+    if "propertyOwner" not in native and "constants" not in native:
+        _die(f"valueTypes.{name}.native.owners needs a default holder")
+    owners = native["owners"]
+    if not isinstance(owners, dict) or not owners:
+        _die(f"valueTypes.{name}.native.owners must be a non-empty object")
+    values = spec["parameters"][native["constantParameter"]]["values"]
+    for member, holder in owners.items():
+        if member not in values:
+            _die(f"valueTypes.{name}.native.owners.{member} is not a value")
+        if (
+            not isinstance(holder, str)
+            or not holder
+            or not holder.replace(".", "").replace("$", "").isalnum()
+        ):
+            _die(f"valueTypes.{name}.native.owners.{member} is not a native holder")
 
 
 def _validate_default(name: str, field: str, rule: dict[str, Any]) -> None:
@@ -447,8 +472,11 @@ def render_native(registry: dict[str, Any]) -> str:
             native = spec["native"]
             lines.append(f"            is Wire{name} -> {{")
             if "constants" in native or "propertyOwner" in native:
+                # A vocabulary can live on several holders; a member without an
+                # entry reads through the family's default holder.
+                holders = native.get("owners") or {}
                 choices = native.get("constants") or {
-                    key: native["propertyOwner"] + "." + key
+                    key: holders.get(key, native["propertyOwner"]) + "." + key
                     for key in spec["parameters"][native["constantParameter"]]["values"]
                 }
                 lines.append(

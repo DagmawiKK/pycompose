@@ -52,6 +52,21 @@ def parameter(name: str, value: dict, has_default: bool = False):
     return {"name": name, "type": value, "hasDefault": has_default, "varargType": None}
 
 
+def class_evidence(**changes):
+    record = {
+        "artifact": ARTIFACT,
+        "owner": "androidx.compose.material3.TextKt",
+        "classifier": "androidx.compose.material3.TextKt",
+        "package": "androidx.compose.material3",
+        "classKind": "FILE_FACADE",
+        "classModality": "FINAL",
+        "classVisibility": "PUBLIC",
+        "classSupertypes": [],
+        "annotations": {},
+    }
+    return record | changes
+
+
 def write_inventory(directory: Path, records: list[dict], **changes):
     document = {
         "formatVersion": 1,
@@ -83,6 +98,7 @@ def write_inventory(directory: Path, records: list[dict], **changes):
             }
         ],
         "declarations": records,
+        "classes": [class_evidence()],
         "diagnostics": [],
     } | changes
     (directory / "inventory.json").write_text(json.dumps(document))
@@ -405,7 +421,7 @@ def test_pinned_source_defaults_generate_native_factories(native_document) -> No
     spec = propose_value(
         source,
         since="1.11.0",
-        families={"androidx/compose/ui/graphics/Color": "Color"},
+        families={"androidx.compose.ui.graphics.Color": "Color"},
         defaults=defaults[source.owner, source.jvm_name, source.jvm_descriptor],
     )
     assert list(spec["parameters"]) == [
@@ -461,7 +477,7 @@ def assert_resolves_token_defaults() -> None:
     spec = propose_value(
         source,
         since="1.11.0",
-        families={"androidx/compose/ui/unit/Dp": "Dp"},
+        families={"androidx.compose.ui.unit.Dp": "Dp"},
         defaults=defaults[key],
     )
     assert "tokens" not in json.dumps(spec["parameters"])
@@ -576,6 +592,81 @@ def test_unsafe_token_initializers_are_refused(
     assert reason in record["defaults"]["value"]["reason"]
 
 
+def test_class_evidence_separates_sibling_vocabularies(native_document) -> None:
+    from schema.classpath_dump import inventory, opt_in_markers
+    from schema.propose import propose_members
+
+    assert native_document["provenance"]["bom"] == "2025.01.01"
+    found = inventory(DUMP)
+    vertical = next(
+        evidence
+        for evidence in found.classes
+        if evidence.owner == "androidx.compose.ui.Alignment$Vertical"
+    )
+    assert vertical.class_kind == "INTERFACE"
+    assert vertical.visibility == "PUBLIC"
+    # Only recorded class facts decide assignability: a sibling type is not a
+    # subtype, however the name reads.
+    assert vertical.supertypes == ("kotlin/Any",)
+    companion = "androidx/compose/ui/Alignment$Companion"
+    markers = opt_in_markers(found)
+    alignment = propose_members(
+        found,
+        companion,
+        {
+            "family": "Alignment",
+            "kotlinType": "androidx.compose.ui.Alignment",
+            "kind": "constant",
+        },
+        since="1.14.0",
+        opt_ins=markers,
+        also_from=("androidx/compose/ui/AbsoluteAlignment",),
+    )
+    assert alignment["parameters"]["name"]["values"] == [
+        "BottomCenter",
+        "BottomEnd",
+        "BottomLeft",
+        "BottomRight",
+        "BottomStart",
+        "Center",
+        "CenterEnd",
+        "CenterLeft",
+        "CenterRight",
+        "CenterStart",
+        "TopCenter",
+        "TopEnd",
+        "TopLeft",
+        "TopRight",
+        "TopStart",
+    ]
+    assert alignment["native"]["propertyOwner"] == "androidx.compose.ui.Alignment"
+    assert alignment["native"]["owners"] == {
+        "BottomLeft": "androidx.compose.ui.AbsoluteAlignment",
+        "BottomRight": "androidx.compose.ui.AbsoluteAlignment",
+        "CenterLeft": "androidx.compose.ui.AbsoluteAlignment",
+        "CenterRight": "androidx.compose.ui.AbsoluteAlignment",
+        "TopLeft": "androidx.compose.ui.AbsoluteAlignment",
+        "TopRight": "androidx.compose.ui.AbsoluteAlignment",
+    }
+    upright = propose_members(
+        found,
+        companion,
+        {
+            "family": "AlignmentVertical",
+            "kotlinType": "androidx.compose.ui.Alignment.Vertical",
+            "kind": "constant",
+        },
+        since="1.14.0",
+        opt_ins=markers,
+    )
+    assert upright["parameters"]["name"]["values"] == [
+        "Bottom",
+        "CenterVertically",
+        "Top",
+    ]
+    assert "owners" not in upright["native"]
+
+
 def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -> None:
     from schema.check_upstream import compare_values
     from schema.classpath_dump import inventory, source_defaults
@@ -598,7 +689,7 @@ def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -
         # A refresh reproduces the approved compiler-resolved facts exactly;
         # semantic policy such as ARGB bounds is preserved, not regenerated.
         assert item["proposal"] == approved
-    assert len(derived) == len(results) == 82
+    assert len(derived) == len(results) == 86
     specs = {item["name"]: item["proposal"] for item in derived}
     assert specs["RoundedCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
     assert specs["CutCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
@@ -854,6 +945,7 @@ class GeneratedBindingProof {{
         "empty",
         "diagnostic",
         "artifact",
+        "classes",
         "override",
         "stale",
     ],
@@ -883,6 +975,8 @@ def test_inventory_refuses_untrusted_or_incomplete_input(
         ]
     elif defect == "artifact":
         document["artifacts"] = []
+    elif defect == "classes":
+        document["classes"] = []
     elif defect == "stale":
         document["provenance"]["sourceHashes"]["dump-compose-api.gradle.kts"] = "0" * 64
     else:

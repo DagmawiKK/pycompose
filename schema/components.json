@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.13.0",
+  "schemaVersion": "1.14.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -14,7 +14,8 @@
     "1.10.0",
     "1.11.0",
     "1.12.0",
-    "1.13.0"
+    "1.13.0",
+    "1.14.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -6440,6 +6441,134 @@
       "native": {
         "constantParameter": "name",
         "propertyOwner": "androidx.compose.material3.TimePickerLayoutType"
+      }
+    },
+    "Alignment": {
+      "family": "Alignment",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.Alignment",
+      "since": "1.14.0",
+      "source": {
+        "owner": "androidx/compose/ui/Alignment$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "BottomCenter",
+            "BottomEnd",
+            "BottomLeft",
+            "BottomRight",
+            "BottomStart",
+            "Center",
+            "CenterEnd",
+            "CenterLeft",
+            "CenterRight",
+            "CenterStart",
+            "TopCenter",
+            "TopEnd",
+            "TopLeft",
+            "TopRight",
+            "TopStart"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.Alignment",
+        "owners": {
+          "BottomLeft": "androidx.compose.ui.AbsoluteAlignment",
+          "BottomRight": "androidx.compose.ui.AbsoluteAlignment",
+          "CenterLeft": "androidx.compose.ui.AbsoluteAlignment",
+          "CenterRight": "androidx.compose.ui.AbsoluteAlignment",
+          "TopLeft": "androidx.compose.ui.AbsoluteAlignment",
+          "TopRight": "androidx.compose.ui.AbsoluteAlignment"
+        }
+      }
+    },
+    "AlignmentVertical": {
+      "family": "AlignmentVertical",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.Alignment.Vertical",
+      "since": "1.14.0",
+      "source": {
+        "owner": "androidx/compose/ui/Alignment$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Bottom",
+            "CenterVertically",
+            "Top"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.Alignment"
+      }
+    },
+    "AlignmentHorizontal": {
+      "family": "AlignmentHorizontal",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.Alignment.Horizontal",
+      "since": "1.14.0",
+      "source": {
+        "owner": "androidx/compose/ui/Alignment$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "CenterHorizontally",
+            "End",
+            "Left",
+            "Right",
+            "Start"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.Alignment",
+        "owners": {
+          "Left": "androidx.compose.ui.AbsoluteAlignment",
+          "Right": "androidx.compose.ui.AbsoluteAlignment"
+        }
+      }
+    },
+    "DisplayMode": {
+      "family": "DisplayMode",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.DisplayMode",
+      "since": "1.14.0",
+      "source": {
+        "owner": "androidx/compose/material3/DisplayMode$Companion",
+        "members": "public properties"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Input",
+            "Picker"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.DisplayMode"
       }
     }
   }

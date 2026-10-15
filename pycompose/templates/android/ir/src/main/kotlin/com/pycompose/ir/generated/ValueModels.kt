@@ -14,6 +14,12 @@ import kotlinx.serialization.json.double
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonObject
 
+sealed interface AlignmentValue
+
+sealed interface AlignmentHorizontalValue
+
+sealed interface AlignmentVerticalValue
+
 sealed interface AnnotatedStringValue
 
 sealed interface BorderStrokeValue
@@ -37,6 +43,8 @@ sealed interface ChipElevationValue
 sealed interface ColorValue
 
 sealed interface DatePickerColorsValue
+
+sealed interface DisplayModeValue
 
 sealed interface DpValue
 
@@ -108,6 +116,21 @@ sealed interface TopAppBarColorsValue
 
 sealed interface WindowInsetsValue
 
+data class WireAlignment(
+    val supplied: Set<String>,
+    val name: String,
+) : AlignmentValue
+
+data class WireAlignmentHorizontal(
+    val supplied: Set<String>,
+    val name: String,
+) : AlignmentHorizontalValue
+
+data class WireAlignmentVertical(
+    val supplied: Set<String>,
+    val name: String,
+) : AlignmentVerticalValue
+
 data class WireAnnotatedString(
     val supplied: Set<String>,
     val text: String,
@@ -128,6 +151,11 @@ data class WireCutCornerShape(
     val supplied: Set<String>,
     val size: DpValue,
 ) : ShapeValue
+
+data class WireDisplayMode(
+    val supplied: Set<String>,
+    val name: String,
+) : DisplayModeValue
 
 data class WireDp(
     val supplied: Set<String>,
@@ -855,10 +883,21 @@ data class WireverticalGradient(
 ) : BrushValue
 
 object ValueContract {
-    const val SCHEMA_VERSION = "1.13.0"
+    const val SCHEMA_VERSION = "1.14.0"
     private val json = Json { classDiscriminator = "type" }
     val specs: JsonObject = json.parseToJsonElement(
-        "{\"AnnotatedString\":{\"family\":\"AnnotatedString\",\"parameters\":" +
+        "{\"Alignment\":{\"family\":\"Alignment\",\"parameters\":{\"name\":{\"re" +
+        "quired\":true,\"type\":\"string\",\"values\":[\"BottomCenter\",\"Botto" +
+        "mEnd\",\"BottomLeft\",\"BottomRight\",\"BottomStart\",\"Center\",\"Cen" +
+        "terEnd\",\"CenterLeft\",\"CenterRight\",\"CenterStart\",\"TopCenter\"" +
+        ",\"TopEnd\",\"TopLeft\",\"TopRight\",\"TopStart\"]}},\"since\":\"1.14.0" +
+        "\"},\"AlignmentHorizontal\":{\"family\":\"AlignmentHorizontal\",\"pa" +
+        "rameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":" +
+        "[\"CenterHorizontally\",\"End\",\"Left\",\"Right\",\"Start\"]}},\"since" +
+        "\":\"1.14.0\"},\"AlignmentVertical\":{\"family\":\"AlignmentVertical" +
+        "\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"val" +
+        "ues\":[\"Bottom\",\"CenterVertically\",\"Top\"]}},\"since\":\"1.14.0\"}" +
+        ",\"AnnotatedString\":{\"family\":\"AnnotatedString\",\"parameters\":" +
         "{\"text\":{\"required\":true,\"type\":\"string\"}},\"since\":\"1.12.0\"}" +
         ",\"BorderStroke\":{\"family\":\"BorderStroke\",\"parameters\":{\"brus" +
         "h\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Brush\"},\"wid" +
@@ -867,394 +906,489 @@ object ValueContract {
         "rs\":{\"color\":{\"maximum\":4294967295,\"minimum\":0,\"required\":tr" +
         "ue,\"type\":\"long\"}},\"since\":\"1.11.0\"},\"CutCornerShape\":{\"fami" +
         "ly\":\"Shape\",\"parameters\":{\"size\":{\"minimum\":0,\"required\":tru" +
-        "e,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Dp\":{" +
-        "\"family\":\"Dp\",\"parameters\":{\"value\":{\"required\":true,\"type\":" +
-        "\"float\"}},\"since\":\"1.11.0\"},\"DpOffset\":{\"family\":\"DpOffset\"," +
-        "\"parameters\":{\"x\":{\"required\":true,\"type\":\"value\",\"valueType" +
-        "\":\"Dp\"},\"y\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"" +
-        "}},\"since\":\"1.13.0\"},\"DpSize\":{\"family\":\"DpSize\",\"parameters" +
-        "\":{\"height\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"" +
-        "},\"width\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"}}" +
-        ",\"since\":\"1.13.0\"},\"Em\":{\"family\":\"TextUnit\",\"parameters\":{\"" +
-        "value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"" +
-        "FabPosition\":{\"family\":\"FabPosition\",\"parameters\":{\"name\":{\"" +
-        "required\":true,\"type\":\"string\",\"values\":[\"Center\",\"End\",\"End" +
-        "Overlay\",\"Start\"]}},\"since\":\"1.13.0\"},\"FontFamily\":{\"family\"" +
-        ":\"FontFamily\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"" +
-        "string\",\"values\":[\"Cursive\",\"Default\",\"Monospace\",\"SansSerif" +
-        "\",\"Serif\"]}},\"since\":\"1.11.0\"},\"FontStyle\":{\"family\":\"FontSt" +
-        "yle\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"" +
-        "values\":[\"Italic\",\"Normal\"]}},\"since\":\"1.13.0\"},\"FontWeight\"" +
-        ":{\"family\":\"FontWeight\",\"parameters\":{\"weight\":{\"maximum\":10" +
-        "00,\"minimum\":1,\"required\":true,\"type\":\"int\"}},\"since\":\"1.11." +
-        "0\"},\"Offset\":{\"family\":\"Offset\",\"parameters\":{\"x\":{\"required" +
-        "\":true,\"type\":\"float\"},\"y\":{\"required\":true,\"type\":\"float\"}}" +
-        ",\"since\":\"1.11.0\"},\"PaddingValues\":{\"family\":\"PaddingValues\"" +
-        ",\"parameters\":{\"bottom\":{\"minimum\":0,\"type\":\"value\",\"valueTy" +
-        "pe\":\"Dp\"},\"end\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"" +
-        "},\"start\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top" +
-        "\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1." +
-        "11.0\"},\"RoundedCornerShape\":{\"family\":\"Shape\",\"parameters\":{" +
-        "\"size\":{\"minimum\":0,\"required\":true,\"type\":\"value\",\"valueTyp" +
-        "e\":\"Dp\"}},\"since\":\"1.11.0\"},\"Size\":{\"family\":\"Size\",\"paramet" +
-        "ers\":{\"height\":{\"minimum\":0,\"required\":true,\"type\":\"float\"}," +
-        "\"width\":{\"minimum\":0,\"required\":true,\"type\":\"float\"}},\"since" +
-        "\":\"1.11.0\"},\"SolidColor\":{\"family\":\"Brush\",\"parameters\":{\"va" +
-        "lue\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Color\"}},\"" +
-        "since\":\"1.11.0\"},\"Sp\":{\"family\":\"TextUnit\",\"parameters\":{\"va" +
-        "lue\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"St" +
-        "rokeCap\":{\"family\":\"StrokeCap\",\"parameters\":{\"name\":{\"requir" +
-        "ed\":true,\"type\":\"string\",\"values\":[\"Butt\",\"Round\",\"Square\"]}" +
-        "},\"since\":\"1.13.0\"},\"TextAlign\":{\"family\":\"TextAlign\",\"param" +
-        "eters\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"C" +
-        "enter\",\"End\",\"Justify\",\"Left\",\"Right\",\"Start\",\"Unspecified\"]" +
-        "}},\"since\":\"1.13.0\"},\"TextDecoration\":{\"family\":\"TextDecorat" +
-        "ion\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"" +
-        "values\":[\"LineThrough\",\"None\",\"Underline\"]}},\"since\":\"1.13.0" +
-        "\"},\"TextOverflow\":{\"family\":\"TextOverflow\",\"parameters\":{\"na" +
-        "me\":{\"required\":true,\"type\":\"string\",\"values\":[\"Clip\",\"Ellip" +
-        "sis\",\"Visible\"]}},\"since\":\"1.13.0\"},\"TextStyle\":{\"family\":\"T" +
-        "extStyle\",\"parameters\":{\"color\":{\"type\":\"value\",\"valueType\":" +
-        "\"Color\"},\"fontFamily\":{\"nullable\":true,\"type\":\"value\",\"value" +
-        "Type\":\"FontFamily\"},\"fontSize\":{\"minimum\":0,\"type\":\"value\",\"" +
-        "valueType\":\"TextUnit\"},\"fontWeight\":{\"nullable\":true,\"type\":" +
-        "\"value\",\"valueType\":\"FontWeight\"},\"letterSpacing\":{\"type\":\"v" +
-        "alue\",\"valueType\":\"TextUnit\"}},\"since\":\"1.11.0\"},\"ThemeColor" +
-        "\":{\"family\":\"Color\",\"parameters\":{\"name\":{\"required\":true,\"t" +
-        "ype\":\"string\",\"values\":[\"background\",\"error\",\"errorContainer" +
-        "\",\"inverseOnSurface\",\"inversePrimary\",\"inverseSurface\",\"onBa" +
-        "ckground\",\"onError\",\"onErrorContainer\",\"onPrimary\",\"onPrimar" +
-        "yContainer\",\"onSecondary\",\"onSecondaryContainer\",\"onSurface\"" +
-        ",\"onSurfaceVariant\",\"onTertiary\",\"onTertiaryContainer\",\"outl" +
-        "ine\",\"outlineVariant\",\"primary\",\"primaryContainer\",\"scrim\",\"" +
-        "secondary\",\"secondaryContainer\",\"surface\",\"surfaceBright\",\"s" +
-        "urfaceContainer\",\"surfaceContainerHigh\",\"surfaceContainerHig" +
-        "hest\",\"surfaceContainerLow\",\"surfaceContainerLowest\",\"surfac" +
-        "eDim\",\"surfaceTint\",\"surfaceVariant\",\"tertiary\",\"tertiaryCon" +
-        "tainer\"]}},\"since\":\"1.11.0\"},\"ThemeShape\":{\"family\":\"Shape\"," +
-        "\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"value" +
-        "s\":[\"extraLarge\",\"extraSmall\",\"large\",\"medium\",\"small\"]}},\"s" +
-        "ince\":\"1.11.0\"},\"ThemeTypography\":{\"family\":\"TextStyle\",\"par" +
-        "ameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[" +
-        "\"bodyLarge\",\"bodyMedium\",\"bodySmall\",\"displayLarge\",\"display" +
-        "Medium\",\"displaySmall\",\"headlineLarge\",\"headlineMedium\",\"hea" +
-        "dlineSmall\",\"labelLarge\",\"labelMedium\",\"labelSmall\",\"titleLa" +
-        "rge\",\"titleMedium\",\"titleSmall\"]}},\"since\":\"1.11.0\"},\"TimePi" +
-        "ckerLayoutType\":{\"family\":\"TimePickerLayoutType\",\"parameters" +
-        "\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"Horizo" +
-        "ntal\",\"Vertical\"]}},\"since\":\"1.13.0\"},\"ToggleableState\":{\"fa" +
-        "mily\":\"ToggleableState\",\"parameters\":{\"name\":{\"required\":tru" +
-        "e,\"type\":\"string\",\"values\":[\"Indeterminate\",\"Off\",\"On\"]}},\"s" +
-        "ince\":\"1.12.0\"},\"WindowInsets\":{\"family\":\"WindowInsets\",\"par" +
-        "ameters\":{\"bottom\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"" +
-        "Dp\"},\"left\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"r" +
-        "ight\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\":{\"" +
-        "minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0" +
-        "\"},\"assistChipColors\":{\"family\":\"ChipColors\",\"parameters\":{\"" +
-        "containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
-        "edContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disa" +
-        "bledLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
-        "edLeadingIconContentColor\":{\"type\":\"value\",\"valueType\":\"Colo" +
-        "r\"},\"disabledTrailingIconContentColor\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\":\"Co" +
-        "lor\"},\"leadingIconContentColor\":{\"type\":\"value\",\"valueType\":" +
-        "\"Color\"},\"trailingIconContentColor\":{\"type\":\"value\",\"valueTy" +
-        "pe\":\"Color\"}},\"since\":\"1.13.0\"},\"assistChipElevation\":{\"fami" +
-        "ly\":\"ChipElevation\",\"parameters\":{\"draggedElevation\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Dp\"}},\"since\":\"1.13.0\"},\"bottomAppBarFabElevation\":{" +
-        "\"family\":\"FloatingActionButtonElevation\",\"parameters\":{\"defa" +
-        "ultElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElev" +
-        "ation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":" +
-        "{\"type\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"buttonColors\"" +
-        ":{\"family\":\"ButtonColors\",\"parameters\":{\"containerColor\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"},\"contentColor\":{\"type\":\"va" +
-        "lue\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"},\"disabledContentColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"},\"buttonElevat" +
-        "ion\":{\"family\":\"ButtonElevation\",\"parameters\":{\"defaultEleva" +
-        "tion\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"disable" +
-        "dElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"f" +
-        "ocusedElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp" +
-        "\"},\"hoveredElevation\":{\"minimum\":0,\"type\":\"value\",\"valueType" +
-        "\":\"Dp\"},\"pressedElevation\":{\"minimum\":0,\"type\":\"value\",\"valu" +
-        "eType\":\"Dp\"}},\"since\":\"1.11.0\"},\"cardColors\":{\"family\":\"Card" +
-        "Colors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"va" +
-        "lueType\":\"Color\"}},\"since\":\"1.13.0\"},\"cardElevation\":{\"famil" +
-        "y\":\"CardElevation\",\"parameters\":{\"defaultElevation\":{\"type\":" +
-        "\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"type\":\"value" +
-        "\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"valueType\":" +
-        "\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"" +
-        "pressedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\"" +
-        ":\"1.13.0\"},\"centerAlignedTopAppBarColors\":{\"family\":\"TopAppB" +
-        "arColors\",\"parameters\":{\"actionIconContentColor\":{\"type\":\"va" +
-        "lue\",\"valueType\":\"Color\"},\"containerColor\":{\"type\":\"value\",\"" +
-        "valueType\":\"Color\"},\"navigationIconContentColor\":{\"type\":\"va" +
-        "lue\",\"valueType\":\"Color\"},\"scrolledContainerColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"},\"titleContentColor\":{\"type\":\"val" +
-        "ue\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"checkboxColors\"" +
-        ":{\"family\":\"CheckboxColors\",\"parameters\":{\"checkedColor\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"},\"checkmarkColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"},\"disabledCheckedColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"},\"disabledIndeterminateColor\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"},\"disabledUncheckedColor\":{" +
-        "\"type\":\"value\",\"valueType\":\"Color\"},\"uncheckedColor\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"datePicker" +
-        "Colors\":{\"family\":\"DatePickerColors\",\"parameters\":{\"containe" +
-        "rColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"currentYearCon" +
-        "tentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"dateTextFie" +
-        "ldColors\":{\"nullable\":true,\"type\":\"value\",\"valueType\":\"TextF" +
-        "ieldColors\"},\"dayContentColor\":{\"type\":\"value\",\"valueType\":\"" +
-        "Color\"},\"dayInSelectionRangeContainerColor\":{\"type\":\"value\"," +
-        "\"valueType\":\"Color\"},\"dayInSelectionRangeContentColor\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Color\"},\"disabledDayContentColor\":{\"" +
-        "type\":\"value\",\"valueType\":\"Color\"},\"disabledSelectedDayConta" +
-        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledSel" +
-        "ectedDayContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
-        "disabledSelectedYearContainerColor\":{\"type\":\"value\",\"valueTy" +
-        "pe\":\"Color\"},\"disabledSelectedYearContentColor\":{\"type\":\"val" +
-        "ue\",\"valueType\":\"Color\"},\"disabledYearContentColor\":{\"type\":" +
-        "\"value\",\"valueType\":\"Color\"},\"dividerColor\":{\"type\":\"value\"," +
-        "\"valueType\":\"Color\"},\"headlineContentColor\":{\"type\":\"value\"," +
-        "\"valueType\":\"Color\"},\"navigationContentColor\":{\"type\":\"value" +
-        "\",\"valueType\":\"Color\"},\"selectedDayContainerColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"},\"selectedDayContentColor\":{\"type" +
-        "\":\"value\",\"valueType\":\"Color\"},\"selectedYearContainerColor\":" +
-        "{\"type\":\"value\",\"valueType\":\"Color\"},\"selectedYearContentCol" +
-        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"subheadContentColo" +
-        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"titleContentColor\":" +
-        "{\"type\":\"value\",\"valueType\":\"Color\"},\"todayContentColor\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"},\"todayDateBorderColor\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"},\"weekdayContentColor\":{\"ty" +
-        "pe\":\"value\",\"valueType\":\"Color\"},\"yearContentColor\":{\"type\":" +
-        "\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedAss" +
-        "istChipColors\":{\"family\":\"ChipColors\",\"parameters\":{\"contain" +
-        "erColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledConta" +
-        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledLab" +
-        "elColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledLeadi" +
-        "ngIconContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"di" +
-        "sabledTrailingIconContentColor\":{\"type\":\"value\",\"valueType\":" +
-        "\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
-        "leadingIconContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
-        "},\"trailingIconContentColor\":{\"type\":\"value\",\"valueType\":\"Co" +
-        "lor\"}},\"since\":\"1.13.0\"},\"elevatedAssistChipElevation\":{\"fam" +
-        "ily\":\"ChipElevation\",\"parameters\":{\"disabledElevation\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"val" +
-        "ue\",\"valueType\":\"Dp\"},\"elevation\":{\"type\":\"value\",\"valueType" +
+        "e,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Displ" +
+        "ayMode\":{\"family\":\"DisplayMode\",\"parameters\":{\"name\":{\"requi" +
+        "red\":true,\"type\":\"string\",\"values\":[\"Input\",\"Picker\"]}},\"sin" +
+        "ce\":\"1.14.0\"},\"Dp\":{\"family\":\"Dp\",\"parameters\":{\"value\":{\"re" +
+        "quired\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"DpOffset\":{" +
+        "\"family\":\"DpOffset\",\"parameters\":{\"x\":{\"required\":true,\"type" +
+        "\":\"value\",\"valueType\":\"Dp\"},\"y\":{\"required\":true,\"type\":\"val" +
+        "ue\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"DpSize\":{\"family\":" +
+        "\"DpSize\",\"parameters\":{\"height\":{\"required\":true,\"type\":\"val" +
+        "ue\",\"valueType\":\"Dp\"},\"width\":{\"required\":true,\"type\":\"value" +
+        "\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"Em\":{\"family\":\"TextU" +
+        "nit\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"float\"}}" +
+        ",\"since\":\"1.11.0\"},\"FabPosition\":{\"family\":\"FabPosition\",\"pa" +
+        "rameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":" +
+        "[\"Center\",\"End\",\"EndOverlay\",\"Start\"]}},\"since\":\"1.13.0\"},\"F" +
+        "ontFamily\":{\"family\":\"FontFamily\",\"parameters\":{\"name\":{\"req" +
+        "uired\":true,\"type\":\"string\",\"values\":[\"Cursive\",\"Default\",\"M" +
+        "onospace\",\"SansSerif\",\"Serif\"]}},\"since\":\"1.11.0\"},\"FontStyl" +
+        "e\":{\"family\":\"FontStyle\",\"parameters\":{\"name\":{\"required\":tr" +
+        "ue,\"type\":\"string\",\"values\":[\"Italic\",\"Normal\"]}},\"since\":\"1" +
+        ".13.0\"},\"FontWeight\":{\"family\":\"FontWeight\",\"parameters\":{\"w" +
+        "eight\":{\"maximum\":1000,\"minimum\":1,\"required\":true,\"type\":\"i" +
+        "nt\"}},\"since\":\"1.11.0\"},\"Offset\":{\"family\":\"Offset\",\"paramet" +
+        "ers\":{\"x\":{\"required\":true,\"type\":\"float\"},\"y\":{\"required\":t" +
+        "rue,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"PaddingValues\":{\"fam" +
+        "ily\":\"PaddingValues\",\"parameters\":{\"bottom\":{\"minimum\":0,\"ty" +
+        "pe\":\"value\",\"valueType\":\"Dp\"},\"end\":{\"minimum\":0,\"type\":\"val" +
+        "ue\",\"valueType\":\"Dp\"},\"start\":{\"minimum\":0,\"type\":\"value\",\"v" +
+        "alueType\":\"Dp\"},\"top\":{\"minimum\":0,\"type\":\"value\",\"valueType" +
+        "\":\"Dp\"}},\"since\":\"1.11.0\"},\"RoundedCornerShape\":{\"family\":\"S" +
+        "hape\",\"parameters\":{\"size\":{\"minimum\":0,\"required\":true,\"typ" +
+        "e\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Size\":{\"fam" +
+        "ily\":\"Size\",\"parameters\":{\"height\":{\"minimum\":0,\"required\":t" +
+        "rue,\"type\":\"float\"},\"width\":{\"minimum\":0,\"required\":true,\"ty" +
+        "pe\":\"float\"}},\"since\":\"1.11.0\"},\"SolidColor\":{\"family\":\"Brus" +
+        "h\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"value\",\"va" +
+        "lueType\":\"Color\"}},\"since\":\"1.11.0\"},\"Sp\":{\"family\":\"TextUni" +
+        "t\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"" +
+        "since\":\"1.11.0\"},\"StrokeCap\":{\"family\":\"StrokeCap\",\"paramete" +
+        "rs\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"Butt" +
+        "\",\"Round\",\"Square\"]}},\"since\":\"1.13.0\"},\"TextAlign\":{\"family" +
+        "\":\"TextAlign\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"" +
+        "string\",\"values\":[\"Center\",\"End\",\"Justify\",\"Left\",\"Right\",\"S" +
+        "tart\",\"Unspecified\"]}},\"since\":\"1.13.0\"},\"TextDecoration\":{\"" +
+        "family\":\"TextDecoration\",\"parameters\":{\"name\":{\"required\":tr" +
+        "ue,\"type\":\"string\",\"values\":[\"LineThrough\",\"None\",\"Underline" +
+        "\"]}},\"since\":\"1.13.0\"},\"TextOverflow\":{\"family\":\"TextOverflo" +
+        "w\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",\"va" +
+        "lues\":[\"Clip\",\"Ellipsis\",\"Visible\"]}},\"since\":\"1.13.0\"},\"Tex" +
+        "tStyle\":{\"family\":\"TextStyle\",\"parameters\":{\"color\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"},\"fontFamily\":{\"nullable\":true,\"" +
+        "type\":\"value\",\"valueType\":\"FontFamily\"},\"fontSize\":{\"minimum" +
+        "\":0,\"type\":\"value\",\"valueType\":\"TextUnit\"},\"fontWeight\":{\"nu" +
+        "llable\":true,\"type\":\"value\",\"valueType\":\"FontWeight\"},\"lette" +
+        "rSpacing\":{\"type\":\"value\",\"valueType\":\"TextUnit\"}},\"since\":\"" +
+        "1.11.0\"},\"ThemeColor\":{\"family\":\"Color\",\"parameters\":{\"name\"" +
+        ":{\"required\":true,\"type\":\"string\",\"values\":[\"background\",\"er" +
+        "ror\",\"errorContainer\",\"inverseOnSurface\",\"inversePrimary\",\"i" +
+        "nverseSurface\",\"onBackground\",\"onError\",\"onErrorContainer\",\"" +
+        "onPrimary\",\"onPrimaryContainer\",\"onSecondary\",\"onSecondaryCo" +
+        "ntainer\",\"onSurface\",\"onSurfaceVariant\",\"onTertiary\",\"onTert" +
+        "iaryContainer\",\"outline\",\"outlineVariant\",\"primary\",\"primary" +
+        "Container\",\"scrim\",\"secondary\",\"secondaryContainer\",\"surface" +
+        "\",\"surfaceBright\",\"surfaceContainer\",\"surfaceContainerHigh\"," +
+        "\"surfaceContainerHighest\",\"surfaceContainerLow\",\"surfaceCont" +
+        "ainerLowest\",\"surfaceDim\",\"surfaceTint\",\"surfaceVariant\",\"te" +
+        "rtiary\",\"tertiaryContainer\"]}},\"since\":\"1.11.0\"},\"ThemeShape" +
+        "\":{\"family\":\"Shape\",\"parameters\":{\"name\":{\"required\":true,\"t" +
+        "ype\":\"string\",\"values\":[\"extraLarge\",\"extraSmall\",\"large\",\"m" +
+        "edium\",\"small\"]}},\"since\":\"1.11.0\"},\"ThemeTypography\":{\"fami" +
+        "ly\":\"TextStyle\",\"parameters\":{\"name\":{\"required\":true,\"type\"" +
+        ":\"string\",\"values\":[\"bodyLarge\",\"bodyMedium\",\"bodySmall\",\"di" +
+        "splayLarge\",\"displayMedium\",\"displaySmall\",\"headlineLarge\",\"" +
+        "headlineMedium\",\"headlineSmall\",\"labelLarge\",\"labelMedium\",\"" +
+        "labelSmall\",\"titleLarge\",\"titleMedium\",\"titleSmall\"]}},\"sinc" +
+        "e\":\"1.11.0\"},\"TimePickerLayoutType\":{\"family\":\"TimePickerLay" +
+        "outType\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"strin" +
+        "g\",\"values\":[\"Horizontal\",\"Vertical\"]}},\"since\":\"1.13.0\"},\"T" +
+        "oggleableState\":{\"family\":\"ToggleableState\",\"parameters\":{\"n" +
+        "ame\":{\"required\":true,\"type\":\"string\",\"values\":[\"Indetermina" +
+        "te\",\"Off\",\"On\"]}},\"since\":\"1.12.0\"},\"WindowInsets\":{\"family\"" +
+        ":\"WindowInsets\",\"parameters\":{\"bottom\":{\"minimum\":0,\"type\":\"" +
+        "value\",\"valueType\":\"Dp\"},\"left\":{\"minimum\":0,\"type\":\"value\"," +
+        "\"valueType\":\"Dp\"},\"right\":{\"minimum\":0,\"type\":\"value\",\"value" +
+        "Type\":\"Dp\"},\"top\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"D" +
+        "p\"}},\"since\":\"1.11.0\"},\"assistChipColors\":{\"family\":\"ChipCol" +
+        "ors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"value" +
+        "Type\":\"Color\"},\"disabledLabelColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"},\"disabledLeadingIconContentColor\":{\"type\":\"valu" +
+        "e\",\"valueType\":\"Color\"},\"disabledTrailingIconContentColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"labelColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"leadingIconContentColor\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"},\"trailingIconContentColor\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"assistC" +
+        "hipElevation\":{\"family\":\"ChipElevation\",\"parameters\":{\"dragg" +
+        "edElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"elevation\":{" +
+        "\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"bottomA" +
+        "ppBarFabElevation\":{\"family\":\"FloatingActionButtonElevation\"" +
+        ",\"parameters\":{\"defaultElevation\":{\"type\":\"value\",\"valueType" +
         "\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}" +
         ",\"hoveredElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"press" +
         "edElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.1" +
-        "3.0\"},\"elevatedCardColors\":{\"family\":\"CardColors\",\"parameter" +
-        "s\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"d" +
-        "isabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}" +
-        ",\"since\":\"1.13.0\"},\"elevatedCardElevation\":{\"family\":\"CardEl" +
-        "evation\",\"parameters\":{\"defaultElevation\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Dp\"},\"disabledElevation\":{\"type\":\"value\",\"valueTy" +
-        "pe\":\"Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valueType\":\"Dp" +
-        "\"},\"focusedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hov" +
-        "eredElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"pressedEle" +
-        "vation\":{\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"}" +
-        ",\"elevatedFilterChipColors\":{\"family\":\"SelectableChipColors\"" +
-        ",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valueType\":" +
-        "\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueType" +
-        "\":\"Color\"},\"disabledLabelColor\":{\"type\":\"value\",\"valueType\":" +
-        "\"Color\"},\"disabledLeadingIconColor\":{\"type\":\"value\",\"valueTy" +
-        "pe\":\"Color\"},\"disabledSelectedContainerColor\":{\"type\":\"value" +
-        "\",\"valueType\":\"Color\"},\"disabledTrailingIconColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"},\"iconColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\":\"C" +
-        "olor\"},\"selectedContainerColor\":{\"type\":\"value\",\"valueType\":" +
-        "\"Color\"},\"selectedLabelColor\":{\"type\":\"value\",\"valueType\":\"C" +
-        "olor\"},\"selectedLeadingIconColor\":{\"type\":\"value\",\"valueType" +
-        "\":\"Color\"},\"selectedTrailingIconColor\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedFilterChipElevat" +
-        "ion\":{\"family\":\"SelectableChipElevation\",\"parameters\":{\"disa" +
+        "3.0\"},\"buttonColors\":{\"family\":\"ButtonColors\",\"parameters\":{" +
+        "\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"conte" +
+        "ntColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledConta" +
+        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledCon" +
+        "tentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1." +
+        "11.0\"},\"buttonElevation\":{\"family\":\"ButtonElevation\",\"parame" +
+        "ters\":{\"defaultElevation\":{\"minimum\":0,\"type\":\"value\",\"value" +
+        "Type\":\"Dp\"},\"disabledElevation\":{\"minimum\":0,\"type\":\"value\"," +
+        "\"valueType\":\"Dp\"},\"focusedElevation\":{\"minimum\":0,\"type\":\"va" +
+        "lue\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"minimum\":0,\"type" +
+        "\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"minimum\":0," +
+        "\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"cardCol" +
+        "ors\":{\"family\":\"CardColors\",\"parameters\":{\"containerColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\"" +
+        ":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"ca" +
+        "rdElevation\":{\"family\":\"CardElevation\",\"parameters\":{\"defaul" +
+        "tElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"disabledEleva" +
+        "tion\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{" +
+        "\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":" +
+        "\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\"" +
+        ",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"value" +
+        "Type\":\"Dp\"}},\"since\":\"1.13.0\"},\"centerAlignedTopAppBarColors" +
+        "\":{\"family\":\"TopAppBarColors\",\"parameters\":{\"actionIconConte" +
+        "ntColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"containerColo" +
+        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"navigationIconConte" +
+        "ntColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"scrolledConta" +
+        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"titleConten" +
+        "tColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13." +
+        "0\"},\"checkboxColors\":{\"family\":\"CheckboxColors\",\"parameters\"" +
+        ":{\"checkedColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"check" +
+        "markColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledChe" +
+        "ckedColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledInd" +
+        "eterminateColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disab" +
+        "ledUncheckedColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unc" +
+        "heckedColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"" +
+        "1.13.0\"},\"datePickerColors\":{\"family\":\"DatePickerColors\",\"pa" +
+        "rameters\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"currentYearContentColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"},\"dateTextFieldColors\":{\"nullable\":true,\"type\":\"value" +
+        "\",\"valueType\":\"TextFieldColors\"},\"dayContentColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"dayInSelectionRangeContainerCol" +
+        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"dayInSelectionRang" +
+        "eContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disable" +
+        "dDayContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disa" +
+        "bledSelectedDayContainerColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"},\"disabledSelectedDayContentColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"disabledSelectedYearContainerColor\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Color\"},\"disabledSelectedYearConten" +
+        "tColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledYearCo" +
+        "ntentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"dividerCol" +
+        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"headlineContentCol" +
+        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"navigationContentC" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"selectedDayConta" +
+        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"selectedDay" +
+        "ContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"selected" +
+        "YearContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"se" +
+        "lectedYearContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        ",\"subheadContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"titleContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"to" +
+        "dayContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"today" +
+        "DateBorderColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"weekd" +
+        "ayContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"yearCo" +
+        "ntentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1" +
+        ".13.0\"},\"elevatedAssistChipColors\":{\"family\":\"ChipColors\",\"p" +
+        "arameters\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"},\"disabledLabelColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"},\"disabledLeadingIconContentColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"disabledTrailingIconContentColor\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"leadingIconContentColor\":{\"type\":\"value\"" +
+        ",\"valueType\":\"Color\"},\"trailingIconContentColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedAssist" +
+        "ChipElevation\":{\"family\":\"ChipElevation\",\"parameters\":{\"disa" +
         "bledElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"draggedEle" +
         "vation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"type" +
         "\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"valu" +
         "e\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"val" +
         "ueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\"" +
-        ":\"Dp\"}},\"since\":\"1.13.0\"},\"elevatedSuggestionChipColors\":{\"f" +
-        "amily\":\"ChipColors\",\"parameters\":{\"containerColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Color\"},\"disabledIconContentColor\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"},\"disabledLabelColor\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Color\"},\"iconContentColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"va" +
-        "lueType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedSuggestionChip" +
-        "Elevation\":{\"family\":\"ChipElevation\",\"parameters\":{\"disabled" +
-        "Elevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"draggedElevati" +
-        "on\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"type\":\"v" +
-        "alue\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"" +
-        "valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueTy" +
-        "pe\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"Dp" +
-        "\"}},\"since\":\"1.13.0\"},\"exposedDropdownMenuOutlinedTextFieldC" +
-        "olors\":{\"family\":\"TextFieldColors\",\"parameters\":{\"disabledCo" +
-        "ntainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorCon" +
-        "tainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedCo" +
-        "ntainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocuse" +
-        "dContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"sinc" +
-        "e\":\"1.13.0\"},\"filledIconButtonColors\":{\"family\":\"IconButtonC" +
-        "olors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"value" +
-        "Type\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"},\"disabledContentColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"}},\"since\":\"1.13.0\"},\"filledIconToggleButtonC" +
-        "olors\":{\"family\":\"IconToggleButtonColors\",\"parameters\":{\"che" +
-        "ckedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"co" +
-        "ntainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"contentC" +
-        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledContaine" +
-        "rColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledConten" +
-        "tColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13." +
-        "0\"},\"filledTonalIconButtonColors\":{\"family\":\"IconButtonColor" +
-        "s\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valueType" +
-        "\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueTy" +
-        "pe\":\"Color\"},\"disabledContentColor\":{\"type\":\"value\",\"valueTy" +
-        "pe\":\"Color\"}},\"since\":\"1.13.0\"},\"filledTonalIconToggleButton" +
-        "Colors\":{\"family\":\"IconToggleButtonColors\",\"parameters\":{\"ch" +
-        "eckedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"c" +
-        "heckedContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"co" +
-        "ntainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabled" +
-        "ContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
-        "edContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since" +
-        "\":\"1.13.0\"},\"filterChipColors\":{\"family\":\"SelectableChipColo" +
-        "rs\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valueTyp" +
-        "e\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueT" +
-        "ype\":\"Color\"},\"disabledLabelColor\":{\"type\":\"value\",\"valueTyp" +
-        "e\":\"Color\"},\"disabledLeadingIconColor\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"},\"disabledSelectedContainerColor\":{\"type\":\"va" +
-        "lue\",\"valueType\":\"Color\"},\"disabledTrailingIconColor\":{\"type" +
-        "\":\"value\",\"valueType\":\"Color\"},\"iconColor\":{\"type\":\"value\",\"" +
-        "valueType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\"" +
-        ":\"Color\"},\"selectedContainerColor\":{\"type\":\"value\",\"valueTyp" +
-        "e\":\"Color\"},\"selectedLabelColor\":{\"type\":\"value\",\"valueType\"" +
-        ":\"Color\"},\"selectedLeadingIconColor\":{\"type\":\"value\",\"valueT" +
-        "ype\":\"Color\"},\"selectedTrailingIconColor\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Color\"}},\"since\":\"1.13.0\"},\"filterChipElevation\":" +
-        "{\"family\":\"SelectableChipElevation\",\"parameters\":{\"draggedEl" +
-        "evation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"val" +
-        "ue\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"va" +
-        "lueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType" +
-        "\":\"Dp\"}},\"since\":\"1.13.0\"},\"floatingActionButtonElevation\":{" +
-        "\"family\":\"FloatingActionButtonElevation\",\"parameters\":{\"defa" +
-        "ultElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElev" +
+        ":\"Dp\"}},\"since\":\"1.13.0\"},\"elevatedCardColors\":{\"family\":\"Ca" +
+        "rdColors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"va" +
+        "lueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedCardElevatio" +
+        "n\":{\"family\":\"CardElevation\",\"parameters\":{\"defaultElevation" +
+        "\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"" +
+        "}},\"since\":\"1.13.0\"},\"elevatedFilterChipColors\":{\"family\":\"S" +
+        "electableChipColors\",\"parameters\":{\"containerColor\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"type" +
+        "\":\"value\",\"valueType\":\"Color\"},\"disabledLabelColor\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"},\"disabledLeadingIconColor\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Color\"},\"disabledSelectedContainerC" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledTrailing" +
+        "IconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"iconColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"labelColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"},\"selectedContainerColor\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"},\"selectedLabelColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"},\"selectedLeadingIconColor\":{\"type" +
+        "\":\"value\",\"valueType\":\"Color\"},\"selectedTrailingIconColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"elev" +
+        "atedFilterChipElevation\":{\"family\":\"SelectableChipElevation\"" +
+        ",\"parameters\":{\"disabledElevation\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"" +
+        "},\"elevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElev" +
         "ation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":" +
         "{\"type\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"horizontalGra" +
-        "dient\":{\"family\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"},\"minItems\":2,\"required\":tr" +
-        "ue,\"type\":\"list\"},\"endX\":{\"type\":\"float\"},\"startX\":{\"type\":\"" +
-        "float\"}},\"since\":\"1.11.0\"},\"iconButtonColors\":{\"family\":\"Ico" +
-        "nButtonColors\",\"parameters\":{\"containerColor\":{\"type\":\"value" +
-        "\",\"valueType\":\"Color\"},\"contentColor\":{\"type\":\"value\",\"value" +
-        "Type\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"}},\"since\":\"1.13.0\"},\"iconToggleButtonColors\"" +
-        ":{\"family\":\"IconToggleButtonColors\",\"parameters\":{\"checkedCo" +
-        "ntainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"checkedC" +
-        "ontentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"container" +
-        "Color\":{\"type\":\"value\",\"valueType\":\"Color\"},\"contentColor\":{" +
-        "\"type\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\"" +
-        ":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"in" +
-        "putChipColors\":{\"family\":\"SelectableChipColors\",\"parameters\"" +
-        ":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"dis" +
-        "abledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"d" +
-        "isabledLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"dis" +
-        "abledLeadingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
-        "\"disabledSelectedContainerColor\":{\"type\":\"value\",\"valueType\"" +
-        ":\"Color\"},\"disabledTrailingIconColor\":{\"type\":\"value\",\"value" +
-        "Type\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\":\"Col" +
-        "or\"},\"leadingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
-        ",\"selectedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color" +
-        "\"},\"selectedLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
-        ",\"selectedLeadingIconColor\":{\"type\":\"value\",\"valueType\":\"Col" +
-        "or\"},\"selectedTrailingIconColor\":{\"type\":\"value\",\"valueType\"" +
-        ":\"Color\"},\"trailingIconColor\":{\"type\":\"value\",\"valueType\":\"C" +
-        "olor\"}},\"since\":\"1.13.0\"},\"inputChipElevation\":{\"family\":\"Se" +
-        "lectableChipElevation\",\"parameters\":{\"draggedElevation\":{\"ty" +
-        "pe\":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"itemColors\":{\"family\":\"M" +
-        "enuItemColors\",\"parameters\":{\"disabledLeadingIconColor\":{\"ty" +
-        "pe\":\"value\",\"valueType\":\"Color\"},\"disabledTextColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"elevatedSugge" +
+        "stionChipColors\":{\"family\":\"ChipColors\",\"parameters\":{\"conta" +
+        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledCon" +
+        "tainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledI" +
+        "conContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disab" +
+        "ledLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"iconCon" +
+        "tentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"labelColor\"" +
+        ":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"el" +
+        "evatedSuggestionChipElevation\":{\"family\":\"ChipElevation\",\"pa" +
+        "rameters\":{\"disabledElevation\":{\"type\":\"value\",\"valueType\":\"" +
+        "Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"e" +
+        "levation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElevatio" +
+        "n\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"exposedDropdownMe" +
+        "nuOutlinedTextFieldColors\":{\"family\":\"TextFieldColors\",\"para" +
+        "meters\":{\"disabledContainerColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"errorContainerColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"focusedContainerColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"unfocusedContainerColor\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Color\"}},\"since\":\"1.13.0\"},\"filledIconButtonColors\":{\"" +
+        "family\":\"IconButtonColors\",\"parameters\":{\"containerColor\":{\"" +
+        "type\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledContentColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"fil" +
+        "ledIconToggleButtonColors\":{\"family\":\"IconToggleButtonColors" +
+        "\",\"parameters\":{\"checkedContainerColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"containerColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"contentColor\":{\"type\":\"value\",\"valueType\":\"Color" +
+        "\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"disabledContentColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"}},\"since\":\"1.13.0\"},\"filledTonalIconButtonColors\":{\"fami" +
+        "ly\":\"IconButtonColors\",\"parameters\":{\"containerColor\":{\"type" +
+        "\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Color\"},\"disabledContentColor\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"filledT" +
+        "onalIconToggleButtonColors\":{\"family\":\"IconToggleButtonColor" +
+        "s\",\"parameters\":{\"checkedContainerColor\":{\"type\":\"value\",\"va" +
+        "lueType\":\"Color\"},\"checkedContentColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"containerColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"},\"disabledContentColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"}},\"since\":\"1.13.0\"},\"filterChipColors\":{\"family\"" +
+        ":\"SelectableChipColors\",\"parameters\":{\"containerColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"disabledLabelColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"disabledLeadingIconColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"disabledSelectedContain" +
+        "erColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledTrail" +
+        "ingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"iconColo" +
+        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"labelColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Color\"},\"selectedContainerColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"selectedLabelColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Color\"},\"selectedLeadingIconColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"selectedTrailingIconColor" +
+        "\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"f" +
+        "ilterChipElevation\":{\"family\":\"SelectableChipElevation\",\"par" +
+        "ameters\":{\"draggedElevation\":{\"type\":\"value\",\"valueType\":\"Dp" +
+        "\"},\"elevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedEle" +
+        "vation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\"" +
+        ":{\"type\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type" +
+        "\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"floatingActi" +
+        "onButtonElevation\":{\"family\":\"FloatingActionButtonElevation\"" +
+        ",\"parameters\":{\"defaultElevation\":{\"type\":\"value\",\"valueType" +
+        "\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}" +
+        ",\"hoveredElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"press" +
+        "edElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.1" +
+        "3.0\"},\"horizontalGradient\":{\"family\":\"Brush\",\"parameters\":{\"" +
+        "colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Color\"},\"minIt" +
+        "ems\":2,\"required\":true,\"type\":\"list\"},\"endX\":{\"type\":\"float\"" +
+        "},\"startX\":{\"type\":\"float\"}},\"since\":\"1.11.0\"},\"iconButtonCo" +
+        "lors\":{\"family\":\"IconButtonColors\",\"parameters\":{\"containerC" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"contentColor\":{\"" +
+        "type\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"ico" +
+        "nToggleButtonColors\":{\"family\":\"IconToggleButtonColors\",\"par" +
+        "ameters\":{\"checkedContainerColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"checkedContentColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"containerColor\":{\"type\":\"value\",\"valueType\":\"Colo" +
+        "r\"},\"contentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"dis" +
+        "abledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"" +
+        "since\":\"1.13.0\"},\"inputChipColors\":{\"family\":\"SelectableChip" +
+        "Colors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"va" +
+        "lueType\":\"Color\"},\"disabledLabelColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"disabledLeadingIconColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"disabledSelectedContainerColor\":{\"type\"" +
         ":\"value\",\"valueType\":\"Color\"},\"disabledTrailingIconColor\":{\"" +
-        "type\":\"value\",\"valueType\":\"Color\"},\"leadingIconColor\":{\"type" +
-        "\":\"value\",\"valueType\":\"Color\"},\"textColor\":{\"type\":\"value\",\"" +
-        "valueType\":\"Color\"},\"trailingIconColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"}},\"since\":\"1.13.0\"},\"largeTopAppBarColors\":{" +
-        "\"family\":\"TopAppBarColors\",\"parameters\":{\"actionIconContentC" +
-        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"containerColor\":" +
-        "{\"type\":\"value\",\"valueType\":\"Color\"},\"navigationIconContentC" +
-        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"scrolledContaine" +
-        "rColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"titleContentCo" +
-        "lor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"}" +
-        ",\"linearGradient\":{\"family\":\"Brush\",\"parameters\":{\"colors\":{" +
-        "\"items\":{\"type\":\"value\",\"valueType\":\"Color\"},\"minItems\":2,\"r" +
-        "equired\":true,\"type\":\"list\"},\"end\":{\"type\":\"value\",\"valueTyp" +
-        "e\":\"Offset\"},\"start\":{\"type\":\"value\",\"valueType\":\"Offset\"}}," +
-        "\"since\":\"1.11.0\"},\"loweredElevation\":{\"family\":\"FloatingActi" +
-        "onButtonElevation\",\"parameters\":{\"defaultElevation\":{\"type\":" +
-        "\"value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\"" +
-        ",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"value" +
-        "Type\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"" +
-        "Dp\"}},\"since\":\"1.13.0\"},\"mediumTopAppBarColors\":{\"family\":\"T" +
-        "opAppBarColors\",\"parameters\":{\"actionIconContentColor\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Color\"},\"containerColor\":{\"type\":\"va" +
-        "lue\",\"valueType\":\"Color\"},\"navigationIconContentColor\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Color\"},\"scrolledContainerColor\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"},\"titleContentColor\":{\"type" +
-        "\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"navigatio" +
-        "nBarItemColors\":{\"family\":\"NavigationBarItemColors\",\"paramet" +
-        "ers\":{\"disabledIconColor\":{\"type\":\"value\",\"valueType\":\"Color" +
-        "\"},\"disabledTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
-        "\"indicatorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"selec" +
-        "tedIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"selected" +
-        "TextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselectedI" +
-        "conColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselectedTe" +
-        "xtColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13" +
-        ".0\"},\"outlinedCardColors\":{\"family\":\"CardColors\",\"parameters" +
-        "\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"di" +
-        "sabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}," +
-        "\"since\":\"1.13.0\"},\"outlinedCardElevation\":{\"family\":\"CardEle" +
-        "vation\",\"parameters\":{\"defaultElevation\":{\"type\":\"value\",\"va" +
-        "lueType\":\"Dp\"},\"disabledElevation\":{\"type\":\"value\",\"valueTyp" +
-        "e\":\"Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"" +
-        "}},\"since\":\"1.13.0\"},\"outlinedIconButtonColors\":{\"family\":\"I" +
-        "conButtonColors\",\"parameters\":{\"containerColor\":{\"type\":\"val" +
-        "ue\",\"valueType\":\"Color\"},\"contentColor\":{\"type\":\"value\",\"val" +
+        "type\":\"value\",\"valueType\":\"Color\"},\"labelColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"leadingIconColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"selectedContainerColor\":{\"type\":\"value" +
+        "\",\"valueType\":\"Color\"},\"selectedLabelColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"selectedLeadingIconColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"selectedTrailingIconColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Color\"},\"trailingIconColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"inputChipElev" +
+        "ation\":{\"family\":\"SelectableChipElevation\",\"parameters\":{\"dr" +
+        "aggedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"elevation" +
+        "\":{\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"item" +
+        "Colors\":{\"family\":\"MenuItemColors\",\"parameters\":{\"disabledLe" +
+        "adingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
+        "edTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledT" +
+        "railingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"lead" +
+        "ingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"textColo" +
+        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"trailingIconColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"lar" +
+        "geTopAppBarColors\":{\"family\":\"TopAppBarColors\",\"parameters\":" +
+        "{\"actionIconContentColor\":{\"type\":\"value\",\"valueType\":\"Color" +
+        "\"},\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"na" +
+        "vigationIconContentColor\":{\"type\":\"value\",\"valueType\":\"Color" +
+        "\"},\"scrolledContainerColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"titleContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
+        "}},\"since\":\"1.13.0\"},\"linearGradient\":{\"family\":\"Brush\",\"par" +
+        "ameters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"minItems\":2,\"required\":true,\"type\":\"list\"},\"end\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Offset\"},\"start\":{\"type\":\"value\",\"va" +
+        "lueType\":\"Offset\"}},\"since\":\"1.11.0\"},\"loweredElevation\":{\"f" +
+        "amily\":\"FloatingActionButtonElevation\",\"parameters\":{\"defaul" +
+        "tElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElevat" +
+        "ion\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"" +
+        "type\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"" +
+        "value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"mediumTopAppBar" +
+        "Colors\":{\"family\":\"TopAppBarColors\",\"parameters\":{\"actionIco" +
+        "nContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"contain" +
+        "erColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"navigationIco" +
+        "nContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"scrolle" +
+        "dContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"title" +
+        "ContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":" +
+        "\"1.13.0\"},\"navigationBarItemColors\":{\"family\":\"NavigationBar" +
+        "ItemColors\",\"parameters\":{\"disabledIconColor\":{\"type\":\"value" +
+        "\",\"valueType\":\"Color\"},\"disabledTextColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"indicatorColor\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Color\"},\"selectedIconColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"selectedTextColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"},\"unselectedIconColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"},\"unselectedTextColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"}},\"since\":\"1.13.0\"},\"outlinedCardColors\":{\"family\":\"Car" +
+        "dColors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"val" +
         "ueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Color\"}},\"since\":\"1.13.0\"},\"outlinedIconToggleBut" +
-        "tonColors\":{\"family\":\"IconToggleButtonColors\",\"parameters\":{" +
-        "\"checkedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
-        ",\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"cont" +
-        "entColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledCont" +
-        "ainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1" +
-        ".13.0\"},\"outlinedTextFieldColors\":{\"family\":\"TextFieldColors" +
-        "\",\"parameters\":{\"cursorColor\":{\"type\":\"value\",\"valueType\":\"C" +
-        "olor\"},\"disabledBorderColor\":{\"type\":\"value\",\"valueType\":\"Co" +
-        "lor\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueType\":\"" +
-        "Color\"},\"disabledLabelColor\":{\"type\":\"value\",\"valueType\":\"Co" +
-        "lor\"},\"disabledLeadingIconColor\":{\"type\":\"value\",\"valueType\"" +
-        ":\"Color\"},\"disabledPlaceholderColor\":{\"type\":\"value\",\"valueT" +
-        "ype\":\"Color\"},\"disabledPrefixColor\":{\"type\":\"value\",\"valueTy" +
-        "pe\":\"Color\"},\"disabledSuffixColor\":{\"type\":\"value\",\"valueTyp" +
-        "e\":\"Color\"},\"disabledSupportingTextColor\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Color\"},\"disabledTextColor\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"},\"disabledTrailingIconColor\":{\"type\":\"value\"," +
-        "\"valueType\":\"Color\"},\"errorBorderColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"},\"errorContainerColor\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"},\"errorCursorColor\":{\"type\":\"value\",\"valueTyp" +
-        "e\":\"Color\"},\"errorLabelColor\":{\"type\":\"value\",\"valueType\":\"C" +
-        "olor\"},\"errorLeadingIconColor\":{\"type\":\"value\",\"valueType\":\"" +
-        "Color\"},\"errorPlaceholderColor\":{\"type\":\"value\",\"valueType\":" +
-        "\"Color\"},\"errorPrefixColor\":{\"type\":\"value\",\"valueType\":\"Col" +
-        "or\"},\"errorSuffixColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
-        ",\"errorSupportingTextColor\":{\"type\":\"value\",\"valueType\":\"Col" +
-        "or\"},\"errorTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
-        "errorTrailingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
-        ",\"focusedBorderColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
-        "focusedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "alueType\":\"Color\"}},\"since\":\"1.13.0\"},\"outlinedCardElevation" +
+        "\":{\"family\":\"CardElevation\",\"parameters\":{\"defaultElevation\"" +
+        ":{\"type\":\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"outlinedIconButton" +
+        "Colors\":{\"family\":\"IconButtonColors\",\"parameters\":{\"containe" +
+        "rColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"contentColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor" +
+        "\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"o" +
+        "utlinedIconToggleButtonColors\":{\"family\":\"IconToggleButtonCo" +
+        "lors\",\"parameters\":{\"checkedContainerColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"containerColor\":{\"type\":\"value\",\"value" +
+        "Type\":\"Color\"},\"contentColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"},\"disabledContainerColor\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"}},\"since\":\"1.13.0\"},\"outlinedTextFieldColors\":{\"fami" +
+        "ly\":\"TextFieldColors\",\"parameters\":{\"cursorColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"},\"disabledBorderColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"disabledLabelColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"disabledLeadingIconColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Color\"},\"disabledPlaceholderColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"disabledPrefixColor\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Color\"},\"disabledSuffixColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"disabledSupportingTextColor" +
+        "\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledTextColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"disabledTrailingIconCol" +
+        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorBorderColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"errorContainerColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"errorCursorColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"errorLabelColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"},\"errorLeadingIconColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"errorPlaceholderColor\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"},\"errorPrefixColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"errorSuffixColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"errorSupportingTextColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"errorTextColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"errorTrailingIconColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"focusedBorderColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"focusedContainerColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"focusedLabelColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"focusedLeadingIconColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"focusedPlaceholderColor\":{\"type\":\"value" +
+        "\",\"valueType\":\"Color\"},\"focusedPrefixColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"focusedSuffixColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"focusedSupportingTextColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"focusedTextColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"},\"focusedTrailingIconColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"unfocusedBorderColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"unfocusedContainerColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"unfocusedLabelColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"},\"unfocusedLeadingIconColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"unfocusedPlaceholderColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocusedPrefixColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocusedSuffixColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocusedSupportingTex" +
+        "tColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocusedTextC" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocusedTrailin" +
+        "gIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1" +
+        ".13.0\"},\"radioButtonColors\":{\"family\":\"RadioButtonColors\",\"p" +
+        "arameters\":{\"disabledSelectedColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"},\"disabledUnselectedColor\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"selectedColor\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"},\"unselectedColor\":{\"type\":\"value\",\"valueType\":\"Colo" +
+        "r\"}},\"since\":\"1.13.0\"},\"richTooltipColors\":{\"family\":\"RichTo" +
+        "oltipColors\",\"parameters\":{\"actionContentColor\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Color\"},\"containerColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"contentColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"titleContentColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"}},\"since\":\"1.13.0\"},\"segmentedButtonColors\":{\"family\"" +
+        ":\"SegmentedButtonColors\",\"parameters\":{\"activeBorderColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"activeContainerColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"activeContentColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"disabledActiveBorderColor" +
+        "\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledActiveContai" +
+        "nerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledActi" +
+        "veContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
+        "edInactiveBorderColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"disabledInactiveContainerColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"disabledInactiveContentColor\":{\"type\":\"value\",\"va" +
+        "lueType\":\"Color\"},\"inactiveBorderColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"inactiveContainerColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"inactiveContentColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"}},\"since\":\"1.13.0\"},\"sliderColors\":{\"famil" +
+        "y\":\"SliderColors\",\"parameters\":{\"activeTickColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"},\"activeTrackColor\":{\"type\":\"value" +
+        "\",\"valueType\":\"Color\"},\"disabledActiveTickColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"disabledActiveTrackColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Color\"},\"disabledInactiveTickColor\":{\"" +
+        "type\":\"value\",\"valueType\":\"Color\"},\"disabledInactiveTrackCol" +
+        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledThumbColor" +
+        "\":{\"type\":\"value\",\"valueType\":\"Color\"},\"inactiveTickColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"inactiveTrackColor\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Color\"},\"thumbColor\":{\"type\":\"valu" +
+        "e\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"suggestionChipCo" +
+        "lors\":{\"family\":\"ChipColors\",\"parameters\":{\"containerColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColor" +
+        "\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledIconContentC" +
+        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledLabelCol" +
+        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"iconContentColor\":" +
+        "{\"type\":\"value\",\"valueType\":\"Color\"},\"labelColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"suggestionChi" +
+        "pElevation\":{\"family\":\"ChipElevation\",\"parameters\":{\"dragged" +
+        "Elevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"elevation\":{\"t" +
+        "ype\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"switchCol" +
+        "ors\":{\"family\":\"SwitchColors\",\"parameters\":{\"checkedBorderCo" +
+        "lor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledCheckedBo" +
+        "rderColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1." +
+        "13.0\"},\"textFieldColors\":{\"family\":\"TextFieldColors\",\"parame" +
+        "ters\":{\"cursorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"d" +
+        "isabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"disabledIndicatorColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
+        "},\"disabledLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
+        "\"disabledLeadingIconColor\":{\"type\":\"value\",\"valueType\":\"Colo" +
+        "r\"},\"disabledPlaceholderColor\":{\"type\":\"value\",\"valueType\":\"" +
+        "Color\"},\"disabledPrefixColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"},\"disabledSuffixColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"},\"disabledSupportingTextColor\":{\"type\":\"value\",\"valueTy" +
+        "pe\":\"Color\"},\"disabledTextColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"disabledTrailingIconColor\":{\"type\":\"value\",\"value" +
+        "Type\":\"Color\"},\"errorContainerColor\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Color\"},\"errorCursorColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"errorIndicatorColor\":{\"type\":\"value\",\"valueType\":" +
+        "\"Color\"},\"errorLabelColor\":{\"type\":\"value\",\"valueType\":\"Colo" +
+        "r\"},\"errorLeadingIconColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"errorPlaceholderColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"},\"errorPrefixColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
+        "},\"errorSuffixColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"e" +
+        "rrorSupportingTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
+        "},\"errorTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"err" +
+        "orTrailingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"f" +
+        "ocusedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
+        "focusedIndicatorColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
         "\"focusedLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"fo" +
         "cusedLeadingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
         "\"focusedPlaceholderColor\":{\"type\":\"value\",\"valueType\":\"Color" +
@@ -1263,138 +1397,82 @@ object ValueContract {
         "focusedSupportingTextColor\":{\"type\":\"value\",\"valueType\":\"Col" +
         "or\"},\"focusedTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
         ",\"focusedTrailingIconColor\":{\"type\":\"value\",\"valueType\":\"Col" +
-        "or\"},\"unfocusedBorderColor\":{\"type\":\"value\",\"valueType\":\"Col" +
         "or\"},\"unfocusedContainerColor\":{\"type\":\"value\",\"valueType\":\"" +
-        "Color\"},\"unfocusedLabelColor\":{\"type\":\"value\",\"valueType\":\"C" +
-        "olor\"},\"unfocusedLeadingIconColor\":{\"type\":\"value\",\"valueTyp" +
-        "e\":\"Color\"},\"unfocusedPlaceholderColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"},\"unfocusedPrefixColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"},\"unfocusedSuffixColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"},\"unfocusedSupportingTextColor\":{\"type\":\"val" +
-        "ue\",\"valueType\":\"Color\"},\"unfocusedTextColor\":{\"type\":\"value" +
-        "\",\"valueType\":\"Color\"},\"unfocusedTrailingIconColor\":{\"type\":" +
-        "\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"radioButton" +
-        "Colors\":{\"family\":\"RadioButtonColors\",\"parameters\":{\"disable" +
-        "dSelectedColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
-        "edUnselectedColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"sel" +
-        "ectedColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselected" +
-        "Color\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0" +
-        "\"},\"richTooltipColors\":{\"family\":\"RichTooltipColors\",\"parame" +
-        "ters\":{\"actionContentColor\":{\"type\":\"value\",\"valueType\":\"Col" +
-        "or\"},\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
-        "contentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"titleCon" +
-        "tentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1." +
-        "13.0\"},\"segmentedButtonColors\":{\"family\":\"SegmentedButtonCol" +
-        "ors\",\"parameters\":{\"activeBorderColor\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"},\"activeContainerColor\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"},\"activeContentColor\":{\"type\":\"value\",\"valueT" +
-        "ype\":\"Color\"},\"disabledActiveBorderColor\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Color\"},\"disabledActiveContainerColor\":{\"type\":\"v" +
-        "alue\",\"valueType\":\"Color\"},\"disabledActiveContentColor\":{\"ty" +
-        "pe\":\"value\",\"valueType\":\"Color\"},\"disabledInactiveBorderColo" +
-        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledInactiveCon" +
-        "tainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledI" +
-        "nactiveContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"i" +
-        "nactiveBorderColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"in" +
-        "activeContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
-        "inactiveContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}," +
-        "\"since\":\"1.13.0\"},\"sliderColors\":{\"family\":\"SliderColors\",\"p" +
-        "arameters\":{\"activeTickColor\":{\"type\":\"value\",\"valueType\":\"C" +
-        "olor\"},\"activeTrackColor\":{\"type\":\"value\",\"valueType\":\"Color" +
-        "\"},\"disabledActiveTickColor\":{\"type\":\"value\",\"valueType\":\"Co" +
-        "lor\"},\"disabledActiveTrackColor\":{\"type\":\"value\",\"valueType\"" +
-        ":\"Color\"},\"disabledInactiveTickColor\":{\"type\":\"value\",\"value" +
-        "Type\":\"Color\"},\"disabledInactiveTrackColor\":{\"type\":\"value\"," +
-        "\"valueType\":\"Color\"},\"disabledThumbColor\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Color\"},\"inactiveTickColor\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"},\"inactiveTrackColor\":{\"type\":\"value\",\"valueT" +
-        "ype\":\"Color\"},\"thumbColor\":{\"type\":\"value\",\"valueType\":\"Colo" +
-        "r\"}},\"since\":\"1.13.0\"},\"suggestionChipColors\":{\"family\":\"Chi" +
-        "pColors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Color\"},\"disabledIconContentColor\":{\"type\":\"value" +
-        "\",\"valueType\":\"Color\"},\"disabledLabelColor\":{\"type\":\"value\"," +
-        "\"valueType\":\"Color\"},\"iconContentColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"},\"labelColor\":{\"type\":\"value\",\"valueType\":\"C" +
-        "olor\"}},\"since\":\"1.13.0\"},\"suggestionChipElevation\":{\"family" +
-        "\":\"ChipElevation\",\"parameters\":{\"draggedElevation\":{\"type\":\"" +
-        "value\",\"valueType\":\"Dp\"},\"elevation\":{\"type\":\"value\",\"valueT" +
-        "ype\":\"Dp\"}},\"since\":\"1.13.0\"},\"switchColors\":{\"family\":\"Swit" +
-        "chColors\",\"parameters\":{\"checkedBorderColor\":{\"type\":\"value\"" +
-        ",\"valueType\":\"Color\"},\"disabledCheckedBorderColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"textFieldCol" +
-        "ors\":{\"family\":\"TextFieldColors\",\"parameters\":{\"cursorColor\"" +
-        ":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledContainerColo" +
-        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledIndicatorCo" +
-        "lor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledLabelColo" +
-        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledLeadingIcon" +
-        "Color\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledPlaceho" +
-        "lderColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledPre" +
-        "fixColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledSuff" +
-        "ixColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledSuppo" +
-        "rtingTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabl" +
-        "edTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledT" +
-        "railingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"erro" +
-        "rContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"error" +
-        "CursorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorIndi" +
-        "catorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorLabel" +
-        "Color\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorLeadingIco" +
-        "nColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorPlacehold" +
-        "erColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorPrefixCo" +
-        "lor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorSuffixColor\"" +
-        ":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorSupportingTextCo" +
-        "lor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"errorTextColor\":{" +
-        "\"type\":\"value\",\"valueType\":\"Color\"},\"errorTrailingIconColor\"" +
-        ":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedContainerColor" +
-        "\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedIndicatorColo" +
-        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedLabelColor\":" +
-        "{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedLeadingIconColo" +
-        "r\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedPlaceholderC" +
-        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedPrefixCol" +
-        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedSuffixColor" +
-        "\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedSupportingTex" +
-        "tColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedTextCol" +
-        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"focusedTrailingIco" +
-        "nColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocusedConta" +
-        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocusedIn" +
-        "dicatorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocuse" +
-        "dLabelColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfocused" +
-        "LeadingIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unfo" +
-        "cusedPlaceholderColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
-        "\"unfocusedPrefixColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
-        "\"unfocusedSuffixColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
-        "\"unfocusedSupportingTextColor\":{\"type\":\"value\",\"valueType\":\"" +
-        "Color\"},\"unfocusedTextColor\":{\"type\":\"value\",\"valueType\":\"Co" +
-        "lor\"},\"unfocusedTrailingIconColor\":{\"type\":\"value\",\"valueTyp" +
-        "e\":\"Color\"}},\"since\":\"1.13.0\"},\"timePickerColors\":{\"family\":" +
-        "\"TimePickerColors\",\"parameters\":{\"clockDialColor\":{\"type\":\"v" +
-        "alue\",\"valueType\":\"Color\"},\"clockDialSelectedContentColor\":{" +
-        "\"type\":\"value\",\"valueType\":\"Color\"},\"clockDialUnselectedCont" +
-        "entColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"containerCol" +
-        "or\":{\"type\":\"value\",\"valueType\":\"Color\"},\"periodSelectorBord" +
-        "erColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"periodSelecto" +
-        "rSelectedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
-        "},\"periodSelectorSelectedContentColor\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"},\"periodSelectorUnselectedContainerColor\":{\"t" +
-        "ype\":\"value\",\"valueType\":\"Color\"},\"periodSelectorUnselectedC" +
-        "ontentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"selectorC" +
-        "olor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"timeSelectorSele" +
-        "ctedContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"ti" +
-        "meSelectorSelectedContentColor\":{\"type\":\"value\",\"valueType\":" +
-        "\"Color\"},\"timeSelectorUnselectedContainerColor\":{\"type\":\"val" +
-        "ue\",\"valueType\":\"Color\"},\"timeSelectorUnselectedContentColor" +
-        "\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"t" +
-        "opAppBarColors\":{\"family\":\"TopAppBarColors\",\"parameters\":{\"a" +
-        "ctionIconContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
-        "\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"navig" +
-        "ationIconContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}," +
-        "\"scrolledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
-        "},\"titleContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}," +
-        "\"since\":\"1.13.0\"},\"verticalGradient\":{\"family\":\"Brush\",\"para" +
-        "meters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Colo" +
-        "r\"},\"minItems\":2,\"required\":true,\"type\":\"list\"},\"endY\":{\"typ" +
-        "e\":\"float\"},\"startY\":{\"type\":\"float\"}},\"since\":\"1.11.0\"}}"
+        "Color\"},\"unfocusedIndicatorColor\":{\"type\":\"value\",\"valueType" +
+        "\":\"Color\"},\"unfocusedLabelColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"unfocusedLeadingIconColor\":{\"type\":\"value\",\"value" +
+        "Type\":\"Color\"},\"unfocusedPlaceholderColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"unfocusedPrefixColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"unfocusedSuffixColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"unfocusedSupportingTextColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"unfocusedTextColor\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Color\"},\"unfocusedTrailingIconColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"timePick" +
+        "erColors\":{\"family\":\"TimePickerColors\",\"parameters\":{\"clockD" +
+        "ialColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"clockDialSel" +
+        "ectedContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"clo" +
+        "ckDialUnselectedContentColor\":{\"type\":\"value\",\"valueType\":\"C" +
+        "olor\"},\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        ",\"periodSelectorBorderColor\":{\"type\":\"value\",\"valueType\":\"Co" +
+        "lor\"},\"periodSelectorSelectedContainerColor\":{\"type\":\"value\"" +
+        ",\"valueType\":\"Color\"},\"periodSelectorSelectedContentColor\":{" +
+        "\"type\":\"value\",\"valueType\":\"Color\"},\"periodSelectorUnselecte" +
+        "dContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"perio" +
+        "dSelectorUnselectedContentColor\":{\"type\":\"value\",\"valueType\"" +
+        ":\"Color\"},\"selectorColor\":{\"type\":\"value\",\"valueType\":\"Color" +
+        "\"},\"timeSelectorSelectedContainerColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"},\"timeSelectorSelectedContentColor\":{\"type\":" +
+        "\"value\",\"valueType\":\"Color\"},\"timeSelectorUnselectedContaine" +
+        "rColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"timeSelectorUn" +
+        "selectedContentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}," +
+        "\"since\":\"1.13.0\"},\"topAppBarColors\":{\"family\":\"TopAppBarColo" +
+        "rs\",\"parameters\":{\"actionIconContentColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"containerColor\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Color\"},\"navigationIconContentColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"scrolledContainerColor\":{\"type\":\"value\"" +
+        ",\"valueType\":\"Color\"},\"titleContentColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"}},\"since\":\"1.13.0\"},\"verticalGradient\":{\"f" +
+        "amily\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"valu" +
+        "e\",\"valueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":" +
+        "\"list\"},\"endY\":{\"type\":\"float\"},\"startY\":{\"type\":\"float\"}},\"" +
+        "since\":\"1.11.0\"}}"
     ).jsonObject
+
+    fun readAlignment(value: JsonElement): AlignmentValue {
+        ValueParser.validate(value, "Alignment", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "Alignment" -> WireAlignment(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readAlignmentHorizontal(value: JsonElement): AlignmentHorizontalValue {
+        ValueParser.validate(value, "AlignmentHorizontal", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "AlignmentHorizontal" -> WireAlignmentHorizontal(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readAlignmentVertical(value: JsonElement): AlignmentVerticalValue {
+        ValueParser.validate(value, "AlignmentVertical", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "AlignmentVertical" -> WireAlignmentVertical(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
 
     fun readAnnotatedString(value: JsonElement): AnnotatedStringValue {
         ValueParser.validate(value, "AnnotatedString", specs).getOrThrow()
@@ -1685,6 +1763,18 @@ object ValueContract {
                 dayInSelectionRangeContainerColor = data["dayInSelectionRangeContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
                 dividerColor = data["dividerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
                 dateTextFieldColors = data["dateTextFieldColors"]?.takeUnless { it == JsonNull }?.let { item -> readTextFieldColors(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readDisplayMode(value: JsonElement): DisplayModeValue {
+        ValueParser.validate(value, "DisplayMode", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "DisplayMode" -> WireDisplayMode(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
             )
             else -> error("Unknown value constructor")
         }

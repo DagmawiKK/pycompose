@@ -60,11 +60,25 @@ declare them.
 """
 
 
-def ancestors(found: Inventory) -> dict[str, set[str]]:
-    """Map every classified class to itself plus its declared supertypes.
+def source_name(classifier: str) -> str:
+    """Spell a metadata classifier the way Kotlin source spells it.
 
-    Only ``classSupertypes`` counts. A type mentioned in a signature is not a
-    supertype, and treating it as one would make every family accept every type.
+    Compose metadata separates packages with ``/`` and nested classes with
+    ``.``, while approved ``kotlinType`` values are source references. Every
+    comparison normalises the classifier, never the approved name, so a nested
+    class and a package boundary stay distinguishable.
+    """
+    return classifier.replace("/", ".")
+
+
+def ancestors(found: Inventory) -> dict[str, set[str]]:
+    """Map every pinned class to itself plus its declared supertypes.
+
+    Only recorded class facts count, and every class counts: a class that
+    declares nothing still says what it extends. ``Alignment.Vertical`` is a
+    sibling of ``Alignment`` rather than a subtype, so a member vocabulary can
+    tell an assignable type from a neighbouring one instead of guessing from a
+    name or silently narrowing to the members it happens to see.
     """
     families: dict[str, set[str]] = {}
 
@@ -74,14 +88,13 @@ def ancestors(found: Inventory) -> dict[str, set[str]]:
         for parent in parents:
             families.setdefault(parent, {parent})
 
+    for evidence in found.classes:
+        record(
+            source_name(evidence.classifier),
+            [source_name(parent) for parent in evidence.supertypes],
+        )
     for declaration in found.declarations:
-        slashed = declaration.owner.replace(".", "/")
-        for node in declaration.document.get("classSupertypes") or []:
-            parent = node.get("classifier")
-            if parent:
-                record(slashed, [parent])
-    for declaration in found.declarations:
-        record(declaration.return_type.classifier, ())
+        record(source_name(declaration.return_type.classifier), ())
     # Supertypes are only declared one level deep, so close the relation: a
     # grandchild is as assignable as its parent.
     for classifier in list(families):
@@ -98,9 +111,9 @@ def ancestors(found: Inventory) -> dict[str, set[str]]:
 
 def assignable(found: Inventory, family: dict[str, str], source: str) -> bool:
     """Report whether ``source`` is the family's type or one of its subtypes."""
-    if source == family["kotlinType"].replace(".", "/"):
+    if source_name(source) == family["kotlinType"]:
         return True
-    return family["kotlinType"].replace(".", "/") in ancestors(found).get(source, set())
+    return family["kotlinType"] in ancestors(found).get(source_name(source), set())
 
 
 def value_families(registry: dict[str, Any]) -> dict[str, str]:
@@ -110,10 +123,11 @@ def value_families(registry: dict[str, Any]) -> dict[str, str]:
         registry: The approved component registry.
 
     Returns:
-        Native type names, ``/``-separated, keyed to family names.
+        Source-spelled native type names keyed to family names. Compare a dump
+        classifier through ``source_name`` first.
     """
     return {
-        spec["kotlinType"].replace(".", "/"): spec["family"]
+        spec["kotlinType"]: spec["family"]
         for spec in registry.get("valueTypes", {}).values()
         if "family" in spec
     }
@@ -122,8 +136,8 @@ def value_families(registry: dict[str, Any]) -> dict[str, str]:
 def _rule(value: KotlinType, families: dict[str, str]) -> dict[str, Any]:
     if value.classifier in SCALARS:
         result: dict[str, Any] = {"type": SCALARS[value.classifier]}
-    elif value.classifier in families:
-        result = {"type": "value", "valueType": families[value.classifier]}
+    elif source_name(value.classifier) in families:
+        result = {"type": "value", "valueType": families[source_name(value.classifier)]}
     elif value.classifier == "kotlin/collections/List" and len(value.arguments) == 1:
         item = value.arguments[0][1]
         if item is None:
@@ -191,7 +205,7 @@ def propose_value(
     native_type = source.return_type.classifier.replace("/", ".")
     if native_type.startswith("kotlin."):
         raise ValueError("not a native value family")
-    family = families.get(source.return_type.classifier, native_type.rsplit(".", 1)[-1])
+    family = families.get(native_type, native_type.rsplit(".", 1)[-1])
     parameters = {}
     omitted = {}
     for parameter in source.parameters:
@@ -272,6 +286,7 @@ def propose_members(
     since: str,
     prefix: str = "",
     opt_ins: set[str] = frozenset(),
+    also_from: tuple[str, ...] = (),
 ) -> dict[str, Any]:
     """Propose a named-member binding: every public member of ``owner`` in ``family``.
 
@@ -286,35 +301,42 @@ def propose_members(
         since: Schema version that introduced the binding.
         prefix: Optional native qualifier, e.g. a ``MaterialTheme`` holder.
         opt_ins: The pin's opt-in markers; a member that needs one contributes it.
+        also_from: Further approved holders of the same vocabulary, such as an
+            object whose members carry the family's type. A member keeps the
+            holder it is read from, so nothing is renamed to fit one prefix.
 
     Returns:
         A ``constant`` descriptor keyed by member name.
 
     Raises:
-        ValueError: The owner has no members of that family, so the binding would
-            be an empty enumeration presented as support.
+        ValueError: The holders have no members of that family, so the binding
+            would be an empty enumeration presented as support.
     """
-    members = set()
+    primary = source_name(owner)
+    holders = {primary, *(source_name(name) for name in also_from)}
+    members: dict[str, str] = {}
     required: set[str] = set()
-    hierarchy = ancestors(found)
-    dotted = owner.replace("/", ".")
     entries = set()
+    hierarchy = ancestors(found)
     for declaration in found.declarations:
-        if declaration.owner == dotted:
+        if declaration.owner not in holders:
+            continue
+        if declaration.owner == primary:
             entries.update(declaration.enum_entries)
-        if declaration.owner != dotted or declaration.disposition != "support":
+        if declaration.disposition != "support":
             continue
         if declaration.document.get("declarationKind") != "property":
             continue
-        if family["kotlinType"].replace(".", "/") not in hierarchy.get(
-            declaration.return_type.classifier, {declaration.return_type.classifier}
-        ):
+        classifier = source_name(declaration.return_type.classifier)
+        if family["kotlinType"] not in hierarchy.get(classifier, {classifier}):
             continue
         if declaration.return_type.nullable or declaration.return_type.arguments:
             raise ValueError(f"{owner}.{declaration.name}: nullable/generic member")
         if declaration.context_receivers or declaration.receiver:
             continue
-        members.add(declaration.name)
+        members[declaration.name] = prefix.rstrip(".") or declaration.owner.replace(
+            "$Companion", ""
+        ).replace("$", ".")
         required |= required_opt_ins(declaration, opt_ins)
     if not members and not entries:
         raise ValueError(f"no public {family['family']} members on {owner}")
@@ -325,6 +347,17 @@ def propose_members(
         if members and not entries
         else "enum entries and public properties"
     )
+    holder = prefix.rstrip(".") or primary.replace("$Companion", "").replace("$", ".")
+    native: dict[str, Any] = {
+        "constantParameter": "name",
+        "propertyOwner": holder,
+    }
+    # A vocabulary can live on more than one holder. Only the members that
+    # differ from the default carry their holder, so the schema states the
+    # exception instead of repeating the rule.
+    others = {name: where for name, where in sorted(members.items()) if where != holder}
+    if others:
+        native["owners"] = others
     return {
         "family": family["family"],
         "kind": family.get("kind", "constant"),
@@ -336,13 +369,10 @@ def propose_members(
             "name": {
                 "type": "string",
                 "required": True,
-                "values": sorted(members | entries),
+                "values": sorted(set(members) | entries),
             }
         },
-        "native": {
-            "constantParameter": "name",
-            "propertyOwner": prefix.rstrip(".") or dotted.replace("$Companion", ""),
-        },
+        "native": native,
     }
 
 
@@ -383,7 +413,7 @@ def propose_extension(
         and d.name == name
         and d.receiver is not None
         and d.receiver.classifier == receiver
-        and d.return_type.classifier == family["kotlinType"].replace(".", "/")
+        and source_name(d.return_type.classifier) == family["kotlinType"]
         and not d.return_type.nullable
         and not d.return_type.arguments
         and not d.context_receivers
@@ -499,7 +529,7 @@ def _matches_rule(
 ) -> bool:
     """Report whether an approved rule already describes a source parameter."""
     if rule.get("type") == "value":
-        return families.get(value.classifier) == rule.get("valueType")
+        return families.get(source_name(value.classifier)) == rule.get("valueType")
     if rule.get("type") == "list":
         return (
             value.classifier == "kotlin/collections/List"
@@ -522,11 +552,17 @@ def bind(
     markers = opt_in_markers(found)
     try:
         if name in MEMBERS:
-            owner, prefix = MEMBERS[name]
+            owner, prefix, also_from = MEMBERS[name]
             return {
                 "name": name,
                 "proposal": propose_members(
-                    found, owner, approved, since=since, prefix=prefix, opt_ins=markers
+                    found,
+                    owner,
+                    approved,
+                    since=since,
+                    prefix=prefix,
+                    opt_ins=markers,
+                    also_from=also_from,
                 ),
             }
         if name in EXTENSIONS:
@@ -604,26 +640,57 @@ MEMBERS = {
     "ThemeColor": (
         "androidx/compose/material3/ColorScheme",
         "androidx.compose.material3.MaterialTheme.colorScheme.",
+        (),
     ),
     "ThemeTypography": (
         "androidx/compose/material3/Typography",
         "androidx.compose.material3.MaterialTheme.typography.",
+        (),
     ),
     "ThemeShape": (
         "androidx/compose/material3/Shapes",
         "androidx.compose.material3.MaterialTheme.shapes.",
+        (),
     ),
-    "FontFamily": ("androidx/compose/ui/text/font/FontFamily$Companion", ""),
-    "ToggleableState": ("androidx/compose/ui/state/ToggleableState", ""),
-    "StrokeCap": ("androidx/compose/ui/graphics/StrokeCap$Companion", ""),
-    "TextAlign": ("androidx/compose/ui/text/style/TextAlign$Companion", ""),
-    "TextDecoration": ("androidx/compose/ui/text/style/TextDecoration$Companion", ""),
-    "TextOverflow": ("androidx/compose/ui/text/style/TextOverflow$Companion", ""),
-    "FontStyle": ("androidx/compose/ui/text/font/FontStyle$Companion", ""),
-    "FabPosition": ("androidx/compose/material3/FabPosition$Companion", ""),
+    "FontFamily": ("androidx/compose/ui/text/font/FontFamily$Companion", "", ()),
+    "ToggleableState": ("androidx/compose/ui/state/ToggleableState", "", ()),
+    "StrokeCap": ("androidx/compose/ui/graphics/StrokeCap$Companion", "", ()),
+    "TextAlign": ("androidx/compose/ui/text/style/TextAlign$Companion", "", ()),
+    "TextDecoration": (
+        "androidx/compose/ui/text/style/TextDecoration$Companion",
+        "",
+        (),
+    ),
+    "TextOverflow": (
+        "androidx/compose/ui/text/style/TextOverflow$Companion",
+        "",
+        (),
+    ),
+    "FontStyle": ("androidx/compose/ui/text/font/FontStyle$Companion", "", ()),
+    "FabPosition": ("androidx/compose/material3/FabPosition$Companion", "", ()),
     "TimePickerLayoutType": (
         "androidx/compose/material3/TimePickerLayoutType$Companion",
         "",
+        (),
+    ),
+    "DisplayMode": ("androidx/compose/material3/DisplayMode$Companion", "", ()),
+    # AbsoluteAlignment is a second holder of the alignment vocabulary, not a
+    # whole new one: its members carry the same family types, so they join the
+    # family under their own holder.
+    "Alignment": (
+        "androidx/compose/ui/Alignment$Companion",
+        "",
+        ("androidx/compose/ui/AbsoluteAlignment",),
+    ),
+    "AlignmentVertical": (
+        "androidx/compose/ui/Alignment$Companion",
+        "",
+        (),
+    ),
+    "AlignmentHorizontal": (
+        "androidx/compose/ui/Alignment$Companion",
+        "",
+        ("androidx/compose/ui/AbsoluteAlignment",),
     ),
 }
 """Bindings whose wire vocabulary is the public member set of one class.
