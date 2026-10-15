@@ -142,6 +142,9 @@ class PropDef:
             prop rather than inferred from the value set, because inference
             breaks silently the day two families share a value set, and the
             failure is a wrong alignment rather than an error.
+        value_type: Optional approved native value family for tagged inputs.
+        native_default: Native default provider used by generated adapters.
+        nullable: Whether an explicit null is valid, distinct from absence.
     """
 
     type: str
@@ -156,6 +159,9 @@ class PropDef:
     content: ContentSlot | None = None
     payload: tuple[tuple[str, str], ...] = ()
     decode: str | None = None
+    value_type: str | None = None
+    native_default: str | None = None
+    nullable: bool = False
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "values", tuple(self.values))
@@ -239,6 +245,9 @@ class PropDef:
             content=_content(data, where),
             payload=_payload(data, where),
             decode=_decode(ptype, cast("str | None", data.get("decode"))),
+            value_type=cast("str | None", data.get("valueType")),
+            native_default=cast("str | None", data.get("nativeDefault")),
+            nullable=cast("bool", data.get("nullable", False)),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -248,6 +257,17 @@ class PropDef:
             A JSON-ready dict.
         """
         out: dict[str, object] = {"type": self.type}
+        out.update(
+            {
+                key: value
+                for key, value in {
+                    "valueType": self.value_type,
+                    "nativeDefault": self.native_default,
+                    "nullable": True if self.nullable else None,
+                }.items()
+                if value is not None
+            }
+        )
         if self.owner != "python":
             # Absent means python, so the common case costs no bytes.
             out["owner"] = self.owner

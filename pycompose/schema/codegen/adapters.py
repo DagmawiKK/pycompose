@@ -134,6 +134,12 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
     if entry.get("children", {}).get("allowed"):
         return False
     for spec in entry.get("props", {}).values():
+        if "valueType" in spec:
+            if spec["type"] == "value" and (
+                spec.get("required") or "nativeDefault" in spec
+            ):
+                continue
+            return False
         if spec.get("type") in MECHANICAL:
             continue
         # Decodable types need a named resolver; without one they cannot be
@@ -338,6 +344,37 @@ def _render_prop(prop: str, spec: dict[str, Any], out: _Fragments) -> bool:
     prop_name = _camel(prop)
     if prop_type == "modifier":
         return True
+
+    if prop_type == "value":
+        family = spec["valueType"]
+        method = family[:1].lower() + family[1:]
+        wire = f"model.props.{prop_name}"
+        declaration = ""
+        if not spec.get("required"):
+            declaration = f"val {prop_name}Wire = {wire}\n                "
+            wire = f"{prop_name}Wire"
+        call = (
+            f"com.pycompose.renderer.generated.ValueResolver.{method}"
+            f"({wire}).getOrThrow()"
+        )
+        if spec.get("nullable"):
+            call = (
+                f"when ({wire}) {{\n"
+                "                    com.pycompose.ir.OptionalValue.Absent -> "
+                f"{spec['nativeDefault']}\n"
+                "                    com.pycompose.ir.OptionalValue.Null -> null\n"
+                f"                    is com.pycompose.ir.OptionalValue.Present -> "
+                f"com.pycompose.renderer.generated.ValueResolver.{method}({wire}.value).getOrThrow()\n"
+                "                }"
+            )
+        elif not spec.get("required"):
+            call = f"if ({wire} != null) {call} else {spec['nativeDefault']}"
+        return out.add(
+            (
+                f"{declaration}val {prop_name}Value = {call}",
+                f"{prop_name} = {prop_name}Value",
+            )
+        )
 
     decoder = spec.get("decode")
     if decoder is not None:

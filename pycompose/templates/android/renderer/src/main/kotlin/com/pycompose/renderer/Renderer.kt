@@ -86,7 +86,7 @@ class Renderer(
         context: RenderContext,
     ) {
         val adapter = registry[node.componentType]
-        val result = remember(node.props.modifier) { modifiers.build(node.props.modifier) }
+        val result = modifiers.build(node.props.modifier)
         val modifier = result.getOrNull()
         if (adapter == null || modifier == null) {
             remember(node.id, node.props, adapter) {

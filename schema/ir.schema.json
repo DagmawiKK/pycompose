@@ -177,6 +177,22 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": "1.11.0"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "root": {
+            "$ref": "#/definitions/V_1_11_0_Node"
+          }
+        }
+      }
     }
   ],
   "definitions": {
@@ -225,6 +241,19 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
@@ -496,7 +525,14 @@
           "additionalProperties": false,
           "properties": {
             "containerColor": {
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
             },
             "modifier": {
               "properties": {
@@ -551,7 +587,14 @@
           "additionalProperties": false,
           "properties": {
             "color": {
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
             },
             "fontResource": {
               "pattern": "^(@(font)/[a-z][a-z0-9_]*)(?![\\s\\S])",
@@ -576,15 +619,22 @@
               "type": "string"
             },
             "style": {
-              "default": "bodyMedium",
-              "enum": [
-                "bodyLarge",
-                "bodyMedium",
-                "bodySmall",
-                "headlineMedium",
-                "titleLarge",
-                "titleMedium",
-                "titleSmall"
+              "anyOf": [
+                {
+                  "default": "bodyMedium",
+                  "enum": [
+                    "bodyLarge",
+                    "bodyMedium",
+                    "bodySmall",
+                    "headlineMedium",
+                    "titleLarge",
+                    "titleMedium",
+                    "titleSmall"
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Family_TextStyle"
+                }
               ]
             },
             "text": {
@@ -700,8 +750,146 @@
       },
       "type": "object"
     },
+    "Family_Brush": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_SolidColor"
+        },
+        {
+          "$ref": "#/definitions/Value_horizontalGradient"
+        },
+        {
+          "$ref": "#/definitions/Value_linearGradient"
+        },
+        {
+          "$ref": "#/definitions/Value_verticalGradient"
+        }
+      ]
+    },
+    "Family_ButtonColors": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_buttonColors"
+        }
+      ]
+    },
+    "Family_ButtonElevation": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_buttonElevation"
+        }
+      ]
+    },
+    "Family_Color": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_Color"
+        },
+        {
+          "$ref": "#/definitions/Value_ThemeColor"
+        }
+      ]
+    },
+    "Family_Dp": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_Dp"
+        }
+      ]
+    },
+    "Family_FontFamily": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_FontFamily"
+        }
+      ]
+    },
+    "Family_FontWeight": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_FontWeight"
+        }
+      ]
+    },
+    "Family_Offset": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_Offset"
+        }
+      ]
+    },
+    "Family_PaddingValues": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_PaddingValues"
+        }
+      ]
+    },
+    "Family_Shape": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_CutCornerShape"
+        },
+        {
+          "$ref": "#/definitions/Value_RoundedCornerShape"
+        },
+        {
+          "$ref": "#/definitions/Value_ThemeShape"
+        }
+      ]
+    },
+    "Family_Size": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_Size"
+        }
+      ]
+    },
+    "Family_TextStyle": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_TextStyle"
+        },
+        {
+          "$ref": "#/definitions/Value_ThemeTypography"
+        }
+      ]
+    },
+    "Family_TextUnit": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_Em"
+        },
+        {
+          "$ref": "#/definitions/Value_Sp"
+        }
+      ]
+    },
+    "Family_WindowInsets": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_WindowInsets"
+        }
+      ]
+    },
     "ModifierOperation": {
       "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "brush": {
+              "$ref": "#/definitions/Family_Brush"
+            },
+            "type": {
+              "const": "background"
+            }
+          },
+          "required": [
+            "type",
+            "brush"
+          ],
+          "type": "object"
+        },
         {
           "additionalProperties": false,
           "properties": {
@@ -729,10 +917,17 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+              "anyOf": [
+                {
+                  "enum": [
+                    "circle",
+                    "rectangle",
+                    "rounded"
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Family_Shape"
+                }
               ]
             },
             "type": {
@@ -770,8 +965,45 @@
               "const": "padding"
             },
             "value": {
-              "minimum": 0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_PaddingValues"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
             }
           },
           "required": [
@@ -784,21 +1016,111 @@
           "additionalProperties": false,
           "properties": {
             "height": {
-              "minimum": 0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_Dp"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
             },
             "type": {
               "const": "size"
             },
             "width": {
-              "minimum": 0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_Dp"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
             }
           },
           "required": [
             "type",
             "height",
             "width"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "insets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            },
+            "type": {
+              "const": "windowInsetsPadding"
+            }
+          },
+          "required": [
+            "type",
+            "insets"
           ],
           "type": "object"
         }
@@ -898,7 +1220,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -928,7 +1250,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -974,7 +1296,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -999,7 +1321,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1025,6 +1347,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_0_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_0_0_Node": {
       "allOf": [
@@ -1094,7 +1577,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1130,7 +1613,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1156,7 +1639,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1185,7 +1668,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1236,7 +1719,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1297,7 +1780,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1327,7 +1810,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1373,7 +1856,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1416,7 +1899,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1449,7 +1932,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1492,7 +1975,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1524,7 +2007,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1550,6 +2033,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_10_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_10_0_Node": {
       "allOf": [
@@ -1631,7 +2275,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1667,7 +2311,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1693,7 +2337,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1729,7 +2373,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1781,7 +2425,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1827,7 +2471,886 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onSelectionChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selection": {
+              "type": "integer"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_Box": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topStart"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Box"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_Button": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onClick",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Button"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_Checkbox": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Checkbox"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_Column": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "horizontalAlignment": {
+              "default": "start",
+              "enum": [
+                "center",
+                "end",
+                "start"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Column"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_FilterChip": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "label",
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilterChip"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_Image": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "resource": {
+              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "required": [
+            "resource"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Image"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_LazyColumn": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyColumn"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "brush": {
+              "$ref": "#/definitions/Family_Brush"
+            },
+            "type": {
+              "const": "background"
+            }
+          },
+          "required": [
+            "type",
+            "brush"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "circle",
+                    "rectangle",
+                    "rounded"
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Family_Shape"
+                }
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_PaddingValues"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_Dp"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/Family_Dp"
+                    },
+                    {
+                      "properties": {
+                        "value": {
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "insets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            },
+            "type": {
+              "const": "windowInsetsPadding"
+            }
+          },
+          "required": [
+            "type",
+            "insets"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "V_1_11_0_Node": {
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/V_1_11_0_Box"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_Button"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_Checkbox"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_Column"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_FilterChip"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_Image"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_LazyColumn"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_Row"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_Scaffold"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_Spacer"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_Text"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_TextButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_11_0_TextField"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/definitions/V_1_11_0_Node"
+          },
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "props": {
+          "type": "object"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "props"
+      ],
+      "type": "object"
+    },
+    "V_1_11_0_Row": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "verticalAlignment": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "top"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Row"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_Scaffold": {
+      "properties": {
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Scaffold"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_Spacer": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Spacer"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_Text": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "fontResource": {
+              "pattern": "^(@(font)/[a-z][a-z0-9_]*)(?![\\s\\S])",
+              "type": "string"
+            },
+            "locale": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "resource": {
+              "pattern": "^(@(string)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            },
+            "style": {
+              "anyOf": [
+                {
+                  "default": "bodyMedium",
+                  "enum": [
+                    "bodyLarge",
+                    "bodyMedium",
+                    "bodySmall",
+                    "headlineMedium",
+                    "titleLarge",
+                    "titleMedium",
+                    "titleSmall"
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Family_TextStyle"
+                }
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Text"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_TextButton": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onClick",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_11_0_TextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1888,7 +3411,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1918,7 +3441,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1964,7 +3487,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -1993,7 +3516,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2025,7 +3548,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2051,6 +3574,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_1_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_1_0_Node": {
       "allOf": [
@@ -2123,7 +3807,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2159,7 +3843,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2185,7 +3869,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2221,7 +3905,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2276,7 +3960,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2337,7 +4021,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2367,7 +4051,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2413,7 +4097,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2442,7 +4126,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2474,7 +4158,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2500,6 +4184,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_2_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_2_0_Node": {
       "allOf": [
@@ -2572,7 +4417,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2608,7 +4453,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2634,7 +4479,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2670,7 +4515,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2725,7 +4570,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2786,7 +4631,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2816,7 +4661,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2862,7 +4707,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2905,7 +4750,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2938,7 +4783,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -2981,7 +4826,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3013,7 +4858,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3039,6 +4884,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_3_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_3_0_Node": {
       "allOf": [
@@ -3120,7 +5126,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3156,7 +5162,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3182,7 +5188,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3218,7 +5224,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3270,7 +5276,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3316,7 +5322,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3377,7 +5383,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3407,7 +5413,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3453,7 +5459,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3496,7 +5502,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3529,7 +5535,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3572,7 +5578,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3604,7 +5610,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3630,6 +5636,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_4_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_4_0_Node": {
       "allOf": [
@@ -3711,7 +5878,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3747,7 +5914,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3773,7 +5940,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3809,7 +5976,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3861,7 +6028,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3907,7 +6074,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3968,7 +6135,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -3998,7 +6165,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4044,7 +6211,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4087,7 +6254,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4120,7 +6287,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4163,7 +6330,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4195,7 +6362,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4221,6 +6388,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_5_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_5_0_Node": {
       "allOf": [
@@ -4302,7 +6630,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4338,7 +6666,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4364,7 +6692,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4400,7 +6728,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4452,7 +6780,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4498,7 +6826,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4559,7 +6887,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4589,7 +6917,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4635,7 +6963,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4678,7 +7006,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4711,7 +7039,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4754,7 +7082,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4786,7 +7114,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4812,6 +7140,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_6_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_6_0_Node": {
       "allOf": [
@@ -4893,7 +7382,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4929,7 +7418,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4955,7 +7444,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -4991,7 +7480,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5043,7 +7532,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5089,7 +7578,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5150,7 +7639,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5180,7 +7669,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5226,7 +7715,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5269,7 +7758,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5302,7 +7791,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5345,7 +7834,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5377,7 +7866,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5403,6 +7892,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_7_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_7_0_Node": {
       "allOf": [
@@ -5484,7 +8134,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5520,7 +8170,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5546,7 +8196,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5582,7 +8232,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5634,7 +8284,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5680,7 +8330,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5741,7 +8391,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5771,7 +8421,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5817,7 +8467,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5860,7 +8510,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5893,7 +8543,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5936,7 +8586,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5968,7 +8618,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -5994,6 +8644,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_8_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_8_0_Node": {
       "allOf": [
@@ -6075,7 +8886,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6111,7 +8922,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6137,7 +8948,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6173,7 +8984,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6225,7 +9036,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6271,7 +9082,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6332,7 +9143,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6362,7 +9173,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6408,7 +9219,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6451,7 +9262,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6484,7 +9295,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6527,7 +9338,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6559,7 +9370,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6585,6 +9396,167 @@
         }
       },
       "type": "object"
+    },
+    "V_1_9_0_ModifierOperation": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "type": {
+              "const": "clickable"
+            }
+          },
+          "required": [
+            "type",
+            "enabled",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "circle",
+                "rectangle",
+                "rounded"
+              ]
+            },
+            "type": {
+              "const": "clip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxWidth"
+            }
+          },
+          "required": [
+            "type",
+            "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "padding"
+            },
+            "value": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            },
+            "type": {
+              "const": "size"
+            },
+            "width": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ],
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "V_1_9_0_Node": {
       "allOf": [
@@ -6666,7 +9638,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6702,7 +9674,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6728,7 +9700,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6764,7 +9736,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6816,7 +9788,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6862,7 +9834,7 @@
               "properties": {
                 "operations": {
                   "items": {
-                    "$ref": "#/definitions/ModifierOperation"
+                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
                   },
                   "type": "array"
                 }
@@ -6899,6 +9871,861 @@
         }
       },
       "type": "object"
+    },
+    "Value_Color": {
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "type": {
+          "const": "Color"
+        }
+      },
+      "required": [
+        "type",
+        "color"
+      ],
+      "type": "object"
+    },
+    "Value_CutCornerShape": {
+      "additionalProperties": false,
+      "properties": {
+        "size": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "type": {
+          "const": "CutCornerShape"
+        }
+      },
+      "required": [
+        "type",
+        "size"
+      ],
+      "type": "object"
+    },
+    "Value_Dp": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "Dp"
+        },
+        "value": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "type": "object"
+    },
+    "Value_Em": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "Em"
+        },
+        "value": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "type": "object"
+    },
+    "Value_FontFamily": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Default",
+            "SansSerif",
+            "Serif",
+            "Monospace",
+            "Cursive"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "FontFamily"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_FontWeight": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "FontWeight"
+        },
+        "weight": {
+          "maximum": 1000,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "weight"
+      ],
+      "type": "object"
+    },
+    "Value_Offset": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "Offset"
+        },
+        "x": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ]
+        },
+        "y": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "Value_PaddingValues": {
+      "additionalProperties": false,
+      "properties": {
+        "bottom": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "end": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "start": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "top": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "type": {
+          "const": "PaddingValues"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_RoundedCornerShape": {
+      "additionalProperties": false,
+      "properties": {
+        "size": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "type": {
+          "const": "RoundedCornerShape"
+        }
+      },
+      "required": [
+        "type",
+        "size"
+      ],
+      "type": "object"
+    },
+    "Value_Size": {
+      "additionalProperties": false,
+      "properties": {
+        "height": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ],
+          "minimum": 0
+        },
+        "type": {
+          "const": "Size"
+        },
+        "width": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ],
+          "minimum": 0
+        }
+      },
+      "required": [
+        "type",
+        "width",
+        "height"
+      ],
+      "type": "object"
+    },
+    "Value_SolidColor": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "SolidColor"
+        },
+        "value": {
+          "$ref": "#/definitions/Family_Color"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "type": "object"
+    },
+    "Value_Sp": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "Sp"
+        },
+        "value": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "type": "object"
+    },
+    "Value_TextStyle": {
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "fontFamily": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Family_FontFamily"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fontSize": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_TextUnit"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "fontWeight": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Family_FontWeight"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "letterSpacing": {
+          "$ref": "#/definitions/Family_TextUnit"
+        },
+        "type": {
+          "const": "TextStyle"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_ThemeColor": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "primary",
+            "onPrimary",
+            "primaryContainer",
+            "onPrimaryContainer",
+            "inversePrimary",
+            "secondary",
+            "onSecondary",
+            "secondaryContainer",
+            "onSecondaryContainer",
+            "tertiary",
+            "onTertiary",
+            "tertiaryContainer",
+            "onTertiaryContainer",
+            "background",
+            "onBackground",
+            "surface",
+            "onSurface",
+            "surfaceVariant",
+            "onSurfaceVariant",
+            "surfaceTint",
+            "inverseSurface",
+            "inverseOnSurface",
+            "error",
+            "onError",
+            "errorContainer",
+            "onErrorContainer",
+            "outline",
+            "outlineVariant",
+            "scrim",
+            "surfaceBright",
+            "surfaceDim",
+            "surfaceContainer",
+            "surfaceContainerHigh",
+            "surfaceContainerHighest",
+            "surfaceContainerLow",
+            "surfaceContainerLowest"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "ThemeColor"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_ThemeShape": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "extraSmall",
+            "small",
+            "medium",
+            "large",
+            "extraLarge"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "ThemeShape"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_ThemeTypography": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "displayLarge",
+            "displayMedium",
+            "displaySmall",
+            "headlineLarge",
+            "headlineMedium",
+            "headlineSmall",
+            "titleLarge",
+            "titleMedium",
+            "titleSmall",
+            "bodyLarge",
+            "bodyMedium",
+            "bodySmall",
+            "labelLarge",
+            "labelMedium",
+            "labelSmall"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "ThemeTypography"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_WindowInsets": {
+      "additionalProperties": false,
+      "properties": {
+        "bottom": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "left": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "right": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "top": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "type": {
+          "const": "WindowInsets"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_buttonColors": {
+      "additionalProperties": false,
+      "properties": {
+        "containerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "contentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "disabledContentColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "buttonColors"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_buttonElevation": {
+      "additionalProperties": false,
+      "properties": {
+        "defaultElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "disabledElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "focusedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "hoveredElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "pressedElevation": {
+          "$ref": "#/definitions/Family_Dp"
+        },
+        "type": {
+          "const": "buttonElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_horizontalGradient": {
+      "additionalProperties": false,
+      "properties": {
+        "colors": {
+          "items": {
+            "$ref": "#/definitions/Family_Color"
+          },
+          "minItems": 2,
+          "type": "array"
+        },
+        "endX": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ]
+        },
+        "startX": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ]
+        },
+        "type": {
+          "const": "horizontalGradient"
+        }
+      },
+      "required": [
+        "type",
+        "colors"
+      ],
+      "type": "object"
+    },
+    "Value_linearGradient": {
+      "additionalProperties": false,
+      "properties": {
+        "colors": {
+          "items": {
+            "$ref": "#/definitions/Family_Color"
+          },
+          "minItems": 2,
+          "type": "array"
+        },
+        "end": {
+          "$ref": "#/definitions/Family_Offset"
+        },
+        "start": {
+          "$ref": "#/definitions/Family_Offset"
+        },
+        "type": {
+          "const": "linearGradient"
+        }
+      },
+      "required": [
+        "type",
+        "colors"
+      ],
+      "type": "object"
+    },
+    "Value_verticalGradient": {
+      "additionalProperties": false,
+      "properties": {
+        "colors": {
+          "items": {
+            "$ref": "#/definitions/Family_Color"
+          },
+          "minItems": 2,
+          "type": "array"
+        },
+        "endY": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ]
+        },
+        "startY": {
+          "allOf": [
+            {
+              "maximum": 3.4028234663852886e+38,
+              "minimum": -3.4028234663852886e+38,
+              "type": "number"
+            },
+            {
+              "anyOf": [
+                {
+                  "const": 0
+                },
+                {
+                  "minimum": 1.401298464324817e-45
+                },
+                {
+                  "maximum": -1.401298464324817e-45
+                }
+              ]
+            }
+          ]
+        },
+        "type": {
+          "const": "verticalGradient"
+        }
+      },
+      "required": [
+        "type",
+        "colors"
+      ],
+      "type": "object"
     }
   },
   "properties": {
@@ -6917,7 +10744,8 @@
         "1.7.0",
         "1.8.0",
         "1.9.0",
-        "1.10.0"
+        "1.10.0",
+        "1.11.0"
       ]
     },
     "version": {

@@ -1,7 +1,7 @@
 """Apply the generated IR schema vocabulary without on-device dependencies.
 
-This is not a general JSON Schema engine: disjunctions in the generated IR
-contract are type-discriminated registrations. Unknown schema keywords fail
+This is not a general JSON Schema engine: generated disjunctions are registered
+types or disjoint scalar/tagged/null and numeric-range unions. Unknown keywords fail
 closed so generator changes cannot silently weaken CLI validation.
 """
 
@@ -23,6 +23,7 @@ TYPE_CHECKS: dict[str, Callable[[object], bool]] = {
     "integer": lambda value: isinstance(value, int) and not isinstance(value, bool),
     "number": lambda value: isinstance(value, int | float)
     and not isinstance(value, bool),
+    "null": lambda value: value is None,
 }
 KEYWORDS = frozenset(
     {
@@ -45,6 +46,7 @@ KEYWORDS = frozenset(
         "$ref",
         "allOf",
         "anyOf",
+        "oneOf",
         "if",
         "then",
         "pattern",
@@ -102,14 +104,24 @@ class WireSchema:
             )
         return rule
 
-    def _choice(self, rule: dict[str, Any], value: object, path: str) -> dict[str, Any]:
+    def _choice(
+        self, rule: dict[str, Any], value: object, path: str
+    ) -> dict[str, Any] | bool:
         key = id(rule)
         if key not in self._choices:
             choices = {}
-            for candidate in rule["anyOf"]:
+            candidates = rule.get("anyOf", rule.get("oneOf", []))
+            for candidate in candidates:
                 resolved = self._resolve(candidate)
-                if isinstance(resolved, dict):
-                    choices[resolved["properties"]["type"]["const"]] = resolved
+                tag = (
+                    resolved.get("properties", {}).get("type", {}).get("const")
+                    if isinstance(resolved, dict)
+                    else None
+                )
+                if not isinstance(tag, str):
+                    return self._value_choice(candidates, value, path)
+                assert isinstance(resolved, dict)
+                choices[tag] = resolved
             self._choices[key] = choices
         kind = value.get("type") if isinstance(value, dict) else None
         if not isinstance(kind, str) or kind not in self._choices[key]:
@@ -117,6 +129,34 @@ class WireSchema:
                 "unknown or missing registered type", path=path, node_type=kind
             )
         return self._choices[key][kind]
+
+    def _value_choice(
+        self, candidates: list[Any], value: object, path: str
+    ) -> dict[str, Any] | bool:
+        # Generated scalar/tagged/null and numeric-range unions are disjoint.
+        # Select shallowly, then the iterative walker checks the complete branch.
+        matches = [
+            self._resolve(candidate)
+            for candidate in candidates
+            if self._matches(candidate, value, path)
+        ]
+        if len(matches) != 1:
+            raise ProjectError("invalid or ambiguous value choice", path=path)
+        return matches[0]
+
+    def _matches(self, source: dict[str, Any] | bool, value: object, path: str) -> bool:
+        rule = self._resolve(source)
+        if isinstance(rule, bool):
+            return rule
+        if set(rule) - KEYWORDS:
+            raise ProjectError("unsupported generated schema keyword", path=path)
+        try:
+            _scalars(value, rule, path)
+            if "anyOf" in rule or "oneOf" in rule:
+                self._choice(rule, value, path)
+        except ProjectError:
+            return False
+        return all(self._matches(child, value, path) for child in rule.get("allOf", []))
 
     def check(self, value: object) -> None:
         """Validate raw JSON before it can be normalized into Python Nodes.
@@ -145,7 +185,7 @@ class WireSchema:
                 if selected is not None:
                     pending.append((item, selected, path))
             pending.extend((item, child, path) for child in rule.get("allOf", []))
-            if "anyOf" in rule:
+            if "anyOf" in rule or "oneOf" in rule:
                 pending.append((item, self._choice(rule, item, path), path))
             if isinstance(item, dict):
                 missing = set(rule.get("required", [])) - item.keys()

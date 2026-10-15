@@ -3,6 +3,7 @@ package com.pycompose.ir
 import com.pycompose.ir.generated.IrContract
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
@@ -35,6 +36,7 @@ internal object WireValidator {
                 "Unknown node field at $id"
             }
             val props = node["props"] as? JsonObject ?: error("Missing object props at $id")
+            ValueParser.checkVersion(props, schema)
             props.keys.forEach { key ->
                 spec.props[key]?.let { rule ->
                     require(
@@ -86,6 +88,21 @@ internal object WireValidator {
         path: String,
         actionIds: Set<String>,
     ) {
+        if (value == JsonNull && rule.nullable) return
+        if (rule.valueType != null && value is JsonObject) {
+            ValueParser.validate(value, rule.valueType).getOrThrow()
+            ValueParser.bounds(value, rule.minimum, rule.maximum)
+            return
+        }
+        legacyProperty(value, rule, path, actionIds)
+    }
+
+    private fun legacyProperty(
+        value: JsonElement,
+        rule: PropertyRule,
+        path: String,
+        actionIds: Set<String>,
+    ) {
         val primitive = value as? JsonPrimitive
         when (rule.type) {
             "string", "color" -> string(value, path)
@@ -107,12 +124,19 @@ internal object WireValidator {
                 }
                 bounds(checkNotNull(primitive.longOrNull).toDouble(), rule, path)
             }
-            "number", "dp" -> {
-                bounds(number(primitive, path), rule, path)
-            }
+            "number", "dp" -> numericProperty(value, rule, path)
             "modifier" -> modifier(value, path, actionIds)
             else -> error("Unsupported registered prop type: ${rule.type}")
         }
+    }
+
+    private fun numericProperty(
+        value: JsonElement,
+        rule: PropertyRule,
+        path: String,
+    ) {
+        if (rule.type == "dp") ValueParser.validateFloat(value)
+        bounds(number(value as? JsonPrimitive, path), rule, path)
     }
 
     private fun number(
@@ -135,7 +159,7 @@ internal object WireValidator {
         require(rule.maximum == null || value <= rule.maximum) { "$path above maximum" }
     }
 
-    private fun modifier(
+    internal fun modifier(
         value: JsonElement,
         path: String,
         actionIds: Set<String>,

@@ -47,6 +47,8 @@ def discover(app: Path, catalog: dict[str, Any]) -> set[str]:
     Scans every ``.py`` under the app, skipping the generated package so the
     slice does not discover itself.
 
+    Unreadable Python syntax propagates AppCodegenError.
+
     Args:
         app: The app's root directory.
         catalog: Every component entry from ``components.json``.
@@ -54,10 +56,18 @@ def discover(app: Path, catalog: dict[str, Any]) -> set[str]:
     Returns:
         The referenced component names.
 
-    Raises:
-        AppCodegenError: If a name matches nothing in the catalog.
     """
-    known = set(catalog["components"])
+    return _discover_names(app, set(catalog["components"]))
+
+
+def discover_values(app: Path, catalog: dict[str, Any]) -> set[str]:
+    """Return explicitly referenced approved value constructors, excluding output."""
+    from pycompose.schema.codegen.values import definitions
+
+    return _discover_names(app, set(definitions(catalog)))
+
+
+def _discover_names(app: Path, known: set[str]) -> set[str]:
     used: set[str] = set()
     for source in sorted(app.rglob("*.py")):
         if APP_PACKAGE in source.relative_to(app).parts:
@@ -120,7 +130,9 @@ def uses_generated_slice(python_root: Path, package: str = APP_PACKAGE) -> bool:
     return False
 
 
-def slice_registry(registry: dict[str, Any], used: set[str]) -> dict[str, Any]:
+def slice_registry(
+    registry: dict[str, Any], used: set[str], *, values: frozenset[str] = frozenset()
+) -> dict[str, Any]:
     """Return the catalog narrowed to the components an app uses.
 
     Everything except ``components`` is carried whole: actions, effects,
@@ -130,6 +142,7 @@ def slice_registry(registry: dict[str, Any], used: set[str]) -> dict[str, Any]:
     Args:
         registry: The parsed catalog.
         used: The component names the app references.
+        values: Explicitly referenced value constructors.
 
     Returns:
         A registry carrying only those components.
@@ -138,6 +151,9 @@ def slice_registry(registry: dict[str, Any], used: set[str]) -> dict[str, Any]:
     narrowed["components"] = {
         name: entry for name, entry in registry["components"].items() if name in used
     }
+    from pycompose.schema.codegen.values import dependency_closure
+
+    narrowed["valueTypes"] = dependency_closure(narrowed, values)
     return narrowed
 
 

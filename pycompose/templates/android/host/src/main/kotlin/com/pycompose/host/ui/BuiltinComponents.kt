@@ -21,6 +21,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.PropResolver
+import com.pycompose.renderer.generated.ValueResolver
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import com.pycompose.ir.generated.Box as BoxNode
 import com.pycompose.ir.generated.Column as ColumnNode
@@ -157,10 +160,20 @@ object BuiltinComponents {
             }
         }
 
-    private fun color(value: String?): Color =
-        value?.let { PropResolver.color(it).getOrDefault(Color.Unspecified) } ?: Color.Unspecified
+    @Composable
+    private fun color(value: JsonElement?): Color =
+        when (value) {
+            is JsonObject -> ValueResolver.color(value).getOrDefault(Color.Unspecified)
+            is JsonPrimitive -> PropResolver.color(value.content).getOrDefault(Color.Unspecified)
+            else -> Color.Unspecified
+        }
 
-    @Composable private fun textStyle(value: String) =
+    @Composable private fun textStyle(value: JsonElement): androidx.compose.ui.text.TextStyle {
+        if (value is JsonObject) return ValueResolver.textStyle(value).getOrThrow()
+        return legacyTextStyle((value as JsonPrimitive).content)
+    }
+
+    @Composable private fun legacyTextStyle(value: String) =
         with(MaterialTheme.typography) {
             PropResolver
                 .enum(

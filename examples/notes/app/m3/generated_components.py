@@ -9,6 +9,7 @@ from pycompose.components.base import Component
 from pycompose.components.modifiers import Modifier
 from pycompose.composition import Content, content_nodes
 from pycompose.core.props import JsonValue
+from pycompose.core.values import UNSET, _Unset
 from pycompose.errors import IrValidationError
 
 __all__ = [
@@ -45,16 +46,6 @@ _RowVerticalAlignment = Literal[
     "bottom",
 ]
 
-_TextStyle = Literal[
-    "bodyLarge",
-    "bodyMedium",
-    "bodySmall",
-    "titleLarge",
-    "titleMedium",
-    "titleSmall",
-    "headlineMedium",
-]
-
 
 class Button(Component):
     """Native Button; props and defaults follow the component manifest."""
@@ -66,6 +57,8 @@ class Button(Component):
         self,
         *,
         id: str,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: str,
@@ -75,12 +68,18 @@ class Button(Component):
 
         Args:
             id: Stable instance key.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; omitted uses its default; None is null.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
             text: Required native text.
         """
         props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if not isinstance(elevation, _Unset):
+            props["elevation"] = elevation
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
@@ -196,7 +195,7 @@ class Scaffold(Component):
         self,
         *,
         id: str,
-        container_color: str | None = None,
+        container_color: JsonValue | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -258,12 +257,12 @@ class Text(Component):
         self,
         *,
         id: str,
-        color: str | None = None,
+        color: JsonValue | None = None,
         font_resource: str | None = None,
         locale: str | None = None,
         modifier: Modifier | None = None,
         resource: str | None = None,
-        style: _TextStyle | None = None,
+        style: JsonValue | None = None,
         text: str,
     ) -> None:
         """Construct a registered Text.

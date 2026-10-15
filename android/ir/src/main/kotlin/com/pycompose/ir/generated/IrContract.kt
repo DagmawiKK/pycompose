@@ -5,9 +5,9 @@ import com.pycompose.ir.ComponentRule
 import com.pycompose.ir.PropertyRule
 
 object IrContract {
-    const val SCHEMA_VERSION: String = "1.10.0"
+    const val SCHEMA_VERSION: String = "1.11.0"
     const val MIN_SCHEMA_VERSION: String = "1.0.0"
-    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0")
+    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0")
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
@@ -25,6 +25,8 @@ object IrContract {
             minimumChildren = 0,
             since = "1.0.0",
             props = mapOf(
+                "colors" to PropertyRule("value", required = false, since = "1.11.0", valueType = "ButtonColors"),
+                "elevation" to PropertyRule("value", required = false, since = "1.11.0", valueType = "ButtonElevation", nullable = true),
                 "enabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
@@ -96,7 +98,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.0.0",
             props = mapOf(
-                "containerColor" to PropertyRule("color", required = false),
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
@@ -113,12 +115,12 @@ object IrContract {
             minimumChildren = 0,
             since = "1.0.0",
             props = mapOf(
-                "color" to PropertyRule("color", required = false),
+                "color" to PropertyRule("color", required = false, valueType = "Color"),
                 "fontResource" to PropertyRule("resource", required = false, values = setOf("font"), since = "1.1.0"),
                 "locale" to PropertyRule("string", required = false, since = "1.1.0"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "resource" to PropertyRule("resource", required = false, values = setOf("string", "asset"), since = "1.1.0"),
-                "style" to PropertyRule("enum", required = false, values = setOf("bodyLarge", "bodyMedium", "bodySmall", "titleLarge", "titleMedium", "titleSmall", "headlineMedium")),
+                "style" to PropertyRule("enum", required = false, values = setOf("bodyLarge", "bodyMedium", "bodySmall", "titleLarge", "titleMedium", "titleSmall", "headlineMedium"), valueType = "TextStyle"),
                 "text" to PropertyRule("string", required = true),
             ),
         ),
@@ -149,22 +151,28 @@ object IrContract {
         ),
     )
     val modifiers: Map<String, Map<String, PropertyRule>> = mapOf(
+        "background" to mapOf(
+                "brush" to PropertyRule("value", required = true, since = "1.11.0", valueType = "Brush"),
+        ),
         "clickable" to mapOf(
                 "enabled" to PropertyRule("boolean", required = true),
                 "onClick" to PropertyRule("actionId", required = true),
         ),
         "clip" to mapOf(
-                "shape" to PropertyRule("enum", required = true, values = setOf("rectangle", "circle", "rounded")),
+                "shape" to PropertyRule("enum", required = true, values = setOf("rectangle", "circle", "rounded"), valueType = "Shape"),
         ),
         "fillMaxWidth" to mapOf(
                 "fraction" to PropertyRule("number", required = true, minimum = 0.0, maximum = 1.0),
         ),
         "padding" to mapOf(
-                "value" to PropertyRule("dp", required = true, minimum = 0.0),
+                "value" to PropertyRule("dp", required = true, valueType = "PaddingValues", minimum = 0.0),
         ),
         "size" to mapOf(
-                "height" to PropertyRule("dp", required = true, minimum = 0.0),
-                "width" to PropertyRule("dp", required = true, minimum = 0.0),
+                "height" to PropertyRule("dp", required = true, valueType = "Dp", minimum = 0.0),
+                "width" to PropertyRule("dp", required = true, valueType = "Dp", minimum = 0.0),
+        ),
+        "windowInsetsPadding" to mapOf(
+                "insets" to PropertyRule("value", required = true, since = "1.11.0", valueType = "WindowInsets"),
         ),
     )
     val actionPayloads: Map<String, Map<String, PropertyRule>> = mapOf(

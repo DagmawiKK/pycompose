@@ -26,6 +26,7 @@ PROP_TYPE_VOCABULARY = {
     "enum",
     "integer",
     "modifier",
+    "value",
     "number",
     "string",
 }

@@ -38,7 +38,7 @@ class Modifier:
         operation = freeze_json({"type": name, **props})
         return Modifier({"operations": (*operations, operation)})
 
-    def padding(self, value: int | float) -> Modifier:
+    def padding(self, value: int | float | dict[str, JsonValue]) -> Modifier:
         """Append nonnegative, uniform dp padding.
 
         Args:
@@ -60,7 +60,11 @@ class Modifier:
         """
         return self._append("fillMaxWidth", fraction=fraction)
 
-    def size(self, width: int | float, height: int | float | None = None) -> Modifier:
+    def size(
+        self,
+        width: int | float | dict[str, JsonValue],
+        height: int | float | dict[str, JsonValue] | None = None,
+    ) -> Modifier:
         """Append nonnegative dp size; an omitted height makes a square.
 
         Args:
@@ -74,7 +78,7 @@ class Modifier:
             "size", width=width, height=width if height is None else height
         )
 
-    def clip(self, shape: str) -> Modifier:
+    def clip(self, shape: str | dict[str, JsonValue]) -> Modifier:
         """Append a registry-declared clipping shape.
 
         Args:
@@ -84,6 +88,28 @@ class Modifier:
             A new modifier.
         """
         return self._append("clip", shape=shape)
+
+    def background(self, brush: dict[str, JsonValue]) -> Modifier:
+        """Paint a decoded native brush behind content.
+
+        Args:
+            brush: Tagged Compose Brush descriptor.
+
+        Returns:
+            A new ordered modifier.
+        """
+        return self._append("background", brush=brush)
+
+    def window_insets_padding(self, insets: dict[str, JsonValue]) -> Modifier:
+        """Apply density-aware native insets.
+
+        Args:
+            insets: Tagged WindowInsets descriptor.
+
+        Returns:
+            A new ordered modifier.
+        """
+        return self._append("windowInsetsPadding", insets=insets)
 
     def clickable(self, on_click: str, *, enabled: bool = True) -> Modifier:
         """Append a registered action reference, never a Python callback.

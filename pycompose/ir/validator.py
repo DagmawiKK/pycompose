@@ -19,6 +19,7 @@ from pycompose.core.node import Node, Props
 from pycompose.core.registry_types import PropDef
 from pycompose.core.resources import valid_resource
 from pycompose.core.traversal import NodeCycleError, walk_nodes
+from pycompose.core.values import validate_bounds, validate_number, validate_value
 from pycompose.errors import ComponentRegistryError, IrValidationError
 from pycompose.ir.data import DATA_SCHEMA, read_data
 from pycompose.ir.effects import EFFECTS_SCHEMA, read_effects
@@ -52,8 +53,7 @@ _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     and not isinstance(value, bool),
     "number": lambda value, _: isinstance(value, int | float)
     and not isinstance(value, bool),
-    "dp": lambda value, _: isinstance(value, int | float)
-    and not isinstance(value, bool),
+    "dp": lambda value, _: _is_native_float(value),
     "modifier": lambda value, _: isinstance(value, Mapping),
     "enum": lambda value, prop: isinstance(value, str) and value in prop.values,
     "actionId": lambda value, _: isinstance(value, ActionBinding)
@@ -74,7 +74,11 @@ def validate_prop(
     Returns:
         Whether the type, bounds and registry references are valid.
     """
+    if value is None:
+        return prop.nullable
     check = _TYPE_CHECKS.get(prop.type)
+    if prop.value_type is not None and isinstance(value, Mapping):
+        return _valid_value(value, prop)
     binding = prop.type == "actionId" and isinstance(value, str) and value in action_ids
     if check is None or not (binding or check(value, prop)):
         return False
@@ -86,10 +90,26 @@ def validate_prop(
     except IrValidationError:
         return False
     if isinstance(value, int | float):
-        if prop.minimum is not None and value < prop.minimum:
-            return False
-        if prop.maximum is not None and value > prop.maximum:
-            return False
+        return (prop.minimum is None or value >= prop.minimum) and (
+            prop.maximum is None or value <= prop.maximum
+        )
+    return True
+
+
+def _is_native_float(value: object) -> bool:
+    try:
+        validate_number(value, {"type": "float"})
+    except IrValidationError:
+        return False
+    return True
+
+
+def _valid_value(value: object, prop: PropDef) -> bool:
+    try:
+        validate_value(value, str(prop.value_type), REGISTRY.value_types)
+        validate_bounds(value, prop.minimum, prop.maximum)
+    except IrValidationError:
+        return False
     return True
 
 
@@ -368,7 +388,9 @@ class _Validation:
             if prop is None:
                 self.report("unknown prop", node, name)
                 removed.add(name)
-            elif prop.since is not None and not self.available(prop.since):
+            elif (
+                prop.since is not None and not self.available(prop.since)
+            ) or not self.values_available(props[name]):
                 self.report("prop requires newer schema", node, name)
                 removed.add(name)
                 invalid_required |= prop.required
@@ -392,6 +414,26 @@ class _Validation:
         return tuple(map(int, self.schema_version.split("."))) >= tuple(
             map(int, since.split("."))
         )
+
+    def values_available(self, value: object) -> bool:
+        pending = [value]
+        while pending:
+            current = pending.pop()
+            if isinstance(current, Mapping):
+                name = current.get("type")
+                definition = (
+                    REGISTRY.value_types.get(name) if isinstance(name, str) else None
+                )
+                if (
+                    definition is not None
+                    and "family" in definition
+                    and not self.available(str(definition["since"]))
+                ):
+                    return False
+                pending.extend(current.values())
+            elif isinstance(current, list | tuple):
+                pending.extend(current)
+        return True
 
     def finish(self, node: Node, frame: _NodeFrame | None) -> Node | None:
         if frame is None:

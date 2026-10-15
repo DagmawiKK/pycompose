@@ -17,6 +17,38 @@ def test_validate_accepts_a_canonical_fixture_outside_a_project(tmp_path: Path) 
     assert "Valid IR" in result.stdout
 
 
+def test_validate_accepts_tagged_nullable_and_numeric_value_unions(
+    tmp_path: Path,
+) -> None:
+    from pycompose.components import Button, Column, Modifier, Text
+    from pycompose.ir import emit_ir, to_json_bytes
+    from pycompose.state import State
+    from pycompose.values import Dp, Sp, TextStyle, ThemeColor
+
+    root = Column(
+        id="root",
+        children=(
+            Text(
+                id="t",
+                text="Hello",
+                color=ThemeColor("primary"),
+                style=TextStyle(font_size=Sp(20)),
+                modifier=Modifier().size(Dp(80)),
+            ),
+            Button(id="b", text="Save", on_click="increment", elevation=None),
+        ),
+    )
+    path = tmp_path / "ui.json"
+    path.write_bytes(to_json_bytes(emit_ir(State(root=root), "1.11.0")))
+    result = cli(tmp_path, "validate", str(path))
+    assert result.returncode == 0, result.stderr
+    document = json.loads(path.read_text())
+    document["root"]["children"][0]["props"]["style"]["fontSize"]["type"] = "Dp"
+    path.write_text(json.dumps(document))
+    result = cli(tmp_path, "validate", str(path))
+    assert result.returncode == 2, result.stderr
+
+
 @pytest.mark.parametrize(
     "invalid",
     [

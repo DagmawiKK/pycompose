@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.10.0",
+  "schemaVersion": "1.11.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -11,7 +11,8 @@
     "1.7.0",
     "1.8.0",
     "1.9.0",
-    "1.10.0"
+    "1.10.0",
+    "1.11.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -49,6 +50,8 @@
       "category": "buttons",
       "stability": "stable",
       "props": {
+        "colors": {"type": "value", "valueType": "ButtonColors", "since": "1.11.0", "nativeDefault": "androidx.compose.material3.ButtonDefaults.buttonColors()"},
+        "elevation": {"type": "value", "valueType": "ButtonElevation", "nullable": true, "since": "1.11.0", "nativeDefault": "androidx.compose.material3.ButtonDefaults.buttonElevation()"},
         "text": {
           "type": "string",
           "required": true,
@@ -250,6 +253,7 @@
       "props": {
         "containerColor": {
           "type": "color",
+          "valueType": "Color",
           "decode": "color"
         },
         "modifier": {
@@ -305,6 +309,7 @@
         },
         "style": {
           "type": "enum",
+          "valueType": "TextStyle",
           "values": [
             "bodyLarge",
             "bodyMedium",
@@ -319,6 +324,7 @@
         },
         "color": {
           "type": "color",
+          "valueType": "Color",
           "decode": "color"
         },
         "modifier": {
@@ -429,6 +435,7 @@
       "props": {
         "value": {
           "type": "dp",
+          "valueType": "PaddingValues",
           "required": true,
           "minimum": 0
         }
@@ -448,11 +455,13 @@
       "props": {
         "width": {
           "type": "dp",
+          "valueType": "Dp",
           "required": true,
           "minimum": 0
         },
         "height": {
           "type": "dp",
+          "valueType": "Dp",
           "required": true,
           "minimum": 0
         }
@@ -462,6 +471,7 @@
       "props": {
         "shape": {
           "type": "enum",
+          "valueType": "Shape",
           "required": true,
           "values": [
             "rectangle",
@@ -470,6 +480,12 @@
           ]
         }
       }
+    },
+    "background": {
+      "props": {"brush": {"type": "value", "valueType": "Brush", "required": true, "since": "1.11.0"}}
+    },
+    "windowInsetsPadding": {
+      "props": {"insets": {"type": "value", "valueType": "WindowInsets", "required": true, "since": "1.11.0"}}
     },
     "clickable": {
       "props": {
@@ -578,6 +594,169 @@
     }
   },
   "valueTypes": {
+    "buttonColors": {
+      "family": "ButtonColors", "kind": "factory", "kotlinType": "androidx.compose.material3.ButtonColors", "since": "1.11.0",
+      "parameters": {
+        "containerColor": {"type": "value", "valueType": "Color"},
+        "contentColor": {"type": "value", "valueType": "Color"},
+        "disabledContainerColor": {"type": "value", "valueType": "Color"},
+        "disabledContentColor": {"type": "value", "valueType": "Color"}
+      },
+      "native": {"call": "androidx.compose.material3.ButtonDefaults.buttonColors", "defaults": "androidx.compose.material3.ButtonDefaults.buttonColors()"}
+    },
+    "buttonElevation": {
+      "family": "ButtonElevation", "kind": "factory", "kotlinType": "androidx.compose.material3.ButtonElevation", "since": "1.11.0",
+      "parameters": {
+        "defaultElevation": {"type": "value", "valueType": "Dp", "defaultNative": "androidx.compose.ui.unit.Dp(0f)"},
+        "pressedElevation": {"type": "value", "valueType": "Dp", "defaultNative": "androidx.compose.ui.unit.Dp(0f)"},
+        "focusedElevation": {"type": "value", "valueType": "Dp", "defaultNative": "androidx.compose.ui.unit.Dp(0f)"},
+        "hoveredElevation": {"type": "value", "valueType": "Dp", "defaultNative": "androidx.compose.ui.unit.Dp(1f)"},
+        "disabledElevation": {"type": "value", "valueType": "Dp", "defaultNative": "androidx.compose.ui.unit.Dp(0f)"}
+      },
+      "native": {"call": "androidx.compose.material3.ButtonDefaults.buttonElevation"}
+    },
+    "ThemeColor": {
+      "family": "Color", "kind": "reference", "kotlinType": "androidx.compose.ui.graphics.Color", "since": "1.11.0",
+      "parameters": {"name": {"type": "string", "required": true, "values": ["primary", "onPrimary", "primaryContainer", "onPrimaryContainer", "inversePrimary", "secondary", "onSecondary", "secondaryContainer", "onSecondaryContainer", "tertiary", "onTertiary", "tertiaryContainer", "onTertiaryContainer", "background", "onBackground", "surface", "onSurface", "surfaceVariant", "onSurfaceVariant", "surfaceTint", "inverseSurface", "inverseOnSurface", "error", "onError", "errorContainer", "onErrorContainer", "outline", "outlineVariant", "scrim", "surfaceBright", "surfaceDim", "surfaceContainer", "surfaceContainerHigh", "surfaceContainerHighest", "surfaceContainerLow", "surfaceContainerLowest"]}},
+      "native": {"constantParameter": "name", "propertyOwner": "androidx.compose.material3.MaterialTheme.colorScheme"}
+    },
+    "ThemeTypography": {
+      "family": "TextStyle", "kind": "reference", "kotlinType": "androidx.compose.ui.text.TextStyle", "since": "1.11.0",
+      "parameters": {"name": {"type": "string", "required": true, "values": ["displayLarge", "displayMedium", "displaySmall", "headlineLarge", "headlineMedium", "headlineSmall", "titleLarge", "titleMedium", "titleSmall", "bodyLarge", "bodyMedium", "bodySmall", "labelLarge", "labelMedium", "labelSmall"]}},
+      "native": {"constantParameter": "name", "propertyOwner": "androidx.compose.material3.MaterialTheme.typography"}
+    },
+    "ThemeShape": {
+      "family": "Shape", "kind": "reference", "kotlinType": "androidx.compose.ui.graphics.Shape", "since": "1.11.0",
+      "parameters": {"name": {"type": "string", "required": true, "values": ["extraSmall", "small", "medium", "large", "extraLarge"]}},
+      "native": {"constantParameter": "name", "propertyOwner": "androidx.compose.material3.MaterialTheme.shapes"}
+    },
+    "FontWeight": {
+      "family": "FontWeight", "kind": "scalar", "kotlinType": "androidx.compose.ui.text.font.FontWeight", "since": "1.11.0",
+      "parameters": {"weight": {"type": "int", "required": true, "minimum": 1, "maximum": 1000}},
+      "native": {"call": "androidx.compose.ui.text.font.FontWeight"}
+    },
+    "PaddingValues": {
+      "family": "PaddingValues", "kind": "record", "kotlinType": "androidx.compose.foundation.layout.PaddingValues", "since": "1.11.0",
+      "parameters": {
+        "start": {"type": "value", "valueType": "Dp", "minimum": 0, "defaultNative": "androidx.compose.ui.unit.Dp(0f)"},
+        "top": {"type": "value", "valueType": "Dp", "minimum": 0, "defaultNative": "androidx.compose.ui.unit.Dp(0f)"},
+        "end": {"type": "value", "valueType": "Dp", "minimum": 0, "defaultNative": "androidx.compose.ui.unit.Dp(0f)"},
+        "bottom": {"type": "value", "valueType": "Dp", "minimum": 0, "defaultNative": "androidx.compose.ui.unit.Dp(0f)"}
+      },
+      "native": {"call": "androidx.compose.foundation.layout.PaddingValues"}
+    },
+    "WindowInsets": {
+      "family": "WindowInsets", "kind": "record", "kotlinType": "androidx.compose.foundation.layout.WindowInsets", "since": "1.11.0",
+      "parameters": {
+        "left": {"type": "value", "valueType": "Dp", "minimum": 0, "defaultNative": "androidx.compose.ui.unit.Dp(0f)"},
+        "top": {"type": "value", "valueType": "Dp", "minimum": 0, "defaultNative": "androidx.compose.ui.unit.Dp(0f)"},
+        "right": {"type": "value", "valueType": "Dp", "minimum": 0, "defaultNative": "androidx.compose.ui.unit.Dp(0f)"},
+        "bottom": {"type": "value", "valueType": "Dp", "minimum": 0, "defaultNative": "androidx.compose.ui.unit.Dp(0f)"}
+      },
+      "native": {"call": "androidx.compose.foundation.layout.WindowInsets"}
+    },
+    "RoundedCornerShape": {
+      "family": "Shape", "kind": "factory", "kotlinType": "androidx.compose.ui.graphics.Shape", "since": "1.11.0",
+      "parameters": {"size": {"type": "value", "valueType": "Dp", "required": true, "minimum": 0}},
+      "native": {"call": "androidx.compose.foundation.shape.RoundedCornerShape"}
+    },
+    "CutCornerShape": {
+      "family": "Shape", "kind": "factory", "kotlinType": "androidx.compose.ui.graphics.Shape", "since": "1.11.0",
+      "parameters": {"size": {"type": "value", "valueType": "Dp", "required": true, "minimum": 0}},
+      "native": {"call": "androidx.compose.foundation.shape.CutCornerShape"}
+    },
+    "Offset": {
+      "family": "Offset", "kind": "record", "kotlinType": "androidx.compose.ui.geometry.Offset", "since": "1.11.0",
+      "parameters": {"x": {"type": "float", "required": true}, "y": {"type": "float", "required": true}},
+      "native": {"call": "androidx.compose.ui.geometry.Offset"}
+    },
+    "Size": {
+      "family": "Size", "kind": "record", "kotlinType": "androidx.compose.ui.geometry.Size", "since": "1.11.0",
+      "parameters": {"width": {"type": "float", "required": true, "minimum": 0}, "height": {"type": "float", "required": true, "minimum": 0}},
+      "native": {"call": "androidx.compose.ui.geometry.Size"}
+    },
+    "SolidColor": {
+      "family": "Brush", "kind": "record", "kotlinType": "androidx.compose.ui.graphics.Brush", "since": "1.11.0",
+      "parameters": {"value": {"type": "value", "valueType": "Color", "required": true}},
+      "native": {"call": "androidx.compose.ui.graphics.SolidColor"}
+    },
+    "horizontalGradient": {
+      "family": "Brush", "kind": "factory", "kotlinType": "androidx.compose.ui.graphics.Brush", "since": "1.11.0",
+      "parameters": {
+        "colors": {"type": "list", "required": true, "minItems": 2, "items": {"type": "value", "valueType": "Color"}},
+        "startX": {"type": "float", "defaultNative": "0f"},
+        "endX": {"type": "float", "defaultNative": "Float.POSITIVE_INFINITY"}
+      },
+      "native": {"call": "androidx.compose.ui.graphics.Brush.horizontalGradient"}
+    },
+    "verticalGradient": {
+      "family": "Brush", "kind": "factory", "kotlinType": "androidx.compose.ui.graphics.Brush", "since": "1.11.0",
+      "parameters": {
+        "colors": {"type": "list", "required": true, "minItems": 2, "items": {"type": "value", "valueType": "Color"}},
+        "startY": {"type": "float", "defaultNative": "0f"},
+        "endY": {"type": "float", "defaultNative": "Float.POSITIVE_INFINITY"}
+      },
+      "native": {"call": "androidx.compose.ui.graphics.Brush.verticalGradient"}
+    },
+    "linearGradient": {
+      "family": "Brush", "kind": "factory", "kotlinType": "androidx.compose.ui.graphics.Brush", "since": "1.11.0",
+      "parameters": {
+        "colors": {"type": "list", "required": true, "minItems": 2, "items": {"type": "value", "valueType": "Color"}},
+        "start": {"type": "value", "valueType": "Offset", "defaultNative": "androidx.compose.ui.geometry.Offset.Zero"},
+        "end": {"type": "value", "valueType": "Offset", "defaultNative": "androidx.compose.ui.geometry.Offset.Infinite"}
+      },
+      "native": {"call": "androidx.compose.ui.graphics.Brush.linearGradient"}
+    },
+    "Dp": {
+      "family": "Dp", "kind": "scalar", "kotlinType": "androidx.compose.ui.unit.Dp", "since": "1.11.0",
+      "parameters": {"value": {"type": "float", "required": true}},
+      "native": {"call": "androidx.compose.ui.unit.Dp"}
+    },
+    "Sp": {
+      "family": "TextUnit", "kind": "scalar", "kotlinType": "androidx.compose.ui.unit.TextUnit", "since": "1.11.0",
+      "parameters": {"value": {"type": "float", "required": true}},
+      "native": {"extension": "sp"}
+    },
+    "Em": {
+      "family": "TextUnit", "kind": "scalar", "kotlinType": "androidx.compose.ui.unit.TextUnit", "since": "1.11.0",
+      "parameters": {"value": {"type": "float", "required": true}},
+      "native": {"extension": "em"}
+    },
+    "TextStyle": {
+      "family": "TextStyle", "kind": "record", "kotlinType": "androidx.compose.ui.text.TextStyle", "since": "1.11.0",
+      "parameters": {
+        "color": {"type": "value", "valueType": "Color"},
+        "fontSize": {"type": "value", "valueType": "TextUnit", "minimum": 0},
+        "letterSpacing": {"type": "value", "valueType": "TextUnit"},
+        "fontFamily": {"type": "value", "valueType": "FontFamily", "nullable": true},
+        "fontWeight": {"type": "value", "valueType": "FontWeight", "nullable": true}
+      },
+      "native": {"call": "androidx.compose.ui.text.TextStyle", "defaults": "androidx.compose.ui.text.TextStyle()"}
+    },
+    "FontFamily": {
+      "family": "FontFamily", "kind": "constant", "kotlinType": "androidx.compose.ui.text.font.FontFamily", "since": "1.11.0",
+      "parameters": {"name": {"type": "string", "required": true, "values": ["Default", "SansSerif", "Serif", "Monospace", "Cursive"]}},
+      "native": {"constantParameter": "name", "constants": {
+        "Default": "androidx.compose.ui.text.font.FontFamily.Default", "SansSerif": "androidx.compose.ui.text.font.FontFamily.SansSerif",
+        "Serif": "androidx.compose.ui.text.font.FontFamily.Serif", "Monospace": "androidx.compose.ui.text.font.FontFamily.Monospace", "Cursive": "androidx.compose.ui.text.font.FontFamily.Cursive"
+      }}
+    },
+    "Color": {
+      "family": "Color",
+      "kind": "scalar",
+      "kotlinType": "androidx.compose.ui.graphics.Color",
+      "since": "1.11.0",
+      "source": {
+        "artifact": "androidx.compose.ui:ui-graphics-android:1.7.7",
+        "owner": "androidx.compose.ui.graphics.ColorKt",
+        "name": "Color",
+        "descriptor": "(J)J"
+      },
+      "parameters": {
+        "color": {"type": "long", "required": true, "minimum": 0, "maximum": 4294967295}
+      },
+      "native": {"call": "androidx.compose.ui.graphics.Color"}
+    },
     "color": {
       "encoding": "string",
       "shape": "#RRGGBB",

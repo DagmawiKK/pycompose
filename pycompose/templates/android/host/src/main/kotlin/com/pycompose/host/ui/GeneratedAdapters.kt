@@ -24,8 +24,18 @@ object GeneratedAdapters {
         this
             .register("Button") { node, modifier, context ->
                 val model = node as ButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.buttonColors(colorsWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.buttonColors()
+                val elevationWire = model.props.elevation
+                val elevationValue = when (elevationWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> androidx.compose.material3.ButtonDefaults.buttonElevation()
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.buttonElevation(elevationWire.value).getOrThrow()
+                }
                 Button(
                     modifier = modifier,
+                    colors = colorsValue,
+                    elevation = elevationValue,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     enabled = model.props.enabled,
                 ) {

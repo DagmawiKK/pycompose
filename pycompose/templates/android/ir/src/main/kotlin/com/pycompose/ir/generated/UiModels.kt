@@ -4,6 +4,9 @@ package com.pycompose.ir.generated
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+import com.pycompose.ir.OptionalValue
 
 @Serializable
 sealed interface UiNode {
@@ -43,6 +46,8 @@ data class Box(
 
 @Serializable
 data class ButtonProps(
+    val `colors`: JsonElement? = null,
+    val `elevation`: OptionalValue = OptionalValue.Absent,
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
@@ -163,7 +168,7 @@ data class Row(
 
 @Serializable
 data class ScaffoldProps(
-    val `containerColor`: String? = null,
+    val `containerColor`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
 ) : UiProps
 
@@ -194,12 +199,12 @@ data class Spacer(
 
 @Serializable
 data class TextProps(
-    val `color`: String? = null,
+    val `color`: JsonElement? = null,
     val `fontResource`: String? = null,
     val `locale`: String? = null,
     override val `modifier`: JsonObject? = null,
     val `resource`: String? = null,
-    val `style`: String = "bodyMedium",
+    val `style`: JsonElement = JsonPrimitive("bodyMedium"),
     val `text`: String,
 ) : UiProps
 

@@ -171,7 +171,9 @@ def test_no_optional_prop_is_passed_through() -> None:
                 continue
             if spec["type"] in ("actionId", "modifier") or spec.get("content"):
                 continue
-            assert spec.get("required") or "default" in spec, (
+            assert (
+                spec.get("required") or "default" in spec or "nativeDefault" in spec
+            ), (
                 f"{name}.{prop} is optional and has no default, "
                 "so the generated model types it nullable"
             )

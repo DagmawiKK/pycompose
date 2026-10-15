@@ -8,6 +8,8 @@ data class PropertyRule(
     val minimum: Double? = null,
     val maximum: Double? = null,
     val since: String = "1.0.0",
+    val valueType: String? = null,
+    val nullable: Boolean = false,
 )
 
 /** Registered component structure and property constraints. */

@@ -15,6 +15,14 @@ class ValidatedIr internal constructor(
 class IrParser(
     private val minSchemaVersion: String = IrContract.MIN_SCHEMA_VERSION,
 ) {
+    companion object {
+        /** Syntax/type gate for standalone modifier consumers; callers supply known actions. */
+        fun validateModifier(
+            value: JsonObject,
+            actionIds: Set<String>,
+        ): Result<Unit> = runCatching { WireValidator.modifier(value, "modifier", actionIds) }
+    }
+
     private val json =
         Json {
             ignoreUnknownKeys = false
