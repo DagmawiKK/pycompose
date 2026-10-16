@@ -4,6 +4,7 @@
 from m3.generated_components import (
     Button,
     Column,
+    Icon,
     LazyColumn,
     LinearProgressIndicator,
     ModalBottomSheet,
@@ -21,6 +22,7 @@ from pycompose.components.modifiers import (
 __all__ = [
     "Button",
     "Column",
+    "Icon",
     "LazyColumn",
     "LinearProgressIndicator",
     "ModalBottomSheet",

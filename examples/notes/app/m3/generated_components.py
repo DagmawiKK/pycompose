@@ -16,6 +16,7 @@ from pycompose.errors import IrValidationError
 __all__ = [
     "Button",
     "Column",
+    "Icon",
     "LazyColumn",
     "LinearProgressIndicator",
     "ModalBottomSheet",
@@ -61,7 +62,7 @@ class Button(Component):
         *,
         id: str,
         colors: JsonValue | None = None,
-        elevation: JsonValue | _Unset = UNSET,
+        elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: str,
@@ -129,6 +130,38 @@ class Column(Component):
             props["horizontal_alignment"] = horizontal_alignment
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Icon(Component):
+    """Native Icon; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Icon"
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        content_description: str | None,
+        image_vector: JsonValue,
+        modifier: Modifier | None = None,
+        tint: JsonValue | None = None,
+    ) -> None:
+        """Construct a registered Icon.
+
+        Args:
+            id: Stable instance key.
+            content_description: Required native contentDescription.
+            image_vector: Required native imageVector.
+            modifier: Native modifier; None uses its default.
+            tint: Native tint; None uses its default.
+        """
+        props: dict[str, JsonValue] = {}
+        props["content_description"] = content_description
+        props["image_vector"] = image_vector
+        if tint is not None:
+            props["tint"] = tint
+        super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
 class LazyColumn(Component):

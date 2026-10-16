@@ -28,6 +28,8 @@ sealed interface FontFamilyValue
 
 sealed interface FontWeightValue
 
+sealed interface ImageVectorValue
+
 sealed interface OffsetValue
 
 sealed interface PaddingValuesValue
@@ -162,6 +164,11 @@ data class WirelinearGradient(
     val end: OffsetValue? = null,
 ) : BrushValue
 
+data class WirematerialIcon(
+    val supplied: Set<String>,
+    val name: String,
+) : ImageVectorValue
+
 data class WireverticalGradient(
     val supplied: Set<String>,
     val colors: List<ColorValue>,
@@ -170,7 +177,7 @@ data class WireverticalGradient(
 ) : BrushValue
 
 object ValueContract {
-    const val SCHEMA_VERSION = "1.20.0"
+    const val SCHEMA_VERSION = "1.21.0"
     private val json = Json { classDiscriminator = "type" }
     val specs: JsonObject = json.parseToJsonElement(
         "{\"Color\":{\"family\":\"Color\",\"parameters\":{\"color\":{\"maximum\":" +
@@ -249,11 +256,96 @@ object ValueContract {
         "\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"value\",\"val" +
         "ueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":\"list\"}" +
         ",\"end\":{\"type\":\"value\",\"valueType\":\"Offset\"},\"start\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Offset\"}},\"since\":\"1.11.0\"},\"verticalG" +
-        "radient\":{\"family\":\"Brush\",\"parameters\":{\"colors\":{\"items\":{" +
-        "\"type\":\"value\",\"valueType\":\"Color\"},\"minItems\":2,\"required\":" +
-        "true,\"type\":\"list\"},\"endY\":{\"type\":\"float\"},\"startY\":{\"type\"" +
-        ":\"float\"}},\"since\":\"1.11.0\"}}"
+        ":\"value\",\"valueType\":\"Offset\"}},\"since\":\"1.11.0\"},\"materialI" +
+        "con\":{\"family\":\"ImageVector\",\"parameters\":{\"name\":{\"required" +
+        "\":true,\"type\":\"string\",\"values\":[\"AutoMirrored.Filled.ArrowB" +
+        "ack\",\"AutoMirrored.Filled.ArrowForward\",\"AutoMirrored.Filled" +
+        ".ExitToApp\",\"AutoMirrored.Filled.KeyboardArrowLeft\",\"AutoMir" +
+        "rored.Filled.KeyboardArrowRight\",\"AutoMirrored.Filled.List\"," +
+        "\"AutoMirrored.Filled.Send\",\"AutoMirrored.Outlined.ArrowBack\"" +
+        ",\"AutoMirrored.Outlined.ArrowForward\",\"AutoMirrored.Outlined" +
+        ".ExitToApp\",\"AutoMirrored.Outlined.KeyboardArrowLeft\",\"AutoM" +
+        "irrored.Outlined.KeyboardArrowRight\",\"AutoMirrored.Outlined." +
+        "List\",\"AutoMirrored.Outlined.Send\",\"AutoMirrored.Rounded.Arr" +
+        "owBack\",\"AutoMirrored.Rounded.ArrowForward\",\"AutoMirrored.Ro" +
+        "unded.ExitToApp\",\"AutoMirrored.Rounded.KeyboardArrowLeft\",\"A" +
+        "utoMirrored.Rounded.KeyboardArrowRight\",\"AutoMirrored.Rounde" +
+        "d.List\",\"AutoMirrored.Rounded.Send\",\"AutoMirrored.Sharp.Arro" +
+        "wBack\",\"AutoMirrored.Sharp.ArrowForward\",\"AutoMirrored.Sharp" +
+        ".ExitToApp\",\"AutoMirrored.Sharp.KeyboardArrowLeft\",\"AutoMirr" +
+        "ored.Sharp.KeyboardArrowRight\",\"AutoMirrored.Sharp.List\",\"Au" +
+        "toMirrored.Sharp.Send\",\"AutoMirrored.TwoTone.ArrowBack\",\"Aut" +
+        "oMirrored.TwoTone.ArrowForward\",\"AutoMirrored.TwoTone.ExitTo" +
+        "App\",\"AutoMirrored.TwoTone.KeyboardArrowLeft\",\"AutoMirrored." +
+        "TwoTone.KeyboardArrowRight\",\"AutoMirrored.TwoTone.List\",\"Aut" +
+        "oMirrored.TwoTone.Send\",\"Filled.AccountBox\",\"Filled.AccountC" +
+        "ircle\",\"Filled.Add\",\"Filled.AddCircle\",\"Filled.ArrowDropDown" +
+        "\",\"Filled.Build\",\"Filled.Call\",\"Filled.Check\",\"Filled.CheckC" +
+        "ircle\",\"Filled.Clear\",\"Filled.Close\",\"Filled.Create\",\"Filled" +
+        ".DateRange\",\"Filled.Delete\",\"Filled.Done\",\"Filled.Edit\",\"Fil" +
+        "led.Email\",\"Filled.Face\",\"Filled.Favorite\",\"Filled.FavoriteB" +
+        "order\",\"Filled.Home\",\"Filled.Info\",\"Filled.KeyboardArrowDown" +
+        "\",\"Filled.KeyboardArrowUp\",\"Filled.LocationOn\",\"Filled.Lock\"" +
+        ",\"Filled.MailOutline\",\"Filled.Menu\",\"Filled.MoreVert\",\"Fille" +
+        "d.Notifications\",\"Filled.Person\",\"Filled.Phone\",\"Filled.Plac" +
+        "e\",\"Filled.PlayArrow\",\"Filled.Refresh\",\"Filled.Search\",\"Fill" +
+        "ed.Settings\",\"Filled.Share\",\"Filled.ShoppingCart\",\"Filled.St" +
+        "ar\",\"Filled.ThumbUp\",\"Filled.Warning\",\"Outlined.AccountBox\"," +
+        "\"Outlined.AccountCircle\",\"Outlined.Add\",\"Outlined.AddCircle\"" +
+        ",\"Outlined.ArrowDropDown\",\"Outlined.Build\",\"Outlined.Call\",\"" +
+        "Outlined.Check\",\"Outlined.CheckCircle\",\"Outlined.Clear\",\"Out" +
+        "lined.Close\",\"Outlined.Create\",\"Outlined.DateRange\",\"Outline" +
+        "d.Delete\",\"Outlined.Done\",\"Outlined.Edit\",\"Outlined.Email\",\"" +
+        "Outlined.Face\",\"Outlined.Favorite\",\"Outlined.FavoriteBorder\"" +
+        ",\"Outlined.Home\",\"Outlined.Info\",\"Outlined.KeyboardArrowDown" +
+        "\",\"Outlined.KeyboardArrowUp\",\"Outlined.LocationOn\",\"Outlined" +
+        ".Lock\",\"Outlined.MailOutline\",\"Outlined.Menu\",\"Outlined.More" +
+        "Vert\",\"Outlined.Notifications\",\"Outlined.Person\",\"Outlined.P" +
+        "hone\",\"Outlined.Place\",\"Outlined.PlayArrow\",\"Outlined.Refres" +
+        "h\",\"Outlined.Search\",\"Outlined.Settings\",\"Outlined.Share\",\"O" +
+        "utlined.ShoppingCart\",\"Outlined.Star\",\"Outlined.ThumbUp\",\"Ou" +
+        "tlined.Warning\",\"Rounded.AccountBox\",\"Rounded.AccountCircle\"" +
+        ",\"Rounded.Add\",\"Rounded.AddCircle\",\"Rounded.ArrowDropDown\",\"" +
+        "Rounded.Build\",\"Rounded.Call\",\"Rounded.Check\",\"Rounded.Check" +
+        "Circle\",\"Rounded.Clear\",\"Rounded.Close\",\"Rounded.Create\",\"Ro" +
+        "unded.DateRange\",\"Rounded.Delete\",\"Rounded.Done\",\"Rounded.Ed" +
+        "it\",\"Rounded.Email\",\"Rounded.Face\",\"Rounded.Favorite\",\"Round" +
+        "ed.FavoriteBorder\",\"Rounded.Home\",\"Rounded.Info\",\"Rounded.Ke" +
+        "yboardArrowDown\",\"Rounded.KeyboardArrowUp\",\"Rounded.Location" +
+        "On\",\"Rounded.Lock\",\"Rounded.MailOutline\",\"Rounded.Menu\",\"Rou" +
+        "nded.MoreVert\",\"Rounded.Notifications\",\"Rounded.Person\",\"Rou" +
+        "nded.Phone\",\"Rounded.Place\",\"Rounded.PlayArrow\",\"Rounded.Ref" +
+        "resh\",\"Rounded.Search\",\"Rounded.Settings\",\"Rounded.Share\",\"R" +
+        "ounded.ShoppingCart\",\"Rounded.Star\",\"Rounded.ThumbUp\",\"Round" +
+        "ed.Warning\",\"Sharp.AccountBox\",\"Sharp.AccountCircle\",\"Sharp." +
+        "Add\",\"Sharp.AddCircle\",\"Sharp.ArrowDropDown\",\"Sharp.Build\",\"" +
+        "Sharp.Call\",\"Sharp.Check\",\"Sharp.CheckCircle\",\"Sharp.Clear\"," +
+        "\"Sharp.Close\",\"Sharp.Create\",\"Sharp.DateRange\",\"Sharp.Delete" +
+        "\",\"Sharp.Done\",\"Sharp.Edit\",\"Sharp.Email\",\"Sharp.Face\",\"Shar" +
+        "p.Favorite\",\"Sharp.FavoriteBorder\",\"Sharp.Home\",\"Sharp.Info\"" +
+        ",\"Sharp.KeyboardArrowDown\",\"Sharp.KeyboardArrowUp\",\"Sharp.Lo" +
+        "cationOn\",\"Sharp.Lock\",\"Sharp.MailOutline\",\"Sharp.Menu\",\"Sha" +
+        "rp.MoreVert\",\"Sharp.Notifications\",\"Sharp.Person\",\"Sharp.Pho" +
+        "ne\",\"Sharp.Place\",\"Sharp.PlayArrow\",\"Sharp.Refresh\",\"Sharp.S" +
+        "earch\",\"Sharp.Settings\",\"Sharp.Share\",\"Sharp.ShoppingCart\",\"" +
+        "Sharp.Star\",\"Sharp.ThumbUp\",\"Sharp.Warning\",\"TwoTone.Account" +
+        "Box\",\"TwoTone.AccountCircle\",\"TwoTone.Add\",\"TwoTone.AddCircl" +
+        "e\",\"TwoTone.ArrowDropDown\",\"TwoTone.Build\",\"TwoTone.Call\",\"T" +
+        "woTone.Check\",\"TwoTone.CheckCircle\",\"TwoTone.Clear\",\"TwoTone" +
+        ".Close\",\"TwoTone.Create\",\"TwoTone.DateRange\",\"TwoTone.Delete" +
+        "\",\"TwoTone.Done\",\"TwoTone.Edit\",\"TwoTone.Email\",\"TwoTone.Fac" +
+        "e\",\"TwoTone.Favorite\",\"TwoTone.FavoriteBorder\",\"TwoTone.Home" +
+        "\",\"TwoTone.Info\",\"TwoTone.KeyboardArrowDown\",\"TwoTone.Keyboa" +
+        "rdArrowUp\",\"TwoTone.LocationOn\",\"TwoTone.Lock\",\"TwoTone.Mail" +
+        "Outline\",\"TwoTone.Menu\",\"TwoTone.MoreVert\",\"TwoTone.Notifica" +
+        "tions\",\"TwoTone.Person\",\"TwoTone.Phone\",\"TwoTone.Place\",\"Two" +
+        "Tone.PlayArrow\",\"TwoTone.Refresh\",\"TwoTone.Search\",\"TwoTone." +
+        "Settings\",\"TwoTone.Share\",\"TwoTone.ShoppingCart\",\"TwoTone.St" +
+        "ar\",\"TwoTone.ThumbUp\",\"TwoTone.Warning\"]}},\"since\":\"1.21.0\"}" +
+        ",\"verticalGradient\":{\"family\":\"Brush\",\"parameters\":{\"colors\"" +
+        ":{\"items\":{\"type\":\"value\",\"valueType\":\"Color\"},\"minItems\":2," +
+        "\"required\":true,\"type\":\"list\"},\"endY\":{\"type\":\"float\"},\"star" +
+        "tY\":{\"type\":\"float\"}},\"since\":\"1.11.0\"}}"
     ).jsonObject
 
     fun readBrush(value: JsonElement): BrushValue {
@@ -364,6 +456,18 @@ object ValueContract {
             "FontWeight" -> WireFontWeight(
                 supplied = data.keys,
                 weight = data.getValue("weight").jsonPrimitive.int,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readImageVector(value: JsonElement): ImageVectorValue {
+        ValueParser.validate(value, "ImageVector", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "materialIcon" -> WirematerialIcon(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
             )
             else -> error("Unknown value constructor")
         }

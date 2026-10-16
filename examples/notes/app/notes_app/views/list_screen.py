@@ -5,6 +5,7 @@ from __future__ import annotations
 from m3 import (
     Button,
     Column,
+    Icon,
     LazyColumn,
     LinearProgressIndicator,
     ModalBottomSheet,
@@ -15,6 +16,7 @@ from m3 import (
     Text,
     TextButton,
 )
+from m3.values import materialIcon
 
 from notes_app.domain.models import Note
 from notes_app.domain.usecases import count_line, filled_share
@@ -109,11 +111,29 @@ def list_screen(
                             id="about_body",
                             modifier=Modifier().padding(20).fill_max_width(),
                             children=[
-                                Text(
-                                    id="about_title",
-                                    text="How this works",
-                                    style="titleMedium",
-                                    color=theme.on_surface,
+                                Row(
+                                    id="about_heading",
+                                    vertical_alignment="center",
+                                    children=[
+                                        Icon(
+                                            id="about_icon",
+                                            image_vector=materialIcon(
+                                                name="Filled.Info"
+                                            ),
+                                            content_description="About this app",
+                                            tint=theme.primary,
+                                        ),
+                                        Spacer(
+                                            id="gap_about_heading",
+                                            modifier=Modifier().size(8),
+                                        ),
+                                        Text(
+                                            id="about_title",
+                                            text="How this works",
+                                            style="titleMedium",
+                                            color=theme.on_surface,
+                                        ),
+                                    ],
                                 ),
                                 Spacer(
                                     id="gap_about_text", modifier=Modifier().size(8)

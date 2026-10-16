@@ -30,6 +30,7 @@ __all__ = [
     "buttonElevation",
     "horizontalGradient",
     "linearGradient",
+    "materialIcon",
     "verticalGradient",
 ]
 
@@ -126,11 +127,113 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     'olor"},"minItems":2,"required":true,"type":"list"}'
     ',"end":{"type":"value","valueType":"Offset"},"star'
     't":{"type":"value","valueType":"Offset"}},"since":'
-    '"1.11.0"},"verticalGradient":{"family":"Brush","pa'
-    'rameters":{"colors":{"items":{"type":"value","valu'
-    'eType":"Color"},"minItems":2,"required":true,"type'
-    '":"list"},"endY":{"type":"float"},"startY":{"type"'
-    ':"float"}},"since":"1.11.0"}}'
+    '"1.11.0"},"materialIcon":{"family":"ImageVector","'
+    'parameters":{"name":{"required":true,"type":"strin'
+    'g","values":["AutoMirrored.Filled.ArrowBack","Auto'
+    'Mirrored.Filled.ArrowForward","AutoMirrored.Filled'
+    '.ExitToApp","AutoMirrored.Filled.KeyboardArrowLeft'
+    '","AutoMirrored.Filled.KeyboardArrowRight","AutoMi'
+    'rrored.Filled.List","AutoMirrored.Filled.Send","Au'
+    'toMirrored.Outlined.ArrowBack","AutoMirrored.Outli'
+    'ned.ArrowForward","AutoMirrored.Outlined.ExitToApp'
+    '","AutoMirrored.Outlined.KeyboardArrowLeft","AutoM'
+    'irrored.Outlined.KeyboardArrowRight","AutoMirrored'
+    '.Outlined.List","AutoMirrored.Outlined.Send","Auto'
+    'Mirrored.Rounded.ArrowBack","AutoMirrored.Rounded.'
+    'ArrowForward","AutoMirrored.Rounded.ExitToApp","Au'
+    'toMirrored.Rounded.KeyboardArrowLeft","AutoMirrore'
+    'd.Rounded.KeyboardArrowRight","AutoMirrored.Rounde'
+    'd.List","AutoMirrored.Rounded.Send","AutoMirrored.'
+    'Sharp.ArrowBack","AutoMirrored.Sharp.ArrowForward"'
+    ',"AutoMirrored.Sharp.ExitToApp","AutoMirrored.Shar'
+    'p.KeyboardArrowLeft","AutoMirrored.Sharp.KeyboardA'
+    'rrowRight","AutoMirrored.Sharp.List","AutoMirrored'
+    '.Sharp.Send","AutoMirrored.TwoTone.ArrowBack","Aut'
+    'oMirrored.TwoTone.ArrowForward","AutoMirrored.TwoT'
+    'one.ExitToApp","AutoMirrored.TwoTone.KeyboardArrow'
+    'Left","AutoMirrored.TwoTone.KeyboardArrowRight","A'
+    'utoMirrored.TwoTone.List","AutoMirrored.TwoTone.Se'
+    'nd","Filled.AccountBox","Filled.AccountCircle","Fi'
+    'lled.Add","Filled.AddCircle","Filled.ArrowDropDown'
+    '","Filled.Build","Filled.Call","Filled.Check","Fil'
+    'led.CheckCircle","Filled.Clear","Filled.Close","Fi'
+    'lled.Create","Filled.DateRange","Filled.Delete","F'
+    'illed.Done","Filled.Edit","Filled.Email","Filled.F'
+    'ace","Filled.Favorite","Filled.FavoriteBorder","Fi'
+    'lled.Home","Filled.Info","Filled.KeyboardArrowDown'
+    '","Filled.KeyboardArrowUp","Filled.LocationOn","Fi'
+    'lled.Lock","Filled.MailOutline","Filled.Menu","Fil'
+    'led.MoreVert","Filled.Notifications","Filled.Perso'
+    'n","Filled.Phone","Filled.Place","Filled.PlayArrow'
+    '","Filled.Refresh","Filled.Search","Filled.Setting'
+    's","Filled.Share","Filled.ShoppingCart","Filled.St'
+    'ar","Filled.ThumbUp","Filled.Warning","Outlined.Ac'
+    'countBox","Outlined.AccountCircle","Outlined.Add",'
+    '"Outlined.AddCircle","Outlined.ArrowDropDown","Out'
+    'lined.Build","Outlined.Call","Outlined.Check","Out'
+    'lined.CheckCircle","Outlined.Clear","Outlined.Clos'
+    'e","Outlined.Create","Outlined.DateRange","Outline'
+    'd.Delete","Outlined.Done","Outlined.Edit","Outline'
+    'd.Email","Outlined.Face","Outlined.Favorite","Outl'
+    'ined.FavoriteBorder","Outlined.Home","Outlined.Inf'
+    'o","Outlined.KeyboardArrowDown","Outlined.Keyboard'
+    'ArrowUp","Outlined.LocationOn","Outlined.Lock","Ou'
+    'tlined.MailOutline","Outlined.Menu","Outlined.More'
+    'Vert","Outlined.Notifications","Outlined.Person","'
+    'Outlined.Phone","Outlined.Place","Outlined.PlayArr'
+    'ow","Outlined.Refresh","Outlined.Search","Outlined'
+    '.Settings","Outlined.Share","Outlined.ShoppingCart'
+    '","Outlined.Star","Outlined.ThumbUp","Outlined.War'
+    'ning","Rounded.AccountBox","Rounded.AccountCircle"'
+    ',"Rounded.Add","Rounded.AddCircle","Rounded.ArrowD'
+    'ropDown","Rounded.Build","Rounded.Call","Rounded.C'
+    'heck","Rounded.CheckCircle","Rounded.Clear","Round'
+    'ed.Close","Rounded.Create","Rounded.DateRange","Ro'
+    'unded.Delete","Rounded.Done","Rounded.Edit","Round'
+    'ed.Email","Rounded.Face","Rounded.Favorite","Round'
+    'ed.FavoriteBorder","Rounded.Home","Rounded.Info","'
+    'Rounded.KeyboardArrowDown","Rounded.KeyboardArrowU'
+    'p","Rounded.LocationOn","Rounded.Lock","Rounded.Ma'
+    'ilOutline","Rounded.Menu","Rounded.MoreVert","Roun'
+    'ded.Notifications","Rounded.Person","Rounded.Phone'
+    '","Rounded.Place","Rounded.PlayArrow","Rounded.Ref'
+    'resh","Rounded.Search","Rounded.Settings","Rounded'
+    '.Share","Rounded.ShoppingCart","Rounded.Star","Rou'
+    'nded.ThumbUp","Rounded.Warning","Sharp.AccountBox"'
+    ',"Sharp.AccountCircle","Sharp.Add","Sharp.AddCircl'
+    'e","Sharp.ArrowDropDown","Sharp.Build","Sharp.Call'
+    '","Sharp.Check","Sharp.CheckCircle","Sharp.Clear",'
+    '"Sharp.Close","Sharp.Create","Sharp.DateRange","Sh'
+    'arp.Delete","Sharp.Done","Sharp.Edit","Sharp.Email'
+    '","Sharp.Face","Sharp.Favorite","Sharp.FavoriteBor'
+    'der","Sharp.Home","Sharp.Info","Sharp.KeyboardArro'
+    'wDown","Sharp.KeyboardArrowUp","Sharp.LocationOn",'
+    '"Sharp.Lock","Sharp.MailOutline","Sharp.Menu","Sha'
+    'rp.MoreVert","Sharp.Notifications","Sharp.Person",'
+    '"Sharp.Phone","Sharp.Place","Sharp.PlayArrow","Sha'
+    'rp.Refresh","Sharp.Search","Sharp.Settings","Sharp'
+    '.Share","Sharp.ShoppingCart","Sharp.Star","Sharp.T'
+    'humbUp","Sharp.Warning","TwoTone.AccountBox","TwoT'
+    'one.AccountCircle","TwoTone.Add","TwoTone.AddCircl'
+    'e","TwoTone.ArrowDropDown","TwoTone.Build","TwoTon'
+    'e.Call","TwoTone.Check","TwoTone.CheckCircle","Two'
+    'Tone.Clear","TwoTone.Close","TwoTone.Create","TwoT'
+    'one.DateRange","TwoTone.Delete","TwoTone.Done","Tw'
+    'oTone.Edit","TwoTone.Email","TwoTone.Face","TwoTon'
+    'e.Favorite","TwoTone.FavoriteBorder","TwoTone.Home'
+    '","TwoTone.Info","TwoTone.KeyboardArrowDown","TwoT'
+    'one.KeyboardArrowUp","TwoTone.LocationOn","TwoTone'
+    '.Lock","TwoTone.MailOutline","TwoTone.Menu","TwoTo'
+    'ne.MoreVert","TwoTone.Notifications","TwoTone.Pers'
+    'on","TwoTone.Phone","TwoTone.Place","TwoTone.PlayA'
+    'rrow","TwoTone.Refresh","TwoTone.Search","TwoTone.'
+    'Settings","TwoTone.Share","TwoTone.ShoppingCart","'
+    'TwoTone.Star","TwoTone.ThumbUp","TwoTone.Warning"]'
+    '}},"since":"1.21.0"},"verticalGradient":{"family":'
+    '"Brush","parameters":{"colors":{"items":{"type":"v'
+    'alue","valueType":"Color"},"minItems":2,"required"'
+    ':true,"type":"list"},"endY":{"type":"float"},"star'
+    'tY":{"type":"float"}},"since":"1.11.0"}}'
 )
 
 
@@ -595,6 +698,26 @@ def linearGradient(
             "colors": colors,
             "start": start,
             "end": end,
+        },
+        DEFINITIONS,
+    )
+
+
+def materialIcon(
+    name: str,
+) -> dict[str, JsonValue]:
+    """Construct ImageVector data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "materialIcon",
+        {
+            "name": name,
         },
         DEFINITIONS,
     )

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -20,6 +21,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.Modifier
 import com.pycompose.ir.generated.Button as ButtonNode
 import com.pycompose.ir.generated.Column as ColumnNode
+import com.pycompose.ir.generated.Icon as IconNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
 import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
@@ -64,6 +66,21 @@ object GeneratedAdapters {
                     modifier = modifier,
                     horizontalAlignment = horizontalAlignmentValue,
                     content = { context.children(model.children) },
+                )
+            }
+            .register("Icon") { node, modifier, context ->
+                val model = node as IconNode
+                val imageVectorValue = com.pycompose.renderer.generated.ValueResolver.imageVector(model.props.imageVector).getOrThrow()
+                val tintValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.tint) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.LocalContentColor.current)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.LocalContentColor.current)
+                    else -> androidx.compose.material3.LocalContentColor.current
+                }
+                Icon(
+                    modifier = modifier,
+                    imageVector = imageVectorValue,
+                    contentDescription = model.props.contentDescription,
+                    tint = tintValue,
                 )
             }
             .register("LazyColumn") { node, modifier, context ->

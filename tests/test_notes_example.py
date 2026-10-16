@@ -375,6 +375,20 @@ def test_the_about_bar_states_a_share_the_host_reads(app: ModuleType) -> None:
     assert stated == pytest.approx(2 / 3)
 
 
+def test_the_about_heading_names_an_icon_the_host_resolves(app: ModuleType) -> None:
+    """An icon vocabulary prop: the app names a pinned icon, never a vector.
+
+    ``Icon.imageVector`` is an ``ImageVector``, which exists only on the native
+    side, so the snapshot carries the path under ``Icons`` and the host reads
+    that property. The heading shows a native icon with no Kotlin in the app.
+    """
+    host = Host(app, follow_navigation=False)
+    icons = nodes(host.snapshot(), "Icon")
+    assert len(icons) == 1
+    assert icons[0]["imageVector"] == {"type": "materialIcon", "name": "Filled.Info"}
+    assert icons[0]["contentDescription"] == "About this app"
+
+
 def test_an_empty_repository_says_so_instead_of_rendering_nothing(
     app: ModuleType,
 ) -> None:
@@ -761,7 +775,7 @@ def test_every_snapshot_is_a_valid_canonical_ir(app: ModuleType) -> None:
     host.tap("set_title", "title", value="Check")
     host.tap("go_back", "back")
     snapshot = host.snapshot()
-    assert snapshot["schemaVersion"] == "1.20.0"
+    assert snapshot["schemaVersion"] == "1.21.0"
     assert "metadata" in snapshot
     assert host.error == ""
 
