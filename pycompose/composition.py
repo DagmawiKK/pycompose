@@ -95,31 +95,7 @@ def slot_nodes(value: Content, *, key: str, slot: str) -> tuple[Node, ...]:
             "a named slot takes nodes, not a content function", node_id=key, prop=slot
         )
     nodes = content_nodes(value, key=key)
-    return tuple(
-        node if node.slot == slot else _with_slot(node, slot) for node in nodes
-    )
-
-
-def _with_slot(node: Node, slot: str) -> Node:
-    """Return ``node`` marked as filling ``slot``.
-
-    The copy keeps every wire-visible field; only the parent's slot differs, and
-    a node never belongs to two slots because sibling ids must stay unique.
-
-    Args:
-        node: The child node to mark.
-        slot: Declared ``camelCase`` slot name.
-
-    Returns:
-        A node equal to ``node`` apart from its slot.
-    """
-    return Node(
-        id=node.id,
-        type=node.type,
-        props=node.props,
-        children=node.children,
-        slot=slot,
-    )
+    return tuple(node.with_slot(slot) for node in nodes)
 
 
 def _detach(value: object, active: set[int] | None = None) -> object:

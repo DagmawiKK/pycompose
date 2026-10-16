@@ -101,6 +101,20 @@ class Props:
 _EMPTY_PROPS = Props()
 
 
+def _slot_names(cls: type) -> Iterator[str]:
+    """Yield every slotted attribute declared in ``cls``'s ancestry.
+
+    Args:
+        cls: A node class.
+
+    Yields:
+        str: Slot names, base classes first.
+    """
+    for base in reversed(cls.__mro__):
+        declared = getattr(base, "__slots__", ())
+        yield from (declared,) if isinstance(declared, str) else declared
+
+
 @dataclass(frozen=True, slots=True, init=False)
 class Node:
     """One immutable element of the IR tree.
@@ -172,3 +186,30 @@ class Node:
         if any(not isinstance(child, Node) for child in children):
             raise IrError("node children must be Nodes", node_id=self.id)
         object.__setattr__(self, "children", children)
+
+    def with_slot(self, slot: str) -> Node:
+        """Return this node filling ``slot`` in its parent.
+
+        The copy keeps the concrete class, so a deferred composition stays
+        deferred and is expanded where it sits rather than flattening into an
+        unbuildable node. Ids stay unique because a node never belongs to two
+        slots.
+
+        Args:
+            slot: Declared ``camelCase`` slot name.
+
+        Returns:
+            A node equal to this one apart from its slot.
+
+        Raises:
+            IrError: If ``slot`` is not a ``camelCase`` name.
+        """
+        if not isinstance(slot, str) or not is_camel_case(slot):
+            raise IrError("node slot must be a camelCase name", node_id=self.id)
+        if slot == self.slot:
+            return self
+        marked = object.__new__(type(self))
+        for name in _slot_names(type(self)):
+            object.__setattr__(marked, name, getattr(self, name))
+        object.__setattr__(marked, "slot", slot)
+        return marked

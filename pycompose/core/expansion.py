@@ -87,7 +87,10 @@ class _Expansion:
         if isinstance(node, DeferredNode):
             self.definitions.remove(node.recursion_key)
             self.context.pop()
-            frame.output.extend(frame.children)
+            frame.output.extend(
+                child if node.slot is None else child.with_slot(node.slot)
+                for child in frame.children
+            )
             return
         identity = f"{frame.prefix}.{node.id}" if frame.prefix else node.id
         unchanged = identity == node.id and len(frame.children) == len(node.children)
@@ -114,7 +117,8 @@ def expand_nodes(root: Node) -> Node:
 
     No context or function is retained in the result. Composable instance keys
     namespace their returned roots; ordinary descendant keys remain local for
-    the emitter to qualify. Slot declarations may produce several siblings.
+    the emitter to qualify. Slot declarations may produce several siblings, and
+    a deferred node filling a named slot passes it on to what it builds.
 
     Args:
         root: App declaration containing native nodes and deferred declarations.

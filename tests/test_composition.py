@@ -4,7 +4,7 @@ import pytest
 
 from pycompose import composable
 from pycompose.ir import emit_ir, to_dict, validate_ir
-from pycompose.m3 import Column, Modifier, Text
+from pycompose.m3 import Column, Modifier, Scaffold, Text
 from pycompose.state import State
 
 
@@ -201,3 +201,36 @@ def test_recursive_composition_can_make_progress_with_explicit_inputs() -> None:
     while node.children:
         node = node.children[0]
     assert node.props["text"] == "done"
+
+
+def test_a_composable_fills_a_declared_slot() -> None:
+    """A named slot takes nodes, and a composable instance is one.
+
+    The slot is the parent's structural fact, so it has to outlive expansion:
+    the deferred call is replaced by what it builds, carrying the slot with it
+    and stamping the instance key onto the built root.
+    """
+
+    @composable
+    def header(*, text: str):
+        return Text(id="title", text=text)
+
+    snapshot = emit_ir(
+        State(
+            root=Scaffold(
+                id="screen",
+                top_bar=header(id="bar", text="Notes"),
+                content=Column(id="body", children=(Text(id="line", text="hello"),)),
+            )
+        ),
+        "1.0.0",
+    )
+    assert validate_ir(snapshot).snapshot is snapshot
+    root = to_dict(snapshot)["root"]
+    assert [(child["type"], child.get("slot")) for child in root["children"]] == [
+        ("Column", None),
+        ("Text", "topBar"),
+    ]
+    title = root["children"][1]
+    assert title["id"] == "root.bar.title"
+    assert title["props"]["text"] == "Notes"

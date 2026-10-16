@@ -56,3 +56,20 @@ def test_node_normalizes_children_to_tuple() -> None:
     child = Node(id="root.0", type="Text", props=Props({"text": "hi"}))
     node = Node(id="root", type="Column", children=[child])  # type: ignore[arg-type]
     assert node.children == (child,)
+
+
+def test_node_is_marked_with_a_slot_it_already_fills() -> None:
+    """Marking is idempotent, so an unchanged branch stays the same object.
+
+    Expansion keeps untouched branches by reference; a needless copy would
+    break that, and the slot is the only field that may differ anyway.
+    """
+    title = Node(id="title", type="Text", slot="topBar")
+    assert title.with_slot("topBar") is title
+
+
+def test_node_refuses_a_slot_that_is_not_camel_case() -> None:
+    """The copy is the one place a slot lands, so it checks the spelling."""
+    with pytest.raises(IrError) as excinfo:
+        Node(id="title", type="Text").with_slot("top_bar")
+    assert "camelCase" in str(excinfo.value)
