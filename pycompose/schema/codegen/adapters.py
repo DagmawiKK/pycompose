@@ -31,9 +31,11 @@ COMPOSE_PACKAGE = {
     "Button": "androidx.compose.material3",
     "Checkbox": "androidx.compose.material3",
     "Column": "androidx.compose.foundation.layout",
+    "DismissibleNavigationDrawer": "androidx.compose.material3",
     "FilterChip": "androidx.compose.material3",
     "Image": "androidx.compose.foundation",
     "LazyColumn": "androidx.compose.foundation.lazy",
+    "ModalNavigationDrawer": "androidx.compose.material3",
     "Row": "androidx.compose.foundation.layout",
     "Scaffold": "androidx.compose.material3",
     "Spacer": "androidx.compose.foundation.layout",
@@ -126,6 +128,15 @@ declares a ``decode``: those types arrive on the wire as strings and need a
 resolver to become a ``Color`` or an ``Alignment``. A prop of one of those types
 with no ``decode`` is refused, because guessing which family its values belong to
 is how an adapter silently renders the wrong alignment.
+"""
+
+STATE_CALLS = {"drawer": "drawerState"}
+"""The renderer method each state family's host holder comes from.
+
+The family decides the create/drive/report logic; the schema decides which
+component has one, which native parameter it fills, and which props carry the
+desired value and report settled changes. Every member of the vocabulary must
+appear here, or codegen has no holder to hand the component.
 """
 
 
@@ -381,6 +392,30 @@ def _interaction(interaction: dict[str, Any]) -> str:
     return (
         "val interactionSourceValue = context.interactionSource("
         f"model.id, mapOf({entries}))"
+    )
+
+
+def _state(state: dict[str, Any]) -> tuple[str, str]:
+    """Render the local that fetches one component's host-owned state holder.
+
+    The holder is the renderer's, remembered per node id; the desired value and
+    the report channel are ordinary props, so the app keeps naming its own
+    fields and the host never holds a Python object.
+
+    Args:
+        state: The component's raw ``state`` entry.
+
+    Returns:
+        The Kotlin local declaration, then the native argument consuming it.
+    """
+    native = state["native"]
+    held = f"{native}Value"
+    value = _camel(state["value"])
+    report = _camel(state["report"])
+    return (
+        f"val {held} = context.{STATE_CALLS[state['kind']]}("
+        f"model.props.{value}, model.props.{report})",
+        f"{native} = {held}",
     )
 
 
@@ -661,7 +696,10 @@ def render(name: str, entry: dict[str, Any]) -> str:
 
     A component that accepts a host-created interaction source names it in its
     entry: the observing prop is left out of the native arguments, and the
-    source the renderer remembers for the node fills its place.
+    source the renderer remembers for the node fills its place. A component that
+    accepts a host-owned state holder declares it the same way: the props
+    carrying Python's desired value and reporting settled changes are left out,
+    and the holder the renderer remembers fills the native parameter.
 
     Args:
         name: The component's schema name.
@@ -677,16 +715,23 @@ def render(name: str, entry: dict[str, Any]) -> str:
     out.arguments.append("modifier = modifier")
     interaction = entry.get("interaction") or {}
     observed = set((interaction.get("observations") or {}).values())
+    state = entry.get("state")
+    held = {state["value"], state["report"]} if state else set()
     for prop, spec in entry.get("props", {}).items():
-        if prop in observed:
-            # The host fills the source; an observed prop reports state, it does
-            # not name a native parameter.
+        if prop in observed or prop in held:
+            # The host fills the source or the state holder; an observed prop
+            # reports state and a held prop carries the app's desired state,
+            # but neither names a native parameter of its own.
             continue
         if not _render_prop(prop, spec, out):
             return ""
     if observed:
         out.locals.append(_interaction(interaction))
         out.arguments.append(f"{interaction['native']} = interactionSourceValue")
+    if state is not None:
+        local, argument = _state(state)
+        out.locals.append(local)
+        out.arguments.append(argument)
     for slot_name, slot in sorted(entry.get("slots", {}).items()):
         out.arguments.append(_named_slot(slot_name, slot))
 

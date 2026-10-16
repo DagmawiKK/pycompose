@@ -528,6 +528,90 @@ class InteractionRule:
         return {"native": self.native, "observations": dict(self.observations)}
 
 
+STATE_KINDS = ("drawer",)
+"""State families the host creates, drives and reports for a component.
+
+A family is one host-side implementation: a drawer reconciles a desired
+open/closed value through gestures and animation. The vocabulary is closed for
+the same reason the interaction kinds are: the host must not be asked to drive
+a state object whose transitions it does not understand.
+"""
+
+
+@dataclass(frozen=True, slots=True)
+class StateRule:
+    """The host-owned state holder a component accepts.
+
+    The holder is the host's: it is created per stable node id, so pulling a
+    snapshot re-renders the tree without recreating state a gesture is already
+    moving. Python states the desired value in the snapshot; the host drives
+    the holder towards it and reports settled changes back as actions, rather
+    than both sides writing the same state.
+
+    Attributes:
+        native: Native parameter the remembered holder fills.
+        kind: State family, naming the host's create/drive/report logic.
+        value: Boolean prop carrying the desired state; absent drives nothing.
+        report: ActionId prop reporting settled changes; absent reports nothing.
+    """
+
+    native: str
+    kind: str
+    value: str
+    report: str
+
+    @classmethod
+    def from_mapping(cls, data: Mapping[str, object], *, where: str) -> StateRule:
+        """Build a :class:`StateRule` from raw JSON.
+
+        Args:
+            data: The raw state object.
+            where: Human-readable location for error messages.
+
+        Returns:
+            The parsed state rule.
+
+        Raises:
+            ComponentRegistryError: If the state object is malformed.
+        """
+        native = data.get("native")
+        if not isinstance(native, str) or not native:
+            raise ComponentRegistryError(f"{where}: 'native' must be a name")
+        kind = data.get("kind")
+        if not isinstance(kind, str) or kind not in STATE_KINDS:
+            raise ComponentRegistryError(
+                f"{where}: unknown state kind {kind!r}; vocabulary: "
+                + ", ".join(STATE_KINDS)
+            )
+        names: dict[str, str] = {}
+        for field_name in ("value", "report"):
+            prop = data.get(field_name)
+            if not isinstance(prop, str) or not prop:
+                raise ComponentRegistryError(
+                    f"{where}: {field_name!r} must name a prop"
+                )
+            names[field_name] = prop
+        return cls(
+            native=native,
+            kind=kind,
+            value=names["value"],
+            report=names["report"],
+        )
+
+    def to_mapping(self) -> dict[str, object]:
+        """Render back to the ``components.json`` state shape.
+
+        Returns:
+            A JSON-ready dict.
+        """
+        return {
+            "native": self.native,
+            "kind": self.kind,
+            "value": self.value,
+            "report": self.report,
+        }
+
+
 class ComponentDef(Protocol):
     """Read-only structural view of a component definition."""
 
@@ -796,6 +880,10 @@ class ComponentSpec:
         interaction: The host-created interaction source this component accepts,
             if any. Codegen-only: it says which native parameter the renderer
             fills and which prop observes each interaction kind.
+        state: The host-owned state holder this component accepts, if any.
+            Codegen-only: it says which native parameter the renderer fills,
+            which prop carries Python's desired state, and which prop reports
+            settled changes.
     """
 
     name: str
@@ -809,6 +897,7 @@ class ComponentSpec:
     wrapper: str | None = None
     slots: Mapping[str, SlotRule] = dataclass_field(default_factory=dict)
     interaction: InteractionRule | None = None
+    state: StateRule | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -881,6 +970,16 @@ class ComponentSpec:
             if isinstance(raw_interaction, Mapping)
             else None
         )
+        raw_state = data.get("state")
+        if raw_state is not None and not isinstance(raw_state, Mapping):
+            raise ComponentRegistryError(
+                f"component {name!r}: 'state' must be an object"
+            )
+        state = (
+            StateRule.from_mapping(raw_state, where=f"{name}.state")
+            if isinstance(raw_state, Mapping)
+            else None
+        )
         return cls(
             name=name,
             category=category,
@@ -893,6 +992,7 @@ class ComponentSpec:
             wrapper=_wrapper(name, data.get("wrapper")),
             slots=slots,
             interaction=interaction,
+            state=state,
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -913,6 +1013,8 @@ class ComponentSpec:
             }
         if self.interaction is not None:
             result["interaction"] = self.interaction.to_mapping()
+        if self.state is not None:
+            result["state"] = self.state.to_mapping()
         if self.since is not None:
             result["since"] = self.since
         if self.reshaped:

@@ -13,7 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DismissibleNavigationDrawer
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -22,8 +24,10 @@ import com.pycompose.ir.generated.Box as BoxNode
 import com.pycompose.ir.generated.Button as ButtonNode
 import com.pycompose.ir.generated.Checkbox as CheckboxNode
 import com.pycompose.ir.generated.Column as ColumnNode
+import com.pycompose.ir.generated.DismissibleNavigationDrawer as DismissibleNavigationDrawerNode
 import com.pycompose.ir.generated.FilterChip as FilterChipNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
+import com.pycompose.ir.generated.ModalNavigationDrawer as ModalNavigationDrawerNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
 import com.pycompose.ir.generated.Spacer as SpacerNode
@@ -87,6 +91,17 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
+            .register("DismissibleNavigationDrawer") { node, modifier, context ->
+                val model = node as DismissibleNavigationDrawerNode
+                val drawerStateValue = context.drawerState(model.props.open, model.props.onOpenChange)
+                DismissibleNavigationDrawer(
+                    modifier = modifier,
+                    gesturesEnabled = model.props.gesturesEnabled,
+                    drawerState = drawerStateValue,
+                    drawerContent = { context.slot(model.children, "drawer")?.invoke() },
+                    content = { context.children(model.children) },
+                )
+            }
             .register("FilterChip") { node, modifier, context ->
                 val model = node as FilterChipNode
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
@@ -108,6 +123,17 @@ object GeneratedAdapters {
                     modifier = modifier,
                     verticalArrangement = verticalArrangementValue,
                     content = { items(context.unslotted(model.children), key = { it.id }) { context.node(it) } },
+                )
+            }
+            .register("ModalNavigationDrawer") { node, modifier, context ->
+                val model = node as ModalNavigationDrawerNode
+                val drawerStateValue = context.drawerState(model.props.open, model.props.onOpenChange)
+                ModalNavigationDrawer(
+                    modifier = modifier,
+                    gesturesEnabled = model.props.gesturesEnabled,
+                    drawerState = drawerStateValue,
+                    drawerContent = { context.slot(model.children, "drawer")?.invoke() },
+                    content = { context.children(model.children) },
                 )
             }
             .register("Row") { node, modifier, context ->

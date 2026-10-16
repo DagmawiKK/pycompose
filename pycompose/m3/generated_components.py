@@ -18,9 +18,11 @@ __all__ = [
     "Button",
     "Checkbox",
     "Column",
+    "DismissibleNavigationDrawer",
     "FilterChip",
     "Image",
     "LazyColumn",
+    "ModalNavigationDrawer",
     "Row",
     "Scaffold",
     "Spacer",
@@ -218,6 +220,62 @@ class Column(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class DismissibleNavigationDrawer(Component):
+    """Native DismissibleNavigationDrawer;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "DismissibleNavigationDrawer"
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        gestures_enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_open_change: str | None = None,
+        open: bool | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        drawer: Content | None = None,
+    ) -> None:
+        """Construct a registered DismissibleNavigationDrawer.
+
+        Args:
+            id: Stable instance key.
+            gestures_enabled: Native gesturesEnabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_open_change: Native onOpenChange; None uses its default.
+            open: Native open; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            drawer: Nodes for the native drawerContent slot.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if gestures_enabled is not None:
+            props["gestures_enabled"] = gestures_enabled
+        if on_open_change is not None:
+            props["on_open_change"] = on_open_change
+        if open is not None:
+            props["open"] = open
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if drawer is not None:
+            slotted += slot_nodes(drawer, key="drawer", slot="drawer")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
 class FilterChip(Component):
     """Native FilterChip; props and defaults follow the component manifest."""
 
@@ -345,6 +403,62 @@ class LazyColumn(Component):
             children = content_nodes(items, key="items")
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ModalNavigationDrawer(Component):
+    """Native ModalNavigationDrawer;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ModalNavigationDrawer"
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        gestures_enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_open_change: str | None = None,
+        open: bool | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        drawer: Content | None = None,
+    ) -> None:
+        """Construct a registered ModalNavigationDrawer.
+
+        Args:
+            id: Stable instance key.
+            gestures_enabled: Native gesturesEnabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_open_change: Native onOpenChange; None uses its default.
+            open: Native open; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            drawer: Nodes for the native drawerContent slot.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if gestures_enabled is not None:
+            props["gestures_enabled"] = gestures_enabled
+        if on_open_change is not None:
+            props["on_open_change"] = on_open_change
+        if open is not None:
+            props["open"] = open
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if drawer is not None:
+            slotted += slot_nodes(drawer, key="drawer", slot="drawer")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class Row(Component):

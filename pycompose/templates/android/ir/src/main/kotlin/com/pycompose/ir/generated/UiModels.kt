@@ -112,6 +112,25 @@ data class Column(
 }
 
 @Serializable
+data class DismissibleNavigationDrawerProps(
+    val `gesturesEnabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onOpenChange`: String? = null,
+    val `open`: Boolean? = null,
+) : UiProps
+
+@Serializable
+@SerialName("DismissibleNavigationDrawer")
+data class DismissibleNavigationDrawer(
+    override val id: String,
+    override val props: DismissibleNavigationDrawerProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "DismissibleNavigationDrawer"
+}
+
+@Serializable
 data class FilterChipProps(
     val `enabled`: Boolean = true,
     val `label`: String,
@@ -167,6 +186,25 @@ data class LazyColumn(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "LazyColumn"
+}
+
+@Serializable
+data class ModalNavigationDrawerProps(
+    val `gesturesEnabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onOpenChange`: String? = null,
+    val `open`: Boolean? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ModalNavigationDrawer")
+data class ModalNavigationDrawer(
+    override val id: String,
+    override val props: ModalNavigationDrawerProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "ModalNavigationDrawer"
 }
 
 @Serializable

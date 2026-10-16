@@ -102,8 +102,14 @@ INTERACTION_KEYS = frozenset({"native", "observations"})
 #: The closed set of interaction kinds the host can observe.
 INTERACTION_KINDS = frozenset({"press", "focus", "hover"})
 
-#: The observed state a payload field may carry: one lowerCamel boolean field.
-PRESS_FIELD = re.compile(r"[a-z][A-Za-z0-9]*")
+#: Keys a state entry may carry. Anything else is a typo.
+STATE_KEYS = frozenset({"native", "kind", "value", "report"})
+
+#: The closed set of state families the host can create, drive and report.
+STATE_KINDS = frozenset({"drawer"})
+
+#: The state a reported payload field may carry: one lowerCamel field.
+REPORTED_FIELD = re.compile(r"[a-z][A-Za-z0-9]*")
 
 SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+$")
 
@@ -284,6 +290,7 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
     _validate_interaction(
         name, props, children, comp.get("slots", {}), comp.get("interaction")
     )
+    _validate_state(name, props, children, comp.get("slots", {}), comp.get("state"))
 
 
 def _validate_interaction(
@@ -343,18 +350,98 @@ def _validate_interaction(
             _die(f"{where}: observation {kind!r} must name one of the props")
         if prop.get("type") != "actionId":
             _die(f"{where}: prop {observed!r} must be an actionId")
-        payload = prop.get("payload")
-        field = payload[0] if isinstance(payload, list) and len(payload) == 1 else None
-        if (
-            not isinstance(field, dict)
-            or field.get("type") != "boolean"
-            or not isinstance(field.get("name"), str)
-            or PRESS_FIELD.fullmatch(field["name"]) is None
-        ):
-            # The host fills one named boolean; more fields would mean the host
-            # guessed which one reports the observation, which is what the
-            # planner refuses to do everywhere else.
-            _die(f"{where}: prop {observed!r} needs one boolean payload field")
+        _validate_reported_payload(where, observed, prop)
+
+
+def _validate_reported_payload(
+    where: str, prop_name: object, prop: dict[str, Any]
+) -> None:
+    """Check a host-reported prop carries exactly one boolean payload field.
+
+    The host fills one named boolean; more fields would mean the host guessed
+    which one reports the value, which is what the planner refuses to do
+    everywhere else.
+
+    Args:
+        where: Where the prop was declared, for error messages.
+        prop_name: The prop's schema name.
+        prop: The prop's schema entry.
+    """
+    payload = prop.get("payload")
+    field = payload[0] if isinstance(payload, list) and len(payload) == 1 else None
+    if (
+        not isinstance(field, dict)
+        or field.get("type") != "boolean"
+        or not isinstance(field.get("name"), str)
+        or REPORTED_FIELD.fullmatch(field["name"]) is None
+    ):
+        _die(f"{where}: prop {prop_name!r} needs one boolean payload field")
+
+
+def _validate_state(
+    name: str,
+    props: dict[str, Any],
+    children: dict[str, Any],
+    slots: object,
+    state: object,
+) -> None:
+    """Check a component's declared state holder against the vocabulary.
+
+    The state object is the host's, not the app's: the schema names the native
+    parameter it fills, the family whose create/drive/report logic applies, the
+    prop carrying Python's desired value, and the prop reporting settled
+    changes. The generator omits both props from the app's native arguments,
+    exactly as it does for an observed interaction.
+
+    Args:
+        name: Component name, for error messages.
+        props: The component's props; the value and report must be among them.
+        children: The component's ``children`` object, whose native parameter
+            the state holder must not reuse.
+        slots: The component's declared slots, which claim their own natives.
+        state: The raw ``state`` object, or None.
+    """
+    if state is None:
+        return
+    where = f"component {name!r} state"
+    if not isinstance(state, dict):
+        _die(f"{where} must be an object")
+    unknown = sorted(set(state) - STATE_KEYS)
+    if unknown:
+        _die(f"{where} has unknown keys: {', '.join(unknown)}")
+    injected = state.get("native")
+    if not isinstance(injected, str) or not NATIVE_PARAMETER.match(injected):
+        _die(f"{where}: 'native' must be a parameter name")
+    natives = {children.get("native", "content")}
+    if isinstance(slots, dict):
+        natives.update(
+            slot["native"]
+            for slot in slots.values()
+            if isinstance(slot, dict) and isinstance(slot.get("native"), str)
+        )
+    if injected in natives or injected in props:
+        _die(f"{where}: 'native' repeats another parameter")
+    kind = state.get("kind")
+    if not isinstance(kind, str) or kind not in STATE_KINDS:
+        _die(
+            f"{where}: unknown state kind {kind!r}; vocabulary: "
+            + ", ".join(sorted(STATE_KINDS))
+        )
+    value = state.get("value")
+    prop = props.get(value) if isinstance(value, str) else None
+    if prop is None:
+        _die(f"{where}: 'value' must name one of the props")
+    if prop.get("type") != "boolean":
+        # The family drives one boolean -- a drawer is open or it is not -- so
+        # a prop of any other type cannot carry that family's desired state.
+        _die(f"{where}: prop {value!r} must be a boolean")
+    report = state.get("report")
+    reported = props.get(report) if isinstance(report, str) else None
+    if reported is None:
+        _die(f"{where}: 'report' must name one of the props")
+    if reported.get("type") != "actionId":
+        _die(f"{where}: prop {report!r} must be an actionId")
+    _validate_reported_payload(where, report, reported)
 
 
 def _validate_slots(
@@ -868,12 +955,30 @@ def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
     }[prop["type"]]
 
 
+def _python_class_docstring(name: str) -> list[str]:
+    """Render the generated class docstring, wrapped when the name is long.
+
+    Args:
+        name: The generated class name.
+
+    Returns:
+        The docstring's source lines.
+    """
+    summary = f"Native {name}; props and defaults follow the component manifest."
+    if len(f'    """{summary}"""') <= 88:
+        return [f'    """{summary}"""']
+    return [
+        f'    """Native {name};',
+        '    props and defaults follow the component manifest."""',
+    ]
+
+
 def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
     props = spec["props"]
     alias = spec["children"].get("kind")
     lines = [
         f"class {name}(Component):",
-        f'    """Native {name}; props and defaults follow the component manifest."""',
+        *_python_class_docstring(name),
         "",
         "    __slots__ = ()",
         f'    component_type = "{name}"',

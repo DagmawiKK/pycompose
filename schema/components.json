@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.17.0",
+  "schemaVersion": "1.18.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -18,7 +18,8 @@
     "1.14.0",
     "1.15.0",
     "1.16.0",
-    "1.17.0"
+    "1.17.0",
+    "1.18.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -219,6 +220,51 @@
         "min": 0
       }
     },
+    "DismissibleNavigationDrawer": {
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.18.0",
+      "props": {
+        "open": {
+          "type": "boolean"
+        },
+        "onOpenChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "open",
+              "type": "boolean"
+            }
+          ]
+        },
+        "gesturesEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      },
+      "slots": {
+        "drawer": {
+          "native": "drawerContent"
+        }
+      },
+      "reshaped": [
+        "open",
+        "onOpenChange"
+      ],
+      "state": {
+        "native": "drawerState",
+        "kind": "drawer",
+        "value": "open",
+        "report": "onOpenChange"
+      }
+    },
     "FilterChip": {
       "category": "input",
       "stability": "stable",
@@ -350,6 +396,51 @@
       "children": {
         "allowed": true,
         "kind": "items"
+      }
+    },
+    "ModalNavigationDrawer": {
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.18.0",
+      "props": {
+        "open": {
+          "type": "boolean"
+        },
+        "onOpenChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "open",
+              "type": "boolean"
+            }
+          ]
+        },
+        "gesturesEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      },
+      "slots": {
+        "drawer": {
+          "native": "drawerContent"
+        }
+      },
+      "reshaped": [
+        "open",
+        "onOpenChange"
+      ],
+      "state": {
+        "native": "drawerState",
+        "kind": "drawer",
+        "value": "open",
+        "report": "onOpenChange"
       }
     },
     "Row": {

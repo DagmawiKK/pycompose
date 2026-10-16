@@ -137,14 +137,20 @@ def test_no_optional_prop_is_passed_through() -> None:
     be passed when the schema marks it required or gives it a default; anything
     else is omitted so Compose's own default applies. A decoded prop is passed
     all the same, because its resolver takes the nullable wire value and each
-    decoding path handles absence itself.
+    decoding path handles absence itself, and a prop a state declaration holds
+    is passed to a host holder that takes it nullable by design: absent means
+    the app said nothing about that half of the protocol.
     """
     registry = components()
     for name, entry in sorted(registry.items()):
         block = render(name, entry)
         if not block:
             continue
+        state = entry.get("state") or {}
+        held = {state.get("value"), state.get("report")} - {None}
         for prop, spec in entry["props"].items():
+            if prop in held:
+                continue
             referenced = re.search(rf"model\.props\.{re.escape(prop)}\b", block)
             if referenced is None:
                 continue

@@ -2,6 +2,7 @@ package com.pycompose.renderer
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -38,6 +39,22 @@ class RenderContext internal constructor(
         id: String,
         actionIds: Map<String, String?>,
     ): MutableInteractionSource? = rememberInteractionSource(id, actionIds, ::observation)
+
+    /**
+     * The host-owned drawer state for one node, reconciled to the desired value.
+     *
+     * The app states the desired value in the snapshot; the host drives the
+     * state, gestures and animation included, and reports each settled change
+     * through [report]. Null in either leaves that half to the other side.
+     *
+     * @param open Desired open state; null drives nothing.
+     * @param report Action id settled changes report to; null reports none.
+     */
+    @Composable
+    fun drawerState(
+        open: Boolean?,
+        report: String?,
+    ): DrawerState = rememberHostDrawerState(open, report, ::observation)
 
     private fun observation(
         kind: String,
