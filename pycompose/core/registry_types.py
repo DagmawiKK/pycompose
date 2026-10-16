@@ -458,6 +458,53 @@ idiomatically applies it, and the app cannot apply it twice.
 """
 
 
+@dataclass(frozen=True, slots=True)
+class InteractionRule:
+    """The host-created interaction source a component accepts.
+
+    The source is the host's: it is remembered per node id so a snapshot pull
+    restarts no ripple in flight, and the observed press state returns as an
+    action a frame later rather than driving a same-frame visual.
+
+    Attributes:
+        native: Native parameter the remembered source fills.
+        prop: The actionId prop whose declared payload observes press state.
+    """
+
+    native: str
+    prop: str
+
+    @classmethod
+    def from_mapping(cls, data: Mapping[str, object], *, where: str) -> InteractionRule:
+        """Build a :class:`InteractionRule` from raw JSON.
+
+        Args:
+            data: The raw interaction object.
+            where: Human-readable location for error messages.
+
+        Returns:
+            The parsed interaction rule.
+
+        Raises:
+            ComponentRegistryError: If the interaction object is malformed.
+        """
+        native = data.get("native")
+        if not isinstance(native, str) or not native:
+            raise ComponentRegistryError(f"{where}: 'native' must be a name")
+        prop = data.get("prop")
+        if not isinstance(prop, str) or not prop:
+            raise ComponentRegistryError(f"{where}: 'prop' must be a name")
+        return cls(native=native, prop=prop)
+
+    def to_mapping(self) -> dict[str, object]:
+        """Render back to the ``components.json`` interaction shape.
+
+        Returns:
+            A JSON-ready dict.
+        """
+        return {"native": self.native, "prop": self.prop}
+
+
 class ComponentDef(Protocol):
     """Read-only structural view of a component definition."""
 
@@ -723,6 +770,9 @@ class ComponentSpec:
         slots: Named slots by wire name, each reaching its own native parameter.
             Declared rather than inferred: which of a component's content
             parameters a subtree belongs in is a decision the schema owns.
+        interaction: The host-created interaction source this component accepts,
+            if any. Codegen-only: it says which native parameter the renderer
+            fills and which prop observes press state.
     """
 
     name: str
@@ -735,6 +785,7 @@ class ComponentSpec:
     adapter: str = "generated"
     wrapper: str | None = None
     slots: Mapping[str, SlotRule] = dataclass_field(default_factory=dict)
+    interaction: InteractionRule | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -797,6 +848,16 @@ class ComponentSpec:
                     f"component {name!r}: slot {slot_name!r} must be an object"
                 )
             slots[slot_name] = SlotRule.from_mapping(slot, where=f"{name}.{slot_name}")
+        raw_interaction = data.get("interaction")
+        if raw_interaction is not None and not isinstance(raw_interaction, Mapping):
+            raise ComponentRegistryError(
+                f"component {name!r}: 'interaction' must be an object"
+            )
+        interaction = (
+            InteractionRule.from_mapping(raw_interaction, where=f"{name}.interaction")
+            if isinstance(raw_interaction, Mapping)
+            else None
+        )
         return cls(
             name=name,
             category=category,
@@ -808,6 +869,7 @@ class ComponentSpec:
             adapter=_adapter(name, data.get("adapter")),
             wrapper=_wrapper(name, data.get("wrapper")),
             slots=slots,
+            interaction=interaction,
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -826,6 +888,8 @@ class ComponentSpec:
             result["slots"] = {
                 name: rule.to_mapping() for name, rule in self.slots.items()
             }
+        if self.interaction is not None:
+            result["interaction"] = self.interaction.to_mapping()
         if self.since is not None:
             result["since"] = self.since
         if self.reshaped:

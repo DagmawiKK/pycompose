@@ -359,6 +359,27 @@ def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:
     )
 
 
+def _interaction(observed: str) -> str:
+    """Render the local that fetches one component's host-created source.
+
+    The source is the renderer's, remembered per node id; which payload field
+    the observation fills is resolved against the app's binding at dispatch
+    time, the same way every other callback's event field is, so the app keeps
+    naming its own fields.
+
+    Args:
+        observed: The prop whose action observes press state.
+
+    Returns:
+        The Kotlin local declaration.
+    """
+    prop = _camel(observed)
+    return (
+        "val interactionSourceValue = context.interactionSource("
+        f"model.id, model.props.{prop})"
+    )
+
+
 def _slot_body(
     nodes: str,
     name: str | None,
@@ -634,6 +655,10 @@ def render(name: str, entry: dict[str, Any]) -> str:
     with stable keys, and a ``paddingValues`` scope is consumed once on the
     subtree's behalf.
 
+    A component that accepts a host-created interaction source names it in its
+    entry: the observing prop is left out of the native arguments, and the
+    source the renderer remembers for the node fills its place.
+
     Args:
         name: The component's schema name.
         entry: Its schema entry.
@@ -646,9 +671,19 @@ def render(name: str, entry: dict[str, Any]) -> str:
 
     out = _Fragments()
     out.arguments.append("modifier = modifier")
+    observed = (entry.get("interaction") or {}).get("prop")
     for prop, spec in entry.get("props", {}).items():
+        if prop == observed:
+            # The host fills the source; the prop observes state, it does not
+            # name a native parameter.
+            continue
         if not _render_prop(prop, spec, out):
             return ""
+    if observed:
+        out.locals.append(_interaction(observed))
+        out.arguments.append(
+            f"{entry['interaction']['native']} = interactionSourceValue"
+        )
     for slot_name, slot in sorted(entry.get("slots", {}).items()):
         out.arguments.append(_named_slot(slot_name, slot))
 

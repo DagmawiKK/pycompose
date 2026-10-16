@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.15.0",
+  "schemaVersion": "1.16.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -16,7 +16,8 @@
     "1.12.0",
     "1.13.0",
     "1.14.0",
-    "1.15.0"
+    "1.15.0",
+    "1.16.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -77,6 +78,15 @@
           "type": "actionId",
           "required": true
         },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
         "enabled": {
           "type": "boolean",
           "default": true
@@ -91,7 +101,11 @@
       "reshaped": [
         "text",
         "onClick"
-      ]
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "prop": "onPress"
+      }
     },
     "Checkbox": {
       "category": "input",
@@ -112,6 +126,15 @@
           ],
           "required": true
         },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
         "enabled": {
           "type": "boolean",
           "default": true
@@ -122,6 +145,10 @@
       },
       "children": {
         "allowed": false
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "prop": "onPress"
       }
     },
     "Column": {
@@ -168,6 +195,15 @@
           "type": "actionId",
           "required": true
         },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
         "enabled": {
           "type": "boolean",
           "default": true
@@ -188,6 +224,10 @@
           "native": "trailingIcon",
           "nullable": true
         }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "prop": "onPress"
       }
     },
     "Image": {
@@ -393,6 +433,15 @@
           "type": "actionId",
           "required": true
         },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
         "enabled": {
           "type": "boolean",
           "default": true
@@ -407,7 +456,11 @@
       "reshaped": [
         "text",
         "onClick"
-      ]
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "prop": "onPress"
+      }
     },
     "TextField": {
       "category": "input",

@@ -1,5 +1,6 @@
 package com.pycompose.renderer
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -20,6 +21,42 @@ class RenderContext internal constructor(
 ) {
     @Composable fun node(node: UiNode) {
         renderer.Node(node, this)
+    }
+
+    /**
+     * The host-created interaction source for one node, or null when it observes none.
+     *
+     * Press state returns as an action a frame later; the same-frame reaction the
+     * user sees stays the component's own. The source is remembered per node id,
+     * so a snapshot pull restarts no ripple in flight.
+     *
+     * @param id Stable node id the source's lifetime follows.
+     * @param actionId Action observing press state, or null for none.
+     */
+    @Composable
+    fun interactionSource(
+        id: String,
+        actionId: String?,
+    ): MutableInteractionSource? = rememberInteractionSource(id, actionId, ::observation)
+
+    private fun observation(
+        actionId: String,
+        value: Boolean,
+    ) {
+        val fields =
+            bindings[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
+        val boolean = fields.filterValues { it.type == "boolean" }
+        val field = boolean.keys.singleOrNull()
+        if (field == null) {
+            // One boolean is the whole observation. Two would mean the host
+            // picked a field the app did not mean, so it reports instead.
+            renderer.report(
+                "Cannot observe press for $actionId: " +
+                    "${boolean.size} boolean fields among ${fields.keys}",
+            )
+            return
+        }
+        actions.dispatch(actionId, JsonObject(mapOf(field to JsonPrimitive(value))))
     }
 
     fun event(

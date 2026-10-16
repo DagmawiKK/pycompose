@@ -55,23 +55,27 @@ object GeneratedAdapters {
                     com.pycompose.ir.OptionalValue.Null -> null
                     is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.buttonElevation(elevationWire.value).getOrThrow()
                 }
+                val interactionSourceValue = context.interactionSource(model.id, model.props.onPress)
                 Button(
                     modifier = modifier,
                     colors = colorsValue,
                     elevation = elevationValue,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     enabled = model.props.enabled,
+                    interactionSource = interactionSourceValue,
                 ) {
                     Text(model.props.text)
                 }
             }
             .register("Checkbox") { node, modifier, context ->
                 val model = node as CheckboxNode
+                val interactionSourceValue = context.interactionSource(model.id, model.props.onPress)
                 Checkbox(
                     modifier = modifier,
                     checked = model.props.checked,
                     onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
                     enabled = model.props.enabled,
+                    interactionSource = interactionSourceValue,
                 )
             }
             .register("Column") { node, modifier, context ->
@@ -85,12 +89,14 @@ object GeneratedAdapters {
             }
             .register("FilterChip") { node, modifier, context ->
                 val model = node as FilterChipNode
+                val interactionSourceValue = context.interactionSource(model.id, model.props.onPress)
                 FilterChip(
                     modifier = modifier,
                     label = { Text(model.props.label) },
                     selected = model.props.selected,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     enabled = model.props.enabled,
+                    interactionSource = interactionSourceValue,
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     trailingIcon = context.slot(model.children, "trailingIcon"),
                 )
@@ -138,10 +144,12 @@ object GeneratedAdapters {
             }
             .register("TextButton") { node, modifier, context ->
                 val model = node as TextButtonNode
+                val interactionSourceValue = context.interactionSource(model.id, model.props.onPress)
                 TextButton(
                     modifier = modifier,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     enabled = model.props.enabled,
+                    interactionSource = interactionSourceValue,
                 ) {
                     Text(model.props.text)
                 }

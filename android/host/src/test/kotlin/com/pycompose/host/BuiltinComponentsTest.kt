@@ -117,6 +117,40 @@ class BuiltinComponentsTest {
         assertTrue("topBar at $top should precede content at $body", top < body)
     }
 
+    @Test
+    fun pressObservationReturnsAsActionsAndNeverDrivesAFrame() {
+        // A Button naming an onPress action: the host creates the interaction
+        // source, hands it to the component and reports the press transitions as
+        // actions. The ripple stays Compose's own, so the app reacts a frame
+        // later instead of driving the visual.
+        val source =
+            """
+            {"version":"0.1.0","schemaVersion":"1.16.0","metadata":{"actionBindings":{
+              "app.demo.click.1":{"handlerId":"demo.click","payload":{},"bound":{}},
+              "app.demo.press.1":{"handlerId":"demo.press","payload":{
+                "pressed":{"required":true,"type":"boolean"}},"bound":{}}}},
+             "root":{"id":"root","type":"Column","props":{},"children":[
+               {"id":"root.button","type":"Button","props":{
+                 "text":"Tap","onClick":"app.demo.click.1","onPress":"app.demo.press.1"}}]}}
+            """.trimIndent()
+        val snapshot = IrParser().parse(source).getOrThrow()
+        val actions = mutableListOf<Action>()
+        val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
+        compose.setContent { PyComposeTheme { renderer.Render(snapshot) } }
+
+        compose.onNodeWithText("Tap").performClick()
+        compose.waitUntil(5000) {
+            actions.count { it.actionId == "app.demo.press.1" } == 2
+        }
+        assertEquals(
+            listOf("""{"pressed":true}""", """{"pressed":false}"""),
+            actions
+                .filter { it.actionId == "app.demo.press.1" }
+                .map { it.payload.toString() },
+        )
+        assertTrue(actions.any { it.actionId == "app.demo.click.1" })
+    }
+
     @Test fun resourceGoldenUsesRealLocalizedStringsDrawableAndAsset() {
         val source = checkNotNull(javaClass.getResource("/resource_screen.json")).readText()
         val context = ApplicationProvider.getApplicationContext<android.app.Application>()

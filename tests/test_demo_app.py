@@ -135,7 +135,7 @@ def test_demo_builds_a_valid_snapshot_of_instance_scoped_bindings(
     draft = f"app.{demo.set_draft.name}.draft"
     toggle = f"app.{demo.toggle_task.name}.task_1"
     done = f"app.{demo.set_filter.name}.done"
-    assert snapshot["schemaVersion"] == "1.15.0"
+    assert snapshot["schemaVersion"] == "1.16.0"
     assert bindings[add]["bound"] == {"title": ""}
     assert bindings[draft]["bound"] == {}
     assert bindings[draft]["payload"] == {"value": {"required": True, "type": "string"}}

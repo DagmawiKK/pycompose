@@ -168,9 +168,13 @@ def test_an_omitted_optional_prop_is_simply_absent() -> None:
     assert "enabled = model.props.enabled" in block
 
     # TextButton carries no optional-without-default scalar to omit, so assert
-    # the rule on a prop that has one instead.
+    # the rule on a prop that has one instead. Action ids are read by the
+    # callback and interaction locals; the rule here is about values passed
+    # straight to Compose.
     block = render("FilterChip", components()["FilterChip"])
     for prop, spec in components()["FilterChip"]["props"].items():
+        if spec["type"] == "actionId":
+            continue
         if not spec.get("required") and "default" not in spec:
             assert f"model.props.{prop}" not in block
 

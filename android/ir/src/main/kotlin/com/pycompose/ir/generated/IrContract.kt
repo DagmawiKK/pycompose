@@ -5,9 +5,9 @@ import com.pycompose.ir.ComponentRule
 import com.pycompose.ir.PropertyRule
 
 object IrContract {
-    const val SCHEMA_VERSION: String = "1.15.0"
+    const val SCHEMA_VERSION: String = "1.16.0"
     const val MIN_SCHEMA_VERSION: String = "1.0.0"
-    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0", "1.12.0", "1.13.0", "1.14.0", "1.15.0")
+    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0", "1.12.0", "1.13.0", "1.14.0", "1.15.0", "1.16.0")
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
@@ -32,6 +32,7 @@ object IrContract {
                 "enabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
+                "onPress" to PropertyRule("actionId", required = false),
                 "text" to PropertyRule("string", required = true),
             ),
         ),
@@ -45,6 +46,7 @@ object IrContract {
                 "enabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onCheckedChange" to PropertyRule("actionId", required = true),
+                "onPress" to PropertyRule("actionId", required = false),
             ),
         ),
         "Column" to ComponentRule(
@@ -67,6 +69,7 @@ object IrContract {
                 "label" to PropertyRule("string", required = true),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
+                "onPress" to PropertyRule("actionId", required = false),
                 "selected" to PropertyRule("boolean", required = true),
             ),
         ),
@@ -144,6 +147,7 @@ object IrContract {
                 "enabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
+                "onPress" to PropertyRule("actionId", required = false),
                 "text" to PropertyRule("string", required = true),
             ),
         ),

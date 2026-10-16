@@ -96,6 +96,12 @@ RESERVED_SLOTS = frozenset({"children", "id", "modifier", "props"})
 #: Keys a slot entry may carry. Anything else is a typo, not a convention.
 SLOT_KEYS = frozenset({"native", "kind", "nullable", "consume"})
 
+#: Keys an interaction entry may carry. Anything else is a typo.
+INTERACTION_KEYS = frozenset({"native", "prop"})
+
+#: The observed state a payload field may carry: one lowerCamel boolean field.
+PRESS_FIELD = re.compile(r"[a-z][A-Za-z0-9]*")
+
 SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+$")
 
 
@@ -272,6 +278,72 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
             + ", ".join(sorted(CONSUMERS))
         )
     _validate_slots(name, props, children, comp.get("slots", {}))
+    _validate_interaction(
+        name, props, children, comp.get("slots", {}), comp.get("interaction")
+    )
+
+
+def _validate_interaction(
+    name: str,
+    props: dict[str, Any],
+    children: dict[str, Any],
+    slots: object,
+    interaction: object,
+) -> None:
+    """Check a component's declared interaction source against the vocabulary.
+
+    The interaction source is the host's, not the app's: the schema names the
+    native parameter it fills and the one prop whose action observes press
+    state, and the generator omits that parameter from the app's props. The
+    observed payload is declared once, on the prop, exactly as every other
+    host-originated callback declares it.
+
+    Args:
+        name: Component name, for error messages.
+        props: The component's props; the observed prop must be one of them.
+        children: The component's ``children`` object, whose native parameter
+            the interaction source must not reuse.
+        slots: The component's declared slots, which claim their own natives.
+        interaction: The raw ``interaction`` object, or None.
+    """
+    if interaction is None:
+        return
+    where = f"component {name!r} interaction"
+    if not isinstance(interaction, dict):
+        _die(f"{where} must be an object")
+    unknown = sorted(set(interaction) - INTERACTION_KEYS)
+    if unknown:
+        _die(f"{where} has unknown keys: {', '.join(unknown)}")
+    native = interaction.get("native")
+    if not isinstance(native, str) or not NATIVE_PARAMETER.match(native):
+        _die(f"{where}: 'native' must be a parameter name")
+    natives = {children.get("native", "content")}
+    if isinstance(slots, dict):
+        natives.update(
+            slot["native"]
+            for slot in slots.values()
+            if isinstance(slot, dict) and isinstance(slot.get("native"), str)
+        )
+    if native in natives or native in props:
+        _die(f"{where}: 'native' repeats another parameter")
+    observed = interaction.get("prop")
+    prop = props.get(observed) if isinstance(observed, str) else None
+    if prop is None:
+        _die(f"{where}: 'prop' must name one of the component's props")
+    if prop.get("type") != "actionId":
+        _die(f"{where}: prop {observed!r} must be an actionId")
+    payload = prop.get("payload")
+    field = payload[0] if isinstance(payload, list) and len(payload) == 1 else None
+    if (
+        not isinstance(field, dict)
+        or field.get("type") != "boolean"
+        or not isinstance(field.get("name"), str)
+        or PRESS_FIELD.fullmatch(field["name"]) is None
+    ):
+        # The host fills one named boolean; more fields would mean the host
+        # guessed which one reports press state, which is what the planner
+        # refuses to do everywhere else.
+        _die(f"{where}: prop {observed!r} needs one boolean payload field")
 
 
 def _validate_slots(
@@ -1470,6 +1542,47 @@ def build_app(
     return 0
 
 
+def _mirror_template(artifacts: dict[Path, str]) -> None:
+    """Mirror every module counterpart into the template, in place.
+
+    The template is the project ``pycompose init`` scaffolds, and it carries the
+    framework sources verbatim. Whatever the modules have is what a generated app
+    gets, so every counterpart is mirrored -- not just the generated half, which
+    would ship a project whose renderer predates its adapters.
+
+    A counterpart this run regenerated is copied from ``artifacts`` rather than
+    read back from disk: disk still holds the previous run's output, so reading
+    the file would mirror content one generation behind.
+
+    Args:
+        artifacts: The run's pending artifacts, keyed by path; template copies
+            are added to it and generated copies are reused as-is.
+    """
+    template = ROOT / "pycompose/templates/android"
+    for path in sorted(template.rglob("*")):
+        if not path.is_file() or path in artifacts:
+            continue
+        source = ROOT / "android" / path.relative_to(template)
+        if not source.is_file():
+            continue
+        generated = artifacts.get(source)
+        if generated is not None:
+            artifacts[path] = generated
+            continue
+        raw = source.read_bytes()
+        try:
+            contents = raw.decode("utf-8")
+        except UnicodeDecodeError:
+            contents = None
+        if contents is None or "\r" in contents:
+            # Not plain LF text: the Gradle wrapper jar is not source at all,
+            # and gradlew.bat keeps its CRLF line endings. `pycompose init`
+            # copies both, and tests/test_template_parity.py compares them byte
+            # for byte -- it sees what a text artifact cannot.
+            continue
+        artifacts[path] = contents
+
+
 def main(argv: list[str] | None = None) -> int:
     from pycompose.schema.codegen.values import render_models, render_native
     from pycompose.schema.codegen.values import render_python as render_values
@@ -1515,36 +1628,8 @@ def main(argv: list[str] | None = None) -> int:
     }
     adapters = render_generated_adapters(registry)
     if adapters:
-        mirror = (
-            ROOT
-            / "pycompose/templates/android"
-            / KOTLIN_ADAPTERS_PATH.relative_to(ROOT / "android")
-        )
         artifacts[KOTLIN_ADAPTERS_PATH] = adapters
-        artifacts[mirror] = adapters
-    # The template is the project `pycompose init` scaffolds, and it carries the
-    # framework sources verbatim. Whatever the modules have is what a generated
-    # app gets, so every counterpart is mirrored -- not just the generated half,
-    # which would ship a project whose renderer predates its adapters.
-    template = ROOT / "pycompose/templates/android"
-    for path in sorted(template.rglob("*")):
-        if not path.is_file():
-            continue
-        source = ROOT / "android" / path.relative_to(template)
-        if not source.is_file():
-            continue
-        raw = source.read_bytes()
-        try:
-            contents = raw.decode("utf-8")
-        except UnicodeDecodeError:
-            contents = None
-        if contents is None or "\r" in contents:
-            # Not plain LF text: the Gradle wrapper jar is not source at all,
-            # and gradlew.bat keeps its CRLF line endings. `pycompose init`
-            # copies both, and tests/test_template_parity.py compares them byte
-            # for byte -- it sees what a text artifact cannot.
-            continue
-        artifacts[path] = contents
+    _mirror_template(artifacts)
     for fixture in sorted((ROOT / "pycompose/testing/fixtures").glob("*.json")):
         relative = Path("ir/src/test/resources") / fixture.name
         contents = fixture.read_text(encoding="utf-8")

@@ -63,6 +63,7 @@ class Button(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: str,
+        on_press: str | None = None,
         text: str,
     ) -> None:
         """Construct a registered Button.
@@ -74,6 +75,7 @@ class Button(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_press: Native onPress; None uses its default.
             text: Required native text.
         """
         props: dict[str, JsonValue] = {}
@@ -84,6 +86,8 @@ class Button(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_press is not None:
+            props["on_press"] = on_press
         props["text"] = text
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
@@ -333,6 +337,7 @@ class TextButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: str,
+        on_press: str | None = None,
         text: str,
     ) -> None:
         """Construct a registered TextButton.
@@ -342,12 +347,15 @@ class TextButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_press: Native onPress; None uses its default.
             text: Required native text.
         """
         props: dict[str, JsonValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_press is not None:
+            props["on_press"] = on_press
         props["text"] = text
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
