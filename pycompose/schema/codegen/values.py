@@ -350,11 +350,19 @@ def render_models(registry: dict[str, Any]) -> str:
     )
     raw = _runtime_contract(registry)
     chunks = [raw[i : i + 60] for i in range(0, len(raw), 60)]
+    # One flat list, joined once. Concatenating the pieces with `+` is the same
+    # string to Kotlin's runtime, but every link is a call on the previous
+    # result, so the resolver recurses once per chunk and a long contract
+    # overflows its stack before the file even type-checks.
     lines.extend(
-        "        " + _kt_string(chunk) + (" +" if i < len(chunks) - 1 else "")
-        for i, chunk in enumerate(chunks)
+        [
+            "        // Joined from a flat list: a chain of + this long overflows",
+            "        // the compiler's stack.",
+            "        listOf(",
+        ]
     )
-    lines.extend(["    ).jsonObject", ""])
+    lines.extend(f"            {_kt_string(chunk)}," for chunk in chunks)
+    lines.extend(['        ).joinToString(""),', "    ).jsonObject", ""])
     for family in families:
         lines.extend(
             [

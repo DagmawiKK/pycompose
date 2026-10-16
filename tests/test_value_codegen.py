@@ -33,6 +33,21 @@ def test_app_values_include_transitive_dependencies_not_unrelated_factories() ->
     assert "ButtonColors" not in models + native
 
 
+def test_the_value_specs_literal_is_joined_from_a_flat_list() -> None:
+    """Chunking keeps lines short; joining must not nest.
+
+    A chain of ``+`` across the pieces is the same string to Kotlin's runtime,
+    but every link is a call on the previous result, so the resolver recurses
+    once per chunk -- and a contract long enough to need splitting overflows
+    the compiler's stack before the file type-checks. The pieces are therefore
+    one flat list, joined once, and no generated line may end in ``" +``.
+    """
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    models = render_models(registry)
+    assert ').joinToString("")' in models
+    assert '" +\n' not in models
+
+
 def test_codegen_rejects_unresolved_value_dependencies(
     tmp_path: Path, monkeypatch
 ) -> None:

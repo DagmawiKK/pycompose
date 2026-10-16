@@ -92,7 +92,11 @@ jobs:
           composed = emit_ir(State(root=greeting(id="greeting", text="Hello")), "1.0.0")
           assert composed.root.type == "Text"
           assert composed.root.props["text"] == "Hello"
-          assert golden_names() == ("component_screen.json", "ir_counter.json")
+          assert golden_names() == (
+              "component_screen.json",
+              "ir_counter.json",
+              "resource_screen.json",
+          )
           assert to_json_bytes(emit_ir(State(root=component_screen()), "1.0.0")) == read_golden("component_screen.json")
           assert read_golden("ir_counter.json")
           PY

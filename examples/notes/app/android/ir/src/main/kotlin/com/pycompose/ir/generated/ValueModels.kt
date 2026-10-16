@@ -293,235 +293,239 @@ object ValueContract {
     const val SCHEMA_VERSION = "1.22.0"
     private val json = Json { classDiscriminator = "type" }
     val specs: JsonObject = json.parseToJsonElement(
-        "{\"BorderStroke\":{\"family\":\"BorderStroke\",\"parameters\":{\"brus" +
-        "h\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Brush\"},\"wid" +
-        "th\":{\"minimum\":0,\"required\":true,\"type\":\"value\",\"valueType\":" +
-        "\"Dp\"}},\"since\":\"1.12.0\"},\"Color\":{\"family\":\"Color\",\"paramete" +
-        "rs\":{\"color\":{\"maximum\":4294967295,\"minimum\":0,\"required\":tr" +
-        "ue,\"type\":\"long\"}},\"since\":\"1.11.0\"},\"CutCornerShape\":{\"fami" +
-        "ly\":\"Shape\",\"parameters\":{\"size\":{\"minimum\":0,\"required\":tru" +
-        "e,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Dp\":{" +
-        "\"family\":\"Dp\",\"parameters\":{\"value\":{\"required\":true,\"type\":" +
-        "\"float\"}},\"since\":\"1.11.0\"},\"Em\":{\"family\":\"TextUnit\",\"param" +
-        "eters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1" +
-        ".11.0\"},\"FontFamily\":{\"family\":\"FontFamily\",\"parameters\":{\"n" +
-        "ame\":{\"required\":true,\"type\":\"string\",\"values\":[\"Cursive\",\"D" +
-        "efault\",\"Monospace\",\"SansSerif\",\"Serif\"]}},\"since\":\"1.11.0\"}" +
-        ",\"FontWeight\":{\"family\":\"FontWeight\",\"parameters\":{\"weight\":" +
-        "{\"maximum\":1000,\"minimum\":1,\"required\":true,\"type\":\"int\"}},\"" +
-        "since\":\"1.11.0\"},\"Offset\":{\"family\":\"Offset\",\"parameters\":{\"" +
-        "x\":{\"required\":true,\"type\":\"float\"},\"y\":{\"required\":true,\"ty" +
-        "pe\":\"float\"}},\"since\":\"1.11.0\"},\"PaddingValues\":{\"family\":\"P" +
-        "addingValues\",\"parameters\":{\"bottom\":{\"minimum\":0,\"type\":\"va" +
-        "lue\",\"valueType\":\"Dp\"},\"end\":{\"minimum\":0,\"type\":\"value\",\"va" +
-        "lueType\":\"Dp\"},\"start\":{\"minimum\":0,\"type\":\"value\",\"valueTyp" +
-        "e\":\"Dp\"},\"top\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}" +
-        "},\"since\":\"1.11.0\"},\"RoundedCornerShape\":{\"family\":\"Shape\",\"" +
-        "parameters\":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"val" +
-        "ue\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"SolidColor\":{\"fami" +
-        "ly\":\"Brush\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"v" +
-        "alue\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"},\"Sp\":{\"family\"" +
-        ":\"TextUnit\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"f" +
-        "loat\"}},\"since\":\"1.11.0\"},\"TextStyle\":{\"family\":\"TextStyle\"," +
-        "\"parameters\":{\"color\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
-        "fontFamily\":{\"nullable\":true,\"type\":\"value\",\"valueType\":\"Fon" +
-        "tFamily\"},\"fontSize\":{\"minimum\":0,\"type\":\"value\",\"valueType\"" +
-        ":\"TextUnit\"},\"fontWeight\":{\"nullable\":true,\"type\":\"value\",\"v" +
-        "alueType\":\"FontWeight\"},\"letterSpacing\":{\"type\":\"value\",\"val" +
-        "ueType\":\"TextUnit\"}},\"since\":\"1.11.0\"},\"ThemeColor\":{\"family" +
-        "\":\"Color\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"stri" +
-        "ng\",\"values\":[\"background\",\"error\",\"errorContainer\",\"inverse" +
-        "OnSurface\",\"inversePrimary\",\"inverseSurface\",\"onBackground\"," +
-        "\"onError\",\"onErrorContainer\",\"onPrimary\",\"onPrimaryContainer" +
-        "\",\"onSecondary\",\"onSecondaryContainer\",\"onSurface\",\"onSurfac" +
-        "eVariant\",\"onTertiary\",\"onTertiaryContainer\",\"outline\",\"outl" +
-        "ineVariant\",\"primary\",\"primaryContainer\",\"scrim\",\"secondary\"" +
-        ",\"secondaryContainer\",\"surface\",\"surfaceBright\",\"surfaceCont" +
-        "ainer\",\"surfaceContainerHigh\",\"surfaceContainerHighest\",\"sur" +
-        "faceContainerLow\",\"surfaceContainerLowest\",\"surfaceDim\",\"sur" +
-        "faceTint\",\"surfaceVariant\",\"tertiary\",\"tertiaryContainer\"]}}" +
-        ",\"since\":\"1.11.0\"},\"ThemeShape\":{\"family\":\"Shape\",\"parameter" +
-        "s\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"extra" +
-        "Large\",\"extraSmall\",\"large\",\"medium\",\"small\"]}},\"since\":\"1.1" +
-        "1.0\"},\"ThemeTypography\":{\"family\":\"TextStyle\",\"parameters\":{" +
-        "\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"bodyLarge" +
-        "\",\"bodyMedium\",\"bodySmall\",\"displayLarge\",\"displayMedium\",\"d" +
-        "isplaySmall\",\"headlineLarge\",\"headlineMedium\",\"headlineSmall" +
-        "\",\"labelLarge\",\"labelMedium\",\"labelSmall\",\"titleLarge\",\"titl" +
-        "eMedium\",\"titleSmall\"]}},\"since\":\"1.11.0\"},\"WindowInsets\":{\"" +
-        "family\":\"WindowInsets\",\"parameters\":{\"bottom\":{\"minimum\":0,\"" +
-        "type\":\"value\",\"valueType\":\"Dp\"},\"left\":{\"minimum\":0,\"type\":\"" +
-        "value\",\"valueType\":\"Dp\"},\"right\":{\"minimum\":0,\"type\":\"value\"" +
-        ",\"valueType\":\"Dp\"},\"top\":{\"minimum\":0,\"type\":\"value\",\"valueT" +
-        "ype\":\"Dp\"}},\"since\":\"1.11.0\"},\"bottomAppBarFabElevation\":{\"f" +
-        "amily\":\"FloatingActionButtonElevation\",\"parameters\":{\"defaul" +
-        "tElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElevat" +
-        "ion\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"" +
-        "type\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"" +
-        "value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"cardColors\":{\"f" +
-        "amily\":\"CardColors\",\"parameters\":{\"containerColor\":{\"type\":\"" +
-        "value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"cardElevat" +
-        "ion\":{\"family\":\"CardElevation\",\"parameters\":{\"defaultElevati" +
-        "on\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"" +
-        "type\":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"" +
-        "value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\"," +
-        "\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueT" +
-        "ype\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"D" +
-        "p\"}},\"since\":\"1.13.0\"},\"elevatedCardColors\":{\"family\":\"CardC" +
-        "olors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"value" +
-        "Type\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedCardElevation\":" +
-        "{\"family\":\"CardElevation\",\"parameters\":{\"defaultElevation\":{" +
-        "\"type\":\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"value" +
-        "\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueType\":" +
-        "\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}}," +
-        "\"since\":\"1.13.0\"},\"filledIconButtonColors\":{\"family\":\"IconBu" +
-        "ttonColors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"" +
-        "valueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\"" +
-        ",\"valueType\":\"Color\"},\"disabledContentColor\":{\"type\":\"value\"" +
-        ",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"filledTonalIconBut" +
-        "tonColors\":{\"family\":\"IconButtonColors\",\"parameters\":{\"conta" +
-        "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledCon" +
-        "tainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledC" +
-        "ontentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"" +
-        "1.13.0\"},\"floatingActionButtonElevation\":{\"family\":\"Floating" +
-        "ActionButtonElevation\",\"parameters\":{\"defaultElevation\":{\"ty" +
-        "pe\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"va" +
-        "lue\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueTyp" +
-        "e\":\"Dp\"}},\"since\":\"1.13.0\"},\"horizontalGradient\":{\"family\":\"" +
-        "Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valu" +
-        "eType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":\"list\"}," +
-        "\"endX\":{\"type\":\"float\"},\"startX\":{\"type\":\"float\"}},\"since\":\"" +
-        "1.11.0\"},\"iconButtonColors\":{\"family\":\"IconButtonColors\",\"pa" +
-        "rameters\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Col" +
-        "or\"},\"contentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"di" +
-        "sabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}," +
-        "\"since\":\"1.13.0\"},\"linearGradient\":{\"family\":\"Brush\",\"parame" +
-        "ters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Color\"" +
-        "},\"minItems\":2,\"required\":true,\"type\":\"list\"},\"end\":{\"type\":" +
-        "\"value\",\"valueType\":\"Offset\"},\"start\":{\"type\":\"value\",\"value" +
-        "Type\":\"Offset\"}},\"since\":\"1.11.0\"},\"loweredElevation\":{\"fami" +
-        "ly\":\"FloatingActionButtonElevation\",\"parameters\":{\"defaultEl" +
-        "evation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation" +
-        "\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"val" +
-        "ue\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"materialIcon\":{\"fa" +
-        "mily\":\"ImageVector\",\"parameters\":{\"name\":{\"required\":true,\"t" +
-        "ype\":\"string\",\"values\":[\"AutoMirrored.Filled.ArrowBack\",\"Aut" +
-        "oMirrored.Filled.ArrowForward\",\"AutoMirrored.Filled.ExitToAp" +
-        "p\",\"AutoMirrored.Filled.KeyboardArrowLeft\",\"AutoMirrored.Fil" +
-        "led.KeyboardArrowRight\",\"AutoMirrored.Filled.List\",\"AutoMirr" +
-        "ored.Filled.Send\",\"AutoMirrored.Outlined.ArrowBack\",\"AutoMir" +
-        "rored.Outlined.ArrowForward\",\"AutoMirrored.Outlined.ExitToAp" +
-        "p\",\"AutoMirrored.Outlined.KeyboardArrowLeft\",\"AutoMirrored.O" +
-        "utlined.KeyboardArrowRight\",\"AutoMirrored.Outlined.List\",\"Au" +
-        "toMirrored.Outlined.Send\",\"AutoMirrored.Rounded.ArrowBack\",\"" +
-        "AutoMirrored.Rounded.ArrowForward\",\"AutoMirrored.Rounded.Exi" +
-        "tToApp\",\"AutoMirrored.Rounded.KeyboardArrowLeft\",\"AutoMirror" +
-        "ed.Rounded.KeyboardArrowRight\",\"AutoMirrored.Rounded.List\",\"" +
-        "AutoMirrored.Rounded.Send\",\"AutoMirrored.Sharp.ArrowBack\",\"A" +
-        "utoMirrored.Sharp.ArrowForward\",\"AutoMirrored.Sharp.ExitToAp" +
-        "p\",\"AutoMirrored.Sharp.KeyboardArrowLeft\",\"AutoMirrored.Shar" +
-        "p.KeyboardArrowRight\",\"AutoMirrored.Sharp.List\",\"AutoMirrore" +
-        "d.Sharp.Send\",\"AutoMirrored.TwoTone.ArrowBack\",\"AutoMirrored" +
-        ".TwoTone.ArrowForward\",\"AutoMirrored.TwoTone.ExitToApp\",\"Aut" +
-        "oMirrored.TwoTone.KeyboardArrowLeft\",\"AutoMirrored.TwoTone.K" +
-        "eyboardArrowRight\",\"AutoMirrored.TwoTone.List\",\"AutoMirrored" +
-        ".TwoTone.Send\",\"Filled.AccountBox\",\"Filled.AccountCircle\",\"F" +
-        "illed.Add\",\"Filled.AddCircle\",\"Filled.ArrowDropDown\",\"Filled" +
-        ".Build\",\"Filled.Call\",\"Filled.Check\",\"Filled.CheckCircle\",\"F" +
-        "illed.Clear\",\"Filled.Close\",\"Filled.Create\",\"Filled.DateRang" +
-        "e\",\"Filled.Delete\",\"Filled.Done\",\"Filled.Edit\",\"Filled.Email" +
-        "\",\"Filled.Face\",\"Filled.Favorite\",\"Filled.FavoriteBorder\",\"F" +
-        "illed.Home\",\"Filled.Info\",\"Filled.KeyboardArrowDown\",\"Filled" +
-        ".KeyboardArrowUp\",\"Filled.LocationOn\",\"Filled.Lock\",\"Filled." +
-        "MailOutline\",\"Filled.Menu\",\"Filled.MoreVert\",\"Filled.Notific" +
-        "ations\",\"Filled.Person\",\"Filled.Phone\",\"Filled.Place\",\"Fille" +
-        "d.PlayArrow\",\"Filled.Refresh\",\"Filled.Search\",\"Filled.Settin" +
-        "gs\",\"Filled.Share\",\"Filled.ShoppingCart\",\"Filled.Star\",\"Fill" +
-        "ed.ThumbUp\",\"Filled.Warning\",\"Outlined.AccountBox\",\"Outlined" +
-        ".AccountCircle\",\"Outlined.Add\",\"Outlined.AddCircle\",\"Outline" +
-        "d.ArrowDropDown\",\"Outlined.Build\",\"Outlined.Call\",\"Outlined." +
-        "Check\",\"Outlined.CheckCircle\",\"Outlined.Clear\",\"Outlined.Clo" +
-        "se\",\"Outlined.Create\",\"Outlined.DateRange\",\"Outlined.Delete\"" +
-        ",\"Outlined.Done\",\"Outlined.Edit\",\"Outlined.Email\",\"Outlined." +
-        "Face\",\"Outlined.Favorite\",\"Outlined.FavoriteBorder\",\"Outline" +
-        "d.Home\",\"Outlined.Info\",\"Outlined.KeyboardArrowDown\",\"Outlin" +
-        "ed.KeyboardArrowUp\",\"Outlined.LocationOn\",\"Outlined.Lock\",\"O" +
-        "utlined.MailOutline\",\"Outlined.Menu\",\"Outlined.MoreVert\",\"Ou" +
-        "tlined.Notifications\",\"Outlined.Person\",\"Outlined.Phone\",\"Ou" +
-        "tlined.Place\",\"Outlined.PlayArrow\",\"Outlined.Refresh\",\"Outli" +
-        "ned.Search\",\"Outlined.Settings\",\"Outlined.Share\",\"Outlined.S" +
-        "hoppingCart\",\"Outlined.Star\",\"Outlined.ThumbUp\",\"Outlined.Wa" +
-        "rning\",\"Rounded.AccountBox\",\"Rounded.AccountCircle\",\"Rounded" +
-        ".Add\",\"Rounded.AddCircle\",\"Rounded.ArrowDropDown\",\"Rounded.B" +
-        "uild\",\"Rounded.Call\",\"Rounded.Check\",\"Rounded.CheckCircle\",\"" +
-        "Rounded.Clear\",\"Rounded.Close\",\"Rounded.Create\",\"Rounded.Dat" +
-        "eRange\",\"Rounded.Delete\",\"Rounded.Done\",\"Rounded.Edit\",\"Roun" +
-        "ded.Email\",\"Rounded.Face\",\"Rounded.Favorite\",\"Rounded.Favori" +
-        "teBorder\",\"Rounded.Home\",\"Rounded.Info\",\"Rounded.KeyboardArr" +
-        "owDown\",\"Rounded.KeyboardArrowUp\",\"Rounded.LocationOn\",\"Roun" +
-        "ded.Lock\",\"Rounded.MailOutline\",\"Rounded.Menu\",\"Rounded.More" +
-        "Vert\",\"Rounded.Notifications\",\"Rounded.Person\",\"Rounded.Phon" +
-        "e\",\"Rounded.Place\",\"Rounded.PlayArrow\",\"Rounded.Refresh\",\"Ro" +
-        "unded.Search\",\"Rounded.Settings\",\"Rounded.Share\",\"Rounded.Sh" +
-        "oppingCart\",\"Rounded.Star\",\"Rounded.ThumbUp\",\"Rounded.Warnin" +
-        "g\",\"Sharp.AccountBox\",\"Sharp.AccountCircle\",\"Sharp.Add\",\"Sha" +
-        "rp.AddCircle\",\"Sharp.ArrowDropDown\",\"Sharp.Build\",\"Sharp.Cal" +
-        "l\",\"Sharp.Check\",\"Sharp.CheckCircle\",\"Sharp.Clear\",\"Sharp.Cl" +
-        "ose\",\"Sharp.Create\",\"Sharp.DateRange\",\"Sharp.Delete\",\"Sharp." +
-        "Done\",\"Sharp.Edit\",\"Sharp.Email\",\"Sharp.Face\",\"Sharp.Favorit" +
-        "e\",\"Sharp.FavoriteBorder\",\"Sharp.Home\",\"Sharp.Info\",\"Sharp.K" +
-        "eyboardArrowDown\",\"Sharp.KeyboardArrowUp\",\"Sharp.LocationOn\"" +
-        ",\"Sharp.Lock\",\"Sharp.MailOutline\",\"Sharp.Menu\",\"Sharp.MoreVe" +
-        "rt\",\"Sharp.Notifications\",\"Sharp.Person\",\"Sharp.Phone\",\"Shar" +
-        "p.Place\",\"Sharp.PlayArrow\",\"Sharp.Refresh\",\"Sharp.Search\",\"S" +
-        "harp.Settings\",\"Sharp.Share\",\"Sharp.ShoppingCart\",\"Sharp.Sta" +
-        "r\",\"Sharp.ThumbUp\",\"Sharp.Warning\",\"TwoTone.AccountBox\",\"Two" +
-        "Tone.AccountCircle\",\"TwoTone.Add\",\"TwoTone.AddCircle\",\"TwoTo" +
-        "ne.ArrowDropDown\",\"TwoTone.Build\",\"TwoTone.Call\",\"TwoTone.Ch" +
-        "eck\",\"TwoTone.CheckCircle\",\"TwoTone.Clear\",\"TwoTone.Close\",\"" +
-        "TwoTone.Create\",\"TwoTone.DateRange\",\"TwoTone.Delete\",\"TwoTon" +
-        "e.Done\",\"TwoTone.Edit\",\"TwoTone.Email\",\"TwoTone.Face\",\"TwoTo" +
-        "ne.Favorite\",\"TwoTone.FavoriteBorder\",\"TwoTone.Home\",\"TwoTon" +
-        "e.Info\",\"TwoTone.KeyboardArrowDown\",\"TwoTone.KeyboardArrowUp" +
-        "\",\"TwoTone.LocationOn\",\"TwoTone.Lock\",\"TwoTone.MailOutline\"," +
-        "\"TwoTone.Menu\",\"TwoTone.MoreVert\",\"TwoTone.Notifications\",\"T" +
-        "woTone.Person\",\"TwoTone.Phone\",\"TwoTone.Place\",\"TwoTone.Play" +
-        "Arrow\",\"TwoTone.Refresh\",\"TwoTone.Search\",\"TwoTone.Settings\"" +
-        ",\"TwoTone.Share\",\"TwoTone.ShoppingCart\",\"TwoTone.Star\",\"TwoT" +
-        "one.ThumbUp\",\"TwoTone.Warning\"]}},\"since\":\"1.21.0\"},\"navigat" +
-        "ionBarItemColors\":{\"family\":\"NavigationBarItemColors\",\"param" +
-        "eters\":{\"disabledIconColor\":{\"type\":\"value\",\"valueType\":\"Col" +
-        "or\"},\"disabledTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
-        "},\"indicatorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"sel" +
-        "ectedIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"select" +
-        "edTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselecte" +
-        "dIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselected" +
-        "TextColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1." +
-        "13.0\"},\"outlinedCardColors\":{\"family\":\"CardColors\",\"paramete" +
-        "rs\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
-        "disabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
-        "},\"since\":\"1.13.0\"},\"outlinedCardElevation\":{\"family\":\"CardE" +
-        "levation\",\"parameters\":{\"defaultElevation\":{\"type\":\"value\",\"" +
-        "valueType\":\"Dp\"},\"disabledElevation\":{\"type\":\"value\",\"valueT" +
-        "ype\":\"Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valueType\":\"D" +
-        "p\"}},\"since\":\"1.13.0\"},\"outlinedIconButtonColors\":{\"family\":" +
-        "\"IconButtonColors\",\"parameters\":{\"containerColor\":{\"type\":\"v" +
-        "alue\",\"valueType\":\"Color\"},\"contentColor\":{\"type\":\"value\",\"v" +
-        "alueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\"," +
-        "\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"switchColors\":{\"fam" +
-        "ily\":\"SwitchColors\",\"parameters\":{\"checkedBorderColor\":{\"typ" +
-        "e\":\"value\",\"valueType\":\"Color\"},\"disabledCheckedBorderColor\"" +
-        ":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"ve" +
-        "rticalGradient\":{\"family\":\"Brush\",\"parameters\":{\"colors\":{\"i" +
-        "tems\":{\"type\":\"value\",\"valueType\":\"Color\"},\"minItems\":2,\"req" +
-        "uired\":true,\"type\":\"list\"},\"endY\":{\"type\":\"float\"},\"startY\":" +
-        "{\"type\":\"float\"}},\"since\":\"1.11.0\"}}"
+        // Joined from a flat list: a chain of + this long overflows
+        // the compiler's stack.
+        listOf(
+            "{\"BorderStroke\":{\"family\":\"BorderStroke\",\"parameters\":{\"brus",
+            "h\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Brush\"},\"wid",
+            "th\":{\"minimum\":0,\"required\":true,\"type\":\"value\",\"valueType\":",
+            "\"Dp\"}},\"since\":\"1.12.0\"},\"Color\":{\"family\":\"Color\",\"paramete",
+            "rs\":{\"color\":{\"maximum\":4294967295,\"minimum\":0,\"required\":tr",
+            "ue,\"type\":\"long\"}},\"since\":\"1.11.0\"},\"CutCornerShape\":{\"fami",
+            "ly\":\"Shape\",\"parameters\":{\"size\":{\"minimum\":0,\"required\":tru",
+            "e,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Dp\":{",
+            "\"family\":\"Dp\",\"parameters\":{\"value\":{\"required\":true,\"type\":",
+            "\"float\"}},\"since\":\"1.11.0\"},\"Em\":{\"family\":\"TextUnit\",\"param",
+            "eters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1",
+            ".11.0\"},\"FontFamily\":{\"family\":\"FontFamily\",\"parameters\":{\"n",
+            "ame\":{\"required\":true,\"type\":\"string\",\"values\":[\"Cursive\",\"D",
+            "efault\",\"Monospace\",\"SansSerif\",\"Serif\"]}},\"since\":\"1.11.0\"}",
+            ",\"FontWeight\":{\"family\":\"FontWeight\",\"parameters\":{\"weight\":",
+            "{\"maximum\":1000,\"minimum\":1,\"required\":true,\"type\":\"int\"}},\"",
+            "since\":\"1.11.0\"},\"Offset\":{\"family\":\"Offset\",\"parameters\":{\"",
+            "x\":{\"required\":true,\"type\":\"float\"},\"y\":{\"required\":true,\"ty",
+            "pe\":\"float\"}},\"since\":\"1.11.0\"},\"PaddingValues\":{\"family\":\"P",
+            "addingValues\",\"parameters\":{\"bottom\":{\"minimum\":0,\"type\":\"va",
+            "lue\",\"valueType\":\"Dp\"},\"end\":{\"minimum\":0,\"type\":\"value\",\"va",
+            "lueType\":\"Dp\"},\"start\":{\"minimum\":0,\"type\":\"value\",\"valueTyp",
+            "e\":\"Dp\"},\"top\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}",
+            "},\"since\":\"1.11.0\"},\"RoundedCornerShape\":{\"family\":\"Shape\",\"",
+            "parameters\":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"val",
+            "ue\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"SolidColor\":{\"fami",
+            "ly\":\"Brush\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"v",
+            "alue\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"},\"Sp\":{\"family\"",
+            ":\"TextUnit\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"f",
+            "loat\"}},\"since\":\"1.11.0\"},\"TextStyle\":{\"family\":\"TextStyle\",",
+            "\"parameters\":{\"color\":{\"type\":\"value\",\"valueType\":\"Color\"},\"",
+            "fontFamily\":{\"nullable\":true,\"type\":\"value\",\"valueType\":\"Fon",
+            "tFamily\"},\"fontSize\":{\"minimum\":0,\"type\":\"value\",\"valueType\"",
+            ":\"TextUnit\"},\"fontWeight\":{\"nullable\":true,\"type\":\"value\",\"v",
+            "alueType\":\"FontWeight\"},\"letterSpacing\":{\"type\":\"value\",\"val",
+            "ueType\":\"TextUnit\"}},\"since\":\"1.11.0\"},\"ThemeColor\":{\"family",
+            "\":\"Color\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"stri",
+            "ng\",\"values\":[\"background\",\"error\",\"errorContainer\",\"inverse",
+            "OnSurface\",\"inversePrimary\",\"inverseSurface\",\"onBackground\",",
+            "\"onError\",\"onErrorContainer\",\"onPrimary\",\"onPrimaryContainer",
+            "\",\"onSecondary\",\"onSecondaryContainer\",\"onSurface\",\"onSurfac",
+            "eVariant\",\"onTertiary\",\"onTertiaryContainer\",\"outline\",\"outl",
+            "ineVariant\",\"primary\",\"primaryContainer\",\"scrim\",\"secondary\"",
+            ",\"secondaryContainer\",\"surface\",\"surfaceBright\",\"surfaceCont",
+            "ainer\",\"surfaceContainerHigh\",\"surfaceContainerHighest\",\"sur",
+            "faceContainerLow\",\"surfaceContainerLowest\",\"surfaceDim\",\"sur",
+            "faceTint\",\"surfaceVariant\",\"tertiary\",\"tertiaryContainer\"]}}",
+            ",\"since\":\"1.11.0\"},\"ThemeShape\":{\"family\":\"Shape\",\"parameter",
+            "s\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"extra",
+            "Large\",\"extraSmall\",\"large\",\"medium\",\"small\"]}},\"since\":\"1.1",
+            "1.0\"},\"ThemeTypography\":{\"family\":\"TextStyle\",\"parameters\":{",
+            "\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"bodyLarge",
+            "\",\"bodyMedium\",\"bodySmall\",\"displayLarge\",\"displayMedium\",\"d",
+            "isplaySmall\",\"headlineLarge\",\"headlineMedium\",\"headlineSmall",
+            "\",\"labelLarge\",\"labelMedium\",\"labelSmall\",\"titleLarge\",\"titl",
+            "eMedium\",\"titleSmall\"]}},\"since\":\"1.11.0\"},\"WindowInsets\":{\"",
+            "family\":\"WindowInsets\",\"parameters\":{\"bottom\":{\"minimum\":0,\"",
+            "type\":\"value\",\"valueType\":\"Dp\"},\"left\":{\"minimum\":0,\"type\":\"",
+            "value\",\"valueType\":\"Dp\"},\"right\":{\"minimum\":0,\"type\":\"value\"",
+            ",\"valueType\":\"Dp\"},\"top\":{\"minimum\":0,\"type\":\"value\",\"valueT",
+            "ype\":\"Dp\"}},\"since\":\"1.11.0\"},\"bottomAppBarFabElevation\":{\"f",
+            "amily\":\"FloatingActionButtonElevation\",\"parameters\":{\"defaul",
+            "tElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElevat",
+            "ion\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"",
+            "type\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"",
+            "value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"cardColors\":{\"f",
+            "amily\":\"CardColors\",\"parameters\":{\"containerColor\":{\"type\":\"",
+            "value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"type\"",
+            ":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"cardElevat",
+            "ion\":{\"family\":\"CardElevation\",\"parameters\":{\"defaultElevati",
+            "on\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"",
+            "type\":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"",
+            "value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",",
+            "\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueT",
+            "ype\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"D",
+            "p\"}},\"since\":\"1.13.0\"},\"elevatedCardColors\":{\"family\":\"CardC",
+            "olors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"value",
+            "Type\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"val",
+            "ueType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedCardElevation\":",
+            "{\"family\":\"CardElevation\",\"parameters\":{\"defaultElevation\":{",
+            "\"type\":\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"type\"",
+            ":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"value",
+            "\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"valu",
+            "eType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueType\":",
+            "\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}},",
+            "\"since\":\"1.13.0\"},\"filledIconButtonColors\":{\"family\":\"IconBu",
+            "ttonColors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"",
+            "valueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\"",
+            ",\"valueType\":\"Color\"},\"disabledContentColor\":{\"type\":\"value\"",
+            ",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"filledTonalIconBut",
+            "tonColors\":{\"family\":\"IconButtonColors\",\"parameters\":{\"conta",
+            "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledCon",
+            "tainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledC",
+            "ontentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"",
+            "1.13.0\"},\"floatingActionButtonElevation\":{\"family\":\"Floating",
+            "ActionButtonElevation\",\"parameters\":{\"defaultElevation\":{\"ty",
+            "pe\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"va",
+            "lue\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"v",
+            "alueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueTyp",
+            "e\":\"Dp\"}},\"since\":\"1.13.0\"},\"horizontalGradient\":{\"family\":\"",
+            "Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valu",
+            "eType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":\"list\"},",
+            "\"endX\":{\"type\":\"float\"},\"startX\":{\"type\":\"float\"}},\"since\":\"",
+            "1.11.0\"},\"iconButtonColors\":{\"family\":\"IconButtonColors\",\"pa",
+            "rameters\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Col",
+            "or\"},\"contentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"di",
+            "sabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},",
+            "\"since\":\"1.13.0\"},\"linearGradient\":{\"family\":\"Brush\",\"parame",
+            "ters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Color\"",
+            "},\"minItems\":2,\"required\":true,\"type\":\"list\"},\"end\":{\"type\":",
+            "\"value\",\"valueType\":\"Offset\"},\"start\":{\"type\":\"value\",\"value",
+            "Type\":\"Offset\"}},\"since\":\"1.11.0\"},\"loweredElevation\":{\"fami",
+            "ly\":\"FloatingActionButtonElevation\",\"parameters\":{\"defaultEl",
+            "evation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation",
+            "\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"typ",
+            "e\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"val",
+            "ue\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"materialIcon\":{\"fa",
+            "mily\":\"ImageVector\",\"parameters\":{\"name\":{\"required\":true,\"t",
+            "ype\":\"string\",\"values\":[\"AutoMirrored.Filled.ArrowBack\",\"Aut",
+            "oMirrored.Filled.ArrowForward\",\"AutoMirrored.Filled.ExitToAp",
+            "p\",\"AutoMirrored.Filled.KeyboardArrowLeft\",\"AutoMirrored.Fil",
+            "led.KeyboardArrowRight\",\"AutoMirrored.Filled.List\",\"AutoMirr",
+            "ored.Filled.Send\",\"AutoMirrored.Outlined.ArrowBack\",\"AutoMir",
+            "rored.Outlined.ArrowForward\",\"AutoMirrored.Outlined.ExitToAp",
+            "p\",\"AutoMirrored.Outlined.KeyboardArrowLeft\",\"AutoMirrored.O",
+            "utlined.KeyboardArrowRight\",\"AutoMirrored.Outlined.List\",\"Au",
+            "toMirrored.Outlined.Send\",\"AutoMirrored.Rounded.ArrowBack\",\"",
+            "AutoMirrored.Rounded.ArrowForward\",\"AutoMirrored.Rounded.Exi",
+            "tToApp\",\"AutoMirrored.Rounded.KeyboardArrowLeft\",\"AutoMirror",
+            "ed.Rounded.KeyboardArrowRight\",\"AutoMirrored.Rounded.List\",\"",
+            "AutoMirrored.Rounded.Send\",\"AutoMirrored.Sharp.ArrowBack\",\"A",
+            "utoMirrored.Sharp.ArrowForward\",\"AutoMirrored.Sharp.ExitToAp",
+            "p\",\"AutoMirrored.Sharp.KeyboardArrowLeft\",\"AutoMirrored.Shar",
+            "p.KeyboardArrowRight\",\"AutoMirrored.Sharp.List\",\"AutoMirrore",
+            "d.Sharp.Send\",\"AutoMirrored.TwoTone.ArrowBack\",\"AutoMirrored",
+            ".TwoTone.ArrowForward\",\"AutoMirrored.TwoTone.ExitToApp\",\"Aut",
+            "oMirrored.TwoTone.KeyboardArrowLeft\",\"AutoMirrored.TwoTone.K",
+            "eyboardArrowRight\",\"AutoMirrored.TwoTone.List\",\"AutoMirrored",
+            ".TwoTone.Send\",\"Filled.AccountBox\",\"Filled.AccountCircle\",\"F",
+            "illed.Add\",\"Filled.AddCircle\",\"Filled.ArrowDropDown\",\"Filled",
+            ".Build\",\"Filled.Call\",\"Filled.Check\",\"Filled.CheckCircle\",\"F",
+            "illed.Clear\",\"Filled.Close\",\"Filled.Create\",\"Filled.DateRang",
+            "e\",\"Filled.Delete\",\"Filled.Done\",\"Filled.Edit\",\"Filled.Email",
+            "\",\"Filled.Face\",\"Filled.Favorite\",\"Filled.FavoriteBorder\",\"F",
+            "illed.Home\",\"Filled.Info\",\"Filled.KeyboardArrowDown\",\"Filled",
+            ".KeyboardArrowUp\",\"Filled.LocationOn\",\"Filled.Lock\",\"Filled.",
+            "MailOutline\",\"Filled.Menu\",\"Filled.MoreVert\",\"Filled.Notific",
+            "ations\",\"Filled.Person\",\"Filled.Phone\",\"Filled.Place\",\"Fille",
+            "d.PlayArrow\",\"Filled.Refresh\",\"Filled.Search\",\"Filled.Settin",
+            "gs\",\"Filled.Share\",\"Filled.ShoppingCart\",\"Filled.Star\",\"Fill",
+            "ed.ThumbUp\",\"Filled.Warning\",\"Outlined.AccountBox\",\"Outlined",
+            ".AccountCircle\",\"Outlined.Add\",\"Outlined.AddCircle\",\"Outline",
+            "d.ArrowDropDown\",\"Outlined.Build\",\"Outlined.Call\",\"Outlined.",
+            "Check\",\"Outlined.CheckCircle\",\"Outlined.Clear\",\"Outlined.Clo",
+            "se\",\"Outlined.Create\",\"Outlined.DateRange\",\"Outlined.Delete\"",
+            ",\"Outlined.Done\",\"Outlined.Edit\",\"Outlined.Email\",\"Outlined.",
+            "Face\",\"Outlined.Favorite\",\"Outlined.FavoriteBorder\",\"Outline",
+            "d.Home\",\"Outlined.Info\",\"Outlined.KeyboardArrowDown\",\"Outlin",
+            "ed.KeyboardArrowUp\",\"Outlined.LocationOn\",\"Outlined.Lock\",\"O",
+            "utlined.MailOutline\",\"Outlined.Menu\",\"Outlined.MoreVert\",\"Ou",
+            "tlined.Notifications\",\"Outlined.Person\",\"Outlined.Phone\",\"Ou",
+            "tlined.Place\",\"Outlined.PlayArrow\",\"Outlined.Refresh\",\"Outli",
+            "ned.Search\",\"Outlined.Settings\",\"Outlined.Share\",\"Outlined.S",
+            "hoppingCart\",\"Outlined.Star\",\"Outlined.ThumbUp\",\"Outlined.Wa",
+            "rning\",\"Rounded.AccountBox\",\"Rounded.AccountCircle\",\"Rounded",
+            ".Add\",\"Rounded.AddCircle\",\"Rounded.ArrowDropDown\",\"Rounded.B",
+            "uild\",\"Rounded.Call\",\"Rounded.Check\",\"Rounded.CheckCircle\",\"",
+            "Rounded.Clear\",\"Rounded.Close\",\"Rounded.Create\",\"Rounded.Dat",
+            "eRange\",\"Rounded.Delete\",\"Rounded.Done\",\"Rounded.Edit\",\"Roun",
+            "ded.Email\",\"Rounded.Face\",\"Rounded.Favorite\",\"Rounded.Favori",
+            "teBorder\",\"Rounded.Home\",\"Rounded.Info\",\"Rounded.KeyboardArr",
+            "owDown\",\"Rounded.KeyboardArrowUp\",\"Rounded.LocationOn\",\"Roun",
+            "ded.Lock\",\"Rounded.MailOutline\",\"Rounded.Menu\",\"Rounded.More",
+            "Vert\",\"Rounded.Notifications\",\"Rounded.Person\",\"Rounded.Phon",
+            "e\",\"Rounded.Place\",\"Rounded.PlayArrow\",\"Rounded.Refresh\",\"Ro",
+            "unded.Search\",\"Rounded.Settings\",\"Rounded.Share\",\"Rounded.Sh",
+            "oppingCart\",\"Rounded.Star\",\"Rounded.ThumbUp\",\"Rounded.Warnin",
+            "g\",\"Sharp.AccountBox\",\"Sharp.AccountCircle\",\"Sharp.Add\",\"Sha",
+            "rp.AddCircle\",\"Sharp.ArrowDropDown\",\"Sharp.Build\",\"Sharp.Cal",
+            "l\",\"Sharp.Check\",\"Sharp.CheckCircle\",\"Sharp.Clear\",\"Sharp.Cl",
+            "ose\",\"Sharp.Create\",\"Sharp.DateRange\",\"Sharp.Delete\",\"Sharp.",
+            "Done\",\"Sharp.Edit\",\"Sharp.Email\",\"Sharp.Face\",\"Sharp.Favorit",
+            "e\",\"Sharp.FavoriteBorder\",\"Sharp.Home\",\"Sharp.Info\",\"Sharp.K",
+            "eyboardArrowDown\",\"Sharp.KeyboardArrowUp\",\"Sharp.LocationOn\"",
+            ",\"Sharp.Lock\",\"Sharp.MailOutline\",\"Sharp.Menu\",\"Sharp.MoreVe",
+            "rt\",\"Sharp.Notifications\",\"Sharp.Person\",\"Sharp.Phone\",\"Shar",
+            "p.Place\",\"Sharp.PlayArrow\",\"Sharp.Refresh\",\"Sharp.Search\",\"S",
+            "harp.Settings\",\"Sharp.Share\",\"Sharp.ShoppingCart\",\"Sharp.Sta",
+            "r\",\"Sharp.ThumbUp\",\"Sharp.Warning\",\"TwoTone.AccountBox\",\"Two",
+            "Tone.AccountCircle\",\"TwoTone.Add\",\"TwoTone.AddCircle\",\"TwoTo",
+            "ne.ArrowDropDown\",\"TwoTone.Build\",\"TwoTone.Call\",\"TwoTone.Ch",
+            "eck\",\"TwoTone.CheckCircle\",\"TwoTone.Clear\",\"TwoTone.Close\",\"",
+            "TwoTone.Create\",\"TwoTone.DateRange\",\"TwoTone.Delete\",\"TwoTon",
+            "e.Done\",\"TwoTone.Edit\",\"TwoTone.Email\",\"TwoTone.Face\",\"TwoTo",
+            "ne.Favorite\",\"TwoTone.FavoriteBorder\",\"TwoTone.Home\",\"TwoTon",
+            "e.Info\",\"TwoTone.KeyboardArrowDown\",\"TwoTone.KeyboardArrowUp",
+            "\",\"TwoTone.LocationOn\",\"TwoTone.Lock\",\"TwoTone.MailOutline\",",
+            "\"TwoTone.Menu\",\"TwoTone.MoreVert\",\"TwoTone.Notifications\",\"T",
+            "woTone.Person\",\"TwoTone.Phone\",\"TwoTone.Place\",\"TwoTone.Play",
+            "Arrow\",\"TwoTone.Refresh\",\"TwoTone.Search\",\"TwoTone.Settings\"",
+            ",\"TwoTone.Share\",\"TwoTone.ShoppingCart\",\"TwoTone.Star\",\"TwoT",
+            "one.ThumbUp\",\"TwoTone.Warning\"]}},\"since\":\"1.21.0\"},\"navigat",
+            "ionBarItemColors\":{\"family\":\"NavigationBarItemColors\",\"param",
+            "eters\":{\"disabledIconColor\":{\"type\":\"value\",\"valueType\":\"Col",
+            "or\"},\"disabledTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"",
+            "},\"indicatorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"sel",
+            "ectedIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"select",
+            "edTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselecte",
+            "dIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselected",
+            "TextColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.",
+            "13.0\"},\"outlinedCardColors\":{\"family\":\"CardColors\",\"paramete",
+            "rs\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"",
+            "disabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}",
+            "},\"since\":\"1.13.0\"},\"outlinedCardElevation\":{\"family\":\"CardE",
+            "levation\",\"parameters\":{\"defaultElevation\":{\"type\":\"value\",\"",
+            "valueType\":\"Dp\"},\"disabledElevation\":{\"type\":\"value\",\"valueT",
+            "ype\":\"Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valueType\":\"D",
+            "p\"}},\"since\":\"1.13.0\"},\"outlinedIconButtonColors\":{\"family\":",
+            "\"IconButtonColors\",\"parameters\":{\"containerColor\":{\"type\":\"v",
+            "alue\",\"valueType\":\"Color\"},\"contentColor\":{\"type\":\"value\",\"v",
+            "alueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"switchColors\":{\"fam",
+            "ily\":\"SwitchColors\",\"parameters\":{\"checkedBorderColor\":{\"typ",
+            "e\":\"value\",\"valueType\":\"Color\"},\"disabledCheckedBorderColor\"",
+            ":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"ve",
+            "rticalGradient\":{\"family\":\"Brush\",\"parameters\":{\"colors\":{\"i",
+            "tems\":{\"type\":\"value\",\"valueType\":\"Color\"},\"minItems\":2,\"req",
+            "uired\":true,\"type\":\"list\"},\"endY\":{\"type\":\"float\"},\"startY\":",
+            "{\"type\":\"float\"}},\"since\":\"1.11.0\"}}",
+        ).joinToString(""),
     ).jsonObject
 
     fun readBorderStroke(value: JsonElement): BorderStrokeValue {
