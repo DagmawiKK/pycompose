@@ -97,7 +97,10 @@ RESERVED_SLOTS = frozenset({"children", "id", "modifier", "props"})
 SLOT_KEYS = frozenset({"native", "kind", "nullable", "consume"})
 
 #: Keys an interaction entry may carry. Anything else is a typo.
-INTERACTION_KEYS = frozenset({"native", "prop"})
+INTERACTION_KEYS = frozenset({"native", "observations"})
+
+#: The closed set of interaction kinds the host can observe.
+INTERACTION_KINDS = frozenset({"press", "focus", "hover"})
 
 #: The observed state a payload field may carry: one lowerCamel boolean field.
 PRESS_FIELD = re.compile(r"[a-z][A-Za-z0-9]*")
@@ -293,14 +296,14 @@ def _validate_interaction(
     """Check a component's declared interaction source against the vocabulary.
 
     The interaction source is the host's, not the app's: the schema names the
-    native parameter it fills and the one prop whose action observes press
-    state, and the generator omits that parameter from the app's props. The
-    observed payload is declared once, on the prop, exactly as every other
-    host-originated callback declares it.
+    native parameter it fills and, per interaction kind, the prop whose action
+    observes that kind, and the generator omits those props from the app's
+    arguments. Each observed payload is declared once, on its prop, exactly as
+    every other host-originated callback declares it.
 
     Args:
         name: Component name, for error messages.
-        props: The component's props; the observed prop must be one of them.
+        props: The component's props; every observed prop must be one of them.
         children: The component's ``children`` object, whose native parameter
             the interaction source must not reuse.
         slots: The component's declared slots, which claim their own natives.
@@ -314,8 +317,8 @@ def _validate_interaction(
     unknown = sorted(set(interaction) - INTERACTION_KEYS)
     if unknown:
         _die(f"{where} has unknown keys: {', '.join(unknown)}")
-    native = interaction.get("native")
-    if not isinstance(native, str) or not NATIVE_PARAMETER.match(native):
+    injected = interaction.get("native")
+    if not isinstance(injected, str) or not NATIVE_PARAMETER.match(injected):
         _die(f"{where}: 'native' must be a parameter name")
     natives = {children.get("native", "content")}
     if isinstance(slots, dict):
@@ -324,26 +327,34 @@ def _validate_interaction(
             for slot in slots.values()
             if isinstance(slot, dict) and isinstance(slot.get("native"), str)
         )
-    if native in natives or native in props:
+    if injected in natives or injected in props:
         _die(f"{where}: 'native' repeats another parameter")
-    observed = interaction.get("prop")
-    prop = props.get(observed) if isinstance(observed, str) else None
-    if prop is None:
-        _die(f"{where}: 'prop' must name one of the component's props")
-    if prop.get("type") != "actionId":
-        _die(f"{where}: prop {observed!r} must be an actionId")
-    payload = prop.get("payload")
-    field = payload[0] if isinstance(payload, list) and len(payload) == 1 else None
-    if (
-        not isinstance(field, dict)
-        or field.get("type") != "boolean"
-        or not isinstance(field.get("name"), str)
-        or PRESS_FIELD.fullmatch(field["name"]) is None
-    ):
-        # The host fills one named boolean; more fields would mean the host
-        # guessed which one reports press state, which is what the planner
-        # refuses to do everywhere else.
-        _die(f"{where}: prop {observed!r} needs one boolean payload field")
+    observations = interaction.get("observations")
+    if not isinstance(observations, dict) or not observations:
+        _die(f"{where}: 'observations' must be a non-empty object")
+    for kind, observed in sorted(observations.items()):
+        if kind not in INTERACTION_KINDS:
+            _die(
+                f"{where}: unknown observation {kind!r}; vocabulary: "
+                + ", ".join(sorted(INTERACTION_KINDS))
+            )
+        prop = props.get(observed) if isinstance(observed, str) else None
+        if prop is None:
+            _die(f"{where}: observation {kind!r} must name one of the props")
+        if prop.get("type") != "actionId":
+            _die(f"{where}: prop {observed!r} must be an actionId")
+        payload = prop.get("payload")
+        field = payload[0] if isinstance(payload, list) and len(payload) == 1 else None
+        if (
+            not isinstance(field, dict)
+            or field.get("type") != "boolean"
+            or not isinstance(field.get("name"), str)
+            or PRESS_FIELD.fullmatch(field["name"]) is None
+        ):
+            # The host fills one named boolean; more fields would mean the host
+            # guessed which one reports the observation, which is what the
+            # planner refuses to do everywhere else.
+            _die(f"{where}: prop {observed!r} needs one boolean payload field")
 
 
 def _validate_slots(

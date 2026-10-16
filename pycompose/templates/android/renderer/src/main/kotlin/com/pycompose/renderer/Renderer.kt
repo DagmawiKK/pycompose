@@ -26,20 +26,21 @@ class RenderContext internal constructor(
     /**
      * The host-created interaction source for one node, or null when it observes none.
      *
-     * Press state returns as an action a frame later; the same-frame reaction the
+     * Session state returns as an action a frame later; the same-frame reaction the
      * user sees stays the component's own. The source is remembered per node id,
-     * so a snapshot pull restarts no ripple in flight.
+     * so a snapshot pull restarts no interaction in flight.
      *
      * @param id Stable node id the source's lifetime follows.
-     * @param actionId Action observing press state, or null for none.
+     * @param actionIds Action observing each interaction kind; null means none.
      */
     @Composable
     fun interactionSource(
         id: String,
-        actionId: String?,
-    ): MutableInteractionSource? = rememberInteractionSource(id, actionId, ::observation)
+        actionIds: Map<String, String?>,
+    ): MutableInteractionSource? = rememberInteractionSource(id, actionIds, ::observation)
 
     private fun observation(
+        kind: String,
         actionId: String,
         value: Boolean,
     ) {
@@ -51,7 +52,7 @@ class RenderContext internal constructor(
             // One boolean is the whole observation. Two would mean the host
             // picked a field the app did not mean, so it reports instead.
             renderer.report(
-                "Cannot observe press for $actionId: " +
+                "Cannot observe $kind for $actionId: " +
                     "${boolean.size} boolean fields among ${fields.keys}",
             )
             return

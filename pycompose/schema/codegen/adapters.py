@@ -359,24 +359,28 @@ def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:
     )
 
 
-def _interaction(observed: str) -> str:
+def _interaction(interaction: dict[str, Any]) -> str:
     """Render the local that fetches one component's host-created source.
 
     The source is the renderer's, remembered per node id; which payload field
-    the observation fills is resolved against the app's binding at dispatch
+    each observation fills is resolved against the app's binding at dispatch
     time, the same way every other callback's event field is, so the app keeps
     naming its own fields.
 
     Args:
-        observed: The prop whose action observes press state.
+        interaction: The component's raw ``interaction`` entry.
 
     Returns:
         The Kotlin local declaration.
     """
-    prop = _camel(observed)
+    observations = interaction["observations"]
+    entries = ", ".join(
+        f'"{kind}" to model.props.{_camel(observations[kind])}'
+        for kind in sorted(observations)
+    )
     return (
         "val interactionSourceValue = context.interactionSource("
-        f"model.id, model.props.{prop})"
+        f"model.id, mapOf({entries}))"
     )
 
 
@@ -671,19 +675,18 @@ def render(name: str, entry: dict[str, Any]) -> str:
 
     out = _Fragments()
     out.arguments.append("modifier = modifier")
-    observed = (entry.get("interaction") or {}).get("prop")
+    interaction = entry.get("interaction") or {}
+    observed = set((interaction.get("observations") or {}).values())
     for prop, spec in entry.get("props", {}).items():
-        if prop == observed:
-            # The host fills the source; the prop observes state, it does not
-            # name a native parameter.
+        if prop in observed:
+            # The host fills the source; an observed prop reports state, it does
+            # not name a native parameter.
             continue
         if not _render_prop(prop, spec, out):
             return ""
     if observed:
-        out.locals.append(_interaction(observed))
-        out.arguments.append(
-            f"{entry['interaction']['native']} = interactionSourceValue"
-        )
+        out.locals.append(_interaction(interaction))
+        out.arguments.append(f"{interaction['native']} = interactionSourceValue")
     for slot_name, slot in sorted(entry.get("slots", {}).items()):
         out.arguments.append(_named_slot(slot_name, slot))
 

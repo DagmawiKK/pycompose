@@ -1,14 +1,14 @@
-"""The host-created interaction source: press state returns as an action.
+"""The host-created interaction source: session state returns as an action.
 
 A component that accepts a host-created interaction source names, in its schema
-entry, the native parameter the source fills and the prop whose action observes
-press state. The source belongs to the host -- one per node id -- so pulling a
-new snapshot restarts no ripple in flight; the reaction a user sees stays the
-component's own, and the app learns about the press a frame later.
+entry, the native parameter the source fills and one actionId prop per observed
+interaction kind. The source belongs to the host -- one per node id -- so pulling
+a new snapshot restarts no interaction in flight; the reaction a user sees stays
+the component's own, and the app learns about the interaction a frame later.
 
-These tests pin the Python half of that contract: how the observation reaches
-the wire, how the adapter fills the parameter, and what the codegen refuses
-rather than guesses.
+These tests pin the Python half of that contract: how observations reach the
+wire, how the adapter fills the parameter, and what the codegen refuses rather
+than guesses.
 """
 
 from __future__ import annotations
@@ -52,44 +52,75 @@ def components() -> dict[str, Any]:
     return json.loads(SCHEMA_PATH.read_text())["components"]
 
 
-def test_the_generated_constructor_observes_press() -> None:
-    """``on_press`` is a prop; the wire carries it camelCase like every other."""
-    wire = snapshot(Button(id="ok", text="OK", on_click="increment", on_press="submit"))
+def test_the_generated_constructor_observes_every_kind() -> None:
+    """The observation props are ordinary props; the wire carries them camelCase."""
+    wire = snapshot(
+        Button(
+            id="ok",
+            text="OK",
+            on_click="increment",
+            on_press="submit",
+            on_focus="submit",
+            on_hover="submit",
+        )
+    )
     assert wire["root"]["props"]["onPress"] == "submit"
+    assert wire["root"]["props"]["onFocus"] == "submit"
+    assert wire["root"]["props"]["onHover"] == "submit"
 
 
-def test_press_observation_is_absent_until_declared() -> None:
-    """A node that observes nothing carries no interaction prop at all."""
+def test_an_observation_is_absent_until_declared() -> None:
+    """A node that observes nothing carries no interaction props at all."""
     wire = snapshot(Button(id="ok", text="OK", on_click="increment"))
     assert "onPress" not in wire["root"]["props"]
+    assert "onFocus" not in wire["root"]["props"]
+    assert "onHover" not in wire["root"]["props"]
 
 
-def test_every_declared_source_observes_a_prop_it_owns() -> None:
-    """The declaration names a real actionId prop, so the host never guesses."""
+def test_every_observation_names_a_prop_it_owns() -> None:
+    """Each observation names a real actionId prop whose payload is one boolean."""
     for name, entry in sorted(components().items()):
         interaction = entry.get("interaction")
         if interaction is None:
             continue
-        prop = entry["props"][interaction["prop"]]
-        assert prop["type"] == "actionId", name
-        payload = prop["payload"]
-        assert [field["type"] for field in payload] == ["boolean"], name
+        observations = interaction["observations"]
+        assert observations, name
+        for kind, observed in sorted(observations.items()):
+            prop = entry["props"][observed]
+            assert prop["type"] == "actionId", (name, kind)
+            assert [field["type"] for field in prop["payload"]] == ["boolean"], (
+                name,
+                kind,
+            )
+
+
+def test_every_observed_kind_is_a_vocabulary_member() -> None:
+    """The declaration never invents a kind the renderer cannot classify."""
+    from pycompose.core.registry_types import INTERACTION_KINDS
+
+    for name, entry in sorted(components().items()):
+        interaction = entry.get("interaction")
+        if interaction is None:
+            continue
+        assert set(interaction["observations"]) <= set(INTERACTION_KINDS), name
 
 
 # ---------------------------------------------------------------------------
-# The adapter fills the parameter; the observed prop is not a native one
+# The adapter fills the parameter; the observed props are not native ones
 # ---------------------------------------------------------------------------
 
 
 def test_the_adapter_passes_the_host_source_where_the_schema_says() -> None:
-    """The observed prop is not a native parameter; the source fills its place."""
+    """Observed props are not native parameters; the source fills their place."""
     adapter = render("Button", components()["Button"])
-    assert (
-        "val interactionSourceValue = context.interactionSource("
-        "model.id, model.props.onPress)" in adapter
-    )
+    assert "context.interactionSource(model.id, mapOf(" in adapter
+    assert '"press" to model.props.onPress' in adapter
+    assert '"focus" to model.props.onFocus' in adapter
+    assert '"hover" to model.props.onHover' in adapter
     assert "interactionSource = interactionSourceValue" in adapter
     assert "onPress =" not in adapter
+    assert "onFocus =" not in adapter
+    assert "onHover =" not in adapter
 
 
 def test_a_component_without_a_source_gets_no_interaction_local() -> None:
@@ -139,17 +170,30 @@ def _interaction(registry: dict[str, Any], component: str) -> dict[str, Any]:
     return registry["components"][component]["interaction"]
 
 
-def _press(registry: dict[str, Any], component: str) -> dict[str, Any]:
-    """Return the observing prop's payload field.
+def _observations(registry: dict[str, Any], component: str) -> dict[str, str]:
+    """Return one interaction's mutable observations map.
 
     Args:
         registry: The loaded catalog.
         component: Component owning the interaction.
 
     Returns:
+        The observations map, for the caller to break.
+    """
+    return _interaction(registry, component)["observations"]
+
+
+def _payload(registry: dict[str, Any], component: str, prop: str) -> dict[str, Any]:
+    """Return one observed prop's payload field.
+
+    Args:
+        registry: The loaded catalog.
+        component: Component owning the interaction.
+        prop: The observed prop whose payload to break.
+
+    Returns:
         The payload field, for the caller to break.
     """
-    prop = _interaction(registry, component)["prop"]
     return registry["components"][component]["props"][prop]["payload"][0]
 
 
@@ -171,19 +215,37 @@ def _press(registry: dict[str, Any], component: str) -> dict[str, Any]:
             "repeats another parameter",
         ),
         (
-            lambda registry: _interaction(registry, "Button").update(prop="onHold"),
-            "must name one of the component's props",
+            lambda registry: _interaction(registry, "Button").update(observations={}),
+            "must be a non-empty object",
         ),
         (
-            lambda registry: _interaction(registry, "Button").update(prop="text"),
+            lambda registry: _observations(registry, "Button").update(hold="onPress"),
+            "unknown observation",
+        ),
+        (
+            lambda registry: _observations(registry, "Button").update(press="onHold"),
+            "must name one of the props",
+        ),
+        (
+            lambda registry: _observations(registry, "Button").update(press="text"),
             "must be an actionId",
         ),
         (
-            lambda registry: _press(registry, "Button").update(type="string"),
+            lambda registry: _payload(registry, "Button", "onPress").update(
+                type="string"
+            ),
             "needs one boolean payload field",
         ),
         (
-            lambda registry: _press(registry, "Button").update(name="Value"),
+            lambda registry: _payload(registry, "Button", "onPress").update(
+                name="Value"
+            ),
+            "needs one boolean payload field",
+        ),
+        (
+            lambda registry: _payload(registry, "Button", "onFocus").update(
+                name="Focus"
+            ),
             "needs one boolean payload field",
         ),
     ],
@@ -234,13 +296,16 @@ def test_the_runtime_registry_round_trips_the_interaction() -> None:
             "stability": "stable",
             "props": {},
             "children": {"allowed": False},
-            "interaction": {"native": "interactionSource", "prop": "onPress"},
+            "interaction": {
+                "native": "interactionSource",
+                "observations": {"press": "onPress", "hover": "onHover"},
+            },
         },
     )
     assert spec.interaction is not None
     assert spec.to_mapping()["interaction"] == {
         "native": "interactionSource",
-        "prop": "onPress",
+        "observations": {"press": "onPress", "hover": "onHover"},
     }
     with pytest.raises(ComponentRegistryError, match="'native' must be a name"):
         ComponentSpec.from_mapping(
@@ -251,5 +316,19 @@ def test_the_runtime_registry_round_trips_the_interaction() -> None:
                 "props": {},
                 "children": {"allowed": False},
                 "interaction": {"native": 3},
+            },
+        )
+    with pytest.raises(ComponentRegistryError, match="unknown observation"):
+        ComponentSpec.from_mapping(
+            "Button",
+            {
+                "category": "buttons",
+                "stability": "stable",
+                "props": {},
+                "children": {"allowed": False},
+                "interaction": {
+                    "native": "interactionSource",
+                    "observations": {"tap": "onPress"},
+                },
             },
         )

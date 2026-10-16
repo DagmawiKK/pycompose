@@ -1,6 +1,8 @@
 package com.pycompose.host
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -9,6 +11,8 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performMouseInput
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.core.app.ApplicationProvider
 import com.pycompose.host.resources.AndroidResources
 import com.pycompose.host.resources.ResourceResolver
@@ -149,6 +153,45 @@ class BuiltinComponentsTest {
                 .map { it.payload.toString() },
         )
         assertTrue(actions.any { it.actionId == "app.demo.click.1" })
+    }
+
+    @Test
+    @OptIn(ExperimentalTestApi::class)
+    fun focusAndHoverObservationsReturnAsActions() {
+        // The same source reports focus and hover session state, so an app can
+        // react to attention; the reaction a user sees still stays the
+        // component's own and the app learns about it a frame later.
+        val source =
+            """
+            {"version":"0.1.0","schemaVersion":"1.17.0","metadata":{"actionBindings":{
+              "app.demo.click.1":{"handlerId":"demo.click","payload":{},"bound":{}},
+              "app.demo.focus.1":{"handlerId":"demo.focus","payload":{
+                "focused":{"required":true,"type":"boolean"}},"bound":{}},
+              "app.demo.hover.1":{"handlerId":"demo.hover","payload":{
+                "hovered":{"required":true,"type":"boolean"}},"bound":{}}}},
+             "root":{"id":"root","type":"Column","props":{},"children":[
+               {"id":"root.button","type":"Button","props":{
+                 "text":"Tap","onClick":"app.demo.click.1",
+                 "onFocus":"app.demo.focus.1","onHover":"app.demo.hover.1"}}]}}
+            """.trimIndent()
+        val snapshot = IrParser().parse(source).getOrThrow()
+        val actions = mutableListOf<Action>()
+        val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
+        compose.setContent { PyComposeTheme { renderer.Render(snapshot) } }
+
+        compose.onNodeWithText("Tap").performSemanticsAction(SemanticsActions.RequestFocus)
+        compose.waitUntil(5000) { actions.any { it.actionId == "app.demo.focus.1" } }
+        assertEquals(
+            """{"focused":true}""",
+            actions.first { it.actionId == "app.demo.focus.1" }.payload.toString(),
+        )
+
+        compose.onNodeWithText("Tap").performMouseInput { moveTo(center) }
+        compose.waitUntil(5000) { actions.any { it.actionId == "app.demo.hover.1" } }
+        assertEquals(
+            """{"hovered":true}""",
+            actions.first { it.actionId == "app.demo.hover.1" }.payload.toString(),
+        )
     }
 
     @Test fun resourceGoldenUsesRealLocalizedStringsDrawableAndAsset() {

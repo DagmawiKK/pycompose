@@ -108,6 +108,8 @@ class Button(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: str,
+        on_focus: str | None = None,
+        on_hover: str | None = None,
         on_press: str | None = None,
         text: str,
     ) -> None:
@@ -120,6 +122,8 @@ class Button(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
             text: Required native text.
         """
@@ -131,6 +135,10 @@ class Button(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
         if on_press is not None:
             props["on_press"] = on_press
         props["text"] = text
@@ -151,6 +159,8 @@ class Checkbox(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: str,
+        on_focus: str | None = None,
+        on_hover: str | None = None,
         on_press: str | None = None,
     ) -> None:
         """Construct a registered Checkbox.
@@ -161,6 +171,8 @@ class Checkbox(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
         """
         props: dict[str, JsonValue] = {}
@@ -168,6 +180,10 @@ class Checkbox(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
         if on_press is not None:
             props["on_press"] = on_press
         super().__init__(id=id, children=(), modifier=modifier, **props)
@@ -216,6 +232,8 @@ class FilterChip(Component):
         label: str,
         modifier: Modifier | None = None,
         on_click: str,
+        on_focus: str | None = None,
+        on_hover: str | None = None,
         on_press: str | None = None,
         selected: bool,
         leading_icon: Content | None = None,
@@ -229,6 +247,8 @@ class FilterChip(Component):
             label: Required native label.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
             selected: Required native selected.
             leading_icon: Nodes for the native leadingIcon slot.
@@ -239,6 +259,10 @@ class FilterChip(Component):
             props["enabled"] = enabled
         props["label"] = label
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
         if on_press is not None:
             props["on_press"] = on_press
         props["selected"] = selected
@@ -499,6 +523,8 @@ class TextButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: str,
+        on_focus: str | None = None,
+        on_hover: str | None = None,
         on_press: str | None = None,
         text: str,
     ) -> None:
@@ -509,6 +535,8 @@ class TextButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
             text: Required native text.
         """
@@ -516,6 +544,10 @@ class TextButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
         if on_press is not None:
             props["on_press"] = on_press
         props["text"] = text

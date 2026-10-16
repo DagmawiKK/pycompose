@@ -40,7 +40,7 @@ object GeneratedAdapters {
                     com.pycompose.ir.OptionalValue.Null -> null
                     is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.buttonElevation(elevationWire.value).getOrThrow()
                 }
-                val interactionSourceValue = context.interactionSource(model.id, model.props.onPress)
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
                 Button(
                     modifier = modifier,
                     colors = colorsValue,
@@ -104,7 +104,7 @@ object GeneratedAdapters {
             }
             .register("TextButton") { node, modifier, context ->
                 val model = node as TextButtonNode
-                val interactionSourceValue = context.interactionSource(model.id, model.props.onPress)
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
                 TextButton(
                     modifier = modifier,
                     onClick = { context.actions.dispatch(model.props.onClick) },

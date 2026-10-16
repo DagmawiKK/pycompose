@@ -46,7 +46,10 @@ class InteractionTest {
                         onClick = {},
                         modifier = modifier,
                         interactionSource =
-                            context.interactionSource(model.id, model.props.onPress),
+                            context.interactionSource(
+                                model.id,
+                                mapOf("press" to model.props.onPress),
+                            ),
                     ) {
                         BasicText(model.props.text)
                     }

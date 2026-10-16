@@ -55,7 +55,7 @@ object GeneratedAdapters {
                     com.pycompose.ir.OptionalValue.Null -> null
                     is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.buttonElevation(elevationWire.value).getOrThrow()
                 }
-                val interactionSourceValue = context.interactionSource(model.id, model.props.onPress)
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
                 Button(
                     modifier = modifier,
                     colors = colorsValue,
@@ -69,7 +69,7 @@ object GeneratedAdapters {
             }
             .register("Checkbox") { node, modifier, context ->
                 val model = node as CheckboxNode
-                val interactionSourceValue = context.interactionSource(model.id, model.props.onPress)
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
                 Checkbox(
                     modifier = modifier,
                     checked = model.props.checked,
@@ -89,7 +89,7 @@ object GeneratedAdapters {
             }
             .register("FilterChip") { node, modifier, context ->
                 val model = node as FilterChipNode
-                val interactionSourceValue = context.interactionSource(model.id, model.props.onPress)
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
                 FilterChip(
                     modifier = modifier,
                     label = { Text(model.props.label) },
@@ -144,7 +144,7 @@ object GeneratedAdapters {
             }
             .register("TextButton") { node, modifier, context ->
                 val model = node as TextButtonNode
-                val interactionSourceValue = context.interactionSource(model.id, model.props.onPress)
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
                 TextButton(
                     modifier = modifier,
                     onClick = { context.actions.dispatch(model.props.onClick) },

@@ -38,6 +38,8 @@ data class ButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
     val `onPress`: String? = null,
     val `text`: String,
 ) : UiProps
@@ -164,6 +166,8 @@ data class TextButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
     val `onPress`: String? = null,
     val `text`: String,
 ) : UiProps

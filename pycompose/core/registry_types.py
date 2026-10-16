@@ -457,6 +457,9 @@ A consumed scope is never lost: the adapter applies it in the one place Compose
 idiomatically applies it, and the app cannot apply it twice.
 """
 
+INTERACTION_KINDS = ("press", "focus", "hover")
+"""Interaction kinds the host can observe and report as actions."""
+
 
 @dataclass(frozen=True, slots=True)
 class InteractionRule:
@@ -468,11 +471,17 @@ class InteractionRule:
 
     Attributes:
         native: Native parameter the remembered source fills.
-        prop: The actionId prop whose declared payload observes press state.
+        observations: One actionId prop per observed interaction kind; each
+            prop's payload observes that kind's session state.
     """
 
     native: str
-    prop: str
+    observations: Mapping[str, str]
+
+    def __post_init__(self) -> None:
+        object.__setattr__(
+            self, "observations", MappingProxyType(dict(self.observations))
+        )
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> InteractionRule:
@@ -491,10 +500,24 @@ class InteractionRule:
         native = data.get("native")
         if not isinstance(native, str) or not native:
             raise ComponentRegistryError(f"{where}: 'native' must be a name")
-        prop = data.get("prop")
-        if not isinstance(prop, str) or not prop:
-            raise ComponentRegistryError(f"{where}: 'prop' must be a name")
-        return cls(native=native, prop=prop)
+        raw = data.get("observations")
+        if not isinstance(raw, Mapping) or not raw:
+            raise ComponentRegistryError(
+                f"{where}: 'observations' must be a non-empty object"
+            )
+        observations: dict[str, str] = {}
+        for kind, prop in raw.items():
+            if kind not in INTERACTION_KINDS:
+                raise ComponentRegistryError(
+                    f"{where}: unknown observation {kind!r}; vocabulary: "
+                    + ", ".join(INTERACTION_KINDS)
+                )
+            if not isinstance(prop, str) or not prop:
+                raise ComponentRegistryError(
+                    f"{where}: observation {kind!r} must name a prop"
+                )
+            observations[kind] = prop
+        return cls(native=native, observations=observations)
 
     def to_mapping(self) -> dict[str, object]:
         """Render back to the ``components.json`` interaction shape.
@@ -502,7 +525,7 @@ class InteractionRule:
         Returns:
             A JSON-ready dict.
         """
-        return {"native": self.native, "prop": self.prop}
+        return {"native": self.native, "observations": dict(self.observations)}
 
 
 class ComponentDef(Protocol):
@@ -772,7 +795,7 @@ class ComponentSpec:
             parameters a subtree belongs in is a decision the schema owns.
         interaction: The host-created interaction source this component accepts,
             if any. Codegen-only: it says which native parameter the renderer
-            fills and which prop observes press state.
+            fills and which prop observes each interaction kind.
     """
 
     name: str
