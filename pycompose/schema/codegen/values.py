@@ -16,41 +16,41 @@ KINDS = {"scalar", "record", "factory", "constant", "reference"}
 
 def validate_definitions(registry: dict[str, Any]) -> None:
     """Fail generation on unresolved families or unimplemented behavior policies."""
-    from pycompose.schema.codegen.main import _die, _require_semver
+    from pycompose.schema.codegen.rules import die, require_semver
 
     specs = definitions(registry)
     families = {s["family"] for s in specs.values()}
     for name, spec in specs.items():
         if not name.isidentifier() or keyword.iskeyword(name):
-            _die(f"invalid value constructor: {name}")
+            die(f"invalid value constructor: {name}")
         if spec.get("kind") not in KINDS:
-            _die(f"unsupported value policy for {name}")
-        _require_semver(spec.get("since"), f"valueTypes.{name}.since")
+            die(f"unsupported value policy for {name}")
+        require_semver(spec.get("since"), f"valueTypes.{name}.since")
         if spec["since"] not in registry["supportedSchemaVersions"]:
-            _die(f"value {name} requires an unsupported schema")
+            die(f"value {name} requires an unsupported schema")
         markers = spec.get("optIn", [])
         if markers != sorted(set(markers)) or not all(
             isinstance(marker, str) and marker for marker in markers
         ):
-            _die(f"valueTypes.{name}.optIn must be sorted, unique annotation names")
+            die(f"valueTypes.{name}.optIn must be sorted, unique annotation names")
         _validate_holders(name, spec)
         for field, rule in spec["parameters"].items():
             if not field.isidentifier() or keyword.iskeyword(to_snake_case(field)):
-                _die(f"invalid value parameter: {name}.{field}")
+                die(f"invalid value parameter: {name}.{field}")
             _validate_rule(rule, families)
             _validate_default(name, field, rule)
     for section in ("components", "modifiers"):
         for spec in registry.get(section, {}).values():
             for prop in spec["props"].values():
                 if "valueType" in prop and prop["valueType"] not in families:
-                    _die(f"unknown value family: {prop['valueType']}")
+                    die(f"unknown value family: {prop['valueType']}")
                 if prop["type"] == "value" and "valueType" not in prop:
-                    _die("value props need a valueType")
+                    die("value props need a valueType")
 
 
 def _validate_holders(name: str, spec: dict[str, Any]) -> None:
     """Fail generation when a constant's native holders are not exact."""
-    from pycompose.schema.codegen.main import _die
+    from pycompose.schema.codegen.rules import die
 
     native = spec.get("native") or {}
     packages = native.get("imports")
@@ -59,52 +59,52 @@ def _validate_holders(name: str, spec: dict[str, Any]) -> None:
             isinstance(package, str) and package and package.replace(".", "").isalnum()
             for package in packages
         ):
-            _die(f"valueTypes.{name}.native.imports must be dotted packages")
+            die(f"valueTypes.{name}.native.imports must be dotted packages")
         if packages != sorted(set(packages)):
-            _die(f"valueTypes.{name}.native.imports must be sorted and unique")
+            die(f"valueTypes.{name}.native.imports must be sorted and unique")
     if "owners" not in native:
         return
     if "propertyOwner" not in native and "constants" not in native:
-        _die(f"valueTypes.{name}.native.owners needs a default holder")
+        die(f"valueTypes.{name}.native.owners needs a default holder")
     owners = native["owners"]
     if not isinstance(owners, dict) or not owners:
-        _die(f"valueTypes.{name}.native.owners must be a non-empty object")
+        die(f"valueTypes.{name}.native.owners must be a non-empty object")
     values = spec["parameters"][native["constantParameter"]]["values"]
     for member, holder in owners.items():
         if member not in values:
-            _die(f"valueTypes.{name}.native.owners.{member} is not a value")
+            die(f"valueTypes.{name}.native.owners.{member} is not a value")
         if (
             not isinstance(holder, str)
             or not holder
             or not holder.replace(".", "").replace("$", "").isalnum()
         ):
-            _die(f"valueTypes.{name}.native.owners.{member} is not a native holder")
+            die(f"valueTypes.{name}.native.owners.{member} is not a native holder")
 
 
 def _validate_default(name: str, field: str, rule: dict[str, Any]) -> None:
     """Every optional parameter needs a default; only typed evidence is accepted."""
-    from pycompose.schema.codegen.main import _die
+    from pycompose.schema.codegen.rules import die
 
     if "default" in rule:
         try:
             render_default(rule["default"], set())
         except ValueError as exc:
-            _die(f"{name}.{field}: {exc}")
+            die(f"{name}.{field}: {exc}")
     elif not rule.get("required"):
-        _die(f"missing native default provider: {name}.{field}")
+        die(f"missing native default provider: {name}.{field}")
 
 
 def _validate_rule(rule: dict[str, Any], families: set[str]) -> None:
-    from pycompose.schema.codegen.main import _die
+    from pycompose.schema.codegen.rules import die
 
     kind = rule["type"]
     if kind == "value":
         if rule.get("valueType") not in families:
-            _die(f"unknown value family: {rule.get('valueType')}")
+            die(f"unknown value family: {rule.get('valueType')}")
     elif kind == "list":
         _validate_rule(rule["items"], families)
     elif kind not in {"int", "long", "float", "double", "string", "boolean"}:
-        _die(f"unsupported value scalar: {kind}")
+        die(f"unsupported value scalar: {kind}")
 
 
 def definitions(registry: dict[str, Any]) -> dict[str, Any]:
@@ -201,7 +201,10 @@ def resolver_call(family: str, source: str) -> str:
 
 def render_python(registry: dict[str, Any]) -> str:
     """Generate JSON-only constructors; no native values live in Python."""
-    from pycompose.schema.codegen.main import GENERATED_NOTICE, _python_string
+    from pycompose.schema.codegen.literals import (
+        GENERATED_NOTICE,
+        python_adjacent_statements,
+    )
 
     specs = definitions(registry)
     raw = _runtime_contract(registry)
@@ -226,7 +229,7 @@ def render_python(registry: dict[str, Any]) -> str:
         "]",
         "",
         "DEFINITIONS: dict[str, dict[str, object]] = json.loads(",
-        *("    " + _python_string(raw[i : i + 50]) for i in range(0, len(raw), 50)),
+        *python_adjacent_statements(raw, indent=4),
         ")",
         "",
         "",
@@ -288,287 +291,6 @@ def render_python(registry: dict[str, Any]) -> str:
                 )
         lines.extend(["        },", "        DEFINITIONS,", "    )", "", ""])
     return "\n".join(lines).rstrip() + "\n"
-
-
-def _kt_type(rule: dict[str, Any]) -> str:
-    if rule["type"] == "value":
-        return str(rule["valueType"]) + "Value"
-    if rule["type"] == "list":
-        return f"List<{_kt_type(rule['items'])}>"
-    return {
-        "int": "Int",
-        "long": "Long",
-        "float": "Double",
-        "double": "Double",
-        "string": "String",
-        "boolean": "Boolean",
-    }[rule["type"]]
-
-
-def render_models(registry: dict[str, Any]) -> str:
-    """Generate pure JVM sealed wire models and typed readers."""
-    from pycompose.schema.codegen.main import GENERATED_NOTICE, _kt_string
-
-    specs = definitions(registry)
-    families = sorted({s["family"] for s in specs.values()})
-    lines = [
-        f"// {GENERATED_NOTICE}",
-        "package com.pycompose.ir.generated",
-        "",
-        "import com.pycompose.ir.ValueParser",
-        "import kotlinx.serialization.json.Json",
-        "import kotlinx.serialization.json.JsonElement",
-        "import kotlinx.serialization.json.JsonObject",
-        "import kotlinx.serialization.json.JsonArray",
-        "import kotlinx.serialization.json.JsonNull",
-        "import kotlinx.serialization.json.jsonPrimitive",
-        "import kotlinx.serialization.json.int",
-        "import kotlinx.serialization.json.long",
-        "import kotlinx.serialization.json.double",
-        "import kotlinx.serialization.json.boolean",
-        "import kotlinx.serialization.json.jsonObject",
-        "",
-    ]
-    for family in families:
-        lines.extend([f"sealed interface {family}Value", ""])
-    for name, spec in specs.items():
-        lines.append(f"data class Wire{name}(")
-        lines.append("    val supplied: Set<String>,")
-        for field, rule in spec["parameters"].items():
-            nullable = not rule.get("required") or rule.get("nullable")
-            suffix = "?" if nullable else ""
-            default = " = null" if not rule.get("required") else ""
-            lines.append(f"    val {field}: {_kt_type(rule)}{suffix}{default},")
-        lines.extend([f") : {spec['family']}Value", ""])
-    lines.extend(
-        [
-            "object ValueContract {",
-            f'    const val SCHEMA_VERSION = "{registry["schemaVersion"]}"',
-            '    private val json = Json { classDiscriminator = "type" }',
-            "    val specs: JsonObject = json.parseToJsonElement(",
-        ]
-    )
-    raw = _runtime_contract(registry)
-    chunks = [raw[i : i + 60] for i in range(0, len(raw), 60)]
-    # One flat list, joined once. Concatenating the pieces with `+` is the same
-    # string to Kotlin's runtime, but every link is a call on the previous
-    # result, so the resolver recurses once per chunk and a long contract
-    # overflows its stack before the file even type-checks.
-    lines.extend(
-        [
-            "        // Joined from a flat list: a chain of + this long overflows",
-            "        // the compiler's stack.",
-            "        listOf(",
-        ]
-    )
-    lines.extend(f"            {_kt_string(chunk)}," for chunk in chunks)
-    lines.extend(['        ).joinToString(""),', "    ).jsonObject", ""])
-    for family in families:
-        lines.extend(
-            [
-                f"    fun read{family}(value: JsonElement): {family}Value {{",
-                f'        ValueParser.validate(value, "{family}", specs).getOrThrow()',
-                "        val data = value.jsonObject",
-                '        return when (data.getValue("type").jsonPrimitive.content) {',
-            ]
-        )
-        for name, spec in specs.items():
-            if spec["family"] != family:
-                continue
-            lines.extend(
-                [
-                    f"            {_kt_string(name)} -> Wire{name}(",
-                    "                supplied = data.keys,",
-                ]
-            )
-            for field, rule in spec["parameters"].items():
-                source = f'data.getValue("{field}")'
-                expression = _read_parameter(source, rule)
-                if not rule.get("required") or rule.get("nullable"):
-                    expression = (
-                        f'data["{field}"]?.takeUnless {{ it == JsonNull }}'
-                        f'?.let {{ item -> {_read_parameter("item", rule)} }}'
-                    )
-                lines.append(f"                {field} = {expression},")
-            lines.append("            )")
-        lines.extend(
-            [
-                '            else -> error("Unknown value constructor")',
-                "        }",
-                "    }",
-                "",
-            ]
-        )
-    return "\n".join([*lines, "}", ""])
-
-
-def _read_parameter(source: str, rule: dict[str, Any]) -> str:
-    kind = rule["type"]
-    if kind == "value":
-        return f'read{rule["valueType"]}({source})'
-    if kind == "list":
-        conversion = _read_parameter("element", rule["items"])
-        return f"({source} as JsonArray).map {{ element -> {conversion} }}"
-    conversion = {
-        "int": "int",
-        "long": "long",
-        "float": "double",
-        "double": "double",
-        "string": "content",
-        "boolean": "boolean",
-    }[kind]
-    return f"{source}.jsonPrimitive.{conversion}"
-
-
-def vocabulary_imports(specs: dict[str, dict[str, Any]]) -> set[str]:
-    """Collect the packages a constant vocabulary's members are declared in.
-
-    An extension property resolves only where it is declared, and Kotlin cannot
-    name one where it stands, so the declaring packages are imported wholesale:
-    the pin decides how many members a style carries. The unit extensions get
-    the same treatment, one import at a time.
-
-    Args:
-        specs: Every approved value descriptor, keyed by constructor name.
-
-    Returns:
-        The import lines, empty when no vocabulary is carried that way.
-    """
-    imports: set[str] = set()
-    for spec in specs.values():
-        native = spec["native"]
-        if "constants" in native or "propertyOwner" in native:
-            imports.update(f"import {pkg}.*" for pkg in native.get("imports", []))
-    return imports
-
-
-def render_native(registry: dict[str, Any]) -> str:
-    """Generate native calls from approved factory descriptions."""
-    from pycompose.schema.codegen.main import GENERATED_NOTICE
-
-    specs = definitions(registry)
-    families = sorted({s["family"] for s in specs.values()})
-    imports: set[str] = set()
-    defaults = {
-        (name, field): render_default(rule["default"], imports)
-        for name, spec in specs.items()
-        for field, rule in spec["parameters"].items()
-        if "default" in rule
-    }
-    imports.update(vocabulary_imports(specs))
-    lines = [
-        f"// {GENERATED_NOTICE}",
-        "package com.pycompose.renderer.generated",
-        "",
-        "import androidx.compose.runtime.Composable",
-        "import androidx.compose.ui.unit.sp",
-        "import androidx.compose.ui.unit.em",
-        *sorted(imports),
-        "import kotlinx.serialization.json.JsonElement",
-        *(f"import com.pycompose.ir.generated.{f}Value" for f in families),
-        "import com.pycompose.ir.generated.ValueContract",
-        *(f"import com.pycompose.ir.generated.Wire{n}" for n in specs),
-        "",
-        "object ValueResolver {",
-    ]
-    for family in families:
-        native_type = next(
-            s["kotlinType"] for s in specs.values() if s["family"] == family
-        )
-        method = method_name(family)
-        markers = sorted(
-            {
-                marker
-                for spec in specs.values()
-                if spec["family"] == family
-                for marker in spec.get("optIn", [])
-            }
-        )
-        opt_in = (
-            [f"    @OptIn({', '.join(f'{m}::class' for m in markers)})"]
-            if markers
-            else []
-        )
-        lines.extend(
-            [
-                "    @Composable",
-                *opt_in,
-                f"    fun {method}(value: JsonElement): Result<{native_type}> {{",
-                "        val parsed = runCatching { "
-                f"ValueContract.read{family}(value) }}"
-                ".getOrElse { return Result.failure(it) }",
-                f"        return Result.success({method}(parsed))",
-                "    }",
-                "",
-                "    @Composable",
-                *opt_in,
-                f"    fun {method}(value: {family}Value): {native_type} =",
-                "        when (value) {",
-            ]
-        )
-        for name, spec in specs.items():
-            if spec["family"] != family:
-                continue
-            native = spec["native"]
-            lines.append(f"            is Wire{name} -> {{")
-            if "constants" in native or "propertyOwner" in native:
-                # A vocabulary can live on several holders; a member without an
-                # entry reads through the family's default holder.
-                holders = native.get("owners") or {}
-                choices = native.get("constants") or {
-                    key: holders.get(key, native["propertyOwner"]) + "." + key
-                    for key in spec["parameters"][native["constantParameter"]]["values"]
-                }
-                lines.append(
-                    f"                when (value.{native['constantParameter']}) {{"
-                )
-                lines.extend(
-                    f'                    "{k}" -> {v}' for k, v in choices.items()
-                )
-                lines.extend(
-                    [
-                        '                    else -> error("Unknown native constant")',
-                        "                }",
-                    ]
-                )
-            elif "extension" in native:
-                lines.append(
-                    f"                value.value.toFloat().{native['extension']}"
-                )
-            elif "constant" in native:
-                lines.append(f"                {native['constant']}")
-            else:
-                lines.append(f"                {native['call']}(")
-                for field, rule in spec["parameters"].items():
-                    source = f"value.{field}"
-                    if not rule.get("required") or rule.get("nullable"):
-                        converted = _decode_parameter("item", rule)
-                        expression = f"{source}?.let {{ item -> {converted} }}"
-                    else:
-                        expression = _decode_parameter(source, rule)
-                    if not rule.get("required"):
-                        fallback = defaults[name, field]
-                        present = expression + ("" if rule.get("nullable") else "!!")
-                        expression = (
-                            f'if ("{field}" in value.supplied) '
-                            f"{present} else {fallback}"
-                        )
-                    lines.append(f"                    {field} = {expression},")
-                lines.append("                )")
-            lines.append("            }")
-        lines.extend(["        }", ""])
-    return "\n".join([*lines, "}", ""])
-
-
-def _decode_parameter(source: str, rule: dict[str, Any]) -> str:
-    kind = rule["type"]
-    if kind == "value":
-        family = rule["valueType"]
-        return f"{method_name(family)}({source})"
-    if kind == "list":
-        converted = _decode_parameter("element", rule["items"])
-        return f"{source}.map {{ element -> {converted} }}"
-    return source + (".toFloat()" if kind == "float" else "")
 
 
 def json_definitions(registry: dict[str, Any]) -> dict[str, Any]:

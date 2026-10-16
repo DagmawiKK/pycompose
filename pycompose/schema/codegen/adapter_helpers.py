@@ -1,0 +1,313 @@
+"""Mechanical adapter layer: pin tables and slot-parsing helpers.
+
+The tables here are the embedding policy a generated adapter follows -- how a
+wire type becomes a Kotlin type, which resolvers decode which prop families
+and which reserved names the call builder quotes them into. Slot-parsing
+predicates decide what a component entry contains; the call builders that turn
+a parsed prop into its call-site fragments live in ``adapter_calls``, and the
+composer that assembles whole adapters lives in ``adapters``.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+from pycompose.core.registry_types import CONSUMERS, SCOPES, SLOT_KINDS
+
+SCALAR_KOTLIN = {
+    "string": "String",
+    "boolean": "Boolean",
+    "integer": "Long",
+    "number": "Double",
+}
+
+DECODED = {"enum", "color", "resource"}
+"""Prop types that arrive on the wire as something other than their Kotlin type."""
+
+RESOLVER_RETURN = {
+    "alignment": "Alignment",
+    "arrangement": "Arrangement.Vertical",
+    "color": "Color",
+    "horizontal": "Alignment.Horizontal",
+    "resourceFont": "FontFamily?",
+    "resourceImage": "Painter?",
+    "resourceText": "String?",
+    "textStyle": "TextStyle",
+    "vertical": "Alignment.Vertical",
+}
+"""What each decoder hands back.
+
+Needed because a prop's Kotlin type is not its wire type: the wire carries the
+string ``"start"`` and Compose wants an ``Alignment.Horizontal``. The schema's
+``decode`` names the resolver; this says what comes out of it, so a generated
+adapter can declare the local it assigns to.
+"""
+
+RESOLVER_FALLBACK = {
+    "alignment": "Alignment.TopStart",
+    "arrangement": "Arrangement.Top",
+    "color": "Color.Unspecified",
+    "horizontal": "Alignment.Start",
+    "resourceFont": "null",
+    "resourceImage": "null",
+    "resourceText": "null",
+    "textStyle": "MaterialTheme.typography.bodyMedium",
+    "vertical": "Alignment.Top",
+}
+"""What a malformed value falls back to.
+
+Degrade, never throw: Compose must not see an exception from a bad prop in a
+debug snapshot (ADR-0005). Each is the value the hand-written adapter already
+chose for the same prop, so generating does not change behaviour.
+"""
+
+KOTLIN_TYPES = {
+    "Alignment": "androidx.compose.ui.Alignment",
+    "Arrangement": "androidx.compose.foundation.layout.Arrangement",
+    "Color": "androidx.compose.ui.graphics.Color",
+    "FontFamily": "androidx.compose.ui.text.font.FontFamily",
+    "MaterialTheme": "androidx.compose.material3.MaterialTheme",
+    "Painter": "androidx.compose.ui.graphics.painter.Painter",
+    "PropResolver": "com.pycompose.renderer.PropResolver",
+    "TextStyle": "androidx.compose.ui.text.TextStyle",
+}
+"""Package for every bare Compose name this generator emits.
+
+Generated code names resolvers and their returns in full instead of importing
+them, the way the value path already did: one less import list to keep honest,
+and a name that cannot be shadowed by a prop.
+"""
+
+MECHANICAL = {"string", "boolean", "integer", "number", "actionId", "modifier"}
+"""Schema prop types an adapter can render with no decision and no decoder.
+
+``color``, ``enum`` and ``resource`` are renderable too, but only when the prop
+declares a ``decode``: those types arrive on the wire as strings and need a
+resolver to become a ``Color`` or an ``Alignment``. A prop of one of those types
+with no ``decode`` is refused, because guessing which family its values belong to
+is how an adapter silently renders the wrong alignment.
+"""
+
+STATE_CALLS = {"drawer": "drawerState", "sheet": "sheetState"}
+"""The renderer method each state family's host holder comes from.
+
+The family decides the create/drive/report logic; the schema decides which
+component has one, which native parameter it fills, and which props carry the
+desired value and report settled changes. Every member of the vocabulary must
+appear here, or codegen has no holder to hand the component.
+"""
+
+GATED_STATES = frozenset({"sheet"})
+"""State families whose native component must be composed conditionally.
+
+``ModalBottomSheet`` shows itself as soon as it is composed and measured, and a
+composed sheet keeps its own window in front of the app even while hidden, so
+presence is the only way to show one and absence the only way to let the app
+through. A gated family's holder carries the native state in ``state`` and the
+composition gate in ``visible``; any other family's holder is the native state
+itself.
+"""
+
+
+def qualify(source: str) -> str:
+    """Fully qualify a Kotlin expression's leading type name.
+
+    Args:
+        source: Kotlin source, e.g. ``Arrangement.Vertical`` or ``Color?``.
+
+    Returns:
+        The source with a known leading type name replaced by its package-qualified
+        spelling; anything already qualified or unknown is returned unchanged.
+    """
+    head, separator, rest = source.partition(".")
+    nullable = head.endswith("?")
+    bare = head[:-1] if nullable else head
+    qualified = KOTLIN_TYPES.get(bare)
+    if qualified is None:
+        return source
+    return f"{qualified}{'?' if nullable else ''}{separator}{rest}"
+
+
+def _camel(name: str) -> str:
+    """Return a snake_case wire name as camelCase.
+
+    Args:
+        name: The schema's prop name.
+
+    Returns:
+        The Kotlin property name.
+    """
+    head, *rest = name.split("_")
+    return head + "".join(word[:1].upper() + word[1:] for word in rest)
+
+
+def _declared_slots(entry: dict[str, Any]) -> bool:
+    """Report whether every child path is drawn from the closed slot vocabulary.
+
+    Args:
+        entry: The component's schema entry.
+
+    Returns:
+        True when the primary children and every named slot use a kind and a
+        consumer this generator renders.
+    """
+    children = entry.get("children", {})
+    scoped = children.get("provides") in {None, *SCOPES} and not (
+        "provides" in children and children.get("consume") is not None
+    )
+    return (
+        children.get("kind") in {None, *SLOT_KINDS}
+        and children.get("consume") in {None, *CONSUMERS}
+        and scoped
+        and all(
+            slot.get("kind", "content") in SLOT_KINDS
+            and slot.get("consume") in {None, *CONSUMERS}
+            for slot in entry.get("slots", {}).values()
+        )
+    )
+
+
+def is_mechanical(entry: dict[str, Any]) -> bool:
+    """Report whether a component's adapter can be derived from its schema.
+
+    Args:
+        entry: The component's schema entry.
+
+    Returns:
+        True when every prop renders without a human decision.
+    """
+    if entry.get("adapter") == "manual":
+        return False
+    if entry.get("wrapper"):
+        # Text and Image hand off to ResourceText / ResourceImage, which load
+        # their content off the Compose thread and report their own diagnostics.
+        # The call site is mechanical; what it delegates to is not.
+        return False
+    if not _declared_slots(entry):
+        return False
+    for spec in entry.get("props", {}).values():
+        if "valueType" in spec:
+            if spec["type"] == "value" and (
+                spec.get("required") or "nativeDefault" in spec
+            ):
+                continue
+            # A colour prop takes a tagged value *or* the legacy string, and the
+            # adapter handles both explicitly; no other decoded family does.
+            if spec.get("type") == "color" and spec.get("decode") == "color":
+                continue
+            return False
+        if spec.get("type") in MECHANICAL:
+            continue
+        # A dp prop carries a plain number and needs no decoder, but only a
+        # prop with some default to fall back to can be rendered at all.
+        if spec.get("type") == "dp" and _dp_renderable(spec):
+            continue
+        # Decodable types need a named resolver; without one they cannot be
+        # rendered at all rather than rendered wrongly.
+        if spec.get("type") in DECODED and spec.get("decode"):
+            continue
+        return False
+    return True
+
+
+def _slot(prop_name: str, spec: dict[str, Any]) -> tuple[str, str] | None:
+    """Render a prop flattened out of a Compose content slot.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+
+    Returns:
+        ``(argument, trailing)`` where either may be empty, or None when the
+        slot is optional and would need a null check -- a decision, not a
+        derivation.
+    """
+    slot = spec.get("content")
+    if slot is None:
+        return None
+    if not spec.get("required"):
+        return None
+    wrapped = f"{slot['composable']}(model.props.{prop_name})"
+    parameter = slot.get("parameter")
+    if parameter is not None:
+        return f"{parameter} = {{ {wrapped} }}", ""
+    return "", wrapped
+
+
+NUMERIC_KOTLIN = frozenset({"Byte", "Short", "Int", "Long", "Float", "Double"})
+"""Kotlin's numeric primitives: the only types a provider coerces between."""
+
+NUMERIC_CONVERSIONS = {
+    ("Double", "Float"): "toFloat",
+    ("Double", "Int"): "toInt",
+    ("Double", "Long"): "toLong",
+    ("Float", "Double"): "toDouble",
+    ("Int", "Float"): "toFloat",
+    ("Int", "Long"): "toLong",
+    ("Long", "Double"): "toDouble",
+    ("Long", "Float"): "toFloat",
+    ("Long", "Int"): "toInt",
+}
+"""Each entry is Kotlin's own named conversion; an unlisted pair is refused."""
+
+
+class _Fragments:
+    """The pieces one adapter is assembled from.
+
+    A list of strings was enough until decoded props arrived, which needed three
+    positions -- locals before the call, arguments inside it, and a trailing
+    content lambda after it -- and a single growing list pushed `render` past
+    the branch limit. Naming the three keeps each obvious.
+    """
+
+    def __init__(self) -> None:
+        """Start empty."""
+        self.locals: list[str] = []
+        self.arguments: list[str] = []
+        self.trailing: list[str] = []
+        self.trailing_parameter: str | None = None
+
+    def add(self, fragment: tuple[str, str] | None) -> bool:
+        """Append one prop's rendering.
+
+        Args:
+            fragment: The local/argument pair, or None to refuse.
+
+        Returns:
+            False when the prop cannot be rendered and the adapter is abandoned.
+        """
+        if fragment is None:
+            return False
+        local, argument = fragment
+        if local:
+            self.locals.append(local)
+        if argument:
+            self.arguments.append(argument)
+        return True
+
+    def trailing_lambda(self, body: str, parameter: str | None = None) -> None:
+        """Record a content lambda that follows the call.
+
+        Args:
+            body: The lambda body, already indented.
+            parameter: Lambda parameter name, for a slot that consumes a scope.
+        """
+        if body:
+            self.trailing.append(body)
+            self.trailing_parameter = parameter or self.trailing_parameter
+
+
+def _dp_renderable(spec: dict[str, Any]) -> bool:
+    """Report whether a dp prop has something to fall back on.
+
+    A dp prop is always passed when it is required or carries a literal model
+    default, and an optional one names its pinned default in ``nativeDefault``.
+    Without either, a stated value would ride the wire and never reach Compose.
+
+    Args:
+        spec: The prop's schema entry.
+
+    Returns:
+        True when the adapter can render the prop without a decision.
+    """
+    return bool(spec.get("required") or "default" in spec or "nativeDefault" in spec)

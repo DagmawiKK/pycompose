@@ -68,7 +68,7 @@ def _keys(expression: dict[str, Any], expected: set[str]) -> None:
 
 def _literal(value: Any, classifier: str) -> str:
     """Render a literal of the declared type, or refuse. Never widen or narrow types."""
-    from pycompose.schema.codegen.main import _kt_string
+    from pycompose.schema.codegen.literals import kotlin_string
 
     if value is None:
         return "null"
@@ -77,7 +77,7 @@ def _literal(value: Any, classifier: str) -> str:
             return "true" if value else "false"
     elif classifier == "kotlin/String":
         if isinstance(value, str):
-            return _kt_string(value)
+            return kotlin_string(value)
     elif classifier in {"kotlin/Int", "kotlin/Long"}:
         bits = 32 if classifier == "kotlin/Int" else 64
         if type(value) is int and -(2 ** (bits - 1)) <= value < 2 ** (bits - 1):

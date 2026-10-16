@@ -1,0 +1,203 @@
+"""Interaction and state rules: the stateful-prop validator family.
+
+Validates interaction sources, reported payloads and state projections;
+each claims its native parameters exactly once across the component, so the
+wire stays expressible and the host never double-counts.
+"""
+
+import re
+from typing import Any
+
+from pycompose.core.registry_types import INTERACTION_KINDS
+from pycompose.schema.codegen.rules import (
+    NATIVE_PARAMETER,
+    die,
+)
+
+INTERACTION_KEYS = frozenset({"native", "observations"})
+
+STATE_KEYS = frozenset({"native", "kind", "value", "report", "dismiss"})
+
+STATE_KINDS = frozenset({"drawer", "sheet"})
+
+REPORTED_FIELD = re.compile(r"[a-z][A-Za-z0-9]*")
+
+
+def _validate_interaction(
+    name: str,
+    props: dict[str, Any],
+    children: dict[str, Any],
+    slots: object,
+    interaction: object,
+) -> None:
+    """Check a component's declared interaction source against the vocabulary.
+
+    The interaction source is the host's, not the app's: the schema names the
+    native parameter it fills and, per interaction kind, the prop whose action
+    observes that kind, and the generator omits those props from the app's
+    arguments. Each observed payload is declared once, on its prop, exactly as
+    every other host-originated callback declares it.
+
+    Args:
+        name: Component name, for error messages.
+        props: The component's props; every observed prop must be one of them.
+        children: The component's ``children`` object, whose native parameter
+            the interaction source must not reuse.
+        slots: The component's declared slots, which claim their own natives.
+        interaction: The raw ``interaction`` object, or None.
+    """
+    if interaction is None:
+        return
+    where = f"component {name!r} interaction"
+    if not isinstance(interaction, dict):
+        die(f"{where} must be an object")
+    unknown = sorted(set(interaction) - INTERACTION_KEYS)
+    if unknown:
+        die(f"{where} has unknown keys: {', '.join(unknown)}")
+    injected = interaction.get("native")
+    if not isinstance(injected, str) or not NATIVE_PARAMETER.match(injected):
+        die(f"{where}: 'native' must be a parameter name")
+    natives = {children.get("native", "content")}
+    if isinstance(slots, dict):
+        natives.update(
+            slot["native"]
+            for slot in slots.values()
+            if isinstance(slot, dict) and isinstance(slot.get("native"), str)
+        )
+    if injected in natives or injected in props:
+        die(f"{where}: 'native' repeats another parameter")
+    observations = interaction.get("observations")
+    if not isinstance(observations, dict) or not observations:
+        die(f"{where}: 'observations' must be a non-empty object")
+    for kind, observed in sorted(observations.items()):
+        if kind not in INTERACTION_KINDS:
+            die(
+                f"{where}: unknown observation {kind!r}; vocabulary: "
+                + ", ".join(sorted(INTERACTION_KINDS))
+            )
+        prop = props.get(observed) if isinstance(observed, str) else None
+        if prop is None:
+            die(f"{where}: observation {kind!r} must name one of the props")
+        if prop.get("type") != "actionId":
+            die(f"{where}: prop {observed!r} must be an actionId")
+        _validate_reported_payload(where, observed, prop)
+
+
+def _validate_reported_payload(
+    where: str, prop_name: object, prop: dict[str, Any]
+) -> None:
+    """Check a host-reported prop carries exactly one boolean payload field.
+
+    The host fills one named boolean; more fields would mean the host guessed
+    which one reports the value, which is what the planner refuses to do
+    everywhere else.
+
+    Args:
+        where: Where the prop was declared, for error messages.
+        prop_name: The prop's schema name.
+        prop: The prop's schema entry.
+    """
+    payload = prop.get("payload")
+    field = payload[0] if isinstance(payload, list) and len(payload) == 1 else None
+    if (
+        not isinstance(field, dict)
+        or field.get("type") != "boolean"
+        or not isinstance(field.get("name"), str)
+        or REPORTED_FIELD.fullmatch(field["name"]) is None
+    ):
+        die(f"{where}: prop {prop_name!r} needs one boolean payload field")
+
+
+def _claimed_parameter(where: str, key: str, value: object, claimed: set[str]) -> str:
+    """Return one declared native parameter after checking what it claims.
+
+    The state names native parameters the generated call must fill itself, so
+    each one has to be a parameter name, and none may be a parameter the
+    component's other declarations already name: two arguments for one parameter
+    would not compile, and a shadowed prop would never reach the component.
+
+    Args:
+        where: Prefix for error messages.
+        key: The state key naming the parameter, for the message.
+        value: The raw value, which must be a parameter name.
+        claimed: Parameters the declaration already names.
+
+    Returns:
+        The parameter name.
+    """
+    if not isinstance(value, str) or NATIVE_PARAMETER.match(value) is None:
+        die(f"{where}: {key!r} must be a parameter name")
+    if value in claimed:
+        die(f"{where}: {key!r} repeats another parameter")
+    return value
+
+
+def _validate_state(
+    name: str,
+    props: dict[str, Any],
+    children: dict[str, Any],
+    slots: object,
+    state: object,
+) -> None:
+    """Check a component's declared state holder against the vocabulary.
+
+    The state object is the host's, not the app's: the schema names the native
+    parameter it fills, the family whose create/drive/report logic applies, the
+    prop carrying Python's desired value, and the prop reporting settled
+    changes. The generator omits both props from the app's native arguments,
+    exactly as it does for an observed interaction.
+
+    A family may also name a native parameter it *completes* rather than fills
+    from a prop: ``dismiss`` is the callback through which the component
+    announces a dismissal it has already carried out, which the props above
+    already report, so the host answers it with an empty callback.
+
+    Args:
+        name: Component name, for error messages.
+        props: The component's props; the value and report must be among them.
+        children: The component's ``children`` object, whose native parameter
+            the state holder must not reuse.
+        slots: The component's declared slots, which claim their own natives.
+        state: The raw ``state`` object, or None.
+    """
+    if state is None:
+        return
+    where = f"component {name!r} state"
+    if not isinstance(state, dict):
+        die(f"{where} must be an object")
+    unknown = sorted(set(state) - STATE_KEYS)
+    if unknown:
+        die(f"{where} has unknown keys: {', '.join(unknown)}")
+    natives = {children.get("native", "content")}
+    if isinstance(slots, dict):
+        natives.update(
+            slot["native"]
+            for slot in slots.values()
+            if isinstance(slot, dict) and isinstance(slot.get("native"), str)
+        )
+    claimed = natives | set(props)
+    injected = _claimed_parameter(where, "native", state.get("native"), claimed)
+    kind = state.get("kind")
+    if not isinstance(kind, str) or kind not in STATE_KINDS:
+        die(
+            f"{where}: unknown state kind {kind!r}; vocabulary: "
+            + ", ".join(sorted(STATE_KINDS))
+        )
+    value = state.get("value")
+    prop = props.get(value) if isinstance(value, str) else None
+    if prop is None:
+        die(f"{where}: 'value' must name one of the props")
+    if prop.get("type") != "boolean":
+        # The family drives one boolean -- a drawer is open or it is not -- so
+        # a prop of any other type cannot carry that family's desired state.
+        die(f"{where}: prop {value!r} must be a boolean")
+    report = state.get("report")
+    reported = props.get(report) if isinstance(report, str) else None
+    if reported is None:
+        die(f"{where}: 'report' must name one of the props")
+    if reported.get("type") != "actionId":
+        die(f"{where}: prop {report!r} must be an actionId")
+    _validate_reported_payload(where, report, reported)
+    dismiss = state.get("dismiss")
+    if dismiss is not None:
+        _claimed_parameter(where, "dismiss", dismiss, claimed | {injected})

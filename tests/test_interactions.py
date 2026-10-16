@@ -147,13 +147,13 @@ def _load_with(
         monkeypatch: Pytest monkeypatch fixture.
         mutate: Applies the change to the loaded registry.
     """
-    from pycompose.schema.codegen import main
+    from pycompose.schema.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     mutate(registry)
     path = tmp_path / "components.json"
     path.write_text(json.dumps(registry))
-    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    monkeypatch.setattr(rules, "SCHEMA_PATH", path)
     main.load_registry()
 
 

@@ -6,11 +6,10 @@ from pathlib import Path
 import pytest
 
 from pycompose.schema.codegen.app_slice import slice_registry
-from pycompose.schema.codegen.values import (
-    definitions,
+from pycompose.schema.codegen.values import definitions, render_python
+from pycompose.schema.codegen.values_kotlin import (
     render_models,
     render_native,
-    render_python,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,7 +50,7 @@ def test_the_value_specs_literal_is_joined_from_a_flat_list() -> None:
 def test_codegen_rejects_unresolved_value_dependencies(
     tmp_path: Path, monkeypatch
 ) -> None:
-    from pycompose.schema.codegen import main
+    from pycompose.schema.codegen import main, rules
 
     registry = json.loads((ROOT / "schema/components.json").read_text())
     registry["valueTypes"]["TextStyle"]["parameters"]["fontSize"]["valueType"] = (
@@ -59,7 +58,7 @@ def test_codegen_rejects_unresolved_value_dependencies(
     )
     path = tmp_path / "components.json"
     path.write_text(json.dumps(registry))
-    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    monkeypatch.setattr(rules, "SCHEMA_PATH", path)
     with pytest.raises(SystemExit, match="unknown value family"):
         main.load_registry()
 
@@ -82,7 +81,7 @@ def test_explicit_value_imports_are_kept_in_app_slice(tmp_path: Path) -> None:
 
 
 def test_codegen_refuses_untyped_native_defaults(tmp_path: Path, monkeypatch) -> None:
-    from pycompose.schema.codegen import main
+    from pycompose.schema.codegen import main, rules
 
     registry = json.loads((ROOT / "schema/components.json").read_text())
     rule = registry["valueTypes"]["buttonElevation"]["parameters"]["defaultElevation"]
@@ -90,25 +89,25 @@ def test_codegen_refuses_untyped_native_defaults(tmp_path: Path, monkeypatch) ->
     rule["defaultNative"] = "arbitrary.native.Expression()"
     path = tmp_path / "components.json"
     path.write_text(json.dumps(registry))
-    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    monkeypatch.setattr(rules, "SCHEMA_PATH", path)
     with pytest.raises(SystemExit, match="missing native default provider"):
         main.load_registry()
 
 
 def test_codegen_refuses_a_repeated_schema_version(tmp_path: Path, monkeypatch) -> None:
-    from pycompose.schema.codegen import main
+    from pycompose.schema.codegen import main, rules
 
     registry = json.loads((ROOT / "schema/components.json").read_text())
     registry["supportedSchemaVersions"].append(registry["schemaVersion"])
     path = tmp_path / "components.json"
     path.write_text(json.dumps(registry))
-    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    monkeypatch.setattr(rules, "SCHEMA_PATH", path)
     with pytest.raises(SystemExit, match="must be unique"):
         main.load_registry()
 
 
 def test_codegen_refuses_unproven_opt_in_markers(tmp_path: Path, monkeypatch) -> None:
-    from pycompose.schema.codegen import main
+    from pycompose.schema.codegen import main, rules
 
     registry = json.loads((ROOT / "schema/components.json").read_text())
     registry["valueTypes"]["checkboxColors"]["optIn"] = [
@@ -117,7 +116,7 @@ def test_codegen_refuses_unproven_opt_in_markers(tmp_path: Path, monkeypatch) ->
     ]
     path = tmp_path / "components.json"
     path.write_text(json.dumps(registry))
-    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    monkeypatch.setattr(rules, "SCHEMA_PATH", path)
     with pytest.raises(SystemExit, match="optIn must be sorted"):
         main.load_registry()
 
@@ -178,7 +177,7 @@ def test_member_vocabularies_keep_each_holders_name() -> None:
 
 
 def test_codegen_refuses_an_unproven_member_holder(tmp_path: Path, monkeypatch) -> None:
-    from pycompose.schema.codegen import main
+    from pycompose.schema.codegen import main, rules
 
     path = tmp_path / "components.json"
     registry = json.loads((ROOT / "schema/components.json").read_text())
@@ -186,7 +185,7 @@ def test_codegen_refuses_an_unproven_member_holder(tmp_path: Path, monkeypatch) 
         "androidx.compose.ui.AbsoluteAlignment"
     )
     path.write_text(json.dumps(registry))
-    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    monkeypatch.setattr(rules, "SCHEMA_PATH", path)
     with pytest.raises(SystemExit, match=r"owners.TopMost is not a value"):
         main.load_registry()
 

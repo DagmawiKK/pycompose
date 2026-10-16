@@ -37,12 +37,13 @@ def _registry() -> dict:
 
 
 def _gen() -> object:
-    """The codegen module, imported the ordinary way.
+    """The codegen emission module, imported the ordinary way.
 
-    It used to be loaded from ``tools/schema/gen.py`` by file path, because it
-    did not live anywhere importable. It lives in the package now.
+    Emitters live beside the loader now: the renderers moved into
+    ``emit_python`` / ``emit_wire`` and the loader into ``rules``, so the
+    freshness checks grade the modules that actually produce each artifact.
     """
-    return importlib.import_module("pycompose.schema.codegen.main")
+    return importlib.import_module("pycompose.schema.codegen.emit_python")
 
 
 def _expected(renderer: str) -> str:
@@ -89,7 +90,9 @@ def test_components_json_shape() -> None:
 
 
 def test_ir_schema_is_fresh() -> None:
-    assert IR_SCHEMA_PATH.read_text(encoding="utf-8") == _expected("render_ir_schema")
+    assert IR_SCHEMA_PATH.read_text(encoding="utf-8") == importlib.import_module(
+        "pycompose.schema.codegen.emit_wire"
+    ).render_ir_schema(_registry())
     assert (
         ROOT / "pycompose" / "schema" / "ir.schema.json"
     ).read_bytes() == IR_SCHEMA_PATH.read_bytes()

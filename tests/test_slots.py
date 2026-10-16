@@ -191,7 +191,7 @@ def _load_with(
     """
     import json
 
-    from pycompose.schema.codegen import main
+    from pycompose.schema.codegen import main, rules
 
     registry = json.loads(
         (Path(__file__).resolve().parents[1] / "schema/components.json").read_text()
@@ -199,7 +199,7 @@ def _load_with(
     mutate(registry)
     path = tmp_path / "components.json"
     path.write_text(json.dumps(registry))
-    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    monkeypatch.setattr(rules, "SCHEMA_PATH", path)
     main.load_registry()
 
 
@@ -295,7 +295,7 @@ def test_a_slot_bearing_component_carries_its_children() -> None:
     sees it, so the declared slot is the fact that decides, not
     ``children.allowed``.
     """
-    from pycompose.schema.codegen.main import render_kotlin_models
+    from pycompose.schema.codegen.emit_kotlin import render_kotlin_models
 
     models = render_kotlin_models(
         {
