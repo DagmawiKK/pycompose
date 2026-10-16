@@ -5,27 +5,28 @@ import com.pycompose.ir.ComponentRule
 import com.pycompose.ir.PropertyRule
 
 object IrContract {
-    const val SCHEMA_VERSION: String = "1.21.0"
+    const val SCHEMA_VERSION: String = "1.22.0"
     const val MIN_SCHEMA_VERSION: String = "1.0.0"
-    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0", "1.12.0", "1.13.0", "1.14.0", "1.15.0", "1.16.0", "1.17.0", "1.18.0", "1.19.0", "1.20.0", "1.21.0")
+    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0", "1.12.0", "1.13.0", "1.14.0", "1.15.0", "1.16.0", "1.17.0", "1.18.0", "1.19.0", "1.20.0", "1.21.0", "1.22.0")
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
-        "Button" to ComponentRule(
+        "Card" to ComponentRule(
             slots = setOf(),
-            childrenAllowed = false,
+            childrenAllowed = true,
             minimumChildren = 0,
-            since = "1.0.0",
+            since = "1.22.0",
             props = mapOf(
-                "colors" to PropertyRule("value", required = false, since = "1.11.0", valueType = "ButtonColors"),
-                "elevation" to PropertyRule("value", required = false, since = "1.11.0", valueType = "ButtonElevation", nullable = true),
+                "border" to PropertyRule("value", required = false, valueType = "BorderStroke", nullable = true),
+                "colors" to PropertyRule("value", required = false, valueType = "CardColors"),
+                "elevation" to PropertyRule("value", required = false, valueType = "CardElevation"),
                 "enabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
                 "onFocus" to PropertyRule("actionId", required = false),
                 "onHover" to PropertyRule("actionId", required = false),
                 "onPress" to PropertyRule("actionId", required = false),
-                "text" to PropertyRule("string", required = true),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
         "Column" to ComponentRule(
@@ -38,6 +39,33 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
+        "FloatingActionButton" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.22.0",
+            props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "elevation" to PropertyRule("value", required = false, valueType = "FloatingActionButtonElevation"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "onFocus" to PropertyRule("actionId", required = false),
+                "onHover" to PropertyRule("actionId", required = false),
+                "onPress" to PropertyRule("actionId", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+            ),
+        ),
+        "HorizontalDivider" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.22.0",
+            props = mapOf(
+                "color" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "thickness" to PropertyRule("dp", required = false),
+            ),
+        ),
         "Icon" to ComponentRule(
             slots = setOf(),
             childrenAllowed = false,
@@ -48,6 +76,21 @@ object IrContract {
                 "imageVector" to PropertyRule("value", required = true, valueType = "ImageVector"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "tint" to PropertyRule("color", required = false, valueType = "Color"),
+            ),
+        ),
+        "IconButton" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.22.0",
+            props = mapOf(
+                "colors" to PropertyRule("value", required = false, valueType = "IconButtonColors"),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "onFocus" to PropertyRule("actionId", required = false),
+                "onHover" to PropertyRule("actionId", required = false),
+                "onPress" to PropertyRule("actionId", required = false),
             ),
         ),
         "LazyColumn" to ComponentRule(
@@ -83,6 +126,35 @@ object IrContract {
                 "open" to PropertyRule("boolean", required = false),
             ),
         ),
+        "NavigationBar" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.22.0",
+            props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "tonalElevation" to PropertyRule("dp", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
+            ),
+        ),
+        "NavigationBarItem" to ComponentRule(
+            slots = setOf("icon", "label"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.22.0",
+            props = mapOf(
+                "alwaysShowLabel" to PropertyRule("boolean", required = false),
+                "colors" to PropertyRule("value", required = false, valueType = "NavigationBarItemColors"),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "onFocus" to PropertyRule("actionId", required = false),
+                "onHover" to PropertyRule("actionId", required = false),
+                "onPress" to PropertyRule("actionId", required = false),
+                "selected" to PropertyRule("boolean", required = true),
+            ),
+        ),
         "Row" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -110,6 +182,22 @@ object IrContract {
             since = "1.0.0",
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
+        "Switch" to ComponentRule(
+            slots = setOf("thumbContent"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.22.0",
+            props = mapOf(
+                "checked" to PropertyRule("boolean", required = true),
+                "colors" to PropertyRule("value", required = false, valueType = "SwitchColors"),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onCheckedChange" to PropertyRule("actionId", required = true),
+                "onFocus" to PropertyRule("actionId", required = false),
+                "onHover" to PropertyRule("actionId", required = false),
+                "onPress" to PropertyRule("actionId", required = false),
             ),
         ),
         "Text" to ComponentRule(
@@ -155,6 +243,17 @@ object IrContract {
                 "onValueChange" to PropertyRule("actionId", required = true),
                 "selection" to PropertyRule("integer", required = false),
                 "value" to PropertyRule("string", required = true),
+            ),
+        ),
+        "VerticalDivider" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.22.0",
+            props = mapOf(
+                "color" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "thickness" to PropertyRule("dp", required = false),
             ),
         ),
     )

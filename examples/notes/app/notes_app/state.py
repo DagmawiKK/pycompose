@@ -16,6 +16,12 @@ from pycompose.state import AppState
 LIST_ROUTE = "notes"
 DETAIL_PREFIX = "note:"
 
+TEXT_FILTER = "with_text"
+"""The listing that keeps only the notes carrying a body."""
+
+ALL_FILTER = "all"
+"""The listing that keeps every note."""
+
 
 def detail_route(note_id: int) -> str:
     """Return the route naming one note.
@@ -57,6 +63,8 @@ class Session(AppState):
         title_caret: Where the caret sits in the title field.
         body_caret: Where the caret sits in the body field.
         about_open: Whether the about sheet is showing.
+        previews: Whether rows show a line of the note's body.
+        listing: Which filter the list is showing.
     """
 
     route: str = LIST_ROUTE
@@ -64,6 +72,8 @@ class Session(AppState):
     title_caret: int = 0
     body_caret: int = 0
     about_open: bool = False
+    previews: bool = True
+    listing: str = ALL_FILTER
 
 
 def seeded_session() -> Session:

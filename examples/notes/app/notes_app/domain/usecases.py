@@ -71,6 +71,21 @@ def filled_share(notes: list[Note]) -> float:
     return sum(1 for note in notes if note.body.strip()) / len(notes)
 
 
+def carrying_text(notes: list[Note]) -> list[Note]:
+    """Return the notes that carry a body, in the order they were given.
+
+    "Carries text" is the same fact the about sheet's bar measures, so the
+    filter and the bar can never disagree about what a filled note is.
+
+    Args:
+        notes: The notes to sift.
+
+    Returns:
+        Only the notes whose body has something in it.
+    """
+    return [note for note in notes if note.body.strip()]
+
+
 class Notes:
     """Everything the app can do with notes, with the storage already bound.
 

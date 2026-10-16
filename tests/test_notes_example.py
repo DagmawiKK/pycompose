@@ -343,6 +343,7 @@ def test_the_list_shows_a_title_preview_and_delete_for_every_note(
     assert [props["text"] for props in nodes(snapshot, "Text")] == [
         "Notes",
         "2 notes",
+        "Show note previews",
         "Try it",
         "Tap a note to edit it, or add one with the New button.",
         "Welcome",
@@ -352,9 +353,113 @@ def test_the_list_shows_a_title_preview_and_delete_for_every_note(
         "sheet is open; the host drives it and reports back what it settled on.",
         "That bar is Python state too: the share of your notes that have a body. "
         "The value is read during composition, so it tracks the notes you keep.",
+        "All notes",
+        "With text",
     ]
     # about + one delete per row + the sheet's close control
     assert len(nodes(snapshot, "TextButton")) == 4
+
+
+def test_the_scaffolds_slots_hold_the_bar_and_the_button(app: ModuleType) -> None:
+    """The wire has one place for a child; the slot says where it composes.
+
+    A Scaffold's floating button and bottom bar are the Scaffold's own content,
+    not the body's, so they arrive marked with the slot the parent declared --
+    and the rule under the header is a real divider, stated in dp.
+    """
+    snapshot = Host(app, follow_navigation=False).snapshot()
+    assert {
+        child["type"]: child.get("slot") for child in snapshot["root"]["children"]
+    } == {
+        "Column": None,
+        "NavigationBar": "bottomBar",
+        "FloatingActionButton": "floatingActionButton",
+    }
+    assert [rule["thickness"] for rule in nodes(snapshot, "HorizontalDivider")] == [1]
+
+
+def test_the_previews_switch_rewrites_what_every_row_shows(app: ModuleType) -> None:
+    """A control the host owns natively, with Python as the only source of truth.
+
+    The switch reports the value it settled on, and the handler assigns what it
+    was handed rather than flipping what it believed -- which is what keeps a
+    report from fighting the user. Stating the value is the whole interface.
+    """
+    host = Host(app, follow_navigation=False)
+    assert data(host.snapshot())["previews"] is True
+    assert [node["checked"] for node in nodes(host.snapshot(), "Switch")] == [True]
+
+    host.tap("set_previews", "previews", value=False)
+    snapshot = host.snapshot()
+    assert data(snapshot)["previews"] is False
+    assert [node["checked"] for node in nodes(snapshot, "Switch")] == [False]
+
+    texts = [props["text"] for props in nodes(snapshot, "Text")]
+    # The titles stay; the line of body under each one goes.
+    assert "Try it" in texts
+    assert "Welcome" in texts
+    assert "Tap a note to edit it, or add one with the New button." not in texts
+    assert "This app is written entirely in Python." not in texts
+
+
+def test_the_filter_bar_narrows_the_list_without_leaving_it(app: ModuleType) -> None:
+    """A navigation bar here is selection, not navigation: nothing moves.
+
+    Each item bakes the filter it stands for into its own binding, so one
+    handler serves both items and the tap carries no data; the one the session
+    names is the selected one, and the rows and the count line follow the
+    filter. A body of spaces carries no text, which is the same fact the about
+    sheet's bar measures.
+    """
+    host = Host(
+        app,
+        follow_navigation=False,
+        repo=a_store([(1, "Body", "words"), (2, "Blank", "   ")]),
+    )
+    assert [
+        item["selected"] for item in nodes(host.snapshot(), "NavigationBarItem")
+    ] == [True, False]
+
+    host.tap("set_listing", "listing_text")
+    snapshot = host.snapshot()
+    assert data(snapshot)["listing"] == "with_text"
+    assert data(snapshot)["route"] == "notes"
+    assert [item["selected"] for item in nodes(snapshot, "NavigationBarItem")] == [
+        False,
+        True,
+    ]
+    texts = [props["text"] for props in nodes(snapshot, "Text")]
+    assert "Body" in texts
+    assert "Blank" not in texts
+    assert "1 note" in texts
+
+
+def test_a_filter_that_matches_nothing_names_the_filter(app: ModuleType) -> None:
+    """An empty list is two different facts, and the screen says which one."""
+    host = Host(app, follow_navigation=False, repo=a_store([(1, "Blank", "  ")]))
+    assert "Blank" in [props["text"] for props in nodes(host.snapshot(), "Text")]
+
+    host.tap("set_listing", "listing_text")
+    texts = [props["text"] for props in nodes(host.snapshot(), "Text")]
+    assert "No notes with text yet." in texts
+    assert "No notes yet." not in texts
+
+
+def test_a_listing_the_app_no_longer_knows_renders_the_whole_list(
+    app: ModuleType,
+) -> None:
+    """A save can outlive the set of filters it was written against.
+
+    The codec checks types, not domains, so a listing it does not recognise
+    arrives here as an ordinary string; the screen shows every note rather than
+    an empty screen nobody can explain.
+    """
+    saved = json.dumps({"route": "notes", "listing": "everything"})
+    snapshot = Host(app, restore=saved).snapshot()
+    assert data(snapshot)["listing"] == "everything"
+    texts = [props["text"] for props in nodes(snapshot, "Text")]
+    assert "Try it" in texts
+    assert "Welcome" in texts
 
 
 def test_the_about_bar_states_a_share_the_host_reads(app: ModuleType) -> None:
@@ -375,18 +480,24 @@ def test_the_about_bar_states_a_share_the_host_reads(app: ModuleType) -> None:
     assert stated == pytest.approx(2 / 3)
 
 
-def test_the_about_heading_names_an_icon_the_host_resolves(app: ModuleType) -> None:
+def test_every_icon_names_a_pinned_glyph_the_host_resolves(app: ModuleType) -> None:
     """An icon vocabulary prop: the app names a pinned icon, never a vector.
 
     ``Icon.imageVector`` is an ``ImageVector``, which exists only on the native
     side, so the snapshot carries the path under ``Icons`` and the host reads
-    that property. The heading shows a native icon with no Kotlin in the app.
+    that property. Every glyph on the screen comes from that vocabulary, and the
+    controls that are nothing but an icon say what they are in words.
     """
     host = Host(app, follow_navigation=False)
     icons = nodes(host.snapshot(), "Icon")
-    assert len(icons) == 1
-    assert icons[0]["imageVector"] == {"type": "materialIcon", "name": "Filled.Info"}
-    assert icons[0]["contentDescription"] == "About this app"
+    assert [
+        (icon["contentDescription"], icon["imageVector"]["name"]) for icon in icons
+    ] == [
+        ("About this app", "Filled.Info"),
+        (None, "Filled.Home"),
+        (None, "Filled.Edit"),
+        ("New note", "Filled.Add"),
+    ]
 
 
 def test_an_empty_repository_says_so_instead_of_rendering_nothing(
@@ -532,6 +643,24 @@ def test_typing_updates_the_note_being_edited(app: ModuleType) -> None:
     # from whatever state happened to be carrying the notes.
     host.tap("go_back", "back")
     assert "3 notes" in [props["text"] for props in nodes(host.snapshot(), "Text")]
+
+
+def test_the_editor_bar_is_an_icon_button_beside_a_rule(app: ModuleType) -> None:
+    """The way back is a glyph, and the rule is a component, not a box.
+
+    An icon button has no text of its own, so its icon carries the label a
+    screen reader reads; the divider is the host's to draw, with the app saying
+    only which colour it wants.
+    """
+    host = Host(app)
+    host.tap("open_note", "n2")
+    snapshot = host.snapshot()
+    assert len(nodes(snapshot, "IconButton")) == 1
+    assert [
+        (icon["contentDescription"], icon["imageVector"]["name"])
+        for icon in nodes(snapshot, "Icon")
+    ] == [("Back to notes", "AutoMirrored.Filled.ArrowBack")]
+    assert [rule["color"] for rule in nodes(snapshot, "VerticalDivider")] == ["#6C7779"]
 
 
 def test_each_row_deletes_only_its_own_note(app: ModuleType) -> None:
@@ -697,7 +826,15 @@ def test_only_the_shell_crosses_the_boundary(app: ModuleType) -> None:
     host = Host(app, repo=a_store([(n, f"Note {n}") for n in range(50)]))
     published = data(host.snapshot())
 
-    assert set(published) == {"route", "dark", "titleCaret", "bodyCaret", "aboutOpen"}
+    assert set(published) == {
+        "route",
+        "dark",
+        "titleCaret",
+        "bodyCaret",
+        "aboutOpen",
+        "previews",
+        "listing",
+    }
     assert len(json.dumps(published)) < 200
     # Fifty rows render; none of them are in what the host saves.
     assert "Note 49" in [props["text"] for props in nodes(host.snapshot(), "Text")]
@@ -740,6 +877,8 @@ def test_ten_thousand_notes_survive_a_restart_without_the_bundle_complaining(
             "titleCaret",
             "bodyCaret",
             "aboutOpen",
+            "previews",
+            "listing",
         }
         assert len(json.dumps(published)) < 200
         # The file, meanwhile, is megabytes -- which is exactly why it is there.
@@ -775,7 +914,7 @@ def test_every_snapshot_is_a_valid_canonical_ir(app: ModuleType) -> None:
     host.tap("set_title", "title", value="Check")
     host.tap("go_back", "back")
     snapshot = host.snapshot()
-    assert snapshot["schemaVersion"] == "1.21.0"
+    assert snapshot["schemaVersion"] == "1.22.0"
     assert "metadata" in snapshot
     assert host.error == ""
 

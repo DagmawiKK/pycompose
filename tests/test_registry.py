@@ -265,7 +265,7 @@ def test_the_notes_app_declares_each_action_exactly_once() -> None:
         ]
     )
     assert declared == len(module.actions.names())
-    assert len(module.actions.names()) == 12
+    assert len(module.actions.names()) == 14
 
 
 def test_the_notes_app_has_no_handler_dataclass_left() -> None:

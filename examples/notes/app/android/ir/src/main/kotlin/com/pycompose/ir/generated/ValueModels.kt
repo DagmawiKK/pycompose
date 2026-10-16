@@ -14,21 +14,29 @@ import kotlinx.serialization.json.double
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonObject
 
+sealed interface BorderStrokeValue
+
 sealed interface BrushValue
 
-sealed interface ButtonColorsValue
+sealed interface CardColorsValue
 
-sealed interface ButtonElevationValue
+sealed interface CardElevationValue
 
 sealed interface ColorValue
 
 sealed interface DpValue
 
+sealed interface FloatingActionButtonElevationValue
+
 sealed interface FontFamilyValue
 
 sealed interface FontWeightValue
 
+sealed interface IconButtonColorsValue
+
 sealed interface ImageVectorValue
+
+sealed interface NavigationBarItemColorsValue
 
 sealed interface OffsetValue
 
@@ -36,11 +44,19 @@ sealed interface PaddingValuesValue
 
 sealed interface ShapeValue
 
+sealed interface SwitchColorsValue
+
 sealed interface TextStyleValue
 
 sealed interface TextUnitValue
 
 sealed interface WindowInsetsValue
+
+data class WireBorderStroke(
+    val supplied: Set<String>,
+    val width: DpValue,
+    val brush: BrushValue,
+) : BorderStrokeValue
 
 data class WireColor(
     val supplied: Set<String>,
@@ -133,22 +149,67 @@ data class WireWindowInsets(
     val bottom: DpValue? = null,
 ) : WindowInsetsValue
 
-data class WirebuttonColors(
-    val supplied: Set<String>,
-    val containerColor: ColorValue? = null,
-    val contentColor: ColorValue? = null,
-    val disabledContainerColor: ColorValue? = null,
-    val disabledContentColor: ColorValue? = null,
-) : ButtonColorsValue
-
-data class WirebuttonElevation(
+data class WirebottomAppBarFabElevation(
     val supplied: Set<String>,
     val defaultElevation: DpValue? = null,
     val pressedElevation: DpValue? = null,
     val focusedElevation: DpValue? = null,
     val hoveredElevation: DpValue? = null,
+) : FloatingActionButtonElevationValue
+
+data class WirecardColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+) : CardColorsValue
+
+data class WirecardElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
     val disabledElevation: DpValue? = null,
-) : ButtonElevationValue
+) : CardElevationValue
+
+data class WireelevatedCardColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+) : CardColorsValue
+
+data class WireelevatedCardElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+    val disabledElevation: DpValue? = null,
+) : CardElevationValue
+
+data class WirefilledIconButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledContentColor: ColorValue? = null,
+) : IconButtonColorsValue
+
+data class WirefilledTonalIconButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+    val disabledContentColor: ColorValue? = null,
+) : IconButtonColorsValue
+
+data class WirefloatingActionButtonElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+) : FloatingActionButtonElevationValue
 
 data class WirehorizontalGradient(
     val supplied: Set<String>,
@@ -157,6 +218,13 @@ data class WirehorizontalGradient(
     val endX: Double? = null,
 ) : BrushValue
 
+data class WireiconButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val contentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+) : IconButtonColorsValue
+
 data class WirelinearGradient(
     val supplied: Set<String>,
     val colors: List<ColorValue>,
@@ -164,10 +232,55 @@ data class WirelinearGradient(
     val end: OffsetValue? = null,
 ) : BrushValue
 
+data class WireloweredElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val pressedElevation: DpValue? = null,
+    val focusedElevation: DpValue? = null,
+    val hoveredElevation: DpValue? = null,
+) : FloatingActionButtonElevationValue
+
 data class WirematerialIcon(
     val supplied: Set<String>,
     val name: String,
 ) : ImageVectorValue
+
+data class WirenavigationBarItemColors(
+    val supplied: Set<String>,
+    val selectedIconColor: ColorValue? = null,
+    val selectedTextColor: ColorValue? = null,
+    val indicatorColor: ColorValue? = null,
+    val unselectedIconColor: ColorValue? = null,
+    val unselectedTextColor: ColorValue? = null,
+    val disabledIconColor: ColorValue? = null,
+    val disabledTextColor: ColorValue? = null,
+) : NavigationBarItemColorsValue
+
+data class WireoutlinedCardColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+) : CardColorsValue
+
+data class WireoutlinedCardElevation(
+    val supplied: Set<String>,
+    val defaultElevation: DpValue? = null,
+    val draggedElevation: DpValue? = null,
+    val disabledElevation: DpValue? = null,
+) : CardElevationValue
+
+data class WireoutlinedIconButtonColors(
+    val supplied: Set<String>,
+    val containerColor: ColorValue? = null,
+    val contentColor: ColorValue? = null,
+    val disabledContainerColor: ColorValue? = null,
+) : IconButtonColorsValue
+
+data class WireswitchColors(
+    val supplied: Set<String>,
+    val checkedBorderColor: ColorValue? = null,
+    val disabledCheckedBorderColor: ColorValue? = null,
+) : SwitchColorsValue
 
 data class WireverticalGradient(
     val supplied: Set<String>,
@@ -177,176 +290,252 @@ data class WireverticalGradient(
 ) : BrushValue
 
 object ValueContract {
-    const val SCHEMA_VERSION = "1.21.0"
+    const val SCHEMA_VERSION = "1.22.0"
     private val json = Json { classDiscriminator = "type" }
     val specs: JsonObject = json.parseToJsonElement(
-        "{\"Color\":{\"family\":\"Color\",\"parameters\":{\"color\":{\"maximum\":" +
-        "4294967295,\"minimum\":0,\"required\":true,\"type\":\"long\"}},\"sinc" +
-        "e\":\"1.11.0\"},\"CutCornerShape\":{\"family\":\"Shape\",\"parameters\"" +
-        ":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"value\",\"valueT" +
-        "ype\":\"Dp\"}},\"since\":\"1.11.0\"},\"Dp\":{\"family\":\"Dp\",\"parameter" +
-        "s\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11." +
-        "0\"},\"Em\":{\"family\":\"TextUnit\",\"parameters\":{\"value\":{\"requir" +
-        "ed\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"FontFamily\":{\"f" +
-        "amily\":\"FontFamily\",\"parameters\":{\"name\":{\"required\":true,\"t" +
-        "ype\":\"string\",\"values\":[\"Cursive\",\"Default\",\"Monospace\",\"San" +
-        "sSerif\",\"Serif\"]}},\"since\":\"1.11.0\"},\"FontWeight\":{\"family\":" +
-        "\"FontWeight\",\"parameters\":{\"weight\":{\"maximum\":1000,\"minimum" +
-        "\":1,\"required\":true,\"type\":\"int\"}},\"since\":\"1.11.0\"},\"Offset" +
-        "\":{\"family\":\"Offset\",\"parameters\":{\"x\":{\"required\":true,\"typ" +
-        "e\":\"float\"},\"y\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1" +
-        ".11.0\"},\"PaddingValues\":{\"family\":\"PaddingValues\",\"parameter" +
-        "s\":{\"bottom\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"" +
-        "end\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"start\":{" +
-        "\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\":{\"minimum" +
-        "\":0,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Rou" +
-        "ndedCornerShape\":{\"family\":\"Shape\",\"parameters\":{\"size\":{\"mi" +
-        "nimum\":0,\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"}},\"" +
-        "since\":\"1.11.0\"},\"SolidColor\":{\"family\":\"Brush\",\"parameters\"" +
-        ":{\"value\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Color" +
-        "\"}},\"since\":\"1.11.0\"},\"Sp\":{\"family\":\"TextUnit\",\"parameters\"" +
-        ":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"" +
-        "},\"TextStyle\":{\"family\":\"TextStyle\",\"parameters\":{\"color\":{\"" +
-        "type\":\"value\",\"valueType\":\"Color\"},\"fontFamily\":{\"nullable\":" +
-        "true,\"type\":\"value\",\"valueType\":\"FontFamily\"},\"fontSize\":{\"m" +
-        "inimum\":0,\"type\":\"value\",\"valueType\":\"TextUnit\"},\"fontWeight" +
-        "\":{\"nullable\":true,\"type\":\"value\",\"valueType\":\"FontWeight\"}," +
-        "\"letterSpacing\":{\"type\":\"value\",\"valueType\":\"TextUnit\"}},\"si" +
-        "nce\":\"1.11.0\"},\"ThemeColor\":{\"family\":\"Color\",\"parameters\":{" +
-        "\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"backgroun" +
-        "d\",\"error\",\"errorContainer\",\"inverseOnSurface\",\"inversePrima" +
-        "ry\",\"inverseSurface\",\"onBackground\",\"onError\",\"onErrorContai" +
-        "ner\",\"onPrimary\",\"onPrimaryContainer\",\"onSecondary\",\"onSecon" +
-        "daryContainer\",\"onSurface\",\"onSurfaceVariant\",\"onTertiary\",\"" +
-        "onTertiaryContainer\",\"outline\",\"outlineVariant\",\"primary\",\"p" +
-        "rimaryContainer\",\"scrim\",\"secondary\",\"secondaryContainer\",\"s" +
-        "urface\",\"surfaceBright\",\"surfaceContainer\",\"surfaceContainer" +
-        "High\",\"surfaceContainerHighest\",\"surfaceContainerLow\",\"surfa" +
-        "ceContainerLowest\",\"surfaceDim\",\"surfaceTint\",\"surfaceVarian" +
-        "t\",\"tertiary\",\"tertiaryContainer\"]}},\"since\":\"1.11.0\"},\"Them" +
-        "eShape\":{\"family\":\"Shape\",\"parameters\":{\"name\":{\"required\":t" +
-        "rue,\"type\":\"string\",\"values\":[\"extraLarge\",\"extraSmall\",\"lar" +
-        "ge\",\"medium\",\"small\"]}},\"since\":\"1.11.0\"},\"ThemeTypography\":" +
-        "{\"family\":\"TextStyle\",\"parameters\":{\"name\":{\"required\":true," +
-        "\"type\":\"string\",\"values\":[\"bodyLarge\",\"bodyMedium\",\"bodySmal" +
-        "l\",\"displayLarge\",\"displayMedium\",\"displaySmall\",\"headlineLa" +
-        "rge\",\"headlineMedium\",\"headlineSmall\",\"labelLarge\",\"labelMed" +
-        "ium\",\"labelSmall\",\"titleLarge\",\"titleMedium\",\"titleSmall\"]}}" +
-        ",\"since\":\"1.11.0\"},\"WindowInsets\":{\"family\":\"WindowInsets\",\"" +
-        "parameters\":{\"bottom\":{\"minimum\":0,\"type\":\"value\",\"valueType" +
-        "\":\"Dp\"},\"left\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}" +
-        ",\"right\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"top\"" +
-        ":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.1" +
-        "1.0\"},\"buttonColors\":{\"family\":\"ButtonColors\",\"parameters\":{" +
-        "\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"conte" +
-        "ntColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledConta" +
+        "{\"BorderStroke\":{\"family\":\"BorderStroke\",\"parameters\":{\"brus" +
+        "h\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Brush\"},\"wid" +
+        "th\":{\"minimum\":0,\"required\":true,\"type\":\"value\",\"valueType\":" +
+        "\"Dp\"}},\"since\":\"1.12.0\"},\"Color\":{\"family\":\"Color\",\"paramete" +
+        "rs\":{\"color\":{\"maximum\":4294967295,\"minimum\":0,\"required\":tr" +
+        "ue,\"type\":\"long\"}},\"since\":\"1.11.0\"},\"CutCornerShape\":{\"fami" +
+        "ly\":\"Shape\",\"parameters\":{\"size\":{\"minimum\":0,\"required\":tru" +
+        "e,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"Dp\":{" +
+        "\"family\":\"Dp\",\"parameters\":{\"value\":{\"required\":true,\"type\":" +
+        "\"float\"}},\"since\":\"1.11.0\"},\"Em\":{\"family\":\"TextUnit\",\"param" +
+        "eters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1" +
+        ".11.0\"},\"FontFamily\":{\"family\":\"FontFamily\",\"parameters\":{\"n" +
+        "ame\":{\"required\":true,\"type\":\"string\",\"values\":[\"Cursive\",\"D" +
+        "efault\",\"Monospace\",\"SansSerif\",\"Serif\"]}},\"since\":\"1.11.0\"}" +
+        ",\"FontWeight\":{\"family\":\"FontWeight\",\"parameters\":{\"weight\":" +
+        "{\"maximum\":1000,\"minimum\":1,\"required\":true,\"type\":\"int\"}},\"" +
+        "since\":\"1.11.0\"},\"Offset\":{\"family\":\"Offset\",\"parameters\":{\"" +
+        "x\":{\"required\":true,\"type\":\"float\"},\"y\":{\"required\":true,\"ty" +
+        "pe\":\"float\"}},\"since\":\"1.11.0\"},\"PaddingValues\":{\"family\":\"P" +
+        "addingValues\",\"parameters\":{\"bottom\":{\"minimum\":0,\"type\":\"va" +
+        "lue\",\"valueType\":\"Dp\"},\"end\":{\"minimum\":0,\"type\":\"value\",\"va" +
+        "lueType\":\"Dp\"},\"start\":{\"minimum\":0,\"type\":\"value\",\"valueTyp" +
+        "e\":\"Dp\"},\"top\":{\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"}" +
+        "},\"since\":\"1.11.0\"},\"RoundedCornerShape\":{\"family\":\"Shape\",\"" +
+        "parameters\":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"val" +
+        "ue\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"SolidColor\":{\"fami" +
+        "ly\":\"Brush\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"},\"Sp\":{\"family\"" +
+        ":\"TextUnit\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"f" +
+        "loat\"}},\"since\":\"1.11.0\"},\"TextStyle\":{\"family\":\"TextStyle\"," +
+        "\"parameters\":{\"color\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
+        "fontFamily\":{\"nullable\":true,\"type\":\"value\",\"valueType\":\"Fon" +
+        "tFamily\"},\"fontSize\":{\"minimum\":0,\"type\":\"value\",\"valueType\"" +
+        ":\"TextUnit\"},\"fontWeight\":{\"nullable\":true,\"type\":\"value\",\"v" +
+        "alueType\":\"FontWeight\"},\"letterSpacing\":{\"type\":\"value\",\"val" +
+        "ueType\":\"TextUnit\"}},\"since\":\"1.11.0\"},\"ThemeColor\":{\"family" +
+        "\":\"Color\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"stri" +
+        "ng\",\"values\":[\"background\",\"error\",\"errorContainer\",\"inverse" +
+        "OnSurface\",\"inversePrimary\",\"inverseSurface\",\"onBackground\"," +
+        "\"onError\",\"onErrorContainer\",\"onPrimary\",\"onPrimaryContainer" +
+        "\",\"onSecondary\",\"onSecondaryContainer\",\"onSurface\",\"onSurfac" +
+        "eVariant\",\"onTertiary\",\"onTertiaryContainer\",\"outline\",\"outl" +
+        "ineVariant\",\"primary\",\"primaryContainer\",\"scrim\",\"secondary\"" +
+        ",\"secondaryContainer\",\"surface\",\"surfaceBright\",\"surfaceCont" +
+        "ainer\",\"surfaceContainerHigh\",\"surfaceContainerHighest\",\"sur" +
+        "faceContainerLow\",\"surfaceContainerLowest\",\"surfaceDim\",\"sur" +
+        "faceTint\",\"surfaceVariant\",\"tertiary\",\"tertiaryContainer\"]}}" +
+        ",\"since\":\"1.11.0\"},\"ThemeShape\":{\"family\":\"Shape\",\"parameter" +
+        "s\":{\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"extra" +
+        "Large\",\"extraSmall\",\"large\",\"medium\",\"small\"]}},\"since\":\"1.1" +
+        "1.0\"},\"ThemeTypography\":{\"family\":\"TextStyle\",\"parameters\":{" +
+        "\"name\":{\"required\":true,\"type\":\"string\",\"values\":[\"bodyLarge" +
+        "\",\"bodyMedium\",\"bodySmall\",\"displayLarge\",\"displayMedium\",\"d" +
+        "isplaySmall\",\"headlineLarge\",\"headlineMedium\",\"headlineSmall" +
+        "\",\"labelLarge\",\"labelMedium\",\"labelSmall\",\"titleLarge\",\"titl" +
+        "eMedium\",\"titleSmall\"]}},\"since\":\"1.11.0\"},\"WindowInsets\":{\"" +
+        "family\":\"WindowInsets\",\"parameters\":{\"bottom\":{\"minimum\":0,\"" +
+        "type\":\"value\",\"valueType\":\"Dp\"},\"left\":{\"minimum\":0,\"type\":\"" +
+        "value\",\"valueType\":\"Dp\"},\"right\":{\"minimum\":0,\"type\":\"value\"" +
+        ",\"valueType\":\"Dp\"},\"top\":{\"minimum\":0,\"type\":\"value\",\"valueT" +
+        "ype\":\"Dp\"}},\"since\":\"1.11.0\"},\"bottomAppBarFabElevation\":{\"f" +
+        "amily\":\"FloatingActionButtonElevation\",\"parameters\":{\"defaul" +
+        "tElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElevat" +
+        "ion\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"" +
+        "type\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"" +
+        "value\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"cardColors\":{\"f" +
+        "amily\":\"CardColors\",\"parameters\":{\"containerColor\":{\"type\":\"" +
+        "value\",\"valueType\":\"Color\"},\"disabledContainerColor\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"cardElevat" +
+        "ion\":{\"family\":\"CardElevation\",\"parameters\":{\"defaultElevati" +
+        "on\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"" +
+        "type\":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"" +
+        "value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\"," +
+        "\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"D" +
+        "p\"}},\"since\":\"1.13.0\"},\"elevatedCardColors\":{\"family\":\"CardC" +
+        "olors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"value" +
+        "Type\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\",\"val" +
+        "ueType\":\"Color\"}},\"since\":\"1.13.0\"},\"elevatedCardElevation\":" +
+        "{\"family\":\"CardElevation\",\"parameters\":{\"defaultElevation\":{" +
+        "\"type\":\"value\",\"valueType\":\"Dp\"},\"disabledElevation\":{\"type\"" +
+        ":\"value\",\"valueType\":\"Dp\"},\"draggedElevation\":{\"type\":\"value" +
+        "\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"valueType\":" +
+        "\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueType\":\"Dp\"}}," +
+        "\"since\":\"1.13.0\"},\"filledIconButtonColors\":{\"family\":\"IconBu" +
+        "ttonColors\",\"parameters\":{\"containerColor\":{\"type\":\"value\",\"" +
+        "valueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\"" +
+        ",\"valueType\":\"Color\"},\"disabledContentColor\":{\"type\":\"value\"" +
+        ",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"filledTonalIconBut" +
+        "tonColors\":{\"family\":\"IconButtonColors\",\"parameters\":{\"conta" +
         "inerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledCon" +
-        "tentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1." +
-        "11.0\"},\"buttonElevation\":{\"family\":\"ButtonElevation\",\"parame" +
-        "ters\":{\"defaultElevation\":{\"minimum\":0,\"type\":\"value\",\"value" +
-        "Type\":\"Dp\"},\"disabledElevation\":{\"minimum\":0,\"type\":\"value\"," +
-        "\"valueType\":\"Dp\"},\"focusedElevation\":{\"minimum\":0,\"type\":\"va" +
-        "lue\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"minimum\":0,\"type" +
-        "\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"minimum\":0," +
-        "\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"horizon" +
-        "talGradient\":{\"family\":\"Brush\",\"parameters\":{\"colors\":{\"item" +
-        "s\":{\"type\":\"value\",\"valueType\":\"Color\"},\"minItems\":2,\"requir" +
-        "ed\":true,\"type\":\"list\"},\"endX\":{\"type\":\"float\"},\"startX\":{\"t" +
-        "ype\":\"float\"}},\"since\":\"1.11.0\"},\"linearGradient\":{\"family\":" +
-        "\"Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"value\",\"val" +
-        "ueType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":\"list\"}" +
-        ",\"end\":{\"type\":\"value\",\"valueType\":\"Offset\"},\"start\":{\"type\"" +
-        ":\"value\",\"valueType\":\"Offset\"}},\"since\":\"1.11.0\"},\"materialI" +
-        "con\":{\"family\":\"ImageVector\",\"parameters\":{\"name\":{\"required" +
-        "\":true,\"type\":\"string\",\"values\":[\"AutoMirrored.Filled.ArrowB" +
-        "ack\",\"AutoMirrored.Filled.ArrowForward\",\"AutoMirrored.Filled" +
-        ".ExitToApp\",\"AutoMirrored.Filled.KeyboardArrowLeft\",\"AutoMir" +
-        "rored.Filled.KeyboardArrowRight\",\"AutoMirrored.Filled.List\"," +
-        "\"AutoMirrored.Filled.Send\",\"AutoMirrored.Outlined.ArrowBack\"" +
-        ",\"AutoMirrored.Outlined.ArrowForward\",\"AutoMirrored.Outlined" +
-        ".ExitToApp\",\"AutoMirrored.Outlined.KeyboardArrowLeft\",\"AutoM" +
-        "irrored.Outlined.KeyboardArrowRight\",\"AutoMirrored.Outlined." +
-        "List\",\"AutoMirrored.Outlined.Send\",\"AutoMirrored.Rounded.Arr" +
-        "owBack\",\"AutoMirrored.Rounded.ArrowForward\",\"AutoMirrored.Ro" +
-        "unded.ExitToApp\",\"AutoMirrored.Rounded.KeyboardArrowLeft\",\"A" +
-        "utoMirrored.Rounded.KeyboardArrowRight\",\"AutoMirrored.Rounde" +
-        "d.List\",\"AutoMirrored.Rounded.Send\",\"AutoMirrored.Sharp.Arro" +
-        "wBack\",\"AutoMirrored.Sharp.ArrowForward\",\"AutoMirrored.Sharp" +
-        ".ExitToApp\",\"AutoMirrored.Sharp.KeyboardArrowLeft\",\"AutoMirr" +
-        "ored.Sharp.KeyboardArrowRight\",\"AutoMirrored.Sharp.List\",\"Au" +
-        "toMirrored.Sharp.Send\",\"AutoMirrored.TwoTone.ArrowBack\",\"Aut" +
-        "oMirrored.TwoTone.ArrowForward\",\"AutoMirrored.TwoTone.ExitTo" +
-        "App\",\"AutoMirrored.TwoTone.KeyboardArrowLeft\",\"AutoMirrored." +
-        "TwoTone.KeyboardArrowRight\",\"AutoMirrored.TwoTone.List\",\"Aut" +
-        "oMirrored.TwoTone.Send\",\"Filled.AccountBox\",\"Filled.AccountC" +
-        "ircle\",\"Filled.Add\",\"Filled.AddCircle\",\"Filled.ArrowDropDown" +
-        "\",\"Filled.Build\",\"Filled.Call\",\"Filled.Check\",\"Filled.CheckC" +
-        "ircle\",\"Filled.Clear\",\"Filled.Close\",\"Filled.Create\",\"Filled" +
-        ".DateRange\",\"Filled.Delete\",\"Filled.Done\",\"Filled.Edit\",\"Fil" +
-        "led.Email\",\"Filled.Face\",\"Filled.Favorite\",\"Filled.FavoriteB" +
-        "order\",\"Filled.Home\",\"Filled.Info\",\"Filled.KeyboardArrowDown" +
-        "\",\"Filled.KeyboardArrowUp\",\"Filled.LocationOn\",\"Filled.Lock\"" +
-        ",\"Filled.MailOutline\",\"Filled.Menu\",\"Filled.MoreVert\",\"Fille" +
-        "d.Notifications\",\"Filled.Person\",\"Filled.Phone\",\"Filled.Plac" +
-        "e\",\"Filled.PlayArrow\",\"Filled.Refresh\",\"Filled.Search\",\"Fill" +
-        "ed.Settings\",\"Filled.Share\",\"Filled.ShoppingCart\",\"Filled.St" +
-        "ar\",\"Filled.ThumbUp\",\"Filled.Warning\",\"Outlined.AccountBox\"," +
-        "\"Outlined.AccountCircle\",\"Outlined.Add\",\"Outlined.AddCircle\"" +
-        ",\"Outlined.ArrowDropDown\",\"Outlined.Build\",\"Outlined.Call\",\"" +
-        "Outlined.Check\",\"Outlined.CheckCircle\",\"Outlined.Clear\",\"Out" +
-        "lined.Close\",\"Outlined.Create\",\"Outlined.DateRange\",\"Outline" +
-        "d.Delete\",\"Outlined.Done\",\"Outlined.Edit\",\"Outlined.Email\",\"" +
-        "Outlined.Face\",\"Outlined.Favorite\",\"Outlined.FavoriteBorder\"" +
-        ",\"Outlined.Home\",\"Outlined.Info\",\"Outlined.KeyboardArrowDown" +
-        "\",\"Outlined.KeyboardArrowUp\",\"Outlined.LocationOn\",\"Outlined" +
-        ".Lock\",\"Outlined.MailOutline\",\"Outlined.Menu\",\"Outlined.More" +
-        "Vert\",\"Outlined.Notifications\",\"Outlined.Person\",\"Outlined.P" +
-        "hone\",\"Outlined.Place\",\"Outlined.PlayArrow\",\"Outlined.Refres" +
-        "h\",\"Outlined.Search\",\"Outlined.Settings\",\"Outlined.Share\",\"O" +
-        "utlined.ShoppingCart\",\"Outlined.Star\",\"Outlined.ThumbUp\",\"Ou" +
-        "tlined.Warning\",\"Rounded.AccountBox\",\"Rounded.AccountCircle\"" +
-        ",\"Rounded.Add\",\"Rounded.AddCircle\",\"Rounded.ArrowDropDown\",\"" +
-        "Rounded.Build\",\"Rounded.Call\",\"Rounded.Check\",\"Rounded.Check" +
-        "Circle\",\"Rounded.Clear\",\"Rounded.Close\",\"Rounded.Create\",\"Ro" +
-        "unded.DateRange\",\"Rounded.Delete\",\"Rounded.Done\",\"Rounded.Ed" +
-        "it\",\"Rounded.Email\",\"Rounded.Face\",\"Rounded.Favorite\",\"Round" +
-        "ed.FavoriteBorder\",\"Rounded.Home\",\"Rounded.Info\",\"Rounded.Ke" +
-        "yboardArrowDown\",\"Rounded.KeyboardArrowUp\",\"Rounded.Location" +
-        "On\",\"Rounded.Lock\",\"Rounded.MailOutline\",\"Rounded.Menu\",\"Rou" +
-        "nded.MoreVert\",\"Rounded.Notifications\",\"Rounded.Person\",\"Rou" +
-        "nded.Phone\",\"Rounded.Place\",\"Rounded.PlayArrow\",\"Rounded.Ref" +
-        "resh\",\"Rounded.Search\",\"Rounded.Settings\",\"Rounded.Share\",\"R" +
-        "ounded.ShoppingCart\",\"Rounded.Star\",\"Rounded.ThumbUp\",\"Round" +
-        "ed.Warning\",\"Sharp.AccountBox\",\"Sharp.AccountCircle\",\"Sharp." +
-        "Add\",\"Sharp.AddCircle\",\"Sharp.ArrowDropDown\",\"Sharp.Build\",\"" +
-        "Sharp.Call\",\"Sharp.Check\",\"Sharp.CheckCircle\",\"Sharp.Clear\"," +
-        "\"Sharp.Close\",\"Sharp.Create\",\"Sharp.DateRange\",\"Sharp.Delete" +
-        "\",\"Sharp.Done\",\"Sharp.Edit\",\"Sharp.Email\",\"Sharp.Face\",\"Shar" +
-        "p.Favorite\",\"Sharp.FavoriteBorder\",\"Sharp.Home\",\"Sharp.Info\"" +
-        ",\"Sharp.KeyboardArrowDown\",\"Sharp.KeyboardArrowUp\",\"Sharp.Lo" +
-        "cationOn\",\"Sharp.Lock\",\"Sharp.MailOutline\",\"Sharp.Menu\",\"Sha" +
-        "rp.MoreVert\",\"Sharp.Notifications\",\"Sharp.Person\",\"Sharp.Pho" +
-        "ne\",\"Sharp.Place\",\"Sharp.PlayArrow\",\"Sharp.Refresh\",\"Sharp.S" +
-        "earch\",\"Sharp.Settings\",\"Sharp.Share\",\"Sharp.ShoppingCart\",\"" +
-        "Sharp.Star\",\"Sharp.ThumbUp\",\"Sharp.Warning\",\"TwoTone.Account" +
-        "Box\",\"TwoTone.AccountCircle\",\"TwoTone.Add\",\"TwoTone.AddCircl" +
-        "e\",\"TwoTone.ArrowDropDown\",\"TwoTone.Build\",\"TwoTone.Call\",\"T" +
-        "woTone.Check\",\"TwoTone.CheckCircle\",\"TwoTone.Clear\",\"TwoTone" +
-        ".Close\",\"TwoTone.Create\",\"TwoTone.DateRange\",\"TwoTone.Delete" +
-        "\",\"TwoTone.Done\",\"TwoTone.Edit\",\"TwoTone.Email\",\"TwoTone.Fac" +
-        "e\",\"TwoTone.Favorite\",\"TwoTone.FavoriteBorder\",\"TwoTone.Home" +
-        "\",\"TwoTone.Info\",\"TwoTone.KeyboardArrowDown\",\"TwoTone.Keyboa" +
-        "rdArrowUp\",\"TwoTone.LocationOn\",\"TwoTone.Lock\",\"TwoTone.Mail" +
-        "Outline\",\"TwoTone.Menu\",\"TwoTone.MoreVert\",\"TwoTone.Notifica" +
-        "tions\",\"TwoTone.Person\",\"TwoTone.Phone\",\"TwoTone.Place\",\"Two" +
-        "Tone.PlayArrow\",\"TwoTone.Refresh\",\"TwoTone.Search\",\"TwoTone." +
-        "Settings\",\"TwoTone.Share\",\"TwoTone.ShoppingCart\",\"TwoTone.St" +
-        "ar\",\"TwoTone.ThumbUp\",\"TwoTone.Warning\"]}},\"since\":\"1.21.0\"}" +
-        ",\"verticalGradient\":{\"family\":\"Brush\",\"parameters\":{\"colors\"" +
-        ":{\"items\":{\"type\":\"value\",\"valueType\":\"Color\"},\"minItems\":2," +
-        "\"required\":true,\"type\":\"list\"},\"endY\":{\"type\":\"float\"},\"star" +
-        "tY\":{\"type\":\"float\"}},\"since\":\"1.11.0\"}}"
+        "tainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"disabledC" +
+        "ontentColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"" +
+        "1.13.0\"},\"floatingActionButtonElevation\":{\"family\":\"Floating" +
+        "ActionButtonElevation\",\"parameters\":{\"defaultElevation\":{\"ty" +
+        "pe\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"va" +
+        "lue\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",\"valueTyp" +
+        "e\":\"Dp\"}},\"since\":\"1.13.0\"},\"horizontalGradient\":{\"family\":\"" +
+        "Brush\",\"parameters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valu" +
+        "eType\":\"Color\"},\"minItems\":2,\"required\":true,\"type\":\"list\"}," +
+        "\"endX\":{\"type\":\"float\"},\"startX\":{\"type\":\"float\"}},\"since\":\"" +
+        "1.11.0\"},\"iconButtonColors\":{\"family\":\"IconButtonColors\",\"pa" +
+        "rameters\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"contentColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"di" +
+        "sabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}}," +
+        "\"since\":\"1.13.0\"},\"linearGradient\":{\"family\":\"Brush\",\"parame" +
+        "ters\":{\"colors\":{\"items\":{\"type\":\"value\",\"valueType\":\"Color\"" +
+        "},\"minItems\":2,\"required\":true,\"type\":\"list\"},\"end\":{\"type\":" +
+        "\"value\",\"valueType\":\"Offset\"},\"start\":{\"type\":\"value\",\"value" +
+        "Type\":\"Offset\"}},\"since\":\"1.11.0\"},\"loweredElevation\":{\"fami" +
+        "ly\":\"FloatingActionButtonElevation\",\"parameters\":{\"defaultEl" +
+        "evation\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"focusedElevation" +
+        "\":{\"type\":\"value\",\"valueType\":\"Dp\"},\"hoveredElevation\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"val" +
+        "ue\",\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"materialIcon\":{\"fa" +
+        "mily\":\"ImageVector\",\"parameters\":{\"name\":{\"required\":true,\"t" +
+        "ype\":\"string\",\"values\":[\"AutoMirrored.Filled.ArrowBack\",\"Aut" +
+        "oMirrored.Filled.ArrowForward\",\"AutoMirrored.Filled.ExitToAp" +
+        "p\",\"AutoMirrored.Filled.KeyboardArrowLeft\",\"AutoMirrored.Fil" +
+        "led.KeyboardArrowRight\",\"AutoMirrored.Filled.List\",\"AutoMirr" +
+        "ored.Filled.Send\",\"AutoMirrored.Outlined.ArrowBack\",\"AutoMir" +
+        "rored.Outlined.ArrowForward\",\"AutoMirrored.Outlined.ExitToAp" +
+        "p\",\"AutoMirrored.Outlined.KeyboardArrowLeft\",\"AutoMirrored.O" +
+        "utlined.KeyboardArrowRight\",\"AutoMirrored.Outlined.List\",\"Au" +
+        "toMirrored.Outlined.Send\",\"AutoMirrored.Rounded.ArrowBack\",\"" +
+        "AutoMirrored.Rounded.ArrowForward\",\"AutoMirrored.Rounded.Exi" +
+        "tToApp\",\"AutoMirrored.Rounded.KeyboardArrowLeft\",\"AutoMirror" +
+        "ed.Rounded.KeyboardArrowRight\",\"AutoMirrored.Rounded.List\",\"" +
+        "AutoMirrored.Rounded.Send\",\"AutoMirrored.Sharp.ArrowBack\",\"A" +
+        "utoMirrored.Sharp.ArrowForward\",\"AutoMirrored.Sharp.ExitToAp" +
+        "p\",\"AutoMirrored.Sharp.KeyboardArrowLeft\",\"AutoMirrored.Shar" +
+        "p.KeyboardArrowRight\",\"AutoMirrored.Sharp.List\",\"AutoMirrore" +
+        "d.Sharp.Send\",\"AutoMirrored.TwoTone.ArrowBack\",\"AutoMirrored" +
+        ".TwoTone.ArrowForward\",\"AutoMirrored.TwoTone.ExitToApp\",\"Aut" +
+        "oMirrored.TwoTone.KeyboardArrowLeft\",\"AutoMirrored.TwoTone.K" +
+        "eyboardArrowRight\",\"AutoMirrored.TwoTone.List\",\"AutoMirrored" +
+        ".TwoTone.Send\",\"Filled.AccountBox\",\"Filled.AccountCircle\",\"F" +
+        "illed.Add\",\"Filled.AddCircle\",\"Filled.ArrowDropDown\",\"Filled" +
+        ".Build\",\"Filled.Call\",\"Filled.Check\",\"Filled.CheckCircle\",\"F" +
+        "illed.Clear\",\"Filled.Close\",\"Filled.Create\",\"Filled.DateRang" +
+        "e\",\"Filled.Delete\",\"Filled.Done\",\"Filled.Edit\",\"Filled.Email" +
+        "\",\"Filled.Face\",\"Filled.Favorite\",\"Filled.FavoriteBorder\",\"F" +
+        "illed.Home\",\"Filled.Info\",\"Filled.KeyboardArrowDown\",\"Filled" +
+        ".KeyboardArrowUp\",\"Filled.LocationOn\",\"Filled.Lock\",\"Filled." +
+        "MailOutline\",\"Filled.Menu\",\"Filled.MoreVert\",\"Filled.Notific" +
+        "ations\",\"Filled.Person\",\"Filled.Phone\",\"Filled.Place\",\"Fille" +
+        "d.PlayArrow\",\"Filled.Refresh\",\"Filled.Search\",\"Filled.Settin" +
+        "gs\",\"Filled.Share\",\"Filled.ShoppingCart\",\"Filled.Star\",\"Fill" +
+        "ed.ThumbUp\",\"Filled.Warning\",\"Outlined.AccountBox\",\"Outlined" +
+        ".AccountCircle\",\"Outlined.Add\",\"Outlined.AddCircle\",\"Outline" +
+        "d.ArrowDropDown\",\"Outlined.Build\",\"Outlined.Call\",\"Outlined." +
+        "Check\",\"Outlined.CheckCircle\",\"Outlined.Clear\",\"Outlined.Clo" +
+        "se\",\"Outlined.Create\",\"Outlined.DateRange\",\"Outlined.Delete\"" +
+        ",\"Outlined.Done\",\"Outlined.Edit\",\"Outlined.Email\",\"Outlined." +
+        "Face\",\"Outlined.Favorite\",\"Outlined.FavoriteBorder\",\"Outline" +
+        "d.Home\",\"Outlined.Info\",\"Outlined.KeyboardArrowDown\",\"Outlin" +
+        "ed.KeyboardArrowUp\",\"Outlined.LocationOn\",\"Outlined.Lock\",\"O" +
+        "utlined.MailOutline\",\"Outlined.Menu\",\"Outlined.MoreVert\",\"Ou" +
+        "tlined.Notifications\",\"Outlined.Person\",\"Outlined.Phone\",\"Ou" +
+        "tlined.Place\",\"Outlined.PlayArrow\",\"Outlined.Refresh\",\"Outli" +
+        "ned.Search\",\"Outlined.Settings\",\"Outlined.Share\",\"Outlined.S" +
+        "hoppingCart\",\"Outlined.Star\",\"Outlined.ThumbUp\",\"Outlined.Wa" +
+        "rning\",\"Rounded.AccountBox\",\"Rounded.AccountCircle\",\"Rounded" +
+        ".Add\",\"Rounded.AddCircle\",\"Rounded.ArrowDropDown\",\"Rounded.B" +
+        "uild\",\"Rounded.Call\",\"Rounded.Check\",\"Rounded.CheckCircle\",\"" +
+        "Rounded.Clear\",\"Rounded.Close\",\"Rounded.Create\",\"Rounded.Dat" +
+        "eRange\",\"Rounded.Delete\",\"Rounded.Done\",\"Rounded.Edit\",\"Roun" +
+        "ded.Email\",\"Rounded.Face\",\"Rounded.Favorite\",\"Rounded.Favori" +
+        "teBorder\",\"Rounded.Home\",\"Rounded.Info\",\"Rounded.KeyboardArr" +
+        "owDown\",\"Rounded.KeyboardArrowUp\",\"Rounded.LocationOn\",\"Roun" +
+        "ded.Lock\",\"Rounded.MailOutline\",\"Rounded.Menu\",\"Rounded.More" +
+        "Vert\",\"Rounded.Notifications\",\"Rounded.Person\",\"Rounded.Phon" +
+        "e\",\"Rounded.Place\",\"Rounded.PlayArrow\",\"Rounded.Refresh\",\"Ro" +
+        "unded.Search\",\"Rounded.Settings\",\"Rounded.Share\",\"Rounded.Sh" +
+        "oppingCart\",\"Rounded.Star\",\"Rounded.ThumbUp\",\"Rounded.Warnin" +
+        "g\",\"Sharp.AccountBox\",\"Sharp.AccountCircle\",\"Sharp.Add\",\"Sha" +
+        "rp.AddCircle\",\"Sharp.ArrowDropDown\",\"Sharp.Build\",\"Sharp.Cal" +
+        "l\",\"Sharp.Check\",\"Sharp.CheckCircle\",\"Sharp.Clear\",\"Sharp.Cl" +
+        "ose\",\"Sharp.Create\",\"Sharp.DateRange\",\"Sharp.Delete\",\"Sharp." +
+        "Done\",\"Sharp.Edit\",\"Sharp.Email\",\"Sharp.Face\",\"Sharp.Favorit" +
+        "e\",\"Sharp.FavoriteBorder\",\"Sharp.Home\",\"Sharp.Info\",\"Sharp.K" +
+        "eyboardArrowDown\",\"Sharp.KeyboardArrowUp\",\"Sharp.LocationOn\"" +
+        ",\"Sharp.Lock\",\"Sharp.MailOutline\",\"Sharp.Menu\",\"Sharp.MoreVe" +
+        "rt\",\"Sharp.Notifications\",\"Sharp.Person\",\"Sharp.Phone\",\"Shar" +
+        "p.Place\",\"Sharp.PlayArrow\",\"Sharp.Refresh\",\"Sharp.Search\",\"S" +
+        "harp.Settings\",\"Sharp.Share\",\"Sharp.ShoppingCart\",\"Sharp.Sta" +
+        "r\",\"Sharp.ThumbUp\",\"Sharp.Warning\",\"TwoTone.AccountBox\",\"Two" +
+        "Tone.AccountCircle\",\"TwoTone.Add\",\"TwoTone.AddCircle\",\"TwoTo" +
+        "ne.ArrowDropDown\",\"TwoTone.Build\",\"TwoTone.Call\",\"TwoTone.Ch" +
+        "eck\",\"TwoTone.CheckCircle\",\"TwoTone.Clear\",\"TwoTone.Close\",\"" +
+        "TwoTone.Create\",\"TwoTone.DateRange\",\"TwoTone.Delete\",\"TwoTon" +
+        "e.Done\",\"TwoTone.Edit\",\"TwoTone.Email\",\"TwoTone.Face\",\"TwoTo" +
+        "ne.Favorite\",\"TwoTone.FavoriteBorder\",\"TwoTone.Home\",\"TwoTon" +
+        "e.Info\",\"TwoTone.KeyboardArrowDown\",\"TwoTone.KeyboardArrowUp" +
+        "\",\"TwoTone.LocationOn\",\"TwoTone.Lock\",\"TwoTone.MailOutline\"," +
+        "\"TwoTone.Menu\",\"TwoTone.MoreVert\",\"TwoTone.Notifications\",\"T" +
+        "woTone.Person\",\"TwoTone.Phone\",\"TwoTone.Place\",\"TwoTone.Play" +
+        "Arrow\",\"TwoTone.Refresh\",\"TwoTone.Search\",\"TwoTone.Settings\"" +
+        ",\"TwoTone.Share\",\"TwoTone.ShoppingCart\",\"TwoTone.Star\",\"TwoT" +
+        "one.ThumbUp\",\"TwoTone.Warning\"]}},\"since\":\"1.21.0\"},\"navigat" +
+        "ionBarItemColors\":{\"family\":\"NavigationBarItemColors\",\"param" +
+        "eters\":{\"disabledIconColor\":{\"type\":\"value\",\"valueType\":\"Col" +
+        "or\"},\"disabledTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"" +
+        "},\"indicatorColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"sel" +
+        "ectedIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"select" +
+        "edTextColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselecte" +
+        "dIconColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"unselected" +
+        "TextColor\":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1." +
+        "13.0\"},\"outlinedCardColors\":{\"family\":\"CardColors\",\"paramete" +
+        "rs\":{\"containerColor\":{\"type\":\"value\",\"valueType\":\"Color\"},\"" +
+        "disabledContainerColor\":{\"type\":\"value\",\"valueType\":\"Color\"}" +
+        "},\"since\":\"1.13.0\"},\"outlinedCardElevation\":{\"family\":\"CardE" +
+        "levation\",\"parameters\":{\"defaultElevation\":{\"type\":\"value\",\"" +
+        "valueType\":\"Dp\"},\"disabledElevation\":{\"type\":\"value\",\"valueT" +
+        "ype\":\"Dp\"},\"draggedElevation\":{\"type\":\"value\",\"valueType\":\"D" +
+        "p\"}},\"since\":\"1.13.0\"},\"outlinedIconButtonColors\":{\"family\":" +
+        "\"IconButtonColors\",\"parameters\":{\"containerColor\":{\"type\":\"v" +
+        "alue\",\"valueType\":\"Color\"},\"contentColor\":{\"type\":\"value\",\"v" +
+        "alueType\":\"Color\"},\"disabledContainerColor\":{\"type\":\"value\"," +
+        "\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"switchColors\":{\"fam" +
+        "ily\":\"SwitchColors\",\"parameters\":{\"checkedBorderColor\":{\"typ" +
+        "e\":\"value\",\"valueType\":\"Color\"},\"disabledCheckedBorderColor\"" +
+        ":{\"type\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.13.0\"},\"ve" +
+        "rticalGradient\":{\"family\":\"Brush\",\"parameters\":{\"colors\":{\"i" +
+        "tems\":{\"type\":\"value\",\"valueType\":\"Color\"},\"minItems\":2,\"req" +
+        "uired\":true,\"type\":\"list\"},\"endY\":{\"type\":\"float\"},\"startY\":" +
+        "{\"type\":\"float\"}},\"since\":\"1.11.0\"}}"
     ).jsonObject
+
+    fun readBorderStroke(value: JsonElement): BorderStrokeValue {
+        ValueParser.validate(value, "BorderStroke", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "BorderStroke" -> WireBorderStroke(
+                supplied = data.keys,
+                width = readDp(data.getValue("width")),
+                brush = readBrush(data.getValue("brush")),
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
 
     fun readBrush(value: JsonElement): BrushValue {
         ValueParser.validate(value, "Brush", specs).getOrThrow()
@@ -378,31 +567,55 @@ object ValueContract {
         }
     }
 
-    fun readButtonColors(value: JsonElement): ButtonColorsValue {
-        ValueParser.validate(value, "ButtonColors", specs).getOrThrow()
+    fun readCardColors(value: JsonElement): CardColorsValue {
+        ValueParser.validate(value, "CardColors", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
-            "buttonColors" -> WirebuttonColors(
+            "cardColors" -> WirecardColors(
                 supplied = data.keys,
                 containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
-                contentColor = data["contentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
                 disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
-                disabledContentColor = data["disabledContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "elevatedCardColors" -> WireelevatedCardColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "outlinedCardColors" -> WireoutlinedCardColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
             )
             else -> error("Unknown value constructor")
         }
     }
 
-    fun readButtonElevation(value: JsonElement): ButtonElevationValue {
-        ValueParser.validate(value, "ButtonElevation", specs).getOrThrow()
+    fun readCardElevation(value: JsonElement): CardElevationValue {
+        ValueParser.validate(value, "CardElevation", specs).getOrThrow()
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
-            "buttonElevation" -> WirebuttonElevation(
+            "cardElevation" -> WirecardElevation(
                 supplied = data.keys,
                 defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
                 pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
                 focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
                 hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                disabledElevation = data["disabledElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "elevatedCardElevation" -> WireelevatedCardElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                disabledElevation = data["disabledElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "outlinedCardElevation" -> WireoutlinedCardElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                draggedElevation = data["draggedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
                 disabledElevation = data["disabledElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
             )
             else -> error("Unknown value constructor")
@@ -437,6 +650,35 @@ object ValueContract {
         }
     }
 
+    fun readFloatingActionButtonElevation(value: JsonElement): FloatingActionButtonElevationValue {
+        ValueParser.validate(value, "FloatingActionButtonElevation", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "bottomAppBarFabElevation" -> WirebottomAppBarFabElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "floatingActionButtonElevation" -> WirefloatingActionButtonElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            "loweredElevation" -> WireloweredElevation(
+                supplied = data.keys,
+                defaultElevation = data["defaultElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                pressedElevation = data["pressedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                focusedElevation = data["focusedElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+                hoveredElevation = data["hoveredElevation"]?.takeUnless { it == JsonNull }?.let { item -> readDp(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
     fun readFontFamily(value: JsonElement): FontFamilyValue {
         ValueParser.validate(value, "FontFamily", specs).getOrThrow()
         val data = value.jsonObject
@@ -461,6 +703,38 @@ object ValueContract {
         }
     }
 
+    fun readIconButtonColors(value: JsonElement): IconButtonColorsValue {
+        ValueParser.validate(value, "IconButtonColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "filledIconButtonColors" -> WirefilledIconButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContentColor = data["disabledContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "filledTonalIconButtonColors" -> WirefilledTonalIconButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContentColor = data["disabledContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "iconButtonColors" -> WireiconButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                contentColor = data["contentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "outlinedIconButtonColors" -> WireoutlinedIconButtonColors(
+                supplied = data.keys,
+                containerColor = data["containerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                contentColor = data["contentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledContainerColor = data["disabledContainerColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
     fun readImageVector(value: JsonElement): ImageVectorValue {
         ValueParser.validate(value, "ImageVector", specs).getOrThrow()
         val data = value.jsonObject
@@ -468,6 +742,24 @@ object ValueContract {
             "materialIcon" -> WirematerialIcon(
                 supplied = data.keys,
                 name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readNavigationBarItemColors(value: JsonElement): NavigationBarItemColorsValue {
+        ValueParser.validate(value, "NavigationBarItemColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "navigationBarItemColors" -> WirenavigationBarItemColors(
+                supplied = data.keys,
+                selectedIconColor = data["selectedIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                selectedTextColor = data["selectedTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                indicatorColor = data["indicatorColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unselectedIconColor = data["unselectedIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                unselectedTextColor = data["unselectedTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledIconColor = data["disabledIconColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledTextColor = data["disabledTextColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
             )
             else -> error("Unknown value constructor")
         }
@@ -516,6 +808,19 @@ object ValueContract {
             "ThemeShape" -> WireThemeShape(
                 supplied = data.keys,
                 name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readSwitchColors(value: JsonElement): SwitchColorsValue {
+        ValueParser.validate(value, "SwitchColors", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "switchColors" -> WireswitchColors(
+                supplied = data.keys,
+                checkedBorderColor = data["checkedBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                disabledCheckedBorderColor = data["disabledCheckedBorderColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
             )
             else -> error("Unknown value constructor")
         }

@@ -10,6 +10,7 @@ from pycompose.core.props import JsonValue
 from pycompose.core.values import UNSET, _Unset, construct
 
 __all__ = [
+    "BorderStroke",
     "Color",
     "CutCornerShape",
     "Dp",
@@ -26,215 +27,327 @@ __all__ = [
     "ThemeShape",
     "ThemeTypography",
     "WindowInsets",
-    "buttonColors",
-    "buttonElevation",
+    "bottomAppBarFabElevation",
+    "cardColors",
+    "cardElevation",
+    "elevatedCardColors",
+    "elevatedCardElevation",
+    "filledIconButtonColors",
+    "filledTonalIconButtonColors",
+    "floatingActionButtonElevation",
     "horizontalGradient",
+    "iconButtonColors",
     "linearGradient",
+    "loweredElevation",
     "materialIcon",
+    "navigationBarItemColors",
+    "outlinedCardColors",
+    "outlinedCardElevation",
+    "outlinedIconButtonColors",
+    "switchColors",
     "verticalGradient",
 ]
 
 DEFINITIONS: dict[str, dict[str, object]] = json.loads(
-    '{"Color":{"family":"Color","parameters":{"color":{'
-    '"maximum":4294967295,"minimum":0,"required":true,"'
-    'type":"long"}},"since":"1.11.0"},"CutCornerShape":'
-    '{"family":"Shape","parameters":{"size":{"minimum":'
-    '0,"required":true,"type":"value","valueType":"Dp"}'
-    '},"since":"1.11.0"},"Dp":{"family":"Dp","parameter'
-    's":{"value":{"required":true,"type":"float"}},"sin'
-    'ce":"1.11.0"},"Em":{"family":"TextUnit","parameter'
-    's":{"value":{"required":true,"type":"float"}},"sin'
-    'ce":"1.11.0"},"FontFamily":{"family":"FontFamily",'
-    '"parameters":{"name":{"required":true,"type":"stri'
-    'ng","values":["Cursive","Default","Monospace","San'
-    'sSerif","Serif"]}},"since":"1.11.0"},"FontWeight":'
-    '{"family":"FontWeight","parameters":{"weight":{"ma'
-    'ximum":1000,"minimum":1,"required":true,"type":"in'
-    't"}},"since":"1.11.0"},"Offset":{"family":"Offset"'
-    ',"parameters":{"x":{"required":true,"type":"float"'
-    '},"y":{"required":true,"type":"float"}},"since":"1'
-    '.11.0"},"PaddingValues":{"family":"PaddingValues",'
-    '"parameters":{"bottom":{"minimum":0,"type":"value"'
-    ',"valueType":"Dp"},"end":{"minimum":0,"type":"valu'
-    'e","valueType":"Dp"},"start":{"minimum":0,"type":"'
-    'value","valueType":"Dp"},"top":{"minimum":0,"type"'
-    ':"value","valueType":"Dp"}},"since":"1.11.0"},"Rou'
-    'ndedCornerShape":{"family":"Shape","parameters":{"'
-    'size":{"minimum":0,"required":true,"type":"value",'
-    '"valueType":"Dp"}},"since":"1.11.0"},"SolidColor":'
-    '{"family":"Brush","parameters":{"value":{"required'
-    '":true,"type":"value","valueType":"Color"}},"since'
-    '":"1.11.0"},"Sp":{"family":"TextUnit","parameters"'
-    ':{"value":{"required":true,"type":"float"}},"since'
-    '":"1.11.0"},"TextStyle":{"family":"TextStyle","par'
-    'ameters":{"color":{"type":"value","valueType":"Col'
-    'or"},"fontFamily":{"nullable":true,"type":"value",'
-    '"valueType":"FontFamily"},"fontSize":{"minimum":0,'
-    '"type":"value","valueType":"TextUnit"},"fontWeight'
-    '":{"nullable":true,"type":"value","valueType":"Fon'
-    'tWeight"},"letterSpacing":{"type":"value","valueTy'
-    'pe":"TextUnit"}},"since":"1.11.0"},"ThemeColor":{"'
-    'family":"Color","parameters":{"name":{"required":t'
-    'rue,"type":"string","values":["background","error"'
-    ',"errorContainer","inverseOnSurface","inversePrima'
-    'ry","inverseSurface","onBackground","onError","onE'
-    'rrorContainer","onPrimary","onPrimaryContainer","o'
-    'nSecondary","onSecondaryContainer","onSurface","on'
-    'SurfaceVariant","onTertiary","onTertiaryContainer"'
-    ',"outline","outlineVariant","primary","primaryCont'
-    'ainer","scrim","secondary","secondaryContainer","s'
-    'urface","surfaceBright","surfaceContainer","surfac'
-    'eContainerHigh","surfaceContainerHighest","surface'
-    'ContainerLow","surfaceContainerLowest","surfaceDim'
-    '","surfaceTint","surfaceVariant","tertiary","terti'
-    'aryContainer"]}},"since":"1.11.0"},"ThemeShape":{"'
-    'family":"Shape","parameters":{"name":{"required":t'
-    'rue,"type":"string","values":["extraLarge","extraS'
-    'mall","large","medium","small"]}},"since":"1.11.0"'
-    '},"ThemeTypography":{"family":"TextStyle","paramet'
-    'ers":{"name":{"required":true,"type":"string","val'
-    'ues":["bodyLarge","bodyMedium","bodySmall","displa'
-    'yLarge","displayMedium","displaySmall","headlineLa'
-    'rge","headlineMedium","headlineSmall","labelLarge"'
-    ',"labelMedium","labelSmall","titleLarge","titleMed'
-    'ium","titleSmall"]}},"since":"1.11.0"},"WindowInse'
-    'ts":{"family":"WindowInsets","parameters":{"bottom'
-    '":{"minimum":0,"type":"value","valueType":"Dp"},"l'
-    'eft":{"minimum":0,"type":"value","valueType":"Dp"}'
-    ',"right":{"minimum":0,"type":"value","valueType":"'
-    'Dp"},"top":{"minimum":0,"type":"value","valueType"'
-    ':"Dp"}},"since":"1.11.0"},"buttonColors":{"family"'
-    ':"ButtonColors","parameters":{"containerColor":{"t'
-    'ype":"value","valueType":"Color"},"contentColor":{'
-    '"type":"value","valueType":"Color"},"disabledConta'
+    '{"BorderStroke":{"family":"BorderStroke","paramete'
+    'rs":{"brush":{"required":true,"type":"value","valu'
+    'eType":"Brush"},"width":{"minimum":0,"required":tr'
+    'ue,"type":"value","valueType":"Dp"}},"since":"1.12'
+    '.0"},"Color":{"family":"Color","parameters":{"colo'
+    'r":{"maximum":4294967295,"minimum":0,"required":tr'
+    'ue,"type":"long"}},"since":"1.11.0"},"CutCornerSha'
+    'pe":{"family":"Shape","parameters":{"size":{"minim'
+    'um":0,"required":true,"type":"value","valueType":"'
+    'Dp"}},"since":"1.11.0"},"Dp":{"family":"Dp","param'
+    'eters":{"value":{"required":true,"type":"float"}},'
+    '"since":"1.11.0"},"Em":{"family":"TextUnit","param'
+    'eters":{"value":{"required":true,"type":"float"}},'
+    '"since":"1.11.0"},"FontFamily":{"family":"FontFami'
+    'ly","parameters":{"name":{"required":true,"type":"'
+    'string","values":["Cursive","Default","Monospace",'
+    '"SansSerif","Serif"]}},"since":"1.11.0"},"FontWeig'
+    'ht":{"family":"FontWeight","parameters":{"weight":'
+    '{"maximum":1000,"minimum":1,"required":true,"type"'
+    ':"int"}},"since":"1.11.0"},"Offset":{"family":"Off'
+    'set","parameters":{"x":{"required":true,"type":"fl'
+    'oat"},"y":{"required":true,"type":"float"}},"since'
+    '":"1.11.0"},"PaddingValues":{"family":"PaddingValu'
+    'es","parameters":{"bottom":{"minimum":0,"type":"va'
+    'lue","valueType":"Dp"},"end":{"minimum":0,"type":"'
+    'value","valueType":"Dp"},"start":{"minimum":0,"typ'
+    'e":"value","valueType":"Dp"},"top":{"minimum":0,"t'
+    'ype":"value","valueType":"Dp"}},"since":"1.11.0"},'
+    '"RoundedCornerShape":{"family":"Shape","parameters'
+    '":{"size":{"minimum":0,"required":true,"type":"val'
+    'ue","valueType":"Dp"}},"since":"1.11.0"},"SolidCol'
+    'or":{"family":"Brush","parameters":{"value":{"requ'
+    'ired":true,"type":"value","valueType":"Color"}},"s'
+    'ince":"1.11.0"},"Sp":{"family":"TextUnit","paramet'
+    'ers":{"value":{"required":true,"type":"float"}},"s'
+    'ince":"1.11.0"},"TextStyle":{"family":"TextStyle",'
+    '"parameters":{"color":{"type":"value","valueType":'
+    '"Color"},"fontFamily":{"nullable":true,"type":"val'
+    'ue","valueType":"FontFamily"},"fontSize":{"minimum'
+    '":0,"type":"value","valueType":"TextUnit"},"fontWe'
+    'ight":{"nullable":true,"type":"value","valueType":'
+    '"FontWeight"},"letterSpacing":{"type":"value","val'
+    'ueType":"TextUnit"}},"since":"1.11.0"},"ThemeColor'
+    '":{"family":"Color","parameters":{"name":{"require'
+    'd":true,"type":"string","values":["background","er'
+    'ror","errorContainer","inverseOnSurface","inverseP'
+    'rimary","inverseSurface","onBackground","onError",'
+    '"onErrorContainer","onPrimary","onPrimaryContainer'
+    '","onSecondary","onSecondaryContainer","onSurface"'
+    ',"onSurfaceVariant","onTertiary","onTertiaryContai'
+    'ner","outline","outlineVariant","primary","primary'
+    'Container","scrim","secondary","secondaryContainer'
+    '","surface","surfaceBright","surfaceContainer","su'
+    'rfaceContainerHigh","surfaceContainerHighest","sur'
+    'faceContainerLow","surfaceContainerLowest","surfac'
+    'eDim","surfaceTint","surfaceVariant","tertiary","t'
+    'ertiaryContainer"]}},"since":"1.11.0"},"ThemeShape'
+    '":{"family":"Shape","parameters":{"name":{"require'
+    'd":true,"type":"string","values":["extraLarge","ex'
+    'traSmall","large","medium","small"]}},"since":"1.1'
+    '1.0"},"ThemeTypography":{"family":"TextStyle","par'
+    'ameters":{"name":{"required":true,"type":"string",'
+    '"values":["bodyLarge","bodyMedium","bodySmall","di'
+    'splayLarge","displayMedium","displaySmall","headli'
+    'neLarge","headlineMedium","headlineSmall","labelLa'
+    'rge","labelMedium","labelSmall","titleLarge","titl'
+    'eMedium","titleSmall"]}},"since":"1.11.0"},"Window'
+    'Insets":{"family":"WindowInsets","parameters":{"bo'
+    'ttom":{"minimum":0,"type":"value","valueType":"Dp"'
+    '},"left":{"minimum":0,"type":"value","valueType":"'
+    'Dp"},"right":{"minimum":0,"type":"value","valueTyp'
+    'e":"Dp"},"top":{"minimum":0,"type":"value","valueT'
+    'ype":"Dp"}},"since":"1.11.0"},"bottomAppBarFabElev'
+    'ation":{"family":"FloatingActionButtonElevation","'
+    'parameters":{"defaultElevation":{"type":"value","v'
+    'alueType":"Dp"},"focusedElevation":{"type":"value"'
+    ',"valueType":"Dp"},"hoveredElevation":{"type":"val'
+    'ue","valueType":"Dp"},"pressedElevation":{"type":"'
+    'value","valueType":"Dp"}},"since":"1.13.0"},"cardC'
+    'olors":{"family":"CardColors","parameters":{"conta'
     'inerColor":{"type":"value","valueType":"Color"},"d'
-    'isabledContentColor":{"type":"value","valueType":"'
-    'Color"}},"since":"1.11.0"},"buttonElevation":{"fam'
-    'ily":"ButtonElevation","parameters":{"defaultEleva'
-    'tion":{"minimum":0,"type":"value","valueType":"Dp"'
-    '},"disabledElevation":{"minimum":0,"type":"value",'
-    '"valueType":"Dp"},"focusedElevation":{"minimum":0,'
-    '"type":"value","valueType":"Dp"},"hoveredElevation'
-    '":{"minimum":0,"type":"value","valueType":"Dp"},"p'
-    'ressedElevation":{"minimum":0,"type":"value","valu'
-    'eType":"Dp"}},"since":"1.11.0"},"horizontalGradien'
-    't":{"family":"Brush","parameters":{"colors":{"item'
-    's":{"type":"value","valueType":"Color"},"minItems"'
-    ':2,"required":true,"type":"list"},"endX":{"type":"'
-    'float"},"startX":{"type":"float"}},"since":"1.11.0'
-    '"},"linearGradient":{"family":"Brush","parameters"'
-    ':{"colors":{"items":{"type":"value","valueType":"C'
-    'olor"},"minItems":2,"required":true,"type":"list"}'
-    ',"end":{"type":"value","valueType":"Offset"},"star'
-    't":{"type":"value","valueType":"Offset"}},"since":'
-    '"1.11.0"},"materialIcon":{"family":"ImageVector","'
-    'parameters":{"name":{"required":true,"type":"strin'
-    'g","values":["AutoMirrored.Filled.ArrowBack","Auto'
-    'Mirrored.Filled.ArrowForward","AutoMirrored.Filled'
-    '.ExitToApp","AutoMirrored.Filled.KeyboardArrowLeft'
-    '","AutoMirrored.Filled.KeyboardArrowRight","AutoMi'
-    'rrored.Filled.List","AutoMirrored.Filled.Send","Au'
-    'toMirrored.Outlined.ArrowBack","AutoMirrored.Outli'
-    'ned.ArrowForward","AutoMirrored.Outlined.ExitToApp'
-    '","AutoMirrored.Outlined.KeyboardArrowLeft","AutoM'
-    'irrored.Outlined.KeyboardArrowRight","AutoMirrored'
-    '.Outlined.List","AutoMirrored.Outlined.Send","Auto'
-    'Mirrored.Rounded.ArrowBack","AutoMirrored.Rounded.'
-    'ArrowForward","AutoMirrored.Rounded.ExitToApp","Au'
-    'toMirrored.Rounded.KeyboardArrowLeft","AutoMirrore'
-    'd.Rounded.KeyboardArrowRight","AutoMirrored.Rounde'
-    'd.List","AutoMirrored.Rounded.Send","AutoMirrored.'
-    'Sharp.ArrowBack","AutoMirrored.Sharp.ArrowForward"'
-    ',"AutoMirrored.Sharp.ExitToApp","AutoMirrored.Shar'
-    'p.KeyboardArrowLeft","AutoMirrored.Sharp.KeyboardA'
-    'rrowRight","AutoMirrored.Sharp.List","AutoMirrored'
-    '.Sharp.Send","AutoMirrored.TwoTone.ArrowBack","Aut'
-    'oMirrored.TwoTone.ArrowForward","AutoMirrored.TwoT'
-    'one.ExitToApp","AutoMirrored.TwoTone.KeyboardArrow'
-    'Left","AutoMirrored.TwoTone.KeyboardArrowRight","A'
-    'utoMirrored.TwoTone.List","AutoMirrored.TwoTone.Se'
-    'nd","Filled.AccountBox","Filled.AccountCircle","Fi'
-    'lled.Add","Filled.AddCircle","Filled.ArrowDropDown'
-    '","Filled.Build","Filled.Call","Filled.Check","Fil'
-    'led.CheckCircle","Filled.Clear","Filled.Close","Fi'
-    'lled.Create","Filled.DateRange","Filled.Delete","F'
-    'illed.Done","Filled.Edit","Filled.Email","Filled.F'
-    'ace","Filled.Favorite","Filled.FavoriteBorder","Fi'
-    'lled.Home","Filled.Info","Filled.KeyboardArrowDown'
-    '","Filled.KeyboardArrowUp","Filled.LocationOn","Fi'
-    'lled.Lock","Filled.MailOutline","Filled.Menu","Fil'
-    'led.MoreVert","Filled.Notifications","Filled.Perso'
-    'n","Filled.Phone","Filled.Place","Filled.PlayArrow'
-    '","Filled.Refresh","Filled.Search","Filled.Setting'
-    's","Filled.Share","Filled.ShoppingCart","Filled.St'
-    'ar","Filled.ThumbUp","Filled.Warning","Outlined.Ac'
-    'countBox","Outlined.AccountCircle","Outlined.Add",'
-    '"Outlined.AddCircle","Outlined.ArrowDropDown","Out'
-    'lined.Build","Outlined.Call","Outlined.Check","Out'
-    'lined.CheckCircle","Outlined.Clear","Outlined.Clos'
-    'e","Outlined.Create","Outlined.DateRange","Outline'
-    'd.Delete","Outlined.Done","Outlined.Edit","Outline'
-    'd.Email","Outlined.Face","Outlined.Favorite","Outl'
-    'ined.FavoriteBorder","Outlined.Home","Outlined.Inf'
-    'o","Outlined.KeyboardArrowDown","Outlined.Keyboard'
-    'ArrowUp","Outlined.LocationOn","Outlined.Lock","Ou'
-    'tlined.MailOutline","Outlined.Menu","Outlined.More'
-    'Vert","Outlined.Notifications","Outlined.Person","'
-    'Outlined.Phone","Outlined.Place","Outlined.PlayArr'
-    'ow","Outlined.Refresh","Outlined.Search","Outlined'
-    '.Settings","Outlined.Share","Outlined.ShoppingCart'
-    '","Outlined.Star","Outlined.ThumbUp","Outlined.War'
-    'ning","Rounded.AccountBox","Rounded.AccountCircle"'
-    ',"Rounded.Add","Rounded.AddCircle","Rounded.ArrowD'
-    'ropDown","Rounded.Build","Rounded.Call","Rounded.C'
-    'heck","Rounded.CheckCircle","Rounded.Clear","Round'
-    'ed.Close","Rounded.Create","Rounded.DateRange","Ro'
-    'unded.Delete","Rounded.Done","Rounded.Edit","Round'
-    'ed.Email","Rounded.Face","Rounded.Favorite","Round'
-    'ed.FavoriteBorder","Rounded.Home","Rounded.Info","'
-    'Rounded.KeyboardArrowDown","Rounded.KeyboardArrowU'
-    'p","Rounded.LocationOn","Rounded.Lock","Rounded.Ma'
-    'ilOutline","Rounded.Menu","Rounded.MoreVert","Roun'
-    'ded.Notifications","Rounded.Person","Rounded.Phone'
-    '","Rounded.Place","Rounded.PlayArrow","Rounded.Ref'
-    'resh","Rounded.Search","Rounded.Settings","Rounded'
-    '.Share","Rounded.ShoppingCart","Rounded.Star","Rou'
-    'nded.ThumbUp","Rounded.Warning","Sharp.AccountBox"'
-    ',"Sharp.AccountCircle","Sharp.Add","Sharp.AddCircl'
-    'e","Sharp.ArrowDropDown","Sharp.Build","Sharp.Call'
-    '","Sharp.Check","Sharp.CheckCircle","Sharp.Clear",'
-    '"Sharp.Close","Sharp.Create","Sharp.DateRange","Sh'
-    'arp.Delete","Sharp.Done","Sharp.Edit","Sharp.Email'
-    '","Sharp.Face","Sharp.Favorite","Sharp.FavoriteBor'
-    'der","Sharp.Home","Sharp.Info","Sharp.KeyboardArro'
-    'wDown","Sharp.KeyboardArrowUp","Sharp.LocationOn",'
-    '"Sharp.Lock","Sharp.MailOutline","Sharp.Menu","Sha'
-    'rp.MoreVert","Sharp.Notifications","Sharp.Person",'
-    '"Sharp.Phone","Sharp.Place","Sharp.PlayArrow","Sha'
-    'rp.Refresh","Sharp.Search","Sharp.Settings","Sharp'
-    '.Share","Sharp.ShoppingCart","Sharp.Star","Sharp.T'
-    'humbUp","Sharp.Warning","TwoTone.AccountBox","TwoT'
-    'one.AccountCircle","TwoTone.Add","TwoTone.AddCircl'
-    'e","TwoTone.ArrowDropDown","TwoTone.Build","TwoTon'
-    'e.Call","TwoTone.Check","TwoTone.CheckCircle","Two'
-    'Tone.Clear","TwoTone.Close","TwoTone.Create","TwoT'
-    'one.DateRange","TwoTone.Delete","TwoTone.Done","Tw'
-    'oTone.Edit","TwoTone.Email","TwoTone.Face","TwoTon'
-    'e.Favorite","TwoTone.FavoriteBorder","TwoTone.Home'
-    '","TwoTone.Info","TwoTone.KeyboardArrowDown","TwoT'
-    'one.KeyboardArrowUp","TwoTone.LocationOn","TwoTone'
-    '.Lock","TwoTone.MailOutline","TwoTone.Menu","TwoTo'
-    'ne.MoreVert","TwoTone.Notifications","TwoTone.Pers'
-    'on","TwoTone.Phone","TwoTone.Place","TwoTone.PlayA'
-    'rrow","TwoTone.Refresh","TwoTone.Search","TwoTone.'
-    'Settings","TwoTone.Share","TwoTone.ShoppingCart","'
-    'TwoTone.Star","TwoTone.ThumbUp","TwoTone.Warning"]'
-    '}},"since":"1.21.0"},"verticalGradient":{"family":'
-    '"Brush","parameters":{"colors":{"items":{"type":"v'
-    'alue","valueType":"Color"},"minItems":2,"required"'
-    ':true,"type":"list"},"endY":{"type":"float"},"star'
-    'tY":{"type":"float"}},"since":"1.11.0"}}'
+    'isabledContainerColor":{"type":"value","valueType"'
+    ':"Color"}},"since":"1.13.0"},"cardElevation":{"fam'
+    'ily":"CardElevation","parameters":{"defaultElevati'
+    'on":{"type":"value","valueType":"Dp"},"disabledEle'
+    'vation":{"type":"value","valueType":"Dp"},"dragged'
+    'Elevation":{"type":"value","valueType":"Dp"},"focu'
+    'sedElevation":{"type":"value","valueType":"Dp"},"h'
+    'overedElevation":{"type":"value","valueType":"Dp"}'
+    ',"pressedElevation":{"type":"value","valueType":"D'
+    'p"}},"since":"1.13.0"},"elevatedCardColors":{"fami'
+    'ly":"CardColors","parameters":{"containerColor":{"'
+    'type":"value","valueType":"Color"},"disabledContai'
+    'nerColor":{"type":"value","valueType":"Color"}},"s'
+    'ince":"1.13.0"},"elevatedCardElevation":{"family":'
+    '"CardElevation","parameters":{"defaultElevation":{'
+    '"type":"value","valueType":"Dp"},"disabledElevatio'
+    'n":{"type":"value","valueType":"Dp"},"draggedEleva'
+    'tion":{"type":"value","valueType":"Dp"},"focusedEl'
+    'evation":{"type":"value","valueType":"Dp"},"hovere'
+    'dElevation":{"type":"value","valueType":"Dp"},"pre'
+    'ssedElevation":{"type":"value","valueType":"Dp"}},'
+    '"since":"1.13.0"},"filledIconButtonColors":{"famil'
+    'y":"IconButtonColors","parameters":{"containerColo'
+    'r":{"type":"value","valueType":"Color"},"disabledC'
+    'ontainerColor":{"type":"value","valueType":"Color"'
+    '},"disabledContentColor":{"type":"value","valueTyp'
+    'e":"Color"}},"since":"1.13.0"},"filledTonalIconBut'
+    'tonColors":{"family":"IconButtonColors","parameter'
+    's":{"containerColor":{"type":"value","valueType":"'
+    'Color"},"disabledContainerColor":{"type":"value","'
+    'valueType":"Color"},"disabledContentColor":{"type"'
+    ':"value","valueType":"Color"}},"since":"1.13.0"},"'
+    'floatingActionButtonElevation":{"family":"Floating'
+    'ActionButtonElevation","parameters":{"defaultEleva'
+    'tion":{"type":"value","valueType":"Dp"},"focusedEl'
+    'evation":{"type":"value","valueType":"Dp"},"hovere'
+    'dElevation":{"type":"value","valueType":"Dp"},"pre'
+    'ssedElevation":{"type":"value","valueType":"Dp"}},'
+    '"since":"1.13.0"},"horizontalGradient":{"family":"'
+    'Brush","parameters":{"colors":{"items":{"type":"va'
+    'lue","valueType":"Color"},"minItems":2,"required":'
+    'true,"type":"list"},"endX":{"type":"float"},"start'
+    'X":{"type":"float"}},"since":"1.11.0"},"iconButton'
+    'Colors":{"family":"IconButtonColors","parameters":'
+    '{"containerColor":{"type":"value","valueType":"Col'
+    'or"},"contentColor":{"type":"value","valueType":"C'
+    'olor"},"disabledContainerColor":{"type":"value","v'
+    'alueType":"Color"}},"since":"1.13.0"},"linearGradi'
+    'ent":{"family":"Brush","parameters":{"colors":{"it'
+    'ems":{"type":"value","valueType":"Color"},"minItem'
+    's":2,"required":true,"type":"list"},"end":{"type":'
+    '"value","valueType":"Offset"},"start":{"type":"val'
+    'ue","valueType":"Offset"}},"since":"1.11.0"},"lowe'
+    'redElevation":{"family":"FloatingActionButtonEleva'
+    'tion","parameters":{"defaultElevation":{"type":"va'
+    'lue","valueType":"Dp"},"focusedElevation":{"type":'
+    '"value","valueType":"Dp"},"hoveredElevation":{"typ'
+    'e":"value","valueType":"Dp"},"pressedElevation":{"'
+    'type":"value","valueType":"Dp"}},"since":"1.13.0"}'
+    ',"materialIcon":{"family":"ImageVector","parameter'
+    's":{"name":{"required":true,"type":"string","value'
+    's":["AutoMirrored.Filled.ArrowBack","AutoMirrored.'
+    'Filled.ArrowForward","AutoMirrored.Filled.ExitToAp'
+    'p","AutoMirrored.Filled.KeyboardArrowLeft","AutoMi'
+    'rrored.Filled.KeyboardArrowRight","AutoMirrored.Fi'
+    'lled.List","AutoMirrored.Filled.Send","AutoMirrore'
+    'd.Outlined.ArrowBack","AutoMirrored.Outlined.Arrow'
+    'Forward","AutoMirrored.Outlined.ExitToApp","AutoMi'
+    'rrored.Outlined.KeyboardArrowLeft","AutoMirrored.O'
+    'utlined.KeyboardArrowRight","AutoMirrored.Outlined'
+    '.List","AutoMirrored.Outlined.Send","AutoMirrored.'
+    'Rounded.ArrowBack","AutoMirrored.Rounded.ArrowForw'
+    'ard","AutoMirrored.Rounded.ExitToApp","AutoMirrore'
+    'd.Rounded.KeyboardArrowLeft","AutoMirrored.Rounded'
+    '.KeyboardArrowRight","AutoMirrored.Rounded.List","'
+    'AutoMirrored.Rounded.Send","AutoMirrored.Sharp.Arr'
+    'owBack","AutoMirrored.Sharp.ArrowForward","AutoMir'
+    'rored.Sharp.ExitToApp","AutoMirrored.Sharp.Keyboar'
+    'dArrowLeft","AutoMirrored.Sharp.KeyboardArrowRight'
+    '","AutoMirrored.Sharp.List","AutoMirrored.Sharp.Se'
+    'nd","AutoMirrored.TwoTone.ArrowBack","AutoMirrored'
+    '.TwoTone.ArrowForward","AutoMirrored.TwoTone.ExitT'
+    'oApp","AutoMirrored.TwoTone.KeyboardArrowLeft","Au'
+    'toMirrored.TwoTone.KeyboardArrowRight","AutoMirror'
+    'ed.TwoTone.List","AutoMirrored.TwoTone.Send","Fill'
+    'ed.AccountBox","Filled.AccountCircle","Filled.Add"'
+    ',"Filled.AddCircle","Filled.ArrowDropDown","Filled'
+    '.Build","Filled.Call","Filled.Check","Filled.Check'
+    'Circle","Filled.Clear","Filled.Close","Filled.Crea'
+    'te","Filled.DateRange","Filled.Delete","Filled.Don'
+    'e","Filled.Edit","Filled.Email","Filled.Face","Fil'
+    'led.Favorite","Filled.FavoriteBorder","Filled.Home'
+    '","Filled.Info","Filled.KeyboardArrowDown","Filled'
+    '.KeyboardArrowUp","Filled.LocationOn","Filled.Lock'
+    '","Filled.MailOutline","Filled.Menu","Filled.MoreV'
+    'ert","Filled.Notifications","Filled.Person","Fille'
+    'd.Phone","Filled.Place","Filled.PlayArrow","Filled'
+    '.Refresh","Filled.Search","Filled.Settings","Fille'
+    'd.Share","Filled.ShoppingCart","Filled.Star","Fill'
+    'ed.ThumbUp","Filled.Warning","Outlined.AccountBox"'
+    ',"Outlined.AccountCircle","Outlined.Add","Outlined'
+    '.AddCircle","Outlined.ArrowDropDown","Outlined.Bui'
+    'ld","Outlined.Call","Outlined.Check","Outlined.Che'
+    'ckCircle","Outlined.Clear","Outlined.Close","Outli'
+    'ned.Create","Outlined.DateRange","Outlined.Delete"'
+    ',"Outlined.Done","Outlined.Edit","Outlined.Email",'
+    '"Outlined.Face","Outlined.Favorite","Outlined.Favo'
+    'riteBorder","Outlined.Home","Outlined.Info","Outli'
+    'ned.KeyboardArrowDown","Outlined.KeyboardArrowUp",'
+    '"Outlined.LocationOn","Outlined.Lock","Outlined.Ma'
+    'ilOutline","Outlined.Menu","Outlined.MoreVert","Ou'
+    'tlined.Notifications","Outlined.Person","Outlined.'
+    'Phone","Outlined.Place","Outlined.PlayArrow","Outl'
+    'ined.Refresh","Outlined.Search","Outlined.Settings'
+    '","Outlined.Share","Outlined.ShoppingCart","Outlin'
+    'ed.Star","Outlined.ThumbUp","Outlined.Warning","Ro'
+    'unded.AccountBox","Rounded.AccountCircle","Rounded'
+    '.Add","Rounded.AddCircle","Rounded.ArrowDropDown",'
+    '"Rounded.Build","Rounded.Call","Rounded.Check","Ro'
+    'unded.CheckCircle","Rounded.Clear","Rounded.Close"'
+    ',"Rounded.Create","Rounded.DateRange","Rounded.Del'
+    'ete","Rounded.Done","Rounded.Edit","Rounded.Email"'
+    ',"Rounded.Face","Rounded.Favorite","Rounded.Favori'
+    'teBorder","Rounded.Home","Rounded.Info","Rounded.K'
+    'eyboardArrowDown","Rounded.KeyboardArrowUp","Round'
+    'ed.LocationOn","Rounded.Lock","Rounded.MailOutline'
+    '","Rounded.Menu","Rounded.MoreVert","Rounded.Notif'
+    'ications","Rounded.Person","Rounded.Phone","Rounde'
+    'd.Place","Rounded.PlayArrow","Rounded.Refresh","Ro'
+    'unded.Search","Rounded.Settings","Rounded.Share","'
+    'Rounded.ShoppingCart","Rounded.Star","Rounded.Thum'
+    'bUp","Rounded.Warning","Sharp.AccountBox","Sharp.A'
+    'ccountCircle","Sharp.Add","Sharp.AddCircle","Sharp'
+    '.ArrowDropDown","Sharp.Build","Sharp.Call","Sharp.'
+    'Check","Sharp.CheckCircle","Sharp.Clear","Sharp.Cl'
+    'ose","Sharp.Create","Sharp.DateRange","Sharp.Delet'
+    'e","Sharp.Done","Sharp.Edit","Sharp.Email","Sharp.'
+    'Face","Sharp.Favorite","Sharp.FavoriteBorder","Sha'
+    'rp.Home","Sharp.Info","Sharp.KeyboardArrowDown","S'
+    'harp.KeyboardArrowUp","Sharp.LocationOn","Sharp.Lo'
+    'ck","Sharp.MailOutline","Sharp.Menu","Sharp.MoreVe'
+    'rt","Sharp.Notifications","Sharp.Person","Sharp.Ph'
+    'one","Sharp.Place","Sharp.PlayArrow","Sharp.Refres'
+    'h","Sharp.Search","Sharp.Settings","Sharp.Share","'
+    'Sharp.ShoppingCart","Sharp.Star","Sharp.ThumbUp","'
+    'Sharp.Warning","TwoTone.AccountBox","TwoTone.Accou'
+    'ntCircle","TwoTone.Add","TwoTone.AddCircle","TwoTo'
+    'ne.ArrowDropDown","TwoTone.Build","TwoTone.Call","'
+    'TwoTone.Check","TwoTone.CheckCircle","TwoTone.Clea'
+    'r","TwoTone.Close","TwoTone.Create","TwoTone.DateR'
+    'ange","TwoTone.Delete","TwoTone.Done","TwoTone.Edi'
+    't","TwoTone.Email","TwoTone.Face","TwoTone.Favorit'
+    'e","TwoTone.FavoriteBorder","TwoTone.Home","TwoTon'
+    'e.Info","TwoTone.KeyboardArrowDown","TwoTone.Keybo'
+    'ardArrowUp","TwoTone.LocationOn","TwoTone.Lock","T'
+    'woTone.MailOutline","TwoTone.Menu","TwoTone.MoreVe'
+    'rt","TwoTone.Notifications","TwoTone.Person","TwoT'
+    'one.Phone","TwoTone.Place","TwoTone.PlayArrow","Tw'
+    'oTone.Refresh","TwoTone.Search","TwoTone.Settings"'
+    ',"TwoTone.Share","TwoTone.ShoppingCart","TwoTone.S'
+    'tar","TwoTone.ThumbUp","TwoTone.Warning"]}},"since'
+    '":"1.21.0"},"navigationBarItemColors":{"family":"N'
+    'avigationBarItemColors","parameters":{"disabledIco'
+    'nColor":{"type":"value","valueType":"Color"},"disa'
+    'bledTextColor":{"type":"value","valueType":"Color"'
+    '},"indicatorColor":{"type":"value","valueType":"Co'
+    'lor"},"selectedIconColor":{"type":"value","valueTy'
+    'pe":"Color"},"selectedTextColor":{"type":"value","'
+    'valueType":"Color"},"unselectedIconColor":{"type":'
+    '"value","valueType":"Color"},"unselectedTextColor"'
+    ':{"type":"value","valueType":"Color"}},"since":"1.'
+    '13.0"},"outlinedCardColors":{"family":"CardColors"'
+    ',"parameters":{"containerColor":{"type":"value","v'
+    'alueType":"Color"},"disabledContainerColor":{"type'
+    '":"value","valueType":"Color"}},"since":"1.13.0"},'
+    '"outlinedCardElevation":{"family":"CardElevation",'
+    '"parameters":{"defaultElevation":{"type":"value","'
+    'valueType":"Dp"},"disabledElevation":{"type":"valu'
+    'e","valueType":"Dp"},"draggedElevation":{"type":"v'
+    'alue","valueType":"Dp"}},"since":"1.13.0"},"outlin'
+    'edIconButtonColors":{"family":"IconButtonColors","'
+    'parameters":{"containerColor":{"type":"value","val'
+    'ueType":"Color"},"contentColor":{"type":"value","v'
+    'alueType":"Color"},"disabledContainerColor":{"type'
+    '":"value","valueType":"Color"}},"since":"1.13.0"},'
+    '"switchColors":{"family":"SwitchColors","parameter'
+    's":{"checkedBorderColor":{"type":"value","valueTyp'
+    'e":"Color"},"disabledCheckedBorderColor":{"type":"'
+    'value","valueType":"Color"}},"since":"1.13.0"},"ve'
+    'rticalGradient":{"family":"Brush","parameters":{"c'
+    'olors":{"items":{"type":"value","valueType":"Color'
+    '"},"minItems":2,"required":true,"type":"list"},"en'
+    'dY":{"type":"float"},"startY":{"type":"float"}},"s'
+    'ince":"1.11.0"}}'
 )
+
+
+def BorderStroke(
+    width: JsonValue,
+    brush: JsonValue,
+) -> dict[str, JsonValue]:
+    """Construct BorderStroke data for native evaluation.
+
+    Args:
+        width: Native width argument.
+        brush: Native brush argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "BorderStroke",
+        {
+            "width": width,
+            "brush": brush,
+        },
+        DEFINITIONS,
+    )
 
 
 def Color(
@@ -590,17 +703,160 @@ def WindowInsets(
     )
 
 
-def buttonColors(
-    container_color: JsonValue | _Unset = UNSET,
-    content_color: JsonValue | _Unset = UNSET,
-    disabled_container_color: JsonValue | _Unset = UNSET,
-    disabled_content_color: JsonValue | _Unset = UNSET,
+def bottomAppBarFabElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
 ) -> dict[str, JsonValue]:
-    """Construct ButtonColors data for native evaluation.
+    """Construct FloatingActionButtonElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "bottomAppBarFabElevation",
+        {
+            "defaultElevation": default_elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def cardColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardColors data for native evaluation.
 
     Args:
         container_color: Native containerColor argument.
-        content_color: Native contentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "cardColors",
+        {
+            "containerColor": container_color,
+            "disabledContainerColor": disabled_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def cardElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+    disabled_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+        dragged_elevation: Native draggedElevation argument.
+        disabled_elevation: Native disabledElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "cardElevation",
+        {
+            "defaultElevation": default_elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+            "draggedElevation": dragged_elevation,
+            "disabledElevation": disabled_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def elevatedCardColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "elevatedCardColors",
+        {
+            "containerColor": container_color,
+            "disabledContainerColor": disabled_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def elevatedCardElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+    disabled_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+        dragged_elevation: Native draggedElevation argument.
+        disabled_elevation: Native disabledElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "elevatedCardElevation",
+        {
+            "defaultElevation": default_elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+            "draggedElevation": dragged_elevation,
+            "disabledElevation": disabled_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def filledIconButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
         disabled_container_color: Native disabledContainerColor argument.
         disabled_content_color: Native disabledContentColor argument.
 
@@ -608,10 +864,9 @@ def buttonColors(
         Validated, detached JSON data.
     """
     return construct(
-        "buttonColors",
+        "filledIconButtonColors",
         {
             "containerColor": container_color,
-            "contentColor": content_color,
             "disabledContainerColor": disabled_container_color,
             "disabledContentColor": disabled_content_color,
         },
@@ -619,33 +874,56 @@ def buttonColors(
     )
 
 
-def buttonElevation(
+def filledTonalIconButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    disabled_content_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        disabled_content_color: Native disabledContentColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "filledTonalIconButtonColors",
+        {
+            "containerColor": container_color,
+            "disabledContainerColor": disabled_container_color,
+            "disabledContentColor": disabled_content_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def floatingActionButtonElevation(
     default_elevation: JsonValue | _Unset = UNSET,
     pressed_elevation: JsonValue | _Unset = UNSET,
     focused_elevation: JsonValue | _Unset = UNSET,
     hovered_elevation: JsonValue | _Unset = UNSET,
-    disabled_elevation: JsonValue | _Unset = UNSET,
 ) -> dict[str, JsonValue]:
-    """Construct ButtonElevation data for native evaluation.
+    """Construct FloatingActionButtonElevation data for native evaluation.
 
     Args:
         default_elevation: Native defaultElevation argument.
         pressed_elevation: Native pressedElevation argument.
         focused_elevation: Native focusedElevation argument.
         hovered_elevation: Native hoveredElevation argument.
-        disabled_elevation: Native disabledElevation argument.
 
     Returns:
         Validated, detached JSON data.
     """
     return construct(
-        "buttonElevation",
+        "floatingActionButtonElevation",
         {
             "defaultElevation": default_elevation,
             "pressedElevation": pressed_elevation,
             "focusedElevation": focused_elevation,
             "hoveredElevation": hovered_elevation,
-            "disabledElevation": disabled_elevation,
         },
         DEFINITIONS,
     )
@@ -677,6 +955,32 @@ def horizontalGradient(
     )
 
 
+def iconButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        content_color: Native contentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "iconButtonColors",
+        {
+            "containerColor": container_color,
+            "contentColor": content_color,
+            "disabledContainerColor": disabled_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
 def linearGradient(
     colors: JsonValue,
     start: JsonValue | _Unset = UNSET,
@@ -703,6 +1007,35 @@ def linearGradient(
     )
 
 
+def loweredElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    pressed_elevation: JsonValue | _Unset = UNSET,
+    focused_elevation: JsonValue | _Unset = UNSET,
+    hovered_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct FloatingActionButtonElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        pressed_elevation: Native pressedElevation argument.
+        focused_elevation: Native focusedElevation argument.
+        hovered_elevation: Native hoveredElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "loweredElevation",
+        {
+            "defaultElevation": default_elevation,
+            "pressedElevation": pressed_elevation,
+            "focusedElevation": focused_elevation,
+            "hoveredElevation": hovered_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
 def materialIcon(
     name: str,
 ) -> dict[str, JsonValue]:
@@ -718,6 +1051,142 @@ def materialIcon(
         "materialIcon",
         {
             "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
+def navigationBarItemColors(
+    selected_icon_color: JsonValue | _Unset = UNSET,
+    selected_text_color: JsonValue | _Unset = UNSET,
+    indicator_color: JsonValue | _Unset = UNSET,
+    unselected_icon_color: JsonValue | _Unset = UNSET,
+    unselected_text_color: JsonValue | _Unset = UNSET,
+    disabled_icon_color: JsonValue | _Unset = UNSET,
+    disabled_text_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct NavigationBarItemColors data for native evaluation.
+
+    Args:
+        selected_icon_color: Native selectedIconColor argument.
+        selected_text_color: Native selectedTextColor argument.
+        indicator_color: Native indicatorColor argument.
+        unselected_icon_color: Native unselectedIconColor argument.
+        unselected_text_color: Native unselectedTextColor argument.
+        disabled_icon_color: Native disabledIconColor argument.
+        disabled_text_color: Native disabledTextColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "navigationBarItemColors",
+        {
+            "selectedIconColor": selected_icon_color,
+            "selectedTextColor": selected_text_color,
+            "indicatorColor": indicator_color,
+            "unselectedIconColor": unselected_icon_color,
+            "unselectedTextColor": unselected_text_color,
+            "disabledIconColor": disabled_icon_color,
+            "disabledTextColor": disabled_text_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def outlinedCardColors(
+    container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "outlinedCardColors",
+        {
+            "containerColor": container_color,
+            "disabledContainerColor": disabled_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def outlinedCardElevation(
+    default_elevation: JsonValue | _Unset = UNSET,
+    dragged_elevation: JsonValue | _Unset = UNSET,
+    disabled_elevation: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct CardElevation data for native evaluation.
+
+    Args:
+        default_elevation: Native defaultElevation argument.
+        dragged_elevation: Native draggedElevation argument.
+        disabled_elevation: Native disabledElevation argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "outlinedCardElevation",
+        {
+            "defaultElevation": default_elevation,
+            "draggedElevation": dragged_elevation,
+            "disabledElevation": disabled_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def outlinedIconButtonColors(
+    container_color: JsonValue | _Unset = UNSET,
+    content_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct IconButtonColors data for native evaluation.
+
+    Args:
+        container_color: Native containerColor argument.
+        content_color: Native contentColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "outlinedIconButtonColors",
+        {
+            "containerColor": container_color,
+            "contentColor": content_color,
+            "disabledContainerColor": disabled_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def switchColors(
+    checked_border_color: JsonValue | _Unset = UNSET,
+    disabled_checked_border_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SwitchColors data for native evaluation.
+
+    Args:
+        checked_border_color: Native checkedBorderColor argument.
+        disabled_checked_border_color: Native disabledCheckedBorderColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "switchColors",
+        {
+            "checkedBorderColor": checked_border_color,
+            "disabledCheckedBorderColor": disabled_checked_border_color,
         },
         DEFINITIONS,
     )

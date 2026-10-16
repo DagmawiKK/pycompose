@@ -43,6 +43,14 @@ class About(TypedDict):
     open: bool
 
 
+class Toggle(TypedDict):
+    value: bool
+
+
+class Listing(TypedDict):
+    value: str
+
+
 class Nothing(TypedDict):
     pass
 
@@ -312,6 +320,43 @@ def set_about(state: State, payload: About) -> State:
         The same screen with the sheet's visibility assigned.
     """
     return _next(state, of(state).evolve(about_open=payload["open"]))
+
+
+@actions
+def set_previews(state: State, payload: Toggle) -> State:
+    """Show or hide the line of body text under each row's title.
+
+    The switch reports the state it settled on, so the handler assigns what it
+    was handed rather than toggling what it believed.
+
+    Args:
+        state: Snapshot before the flip.
+        payload: The value the switch is now showing.
+
+    Returns:
+        The same screen, showing or hiding every row's preview.
+    """
+    return _next(state, of(state).evolve(previews=payload["value"]))
+
+
+@actions
+def set_listing(state: State, payload: Listing) -> State:
+    """Show every note, or only the ones carrying text.
+
+    Each bar item bakes the filter it stands for into its own binding, so the
+    tap carries no data and the host never chooses one for the user. A listing
+    can outlive the set of filters it was written against: the screen shows the
+    whole list for a value it does not know rather than an empty screen.
+
+    Args:
+        state: Snapshot before the tap.
+        payload: The filter baked into the item that was tapped.
+
+    Returns:
+        The same screen, listing under that filter.
+    """
+    session = of(state)
+    return _next(state, session.evolve(listing=payload["value"]))
 
 
 @actions

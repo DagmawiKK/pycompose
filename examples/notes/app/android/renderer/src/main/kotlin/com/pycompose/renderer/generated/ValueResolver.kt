@@ -16,21 +16,27 @@ import androidx.compose.material.icons.sharp.*
 import androidx.compose.material.icons.twotone.*
 import androidx.compose.ui.unit.dp as default_androidx_compose_ui_unit_dp
 import kotlinx.serialization.json.JsonElement
+import com.pycompose.ir.generated.BorderStrokeValue
 import com.pycompose.ir.generated.BrushValue
-import com.pycompose.ir.generated.ButtonColorsValue
-import com.pycompose.ir.generated.ButtonElevationValue
+import com.pycompose.ir.generated.CardColorsValue
+import com.pycompose.ir.generated.CardElevationValue
 import com.pycompose.ir.generated.ColorValue
 import com.pycompose.ir.generated.DpValue
+import com.pycompose.ir.generated.FloatingActionButtonElevationValue
 import com.pycompose.ir.generated.FontFamilyValue
 import com.pycompose.ir.generated.FontWeightValue
+import com.pycompose.ir.generated.IconButtonColorsValue
 import com.pycompose.ir.generated.ImageVectorValue
+import com.pycompose.ir.generated.NavigationBarItemColorsValue
 import com.pycompose.ir.generated.OffsetValue
 import com.pycompose.ir.generated.PaddingValuesValue
 import com.pycompose.ir.generated.ShapeValue
+import com.pycompose.ir.generated.SwitchColorsValue
 import com.pycompose.ir.generated.TextStyleValue
 import com.pycompose.ir.generated.TextUnitValue
 import com.pycompose.ir.generated.WindowInsetsValue
 import com.pycompose.ir.generated.ValueContract
+import com.pycompose.ir.generated.WireBorderStroke
 import com.pycompose.ir.generated.WireColor
 import com.pycompose.ir.generated.WireCutCornerShape
 import com.pycompose.ir.generated.WireDp
@@ -47,14 +53,44 @@ import com.pycompose.ir.generated.WireThemeColor
 import com.pycompose.ir.generated.WireThemeShape
 import com.pycompose.ir.generated.WireThemeTypography
 import com.pycompose.ir.generated.WireWindowInsets
-import com.pycompose.ir.generated.WirebuttonColors
-import com.pycompose.ir.generated.WirebuttonElevation
+import com.pycompose.ir.generated.WirebottomAppBarFabElevation
+import com.pycompose.ir.generated.WirecardColors
+import com.pycompose.ir.generated.WirecardElevation
+import com.pycompose.ir.generated.WireelevatedCardColors
+import com.pycompose.ir.generated.WireelevatedCardElevation
+import com.pycompose.ir.generated.WirefilledIconButtonColors
+import com.pycompose.ir.generated.WirefilledTonalIconButtonColors
+import com.pycompose.ir.generated.WirefloatingActionButtonElevation
 import com.pycompose.ir.generated.WirehorizontalGradient
+import com.pycompose.ir.generated.WireiconButtonColors
 import com.pycompose.ir.generated.WirelinearGradient
+import com.pycompose.ir.generated.WireloweredElevation
 import com.pycompose.ir.generated.WirematerialIcon
+import com.pycompose.ir.generated.WirenavigationBarItemColors
+import com.pycompose.ir.generated.WireoutlinedCardColors
+import com.pycompose.ir.generated.WireoutlinedCardElevation
+import com.pycompose.ir.generated.WireoutlinedIconButtonColors
+import com.pycompose.ir.generated.WireswitchColors
 import com.pycompose.ir.generated.WireverticalGradient
 
 object ValueResolver {
+    @Composable
+    fun borderStroke(value: JsonElement): Result<androidx.compose.foundation.BorderStroke> {
+        val parsed = runCatching { ValueContract.readBorderStroke(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(borderStroke(parsed))
+    }
+
+    @Composable
+    fun borderStroke(value: BorderStrokeValue): androidx.compose.foundation.BorderStroke =
+        when (value) {
+            is WireBorderStroke -> {
+                androidx.compose.foundation.BorderStroke(
+                    width = dp(value.width),
+                    brush = brush(value.brush),
+                )
+            }
+        }
+
     @Composable
     fun brush(value: JsonElement): Result<androidx.compose.ui.graphics.Brush> {
         val parsed = runCatching { ValueContract.readBrush(value) }.getOrElse { return Result.failure(it) }
@@ -93,39 +129,67 @@ object ValueResolver {
         }
 
     @Composable
-    fun buttonColors(value: JsonElement): Result<androidx.compose.material3.ButtonColors> {
-        val parsed = runCatching { ValueContract.readButtonColors(value) }.getOrElse { return Result.failure(it) }
-        return Result.success(buttonColors(parsed))
+    fun cardColors(value: JsonElement): Result<androidx.compose.material3.CardColors> {
+        val parsed = runCatching { ValueContract.readCardColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(cardColors(parsed))
     }
 
     @Composable
-    fun buttonColors(value: ButtonColorsValue): androidx.compose.material3.ButtonColors =
+    fun cardColors(value: CardColorsValue): androidx.compose.material3.CardColors =
         when (value) {
-            is WirebuttonColors -> {
-                androidx.compose.material3.ButtonDefaults.buttonColors(
+            is WirecardColors -> {
+                androidx.compose.material3.CardDefaults.cardColors(
                     containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
-                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
-                    disabledContentColor = if ("disabledContentColor" in value.supplied) value.disabledContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireelevatedCardColors -> {
+                androidx.compose.material3.CardDefaults.elevatedCardColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireoutlinedCardColors -> {
+                androidx.compose.material3.CardDefaults.outlinedCardColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
             }
         }
 
     @Composable
-    fun buttonElevation(value: JsonElement): Result<androidx.compose.material3.ButtonElevation> {
-        val parsed = runCatching { ValueContract.readButtonElevation(value) }.getOrElse { return Result.failure(it) }
-        return Result.success(buttonElevation(parsed))
+    fun cardElevation(value: JsonElement): Result<androidx.compose.material3.CardElevation> {
+        val parsed = runCatching { ValueContract.readCardElevation(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(cardElevation(parsed))
     }
 
     @Composable
-    fun buttonElevation(value: ButtonElevationValue): androidx.compose.material3.ButtonElevation =
+    fun cardElevation(value: CardElevationValue): androidx.compose.material3.CardElevation =
         when (value) {
-            is WirebuttonElevation -> {
-                androidx.compose.material3.ButtonDefaults.buttonElevation(
+            is WirecardElevation -> {
+                androidx.compose.material3.CardDefaults.cardElevation(
                     defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
                     pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
                     focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
                     hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WireelevatedCardElevation -> {
+                androidx.compose.material3.CardDefaults.elevatedCardElevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WireoutlinedCardElevation -> {
+                androidx.compose.material3.CardDefaults.outlinedCardElevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
                     disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
                 )
             }
@@ -205,6 +269,41 @@ object ValueResolver {
         }
 
     @Composable
+    fun floatingActionButtonElevation(value: JsonElement): Result<androidx.compose.material3.FloatingActionButtonElevation> {
+        val parsed = runCatching { ValueContract.readFloatingActionButtonElevation(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(floatingActionButtonElevation(parsed))
+    }
+
+    @Composable
+    fun floatingActionButtonElevation(value: FloatingActionButtonElevationValue): androidx.compose.material3.FloatingActionButtonElevation =
+        when (value) {
+            is WirebottomAppBarFabElevation -> {
+                androidx.compose.material3.FloatingActionButtonDefaults.bottomAppBarFabElevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WirefloatingActionButtonElevation -> {
+                androidx.compose.material3.FloatingActionButtonDefaults.elevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+            is WireloweredElevation -> {
+                androidx.compose.material3.FloatingActionButtonDefaults.loweredElevation(
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).default_androidx_compose_ui_unit_dp,
+                )
+            }
+        }
+
+    @Composable
     fun fontFamily(value: JsonElement): Result<androidx.compose.ui.text.font.FontFamily> {
         val parsed = runCatching { ValueContract.readFontFamily(value) }.getOrElse { return Result.failure(it) }
         return Result.success(fontFamily(parsed))
@@ -237,6 +336,45 @@ object ValueResolver {
             is WireFontWeight -> {
                 androidx.compose.ui.text.font.FontWeight(
                     weight = value.weight,
+                )
+            }
+        }
+
+    @Composable
+    fun iconButtonColors(value: JsonElement): Result<androidx.compose.material3.IconButtonColors> {
+        val parsed = runCatching { ValueContract.readIconButtonColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(iconButtonColors(parsed))
+    }
+
+    @Composable
+    fun iconButtonColors(value: IconButtonColorsValue): androidx.compose.material3.IconButtonColors =
+        when (value) {
+            is WirefilledIconButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContentColor = if ("disabledContentColor" in value.supplied) value.disabledContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WirefilledTonalIconButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.filledTonalIconButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContentColor = if ("disabledContentColor" in value.supplied) value.disabledContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireiconButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.iconButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else (androidx.compose.material3.LocalContentColor).current,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WireoutlinedIconButtonColors -> {
+                androidx.compose.material3.IconButtonDefaults.outlinedIconButtonColors(
+                    containerColor = if ("containerColor" in value.supplied) value.containerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    contentColor = if ("contentColor" in value.supplied) value.contentColor?.let { item -> color(item) }!! else (androidx.compose.material3.LocalContentColor).current,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
             }
         }
@@ -503,6 +641,28 @@ object ValueResolver {
         }
 
     @Composable
+    fun navigationBarItemColors(value: JsonElement): Result<androidx.compose.material3.NavigationBarItemColors> {
+        val parsed = runCatching { ValueContract.readNavigationBarItemColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(navigationBarItemColors(parsed))
+    }
+
+    @Composable
+    fun navigationBarItemColors(value: NavigationBarItemColorsValue): androidx.compose.material3.NavigationBarItemColors =
+        when (value) {
+            is WirenavigationBarItemColors -> {
+                androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = if ("selectedIconColor" in value.supplied) value.selectedIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    selectedTextColor = if ("selectedTextColor" in value.supplied) value.selectedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    indicatorColor = if ("indicatorColor" in value.supplied) value.indicatorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unselectedIconColor = if ("unselectedIconColor" in value.supplied) value.unselectedIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unselectedTextColor = if ("unselectedTextColor" in value.supplied) value.unselectedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledIconColor = if ("disabledIconColor" in value.supplied) value.disabledIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTextColor = if ("disabledTextColor" in value.supplied) value.disabledTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
     fun offset(value: JsonElement): Result<androidx.compose.ui.geometry.Offset> {
         val parsed = runCatching { ValueContract.readOffset(value) }.getOrElse { return Result.failure(it) }
         return Result.success(offset(parsed))
@@ -566,6 +726,23 @@ object ValueResolver {
                     "small" -> androidx.compose.material3.MaterialTheme.shapes.small
                     else -> error("Unknown native constant")
                 }
+            }
+        }
+
+    @Composable
+    fun switchColors(value: JsonElement): Result<androidx.compose.material3.SwitchColors> {
+        val parsed = runCatching { ValueContract.readSwitchColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(switchColors(parsed))
+    }
+
+    @Composable
+    fun switchColors(value: SwitchColorsValue): androidx.compose.material3.SwitchColors =
+        when (value) {
+            is WireswitchColors -> {
+                androidx.compose.material3.SwitchDefaults.colors(
+                    checkedBorderColor = if ("checkedBorderColor" in value.supplied) value.checkedBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                    disabledCheckedBorderColor = if ("disabledCheckedBorderColor" in value.supplied) value.disabledCheckedBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                )
             }
         }
 

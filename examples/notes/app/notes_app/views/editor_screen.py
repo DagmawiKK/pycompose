@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from m3 import (
     Column,
+    Icon,
+    IconButton,
     Modifier,
     Row,
     Scaffold,
@@ -11,7 +13,9 @@ from m3 import (
     Text,
     TextButton,
     TextField,
+    VerticalDivider,
 )
+from m3.values import materialIcon
 
 from notes_app.domain.models import Note
 from notes_app.state import Session
@@ -50,10 +54,24 @@ def editor_screen(
             id="bar",
             vertical_alignment="center",
             children=[
-                TextButton(
+                IconButton(
                     id="back",
-                    text="Notes",
                     on_click=actions.go_back.bind(id="back"),
+                    children=[
+                        Icon(
+                            id="back_icon",
+                            image_vector=materialIcon(
+                                name="AutoMirrored.Filled.ArrowBack"
+                            ),
+                            content_description="Back to notes",
+                            tint=theme.on_surface,
+                        )
+                    ],
+                ),
+                VerticalDivider(
+                    id="bar_rule",
+                    color=theme.muted,
+                    modifier=Modifier().size(1, 24),
                 ),
                 Spacer(id="gap_bar_title", modifier=Modifier().size(8)),
                 Text(

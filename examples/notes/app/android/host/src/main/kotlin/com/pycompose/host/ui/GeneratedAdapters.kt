@@ -11,24 +11,40 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.ui.Modifier
-import com.pycompose.ir.generated.Button as ButtonNode
+import androidx.compose.ui.unit.dp
+import com.pycompose.ir.generated.Card as CardNode
 import com.pycompose.ir.generated.Column as ColumnNode
+import com.pycompose.ir.generated.FloatingActionButton as FloatingActionButtonNode
+import com.pycompose.ir.generated.HorizontalDivider as HorizontalDividerNode
 import com.pycompose.ir.generated.Icon as IconNode
+import com.pycompose.ir.generated.IconButton as IconButtonNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
 import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
+import com.pycompose.ir.generated.NavigationBar as NavigationBarNode
+import com.pycompose.ir.generated.NavigationBarItem as NavigationBarItemNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
 import com.pycompose.ir.generated.Spacer as SpacerNode
+import com.pycompose.ir.generated.Switch as SwitchNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
+import com.pycompose.ir.generated.VerticalDivider as VerticalDividerNode
+import com.pycompose.renderer.unslotted
 import kotlinx.serialization.json.JsonObject
 
 /** Adapters derived mechanically from the schema, for every component whose
@@ -37,27 +53,32 @@ object GeneratedAdapters {
     private fun ComponentRegistry.Builder.generated():
         ComponentRegistry.Builder =
         this
-            .register("Button") { node, modifier, context ->
-                val model = node as ButtonNode
+            .register("Card") { node, modifier, context ->
+                val model = node as CardNode
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.CardDefaults.shape
                 val colorsWire = model.props.colors
-                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.buttonColors(colorsWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.buttonColors()
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.cardColors(colorsWire).getOrThrow() else androidx.compose.material3.CardDefaults.cardColors()
                 val elevationWire = model.props.elevation
-                val elevationValue = when (elevationWire) {
-                    com.pycompose.ir.OptionalValue.Absent -> androidx.compose.material3.ButtonDefaults.buttonElevation()
+                val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.cardElevation(elevationWire).getOrThrow() else androidx.compose.material3.CardDefaults.cardElevation()
+                val borderWire = model.props.border
+                val borderValue = when (borderWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
                     com.pycompose.ir.OptionalValue.Null -> null
-                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.buttonElevation(elevationWire.value).getOrThrow()
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.borderStroke(borderWire.value).getOrThrow()
                 }
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
-                Button(
+                Card(
                     modifier = modifier,
-                    colors = colorsValue,
-                    elevation = elevationValue,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     enabled = model.props.enabled,
+                    shape = shapeValue,
+                    colors = colorsValue,
+                    elevation = elevationValue,
+                    border = borderValue,
                     interactionSource = interactionSourceValue,
-                ) {
-                    Text(model.props.text)
-                }
+                    content = { context.childrenInColumnScope(this, model.children) },
+                )
             }
             .register("Column") { node, modifier, context ->
                 val model = node as ColumnNode
@@ -65,7 +86,44 @@ object GeneratedAdapters {
                 Column(
                     modifier = modifier,
                     horizontalAlignment = horizontalAlignmentValue,
+                    content = { context.childrenInColumnScope(this, model.children) },
+                )
+            }
+            .register("FloatingActionButton") { node, modifier, context ->
+                val model = node as FloatingActionButtonNode
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.shape
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
+                    else -> androidx.compose.material3.FloatingActionButtonDefaults.containerColor
+                }
+                val elevationWire = model.props.elevation
+                val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.floatingActionButtonElevation(elevationWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.elevation()
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                FloatingActionButton(
+                    modifier = modifier,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    containerColor = containerColorValue,
+                    elevation = elevationValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
+                )
+            }
+            .register("HorizontalDivider") { node, modifier, context ->
+                val model = node as HorizontalDividerNode
+                val thicknessWire = model.props.thickness
+                val thicknessValue = if (thicknessWire != null) thicknessWire.dp else androidx.compose.material3.DividerDefaults.Thickness
+                val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.DividerDefaults.color)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.DividerDefaults.color)
+                    else -> androidx.compose.material3.DividerDefaults.color
+                }
+                HorizontalDivider(
+                    modifier = modifier,
+                    thickness = thicknessValue,
+                    color = colorValue,
                 )
             }
             .register("Icon") { node, modifier, context ->
@@ -83,13 +141,27 @@ object GeneratedAdapters {
                     tint = tintValue,
                 )
             }
+            .register("IconButton") { node, modifier, context ->
+                val model = node as IconButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.iconButtonColors()
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                IconButton(
+                    modifier = modifier,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    enabled = model.props.enabled,
+                    colors = colorsValue,
+                    interactionSource = interactionSourceValue,
+                    content = { context.children(model.children) },
+                )
+            }
             .register("LazyColumn") { node, modifier, context ->
                 val model = node as LazyColumnNode
                 val verticalArrangementValue: androidx.compose.foundation.layout.Arrangement.Vertical = com.pycompose.renderer.PropResolver.arrangement(model.props.verticalArrangement).getOrDefault(androidx.compose.foundation.layout.Arrangement.Top)
                 LazyColumn(
                     modifier = modifier,
                     verticalArrangement = verticalArrangementValue,
-                    content = { items(context.unslotted(model.children), key = { it.id }) { context.node(it) } },
+                    content = { items(model.children.unslotted(), key = { it.id }) { context.node(it) } },
                 )
             }
             .register("LinearProgressIndicator") { node, modifier, context ->
@@ -121,9 +193,45 @@ object GeneratedAdapters {
                         sheetState = sheetStateValue.state,
                         onDismissRequest = {},
                         dragHandle = context.slot(model.children, "dragHandle"),
-                        content = { context.children(model.children) },
+                        content = { context.childrenInColumnScope(this, model.children) },
                     )
                 }
+            }
+            .register("NavigationBar") { node, modifier, context ->
+                val model = node as NavigationBarNode
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.NavigationBarDefaults.containerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.NavigationBarDefaults.containerColor)
+                    else -> androidx.compose.material3.NavigationBarDefaults.containerColor
+                }
+                val tonalElevationWire = model.props.tonalElevation
+                val tonalElevationValue = if (tonalElevationWire != null) tonalElevationWire.dp else androidx.compose.material3.NavigationBarDefaults.Elevation
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.NavigationBarDefaults.windowInsets
+                NavigationBar(
+                    modifier = modifier,
+                    containerColor = containerColorValue,
+                    tonalElevation = tonalElevationValue,
+                    windowInsets = windowInsetsValue,
+                    content = { context.childrenInRowScope(this, model.children) },
+                )
+            }
+            .registerRowScoped("NavigationBarItem") { node, modifier, context ->
+                val model = node as NavigationBarItemNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.navigationBarItemColors(colorsWire).getOrThrow() else androidx.compose.material3.NavigationBarItemDefaults.colors()
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                NavigationBarItem(
+                    modifier = modifier,
+                    selected = model.props.selected,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    enabled = model.props.enabled,
+                    alwaysShowLabel = model.props.alwaysShowLabel,
+                    colors = colorsValue,
+                    interactionSource = interactionSourceValue,
+                    icon = { context.slot(model.children, "icon")?.invoke() },
+                    label = context.slot(model.children, "label"),
+                )
             }
             .register("Row") { node, modifier, context ->
                 val model = node as RowNode
@@ -131,7 +239,7 @@ object GeneratedAdapters {
                 Row(
                     modifier = modifier,
                     verticalAlignment = verticalAlignmentValue,
-                    content = { context.children(model.children) },
+                    content = { context.childrenInRowScope(this, model.children) },
                 )
             }
             .register("Scaffold") { node, modifier, context ->
@@ -157,6 +265,21 @@ object GeneratedAdapters {
                     modifier = modifier,
                 )
             }
+            .register("Switch") { node, modifier, context ->
+                val model = node as SwitchNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.switchColors(colorsWire).getOrThrow() else androidx.compose.material3.SwitchDefaults.colors()
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                Switch(
+                    modifier = modifier,
+                    checked = model.props.checked,
+                    onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
+                    enabled = model.props.enabled,
+                    colors = colorsValue,
+                    interactionSource = interactionSourceValue,
+                    thumbContent = context.slot(model.children, "thumbContent"),
+                )
+            }
             .register("TextButton") { node, modifier, context ->
                 val model = node as TextButtonNode
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
@@ -168,6 +291,21 @@ object GeneratedAdapters {
                 ) {
                     Text(model.props.text)
                 }
+            }
+            .register("VerticalDivider") { node, modifier, context ->
+                val model = node as VerticalDividerNode
+                val thicknessWire = model.props.thickness
+                val thicknessValue = if (thicknessWire != null) thicknessWire.dp else androidx.compose.material3.DividerDefaults.Thickness
+                val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.DividerDefaults.color)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.DividerDefaults.color)
+                    else -> androidx.compose.material3.DividerDefaults.color
+                }
+                VerticalDivider(
+                    modifier = modifier,
+                    thickness = thicknessValue,
+                    color = colorValue,
+                )
             }
     fun register(into: ComponentRegistry.Builder):
         ComponentRegistry.Builder =

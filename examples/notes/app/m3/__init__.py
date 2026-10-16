@@ -2,35 +2,49 @@
 """Native components backed by the shared manifest."""
 
 from m3.generated_components import (
-    Button,
+    Card,
     Column,
+    FloatingActionButton,
+    HorizontalDivider,
     Icon,
+    IconButton,
     LazyColumn,
     LinearProgressIndicator,
     ModalBottomSheet,
+    NavigationBar,
+    NavigationBarItem,
     Row,
     Scaffold,
     Spacer,
+    Switch,
     Text,
     TextButton,
     TextField,
+    VerticalDivider,
 )
 from pycompose.components.modifiers import (
     Modifier,
 )
 
 __all__ = [
-    "Button",
+    "Card",
     "Column",
+    "FloatingActionButton",
+    "HorizontalDivider",
     "Icon",
+    "IconButton",
     "LazyColumn",
     "LinearProgressIndicator",
     "ModalBottomSheet",
     "Modifier",
+    "NavigationBar",
+    "NavigationBarItem",
     "Row",
     "Scaffold",
     "Spacer",
+    "Switch",
     "Text",
     "TextButton",
     "TextField",
+    "VerticalDivider",
 ]
