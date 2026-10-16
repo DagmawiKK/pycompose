@@ -285,6 +285,58 @@ def test_an_omitted_optional_prop_is_simply_absent() -> None:
             assert f"model.props.{prop}" not in block
 
 
+def test_a_required_nullable_scalar_is_passed_through() -> None:
+    """``Icon.contentDescription`` is ``String?`` and has no default to omit.
+
+    The pinned parameter takes no default, so absence is not one of its states:
+    the wire has to state a description or an explicit null, and what the model
+    holds is that nullable value rather than the ``OptionalValue`` an optional
+    nullable prop gets.
+    """
+    block = render("Icon", components()["Icon"])
+    assert "contentDescription = model.props.contentDescription" in block
+
+
+def test_an_icon_is_resolved_from_the_pinned_vocabulary() -> None:
+    """The wire names an icon; the host supplies the pinned ``ImageVector``."""
+    block = render("Icon", components()["Icon"])
+    assert "ValueResolver.imageVector(model.props.imageVector).getOrThrow()" in block
+    # ``Icon`` tints with the ambient content colour unless the app states one,
+    # so the fallback is the pinned default and not a generated guess.
+    assert "androidx.compose.material3.LocalContentColor.current" in block
+
+
+def test_nullable_shapes_are_kept_apart(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The two nullable shapes fit different parameters, so both are checked.
+
+    A required nullable prop is handed over as it stands, which only lines up
+    where the wire value *is* the native value: an undecoded scalar. An optional
+    nullable prop is the ``OptionalValue`` form the value family's adapter
+    implements, where absence and an explicit null are two facts. Anything else
+    would be passed where it does not fit or dropped silently.
+    """
+    from pycompose.schema.codegen import main
+
+    registry = json.loads(SCHEMA_PATH.read_text())
+    registry["components"]["Text"]["props"]["color"] = {
+        "type": "string",
+        "nullable": True,
+    }
+    path = tmp_path / "components.json"
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match="absent/null distinction"):
+        main.load_registry()
+
+    registry = json.loads(SCHEMA_PATH.read_text())
+    registry["components"]["Icon"]["props"]["imageVector"]["nullable"] = True
+    path.write_text(json.dumps(registry))
+    with pytest.raises(SystemExit, match="must be an undecoded scalar"):
+        main.load_registry()
+
+
 # ---------------------------------------------------------------------------
 # Content slots: Compose has no Button.text
 # ---------------------------------------------------------------------------

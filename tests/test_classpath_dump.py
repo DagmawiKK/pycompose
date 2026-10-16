@@ -406,6 +406,110 @@ def test_member_proposal_reads_enum_entries_as_the_wire_vocabulary(tmp_path) -> 
     }
 
 
+def test_icon_proposal_labels_members_by_their_path(tmp_path) -> None:
+    from schema.classpath_dump import inventory
+    from schema.propose import propose_icons
+
+    image = type_doc("androidx/compose/ui/graphics/vector/ImageVector")
+    write_inventory(
+        tmp_path,
+        [
+            declaration(),
+            declaration(
+                name="Add",
+                owner="androidx.compose.material.icons.filled.AddKt",
+                package="androidx.compose.material.icons.filled",
+                disposition="support",
+                composable=False,
+                declarationKind="property",
+                receiver=type_doc("androidx/compose/material/icons/Icons.Filled"),
+                returnType=image,
+            ),
+            declaration(
+                name="Add",
+                owner="androidx.compose.material.icons.outlined.AddKt",
+                package="androidx.compose.material.icons.outlined",
+                disposition="support",
+                composable=False,
+                declarationKind="property",
+                receiver=type_doc("androidx/compose/material/icons/Icons.Outlined"),
+                returnType=image,
+            ),
+            declaration(
+                name="ArrowBack",
+                owner="androidx.compose.material.icons.automirrored.filled.ArrowBackKt",
+                package="androidx.compose.material.icons.automirrored.filled",
+                disposition="support",
+                composable=False,
+                declarationKind="property",
+                receiver=type_doc(
+                    "androidx/compose/material/icons/Icons.AutoMirrored.Filled"
+                ),
+                returnType=image,
+                annotations={"kotlin/Deprecated": {}},
+            ),
+            declaration(
+                name="Tint",
+                owner="androidx.compose.material.icons.filled.TintKt",
+                package="androidx.compose.material.icons.filled",
+                disposition="support",
+                composable=False,
+                declarationKind="property",
+                receiver=type_doc("androidx/compose/material/icons/Icons.Filled"),
+                returnType=type_doc("kotlin/String"),
+            ),
+        ],
+    )
+    spec = propose_icons(
+        inventory(tmp_path),
+        "androidx/compose/material/icons/Icons",
+        {
+            "family": "ImageVector",
+            "kind": "constant",
+            "kotlinType": "androidx.compose.ui.graphics.vector.ImageVector",
+        },
+        since="1.21.0",
+    )
+    # The label is where the icon is read from, a deprecated twin is not offered
+    # and a same-named property of another type is not an icon.
+    assert spec["parameters"]["name"]["values"] == ["Filled.Add", "Outlined.Add"]
+    assert spec["family"] == "ImageVector"
+    assert spec["kind"] == "constant"
+    assert spec["since"] == "1.21.0"
+    assert spec["source"] == {
+        "owner": "androidx/compose/material/icons/Icons",
+        "members": "public properties",
+    }
+    # An extension property only resolves where it is declared, so the packages
+    # come along with the members they declare.
+    assert spec["native"] == {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material.icons.Icons",
+        "imports": [
+            "androidx.compose.material.icons.filled",
+            "androidx.compose.material.icons.outlined",
+        ],
+    }
+
+
+def test_icon_proposal_refuses_a_holder_with_no_icons(tmp_path) -> None:
+    from schema.classpath_dump import inventory
+    from schema.propose import propose_icons
+
+    write_inventory(tmp_path, [declaration()])
+    with pytest.raises(ValueError, match="no public ImageVector members"):
+        propose_icons(
+            inventory(tmp_path),
+            "androidx/compose/material/icons/Icons",
+            {
+                "family": "ImageVector",
+                "kind": "constant",
+                "kotlinType": "androidx.compose.ui.graphics.vector.ImageVector",
+            },
+            since="1.21.0",
+        )
+
+
 def test_pinned_source_defaults_generate_native_factories(native_document) -> None:
     from schema.classpath_dump import inventory, source_defaults
     from schema.propose import propose_value
@@ -793,6 +897,23 @@ def test_named_member_and_omission_drift_require_review(native_document) -> None
     )
     errors = compare_values(registry, changed, source_defaults(DUMP))
     assert any("ThemeColor:" in error and "nullable" in error for error in errors)
+
+
+def test_icon_vocabulary_drift_requires_review(native_document) -> None:
+    from schema.check_upstream import DRIFT, compare_values
+    from schema.classpath_dump import inventory, source_defaults
+
+    assert native_document["artifacts"]
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    icon = registry["valueTypes"]["materialIcon"]
+    # A label the pin no longer carries and a package that declares nothing the
+    # vocabulary names are both facts of the pin, so an approved copy of either
+    # has to surface as a proposal diff for a person to review.
+    icon["parameters"]["name"]["values"].remove("Filled.Add")
+    icon["native"]["imports"] = ["androidx.compose.material.icons.filled"]
+    assert compare_values(registry, inventory(DUMP), source_defaults(DUMP)) == [
+        f"materialIcon: {DRIFT}"
+    ]
 
 
 def test_inline_value_overloads_are_not_collapsed_by_jvm_erasure(tmp_path) -> None:

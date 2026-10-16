@@ -111,6 +111,19 @@ def test_theme_references_remain_symbolic_in_canonical_ir() -> None:
         ThemeColor("notAThemeToken")
 
 
+def test_the_icon_vocabulary_accepts_only_labels_the_pin_carries() -> None:
+    from pycompose.values import materialIcon
+
+    icon = materialIcon(name="AutoMirrored.Filled.ArrowBack")
+    assert icon == {"type": "materialIcon", "name": "AutoMirrored.Filled.ArrowBack"}
+    # ``Icons.Filled.ArrowBack`` is the deprecated spelling the auto-mirrored
+    # twin replaced: offering it would generate a call that warns at every build.
+    with pytest.raises(IrValidationError):
+        materialIcon(name="Filled.ArrowBack")
+    with pytest.raises(IrValidationError):
+        materialIcon(name="Filled.NotAnIcon")
+
+
 def test_component_factories_keep_omission_native() -> None:
     from pycompose.components import Button
     from pycompose.values import Dp, ThemeColor, buttonColors, buttonElevation

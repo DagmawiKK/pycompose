@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DismissibleNavigationDrawer
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -29,6 +30,7 @@ import com.pycompose.ir.generated.Checkbox as CheckboxNode
 import com.pycompose.ir.generated.Column as ColumnNode
 import com.pycompose.ir.generated.DismissibleNavigationDrawer as DismissibleNavigationDrawerNode
 import com.pycompose.ir.generated.FilterChip as FilterChipNode
+import com.pycompose.ir.generated.Icon as IconNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
 import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
@@ -119,6 +121,21 @@ object GeneratedAdapters {
                     interactionSource = interactionSourceValue,
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
+            .register("Icon") { node, modifier, context ->
+                val model = node as IconNode
+                val imageVectorValue = com.pycompose.renderer.generated.ValueResolver.imageVector(model.props.imageVector).getOrThrow()
+                val tintValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.tint) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.LocalContentColor.current)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.LocalContentColor.current)
+                    else -> androidx.compose.material3.LocalContentColor.current
+                }
+                Icon(
+                    modifier = modifier,
+                    imageVector = imageVectorValue,
+                    contentDescription = model.props.contentDescription,
+                    tint = tintValue,
                 )
             }
             .register("LazyColumn") { node, modifier, context ->

@@ -36,6 +36,9 @@ dependencies {
     // PropResolver.textStyle reads MaterialTheme, so :renderer needs material3.
     // It had no reason to before: no adapter generated a style from the wire.
     implementation(libs.compose.material3)
+    // The icon vocabulary resolves to `Icons.<Style>.<Name>` properties, which
+    // material3 does not put on the compile classpath.
+    implementation(libs.compose.material.icons.core)
     testImplementation(libs.compose.test)
     testImplementation(libs.robolectric)
     testImplementation(libs.junit4)

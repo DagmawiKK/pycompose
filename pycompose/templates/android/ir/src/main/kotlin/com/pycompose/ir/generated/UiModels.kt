@@ -154,6 +154,25 @@ data class FilterChip(
 }
 
 @Serializable
+data class IconProps(
+    val `contentDescription`: String?,
+    val `imageVector`: JsonElement,
+    override val `modifier`: JsonObject? = null,
+    val `tint`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("Icon")
+data class Icon(
+    override val id: String,
+    override val props: IconProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "Icon"
+}
+
+@Serializable
 data class ImageProps(
     val `contentDescription`: String? = null,
     override val `modifier`: JsonObject? = null,

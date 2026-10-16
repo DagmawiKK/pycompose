@@ -4,6 +4,16 @@ package com.pycompose.renderer.generated
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.em
+import androidx.compose.material.icons.automirrored.filled.*
+import androidx.compose.material.icons.automirrored.outlined.*
+import androidx.compose.material.icons.automirrored.rounded.*
+import androidx.compose.material.icons.automirrored.sharp.*
+import androidx.compose.material.icons.automirrored.twotone.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.sharp.*
+import androidx.compose.material.icons.twotone.*
 import androidx.compose.ui.unit.dp as default_androidx_compose_ui_unit_dp
 import kotlinx.serialization.json.JsonElement
 import com.pycompose.ir.generated.AlignmentValue
@@ -32,6 +42,7 @@ import com.pycompose.ir.generated.FontStyleValue
 import com.pycompose.ir.generated.FontWeightValue
 import com.pycompose.ir.generated.IconButtonColorsValue
 import com.pycompose.ir.generated.IconToggleButtonColorsValue
+import com.pycompose.ir.generated.ImageVectorValue
 import com.pycompose.ir.generated.MenuItemColorsValue
 import com.pycompose.ir.generated.NavigationBarItemColorsValue
 import com.pycompose.ir.generated.OffsetValue
@@ -126,6 +137,7 @@ import com.pycompose.ir.generated.WireitemColors
 import com.pycompose.ir.generated.WirelargeTopAppBarColors
 import com.pycompose.ir.generated.WirelinearGradient
 import com.pycompose.ir.generated.WireloweredElevation
+import com.pycompose.ir.generated.WirematerialIcon
 import com.pycompose.ir.generated.WiremediumTopAppBarColors
 import com.pycompose.ir.generated.WirenavigationBarItemColors
 import com.pycompose.ir.generated.WireoutlinedCardColors
@@ -873,6 +885,267 @@ object ValueResolver {
                     disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     checkedContainerColor = if ("checkedContainerColor" in value.supplied) value.checkedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
+            }
+        }
+
+    @Composable
+    fun imageVector(value: JsonElement): Result<androidx.compose.ui.graphics.vector.ImageVector> {
+        val parsed = runCatching { ValueContract.readImageVector(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(imageVector(parsed))
+    }
+
+    @Composable
+    fun imageVector(value: ImageVectorValue): androidx.compose.ui.graphics.vector.ImageVector =
+        when (value) {
+            is WirematerialIcon -> {
+                when (value.name) {
+                    "AutoMirrored.Filled.ArrowBack" -> androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack
+                    "AutoMirrored.Filled.ArrowForward" -> androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowForward
+                    "AutoMirrored.Filled.ExitToApp" -> androidx.compose.material.icons.Icons.AutoMirrored.Filled.ExitToApp
+                    "AutoMirrored.Filled.KeyboardArrowLeft" -> androidx.compose.material.icons.Icons.AutoMirrored.Filled.KeyboardArrowLeft
+                    "AutoMirrored.Filled.KeyboardArrowRight" -> androidx.compose.material.icons.Icons.AutoMirrored.Filled.KeyboardArrowRight
+                    "AutoMirrored.Filled.List" -> androidx.compose.material.icons.Icons.AutoMirrored.Filled.List
+                    "AutoMirrored.Filled.Send" -> androidx.compose.material.icons.Icons.AutoMirrored.Filled.Send
+                    "AutoMirrored.Outlined.ArrowBack" -> androidx.compose.material.icons.Icons.AutoMirrored.Outlined.ArrowBack
+                    "AutoMirrored.Outlined.ArrowForward" -> androidx.compose.material.icons.Icons.AutoMirrored.Outlined.ArrowForward
+                    "AutoMirrored.Outlined.ExitToApp" -> androidx.compose.material.icons.Icons.AutoMirrored.Outlined.ExitToApp
+                    "AutoMirrored.Outlined.KeyboardArrowLeft" -> androidx.compose.material.icons.Icons.AutoMirrored.Outlined.KeyboardArrowLeft
+                    "AutoMirrored.Outlined.KeyboardArrowRight" -> androidx.compose.material.icons.Icons.AutoMirrored.Outlined.KeyboardArrowRight
+                    "AutoMirrored.Outlined.List" -> androidx.compose.material.icons.Icons.AutoMirrored.Outlined.List
+                    "AutoMirrored.Outlined.Send" -> androidx.compose.material.icons.Icons.AutoMirrored.Outlined.Send
+                    "AutoMirrored.Rounded.ArrowBack" -> androidx.compose.material.icons.Icons.AutoMirrored.Rounded.ArrowBack
+                    "AutoMirrored.Rounded.ArrowForward" -> androidx.compose.material.icons.Icons.AutoMirrored.Rounded.ArrowForward
+                    "AutoMirrored.Rounded.ExitToApp" -> androidx.compose.material.icons.Icons.AutoMirrored.Rounded.ExitToApp
+                    "AutoMirrored.Rounded.KeyboardArrowLeft" -> androidx.compose.material.icons.Icons.AutoMirrored.Rounded.KeyboardArrowLeft
+                    "AutoMirrored.Rounded.KeyboardArrowRight" -> androidx.compose.material.icons.Icons.AutoMirrored.Rounded.KeyboardArrowRight
+                    "AutoMirrored.Rounded.List" -> androidx.compose.material.icons.Icons.AutoMirrored.Rounded.List
+                    "AutoMirrored.Rounded.Send" -> androidx.compose.material.icons.Icons.AutoMirrored.Rounded.Send
+                    "AutoMirrored.Sharp.ArrowBack" -> androidx.compose.material.icons.Icons.AutoMirrored.Sharp.ArrowBack
+                    "AutoMirrored.Sharp.ArrowForward" -> androidx.compose.material.icons.Icons.AutoMirrored.Sharp.ArrowForward
+                    "AutoMirrored.Sharp.ExitToApp" -> androidx.compose.material.icons.Icons.AutoMirrored.Sharp.ExitToApp
+                    "AutoMirrored.Sharp.KeyboardArrowLeft" -> androidx.compose.material.icons.Icons.AutoMirrored.Sharp.KeyboardArrowLeft
+                    "AutoMirrored.Sharp.KeyboardArrowRight" -> androidx.compose.material.icons.Icons.AutoMirrored.Sharp.KeyboardArrowRight
+                    "AutoMirrored.Sharp.List" -> androidx.compose.material.icons.Icons.AutoMirrored.Sharp.List
+                    "AutoMirrored.Sharp.Send" -> androidx.compose.material.icons.Icons.AutoMirrored.Sharp.Send
+                    "AutoMirrored.TwoTone.ArrowBack" -> androidx.compose.material.icons.Icons.AutoMirrored.TwoTone.ArrowBack
+                    "AutoMirrored.TwoTone.ArrowForward" -> androidx.compose.material.icons.Icons.AutoMirrored.TwoTone.ArrowForward
+                    "AutoMirrored.TwoTone.ExitToApp" -> androidx.compose.material.icons.Icons.AutoMirrored.TwoTone.ExitToApp
+                    "AutoMirrored.TwoTone.KeyboardArrowLeft" -> androidx.compose.material.icons.Icons.AutoMirrored.TwoTone.KeyboardArrowLeft
+                    "AutoMirrored.TwoTone.KeyboardArrowRight" -> androidx.compose.material.icons.Icons.AutoMirrored.TwoTone.KeyboardArrowRight
+                    "AutoMirrored.TwoTone.List" -> androidx.compose.material.icons.Icons.AutoMirrored.TwoTone.List
+                    "AutoMirrored.TwoTone.Send" -> androidx.compose.material.icons.Icons.AutoMirrored.TwoTone.Send
+                    "Filled.AccountBox" -> androidx.compose.material.icons.Icons.Filled.AccountBox
+                    "Filled.AccountCircle" -> androidx.compose.material.icons.Icons.Filled.AccountCircle
+                    "Filled.Add" -> androidx.compose.material.icons.Icons.Filled.Add
+                    "Filled.AddCircle" -> androidx.compose.material.icons.Icons.Filled.AddCircle
+                    "Filled.ArrowDropDown" -> androidx.compose.material.icons.Icons.Filled.ArrowDropDown
+                    "Filled.Build" -> androidx.compose.material.icons.Icons.Filled.Build
+                    "Filled.Call" -> androidx.compose.material.icons.Icons.Filled.Call
+                    "Filled.Check" -> androidx.compose.material.icons.Icons.Filled.Check
+                    "Filled.CheckCircle" -> androidx.compose.material.icons.Icons.Filled.CheckCircle
+                    "Filled.Clear" -> androidx.compose.material.icons.Icons.Filled.Clear
+                    "Filled.Close" -> androidx.compose.material.icons.Icons.Filled.Close
+                    "Filled.Create" -> androidx.compose.material.icons.Icons.Filled.Create
+                    "Filled.DateRange" -> androidx.compose.material.icons.Icons.Filled.DateRange
+                    "Filled.Delete" -> androidx.compose.material.icons.Icons.Filled.Delete
+                    "Filled.Done" -> androidx.compose.material.icons.Icons.Filled.Done
+                    "Filled.Edit" -> androidx.compose.material.icons.Icons.Filled.Edit
+                    "Filled.Email" -> androidx.compose.material.icons.Icons.Filled.Email
+                    "Filled.Face" -> androidx.compose.material.icons.Icons.Filled.Face
+                    "Filled.Favorite" -> androidx.compose.material.icons.Icons.Filled.Favorite
+                    "Filled.FavoriteBorder" -> androidx.compose.material.icons.Icons.Filled.FavoriteBorder
+                    "Filled.Home" -> androidx.compose.material.icons.Icons.Filled.Home
+                    "Filled.Info" -> androidx.compose.material.icons.Icons.Filled.Info
+                    "Filled.KeyboardArrowDown" -> androidx.compose.material.icons.Icons.Filled.KeyboardArrowDown
+                    "Filled.KeyboardArrowUp" -> androidx.compose.material.icons.Icons.Filled.KeyboardArrowUp
+                    "Filled.LocationOn" -> androidx.compose.material.icons.Icons.Filled.LocationOn
+                    "Filled.Lock" -> androidx.compose.material.icons.Icons.Filled.Lock
+                    "Filled.MailOutline" -> androidx.compose.material.icons.Icons.Filled.MailOutline
+                    "Filled.Menu" -> androidx.compose.material.icons.Icons.Filled.Menu
+                    "Filled.MoreVert" -> androidx.compose.material.icons.Icons.Filled.MoreVert
+                    "Filled.Notifications" -> androidx.compose.material.icons.Icons.Filled.Notifications
+                    "Filled.Person" -> androidx.compose.material.icons.Icons.Filled.Person
+                    "Filled.Phone" -> androidx.compose.material.icons.Icons.Filled.Phone
+                    "Filled.Place" -> androidx.compose.material.icons.Icons.Filled.Place
+                    "Filled.PlayArrow" -> androidx.compose.material.icons.Icons.Filled.PlayArrow
+                    "Filled.Refresh" -> androidx.compose.material.icons.Icons.Filled.Refresh
+                    "Filled.Search" -> androidx.compose.material.icons.Icons.Filled.Search
+                    "Filled.Settings" -> androidx.compose.material.icons.Icons.Filled.Settings
+                    "Filled.Share" -> androidx.compose.material.icons.Icons.Filled.Share
+                    "Filled.ShoppingCart" -> androidx.compose.material.icons.Icons.Filled.ShoppingCart
+                    "Filled.Star" -> androidx.compose.material.icons.Icons.Filled.Star
+                    "Filled.ThumbUp" -> androidx.compose.material.icons.Icons.Filled.ThumbUp
+                    "Filled.Warning" -> androidx.compose.material.icons.Icons.Filled.Warning
+                    "Outlined.AccountBox" -> androidx.compose.material.icons.Icons.Outlined.AccountBox
+                    "Outlined.AccountCircle" -> androidx.compose.material.icons.Icons.Outlined.AccountCircle
+                    "Outlined.Add" -> androidx.compose.material.icons.Icons.Outlined.Add
+                    "Outlined.AddCircle" -> androidx.compose.material.icons.Icons.Outlined.AddCircle
+                    "Outlined.ArrowDropDown" -> androidx.compose.material.icons.Icons.Outlined.ArrowDropDown
+                    "Outlined.Build" -> androidx.compose.material.icons.Icons.Outlined.Build
+                    "Outlined.Call" -> androidx.compose.material.icons.Icons.Outlined.Call
+                    "Outlined.Check" -> androidx.compose.material.icons.Icons.Outlined.Check
+                    "Outlined.CheckCircle" -> androidx.compose.material.icons.Icons.Outlined.CheckCircle
+                    "Outlined.Clear" -> androidx.compose.material.icons.Icons.Outlined.Clear
+                    "Outlined.Close" -> androidx.compose.material.icons.Icons.Outlined.Close
+                    "Outlined.Create" -> androidx.compose.material.icons.Icons.Outlined.Create
+                    "Outlined.DateRange" -> androidx.compose.material.icons.Icons.Outlined.DateRange
+                    "Outlined.Delete" -> androidx.compose.material.icons.Icons.Outlined.Delete
+                    "Outlined.Done" -> androidx.compose.material.icons.Icons.Outlined.Done
+                    "Outlined.Edit" -> androidx.compose.material.icons.Icons.Outlined.Edit
+                    "Outlined.Email" -> androidx.compose.material.icons.Icons.Outlined.Email
+                    "Outlined.Face" -> androidx.compose.material.icons.Icons.Outlined.Face
+                    "Outlined.Favorite" -> androidx.compose.material.icons.Icons.Outlined.Favorite
+                    "Outlined.FavoriteBorder" -> androidx.compose.material.icons.Icons.Outlined.FavoriteBorder
+                    "Outlined.Home" -> androidx.compose.material.icons.Icons.Outlined.Home
+                    "Outlined.Info" -> androidx.compose.material.icons.Icons.Outlined.Info
+                    "Outlined.KeyboardArrowDown" -> androidx.compose.material.icons.Icons.Outlined.KeyboardArrowDown
+                    "Outlined.KeyboardArrowUp" -> androidx.compose.material.icons.Icons.Outlined.KeyboardArrowUp
+                    "Outlined.LocationOn" -> androidx.compose.material.icons.Icons.Outlined.LocationOn
+                    "Outlined.Lock" -> androidx.compose.material.icons.Icons.Outlined.Lock
+                    "Outlined.MailOutline" -> androidx.compose.material.icons.Icons.Outlined.MailOutline
+                    "Outlined.Menu" -> androidx.compose.material.icons.Icons.Outlined.Menu
+                    "Outlined.MoreVert" -> androidx.compose.material.icons.Icons.Outlined.MoreVert
+                    "Outlined.Notifications" -> androidx.compose.material.icons.Icons.Outlined.Notifications
+                    "Outlined.Person" -> androidx.compose.material.icons.Icons.Outlined.Person
+                    "Outlined.Phone" -> androidx.compose.material.icons.Icons.Outlined.Phone
+                    "Outlined.Place" -> androidx.compose.material.icons.Icons.Outlined.Place
+                    "Outlined.PlayArrow" -> androidx.compose.material.icons.Icons.Outlined.PlayArrow
+                    "Outlined.Refresh" -> androidx.compose.material.icons.Icons.Outlined.Refresh
+                    "Outlined.Search" -> androidx.compose.material.icons.Icons.Outlined.Search
+                    "Outlined.Settings" -> androidx.compose.material.icons.Icons.Outlined.Settings
+                    "Outlined.Share" -> androidx.compose.material.icons.Icons.Outlined.Share
+                    "Outlined.ShoppingCart" -> androidx.compose.material.icons.Icons.Outlined.ShoppingCart
+                    "Outlined.Star" -> androidx.compose.material.icons.Icons.Outlined.Star
+                    "Outlined.ThumbUp" -> androidx.compose.material.icons.Icons.Outlined.ThumbUp
+                    "Outlined.Warning" -> androidx.compose.material.icons.Icons.Outlined.Warning
+                    "Rounded.AccountBox" -> androidx.compose.material.icons.Icons.Rounded.AccountBox
+                    "Rounded.AccountCircle" -> androidx.compose.material.icons.Icons.Rounded.AccountCircle
+                    "Rounded.Add" -> androidx.compose.material.icons.Icons.Rounded.Add
+                    "Rounded.AddCircle" -> androidx.compose.material.icons.Icons.Rounded.AddCircle
+                    "Rounded.ArrowDropDown" -> androidx.compose.material.icons.Icons.Rounded.ArrowDropDown
+                    "Rounded.Build" -> androidx.compose.material.icons.Icons.Rounded.Build
+                    "Rounded.Call" -> androidx.compose.material.icons.Icons.Rounded.Call
+                    "Rounded.Check" -> androidx.compose.material.icons.Icons.Rounded.Check
+                    "Rounded.CheckCircle" -> androidx.compose.material.icons.Icons.Rounded.CheckCircle
+                    "Rounded.Clear" -> androidx.compose.material.icons.Icons.Rounded.Clear
+                    "Rounded.Close" -> androidx.compose.material.icons.Icons.Rounded.Close
+                    "Rounded.Create" -> androidx.compose.material.icons.Icons.Rounded.Create
+                    "Rounded.DateRange" -> androidx.compose.material.icons.Icons.Rounded.DateRange
+                    "Rounded.Delete" -> androidx.compose.material.icons.Icons.Rounded.Delete
+                    "Rounded.Done" -> androidx.compose.material.icons.Icons.Rounded.Done
+                    "Rounded.Edit" -> androidx.compose.material.icons.Icons.Rounded.Edit
+                    "Rounded.Email" -> androidx.compose.material.icons.Icons.Rounded.Email
+                    "Rounded.Face" -> androidx.compose.material.icons.Icons.Rounded.Face
+                    "Rounded.Favorite" -> androidx.compose.material.icons.Icons.Rounded.Favorite
+                    "Rounded.FavoriteBorder" -> androidx.compose.material.icons.Icons.Rounded.FavoriteBorder
+                    "Rounded.Home" -> androidx.compose.material.icons.Icons.Rounded.Home
+                    "Rounded.Info" -> androidx.compose.material.icons.Icons.Rounded.Info
+                    "Rounded.KeyboardArrowDown" -> androidx.compose.material.icons.Icons.Rounded.KeyboardArrowDown
+                    "Rounded.KeyboardArrowUp" -> androidx.compose.material.icons.Icons.Rounded.KeyboardArrowUp
+                    "Rounded.LocationOn" -> androidx.compose.material.icons.Icons.Rounded.LocationOn
+                    "Rounded.Lock" -> androidx.compose.material.icons.Icons.Rounded.Lock
+                    "Rounded.MailOutline" -> androidx.compose.material.icons.Icons.Rounded.MailOutline
+                    "Rounded.Menu" -> androidx.compose.material.icons.Icons.Rounded.Menu
+                    "Rounded.MoreVert" -> androidx.compose.material.icons.Icons.Rounded.MoreVert
+                    "Rounded.Notifications" -> androidx.compose.material.icons.Icons.Rounded.Notifications
+                    "Rounded.Person" -> androidx.compose.material.icons.Icons.Rounded.Person
+                    "Rounded.Phone" -> androidx.compose.material.icons.Icons.Rounded.Phone
+                    "Rounded.Place" -> androidx.compose.material.icons.Icons.Rounded.Place
+                    "Rounded.PlayArrow" -> androidx.compose.material.icons.Icons.Rounded.PlayArrow
+                    "Rounded.Refresh" -> androidx.compose.material.icons.Icons.Rounded.Refresh
+                    "Rounded.Search" -> androidx.compose.material.icons.Icons.Rounded.Search
+                    "Rounded.Settings" -> androidx.compose.material.icons.Icons.Rounded.Settings
+                    "Rounded.Share" -> androidx.compose.material.icons.Icons.Rounded.Share
+                    "Rounded.ShoppingCart" -> androidx.compose.material.icons.Icons.Rounded.ShoppingCart
+                    "Rounded.Star" -> androidx.compose.material.icons.Icons.Rounded.Star
+                    "Rounded.ThumbUp" -> androidx.compose.material.icons.Icons.Rounded.ThumbUp
+                    "Rounded.Warning" -> androidx.compose.material.icons.Icons.Rounded.Warning
+                    "Sharp.AccountBox" -> androidx.compose.material.icons.Icons.Sharp.AccountBox
+                    "Sharp.AccountCircle" -> androidx.compose.material.icons.Icons.Sharp.AccountCircle
+                    "Sharp.Add" -> androidx.compose.material.icons.Icons.Sharp.Add
+                    "Sharp.AddCircle" -> androidx.compose.material.icons.Icons.Sharp.AddCircle
+                    "Sharp.ArrowDropDown" -> androidx.compose.material.icons.Icons.Sharp.ArrowDropDown
+                    "Sharp.Build" -> androidx.compose.material.icons.Icons.Sharp.Build
+                    "Sharp.Call" -> androidx.compose.material.icons.Icons.Sharp.Call
+                    "Sharp.Check" -> androidx.compose.material.icons.Icons.Sharp.Check
+                    "Sharp.CheckCircle" -> androidx.compose.material.icons.Icons.Sharp.CheckCircle
+                    "Sharp.Clear" -> androidx.compose.material.icons.Icons.Sharp.Clear
+                    "Sharp.Close" -> androidx.compose.material.icons.Icons.Sharp.Close
+                    "Sharp.Create" -> androidx.compose.material.icons.Icons.Sharp.Create
+                    "Sharp.DateRange" -> androidx.compose.material.icons.Icons.Sharp.DateRange
+                    "Sharp.Delete" -> androidx.compose.material.icons.Icons.Sharp.Delete
+                    "Sharp.Done" -> androidx.compose.material.icons.Icons.Sharp.Done
+                    "Sharp.Edit" -> androidx.compose.material.icons.Icons.Sharp.Edit
+                    "Sharp.Email" -> androidx.compose.material.icons.Icons.Sharp.Email
+                    "Sharp.Face" -> androidx.compose.material.icons.Icons.Sharp.Face
+                    "Sharp.Favorite" -> androidx.compose.material.icons.Icons.Sharp.Favorite
+                    "Sharp.FavoriteBorder" -> androidx.compose.material.icons.Icons.Sharp.FavoriteBorder
+                    "Sharp.Home" -> androidx.compose.material.icons.Icons.Sharp.Home
+                    "Sharp.Info" -> androidx.compose.material.icons.Icons.Sharp.Info
+                    "Sharp.KeyboardArrowDown" -> androidx.compose.material.icons.Icons.Sharp.KeyboardArrowDown
+                    "Sharp.KeyboardArrowUp" -> androidx.compose.material.icons.Icons.Sharp.KeyboardArrowUp
+                    "Sharp.LocationOn" -> androidx.compose.material.icons.Icons.Sharp.LocationOn
+                    "Sharp.Lock" -> androidx.compose.material.icons.Icons.Sharp.Lock
+                    "Sharp.MailOutline" -> androidx.compose.material.icons.Icons.Sharp.MailOutline
+                    "Sharp.Menu" -> androidx.compose.material.icons.Icons.Sharp.Menu
+                    "Sharp.MoreVert" -> androidx.compose.material.icons.Icons.Sharp.MoreVert
+                    "Sharp.Notifications" -> androidx.compose.material.icons.Icons.Sharp.Notifications
+                    "Sharp.Person" -> androidx.compose.material.icons.Icons.Sharp.Person
+                    "Sharp.Phone" -> androidx.compose.material.icons.Icons.Sharp.Phone
+                    "Sharp.Place" -> androidx.compose.material.icons.Icons.Sharp.Place
+                    "Sharp.PlayArrow" -> androidx.compose.material.icons.Icons.Sharp.PlayArrow
+                    "Sharp.Refresh" -> androidx.compose.material.icons.Icons.Sharp.Refresh
+                    "Sharp.Search" -> androidx.compose.material.icons.Icons.Sharp.Search
+                    "Sharp.Settings" -> androidx.compose.material.icons.Icons.Sharp.Settings
+                    "Sharp.Share" -> androidx.compose.material.icons.Icons.Sharp.Share
+                    "Sharp.ShoppingCart" -> androidx.compose.material.icons.Icons.Sharp.ShoppingCart
+                    "Sharp.Star" -> androidx.compose.material.icons.Icons.Sharp.Star
+                    "Sharp.ThumbUp" -> androidx.compose.material.icons.Icons.Sharp.ThumbUp
+                    "Sharp.Warning" -> androidx.compose.material.icons.Icons.Sharp.Warning
+                    "TwoTone.AccountBox" -> androidx.compose.material.icons.Icons.TwoTone.AccountBox
+                    "TwoTone.AccountCircle" -> androidx.compose.material.icons.Icons.TwoTone.AccountCircle
+                    "TwoTone.Add" -> androidx.compose.material.icons.Icons.TwoTone.Add
+                    "TwoTone.AddCircle" -> androidx.compose.material.icons.Icons.TwoTone.AddCircle
+                    "TwoTone.ArrowDropDown" -> androidx.compose.material.icons.Icons.TwoTone.ArrowDropDown
+                    "TwoTone.Build" -> androidx.compose.material.icons.Icons.TwoTone.Build
+                    "TwoTone.Call" -> androidx.compose.material.icons.Icons.TwoTone.Call
+                    "TwoTone.Check" -> androidx.compose.material.icons.Icons.TwoTone.Check
+                    "TwoTone.CheckCircle" -> androidx.compose.material.icons.Icons.TwoTone.CheckCircle
+                    "TwoTone.Clear" -> androidx.compose.material.icons.Icons.TwoTone.Clear
+                    "TwoTone.Close" -> androidx.compose.material.icons.Icons.TwoTone.Close
+                    "TwoTone.Create" -> androidx.compose.material.icons.Icons.TwoTone.Create
+                    "TwoTone.DateRange" -> androidx.compose.material.icons.Icons.TwoTone.DateRange
+                    "TwoTone.Delete" -> androidx.compose.material.icons.Icons.TwoTone.Delete
+                    "TwoTone.Done" -> androidx.compose.material.icons.Icons.TwoTone.Done
+                    "TwoTone.Edit" -> androidx.compose.material.icons.Icons.TwoTone.Edit
+                    "TwoTone.Email" -> androidx.compose.material.icons.Icons.TwoTone.Email
+                    "TwoTone.Face" -> androidx.compose.material.icons.Icons.TwoTone.Face
+                    "TwoTone.Favorite" -> androidx.compose.material.icons.Icons.TwoTone.Favorite
+                    "TwoTone.FavoriteBorder" -> androidx.compose.material.icons.Icons.TwoTone.FavoriteBorder
+                    "TwoTone.Home" -> androidx.compose.material.icons.Icons.TwoTone.Home
+                    "TwoTone.Info" -> androidx.compose.material.icons.Icons.TwoTone.Info
+                    "TwoTone.KeyboardArrowDown" -> androidx.compose.material.icons.Icons.TwoTone.KeyboardArrowDown
+                    "TwoTone.KeyboardArrowUp" -> androidx.compose.material.icons.Icons.TwoTone.KeyboardArrowUp
+                    "TwoTone.LocationOn" -> androidx.compose.material.icons.Icons.TwoTone.LocationOn
+                    "TwoTone.Lock" -> androidx.compose.material.icons.Icons.TwoTone.Lock
+                    "TwoTone.MailOutline" -> androidx.compose.material.icons.Icons.TwoTone.MailOutline
+                    "TwoTone.Menu" -> androidx.compose.material.icons.Icons.TwoTone.Menu
+                    "TwoTone.MoreVert" -> androidx.compose.material.icons.Icons.TwoTone.MoreVert
+                    "TwoTone.Notifications" -> androidx.compose.material.icons.Icons.TwoTone.Notifications
+                    "TwoTone.Person" -> androidx.compose.material.icons.Icons.TwoTone.Person
+                    "TwoTone.Phone" -> androidx.compose.material.icons.Icons.TwoTone.Phone
+                    "TwoTone.Place" -> androidx.compose.material.icons.Icons.TwoTone.Place
+                    "TwoTone.PlayArrow" -> androidx.compose.material.icons.Icons.TwoTone.PlayArrow
+                    "TwoTone.Refresh" -> androidx.compose.material.icons.Icons.TwoTone.Refresh
+                    "TwoTone.Search" -> androidx.compose.material.icons.Icons.TwoTone.Search
+                    "TwoTone.Settings" -> androidx.compose.material.icons.Icons.TwoTone.Settings
+                    "TwoTone.Share" -> androidx.compose.material.icons.Icons.TwoTone.Share
+                    "TwoTone.ShoppingCart" -> androidx.compose.material.icons.Icons.TwoTone.ShoppingCart
+                    "TwoTone.Star" -> androidx.compose.material.icons.Icons.TwoTone.Star
+                    "TwoTone.ThumbUp" -> androidx.compose.material.icons.Icons.TwoTone.ThumbUp
+                    "TwoTone.Warning" -> androidx.compose.material.icons.Icons.TwoTone.Warning
+                    else -> error("Unknown native constant")
+                }
             }
         }
 

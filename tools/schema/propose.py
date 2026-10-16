@@ -376,6 +376,91 @@ def propose_members(
     }
 
 
+def propose_icons(
+    found: Inventory,
+    owner: str,
+    family: dict[str, str],
+    *,
+    since: str,
+) -> dict[str, Any]:
+    """Propose an icon vocabulary: every public icon under one object.
+
+    ``propose_members`` cannot see these: an icon is an extension property on a
+    nested object rather than a member of one class, and the path it is read by
+    is the label -- ``Filled.Add``, or ``AutoMirrored.Filled.ArrowBack``. Reading
+    it back is a property chain on the same object, so one ``propertyOwner`` plus
+    the label spells every native expression and no member needs a holder of its
+    own. The packages declaring those extensions are recorded beside it: an
+    extension property resolves only when its declaring package is in scope, and
+    Kotlin has no syntax for naming one where it stands. A deprecated icon is
+    left out rather than offered: ``Icons.Filled.ArrowBack`` was replaced by the
+    auto-mirrored one, and a vocabulary that kept the old spelling would
+    generate a call that warns at every build.
+
+    Args:
+        found: The validated inventory of the current pin.
+        owner: Fully qualified object whose nested objects name the icons.
+        family: An approved descriptor providing the wire family and Kotlin type.
+        since: Schema version that introduced the binding.
+
+    Returns:
+        A ``constant`` descriptor keyed by icon label.
+
+    Raises:
+        ValueError: The holder has no public icons of that family, so the
+            binding would be an empty enumeration presented as support.
+    """
+    holder = source_name(owner)
+    hierarchy = ancestors(found)
+    labels: set[str] = set()
+    packages: set[str] = set()
+    for declaration in found.declarations:
+        if declaration.disposition != "support":
+            continue
+        if declaration.document.get("declarationKind") != "property":
+            continue
+        receiver = declaration.receiver
+        if receiver is None or declaration.context_receivers:
+            continue
+        where = source_name(receiver.classifier)
+        if where == holder:
+            label = declaration.name
+        elif where.startswith(holder + "."):
+            label = f"{where[len(holder) + 1:]}.{declaration.name}"
+        else:
+            continue
+        classifier = source_name(declaration.return_type.classifier)
+        if family["kotlinType"] not in hierarchy.get(classifier, {classifier}):
+            continue
+        if declaration.return_type.nullable or declaration.return_type.arguments:
+            raise ValueError(f"{owner}.{declaration.name}: nullable/generic icon")
+        if "kotlin/Deprecated" in declaration.annotations:
+            continue
+        labels.add(label)
+        packages.add(declaration.package)
+    if not labels:
+        raise ValueError(f"no public {family['family']} members on {owner}")
+    return {
+        "family": family["family"],
+        "kind": family.get("kind", "constant"),
+        "kotlinType": family["kotlinType"],
+        "since": since,
+        "source": {"owner": owner, "members": "public properties"},
+        "parameters": {
+            "name": {
+                "type": "string",
+                "required": True,
+                "values": sorted(labels),
+            }
+        },
+        "native": {
+            "constantParameter": "name",
+            "propertyOwner": holder,
+            "imports": sorted(packages),
+        },
+    }
+
+
 def propose_extension(
     found: Inventory,
     name: str,
@@ -540,6 +625,51 @@ def _matches_rule(
     return rule.get("type") == SCALARS.get(value.classifier)
 
 
+def propose_vocabulary(
+    found: Inventory,
+    approved: dict[str, Any],
+    name: str,
+    *,
+    since: str,
+    markers: set[str],
+) -> dict[str, Any] | None:
+    """Propose a member, unit or icon vocabulary, or nothing the tables know.
+
+    The three differ in what the pin has to show. A member vocabulary is read off
+    one holder's own members, the unit extensions mirror a scalar Kotlin spells
+    as a suffix, and an icon vocabulary is a nested object whose property paths
+    are the labels.
+
+    Args:
+        found: The validated inventory of the current pin.
+        approved: The family's approved descriptor, empty before first approval.
+        name: The constructor name being rebound.
+        since: Schema version that introduced the binding.
+        markers: The pin's opt-in markers; a member that needs one carries it.
+
+    Returns:
+        The proposal, or None when the name is not one of these vocabularies.
+    """
+    if name in MEMBERS:
+        owner, prefix, also_from = MEMBERS[name]
+        return propose_members(
+            found,
+            owner,
+            approved,
+            since=since,
+            prefix=prefix,
+            opt_ins=markers,
+            also_from=also_from,
+        )
+    if name in EXTENSIONS:
+        return propose_extension(
+            found, EXTENSIONS[name], "kotlin/Float", approved, since=since
+        )
+    if name in ICONS:
+        return propose_icons(found, ICONS[name], approved, since=since)
+    return None
+
+
 def bind(
     found: Inventory,
     evidence: dict[tuple[str, str, str], dict[str, Any]],
@@ -551,27 +681,11 @@ def bind(
     since = approved.get("since", registry["schemaVersion"])
     markers = opt_in_markers(found)
     try:
-        if name in MEMBERS:
-            owner, prefix, also_from = MEMBERS[name]
-            return {
-                "name": name,
-                "proposal": propose_members(
-                    found,
-                    owner,
-                    approved,
-                    since=since,
-                    prefix=prefix,
-                    opt_ins=markers,
-                    also_from=also_from,
-                ),
-            }
-        if name in EXTENSIONS:
-            return {
-                "name": name,
-                "proposal": propose_extension(
-                    found, EXTENSIONS[name], "kotlin/Float", approved, since=since
-                ),
-            }
+        proposal = propose_vocabulary(
+            found, approved, name, since=since, markers=markers
+        )
+        if proposal is not None:
+            return {"name": name, "proposal": proposal}
     except ValueError as exc:
         return {"name": name, "unsupported": str(exc)}
     families = value_families(registry)
@@ -700,6 +814,13 @@ names, their Kotlin spelling and their count all come from the pinned artifact.
 """
 EXTENSIONS = {"Sp": "sp", "Em": "em"}
 """Bindings that mirror a public extension property over a scalar."""
+ICONS = {"materialIcon": "androidx/compose/material/icons/Icons"}
+"""Bindings whose wire vocabulary is every icon under one object.
+
+The holder is named, never its members: ``Icons`` carries the styles and their
+auto-mirrored twins, and each icon is a property on one of those, so the pinned
+artifact decides the whole vocabulary and its count.
+"""
 
 
 def refresh(

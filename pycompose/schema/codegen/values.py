@@ -49,10 +49,19 @@ def validate_definitions(registry: dict[str, Any]) -> None:
 
 
 def _validate_holders(name: str, spec: dict[str, Any]) -> None:
-    """Fail generation when a constant's per-member holders are not exact."""
+    """Fail generation when a constant's native holders are not exact."""
     from pycompose.schema.codegen.main import _die
 
     native = spec.get("native") or {}
+    packages = native.get("imports")
+    if packages is not None:
+        if not isinstance(packages, list) or not all(
+            isinstance(package, str) and package and package.replace(".", "").isalnum()
+            for package in packages
+        ):
+            _die(f"valueTypes.{name}.native.imports must be dotted packages")
+        if packages != sorted(set(packages)):
+            _die(f"valueTypes.{name}.native.imports must be sorted and unique")
     if "owners" not in native:
         return
     if "propertyOwner" not in native and "constants" not in native:
@@ -403,6 +412,28 @@ def _read_parameter(source: str, rule: dict[str, Any]) -> str:
     return f"{source}.jsonPrimitive.{conversion}"
 
 
+def vocabulary_imports(specs: dict[str, dict[str, Any]]) -> set[str]:
+    """Collect the packages a constant vocabulary's members are declared in.
+
+    An extension property resolves only where it is declared, and Kotlin cannot
+    name one where it stands, so the declaring packages are imported wholesale:
+    the pin decides how many members a style carries. The unit extensions get
+    the same treatment, one import at a time.
+
+    Args:
+        specs: Every approved value descriptor, keyed by constructor name.
+
+    Returns:
+        The import lines, empty when no vocabulary is carried that way.
+    """
+    imports: set[str] = set()
+    for spec in specs.values():
+        native = spec["native"]
+        if "constants" in native or "propertyOwner" in native:
+            imports.update(f"import {pkg}.*" for pkg in native.get("imports", []))
+    return imports
+
+
 def render_native(registry: dict[str, Any]) -> str:
     """Generate native calls from approved factory descriptions."""
     from pycompose.schema.codegen.main import GENERATED_NOTICE
@@ -416,6 +447,7 @@ def render_native(registry: dict[str, Any]) -> str:
         for field, rule in spec["parameters"].items()
         if "default" in rule
     }
+    imports.update(vocabulary_imports(specs))
     lines = [
         f"// {GENERATED_NOTICE}",
         "package com.pycompose.renderer.generated",

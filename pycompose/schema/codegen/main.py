@@ -608,6 +608,41 @@ def _validate_prop(name: str, prop_name: str, prop: dict[str, Any]) -> None:
             _die(f"prop {name}.{prop_name} 'fallback' must be Kotlin source")
     if "provider" in prop:
         _validate_provider(name, prop_name, prop)
+    _validate_nullable(name, prop_name, prop)
+
+
+def _validate_nullable(name: str, prop_name: str, prop: dict[str, Any]) -> None:
+    """Check which of the two nullable shapes a prop may have.
+
+    They are not the same shape. A *required* nullable prop has no omission: the
+    pinned parameter takes no default, so the value is passed through as it
+    stands, and that only lines up when the wire type *is* the native type -- an
+    undecoded scalar, where ``None`` is a ``null``. An *optional* nullable prop
+    is the ``OptionalValue`` form, where absence and an explicit null are two
+    facts, and the generated adapter implements that for a value family
+    (``Button.elevation``). Every other combination would either be passed where
+    it does not fit or dropped silently, so it is refused here.
+
+    Args:
+        name: Component name, for error messages.
+        prop_name: The prop's schema name.
+        prop: Its raw schema entry.
+    """
+    if not prop.get("nullable"):
+        return
+    from pycompose.schema.codegen.adapters import SCALAR_KOTLIN
+
+    if prop.get("required"):
+        if prop["type"] not in SCALAR_KOTLIN or "decode" in prop:
+            _die(
+                f"prop {name}.{prop_name}: a required nullable prop is passed "
+                "through, so it must be an undecoded scalar"
+            )
+    elif prop["type"] != "value":
+        _die(
+            f"prop {name}.{prop_name}: an optional nullable prop needs the "
+            "value family's absent/null distinction"
+        )
 
 
 def _validate_provider(name: str, prop_name: str, prop: dict[str, Any]) -> None:
@@ -1226,6 +1261,8 @@ def _python_argument(
     component: str, field: str, prop: dict[str, Any]
 ) -> tuple[str, str]:
     annotation = _python_type(component, field, prop)
+    if prop.get("nullable"):
+        annotation += " | None"
     if prop.get("required"):
         return annotation, f"Required native {field}."
     if prop.get("nullable"):
@@ -1350,10 +1387,11 @@ def _kt_field(name: str) -> str:
 
 
 def _kt_type(prop: dict[str, Any]) -> str:
-    if prop.get("nullable"):
+    if prop.get("nullable") and not prop.get("required"):
         return "OptionalValue"
+    suffix = "?" if prop.get("nullable") else ""
     if "valueType" in prop:
-        return "JsonElement"
+        return "JsonElement" + suffix
     return {
         "string": "String",
         "color": "String",
@@ -1366,7 +1404,7 @@ def _kt_type(prop: dict[str, Any]) -> str:
         "number": "Double",
         "dp": "Double",
         "modifier": "JsonObject",
-    }[prop["type"]]
+    }[prop["type"]] + suffix
 
 
 def _kt_default(prop: dict[str, Any]) -> str:
