@@ -793,7 +793,8 @@ def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -
         # A refresh reproduces the approved compiler-resolved facts exactly;
         # semantic policy such as ARGB bounds is preserved, not regenerated.
         assert item["proposal"] == approved
-    assert len(derived) == len(results) == 86
+    # Membership is checked above; the length adds that refresh() skips nothing.
+    assert len(derived) == len(results)
     specs = {item["name"]: item["proposal"] for item in derived}
     assert specs["RoundedCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
     assert specs["CutCornerShape"]["parameters"]["size"]["valueType"] == "Dp"

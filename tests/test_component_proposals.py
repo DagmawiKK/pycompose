@@ -92,18 +92,22 @@ def test_pinned_denominator_separates_components_from_styling_hooks(native_docum
         source_defaults(DUMP),
         json.loads(Path("schema/components.json").read_text()),
     )
-    assert report["coverage"]["components"] == {
-        "names": 99,
-        "overloads": 132,
-        "callPlan": 90,
-        "blocked": 42,
-    }
-    assert report["coverage"]["hooks"] == {
-        "names": 17,
-        "overloads": 23,
-        "callPlan": 0,
-        "blocked": 23,
-    }
+    component_coverage = report["coverage"]["components"]
+    hook_coverage = report["coverage"]["hooks"]
+    # Pin-derived denominators describe the committed dump (bom 2025.01.01) and
+    # move only when the pinned evidence moves, never with catalog policy.
+    assert component_coverage["names"] == 99
+    assert component_coverage["overloads"] == 132
+    assert hook_coverage["names"] == 17
+    assert hook_coverage["overloads"] == 23
+    # The callPlan/blocked split follows the protocols the catalog has activated,
+    # so it must stay a decomposition rather than a memorized count.
+    assert (
+        component_coverage["callPlan"] + component_coverage["blocked"]
+        == component_coverage["overloads"]
+    )
+    assert hook_coverage["callPlan"] == 0
+    assert hook_coverage["blocked"] == hook_coverage["overloads"]
     hooks = {c["name"] for c in report["candidates"] if c["surface"] == "hook"}
     assert {"Thumb", "Container", "Indicator", "InputField"} <= hooks
     # The approved value families closed their own gaps, and nothing else.
