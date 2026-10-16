@@ -17,6 +17,7 @@ __all__ = [
     "Button",
     "Column",
     "LazyColumn",
+    "LinearProgressIndicator",
     "ModalBottomSheet",
     "Row",
     "Scaffold",
@@ -168,6 +169,40 @@ class LazyColumn(Component):
             children = content_nodes(items, key="items")
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class LinearProgressIndicator(Component):
+    """Native LinearProgressIndicator;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LinearProgressIndicator"
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        progress: int | float,
+        track_color: JsonValue | None = None,
+    ) -> None:
+        """Construct a registered LinearProgressIndicator.
+
+        Args:
+            id: Stable instance key.
+            color: Native color; None uses its default.
+            modifier: Native modifier; None uses its default.
+            progress: Required native progress.
+            track_color: Native trackColor; None uses its default.
+        """
+        props: dict[str, JsonValue] = {}
+        if color is not None:
+            props["color"] = color
+        props["progress"] = progress
+        if track_color is not None:
+            props["track_color"] = track_color
+        super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
 class ModalBottomSheet(Component):

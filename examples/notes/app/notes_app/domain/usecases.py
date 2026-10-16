@@ -52,6 +52,25 @@ def newest_first(notes: list[Note]) -> list[Note]:
     return sorted(notes, key=lambda note: note.id, reverse=True)
 
 
+def filled_share(notes: list[Note]) -> float:
+    """Return the share of notes that carry a body.
+
+    The about sheet's bar shows this fraction. It is a *provider* prop: the app
+    states a number in the snapshot and the host hands Compose a lambda that
+    reads it during composition, so the bar follows the notes with no Kotlin in
+    the app at all.
+
+    Args:
+        notes: Every note held.
+
+    Returns:
+        Notes with a body over every note, or 0.0 when there are none.
+    """
+    if not notes:
+        return 0.0
+    return sum(1 for note in notes if note.body.strip()) / len(notes)
+
+
 class Notes:
     """Everything the app can do with notes, with the storage already bound.
 

@@ -6,6 +6,7 @@ from m3 import (
     Button,
     Column,
     LazyColumn,
+    LinearProgressIndicator,
     ModalBottomSheet,
     Modifier,
     Row,
@@ -16,7 +17,7 @@ from m3 import (
 )
 
 from notes_app.domain.models import Note
-from notes_app.domain.usecases import count_line
+from notes_app.domain.usecases import count_line, filled_share
 from notes_app.state import Session
 from notes_app.theme import Theme
 from pycompose import Registry, composable
@@ -126,6 +127,27 @@ def list_screen(
                                         "it settled on."
                                     ),
                                     style="bodyMedium",
+                                    color=theme.muted,
+                                ),
+                                Spacer(
+                                    id="gap_about_bar", modifier=Modifier().size(12)
+                                ),
+                                LinearProgressIndicator(
+                                    id="about_progress",
+                                    progress=filled_share(notes),
+                                ),
+                                Spacer(
+                                    id="gap_about_note", modifier=Modifier().size(8)
+                                ),
+                                Text(
+                                    id="about_progress_note",
+                                    text=(
+                                        "That bar is Python state too: the share of "
+                                        "your notes that have a body. The value is "
+                                        "read during composition, so it tracks the "
+                                        "notes you keep."
+                                    ),
+                                    style="bodySmall",
                                     color=theme.muted,
                                 ),
                                 Spacer(

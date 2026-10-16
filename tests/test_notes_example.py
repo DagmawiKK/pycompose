@@ -350,9 +350,29 @@ def test_the_list_shows_a_title_preview_and_delete_for_every_note(
         "How this works",
         "Every control here is native Material 3. Python states whether this "
         "sheet is open; the host drives it and reports back what it settled on.",
+        "That bar is Python state too: the share of your notes that have a body. "
+        "The value is read during composition, so it tracks the notes you keep.",
     ]
     # about + one delete per row + the sheet's close control
     assert len(nodes(snapshot, "TextButton")) == 4
+
+
+def test_the_about_bar_states_a_share_the_host_reads(app: ModuleType) -> None:
+    """A provider prop: the app states a number, never a function.
+
+    ``LinearProgressIndicator.progress`` is pinned as ``() -> Float``, which
+    Python cannot hand over. The app's side of that parameter is an ordinary
+    number in the snapshot, and the host reads it during composition -- so the
+    bar follows the notes while the app writes no Kotlin and holds no callback.
+    """
+    host = Host(app, follow_navigation=False)
+    seeded = nodes(host.snapshot(), "LinearProgressIndicator")
+    assert [bar["progress"] for bar in seeded] == [1.0]
+
+    # A note with no body yet: the share the app states follows the notes.
+    host.tap("new_note", "new")
+    stated = nodes(host.snapshot(), "LinearProgressIndicator")[0]["progress"]
+    assert stated == pytest.approx(2 / 3)
 
 
 def test_an_empty_repository_says_so_instead_of_rendering_nothing(
