@@ -39,6 +39,10 @@ class Route(TypedDict):
     route: str
 
 
+class About(TypedDict):
+    open: bool
+
+
 class Nothing(TypedDict):
     pass
 
@@ -292,23 +296,22 @@ def go_back(state: State, payload: Nothing) -> State:
 
 
 @actions
-def show_about(state: State, payload: Nothing) -> State:
-    """Explain where the interface comes from.
+def set_about(state: State, payload: About) -> State:
+    """Show or hide the about sheet.
+
+    The sheet's own ``onOpenChange`` reports what it settled on through this
+    same transition, so one handler serves the button that opens it, the button
+    that closes it, and the swipe or scrim tap that dismisses it: the app always
+    assigns the value it was handed rather than toggling what it believed.
 
     Args:
-        state: Snapshot before the tap.
-        payload: Empty; this command takes no event fields.
+        state: Snapshot before the change.
+        payload: The desired visibility the control or the sheet stated.
 
     Returns:
-        The same screen plus a host toast.
+        The same screen with the sheet's visibility assigned.
     """
-    return _next(
-        state,
-        of(state),
-        effects=(
-            Effect("toast", {"message": "Every control here is native Material 3."}),
-        ),
-    )
+    return _next(state, of(state).evolve(about_open=payload["open"]))
 
 
 @actions

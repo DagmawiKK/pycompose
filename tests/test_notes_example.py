@@ -347,8 +347,12 @@ def test_the_list_shows_a_title_preview_and_delete_for_every_note(
         "Tap a note to edit it, or add one with the New button.",
         "Welcome",
         "This app is written entirely in Python.",
+        "How this works",
+        "Every control here is native Material 3. Python states whether this "
+        "sheet is open; the host drives it and reports back what it settled on.",
     ]
-    assert len(nodes(snapshot, "TextButton")) == 3  # about + one delete per row
+    # about + one delete per row + the sheet's close control
+    assert len(nodes(snapshot, "TextButton")) == 4
 
 
 def test_an_empty_repository_says_so_instead_of_rendering_nothing(
@@ -356,6 +360,34 @@ def test_an_empty_repository_says_so_instead_of_rendering_nothing(
 ) -> None:
     snapshot = Host(app, repo=a_store([])).snapshot()
     assert "No notes yet." in [props["text"] for props in nodes(snapshot, "Text")]
+
+
+def test_the_about_sheet_opens_and_closes_through_one_transition(
+    app: ModuleType,
+) -> None:
+    """One handler serves the button, the close control and the sheet's report.
+
+    A dismissal the app did not cause arrives through the sheet's own
+    ``onOpenChange``, so the app assigns the value it was handed rather than
+    toggling what it believed. That is what keeps a report from fighting a
+    user's swipe, and it is the same transition either way.
+    """
+    host = Host(app)
+    assert data(host.snapshot())["aboutOpen"] is False
+
+    # The button states the value it wants, so the binding carries it.
+    host.tap("set_about", "about")
+    snapshot = host.snapshot()
+    assert data(snapshot)["aboutOpen"] is True
+    assert nodes(snapshot, "ModalBottomSheet")[0]["open"] is True
+
+    # What the host sends once the sheet has settled: the user dismissed it.
+    # This binding names no value, so the event is the one carrying it.
+    host.tap("set_about", "about_sheet", open=False)
+    assert data(host.snapshot())["aboutOpen"] is False
+
+    host.tap("set_about", "about_close")
+    assert data(host.snapshot())["aboutOpen"] is False
 
 
 # ---------------------------------------------------------------------------
@@ -631,7 +663,7 @@ def test_only_the_shell_crosses_the_boundary(app: ModuleType) -> None:
     host = Host(app, repo=a_store([(n, f"Note {n}") for n in range(50)]))
     published = data(host.snapshot())
 
-    assert set(published) == {"route", "dark", "titleCaret", "bodyCaret"}
+    assert set(published) == {"route", "dark", "titleCaret", "bodyCaret", "aboutOpen"}
     assert len(json.dumps(published)) < 200
     # Fifty rows render; none of them are in what the host saves.
     assert "Note 49" in [props["text"] for props in nodes(host.snapshot(), "Text")]
@@ -668,7 +700,13 @@ def test_ten_thousand_notes_survive_a_restart_without_the_bundle_complaining(
         published = data(host.snapshot())
         assert len(host.repo.load()) == 10_000
         assert held_of(host, 9_999).title == "Note 9999"
-        assert set(published) == {"route", "dark", "titleCaret", "bodyCaret"}
+        assert set(published) == {
+            "route",
+            "dark",
+            "titleCaret",
+            "bodyCaret",
+            "aboutOpen",
+        }
         assert len(json.dumps(published)) < 200
         # The file, meanwhile, is megabytes -- which is exactly why it is there.
         assert (tmp_path / "notes.json").stat().st_size > 1_000_000

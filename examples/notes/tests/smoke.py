@@ -4,20 +4,23 @@ Run it with no device attached:
 
     python examples/notes/tests/smoke.py
 
-It prints what a user would see at each step. Any failure raises.
+It prints what a user would see at each step, against a store of its own rather
+than wherever the app's notes live when a device runs it. Any failure raises.
 """
 
 from __future__ import annotations
 
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1] / "app"
 sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "tests"))
 
 import main  # noqa: E402
-from harness import Host, data, effects, titles  # noqa: E402
+from harness import Host, data, effects  # noqa: E402
+
+from pycompose.repository import use_root  # noqa: E402
 
 
 def show(step: str, host: Host, *extra: object) -> None:
@@ -30,10 +33,15 @@ def show(step: str, host: Host, *extra: object) -> None:
     """
     snapshot = host.snapshot()
     route = data(snapshot)["route"]
-    print(f"{step:<34} route={route:<8} notes={titles(snapshot)}", *extra)
+    print(f"{step:<34} route={route:<8} notes={host.titles}", *extra)
 
 
 def main_() -> None:
+    # A store of its own: notes outlive the process, so a file left behind by a
+    # previous run would make "fresh install" a lie, and writing to the working
+    # directory would leave one behind.
+    use_root(Path(tempfile.mkdtemp(prefix="notes-smoke-")))
+
     host = Host(main)
     show("fresh install", host)
 
@@ -47,14 +55,23 @@ def main_() -> None:
     host.tap("go_back", "back")
     show("back to the list", host, effects(host.snapshot()))
 
+    # The button binds the value it wants, so the host sends no payload for it.
+    host.tap("set_about", "about")
+    show("tap How this works", host, f"aboutOpen={data(host.snapshot())['aboutOpen']}")
+
+    # The sheet reports what it settled on, as after a swipe. This binding names
+    # no value, so the event is the one that carries it -- and the app assigns
+    # it rather than toggling what it believed.
+    host.tap("set_about", "about_sheet", open=False)
+    show(
+        "swipe the sheet away", host, f"aboutOpen={data(host.snapshot())['aboutOpen']}"
+    )
+
     host.tap("open_note", "n1")
-    show("open Welcome", host, effects(host.snapshot()))
+    show("open the note", host, effects(host.snapshot()))
 
     host.lifecycle("onBackRequested")
     show("system back", host, effects(host.snapshot()))
-
-    host.tap("delete_note", "n2")
-    show("delete one note", host)
 
     host.lifecycle(
         "onConfigChanged",
@@ -73,8 +90,13 @@ def main_() -> None:
 
     revived = Host(main, route=published["route"], restore=_json(published))
     show("relaunch after process death", revived)
-    print(f"{'  text survived':<34} {published['notes'][1]['title']!r}")
+    assert "Half-typed" in revived.titles, revived.titles
+    print(f"{'  text survived':<34} {revived.titles!r}")
     assert revived.error == "", revived.error
+
+    revived.tap("go_back", "back")
+    revived.tap("delete_note", "n1")
+    show("delete the note", revived)
 
 
 def _json(value: object) -> str:

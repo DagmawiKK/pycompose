@@ -14,6 +14,7 @@ from typing import Any, cast
 ROOT = Path(__file__).resolve().parents[1] / "app"
 sys.path.insert(0, str(ROOT))
 
+from pycompose import AppContext, install_context  # noqa: E402
 from pycompose.bridge import BridgeSurface  # noqa: E402
 from pycompose.state import Store  # noqa: E402
 
@@ -38,9 +39,38 @@ class Host:
             follow_navigation: Echo navigate effects back as the host does.
         """
         self.follow_navigation = follow_navigation
-        self._bridge = BridgeSurface(
-            Store(entrypoint.build(route=route, restore=restore)), entrypoint.actions
+        # A real session builds the app's container and installs the context
+        # while resolving the app's factory, before anything renders: the views
+        # read both of them from there rather than being handed them. This
+        # harness drives the surface directly, so it stands in for that here,
+        # once, and hands the same container to ``build``.
+        container = entrypoint.container()
+        entrypoint.actions.install_container(container)
+        install_context(
+            AppContext(
+                actions=entrypoint.actions,
+                container=container,
+                notes=container.notes,
+            )
         )
+        self.container = container
+        self._bridge = BridgeSurface(
+            Store(entrypoint.build(route=route, restore=restore, container=container)),
+            entrypoint.actions,
+        )
+
+    @property
+    def titles(self) -> list[str]:
+        """Return the note titles held, newest first.
+
+        The notes live in the repository rather than in the published shell, so
+        this reads them where they are instead of looking for them in a
+        snapshot -- which is the seam the whole data layer exists for.
+
+        Returns:
+            The titles, newest first.
+        """
+        return [note.title for note in self.container.notes.list()]
 
     @property
     def error(self) -> str:

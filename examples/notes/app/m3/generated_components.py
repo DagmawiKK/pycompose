@@ -17,6 +17,7 @@ __all__ = [
     "Button",
     "Column",
     "LazyColumn",
+    "ModalBottomSheet",
     "Row",
     "Scaffold",
     "Spacer",
@@ -167,6 +168,57 @@ class LazyColumn(Component):
             children = content_nodes(items, key="items")
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ModalBottomSheet(Component):
+    """Native ModalBottomSheet; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ModalBottomSheet"
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        modifier: Modifier | None = None,
+        on_open_change: str | None = None,
+        open: bool | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        drag_handle: Content | None = None,
+    ) -> None:
+        """Construct a registered ModalBottomSheet.
+
+        Args:
+            id: Stable instance key.
+            modifier: Native modifier; None uses its default.
+            on_open_change: Native onOpenChange; None uses its default.
+            open: Native open; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            drag_handle: Nodes for the native dragHandle slot.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if on_open_change is not None:
+            props["on_open_change"] = on_open_change
+        if open is not None:
+            props["open"] = open
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if drag_handle is not None:
+            slotted += slot_nodes(drag_handle, key="dragHandle", slot="dragHandle")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class Row(Component):

@@ -6,6 +6,7 @@ from m3 import (
     Button,
     Column,
     LazyColumn,
+    ModalBottomSheet,
     Modifier,
     Row,
     Scaffold,
@@ -88,7 +89,7 @@ def list_screen(
                         TextButton(
                             id="about",
                             text="How this works",
-                            on_click=actions.show_about.bind(id="about"),
+                            on_click=actions.set_about.bind(id="about", open=True),
                         ),
                     ],
                 ),
@@ -97,6 +98,49 @@ def list_screen(
                     id="notes",
                     items=rows,
                     modifier=Modifier().fill_max_width(),
+                ),
+                ModalBottomSheet(
+                    id="about_sheet",
+                    open=session.about_open,
+                    on_open_change=actions.set_about.bind(id="about_sheet"),
+                    children=[
+                        Column(
+                            id="about_body",
+                            modifier=Modifier().padding(20).fill_max_width(),
+                            children=[
+                                Text(
+                                    id="about_title",
+                                    text="How this works",
+                                    style="titleMedium",
+                                    color=theme.on_surface,
+                                ),
+                                Spacer(
+                                    id="gap_about_text", modifier=Modifier().size(8)
+                                ),
+                                Text(
+                                    id="about_text",
+                                    text=(
+                                        "Every control here is native Material 3. "
+                                        "Python states whether this sheet is open; "
+                                        "the host drives it and reports back what "
+                                        "it settled on."
+                                    ),
+                                    style="bodyMedium",
+                                    color=theme.muted,
+                                ),
+                                Spacer(
+                                    id="gap_about_close", modifier=Modifier().size(12)
+                                ),
+                                TextButton(
+                                    id="about_close",
+                                    text="Got it",
+                                    on_click=actions.set_about.bind(
+                                        id="about_close", open=False
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
                 ),
             ],
         ),

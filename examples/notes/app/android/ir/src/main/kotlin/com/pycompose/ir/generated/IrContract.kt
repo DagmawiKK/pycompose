@@ -48,6 +48,17 @@ object IrContract {
                 "verticalArrangement" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom", "spaceEvenly", "spaceBetween", "spaceAround")),
             ),
         ),
+        "ModalBottomSheet" to ComponentRule(
+            slots = setOf("dragHandle"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.19.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "onOpenChange" to PropertyRule("actionId", required = false),
+                "open" to PropertyRule("boolean", required = false),
+            ),
+        ),
         "Row" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,

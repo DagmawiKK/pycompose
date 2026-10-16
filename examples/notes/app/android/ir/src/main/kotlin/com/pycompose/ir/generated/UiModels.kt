@@ -90,6 +90,24 @@ data class LazyColumn(
 }
 
 @Serializable
+data class ModalBottomSheetProps(
+    override val `modifier`: JsonObject? = null,
+    val `onOpenChange`: String? = null,
+    val `open`: Boolean? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ModalBottomSheet")
+data class ModalBottomSheet(
+    override val id: String,
+    override val props: ModalBottomSheetProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "ModalBottomSheet"
+}
+
+@Serializable
 data class RowProps(
     override val `modifier`: JsonObject? = null,
     val `verticalAlignment`: String = "top",
