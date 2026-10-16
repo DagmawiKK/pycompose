@@ -11,9 +11,12 @@ import argparse
 import hashlib
 import json
 import re
+import sys
 import tomllib
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from schema.classpath_types import (  # noqa: F401 -- typed view re-exports
     BUILDERS,
