@@ -10,6 +10,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from pycompose.schema.codegen.adapters import SCOPES
 from schema.classpath_dump import DUMP_DIR, Inventory, inventory, source_defaults
 from schema.propose import refresh
 
@@ -107,6 +108,93 @@ def provider_errors(
     return errors
 
 
+def _content_scope(declaration: Any, native: str) -> str | None:
+    """The approved composition scope one pinned content lambda carries.
+
+    Args:
+        declaration: One pinned declaration.
+        native: The parameter the children compose into.
+
+    Returns:
+        The scope's schema name, or None when the lambda carries none.
+    """
+    for parameter in declaration.parameters:
+        if parameter.name != native:
+            continue
+        if "kotlin/ExtensionFunctionType" not in parameter.type.annotations:
+            continue
+        arguments = [type_ for _, type_ in parameter.type.arguments]
+        if not arguments:
+            continue
+        classifier = arguments[0].classifier
+        for scope, path in SCOPES.items():
+            if path.replace(".", "/") == classifier:
+                return scope
+    return None
+
+
+def scope_errors(name: str, entry: dict[str, Any], overloads: list[Any]) -> list[str]:
+    """Re-derive a component's receiver and the scope it hands to its children.
+
+    A component the pin declares as an extension on a composition scope composes
+    only inside a parent that provides the receiver, and a parent's content
+    lambda carries its receiver exactly when the pin says it does. Both are
+    facts about the pinned declarations, so both are checked against them: a
+    release that drops a receiver, or adds one, must not pass silently.
+
+    Args:
+        name: The component's schema name.
+        entry: Its approved schema entry.
+        overloads: The pinned declarations carrying that name.
+
+    Returns:
+        One message per scope fact that no longer matches the pin.
+    """
+    errors = []
+    with_parameters = [d for d in overloads if d.parameters]
+    declared = entry.get("scope")
+    if declared is not None:
+        path = SCOPES.get(declared, "").replace(".", "/")
+        if not any(
+            d.receiver is not None and d.receiver.classifier == path
+            for d in with_parameters
+        ):
+            errors.append(
+                f"{name}: scope {declared!r} is not a pinned declaration's receiver"
+            )
+    elif with_parameters and all(d.receiver is not None for d in with_parameters):
+        errors.append(
+            f"{name}: every pinned overload is a scope extension; declare 'scope'"
+        )
+
+    children = entry.get("children", {})
+    native = children.get("native", "content")
+    with_content = [
+        d for d in with_parameters if any(p.name == native for p in d.parameters)
+    ]
+    provides = children.get("provides")
+    if provides is not None:
+        scopes = {_content_scope(d, native) for d in with_content}
+        if provides not in scopes:
+            errors.append(
+                f"{name}: children.provides {provides!r} is not the pinned "
+                "content lambda's receiver"
+            )
+    elif (
+        children.get("allowed")
+        and with_content
+        and all(_content_scope(d, native) is not None for d in with_content)
+    ):
+        scopes = sorted(
+            {scope for d in with_content if (scope := _content_scope(d, native))}
+        )
+        errors.append(
+            f"{name}: pinned content composes under {', '.join(scopes)}; "
+            "declare children.provides"
+        )
+    return errors
+
+
 def compare(registry: dict[str, Any], found: Inventory) -> list[str]:
     """Report removed props and moved packages without merging overloads."""
     errors = []
@@ -131,6 +219,7 @@ def compare(registry: dict[str, Any], found: Inventory) -> list[str]:
             f"{name}.{prop}: no parameter in any pinned overload" for prop in removed
         )
         errors.extend(provider_errors(name, entry, overloads))
+        errors.extend(scope_errors(name, entry, overloads))
     return errors
 
 

@@ -66,3 +66,21 @@ def test_registry_rejects_a_repeated_schema_version() -> None:
     with pytest.raises(ComponentRegistryError) as excinfo:
         Registry.from_mapping(raw)
     assert "unique" in str(excinfo.value)
+
+
+def test_registry_rejects_an_unknown_scope() -> None:
+    """Both ends of the scope relationship come from a closed vocabulary.
+
+    The scope a component requires and the one it hands to its children are
+    spelled on the wire like every other fact, so a typo has to fail here
+    rather than reach an adapter that registers into a table nothing reads.
+    """
+    raw = _raw()
+    raw["components"]["NavigationBarItem"]["scope"] = "TouchScope"
+    with pytest.raises(ComponentRegistryError, match="scope must be one of"):
+        Registry.from_mapping(raw)
+
+    raw = _raw()
+    raw["components"]["NavigationBar"]["children"]["provides"] = "TouchScope"
+    with pytest.raises(ComponentRegistryError, match="'provides' must be one of"):
+        Registry.from_mapping(raw)

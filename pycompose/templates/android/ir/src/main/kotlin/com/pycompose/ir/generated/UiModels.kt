@@ -73,6 +73,31 @@ data class Button(
 }
 
 @Serializable
+data class CardProps(
+    val `border`: OptionalValue = OptionalValue.Absent,
+    val `colors`: JsonElement? = null,
+    val `elevation`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
+    val `shape`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("Card")
+data class Card(
+    override val id: String,
+    override val props: CardProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "Card"
+}
+
+@Serializable
 data class CheckboxProps(
     val `checked`: Boolean,
     val `enabled`: Boolean = true,
@@ -95,6 +120,26 @@ data class Checkbox(
 }
 
 @Serializable
+data class CircularProgressIndicatorProps(
+    val `color`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `strokeCap`: JsonElement? = null,
+    val `strokeWidth`: Double? = null,
+    val `trackColor`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("CircularProgressIndicator")
+data class CircularProgressIndicator(
+    override val id: String,
+    override val props: CircularProgressIndicatorProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "CircularProgressIndicator"
+}
+
+@Serializable
 data class ColumnProps(
     val `horizontalAlignment`: String = "start",
     override val `modifier`: JsonObject? = null,
@@ -109,6 +154,26 @@ data class Column(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Column"
+}
+
+@Serializable
+data class DismissibleDrawerSheetProps(
+    val `drawerContainerColor`: JsonElement? = null,
+    val `drawerShape`: JsonElement? = null,
+    val `drawerTonalElevation`: Double? = null,
+    override val `modifier`: JsonObject? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("DismissibleDrawerSheet")
+data class DismissibleDrawerSheet(
+    override val id: String,
+    override val props: DismissibleDrawerSheetProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "DismissibleDrawerSheet"
 }
 
 @Serializable
@@ -147,10 +212,51 @@ data class FilterChipProps(
 data class FilterChip(
     override val id: String,
     override val props: FilterChipProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "FilterChip"
+}
+
+@Serializable
+data class FloatingActionButtonProps(
+    val `containerColor`: JsonElement? = null,
+    val `elevation`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
+    val `shape`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("FloatingActionButton")
+data class FloatingActionButton(
+    override val id: String,
+    override val props: FloatingActionButtonProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "FloatingActionButton"
+}
+
+@Serializable
+data class HorizontalDividerProps(
+    val `color`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `thickness`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("HorizontalDivider")
+data class HorizontalDivider(
+    override val id: String,
+    override val props: HorizontalDividerProps,
     override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
-    override val componentType: String get() = "FilterChip"
+    override val componentType: String get() = "HorizontalDivider"
 }
 
 @Serializable
@@ -170,6 +276,28 @@ data class Icon(
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "Icon"
+}
+
+@Serializable
+data class IconButtonProps(
+    val `colors`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("IconButton")
+data class IconButton(
+    override val id: String,
+    override val props: IconButtonProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "IconButton"
 }
 
 @Serializable
@@ -245,6 +373,26 @@ data class ModalBottomSheet(
 }
 
 @Serializable
+data class ModalDrawerSheetProps(
+    val `drawerContainerColor`: JsonElement? = null,
+    val `drawerShape`: JsonElement? = null,
+    val `drawerTonalElevation`: Double? = null,
+    override val `modifier`: JsonObject? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ModalDrawerSheet")
+data class ModalDrawerSheet(
+    override val id: String,
+    override val props: ModalDrawerSheetProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "ModalDrawerSheet"
+}
+
+@Serializable
 data class ModalNavigationDrawerProps(
     val `gesturesEnabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
@@ -261,6 +409,72 @@ data class ModalNavigationDrawer(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "ModalNavigationDrawer"
+}
+
+@Serializable
+data class NavigationBarProps(
+    val `containerColor`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `tonalElevation`: Double? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("NavigationBar")
+data class NavigationBar(
+    override val id: String,
+    override val props: NavigationBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "NavigationBar"
+}
+
+@Serializable
+data class NavigationBarItemProps(
+    val `alwaysShowLabel`: Boolean = true,
+    val `colors`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
+    val `selected`: Boolean,
+) : UiProps
+
+@Serializable
+@SerialName("NavigationBarItem")
+data class NavigationBarItem(
+    override val id: String,
+    override val props: NavigationBarItemProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "NavigationBarItem"
+}
+
+@Serializable
+data class RadioButtonProps(
+    val `colors`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
+    val `selected`: Boolean,
+) : UiProps
+
+@Serializable
+@SerialName("RadioButton")
+data class RadioButton(
+    override val id: String,
+    override val props: RadioButtonProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "RadioButton"
 }
 
 @Serializable
@@ -311,6 +525,29 @@ data class Spacer(
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "Spacer"
+}
+
+@Serializable
+data class SwitchProps(
+    val `checked`: Boolean,
+    val `colors`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onCheckedChange`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("Switch")
+data class Switch(
+    override val id: String,
+    override val props: SwitchProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "Switch"
 }
 
 @Serializable
@@ -377,6 +614,24 @@ data class TextField(
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "TextField"
+}
+
+@Serializable
+data class VerticalDividerProps(
+    val `color`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `thickness`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("VerticalDivider")
+data class VerticalDivider(
+    override val id: String,
+    override val props: VerticalDividerProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "VerticalDivider"
 }
 
 sealed interface ActionPayload

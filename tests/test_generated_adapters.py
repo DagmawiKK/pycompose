@@ -107,8 +107,9 @@ def test_each_component_is_registered_exactly_once_across_both_files() -> None:
     """No duplicates, no omissions: one adapter per component, in one file."""
     registry = components()
     # No leading dot: TextField's adapter opens a helper, so its register call
-    # starts a statement rather than continuing a chain.
-    pattern = r'register\("(\w+)"'
+    # starts a statement rather than continuing a chain. A scoped component
+    # registers through its scope's method, which the same pattern catches.
+    pattern = r'register(?:\w+)?\("(\w+)"'
     generated_names = re.findall(pattern, GENERATED.read_text())
     manual_names = re.findall(pattern, MANUAL.read_text())
 
@@ -122,6 +123,20 @@ def test_each_component_is_registered_exactly_once_across_both_files() -> None:
     assert covered == set(registry), (
         f"uncovered: {sorted(set(registry) - covered)}; "
         f"unknown: {sorted(covered - set(registry))}"
+    )
+
+    scoped = {
+        name: f"{stem}Scope"
+        for stem, name in re.findall(
+            r'register(\w+?)Scoped\("(\w+)"\)', GENERATED.read_text()
+        )
+    }
+    declared = {
+        name: entry["scope"] for name, entry in registry.items() if entry.get("scope")
+    }
+    assert scoped == declared, (
+        f"registered through {scoped}, declared {declared}; a scoped component "
+        "registers through its own scope's method"
     )
 
 
@@ -383,7 +398,11 @@ def test_primary_children_reach_the_declared_parameter() -> None:
     says nothing about where that parameter sits in the signature.
     """
     block = render("Column", components()["Column"])
-    assert "content = { context.children(model.children) }," in block
+    assert "content = { context.childrenInColumnScope(this, model.children) }," in block
+    # A parent whose lambda carries no scope passes nothing down.
+    drawer = components()["DismissibleNavigationDrawer"]
+    block = render("DismissibleNavigationDrawer", drawer)
+    assert "content = { context.children(model.children) }" in block
 
 
 def test_a_named_slot_reaches_its_native_parameter() -> None:
@@ -429,20 +448,21 @@ def test_a_lazy_slot_lists_children_as_keyed_items() -> None:
 
     entry = components()["LazyColumn"]
     block = render("LazyColumn", entry)
-    assert (
-        "content = { items(context.unslotted(model.children), key = { it.id })" in block
-    )
+    assert "content = { items(model.children.unslotted(), key = { it.id })" in block
     assert "androidx.compose.foundation.lazy.items" in extra_imports(entry)
+    # An extension resolves only where it is imported.
+    assert "com.pycompose.renderer.unslotted" in extra_imports(entry)
 
 
 def test_a_named_items_slot_lists_its_own_nodes() -> None:
     """A lazy slot lists the slot's children, not the primary ones."""
+    from pycompose.schema.codegen.adapters import extra_imports
+
     entry = components()["Column"]
     entry["slots"] = {"header": {"native": "header", "kind": "items"}}
     block = render("Column", entry)
-    assert (
-        'items(context.slotNodes(model.children, "header"), key = { it.id })' in block
-    )
+    assert 'items(model.children.inSlot("header"), key = { it.id })' in block
+    assert "com.pycompose.renderer.inSlot" in extra_imports(entry)
 
 
 def test_an_undeclared_slot_kind_is_refused() -> None:
@@ -450,6 +470,158 @@ def test_an_undeclared_slot_kind_is_refused() -> None:
     entry = components()["Scaffold"]
     entry["slots"]["topBar"]["kind"] = "canvas"
     assert render("Scaffold", entry) == ""
+
+
+# ---------------------------------------------------------------------------
+# Scopes: a receiver exists only inside the lambda that provides it
+# ---------------------------------------------------------------------------
+
+
+def test_a_scoped_component_registers_through_its_scope() -> None:
+    """``NavigationBarItem`` is ``RowScope.NavigationBarItem`` in the pin.
+
+    Its receiver cannot be invented at the call site, so the adapter is not a
+    plain table entry: it registers through the scope's method and is looked up
+    only inside a lambda that carries that receiver.
+    """
+    block = render("NavigationBarItem", components()["NavigationBarItem"])
+    assert '.registerRowScoped("NavigationBarItem")' in block
+
+
+def test_a_provider_hands_its_children_the_receiver() -> None:
+    """A parent whose content lambda carries a receiver passes it down.
+
+    The receiver is what makes a scoped child composable at all, so a provided
+    scope composes the children inside it rather than beside it.
+    """
+    for name, scope in (
+        ("Box", "BoxScope"),
+        ("Column", "ColumnScope"),
+        ("Row", "RowScope"),
+    ):
+        block = render(name, components()[name])
+        assert f"context.childrenIn{scope}(this, model.children)" in block, name
+
+
+@pytest.mark.parametrize(
+    ("component", "change", "message"),
+    [
+        ("NavigationBarItem", {"scope": "TouchScope"}, "scope must be one of"),
+        (
+            "Card",
+            {"children": {"allowed": True, "kind": "content", "provides": "Touch"}},
+            "children.provides must be one of",
+        ),
+        (
+            "Card",
+            {
+                "children": {
+                    "allowed": True,
+                    "kind": "content",
+                    "provides": "RowScope",
+                    "consume": "paddingValues",
+                }
+            },
+            "cannot consume and provide a scope",
+        ),
+        (
+            "Card",
+            {"children": {"allowed": True, "kind": "items", "provides": "RowScope"}},
+            "needs the content kind",
+        ),
+    ],
+)
+def test_the_schema_refuses_a_scope_it_cannot_wire(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    component: str,
+    change: dict,
+    message: str,
+) -> None:
+    """The vocabulary is closed on both ends, so a typo fails at codegen."""
+    from pycompose.schema.codegen import main
+
+    registry = json.loads(SCHEMA_PATH.read_text())
+    registry["components"][component].update(change)
+    path = tmp_path / "components.json"
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match=message):
+        main.load_registry()
+
+
+# ---------------------------------------------------------------------------
+# Density: a dp rides the wire as a plain number
+# ---------------------------------------------------------------------------
+
+
+def test_a_dp_prop_is_read_in_the_unit_the_app_stated() -> None:
+    """``thickness=2`` is two density-independent pixels, not two pixels.
+
+    The model holds a plain number, so the adapter names the unit where it is
+    read; an absent one falls back to the pinned default rather than to a zero
+    the host invented.
+    """
+    block = render("HorizontalDivider", components()["HorizontalDivider"])
+    assert "val thicknessWire = model.props.thickness" in block
+    assert (
+        "val thicknessValue = if (thicknessWire != null) thicknessWire.dp "
+        "else androidx.compose.material3.DividerDefaults.Thickness" in block
+    )
+    assert "thickness = thicknessValue," in block
+
+
+@pytest.mark.parametrize(
+    "spec",
+    [{"type": "dp", "required": True}, {"type": "dp", "default": 4}],
+)
+def test_a_dp_prop_that_is_always_present_wraps_at_the_call(spec: dict) -> None:
+    """No fallback to choose: the number is there, and it is a dp."""
+    entry = components()["VerticalDivider"]
+    entry["props"]["thickness"] = spec
+    block = render("VerticalDivider", entry)
+    assert "thickness = model.props.thickness.dp," in block
+
+
+@pytest.mark.parametrize(
+    ("edit", "message"),
+    [
+        (
+            lambda registry: registry["components"]["HorizontalDivider"][
+                "props"
+            ].update({"thickness": {"type": "dp"}}),
+            "dp props must be required or carry",
+        ),
+        (
+            lambda registry: registry["components"]["HorizontalDivider"]["props"][
+                "thickness"
+            ].update({"nativeDefault": ""}),
+            "'nativeDefault' must be Kotlin source",
+        ),
+        (
+            lambda registry: registry["components"]["Text"]["props"]["text"].update(
+                {"nativeDefault": "androidx.compose.material3.LocalTextStyle.current"}
+            ),
+            "'nativeDefault' is read only for value and dp props",
+        ),
+    ],
+)
+def test_the_schema_refuses_a_dp_prop_it_cannot_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    edit: Any,
+    message: str,
+) -> None:
+    """A dp prop states its default or refuses to render; it never guesses."""
+    from pycompose.schema.codegen import main
+
+    registry = json.loads(SCHEMA_PATH.read_text())
+    edit(registry)
+    path = tmp_path / "components.json"
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match=message):
+        main.load_registry()
 
 
 # ---------------------------------------------------------------------------

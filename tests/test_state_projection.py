@@ -197,7 +197,8 @@ def test_a_gated_family_composes_its_component_from_the_holder() -> None:
     assert "open =" not in adapter
     assert "onOpenChange =" not in adapter
     assert 'dragHandle = context.slot(model.children, "dragHandle")' in adapter
-    assert "content = { context.children(model.children) }" in adapter
+    scoped = "content = { context.childrenInColumnScope(this, model.children) }"
+    assert scoped in adapter
 
 
 def test_the_holder_stays_outside_the_gate() -> None:

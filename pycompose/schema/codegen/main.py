@@ -287,6 +287,7 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
     if comp.get("stability") not in STABILITIES:
         _die(f"component {name!r} has unknown stability {comp.get('stability')!r}")
     _validate_opt_in(name, comp)
+    _validate_scope(name, comp)
     props = comp.get("props")
     if not isinstance(props, dict):
         _die(f"component {name!r} needs a 'props' object")
@@ -295,6 +296,21 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
     children = comp.get("children")
     if not isinstance(children, dict):
         _die(f"component {name!r} needs a 'children' object")
+    _validate_children(name, children)
+    _validate_slots(name, props, children, comp.get("slots", {}))
+    _validate_interaction(
+        name, props, children, comp.get("slots", {}), comp.get("interaction")
+    )
+    _validate_state(name, props, children, comp.get("slots", {}), comp.get("state"))
+
+
+def _validate_children(name: str, children: dict[str, Any]) -> None:
+    """Check a component's children declaration and the scope it provides.
+
+    Args:
+        name: Component name, for error messages.
+        children: The component's raw ``children`` object.
+    """
     if not isinstance(children.get("allowed"), bool):
         _die(f"component {name!r} needs children.allowed as a boolean")
     if children.get("kind", "content") not in SLOT_KINDS:
@@ -314,11 +330,42 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
             f"component {name!r} children.consume must be one of "
             + ", ".join(sorted(CONSUMERS))
         )
-    _validate_slots(name, props, children, comp.get("slots", {}))
-    _validate_interaction(
-        name, props, children, comp.get("slots", {}), comp.get("interaction")
-    )
-    _validate_state(name, props, children, comp.get("slots", {}), comp.get("state"))
+    provides = children.get("provides")
+    if provides is None:
+        return
+    from pycompose.schema.codegen.adapters import SCOPES
+
+    if provides not in SCOPES:
+        _die(
+            f"component {name!r} children.provides must be one of "
+            + ", ".join(sorted(SCOPES))
+        )
+    if children.get("consume") is not None:
+        _die(f"component {name!r} children cannot consume and provide a scope")
+    if children.get("kind", "content") != "content":
+        _die(f"component {name!r} children.provides needs the content kind")
+
+
+def _validate_scope(name: str, comp: dict[str, Any]) -> None:
+    """Check a component's declared receiver against the scope vocabulary.
+
+    A component the pin declares as an extension on a composition scope cannot
+    be looked up like a plain one: its receiver exists only inside the parent
+    lambda that provides it, so the adapter registers through the matching
+    scoped method. The vocabulary is closed, and the fact itself is re-derived
+    from the pinned inventory by ``check_upstream``.
+
+    Args:
+        name: Component name, for error messages.
+        comp: The component's schema entry.
+    """
+    scope = comp.get("scope")
+    if scope is None:
+        return
+    from pycompose.schema.codegen.adapters import SCOPES
+
+    if scope not in SCOPES:
+        _die(f"component {name!r} scope must be one of " + ", ".join(sorted(SCOPES)))
 
 
 def _validate_interaction(
@@ -606,9 +653,43 @@ def _validate_prop(name: str, prop_name: str, prop: dict[str, Any]) -> None:
             _die(f"prop {name}.{prop_name} 'fallback' needs a 'decode'")
         if not isinstance(prop["fallback"], str) or not prop["fallback"]:
             _die(f"prop {name}.{prop_name} 'fallback' must be Kotlin source")
+    _validate_defaults(name, prop_name, prop, ptype)
     if "provider" in prop:
         _validate_provider(name, prop_name, prop)
     _validate_nullable(name, prop_name, prop)
+
+
+def _validate_defaults(
+    name: str,
+    prop_name: str,
+    prop: dict[str, Any],
+    ptype: object,
+) -> None:
+    """Check a prop's native default and the fallback a dp prop must declare.
+
+    Args:
+        name: Component name, for error messages.
+        prop_name: Prop name, for error messages.
+        prop: The prop's raw entry.
+        ptype: The prop's declared type.
+    """
+    if "nativeDefault" in prop:
+        if not isinstance(prop["nativeDefault"], str) or not prop["nativeDefault"]:
+            _die(f"prop {name}.{prop_name} 'nativeDefault' must be Kotlin source")
+        if ptype not in {"value", "dp"}:
+            # Anything else that carried one would never be read, and the
+            # stated default would quietly differ from the pinned one.
+            _die(
+                f"prop {name}.{prop_name} 'nativeDefault' is read only for "
+                "value and dp props"
+            )
+    if ptype == "dp" and not (
+        prop.get("required") or "default" in prop or "nativeDefault" in prop
+    ):
+        _die(
+            f"prop {name}.{prop_name} dp props must be required or carry a "
+            "'default' or 'nativeDefault'"
+        )
 
 
 def _validate_nullable(name: str, prop_name: str, prop: dict[str, Any]) -> None:
@@ -1518,11 +1599,14 @@ def render_kotlin_models(registry: dict[str, Any]) -> str:
                 f"    override val props: {name}Props,",
             ]
         )
-        if spec["children"]["allowed"]:
+        if spec["children"]["allowed"] or spec.get("slots"):
+            # Slot children ride the same list as primary ones, so a component
+            # that declares slots carries children even when it forbids primary
+            # ones -- a chip's leading icon is a child, not a prop.
             lines.append("    override val children: List<UiNode> = emptyList(),")
         lines.append("    override val slot: String? = null,")
         lines.append(") : UiNode {")
-        if not spec["children"]["allowed"]:
+        if not spec["children"]["allowed"] and not spec.get("slots"):
             lines.append("    override val children: List<UiNode> get() = emptyList()")
         lines.extend(
             [

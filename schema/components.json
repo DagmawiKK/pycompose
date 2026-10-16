@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.21.0",
+  "schemaVersion": "1.22.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -22,7 +22,8 @@
     "1.18.0",
     "1.19.0",
     "1.20.0",
-    "1.21.0"
+    "1.21.0",
+    "1.22.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -53,7 +54,8 @@
       },
       "children": {
         "allowed": true,
-        "min": 0
+        "min": 0,
+        "provides": "BoxScope"
       }
     },
     "Button": {
@@ -139,6 +141,91 @@
         }
       }
     },
+    "Card": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.shape"
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "CardColors",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.cardColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "CardElevation",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.cardElevation()"
+        },
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nullable": true,
+          "nativeDefault": "null"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    },
     "Checkbox": {
       "package": "androidx.compose.material3",
       "category": "input",
@@ -211,6 +298,41 @@
         }
       }
     },
+    "CircularProgressIndicator": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularColor"
+        },
+        "strokeWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth"
+        },
+        "trackColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularIndeterminateTrackColor"
+        },
+        "strokeCap": {
+          "type": "value",
+          "valueType": "StrokeCap",
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularIndeterminateStrokeCap"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
     "Column": {
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
@@ -232,7 +354,44 @@
       },
       "children": {
         "allowed": true,
-        "min": 0
+        "min": 0,
+        "provides": "ColumnScope"
+      }
+    },
+    "DismissibleDrawerSheet": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "drawerShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.ui.graphics.RectangleShape"
+        },
+        "drawerContainerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.DrawerDefaults.standardContainerColor"
+        },
+        "drawerTonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.DismissibleDrawerElevation"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
       }
     },
     "DismissibleNavigationDrawer": {
@@ -365,6 +524,105 @@
         }
       }
     },
+    "FloatingActionButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.FloatingActionButtonDefaults.shape"
+        },
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "FloatingActionButtonElevation",
+          "nativeDefault": "androidx.compose.material3.FloatingActionButtonDefaults.elevation()"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    },
+    "HorizontalDivider": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "thickness": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.DividerDefaults.Thickness"
+        },
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.DividerDefaults.color"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
     "Icon": {
       "package": "androidx.compose.material3",
       "category": "media",
@@ -393,6 +651,74 @@
       },
       "children": {
         "allowed": false
+      }
+    },
+    "IconButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "IconButtonColors",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.iconButtonColors()"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
       }
     },
     "Image": {
@@ -520,7 +846,8 @@
       },
       "children": {
         "allowed": true,
-        "kind": "content"
+        "kind": "content",
+        "provides": "ColumnScope"
       },
       "slots": {
         "dragHandle": {
@@ -538,6 +865,42 @@
         "value": "open",
         "report": "onOpenChange",
         "dismiss": "onDismissRequest"
+      }
+    },
+    "ModalDrawerSheet": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "drawerShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.shape"
+        },
+        "drawerContainerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.DrawerDefaults.modalContainerColor"
+        },
+        "drawerTonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.ModalDrawerElevation"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
       }
     },
     "ModalNavigationDrawer": {
@@ -586,6 +949,193 @@
         "report": "onOpenChange"
       }
     },
+    "NavigationBar": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.NavigationBarDefaults.containerColor"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.NavigationBarDefaults.Elevation"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.NavigationBarDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "RowScope"
+      }
+    },
+    "NavigationBarItem": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "alwaysShowLabel": {
+          "type": "boolean",
+          "default": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "NavigationBarItemColors",
+          "nativeDefault": "androidx.compose.material3.NavigationBarItemDefaults.colors()"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "icon": {
+          "native": "icon"
+        },
+        "label": {
+          "native": "label",
+          "nullable": true
+        }
+      },
+      "scope": "RowScope",
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    },
+    "RadioButton": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "RadioButtonColors",
+          "nativeDefault": "androidx.compose.material3.RadioButtonDefaults.colors()"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    },
     "Row": {
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
@@ -607,7 +1157,8 @@
       },
       "children": {
         "allowed": true,
-        "min": 0
+        "min": 0,
+        "provides": "RowScope"
       }
     },
     "Scaffold": {
@@ -656,6 +1207,89 @@
       },
       "children": {
         "allowed": false
+      }
+    },
+    "Switch": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "boolean"
+            }
+          ],
+          "required": true
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "SwitchColors",
+          "nativeDefault": "androidx.compose.material3.SwitchDefaults.colors()"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "thumbContent": {
+          "native": "thumbContent",
+          "nullable": true
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
       }
     },
     "Text": {
@@ -849,6 +1483,30 @@
         "selection",
         "onSelectionChange"
       ]
+    },
+    "VerticalDivider": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.22.0",
+      "props": {
+        "thickness": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.DividerDefaults.Thickness"
+        },
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.DividerDefaults.color"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
     }
   },
   "modifiers": {

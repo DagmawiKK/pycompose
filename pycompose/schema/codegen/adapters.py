@@ -79,6 +79,22 @@ SLOT_KINDS = frozenset({"content", "items"})
 CONSUMERS = frozenset({"paddingValues"})
 """Slot scopes the adapter consumes, so an app never double-applies one."""
 
+SCOPES = {
+    "RowScope": "androidx.compose.foundation.layout.RowScope",
+    "ColumnScope": "androidx.compose.foundation.layout.ColumnScope",
+    "BoxScope": "androidx.compose.foundation.layout.BoxScope",
+}
+"""Composition scopes an adapter can receive or hand to its children.
+
+A component declared as an extension on one of these is registered through the
+matching ``register*Scoped`` method, because its receiver exists only inside the
+parent lambda that provides it and cannot be invented at the call site. A parent
+whose pinned content lambda carries one hands it down, so a scoped child composes
+under the lambda that provides its receiver. Both facts are re-derived from the
+pinned inventory by ``check_upstream``; the vocabulary here only says which
+scopes this generator can wire.
+"""
+
 KOTLIN_TYPES = {
     "Alignment": "androidx.compose.ui.Alignment",
     "Arrangement": "androidx.compose.foundation.layout.Arrangement",
@@ -170,16 +186,19 @@ def _declared_slots(entry: dict[str, Any]) -> bool:
         consumer this generator renders.
     """
     children = entry.get("children", {})
-    if children.get("kind") not in {None, *SLOT_KINDS}:
-        return False
-    if children.get("consume") not in {None, *CONSUMERS}:
-        return False
-    for slot in entry.get("slots", {}).values():
-        if slot.get("kind", "content") not in SLOT_KINDS:
-            return False
-        if slot.get("consume") not in {None, *CONSUMERS}:
-            return False
-    return True
+    scoped = children.get("provides") in {None, *SCOPES} and not (
+        "provides" in children and children.get("consume") is not None
+    )
+    return (
+        children.get("kind") in {None, *SLOT_KINDS}
+        and children.get("consume") in {None, *CONSUMERS}
+        and scoped
+        and all(
+            slot.get("kind", "content") in SLOT_KINDS
+            and slot.get("consume") in {None, *CONSUMERS}
+            for slot in entry.get("slots", {}).values()
+        )
+    )
 
 
 def is_mechanical(entry: dict[str, Any]) -> bool:
@@ -212,6 +231,10 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
                 continue
             return False
         if spec.get("type") in MECHANICAL:
+            continue
+        # A dp prop carries a plain number and needs no decoder, but only a
+        # prop with some default to fall back to can be rendered at all.
+        if spec.get("type") == "dp" and _dp_renderable(spec):
             continue
         # Decodable types need a named resolver; without one they cannot be
         # rendered at all rather than rendered wrongly.
@@ -510,6 +533,7 @@ def _slot_body(
     name: str | None,
     kind: str | None,
     consume: str | None,
+    provides: str | None = None,
 ) -> tuple[str, str | None]:
     """Render the inside of one declared slot's content lambda.
 
@@ -518,19 +542,21 @@ def _slot_body(
         name: Slot name, or None for the primary children.
         kind: ``content`` composes nodes in order; ``items`` lists them lazily.
         consume: Slot scope the adapter consumes on the subtree's behalf.
+        provides: Composition scope the pinned lambda carries, handed to the
+            children so a scoped child composes under its provider.
 
     Returns:
         The lambda body, then its parameter name when the slot consumes a scope.
     """
     if kind == "items":
-        listed = (
-            f"context.unslotted({nodes})"
-            if name is None
-            else f'context.slotNodes({nodes}, "{name}")'
-        )
+        listed = f"{nodes}.unslotted()" if name is None else f'{nodes}.inSlot("{name}")'
         read = f"items({listed}, key = {{ it.id }}) {{ context.node(it) }}"
     elif name is None:
-        read = f"context.children({nodes})"
+        read = (
+            f"context.childrenIn{provides}(this, {nodes})"
+            if provides is not None and consume is None
+            else f"context.children({nodes})"
+        )
     else:
         # The parameter is non-null, so the lambda always runs and the slot's
         # own lambda is invoked inside it. Evaluating the slot without invoking
@@ -602,6 +628,10 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
     for spec in entry.get("props", {}).values():
         if spec.get("type") == "color" and "valueType" in spec:
             qualified.add("kotlinx.serialization.json.JsonObject")
+        if spec.get("type") == "dp":
+            # Kotlin's own conversion is an extension property, so the import
+            # is what makes ``model.props.x.dp`` resolve.
+            qualified.add("androidx.compose.ui.unit.dp")
     slots = [entry.get("children", {}), *entry.get("slots", {}).values()]
     for slot in slots:
         if slot.get("consume") == "paddingValues":
@@ -612,8 +642,22 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
                     "androidx.compose.ui.Modifier",
                 }
             )
-        if slot.get("kind") == "items":
-            qualified.add("androidx.compose.foundation.lazy.items")
+    if entry.get("children", {}).get("kind") == "items":
+        # The primary children are the unslotted ones, and an extension becomes
+        # callable only where it is imported.
+        qualified.update(
+            {
+                "androidx.compose.foundation.lazy.items",
+                "com.pycompose.renderer.unslotted",
+            }
+        )
+    if any(slot.get("kind") == "items" for slot in entry.get("slots", {}).values()):
+        qualified.update(
+            {
+                "androidx.compose.foundation.lazy.items",
+                "com.pycompose.renderer.inSlot",
+            }
+        )
     return qualified
 
 
@@ -701,6 +745,56 @@ def _render_value(prop_name: str, spec: dict[str, Any], out: _Fragments) -> bool
     )
 
 
+def _dp_renderable(spec: dict[str, Any]) -> bool:
+    """Report whether a dp prop has something to fall back on.
+
+    A dp prop is always passed when it is required or carries a literal model
+    default, and an optional one names its pinned default in ``nativeDefault``.
+    Without either, a stated value would ride the wire and never reach Compose.
+
+    Args:
+        spec: The prop's schema entry.
+
+    Returns:
+        True when the adapter can render the prop without a decision.
+    """
+    return bool(spec.get("required") or "default" in spec or "nativeDefault" in spec)
+
+
+def _render_dp(prop_name: str, spec: dict[str, Any], out: _Fragments) -> bool:
+    """Render a dp prop through Kotlin's own ``Double.dp`` conversion.
+
+    A dp prop rides the wire as a plain finite number; the number already means
+    the density-independent unit, so no decoder sits between them. Absence is
+    the interesting half: the model cannot hold a ``Dp``, so an optional prop
+    names its pinned default in ``nativeDefault`` and the adapter chooses, with
+    the native side owning the value it declared.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+        out: Collects the rendered pieces.
+
+    Returns:
+        True when the prop rendered; False leaves the adapter to the hands.
+    """
+    wire = f"model.props.{prop_name}"
+    if spec.get("required") or "default" in spec:
+        out.arguments.append(f"{prop_name} = {wire}.dp")
+        return True
+    if "nativeDefault" in spec:
+        # Through a local: the model lives in another module, so its nullable
+        # property does not smart-cast.
+        out.locals.append(f"val {prop_name}Wire = {wire}")
+        out.locals.append(
+            f"val {prop_name}Value = if ({prop_name}Wire != null) "
+            f"{prop_name}Wire.dp else {spec['nativeDefault']}"
+        )
+        out.arguments.append(f"{prop_name} = {prop_name}Value")
+        return True
+    return False
+
+
 def _render_prop(prop: str, spec: dict[str, Any], out: _Fragments) -> bool:
     """Render one prop into `out`, or report that the adapter cannot be built.
 
@@ -727,6 +821,8 @@ def _render_prop(prop: str, spec: dict[str, Any], out: _Fragments) -> bool:
     elif prop_type == "actionId":
         callback = _callback(prop_name, spec)
         emitted = callback is not None and out.add(("", callback))
+    elif prop_type == "dp":
+        emitted = _render_dp(prop_name, spec, out)
     else:
         emitted = _render_scalar(prop_name, spec, out)
     return emitted
@@ -842,7 +938,11 @@ def render(name: str, entry: dict[str, Any]) -> str:
         # Emitted by name rather than trailing: the schema says which parameter
         # the primary children reach, and says nothing about where it sits.
         children_body, parameter = _slot_body(
-            "model.children", None, children.get("kind"), children.get("consume")
+            "model.children",
+            None,
+            children.get("kind"),
+            children.get("consume"),
+            children.get("provides"),
         )
         prefix = f"{parameter} -> " if parameter is not None else ""
         native = children.get("native", "content")
@@ -866,8 +966,12 @@ def render(name: str, entry: dict[str, Any]) -> str:
         # The holder stays outside the gate: the state must outlive the
         # composition of the component it projects.
         call = f"                if ({gate}) {{\n{call}\n                }}"
+    scope = entry.get("scope")
+    registration = (
+        f"register{scope.removesuffix('Scope')}Scoped" if scope else "register"
+    )
     return (
-        f'            .register("{name}") {{ node, modifier, context ->\n'
+        f'            .{registration}("{name}") {{ node, modifier, context ->\n'
         f"                val model = node as {node}\n"
         + (f"{prelude}\n" if prelude else "")
         + f"{call}\n"

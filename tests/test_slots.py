@@ -278,3 +278,50 @@ def test_the_codegen_refuses_a_slot_named_like_a_prop(
                 {"containerColor": {"native": "containerColorSlot"}}
             ),
         )
+
+
+# ---------------------------------------------------------------------------
+# A slot-bearing component carries its children, primary or not
+# ---------------------------------------------------------------------------
+
+
+def test_a_slot_bearing_component_carries_its_children() -> None:
+    """The model accepts what the wire permits: slot children need the list.
+
+    A component may forbid primary children and still declare slots -- a chip's
+    leading icon, a bar item's label -- and those children ride the same
+    ``children`` list as primary ones, because the wire has one place for a
+    child. A model without the field rejects the snapshot before any adapter
+    sees it, so the declared slot is the fact that decides, not
+    ``children.allowed``.
+    """
+    from pycompose.schema.codegen.main import render_kotlin_models
+
+    models = render_kotlin_models(
+        {
+            "actions": {},
+            "components": {
+                "Leaf": {"props": {}, "children": {"allowed": False}},
+                "Slotted": {
+                    "props": {},
+                    "children": {"allowed": False},
+                    "slots": {"icon": {"native": "icon"}},
+                },
+                "Parent": {"props": {}, "children": {"allowed": True}},
+            },
+        }
+    )
+    carrying = (
+        "    override val props: {name}Props,\n"
+        "    override val children: List<UiNode> = emptyList(),\n"
+    )
+    assert carrying.format(name="Slotted") in models
+    assert carrying.format(name="Parent") in models
+    assert (
+        "data class Leaf(\n"
+        "    override val id: String,\n"
+        "    override val props: LeafProps,\n"
+        "    override val slot: String? = null,\n"
+        ") : UiNode {\n"
+        "    override val children: List<UiNode> get() = emptyList()"
+    ) in models

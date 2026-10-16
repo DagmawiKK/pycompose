@@ -378,6 +378,9 @@ class ChildrenRule:
         min: Optional minimum child count.
         native: Native parameter name the children are placed in.
         consume: Slot scope the adapter consumes on the children's behalf.
+        provides: Composition scope the children are composed under, when the
+            pinned content lambda carries one. Codegen-only: the renderer hands
+            the receiver down so a scoped child composes under its provider.
     """
 
     allowed: bool
@@ -385,6 +388,7 @@ class ChildrenRule:
     min: int | None = None
     native: str | None = None
     consume: str | None = None
+    provides: str | None = None
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> ChildrenRule:
@@ -419,12 +423,18 @@ class ChildrenRule:
             raise ComponentRegistryError(
                 f"{where}: 'consume' must be one of {', '.join(CONSUMERS)}"
             )
+        provides = data.get("provides")
+        if provides is not None and provides not in SCOPES:
+            raise ComponentRegistryError(
+                f"{where}: 'provides' must be one of {', '.join(SCOPES)}"
+            )
         return cls(
             allowed=allowed,
             kind=kind,
             min=minimum,
             native=native,
             consume=cast("str | None", consume),
+            provides=cast("str | None", provides),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -442,6 +452,8 @@ class ChildrenRule:
             out["native"] = self.native
         if self.consume is not None:
             out["consume"] = self.consume
+        if self.provides is not None:
+            out["provides"] = self.provides
         return out
 
 
@@ -523,6 +535,13 @@ CONSUMERS = ("paddingValues",)
 
 A consumed scope is never lost: the adapter applies it in the one place Compose
 idiomatically applies it, and the app cannot apply it twice.
+"""
+
+SCOPES = ("RowScope", "ColumnScope", "BoxScope")
+"""Composition scopes a component can require or hand to its children.
+
+Closed like :data:`CONSUMERS`: the renderer owns one registration path per scope,
+so a name outside this tuple has no path to land in.
 """
 
 INTERACTION_KINDS = ("press", "focus", "hover")
@@ -992,6 +1011,9 @@ class ComponentSpec:
         package: The Kotlin package the pinned composable lives in, so a
             generated adapter imports the qualified name instead of a generator
             keeping its own list of where every component lives.
+        scope: The composition scope the pinned declaration extends, if any.
+            Codegen-only: the adapter registers through the matching scoped
+            method, and only a parent that provides the scope can compose it.
     """
 
     name: str
@@ -1008,6 +1030,7 @@ class ComponentSpec:
     state: StateRule | None = None
     opt_in: tuple[str, ...] = ()
     package: str | None = None
+    scope: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -1020,6 +1043,8 @@ class ComponentSpec:
             not isinstance(self.package, str) or not self.package
         ):
             raise ComponentRegistryError("package must be a non-empty dotted name")
+        if self.scope is not None and self.scope not in SCOPES:
+            raise ComponentRegistryError(f"scope must be one of {', '.join(SCOPES)}")
 
     @classmethod
     def from_mapping(cls, name: str, data: Mapping[str, object]) -> ComponentSpec:
@@ -1114,6 +1139,7 @@ class ComponentSpec:
             state=state,
             opt_in=_opt_in(name, data.get("optIn")),
             package=package,
+            scope=cast("str | None", data.get("scope")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -1148,6 +1174,8 @@ class ComponentSpec:
             result["optIn"] = list(self.opt_in)
         if self.wrapper is not None:
             result["wrapper"] = self.wrapper
+        if self.scope is not None:
+            result["scope"] = self.scope
         return result
 
 

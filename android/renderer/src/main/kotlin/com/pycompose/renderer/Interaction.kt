@@ -9,7 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import com.pycompose.ir.AppBinding
+import com.pycompose.ir.generated.IrContract
 import kotlinx.coroutines.flow.collect
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * The host-created interaction source for one node, or null when it observes nothing.
@@ -63,3 +67,47 @@ private fun kindAndState(interaction: Interaction): Pair<String, Boolean>? =
         is HoverInteraction.Exit -> "hover" to false
         else -> null
     }
+
+/**
+ * Turns one observed interaction into an action, or reports why it cannot be one.
+ *
+ * The observation carries one boolean, so exactly one boolean field of the
+ * declared payload receives it; two would mean the host picked a field the app
+ * did not mean. The declaration is data, so nothing here needs the renderer or
+ * the composition: the sink is testable on its own.
+ *
+ * @param bindings Session bindings by action id.
+ * @param actions Dispatcher that receives the action.
+ * @param report Sink for a message the host cannot turn into an action.
+ */
+internal class ObservationSink(
+    private val bindings: Map<String, AppBinding>,
+    private val actions: ActionDispatcher,
+    private val report: (String) -> Unit,
+) {
+    /**
+     * Report one observed interaction.
+     *
+     * @param kind Interaction kind the action observes, for the message.
+     * @param actionId The action observing it.
+     * @param value The new state of that kind.
+     */
+    fun observe(
+        kind: String,
+        actionId: String,
+        value: Boolean,
+    ) {
+        val fields =
+            bindings[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
+        val boolean = fields.filterValues { it.type == "boolean" }
+        val field = boolean.keys.singleOrNull()
+        if (field == null) {
+            report(
+                "Cannot observe $kind for $actionId: " +
+                    "${boolean.size} boolean fields among ${fields.keys}",
+            )
+            return
+        }
+        actions.dispatch(actionId, JsonObject(mapOf(field to JsonPrimitive(value))))
+    }
+}

@@ -1,11 +1,15 @@
 package com.pycompose.renderer
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import com.pycompose.ir.AppBinding
 import com.pycompose.ir.AppBindings
 import com.pycompose.ir.ValidatedIr
@@ -38,7 +42,7 @@ class RenderContext internal constructor(
     fun interactionSource(
         id: String,
         actionIds: Map<String, String?>,
-    ): MutableInteractionSource? = rememberInteractionSource(id, actionIds, ::observation)
+    ): MutableInteractionSource? = rememberInteractionSource(id, actionIds, observations::observe)
 
     /**
      * The host-owned drawer state for one node, reconciled to the desired value.
@@ -54,7 +58,7 @@ class RenderContext internal constructor(
     fun drawerState(
         open: Boolean?,
         report: String?,
-    ): DrawerState = rememberHostDrawerState(open, report, ::observation)
+    ): DrawerState = rememberHostDrawerState(open, report, observations::observe)
 
     /**
      * The host-owned sheet state for one node, and whether to compose the sheet.
@@ -73,28 +77,15 @@ class RenderContext internal constructor(
     fun sheetState(
         open: Boolean?,
         report: String?,
-    ): HostSheetState = rememberHostSheetState(open, report, ::observation)
+    ): HostSheetState = rememberHostSheetState(open, report, observations::observe)
 
-    private fun observation(
-        kind: String,
-        actionId: String,
-        value: Boolean,
-    ) {
-        val fields =
-            bindings[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
-        val boolean = fields.filterValues { it.type == "boolean" }
-        val field = boolean.keys.singleOrNull()
-        if (field == null) {
-            // One boolean is the whole observation. Two would mean the host
-            // picked a field the app did not mean, so it reports instead.
-            renderer.report(
-                "Cannot observe $kind for $actionId: " +
-                    "${boolean.size} boolean fields among ${fields.keys}",
-            )
-            return
-        }
-        actions.dispatch(actionId, JsonObject(mapOf(field to JsonPrimitive(value))))
-    }
+    /**
+     * Where this context's observations go.
+     *
+     * The sink fixes the three collaborators an observation needs, so every
+     * caller hands the same three-argument function to the state helpers.
+     */
+    private val observations = ObservationSink(bindings, actions, renderer.report)
 
     fun event(
         actionId: String,
@@ -130,16 +121,48 @@ class RenderContext internal constructor(
     }
 
     /** Primary children, in declaration order. */
-    fun unslotted(nodes: List<UiNode>): List<UiNode> = nodes.filter { it.slot == null }
-
-    /** Fillers of one declared slot, in declaration order. */
-    fun slotNodes(
-        nodes: List<UiNode>,
-        slot: String,
-    ): List<UiNode> = nodes.filter { it.slot == slot }
-
     @Composable fun children(nodes: List<UiNode>) {
-        unslotted(nodes).forEach { child -> key(child.id) { node(child) } }
+        nodes.unslotted().forEach { child -> key(child.id) { node(child) } }
+    }
+
+    /**
+     * Primary children composed under the RowScope their parent's lambda carries.
+     *
+     * A scoped component's adapter takes its receiver as a parameter, because the
+     * receiver exists only inside the content lambda that provides it. This is
+     * how that lambda hands it down; children that need no scope compose exactly
+     * as [children] composes them.
+     *
+     * @param scope The receiver the parent's pinned content lambda carries.
+     * @param nodes The parent's child nodes, in declaration order.
+     */
+    @Composable fun childrenInRowScope(
+        scope: RowScope,
+        nodes: List<UiNode>,
+    ) {
+        nodes.unslotted().forEach { child ->
+            key(child.id) { renderer.ScopedNode(child, this, scope) }
+        }
+    }
+
+    /** Primary children composed under their parent's ColumnScope, as [childrenInRowScope]. */
+    @Composable fun childrenInColumnScope(
+        scope: ColumnScope,
+        nodes: List<UiNode>,
+    ) {
+        nodes.unslotted().forEach { child ->
+            key(child.id) { renderer.ScopedNode(child, this, scope) }
+        }
+    }
+
+    /** Primary children composed under their parent's BoxScope, as [childrenInRowScope]. */
+    @Composable fun childrenInBoxScope(
+        scope: BoxScope,
+        nodes: List<UiNode>,
+    ) {
+        nodes.unslotted().forEach { child ->
+            key(child.id) { renderer.ScopedNode(child, this, scope) }
+        }
     }
 
     /**
@@ -153,7 +176,7 @@ class RenderContext internal constructor(
         nodes: List<UiNode>,
         slot: String,
     ): (@Composable () -> Unit)? {
-        val filled = slotNodes(nodes, slot)
+        val filled = nodes.inSlot(slot)
         if (filled.isEmpty()) return null
         return { filled.forEach { child -> key(child.id) { node(child) } } }
     }
@@ -185,19 +208,84 @@ class Renderer(
         context: RenderContext,
     ) {
         val adapter = registry[node.componentType]
-        val result = modifiers.build(node.props.modifier)
-        val modifier = result.getOrNull()
-        if (adapter == null || modifier == null) {
-            remember(node.id, node.props, adapter) {
-                val reason = result.exceptionOrNull()?.message.orEmpty()
+        if (adapter == null) {
+            // A type with only a scoped adapter cannot compose here: its
+            // receiver exists inside a parent lambda this path is outside of.
+            val scope = registry.scopeOf(node.componentType)
+            remember(node.id, node.props) {
                 report(
-                    "Cannot render ${node.id}: ${node.componentType}: $reason",
+                    "Cannot render ${node.id}: ${node.componentType}: " +
+                        (scope?.let { "$it parent required" } ?: ""),
                 )
                 true
             }
             if (debug) BasicText("Unsupported: ${node.componentType}")
             return
         }
+        val modifier = modifierFor(node) ?: return
         adapter(node, modifier, context)
+    }
+
+    /** Compose one child of a RowScope content lambda, through its scoped adapter. */
+    @Composable internal fun ScopedNode(
+        node: UiNode,
+        context: RenderContext,
+        scope: RowScope,
+    ) {
+        val adapter = registry.rowScoped(node.componentType)
+        if (adapter == null) {
+            Node(node, context)
+            return
+        }
+        val modifier = modifierFor(node) ?: return
+        scope.adapter(node, modifier, context)
+    }
+
+    /** Compose one child of a ColumnScope content lambda, through its scoped adapter. */
+    @Composable internal fun ScopedNode(
+        node: UiNode,
+        context: RenderContext,
+        scope: ColumnScope,
+    ) {
+        val adapter = registry.columnScoped(node.componentType)
+        if (adapter == null) {
+            Node(node, context)
+            return
+        }
+        val modifier = modifierFor(node) ?: return
+        scope.adapter(node, modifier, context)
+    }
+
+    /** Compose one child of a BoxScope content lambda, through its scoped adapter. */
+    @Composable internal fun ScopedNode(
+        node: UiNode,
+        context: RenderContext,
+        scope: BoxScope,
+    ) {
+        val adapter = registry.boxScoped(node.componentType)
+        if (adapter == null) {
+            Node(node, context)
+            return
+        }
+        val modifier = modifierFor(node) ?: return
+        scope.adapter(node, modifier, context)
+    }
+
+    /** Build one node's modifier, reporting once when the wire carries a bad one. */
+    @Composable
+    private fun modifierFor(node: UiNode): Modifier? {
+        val result = modifiers.build(node.props.modifier)
+        val modifier = result.getOrNull()
+        if (modifier == null) {
+            remember(node.id, node.props) {
+                report(
+                    "Cannot render ${node.id}: ${node.componentType}: " +
+                        result.exceptionOrNull()?.message.orEmpty(),
+                )
+                true
+            }
+            if (debug) BasicText("Unsupported: ${node.componentType}")
+        }
+        return modifier
     }
 }

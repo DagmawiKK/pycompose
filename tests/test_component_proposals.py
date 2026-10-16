@@ -698,3 +698,48 @@ def test_the_drift_check_re_derives_a_package_and_a_provider(native_document) ->
         "LinearProgressIndicator.progress: provider parameter 'state' is not "
         "a pinned zero-arg function"
     ]
+
+
+def test_the_drift_check_re_derives_receivers_and_provided_scopes(
+    native_document,
+) -> None:
+    """A scope fact is a fact of the pin, on both sides of the relationship.
+
+    A component the pin prefixes with a scope cannot be looked up like a plain
+    one, and a parent's content lambda carries a receiver exactly when the pin
+    says it does. Both are re-derived, so dropping either -- or promising a
+    scope the pin never hands down -- fails here rather than becoming a call
+    that cannot compile.
+    """
+    from schema.check_upstream import compare
+    from schema.classpath_dump import inventory
+
+    assert native_document["provenance"]["compiler"] == "2.0.21"
+    found = inventory(DUMP)
+
+    def edited(name: str, **changes) -> dict:
+        registry = json.loads(Path("schema/components.json").read_text())
+        entry = registry["components"][name]
+        for key, value in changes.items():
+            if key == "provides":
+                entry["children"][key] = value
+            else:
+                entry[key] = value
+        return registry
+
+    # ``NavigationBarItem`` is declared ``RowScope.NavigationBarItem``: every
+    # overload carries the receiver, so silence about it is drift.
+    assert compare(edited("NavigationBarItem", scope=None), found) == [
+        "NavigationBarItem: every pinned overload is a scope extension; "
+        "declare 'scope'"
+    ]
+    assert compare(edited("NavigationBarItem", scope="ColumnScope"), found) == [
+        "NavigationBarItem: scope 'ColumnScope' is not a pinned declaration's receiver"
+    ]
+    assert compare(edited("NavigationBar", provides="ColumnScope"), found) == [
+        "NavigationBar: children.provides 'ColumnScope' is not the pinned "
+        "content lambda's receiver"
+    ]
+    assert compare(edited("Row", provides=None), found) == [
+        "Row: pinned content composes under RowScope; declare children.provides"
+    ]

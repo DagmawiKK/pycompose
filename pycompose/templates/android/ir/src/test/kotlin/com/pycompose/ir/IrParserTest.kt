@@ -111,6 +111,24 @@ class IrParserTest {
     }
 
     @Test
+    fun `a value prop is refused in its legacy string form`() {
+        // A value prop names a family; a bare string names none, so there is
+        // nothing to resolve it against and the report must say so.
+        val source = """{"version":"0.1.0","schemaVersion":"1.22.0",
+            "root":{"id":"root","type":"Card","props":{
+                "onClick":"increment","shape":"rounded"}}}"""
+        val result = IrParser().parse(source)
+        assertTrue(result.isFailure)
+        assertTrue(
+            result
+                .exceptionOrNull()
+                ?.message
+                .orEmpty()
+                .contains("tagged value object"),
+        )
+    }
+
+    @Test
     fun `version gates compare numeric versions and accept a compatible library`() {
         val source = checkNotNull(javaClass.getResource("/ir_counter.json")).readText()
         assertTrue(IrParser("0.9.0").parse(source).isSuccess)

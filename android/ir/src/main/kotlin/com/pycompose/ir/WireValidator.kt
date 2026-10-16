@@ -122,6 +122,11 @@ internal object WireValidator {
             ValueParser.bounds(value, rule.minimum, rule.maximum)
             return
         }
+        if (rule.type == "value") {
+            // A value prop is always its family's tagged object: a bare string
+            // names no family, so there is nothing to resolve it against.
+            error("$path must be its family's tagged value object")
+        }
         legacyProperty(value, rule, path, actionIds)
     }
 
