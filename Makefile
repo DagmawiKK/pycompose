@@ -8,6 +8,7 @@ lint-py:
 	bandit -ll -q -r pycompose
 	pydoclint pycompose
 	lint-imports --config pyproject.toml
+	python tools/limits.py
 	@if [ -d examples/notes/app ]; then (cd examples/notes/app && lint-imports --config importlinter.toml); fi
 
 lint-kt:

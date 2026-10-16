@@ -18,6 +18,7 @@ from typing import Any, NamedTuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from pycompose.core.registry_types import SCOPE_PATHS
 from pycompose.schema.codegen.defaults import render_default
 from schema.classpath_dump import (
     DUMP_DIR,
@@ -30,11 +31,9 @@ from schema.classpath_dump import (
 )
 from schema.propose import SCALARS, identity, source_name, value_families
 
-SCOPES = {
-    "androidx/compose/foundation/layout/RowScope",
-    "androidx/compose/foundation/layout/ColumnScope",
-    "androidx/compose/foundation/layout/BoxScope",
-}
+# The pin reports receivers as classifier paths; derive that form from the
+# closed scope vocabulary instead of transcribing it a second time.
+SLASH_SCOPES = frozenset(path.replace(".", "/") for path in SCOPE_PATHS.values())
 MODIFIER = "androidx/compose/ui/Modifier"
 
 
@@ -73,7 +72,7 @@ def _slot(value) -> dict[str, Any]:
         native_receiver = arguments.pop(0)
         receiver = native_receiver.classifier
         if (
-            receiver not in SCOPES
+            receiver not in SLASH_SCOPES
             or native_receiver.nullable
             or native_receiver.arguments
         ):
@@ -219,7 +218,7 @@ def _plan(
     parameters: dict[str, Any] = {}
     gaps = []
     if (
-        (source.receiver and source.receiver.classifier not in SCOPES)
+        (source.receiver and source.receiver.classifier not in SLASH_SCOPES)
         or source.dispatch_receiver
         or source.context_receivers
         or source.document.get("typeParameters")

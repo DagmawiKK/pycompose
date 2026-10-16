@@ -46,6 +46,8 @@ jobs:
         run: pydoclint pycompose
       - name: import-linter (blocking boundary gate)
         run: lint-imports --config pyproject.toml
+      - name: Line budgets (ADR-0015)
+        run: python tools/limits.py
       - name: pytest
         run: pytest -q --junitxml=reports/pytest.xml
       - name: Upload reports

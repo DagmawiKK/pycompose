@@ -71,6 +71,11 @@ repos:
         language: system
         entry: actionlint
         files: ^\.github/workflows/
+      - id: line-budgets
+        name: Line budgets (ADR-0015)
+        language: system
+        entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/limits.py; fi; exec python tools/limits.py'
+        files: \.(py|kt)$
       - id: commitlint
         name: commitlint (semantic commit messages)
         language: system

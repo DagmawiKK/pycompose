@@ -10,7 +10,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from pycompose.schema.codegen.adapters import SCOPES
+from pycompose.core.registry_types import SCOPE_PATHS
 from schema.classpath_dump import DUMP_DIR, Inventory, inventory, source_defaults
 from schema.propose import refresh
 
@@ -127,7 +127,7 @@ def _content_scope(declaration: Any, native: str) -> str | None:
         if not arguments:
             continue
         classifier = arguments[0].classifier
-        for scope, path in SCOPES.items():
+        for scope, path in SCOPE_PATHS.items():
             if path.replace(".", "/") == classifier:
                 return scope
     return None
@@ -154,7 +154,7 @@ def scope_errors(name: str, entry: dict[str, Any], overloads: list[Any]) -> list
     with_parameters = [d for d in overloads if d.parameters]
     declared = entry.get("scope")
     if declared is not None:
-        path = SCOPES.get(declared, "").replace(".", "/")
+        path = SCOPE_PATHS.get(declared, "").replace(".", "/")
         if not any(
             d.receiver is not None and d.receiver.classifier == path
             for d in with_parameters
