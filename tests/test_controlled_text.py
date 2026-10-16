@@ -21,6 +21,7 @@ from typing import Any
 import pytest
 
 from pycompose import AppContext, install_context
+from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.m3 import TextField
 
 APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"
@@ -52,7 +53,9 @@ def test_the_caret_is_declared_optional() -> None:
 
 def test_the_schema_grew_without_becoming_permissive() -> None:
     """The version moved; permissive shapes are still absent."""
-    assert SCHEMA["schemaVersion"] == "1.22.0"
+    # The catalog's version is whatever the runtime stamps into the wire. It
+    # moves with every batch; the test pins the *congruence*, not the number.
+    assert SCHEMA["schemaVersion"] == SCHEMA_VERSION
     assert {"1.5.0", "1.6.0", "1.7.0"} <= set(SCHEMA["supportedSchemaVersions"])
     # The range form I tried first is not there, because the event channel
     # carries one scalar and a range is two.

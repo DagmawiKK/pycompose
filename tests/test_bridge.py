@@ -12,6 +12,7 @@ from pycompose.bridge import BridgeSurface
 from pycompose.bridge.types import IncrementPayload, SubmitPayload
 from pycompose.core import Node, Props
 from pycompose.errors import SchemaError
+from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.state import Actions, State, Store
 from pycompose.utils.json_canonical import FrozenJsonValue
 
@@ -39,7 +40,7 @@ def test_action_handler_publishes_the_next_canonical_snapshot() -> None:
     assert bridge.accept_action('{"actionId":"increment","payload":{"by":2}}') is None
     assert bridge.expose_latest_snapshot() == (
         '{"root":{"id":"root","props":{"text":"2"},"type":"Text"},'
-        '"schemaVersion":"1.22.0","version":"0.1.0"}'
+        '"schemaVersion":"' + SCHEMA_VERSION + '","version":"0.1.0"}'
     )
     assert store.value.root.props.values["text"] == "2"
 

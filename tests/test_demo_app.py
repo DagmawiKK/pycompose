@@ -13,6 +13,7 @@ import pytest
 
 from pycompose.bridge import BridgeSurface
 from pycompose.core.props import to_camel_case
+from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.state import Store
 
 DEMO = (
@@ -140,7 +141,7 @@ def test_demo_builds_a_valid_snapshot_of_instance_scoped_bindings(
     draft = f"app.{demo.set_draft.name}.draft"
     toggle = f"app.{demo.toggle_task.name}.task_1"
     done = f"app.{demo.set_filter.name}.done"
-    assert snapshot["schemaVersion"] == "1.22.0"
+    assert snapshot["schemaVersion"] == SCHEMA_VERSION
     assert bindings[add]["bound"] == {"title": ""}
     assert bindings[draft]["bound"] == {}
     assert bindings[draft]["payload"] == {"value": {"required": True, "type": "string"}}
