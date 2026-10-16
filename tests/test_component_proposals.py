@@ -641,3 +641,21 @@ def test_call_generation_refuses_blockers_and_opaque_expressions(tmp_path):
     plan["status"] = "call-plan"
     with pytest.raises(ValueError, match="blocked"):
         render_call(plan, package="proof")
+
+
+def test_the_shipped_catalog_carries_no_unexplained_prop(native_document) -> None:
+    """A prop the host fills must say so, or the drift check reads it as removed.
+
+    The component drift check is what keeps a parameter vanishing under a new
+    release from passing as an approved binding, and it exempts exactly what the
+    catalog calls ``reshaped``. A prop with no pinned counterpart but a *host*
+    filler -- an observed interaction, a state's desired value or its report --
+    has to be listed there too; otherwise the gate stays red for a reason the
+    schema alone does not show.
+    """
+    from schema.check_upstream import compare
+    from schema.classpath_dump import inventory
+
+    assert native_document["provenance"]["compiler"] == "2.0.21"
+    registry = json.loads(Path("schema/components.json").read_text())
+    assert compare(registry, inventory(DUMP)) == []

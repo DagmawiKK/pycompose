@@ -121,7 +121,10 @@
       },
       "reshaped": [
         "text",
-        "onClick"
+        "onClick",
+        "onPress",
+        "onFocus",
+        "onHover"
       ],
       "interaction": {
         "native": "interactionSource",
@@ -189,6 +192,11 @@
       "children": {
         "allowed": false
       },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -335,6 +343,11 @@
           "nullable": true
         }
       },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -678,7 +691,10 @@
       },
       "reshaped": [
         "text",
-        "onClick"
+        "onClick",
+        "onPress",
+        "onFocus",
+        "onHover"
       ],
       "interaction": {
         "native": "interactionSource",
