@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.19.0",
+  "schemaVersion": "1.20.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -20,11 +20,13 @@
     "1.16.0",
     "1.17.0",
     "1.18.0",
-    "1.19.0"
+    "1.19.0",
+    "1.20.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
     "Box": {
+      "package": "androidx.compose.foundation.layout",
       "category": "layout",
       "stability": "stable",
       "props": {
@@ -54,6 +56,7 @@
       }
     },
     "Button": {
+      "package": "androidx.compose.material3",
       "category": "buttons",
       "stability": "stable",
       "props": {
@@ -136,6 +139,7 @@
       }
     },
     "Checkbox": {
+      "package": "androidx.compose.material3",
       "category": "input",
       "stability": "stable",
       "since": "1.3.0",
@@ -207,6 +211,7 @@
       }
     },
     "Column": {
+      "package": "androidx.compose.foundation.layout",
       "category": "layout",
       "stability": "stable",
       "props": {
@@ -230,6 +235,7 @@
       }
     },
     "DismissibleNavigationDrawer": {
+      "package": "androidx.compose.material3",
       "category": "layout",
       "stability": "stable",
       "since": "1.18.0",
@@ -275,6 +281,7 @@
       }
     },
     "FilterChip": {
+      "package": "androidx.compose.material3",
       "category": "input",
       "stability": "stable",
       "since": "1.3.0",
@@ -358,6 +365,7 @@
       }
     },
     "Image": {
+      "package": "androidx.compose.foundation",
       "category": "media",
       "stability": "stable",
       "since": "1.1.0",
@@ -387,6 +395,7 @@
       ]
     },
     "LazyColumn": {
+      "package": "androidx.compose.foundation.lazy",
       "category": "lists",
       "stability": "stable",
       "props": {
@@ -412,7 +421,49 @@
         "kind": "items"
       }
     },
+    "LinearProgressIndicator": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "experimental",
+      "since": "1.20.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "progress": {
+          "type": "number",
+          "required": true,
+          "provider": {
+            "native": "progress",
+            "returns": "Float"
+          },
+          "since": "1.20.0"
+        },
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor"
+        },
+        "trackColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "progress"
+      ]
+    },
     "ModalBottomSheet": {
+      "package": "androidx.compose.material3",
       "category": "layout",
       "stability": "experimental",
       "since": "1.19.0",
@@ -459,6 +510,7 @@
       }
     },
     "ModalNavigationDrawer": {
+      "package": "androidx.compose.material3",
       "category": "layout",
       "stability": "stable",
       "since": "1.18.0",
@@ -504,6 +556,7 @@
       }
     },
     "Row": {
+      "package": "androidx.compose.foundation.layout",
       "category": "layout",
       "stability": "stable",
       "props": {
@@ -527,6 +580,7 @@
       }
     },
     "Scaffold": {
+      "package": "androidx.compose.material3",
       "category": "layout",
       "stability": "stable",
       "props": {
@@ -561,6 +615,7 @@
       }
     },
     "Spacer": {
+      "package": "androidx.compose.foundation.layout",
       "category": "layout",
       "stability": "stable",
       "props": {
@@ -573,6 +628,7 @@
       }
     },
     "Text": {
+      "package": "androidx.compose.material3",
       "category": "typography",
       "stability": "stable",
       "props": {
@@ -636,6 +692,7 @@
       ]
     },
     "TextButton": {
+      "package": "androidx.compose.material3",
       "category": "buttons",
       "stability": "stable",
       "since": "1.3.0",
@@ -706,6 +763,7 @@
       }
     },
     "TextField": {
+      "package": "androidx.compose.material3",
       "category": "input",
       "stability": "stable",
       "props": {

@@ -32,6 +32,7 @@ __all__ = [
     "ComponentSpec",
     "ContentSlot",
     "PropDef",
+    "ProviderDef",
     "Registry",
 ]
 
@@ -108,6 +109,55 @@ class ContentSlot:
 
 
 @dataclass(frozen=True, slots=True)
+class ProviderDef:
+    """A prop the native call receives as a zero-arg lambda.
+
+    Attributes:
+        native: The pinned parameter the host fills during composition.
+        returns: The lambda's pinned return type. Recorded so a generated
+            adapter can coerce the wire value instead of guessing, and so the
+            drift check can re-derive it from the pinned declaration.
+    """
+
+    native: str
+    returns: str
+
+    @classmethod
+    def from_mapping(cls, data: Mapping[str, object], *, where: str) -> ProviderDef:
+        """Build a :class:`ProviderDef` from raw JSON.
+
+        Args:
+            data: The raw ``provider`` object.
+            where: Human-readable location for error messages.
+
+        Returns:
+            The parsed provider definition.
+
+        Raises:
+            ComponentRegistryError: If the provider object is malformed.
+        """
+        native = data.get("native")
+        if not isinstance(native, str) or not native:
+            raise ComponentRegistryError(
+                f"{where}: provider 'native' must be a parameter name"
+            )
+        returns = data.get("returns")
+        if not isinstance(returns, str) or not returns:
+            raise ComponentRegistryError(
+                f"{where}: provider 'returns' must be a Kotlin type name"
+            )
+        return cls(native=native, returns=returns)
+
+    def to_mapping(self) -> dict[str, object]:
+        """Render back to the ``components.json`` provider shape.
+
+        Returns:
+            A JSON-ready dict.
+        """
+        return {"native": self.native, "returns": self.returns}
+
+
+@dataclass(frozen=True, slots=True)
 class PropDef:
     """A prop (or action-payload field) definition.
 
@@ -148,6 +198,9 @@ class PropDef:
             default, for the parameters where the hand-written adapter read the
             theme instead. Only valid together with ``decode``.
         nullable: Whether an explicit null is valid, distinct from absence.
+        provider: Set when the prop reaches a native zero-arg lambda parameter.
+            The app states a value; the host supplies the function, so the
+            parameter stays something the app cannot name (ADR-0016).
     """
 
     type: str
@@ -166,6 +219,7 @@ class PropDef:
     native_default: str | None = None
     fallback: str | None = None
     nullable: bool = False
+    provider: ProviderDef | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "values", tuple(self.values))
@@ -200,6 +254,10 @@ class PropDef:
             and self.minimum > self.maximum
         ):
             raise ComponentRegistryError("minimum exceeds maximum")
+        if self.provider is not None and self.nullable:
+            # The lambda always returns a value; a prop that may be absent has
+            # no value for it to return.
+            raise ComponentRegistryError("a provider prop cannot be nullable")
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> PropDef:
@@ -236,6 +294,9 @@ class PropDef:
             raise ComponentRegistryError(
                 f"{where}: 'owner' must be one of {', '.join(OWNERS)}"
             )
+        raw_provider = data.get("provider")
+        if raw_provider is not None and not isinstance(raw_provider, Mapping):
+            raise ComponentRegistryError(f"{where}: 'provider' must be an object")
         return cls(
             type=ptype,
             values=values,
@@ -253,6 +314,11 @@ class PropDef:
             native_default=cast("str | None", data.get("nativeDefault")),
             fallback=cast("str | None", data.get("fallback")),
             nullable=cast("bool", data.get("nullable", False)),
+            provider=(
+                ProviderDef.from_mapping(raw_provider, where=where)
+                if isinstance(raw_provider, Mapping)
+                else None
+            ),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -297,6 +363,8 @@ class PropDef:
             ]
         if self.decode is not None:
             out["decode"] = self.decode
+        if self.provider is not None:
+            out["provider"] = self.provider.to_mapping()
         return out
 
 
@@ -921,6 +989,9 @@ class ComponentSpec:
             settled changes.
         opt_in: Opt-in markers the pinned declaration requires, if any.
             Codegen-only: the generated adapter file declares each one it needs.
+        package: The Kotlin package the pinned composable lives in, so a
+            generated adapter imports the qualified name instead of a generator
+            keeping its own list of where every component lives.
     """
 
     name: str
@@ -936,6 +1007,7 @@ class ComponentSpec:
     interaction: InteractionRule | None = None
     state: StateRule | None = None
     opt_in: tuple[str, ...] = ()
+    package: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -944,6 +1016,10 @@ class ComponentSpec:
             not isinstance(self.since, str) or not self.since
         ):
             raise ComponentRegistryError("since must be a non-empty schema version")
+        if self.package is not None and (
+            not isinstance(self.package, str) or not self.package
+        ):
+            raise ComponentRegistryError("package must be a non-empty dotted name")
 
     @classmethod
     def from_mapping(cls, name: str, data: Mapping[str, object]) -> ComponentSpec:
@@ -968,6 +1044,11 @@ class ComponentSpec:
         if not isinstance(stability, str) or not stability:
             raise ComponentRegistryError(
                 f"component {name!r}: 'stability' must be a non-empty string"
+            )
+        package = data.get("package")
+        if package is not None and (not isinstance(package, str) or not package):
+            raise ComponentRegistryError(
+                f"component {name!r}: 'package' must be a non-empty string"
             )
         raw_props = data.get("props")
         if not isinstance(raw_props, Mapping):
@@ -1032,6 +1113,7 @@ class ComponentSpec:
             interaction=interaction,
             state=state,
             opt_in=_opt_in(name, data.get("optIn")),
+            package=package,
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -1046,6 +1128,8 @@ class ComponentSpec:
             "props": {name: prop.to_mapping() for name, prop in self.props.items()},
             "children": self.children.to_mapping(),
         }
+        if self.package is not None:
+            result["package"] = self.package
         if self.slots:
             result["slots"] = {
                 name: rule.to_mapping() for name, rule in self.slots.items()

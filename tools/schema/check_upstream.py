@@ -41,8 +41,74 @@ def _derived(spec: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def pinned_packages(found: Inventory, name: str) -> set[str]:
+    """Packages the pin declares for one composable name.
+
+    A name can also appear as a parameterless extension declaration in packages
+    like semantics or content; those are not components, so declarations that
+    state parameters of their own decide the answer.
+
+    Args:
+        found: The validated pinned inventory.
+        name: The component's schema name.
+
+    Returns:
+        Every package a component of that name is pinned in.
+    """
+    declarations = [
+        d
+        for d in found.declarations
+        if d.name == name and d.disposition in {"ui", "support"}
+    ]
+    with_parameters = [d for d in declarations if d.parameters]
+    return {d.package for d in (with_parameters or declarations)}
+
+
+def provider_errors(
+    name: str, entry: dict[str, Any], overloads: list[Any]
+) -> list[str]:
+    """Re-derive every provider parameter from the pin.
+
+    A provider names a native parameter and the return type of the lambda the
+    host supplies, so both facts can be checked against the same overloads the
+    rest of the entry is checked against.
+
+    Args:
+        name: The component's schema name.
+        entry: Its approved schema entry.
+        overloads: The pinned declarations carrying that name.
+
+    Returns:
+        One message per provider whose parameter or return type is not pinned.
+    """
+    errors = []
+    for prop, spec in entry["props"].items():
+        provider = spec.get("provider")
+        if provider is None:
+            continue
+        returns = {
+            argument[1].classifier.rsplit("/", 1)[-1]
+            for declaration in overloads
+            for parameter in declaration.parameters
+            if parameter.name == provider["native"]
+            and parameter.type.classifier == "kotlin/Function0"
+            for argument in parameter.type.arguments
+        }
+        if not returns:
+            errors.append(
+                f"{name}.{prop}: provider parameter {provider['native']!r} "
+                "is not a pinned zero-arg function"
+            )
+        elif provider["returns"] not in returns:
+            errors.append(
+                f"{name}.{prop}: provider returns {provider['returns']!r} is not "
+                f"pinned ({', '.join(sorted(returns))})"
+            )
+    return errors
+
+
 def compare(registry: dict[str, Any], found: Inventory) -> list[str]:
-    """Report removed props without pretending different overloads are one binding."""
+    """Report removed props and moved packages without merging overloads."""
     errors = []
     for name, entry in registry["components"].items():
         overloads = [
@@ -53,11 +119,18 @@ def compare(registry: dict[str, Any], found: Inventory) -> list[str]:
         if not overloads:
             errors.append(f"{name}: no public composable in the pinned inventory")
             continue
+        packages = pinned_packages(found, name)
+        if entry.get("package") not in packages:
+            errors.append(
+                f"{name}: package {entry.get('package')!r} is not pinned "
+                f"({', '.join(sorted(packages))})"
+            )
         names = {p.name for d in overloads for p in d.parameters}
         removed = entry["props"].keys() - set(entry.get("reshaped", [])) - names
         errors.extend(
             f"{name}.{prop}: no parameter in any pinned overload" for prop in removed
         )
+        errors.extend(provider_errors(name, entry, overloads))
     return errors
 
 

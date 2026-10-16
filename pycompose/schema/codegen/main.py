@@ -91,6 +91,9 @@ SLOT_NAME = re.compile(r"^[a-z][A-Za-z0-9]*$")
 
 NATIVE_PARAMETER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
+DOTTED_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$")
+"""A Kotlin package or type name: a dotted path of simple identifiers."""
+
 RESERVED_SLOTS = frozenset({"children", "id", "modifier", "props"})
 
 #: Keys a slot entry may carry. Anything else is a typo, not a convention.
@@ -104,6 +107,9 @@ INTERACTION_KINDS = frozenset({"press", "focus", "hover"})
 
 #: Keys a state entry may carry. Anything else is a typo.
 STATE_KEYS = frozenset({"native", "kind", "value", "report", "dismiss"})
+
+#: Keys a prop's provider entry may carry. Anything else is a typo.
+PROVIDER_KEYS = frozenset({"native", "returns"})
 
 #: The closed set of state families the host can create, drive and report.
 STATE_KINDS = frozenset({"drawer", "sheet"})
@@ -275,6 +281,9 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
         _die(f"component {name!r} must be an object")
     if not isinstance(comp.get("category"), str) or not comp["category"]:
         _die(f"component {name!r} needs a non-empty 'category'")
+    package = comp.get("package")
+    if not isinstance(package, str) or DOTTED_NAME.fullmatch(package) is None:
+        _die(f"component {name!r} needs a dotted 'package' the pin declares it in")
     if comp.get("stability") not in STABILITIES:
         _die(f"component {name!r} has unknown stability {comp.get('stability')!r}")
     _validate_opt_in(name, comp)
@@ -597,6 +606,45 @@ def _validate_prop(name: str, prop_name: str, prop: dict[str, Any]) -> None:
             _die(f"prop {name}.{prop_name} 'fallback' needs a 'decode'")
         if not isinstance(prop["fallback"], str) or not prop["fallback"]:
             _die(f"prop {name}.{prop_name} 'fallback' must be Kotlin source")
+    if "provider" in prop:
+        _validate_provider(name, prop_name, prop)
+
+
+def _validate_provider(name: str, prop_name: str, prop: dict[str, Any]) -> None:
+    """Check a prop delivered through a zero-arg native lambda.
+
+    A provider prop states a value the host reads during composition; the native
+    parameter is a function the host supplies, never one the app can name. The
+    prop stays required because an absent value would need a call-site branch
+    between two overload shapes, which the plan rejects (ADR-0016 decision 22).
+    ``returns`` is the pinned lambda's return type: the generator needs it to
+    coerce the wire value, and check_upstream.py re-derives it from the pin.
+
+    Args:
+        name: Component name, for error messages.
+        prop_name: The prop's schema name.
+        prop: Its raw schema entry, whose ``provider`` object is validated.
+    """
+    provider = prop["provider"]
+    if not isinstance(provider, dict):
+        _die(f"prop {name}.{prop_name} 'provider' must be an object")
+    unknown = sorted(set(provider) - PROVIDER_KEYS)
+    if unknown:
+        _die(
+            f"prop {name}.{prop_name} provider has unknown keys: " + ", ".join(unknown)
+        )
+    injected = provider.get("native")
+    if not isinstance(injected, str) or NATIVE_PARAMETER.fullmatch(injected) is None:
+        _die(f"prop {name}.{prop_name} provider 'native' must be a parameter name")
+    returns = provider.get("returns")
+    if not isinstance(returns, str) or DOTTED_NAME.fullmatch(returns) is None:
+        _die(f"prop {name}.{prop_name} provider 'returns' must be a Kotlin type name")
+    if not prop.get("required"):
+        _die(f"prop {name}.{prop_name} provider 'native' needs the prop to be required")
+    if prop.get("nullable"):
+        _die(f"prop {name}.{prop_name} provider cannot come from a nullable prop")
+    if prop.get("type") in {"modifier", "actionId"}:
+        _die(f"prop {name}.{prop_name} provider cannot wrap a {prop['type']} prop")
 
 
 def _validate_action(action_id: str, action: dict[str, Any]) -> None:

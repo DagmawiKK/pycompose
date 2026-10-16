@@ -659,3 +659,42 @@ def test_the_shipped_catalog_carries_no_unexplained_prop(native_document) -> Non
     assert native_document["provenance"]["compiler"] == "2.0.21"
     registry = json.loads(Path("schema/components.json").read_text())
     assert compare(registry, inventory(DUMP)) == []
+
+
+def test_the_drift_check_re_derives_a_package_and_a_provider(native_document) -> None:
+    """Both facts the generator reads are facts of the pin, not of the catalog.
+
+    The package decides which composable a generated adapter imports, and a
+    provider's return type decides whether the wire value can be handed over at
+    all, so a stale one has to fail here rather than become a coercion nobody
+    checked.
+    """
+    from schema.check_upstream import compare
+    from schema.classpath_dump import inventory
+
+    assert native_document["provenance"]["compiler"] == "2.0.21"
+    found = inventory(DUMP)
+
+    def edited(**changes) -> dict:
+        registry = json.loads(Path("schema/components.json").read_text())
+        entry = registry["components"]["LinearProgressIndicator"]
+        for key, value in changes.items():
+            provider = entry["props"]["progress"]["provider"]
+            if key == "package":
+                entry["package"] = value
+            else:
+                provider[key] = value
+        return registry
+
+    assert compare(edited(package="androidx.compose.example"), found) == [
+        "LinearProgressIndicator: package 'androidx.compose.example' is not "
+        "pinned (androidx.compose.material3)"
+    ]
+    assert compare(edited(returns="Long"), found) == [
+        "LinearProgressIndicator.progress: provider returns 'Long' is not "
+        "pinned (Float)"
+    ]
+    assert compare(edited(native="state"), found) == [
+        "LinearProgressIndicator.progress: provider parameter 'state' is not "
+        "a pinned zero-arg function"
+    ]

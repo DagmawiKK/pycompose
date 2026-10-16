@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DismissibleNavigationDrawer
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -29,6 +30,7 @@ import com.pycompose.ir.generated.Column as ColumnNode
 import com.pycompose.ir.generated.DismissibleNavigationDrawer as DismissibleNavigationDrawerNode
 import com.pycompose.ir.generated.FilterChip as FilterChipNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
+import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
 import com.pycompose.ir.generated.ModalNavigationDrawer as ModalNavigationDrawerNode
 import com.pycompose.ir.generated.Row as RowNode
@@ -126,6 +128,26 @@ object GeneratedAdapters {
                     modifier = modifier,
                     verticalArrangement = verticalArrangementValue,
                     content = { items(context.unslotted(model.children), key = { it.id }) { context.node(it) } },
+                )
+            }
+            .register("LinearProgressIndicator") { node, modifier, context ->
+                val model = node as LinearProgressIndicatorNode
+                val progressValue = model.props.progress
+                val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearColor)
+                    else -> androidx.compose.material3.ProgressIndicatorDefaults.linearColor
+                }
+                val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
+                    else -> androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor
+                }
+                LinearProgressIndicator(
+                    modifier = modifier,
+                    progress = { progressValue.toFloat() },
+                    color = colorValue,
+                    trackColor = trackColorValue,
                 )
             }
             .register("ModalBottomSheet") { node, modifier, context ->

@@ -5,9 +5,9 @@ import com.pycompose.ir.ComponentRule
 import com.pycompose.ir.PropertyRule
 
 object IrContract {
-    const val SCHEMA_VERSION: String = "1.19.0"
+    const val SCHEMA_VERSION: String = "1.20.0"
     const val MIN_SCHEMA_VERSION: String = "1.0.0"
-    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0", "1.12.0", "1.13.0", "1.14.0", "1.15.0", "1.16.0", "1.17.0", "1.18.0", "1.19.0")
+    val supportedSchemaVersions: Set<String> = setOf("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0", "1.12.0", "1.13.0", "1.14.0", "1.15.0", "1.16.0", "1.17.0", "1.18.0", "1.19.0", "1.20.0")
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
@@ -110,6 +110,18 @@ object IrContract {
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
                 "verticalArrangement" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom", "spaceEvenly", "spaceBetween", "spaceAround")),
+            ),
+        ),
+        "LinearProgressIndicator" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.20.0",
+            props = mapOf(
+                "color" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "progress" to PropertyRule("number", required = true, since = "1.20.0"),
+                "trackColor" to PropertyRule("color", required = false, valueType = "Color"),
             ),
         ),
         "ModalBottomSheet" to ComponentRule(

@@ -189,6 +189,25 @@ data class LazyColumn(
 }
 
 @Serializable
+data class LinearProgressIndicatorProps(
+    val `color`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `progress`: Double,
+    val `trackColor`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("LinearProgressIndicator")
+data class LinearProgressIndicator(
+    override val id: String,
+    override val props: LinearProgressIndicatorProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "LinearProgressIndicator"
+}
+
+@Serializable
 data class ModalBottomSheetProps(
     override val `modifier`: JsonObject? = null,
     val `onOpenChange`: String? = null,

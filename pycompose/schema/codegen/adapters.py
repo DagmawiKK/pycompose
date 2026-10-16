@@ -26,31 +26,6 @@ from typing import Any
 
 from pycompose.schema.codegen.values import resolver_call
 
-COMPOSE_PACKAGE = {
-    "Box": "androidx.compose.foundation.layout",
-    "Button": "androidx.compose.material3",
-    "Checkbox": "androidx.compose.material3",
-    "Column": "androidx.compose.foundation.layout",
-    "DismissibleNavigationDrawer": "androidx.compose.material3",
-    "FilterChip": "androidx.compose.material3",
-    "Image": "androidx.compose.foundation",
-    "LazyColumn": "androidx.compose.foundation.lazy",
-    "ModalBottomSheet": "androidx.compose.material3",
-    "ModalNavigationDrawer": "androidx.compose.material3",
-    "Row": "androidx.compose.foundation.layout",
-    "Scaffold": "androidx.compose.material3",
-    "Spacer": "androidx.compose.foundation.layout",
-    "Text": "androidx.compose.material3",
-    "TextButton": "androidx.compose.material3",
-    "TextField": "androidx.compose.material3",
-}
-"""Where each component's Compose class lives.
-
-Placeholder knowledge, and the only part of this file that is not derived from the
-schema. Phase C removes it: the API dump already says which ``*Kt`` class each
-composable hangs off, so the package is derivable rather than listed.
-"""
-
 SCALAR_KOTLIN = {
     "string": "String",
     "boolean": "Boolean",
@@ -268,6 +243,94 @@ def _slot(prop_name: str, spec: dict[str, Any]) -> tuple[str, str] | None:
     if parameter is not None:
         return f"{parameter} = {{ {wrapped} }}", ""
     return "", wrapped
+
+
+NUMERIC_KOTLIN = frozenset({"Byte", "Short", "Int", "Long", "Float", "Double"})
+"""Kotlin's numeric primitives: the only types a provider coerces between."""
+
+NUMERIC_CONVERSIONS = {
+    ("Double", "Float"): "toFloat",
+    ("Double", "Int"): "toInt",
+    ("Double", "Long"): "toLong",
+    ("Float", "Double"): "toDouble",
+    ("Int", "Float"): "toFloat",
+    ("Int", "Long"): "toLong",
+    ("Long", "Double"): "toDouble",
+    ("Long", "Float"): "toFloat",
+    ("Long", "Int"): "toInt",
+}
+"""Each entry is Kotlin's own named conversion; an unlisted pair is refused."""
+
+
+def _provided(expression: str, wire: str | None, target: str) -> str | None:
+    """Coerce a resolved value to a provider's pinned return type.
+
+    ``wire`` is the Kotlin type the generator resolved the prop into, or None
+    when that type is a family resolver's contract: the compiler checks the
+    lambda against the pinned parameter and check_upstream.py checks ``target``
+    against the pin, so no coercion is invented there.
+
+    Args:
+        expression: The Kotlin expression holding the resolved value.
+        wire: The Kotlin type of that expression, when the generator knows it.
+        target: The provider's ``returns`` type.
+
+    Returns:
+        The coerced expression, or None when the pair has no stated conversion.
+    """
+    if wire is None or wire == target:
+        return expression
+    if wire in NUMERIC_KOTLIN and target in NUMERIC_KOTLIN:
+        conversion = NUMERIC_CONVERSIONS.get((wire, target))
+        return None if conversion is None else f"{expression}.{conversion}()"
+    return None
+
+
+def _render_provider(
+    prop_name: str, spec: dict[str, Any], provider: dict[str, Any], out: _Fragments
+) -> bool:
+    """Render a prop the native call receives as a zero-arg lambda.
+
+    The app states a value in the snapshot, and the host reads it during
+    composition to supply the lambda the native parameter declares. Python is
+    never called from composition, and the parameter stays a value the app
+    cannot name: the schema requires the prop, so the adapter has exactly one
+    call shape.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+        provider: Its validated ``provider`` object.
+        out: Collects the rendered pieces.
+
+    Returns:
+        False when the prop's type cannot be resolved, or the resolved type has
+        no stated conversion to the pinned return type.
+    """
+    local: str
+    wire: str | None
+    if spec["type"] == "value":
+        wire = None
+        local = (
+            f"val {prop_name}Value = "
+            f"{resolver_call(spec['valueType'], f'model.props.{prop_name}')}"
+            ".getOrThrow()"
+        )
+    elif spec.get("decode") is not None:
+        decoded = _decoded(prop_name, spec, spec["decode"])
+        if decoded is None:
+            return False
+        local, _ = decoded
+        wire = RESOLVER_RETURN.get(spec["decode"])
+    elif spec["type"] in SCALAR_KOTLIN:
+        wire = SCALAR_KOTLIN[spec["type"]]
+        local = f"val {prop_name}Value = model.props.{prop_name}"
+    else:
+        return False
+    argument = _provided(f"{prop_name}Value", wire, provider["returns"])
+    if argument is None:
+        return False
+    return out.add((local, f"{provider['native']} = {{ {argument} }}"))
 
 
 def _decoded(
@@ -600,6 +663,44 @@ class _Fragments:
             self.trailing_parameter = parameter or self.trailing_parameter
 
 
+def _render_value(prop_name: str, spec: dict[str, Any], out: _Fragments) -> bool:
+    """Render a prop carrying a native value-family tag.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+        out: Collects the rendered pieces.
+
+    Returns:
+        True when the value could be resolved into a local.
+    """
+    family = spec["valueType"]
+    wire = f"model.props.{prop_name}"
+    declaration = ""
+    if not spec.get("required"):
+        declaration = f"val {prop_name}Wire = {wire}\n                "
+        wire = f"{prop_name}Wire"
+    call = resolver_call(family, wire) + ".getOrThrow()"
+    if spec.get("nullable"):
+        call = (
+            f"when ({wire}) {{\n"
+            "                    com.pycompose.ir.OptionalValue.Absent -> "
+            f"{spec['nativeDefault']}\n"
+            "                    com.pycompose.ir.OptionalValue.Null -> null\n"
+            f"                    is com.pycompose.ir.OptionalValue.Present -> "
+            f"{resolver_call(family, f'{wire}.value')}.getOrThrow()\n"
+            "                }"
+        )
+    elif not spec.get("required"):
+        call = f"if ({wire} != null) {call} else {spec['nativeDefault']}"
+    return out.add(
+        (
+            f"{declaration}val {prop_name}Value = {call}",
+            f"{prop_name} = {prop_name}Value",
+        )
+    )
+
+
 def _render_prop(prop: str, spec: dict[str, Any], out: _Fragments) -> bool:
     """Render one prop into `out`, or report that the adapter cannot be built.
 
@@ -615,43 +716,20 @@ def _render_prop(prop: str, spec: dict[str, Any], out: _Fragments) -> bool:
     prop_name = _camel(prop)
     if prop_type == "modifier":
         return True
-
-    if prop_type == "value":
-        family = spec["valueType"]
-        wire = f"model.props.{prop_name}"
-        declaration = ""
-        if not spec.get("required"):
-            declaration = f"val {prop_name}Wire = {wire}\n                "
-            wire = f"{prop_name}Wire"
-        call = resolver_call(family, wire) + ".getOrThrow()"
-        if spec.get("nullable"):
-            call = (
-                f"when ({wire}) {{\n"
-                "                    com.pycompose.ir.OptionalValue.Absent -> "
-                f"{spec['nativeDefault']}\n"
-                "                    com.pycompose.ir.OptionalValue.Null -> null\n"
-                f"                    is com.pycompose.ir.OptionalValue.Present -> "
-                f"{resolver_call(family, f'{wire}.value')}.getOrThrow()\n"
-                "                }"
-            )
-        elif not spec.get("required"):
-            call = f"if ({wire} != null) {call} else {spec['nativeDefault']}"
-        return out.add(
-            (
-                f"{declaration}val {prop_name}Value = {call}",
-                f"{prop_name} = {prop_name}Value",
-            )
-        )
-
-    decoder = spec.get("decode")
-    if decoder is not None:
-        return out.add(_decoded(prop_name, spec, decoder))
-    if spec.get("content") is not None:
-        return _render_slot(prop_name, spec, out)
-    if prop_type == "actionId":
+    if "provider" in spec:
+        emitted = _render_provider(prop_name, spec, spec["provider"], out)
+    elif prop_type == "value":
+        emitted = _render_value(prop_name, spec, out)
+    elif spec.get("decode") is not None:
+        emitted = out.add(_decoded(prop_name, spec, spec["decode"]))
+    elif spec.get("content") is not None:
+        emitted = _render_slot(prop_name, spec, out)
+    elif prop_type == "actionId":
         callback = _callback(prop_name, spec)
-        return callback is not None and out.add(("", callback))
-    return _render_scalar(prop_name, spec, out)
+        emitted = callback is not None and out.add(("", callback))
+    else:
+        emitted = _render_scalar(prop_name, spec, out)
+    return emitted
 
 
 def _render_slot(prop_name: str, spec: dict[str, Any], out: _Fragments) -> bool:
@@ -815,9 +893,7 @@ def render_file(registry: dict[str, Any]) -> str:
         if block:
             blocks.append(block)
             opt_ins.update(entry.get("optIn", ()))
-            package = COMPOSE_PACKAGE.get(name)
-            if package is None:
-                continue
+            package = entry["package"]
             imports.add(f"import {package}.{name}")
             for extra in composables(name, entry):
                 imports.add(f"import {package}.{extra}")
