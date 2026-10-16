@@ -37,10 +37,15 @@ def demo() -> ModuleType:
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
+    # The Android worker resolves sibling imports from the same python source
+    # directory; mirror that for todo_model.
+    python_dir = str(DEMO.parent)
+    sys.path.append(python_dir)
     try:
         spec.loader.exec_module(module)
     finally:
         del sys.modules[spec.name]
+        sys.path.remove(python_dir)
     return module
 
 
