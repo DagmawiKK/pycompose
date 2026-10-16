@@ -528,13 +528,14 @@ class InteractionRule:
         return {"native": self.native, "observations": dict(self.observations)}
 
 
-STATE_KINDS = ("drawer",)
+STATE_KINDS = ("drawer", "sheet")
 """State families the host creates, drives and reports for a component.
 
 A family is one host-side implementation: a drawer reconciles a desired
-open/closed value through gestures and animation. The vocabulary is closed for
-the same reason the interaction kinds are: the host must not be asked to drive
-a state object whose transitions it does not understand.
+open/closed value through gestures and animation, and a sheet does the same for
+a modal surface that has to be composed to be shown at all. The vocabulary is
+closed for the same reason the interaction kinds are: the host must not be asked
+to drive a state object whose transitions it does not understand.
 """
 
 
@@ -553,12 +554,15 @@ class StateRule:
         kind: State family, naming the host's create/drive/report logic.
         value: Boolean prop carrying the desired state; absent drives nothing.
         report: ActionId prop reporting settled changes; absent reports nothing.
+        dismiss: Native parameter through which the component announces a
+            dismissal it has already carried out, if it has one.
     """
 
     native: str
     kind: str
     value: str
     report: str
+    dismiss: str | None = None
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> StateRule:
@@ -591,11 +595,15 @@ class StateRule:
                     f"{where}: {field_name!r} must name a prop"
                 )
             names[field_name] = prop
+        dismiss = data.get("dismiss")
+        if dismiss is not None and (not isinstance(dismiss, str) or not dismiss):
+            raise ComponentRegistryError(f"{where}: 'dismiss' must be a name")
         return cls(
             native=native,
             kind=kind,
             value=names["value"],
             report=names["report"],
+            dismiss=dismiss if isinstance(dismiss, str) else None,
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -604,12 +612,15 @@ class StateRule:
         Returns:
             A JSON-ready dict.
         """
-        return {
+        result: dict[str, object] = {
             "native": self.native,
             "kind": self.kind,
             "value": self.value,
             "report": self.report,
         }
+        if self.dismiss is not None:
+            result["dismiss"] = self.dismiss
+        return result
 
 
 class ComponentDef(Protocol):
@@ -830,6 +841,30 @@ def _wrapper(name: str, value: object) -> str | None:
     return cast("str", value)
 
 
+def _opt_in(name: str, value: object) -> tuple[str, ...]:
+    """Parse a component's declared opt-in markers.
+
+    Args:
+        name: The component's registry key, for the error message.
+        value: The raw ``optIn`` field.
+
+    Returns:
+        The marker names, in declaration order.
+
+    Raises:
+        ComponentRegistryError: If the field is present but malformed.
+    """
+    if value is None:
+        return ()
+    if not isinstance(value, list) or not all(
+        isinstance(item, str) and item for item in value
+    ):
+        raise ComponentRegistryError(
+            f"component {name!r}: 'optIn' must be a string list"
+        )
+    return tuple(value)
+
+
 def _reshaped(name: str, value: object) -> tuple[str, ...]:
     """Parse a component's declared reshaped props.
 
@@ -884,6 +919,8 @@ class ComponentSpec:
             Codegen-only: it says which native parameter the renderer fills,
             which prop carries Python's desired state, and which prop reports
             settled changes.
+        opt_in: Opt-in markers the pinned declaration requires, if any.
+            Codegen-only: the generated adapter file declares each one it needs.
     """
 
     name: str
@@ -898,6 +935,7 @@ class ComponentSpec:
     slots: Mapping[str, SlotRule] = dataclass_field(default_factory=dict)
     interaction: InteractionRule | None = None
     state: StateRule | None = None
+    opt_in: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -993,6 +1031,7 @@ class ComponentSpec:
             slots=slots,
             interaction=interaction,
             state=state,
+            opt_in=_opt_in(name, data.get("optIn")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -1021,6 +1060,8 @@ class ComponentSpec:
             result["reshaped"] = list(self.reshaped)
         if self.adapter != "generated":
             result["adapter"] = self.adapter
+        if self.opt_in:
+            result["optIn"] = list(self.opt_in)
         if self.wrapper is not None:
             result["wrapper"] = self.wrapper
         return result

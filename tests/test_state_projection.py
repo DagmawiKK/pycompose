@@ -23,7 +23,7 @@ import pytest
 
 from pycompose.core.node import Node
 from pycompose.ir import emit_ir, to_dict, validate_ir
-from pycompose.m3 import ModalNavigationDrawer, Text
+from pycompose.m3 import ModalBottomSheet, ModalNavigationDrawer, Text
 from pycompose.schema.codegen.adapters import render
 from pycompose.state import State
 
@@ -33,6 +33,8 @@ CATALOG = json.loads(SCHEMA_PATH.read_text())
 """The parsed catalog, so the wire tests state the version they are tested at."""
 
 STATEFUL = "ModalNavigationDrawer"
+
+GATED = "ModalBottomSheet"
 
 
 def snapshot(root: Node) -> dict:
@@ -91,6 +93,26 @@ def test_an_undeclared_desired_value_is_omitted_from_the_wire() -> None:
     assert "open" not in wire["root"]["props"]
 
 
+def test_a_sheet_states_its_desired_value_and_reaches_its_handle_slot() -> None:
+    """The same protocol on a modal surface, plus its own named slot."""
+    wire = snapshot(
+        ModalBottomSheet(
+            id="sheet",
+            open=True,
+            on_open_change="submit",
+            children=[Text(id="body", text="Body")],
+            drag_handle=[Text(id="handle", text="Handle")],
+        )
+    )
+    props = wire["root"]["props"]
+    assert props["open"] is True
+    assert props["onOpenChange"] == "submit"
+    slots = {
+        child["props"]["text"]: child.get("slot") for child in wire["root"]["children"]
+    }
+    assert slots == {"Body": None, "Handle": "dragHandle"}
+
+
 # ---------------------------------------------------------------------------
 # Every declaration agrees with the props it names
 # ---------------------------------------------------------------------------
@@ -126,6 +148,21 @@ def test_every_state_kind_is_a_vocabulary_member() -> None:
             assert state["kind"] in STATE_KINDS, name
 
 
+def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:
+    """A completed callback is not a prop, and not anyone else's parameter."""
+    for name, entry in sorted(components().items()):
+        state = entry.get("state") or {}
+        dismiss = state.get("dismiss")
+        if dismiss is None:
+            continue
+        assert dismiss != state["native"], name
+        assert dismiss not in entry["props"], name
+        assert dismiss != entry["children"].get("native", "content"), name
+        assert dismiss not in {
+            slot["native"] for slot in entry.get("slots", {}).values()
+        }, name
+
+
 # ---------------------------------------------------------------------------
 # The adapter fills the parameter; the props are not native ones
 # ---------------------------------------------------------------------------
@@ -145,10 +182,45 @@ def test_the_adapter_passes_the_host_holder_where_the_schema_says() -> None:
     assert "content = { context.children(model.children) }" in adapter
 
 
+def test_a_gated_family_composes_its_component_from_the_holder() -> None:
+    """A sheet shows itself once composed, so presence is the host's decision."""
+    adapter = render(GATED, components()[GATED])
+    assert (
+        "val sheetStateValue = context.sheetState("
+        "model.props.open, model.props.onOpenChange)" in adapter
+    )
+    assert "if (sheetStateValue.visible) {" in adapter
+    assert "sheetState = sheetStateValue.state" in adapter
+    # The component has already hidden itself when it calls this, and the
+    # settled change reports through the report prop, so nothing answers it.
+    assert "onDismissRequest = {}" in adapter
+    assert "open =" not in adapter
+    assert "onOpenChange =" not in adapter
+    assert 'dragHandle = context.slot(model.children, "dragHandle")' in adapter
+    assert "content = { context.children(model.children) }" in adapter
+
+
+def test_the_holder_stays_outside_the_gate() -> None:
+    """The state must outlive the composition of the component it projects."""
+    adapter = render(GATED, components()[GATED])
+    holder = adapter.index("val sheetStateValue = context.sheetState(")
+    gate = adapter.index("if (sheetStateValue.visible) {")
+    assert holder < gate
+
+
 def test_a_component_without_a_holder_gets_no_state_local() -> None:
     """Only components that declare a holder ask the renderer for one."""
     adapter = render("Column", components()["Column"])
     assert "context.drawerState(" not in adapter
+
+
+def test_every_state_kind_has_a_holder_and_a_gate_decision() -> None:
+    """A family without a renderer method or a gate decision cannot be emitted."""
+    from pycompose.core.registry_types import STATE_KINDS
+    from pycompose.schema.codegen.adapters import GATED_STATES, STATE_CALLS
+
+    assert set(STATE_CALLS) == set(STATE_KINDS)
+    assert set(STATE_KINDS) >= GATED_STATES
 
 
 # ---------------------------------------------------------------------------
@@ -217,7 +289,7 @@ def _payload(registry: dict[str, Any], prop: str, component: str = STATEFUL) -> 
             "unknown keys",
         ),
         (
-            lambda registry: _state(registry).update(kind="sheet"),
+            lambda registry: _state(registry).update(kind="dialog"),
             "unknown state kind",
         ),
         (
@@ -231,6 +303,22 @@ def _payload(registry: dict[str, Any], prop: str, component: str = STATEFUL) -> 
         (
             lambda registry: _state(registry).update(native="content"),
             "repeats another parameter",
+        ),
+        (
+            lambda registry: _state(registry).update(dismiss="open"),
+            "repeats another parameter",
+        ),
+        (
+            lambda registry: _state(registry).update(dismiss="drawerState"),
+            "repeats another parameter",
+        ),
+        (
+            lambda registry: _state(registry).update(dismiss="drawerContent"),
+            "repeats another parameter",
+        ),
+        (
+            lambda registry: _state(registry).update(dismiss=3),
+            "must be a parameter name",
         ),
         (
             lambda registry: _state(registry).update(value="onOpenChange"),
@@ -317,6 +405,31 @@ def test_the_runtime_registry_round_trips_the_state() -> None:
     assert spec.state is not None
     assert spec.state.kind == "drawer"
     assert spec.to_mapping()["state"] == state
+    dismissed = {**state, "dismiss": "onDismissRequest"}
+    spec = ComponentSpec.from_mapping(
+        STATEFUL,
+        {
+            "category": "layout",
+            "stability": "stable",
+            "props": {},
+            "children": {"allowed": True},
+            "state": dismissed,
+        },
+    )
+    assert spec.state is not None
+    assert spec.state.dismiss == "onDismissRequest"
+    assert spec.to_mapping()["state"] == dismissed
+    with pytest.raises(ComponentRegistryError, match="'dismiss' must be a name"):
+        ComponentSpec.from_mapping(
+            STATEFUL,
+            {
+                "category": "layout",
+                "stability": "stable",
+                "props": {},
+                "children": {"allowed": True},
+                "state": {**state, "dismiss": 3},
+            },
+        )
     with pytest.raises(ComponentRegistryError, match="unknown state kind"):
         ComponentSpec.from_mapping(
             STATEFUL,
@@ -325,7 +438,7 @@ def test_the_runtime_registry_round_trips_the_state() -> None:
                 "stability": "stable",
                 "props": {},
                 "children": {"allowed": True},
-                "state": {**state, "kind": "sheet"},
+                "state": {**state, "kind": "dialog"},
             },
         )
     with pytest.raises(ComponentRegistryError, match="'native' must be a name"):

@@ -883,7 +883,7 @@ data class WireverticalGradient(
 ) : BrushValue
 
 object ValueContract {
-    const val SCHEMA_VERSION = "1.18.0"
+    const val SCHEMA_VERSION = "1.19.0"
     private val json = Json { classDiscriminator = "type" }
     val specs: JsonObject = json.parseToJsonElement(
         "{\"Alignment\":{\"family\":\"Alignment\",\"parameters\":{\"name\":{\"re" +

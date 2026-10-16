@@ -126,6 +126,106 @@ def test_each_component_is_registered_exactly_once_across_both_files() -> None:
 
 
 # ---------------------------------------------------------------------------
+# Component opt-ins: the pinned declaration decides
+# ---------------------------------------------------------------------------
+
+
+def test_the_committed_file_declares_the_markers_its_components_require() -> None:
+    """A component that needs an opt-in is still one anonymous builder.
+
+    The markers are a property of the *file*, not of the single adapter that
+    first needed one, so the union is emitted once -- and it is the union of the
+    components the file actually renders.
+    """
+    markers = sorted(
+        {
+            marker
+            for entry in components().values()
+            if is_mechanical(entry)
+            for marker in entry.get("optIn", [])
+        }
+    )
+    assert markers, "expected the catalog to declare component opt-ins"
+    annotation = "@file:OptIn(" + ", ".join(f"{m}::class" for m in markers) + ")"
+    assert annotation in GENERATED.read_text()
+
+
+def test_the_file_annotation_precedes_the_package_and_imports() -> None:
+    """A file annotation after the package directive does not compile."""
+    source = GENERATED.read_text()
+    annotation = source.index("@file:OptIn(")
+    assert annotation < source.index("package ")
+    assert annotation < source.index("\nimport ")
+
+
+def test_a_component_without_a_marker_contributes_no_annotation() -> None:
+    """An opt-in the file does not need is a stale permission, not a harmless extra."""
+    source = render_file({"components": {"Column": components()["Column"]}})
+    assert "Column(" in source
+    assert "@file:OptIn" not in source
+
+
+def test_a_manual_components_markers_never_reach_the_generated_file() -> None:
+    """A hand-written adapter declares its own markers, in its own file."""
+    declaration = {
+        **components()["Button"],
+        "adapter": "manual",
+        "optIn": ["androidx.compose.material3.ExperimentalMaterial3Api"],
+    }
+    source = render_file(
+        {"components": {"Column": components()["Column"], "Button": declaration}}
+    )
+    assert "Column(" in source
+    assert "Button(" not in source
+    assert "@file:OptIn" not in source
+
+
+@pytest.mark.parametrize(
+    "markers",
+    [
+        ["androidx.compose.material3.ExperimentalMaterial3Api"] * 2,
+        ["z.Marker", "a.Marker"],
+        [""],
+    ],
+)
+def test_the_codegen_refuses_an_unproven_component_opt_in(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, markers: list[str]
+) -> None:
+    """A marker list is a promise that these, exactly, compile the file."""
+    from pycompose.schema.codegen import main
+
+    registry = json.loads(SCHEMA_PATH.read_text())
+    registry["components"]["ModalBottomSheet"]["optIn"] = markers
+    path = tmp_path / "components.json"
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(main, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match="optIn must be sorted"):
+        main.load_registry()
+
+
+def test_the_runtime_registry_round_trips_a_components_opt_in() -> None:
+    """The registry type keeps the markers a schema reader can trust."""
+    from pycompose.core.registry_types import ComponentSpec
+    from pycompose.errors import ComponentRegistryError
+
+    declaration = {
+        **components()["ModalBottomSheet"],
+        "props": {},
+        "children": {"allowed": True},
+    }
+    spec = ComponentSpec.from_mapping("ModalBottomSheet", declaration)
+    assert spec.opt_in == ("androidx.compose.material3.ExperimentalMaterial3Api",)
+    assert spec.to_mapping()["optIn"] == [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+    ]
+    for malformed in (3, [1], {}):
+        with pytest.raises(ComponentRegistryError, match="'optIn' must be a string"):
+            ComponentSpec.from_mapping(
+                "ModalBottomSheet", {**declaration, "optIn": malformed}
+            )
+
+
+# ---------------------------------------------------------------------------
 # Nullability: the mistake that produced "does not compile"
 # ---------------------------------------------------------------------------
 

@@ -35,6 +35,7 @@ COMPOSE_PACKAGE = {
     "FilterChip": "androidx.compose.material3",
     "Image": "androidx.compose.foundation",
     "LazyColumn": "androidx.compose.foundation.lazy",
+    "ModalBottomSheet": "androidx.compose.material3",
     "ModalNavigationDrawer": "androidx.compose.material3",
     "Row": "androidx.compose.foundation.layout",
     "Scaffold": "androidx.compose.material3",
@@ -130,13 +131,24 @@ with no ``decode`` is refused, because guessing which family its values belong t
 is how an adapter silently renders the wrong alignment.
 """
 
-STATE_CALLS = {"drawer": "drawerState"}
+STATE_CALLS = {"drawer": "drawerState", "sheet": "sheetState"}
 """The renderer method each state family's host holder comes from.
 
 The family decides the create/drive/report logic; the schema decides which
 component has one, which native parameter it fills, and which props carry the
 desired value and report settled changes. Every member of the vocabulary must
 appear here, or codegen has no holder to hand the component.
+"""
+
+GATED_STATES = frozenset({"sheet"})
+"""State families whose native component must be composed conditionally.
+
+``ModalBottomSheet`` shows itself as soon as it is composed and measured, and a
+composed sheet keeps its own window in front of the app even while hidden, so
+presence is the only way to show one and absence the only way to let the app
+through. A gated family's holder carries the native state in ``state`` and the
+composition gate in ``visible``; any other family's holder is the native state
+itself.
 """
 
 
@@ -395,7 +407,7 @@ def _interaction(interaction: dict[str, Any]) -> str:
     )
 
 
-def _state(state: dict[str, Any]) -> tuple[str, str]:
+def _state(state: dict[str, Any]) -> tuple[str, list[str], str | None]:
     """Render the local that fetches one component's host-owned state holder.
 
     The holder is the renderer's, remembered per node id; the desired value and
@@ -406,16 +418,27 @@ def _state(state: dict[str, Any]) -> tuple[str, str]:
         state: The component's raw ``state`` entry.
 
     Returns:
-        The Kotlin local declaration, then the native argument consuming it.
+        The Kotlin local declaration, the native arguments consuming it, and the
+        expression gating the call for a family that must be composed
+        conditionally, or None when the component is always composed.
     """
     native = state["native"]
     held = f"{native}Value"
     value = _camel(state["value"])
     report = _camel(state["report"])
+    gated = state["kind"] in GATED_STATES
+    arguments = [f"{native} = {held}.state" if gated else f"{native} = {held}"]
+    dismiss = state.get("dismiss")
+    if dismiss is not None:
+        # The component announces a dismissal it has already carried out; the
+        # settled change reports through the report prop, so the callback is
+        # answered with nothing rather than with a second channel.
+        arguments.append(f"{dismiss} = {{}}")
     return (
         f"val {held} = context.{STATE_CALLS[state['kind']]}("
         f"model.props.{value}, model.props.{report})",
-        f"{native} = {held}",
+        arguments,
+        f"{held}.visible" if gated else None,
     )
 
 
@@ -728,10 +751,11 @@ def render(name: str, entry: dict[str, Any]) -> str:
     if observed:
         out.locals.append(_interaction(interaction))
         out.arguments.append(f"{interaction['native']} = interactionSourceValue")
+    gate: str | None = None
     if state is not None:
-        local, argument = _state(state)
+        local, arguments, gate = _state(state)
         out.locals.append(local)
-        out.arguments.append(argument)
+        out.arguments.extend(arguments)
     for slot_name, slot in sorted(entry.get("slots", {}).items()):
         out.arguments.append(_named_slot(slot_name, slot))
 
@@ -746,23 +770,29 @@ def render(name: str, entry: dict[str, Any]) -> str:
         native = children.get("native", "content")
         out.arguments.append(f"{native} = {{ {prefix}{children_body} }}")
 
-    body = "\n".join(f"                    {argument}," for argument in out.arguments)
+    indent = "                "
+    if gate is not None:
+        indent += "    "
+    body = "\n".join(f"{indent}    {argument}," for argument in out.arguments)
     tail = ""
     if out.trailing:
         head = " {"
         if out.trailing_parameter is not None:
             head = f" {{ {out.trailing_parameter} ->"
-        body_lines = "\n".join(f"                    {line}" for line in out.trailing)
-        tail = head + "\n" + body_lines + "\n                }"
+        body_lines = "\n".join(f"{indent}    {line}" for line in out.trailing)
+        tail = head + "\n" + body_lines + "\n" + indent + "}"
     node = f"{name}Node"
     prelude = "\n".join(f"                {line}" for line in out.locals)
+    call = f"{indent}{name}(\n{body}\n{indent}){tail}"
+    if gate is not None:
+        # The holder stays outside the gate: the state must outlive the
+        # composition of the component it projects.
+        call = f"                if ({gate}) {{\n{call}\n                }}"
     return (
         f'            .register("{name}") {{ node, modifier, context ->\n'
         f"                val model = node as {node}\n"
         + (f"{prelude}\n" if prelude else "")
-        + f"                {name}(\n"
-        f"{body}\n"
-        f"                ){tail}\n"
+        + f"{call}\n"
         f"            }}"
     )
 
@@ -778,11 +808,13 @@ def render_file(registry: dict[str, Any]) -> str:
     """
     blocks: list[str] = []
     imports: set[str] = set()
+    opt_ins: set[str] = set()
     for name in sorted(registry["components"]):
         entry = registry["components"][name]
         block = render(name, entry)
         if block:
             blocks.append(block)
+            opt_ins.update(entry.get("optIn", ()))
             package = COMPOSE_PACKAGE.get(name)
             if package is None:
                 continue
@@ -798,6 +830,16 @@ def render_file(registry: dict[str, Any]) -> str:
     header = [
         "// Generated by tools/schema/gen.py from schema/components.json.",
         "// Do not edit: change the schema and regenerate.",
+    ]
+    if opt_ins:
+        # The pinned declaration requires these markers, and the adapters are one
+        # anonymous builder inside one file, so the file declares them.
+        header.append(
+            "@file:OptIn("
+            + ", ".join(f"{marker}::class" for marker in sorted(opt_ins))
+            + ")"
+        )
+    header += [
         "package com.pycompose.host.ui",
         "",
         "import com.pycompose.renderer.ComponentRegistry",

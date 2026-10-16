@@ -103,10 +103,10 @@ INTERACTION_KEYS = frozenset({"native", "observations"})
 INTERACTION_KINDS = frozenset({"press", "focus", "hover"})
 
 #: Keys a state entry may carry. Anything else is a typo.
-STATE_KEYS = frozenset({"native", "kind", "value", "report"})
+STATE_KEYS = frozenset({"native", "kind", "value", "report", "dismiss"})
 
 #: The closed set of state families the host can create, drive and report.
-STATE_KINDS = frozenset({"drawer"})
+STATE_KINDS = frozenset({"drawer", "sheet"})
 
 #: The state a reported payload field may carry: one lowerCamel field.
 REPORTED_FIELD = re.compile(r"[a-z][A-Za-z0-9]*")
@@ -252,6 +252,24 @@ def _validate_action_refs(registry: dict[str, Any]) -> None:
                 )
 
 
+def _validate_opt_in(name: str, comp: dict[str, Any]) -> None:
+    """Check a component's declared opt-in markers are usable annotation names.
+
+    Mirrors ``valueTypes.*.optIn``: the pin decided which markers a declaration
+    needs, and this only refuses a list that is malformed. Sorted and unique
+    keeps the generated ``@file:OptIn`` byte-stable.
+
+    Args:
+        name: Component name, for error messages.
+        comp: The component's raw schema entry.
+    """
+    markers = comp.get("optIn", [])
+    if markers != sorted(set(markers)) or not all(
+        isinstance(marker, str) and marker for marker in markers
+    ):
+        _die(f"component {name!r} optIn must be sorted, unique annotation names")
+
+
 def _validate_component(name: str, comp: dict[str, Any]) -> None:
     if not isinstance(comp, dict):
         _die(f"component {name!r} must be an object")
@@ -259,6 +277,7 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
         _die(f"component {name!r} needs a non-empty 'category'")
     if comp.get("stability") not in STABILITIES:
         _die(f"component {name!r} has unknown stability {comp.get('stability')!r}")
+    _validate_opt_in(name, comp)
     props = comp.get("props")
     if not isinstance(props, dict):
         _die(f"component {name!r} needs a 'props' object")
@@ -378,6 +397,30 @@ def _validate_reported_payload(
         _die(f"{where}: prop {prop_name!r} needs one boolean payload field")
 
 
+def _claimed_parameter(where: str, key: str, value: object, claimed: set[str]) -> str:
+    """Return one declared native parameter after checking what it claims.
+
+    The state names native parameters the generated call must fill itself, so
+    each one has to be a parameter name, and none may be a parameter the
+    component's other declarations already name: two arguments for one parameter
+    would not compile, and a shadowed prop would never reach the component.
+
+    Args:
+        where: Prefix for error messages.
+        key: The state key naming the parameter, for the message.
+        value: The raw value, which must be a parameter name.
+        claimed: Parameters the declaration already names.
+
+    Returns:
+        The parameter name.
+    """
+    if not isinstance(value, str) or NATIVE_PARAMETER.match(value) is None:
+        _die(f"{where}: {key!r} must be a parameter name")
+    if value in claimed:
+        _die(f"{where}: {key!r} repeats another parameter")
+    return value
+
+
 def _validate_state(
     name: str,
     props: dict[str, Any],
@@ -392,6 +435,11 @@ def _validate_state(
     prop carrying Python's desired value, and the prop reporting settled
     changes. The generator omits both props from the app's native arguments,
     exactly as it does for an observed interaction.
+
+    A family may also name a native parameter it *completes* rather than fills
+    from a prop: ``dismiss`` is the callback through which the component
+    announces a dismissal it has already carried out, which the props above
+    already report, so the host answers it with an empty callback.
 
     Args:
         name: Component name, for error messages.
@@ -409,9 +457,6 @@ def _validate_state(
     unknown = sorted(set(state) - STATE_KEYS)
     if unknown:
         _die(f"{where} has unknown keys: {', '.join(unknown)}")
-    injected = state.get("native")
-    if not isinstance(injected, str) or not NATIVE_PARAMETER.match(injected):
-        _die(f"{where}: 'native' must be a parameter name")
     natives = {children.get("native", "content")}
     if isinstance(slots, dict):
         natives.update(
@@ -419,8 +464,8 @@ def _validate_state(
             for slot in slots.values()
             if isinstance(slot, dict) and isinstance(slot.get("native"), str)
         )
-    if injected in natives or injected in props:
-        _die(f"{where}: 'native' repeats another parameter")
+    claimed = natives | set(props)
+    injected = _claimed_parameter(where, "native", state.get("native"), claimed)
     kind = state.get("kind")
     if not isinstance(kind, str) or kind not in STATE_KINDS:
         _die(
@@ -442,6 +487,9 @@ def _validate_state(
     if reported.get("type") != "actionId":
         _die(f"{where}: prop {report!r} must be an actionId")
     _validate_reported_payload(where, report, reported)
+    dismiss = state.get("dismiss")
+    if dismiss is not None:
+        _claimed_parameter(where, "dismiss", dismiss, claimed | {injected})
 
 
 def _validate_slots(

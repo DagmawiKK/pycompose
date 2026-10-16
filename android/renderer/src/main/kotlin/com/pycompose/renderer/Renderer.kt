@@ -56,6 +56,25 @@ class RenderContext internal constructor(
         report: String?,
     ): DrawerState = rememberHostDrawerState(open, report, ::observation)
 
+    /**
+     * The host-owned sheet state for one node, and whether to compose the sheet.
+     *
+     * A sheet has no restful hidden form to sit in: the native component shows
+     * itself once composed and keeps its window in front of the app while
+     * composed, so the holder also says whether the adapter should compose it.
+     * The app states the desired value in the snapshot; the host drives the
+     * state, gestures and animation included, and reports each settled change
+     * through [report]. Null in either leaves that half to the other side.
+     *
+     * @param open Desired open state; null drives nothing.
+     * @param report Action id settled changes report to; null reports none.
+     */
+    @Composable
+    fun sheetState(
+        open: Boolean?,
+        report: String?,
+    ): HostSheetState = rememberHostSheetState(open, report, ::observation)
+
     private fun observation(
         kind: String,
         actionId: String,
