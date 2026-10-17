@@ -9,7 +9,7 @@ from typing import Any, cast
 from pycompose.core.action_binding import BindingSpec, check_payload
 from pycompose.core.node import Node
 from pycompose.core.props import to_camel_case
-from pycompose.errors import StateError
+from pycompose.errors import IrValidationError, StateError
 from pycompose.state.app_action import CONTAINER, AppAction
 from pycompose.state.state import State
 
@@ -221,16 +221,24 @@ class Actions:
         Args:
             action_id: Id the payload arrived under.
             payload: The translated payload.
+
+        Raises:
+            IrValidationError: If the payload is not an object, or does not
+                carry exactly the fields the handler declared.
         """
-        definition = self._definitions.get(action_id)
-        if definition is None or not isinstance(payload, Mapping):
+        definition = self._contracts.get(action_id)
+        if definition is None:
             return
+        if not isinstance(payload, Mapping):
+            raise IrValidationError(
+                "app payload must be an object", action_id=action_id
+            )
         # The payload has already been translated to the handler's own names, and
         # the declared fields are wire-named, so compare like with like.
         declared = {
             definition.aliases[name]: prop for name, prop in definition.fields.items()
         }
-        check_payload(payload, declared, partial=True)
+        check_payload(payload, declared)
 
     def _python_payload(self, action_id: str, payload: Any) -> Any:
         """Translate wire-named payload fields to the handler's own names.
@@ -246,13 +254,24 @@ class Actions:
 
         Returns:
             The payload with field names the handler declared.
+
+        Raises:
+            IrValidationError: If two supplied fields translate to the same
+                handler parameter, so one would silently overwrite the other.
         """
         definition = self._contracts.get(action_id)
+        if definition is not None and payload is None:
+            return {}
         if definition is None or not isinstance(payload, Mapping):
             return payload
-        return {
+        translated = {
             definition.aliases.get(name, name): value for name, value in payload.items()
         }
+        if len(translated) != len(payload):
+            raise IrValidationError(
+                "app payload field names collide", action_id=action_id
+            )
+        return translated
 
     def __contains__(self, action_id: object) -> bool:
         """Report whether an action id names a handler this app registered.
