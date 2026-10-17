@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import re
 from pathlib import Path
 
@@ -9,7 +10,29 @@ from pycompose.core.registry_types import CONSUMERS, SCOPE_PATHS, SCOPES, SLOT_K
 
 ROOT = Path(__file__).resolve().parents[1]
 HOME = ROOT / "pycompose" / "core" / "registry_vocabulary.py"
-TERMS = ("SLOT_KINDS", "CONSUMERS", "SCOPES", "SCOPE_PATHS")
+
+
+def _terms() -> list[str]:
+    """Read the home module's own constant names, so growth widens the scan.
+
+    Returns:
+        Every module-level ALL_CAPS assignment the home defines.
+    """
+    tree = ast.parse(HOME.read_text(encoding="utf-8"))
+    names = [
+        target.id
+        for node in tree.body
+        for target in (
+            node.targets
+            if isinstance(node, ast.Assign)
+            else [node.target]
+            if isinstance(node, ast.AnnAssign) and node.value is not None
+            else []
+        )
+        if isinstance(target, ast.Name) and target.id.isupper()
+    ]
+    assert names, "the home module must define its vocabularies"
+    return names
 
 
 def _hand_sources() -> list[Path]:
@@ -34,15 +57,17 @@ def test_the_closed_vocabularies_are_defined_in_one_module() -> None:
 
     A second definition is how a scope appears wired in one layer and unknown
     in another, so this scan refuses any assignment outside the home module,
-    including mirrors and generated copies.
+    including mirrors and generated copies. The term list is the home's own
+    assignments: a vocabulary added to the home is guarded from its first day.
     """
+    terms = _terms()
     for path in _hand_sources():
         if path == HOME:
             continue
         text = path.read_text()
-        for term in TERMS:
+        for term in terms:
             assert not re.search(
-                rf"^{term} = ", text, re.MULTILINE
+                rf"^{term}\s*(?::[^=\n]*)?=", text, re.MULTILINE
             ), f"{path} redefines {term}; import it from registry_vocabulary"
 
 

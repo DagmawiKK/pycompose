@@ -8,7 +8,7 @@ wire stays expressible and the host never double-counts.
 import re
 from typing import Any
 
-from pycompose.core.registry_types import INTERACTION_KINDS
+from pycompose.core.registry_types import INTERACTION_KINDS, STATE_KINDS
 from pycompose.schema.codegen.rules import (
     NATIVE_PARAMETER,
     die,
@@ -17,8 +17,6 @@ from pycompose.schema.codegen.rules import (
 INTERACTION_KEYS = frozenset({"native", "observations"})
 
 STATE_KEYS = frozenset({"native", "kind", "value", "report", "dismiss"})
-
-STATE_KINDS = frozenset({"drawer", "sheet"})
 
 REPORTED_FIELD = re.compile(r"[a-z][A-Za-z0-9]*")
 
