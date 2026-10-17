@@ -145,7 +145,7 @@ def _addressable(node: Node) -> bool:
                     continue
                 props = REGISTRY.modifiers.get(str(operation.get("type")))
                 if props is not None and any(
-                    name in operation
+                    operation.get(name) is not None
                     for name, rule in props.items()
                     if rule.type == "actionId"
                 ):
