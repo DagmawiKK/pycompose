@@ -64,6 +64,10 @@ SLOT_KEYS = frozenset({"native", "kind", "nullable", "consume"})
 
 SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+$")
 
+#: Top-level keys every catalog carries; ``schema/catalog.schema.json``
+#: declares the same set, and a test holds the two together.
+REGISTRY_KEYS = ("schemaVersion", "minLibraryVersion", "components", "actions")
+
 
 def die(message: str) -> NoReturn:
     """Abort codegen with a message.
@@ -90,7 +94,7 @@ def load_registry() -> dict[str, Any]:
 
 
 def _validate_registry(registry: dict[str, Any]) -> None:
-    for key in ("schemaVersion", "minLibraryVersion", "components", "actions"):
+    for key in REGISTRY_KEYS:
         if key not in registry:
             die(f"missing top-level key {key!r} in components.json")
     if not isinstance(registry["schemaVersion"], str):

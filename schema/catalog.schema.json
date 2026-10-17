@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PyCompose catalog shape",
+  "description": "Declarative SHAPE of schema/components.json: required keys, types, nesting, and refusal of unknown keys. Vocabulary membership (prop types, stabilities, state kinds, value kinds) is deliberately NOT declared here: those closed sets live once in pycompose/core/registry_vocabulary.py and their codegen homes, and a JSON enum would be a second home the .py-scanning gate cannot see. Deep semantics (semver cross-references, value families, payload wiring) stay in the validator functions. The catalog faces both this schema and the functions, so disagreement between them surfaces as a failing test rather than as drift.",
+  "type": "object",
+  "required": ["schemaVersion", "minLibraryVersion", "components", "actions"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "$ref": "#/$defs/semver" },
+    "supportedSchemaVersions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/semver" }
+    },
+    "minLibraryVersion": { "$ref": "#/$defs/semver" },
+    "components": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/component" }
+    },
+    "modifiers": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/propsHolder" }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/fieldHolder" }
+    },
+    "effects": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9]*$" },
+      "additionalProperties": { "$ref": "#/$defs/fieldHolder" }
+    },
+    "lifecycle": {
+      "type": "object",
+      "propertyNames": { "pattern": "^on[A-Z][A-Za-z0-9]*$" },
+      "additionalProperties": { "$ref": "#/$defs/fieldHolder" }
+    },
+    "valueTypes": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/valueType" }
+    }
+  },
+  "$defs": {
+    "semver": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "identifier": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+    "dottedName": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*$"
+    },
+    "prop": {
+      "type": "object",
+      "description": "A prop or payload field. `type` is a string here because the prop-type vocabulary lives in the validator, not in this file.",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string" },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "decode": { "type": "string" },
+        "default": {},
+        "valueType": { "type": "string" },
+        "since": { "$ref": "#/$defs/semver" },
+        "nativeDefault": { "type": "string" },
+        "nullable": { "type": "boolean" },
+        "required": { "type": "boolean" },
+        "content": { "$ref": "#/$defs/content" },
+        "payload": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/payloadItem" }
+        },
+        "fallback": { "type": "string" },
+        "provider": { "$ref": "#/$defs/provider" },
+        "minimum": { "type": "number" },
+        "maximum": { "type": "number" }
+      }
+    },
+    "payloadItem": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "type": { "type": "string" }
+      }
+    },
+    "content": {
+      "type": "object",
+      "required": ["composable"],
+      "additionalProperties": false,
+      "properties": {
+        "composable": { "type": "string" },
+        "parameter": { "type": "string" }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "required": ["native", "returns"],
+      "additionalProperties": false,
+      "properties": {
+        "native": { "type": "string" },
+        "returns": { "type": "string" }
+      }
+    },
+    "propsHolder": {
+      "type": "object",
+      "required": ["props"],
+      "additionalProperties": false,
+      "properties": {
+        "props": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/prop" }
+        }
+      }
+    },
+    "fieldHolder": {
+      "type": "object",
+      "description": "An action, effect, or lifecycle entry: named payload fields mapped to prop-shaped field specs.",
+      "additionalProperties": false,
+      "properties": {
+        "payload": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/prop" }
+        }
+      }
+    },
+    "component": {
+      "type": "object",
+      "required": ["package", "category", "stability", "props", "children"],
+      "additionalProperties": false,
+      "properties": {
+        "package": { "$ref": "#/$defs/dottedName" },
+        "category": { "type": "string", "minLength": 1 },
+        "stability": { "type": "string" },
+        "since": { "$ref": "#/$defs/semver" },
+        "optIn": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/prop" }
+        },
+        "children": { "$ref": "#/$defs/children" },
+        "slots": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/slot" }
+        },
+        "state": { "$ref": "#/$defs/stateBlock" },
+        "interaction": { "$ref": "#/$defs/interactionBlock" },
+        "wrapper": { "type": "string" },
+        "scope": { "type": "string" },
+        "adapter": { "type": "string" },
+        "reshaped": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    },
+    "children": {
+      "type": "object",
+      "required": ["allowed"],
+      "additionalProperties": false,
+      "properties": {
+        "allowed": { "type": "boolean" },
+        "min": { "type": "integer", "minimum": 0 },
+        "kind": { "type": "string" },
+        "provides": { "type": "string" },
+        "consume": { "type": "string" }
+      }
+    },
+    "slot": {
+      "type": "object",
+      "required": ["native"],
+      "additionalProperties": false,
+      "properties": {
+        "native": { "type": "string" },
+        "kind": { "type": "string" },
+        "nullable": { "type": "boolean" },
+        "consume": { "type": "string" }
+      }
+    },
+    "stateBlock": {
+      "type": "object",
+      "description": "ADR-0016 decision 19 projection rail; `kind` membership is the STATE_KINDS vocabulary, not this file.",
+      "required": ["native", "kind", "value", "report"],
+      "additionalProperties": false,
+      "properties": {
+        "native": { "type": "string" },
+        "kind": { "type": "string" },
+        "value": { "type": "string" },
+        "report": { "type": "string" },
+        "dismiss": { "type": "string" }
+      }
+    },
+    "interactionBlock": {
+      "type": "object",
+      "required": ["native", "observations"],
+      "additionalProperties": false,
+      "properties": {
+        "native": { "type": "string" },
+        "observations": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "valueType": {
+      "oneOf": [
+        { "$ref": "#/$defs/valueTypeDescriptor" },
+        { "$ref": "#/$defs/valueTypeEncoding" }
+      ]
+    },
+    "valueTypeDescriptor": {
+      "type": "object",
+      "description": "A pinned native value: source/parameters/natives stay at object level here; their rules live in the values validators.",
+      "required": [
+        "family",
+        "kind",
+        "kotlinType",
+        "since",
+        "source",
+        "parameters",
+        "native"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "family": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string" },
+        "kotlinType": { "$ref": "#/$defs/dottedName" },
+        "since": { "$ref": "#/$defs/semver" },
+        "source": { "type": "object" },
+        "parameters": { "type": "object" },
+        "native": { "type": "object" },
+        "omitted": { "type": "object" },
+        "optIn": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "valueTypeEncoding": {
+      "type": "object",
+      "description": "A bounded literal-grammar family (ADR-0015 rails).",
+      "required": ["since", "encoding", "shape", "covers"],
+      "additionalProperties": false,
+      "properties": {
+        "since": { "$ref": "#/$defs/semver" },
+        "encoding": { "type": "string" },
+        "shape": { "type": "string" },
+        "covers": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
