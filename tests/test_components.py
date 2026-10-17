@@ -111,6 +111,53 @@ def test_modifier_chain_preserves_order_and_duplicates() -> None:
     assert validate_ir(candidate).snapshot is candidate
 
 
+def test_modifier_padding_keywords_build_the_side_form() -> None:
+    mixed = Spacer(id="gap", modifier=Modifier().padding(bottom=8, horizontal=16))
+    assert mixed.props.to_wire()["modifier"] == {
+        "operations": [
+            {
+                "type": "padding",
+                "value": {
+                    "start": {"type": "Dp", "value": 16},
+                    "end": {"type": "Dp", "value": 16},
+                    "bottom": {"type": "Dp", "value": 8},
+                },
+            }
+        ]
+    }
+
+
+def test_modifier_padding_sides_collapse_to_uniform_when_every_side_matches() -> None:
+    uniform = Spacer(id="gap", modifier=Modifier().padding(4, top=4, vertical=4))
+    assert uniform.props.to_wire()["modifier"] == {
+        "operations": [{"type": "padding", "value": 4}]
+    }
+
+
+def test_modifier_padding_over_a_uniform_value_overrides_only_its_side() -> None:
+    overridden = Spacer(id="gap", modifier=Modifier().padding(8, bottom=2))
+    assert overridden.props.to_wire()["modifier"] == {
+        "operations": [
+            {
+                "type": "padding",
+                "value": {
+                    "start": {"type": "Dp", "value": 8},
+                    "top": {"type": "Dp", "value": 8},
+                    "end": {"type": "Dp", "value": 8},
+                    "bottom": {"type": "Dp", "value": 2},
+                },
+            }
+        ]
+    }
+
+
+def test_modifier_padding_without_a_value_or_refusing_a_mixed_form_is_refused() -> None:
+    with pytest.raises(IrValidationError, match="padding"):
+        Modifier().padding()
+    with pytest.raises(IrValidationError, match="dict"):
+        Modifier().padding({"start": {"type": "Dp", "value": 4}}, top=1)
+
+
 @pytest.mark.parametrize(
     "component,valid",
     [

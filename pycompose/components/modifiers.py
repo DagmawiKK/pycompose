@@ -10,6 +10,9 @@ from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.ir.validator import validate_modifier
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
+from pycompose.values import Dp
+
+_PADDING_SIDES = ("start", "top", "end", "bottom")
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,16 +41,73 @@ class Modifier:
         operation = freeze_json({"type": name, **props})
         return Modifier({"operations": (*operations, operation)})
 
-    def padding(self, value: int | float | dict[str, JsonValue]) -> Modifier:
-        """Append nonnegative, uniform dp padding.
+    def padding(
+        self,
+        value: int | float | dict[str, JsonValue] | None = None,
+        *,
+        top: int | float | None = None,
+        start: int | float | None = None,
+        end: int | float | None = None,
+        bottom: int | float | None = None,
+        horizontal: int | float | None = None,
+        vertical: int | float | None = None,
+    ) -> Modifier:
+        """Append nonnegative padding: uniform in dp, or per side.
+
+        A single value pads every side, as it always has. Keywords name sides:
+        ``horizontal`` and ``vertical`` each set two, and the four explicit
+        sides win over both. When every side ends up equal the uniform form is
+        emitted, so ``padding(4, top=4)`` is exactly ``padding(4)``.
 
         Args:
-            value: Padding in dp.
+            value: Padding in dp for every side, or the wire padding dict.
+            top: Top padding in dp, winning over value and vertical.
+            start: Start padding in dp, winning over value and horizontal.
+            end: End padding in dp, winning over value and horizontal.
+            bottom: Bottom padding in dp, winning over value and vertical.
+            horizontal: Start and end padding in dp.
+            vertical: Top and bottom padding in dp.
 
         Returns:
             A new modifier, leaving this one unchanged.
+
+        Raises:
+            IrValidationError: If nothing was given to pad with, or the wire
+                dict was combined with side keywords.
         """
-        return self._append("padding", value=value)
+        keywords = (top, start, end, bottom, horizontal, vertical)
+        if isinstance(value, Mapping):
+            if any(side is not None for side in keywords):
+                raise IrValidationError(
+                    "padding takes either a padding dict or side keywords, not both"
+                )
+            return self._append("padding", value=dict(value))
+        if value is None and not any(side is not None for side in keywords):
+            raise IrValidationError("padding needs a value or at least one side")
+        sides: dict[str, int | float] = {}
+        if value is not None:
+            sides = {name: value for name in _PADDING_SIDES}
+        if horizontal is not None:
+            sides["start"] = horizontal
+            sides["end"] = horizontal
+        if vertical is not None:
+            sides["top"] = vertical
+            sides["bottom"] = vertical
+        for name, amount in (
+            ("top", top),
+            ("start", start),
+            ("end", end),
+            ("bottom", bottom),
+        ):
+            if amount is not None:
+                sides[name] = amount
+        every = all(name in sides for name in _PADDING_SIDES)
+        if every and len(set(sides.values())) == 1:
+            return self._append("padding", value=sides["bottom"])
+        return self._append(
+            "padding",
+            value={name: Dp(amount) for name, amount in sides.items()},
+        )
 
     def fill_max_width(self, fraction: int | float = 1) -> Modifier:
         """Append fillMaxWidth with an inclusive zero-to-one fraction.
