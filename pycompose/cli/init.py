@@ -73,7 +73,15 @@ def init_project(name: str, *, directory: Path) -> tuple[Path, bool, bool]:
     config = (
         f"[app]\nname = {quoted}\napplication_id = {app_id}\n"
         'version_name = "0.1.0"\nversion_code = 1\n\n'
-        '[python]\nentrypoint = "main:app"\nsource_dir = "app"\n\n'
+        '[python]\nentrypoint = "main:app"\nsource_dir = "app"\n'
+        "# Packages installed into the app at build time. Pip resolves them then,\n"
+        "# from PyPI and Chaquopy's index, so pin exact versions (==) when a build\n"
+        "# must be reproducible. Pure Python packages and Android wheels for\n"
+        "# Python 3.12 on arm64-v8a and x86_64 install; a package with native code\n"
+        "# needs an Android wheel, and the build fails listing the available\n"
+        "# versions when there is none. Changing this list changes the app and\n"
+        "# needs a rebuild, not a hot reload.\n"
+        "requirements = []\n\n"
         '[resources]\npath = "resources"\n\n'
         '[signing]\nkeystore = ""\nkey_alias = ""\n'
         'store_password_env = "PYCOMPOSE_STORE_PASSWORD"\n'

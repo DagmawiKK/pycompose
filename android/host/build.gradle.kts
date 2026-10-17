@@ -49,6 +49,20 @@ android {
 chaquopy {
     defaultConfig {
         version = "3.12"
+        // App requirements arrive as newline-separated data from
+        // pycompose.toml; the app never edits this file to add a package.
+        val requirements =
+            providers
+                .gradleProperty("pycomposeRequirements")
+                .orNull
+                ?.lines()
+                ?.filter(String::isNotBlank)
+                .orEmpty()
+        if (requirements.isNotEmpty()) {
+            pip {
+                requirements.forEach { install(it) }
+            }
+        }
     }
     sourceSets.getByName("main") {
         setSrcDirs(

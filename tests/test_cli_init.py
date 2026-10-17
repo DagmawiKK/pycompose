@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 import tomllib
+from importlib.resources import files
 from pathlib import Path
 
 import pytest
@@ -43,7 +44,11 @@ def test_init_creates_config_python_entrypoint_and_resource_directories(
         "version_name": "0.1.0",
         "version_code": 1,
     }
-    assert config["python"] == {"entrypoint": "main:app", "source_dir": "app"}
+    assert config["python"] == {
+        "entrypoint": "main:app",
+        "source_dir": "app",
+        "requirements": [],
+    }
     assert config["resources"]["path"] == "resources"
     assert config["signing"]["store_password_env"] == "PYCOMPOSE_STORE_PASSWORD"
     assert config["signing"]["key_password_env"] == "PYCOMPOSE_KEY_PASSWORD"
@@ -54,7 +59,10 @@ def test_init_creates_config_python_entrypoint_and_resource_directories(
     assert (project / "app" / "main.py").is_file()
     assert (project / ".gitignore").is_file()
     assert result.stderr == ""
-    assert config["toolchain"]["template_version"] == "0.3.0"
+    manifest = tomllib.loads(
+        files("pycompose").joinpath("templates", "android", "template.toml").read_text()
+    )
+    assert config["toolchain"]["template_version"] == manifest["template_version"]
     assert (project / "gradlew").stat().st_mode & 0o111
     assert (project / "gradle" / "wrapper" / "gradle-wrapper.jar").is_file()
     assert (project / "ir" / "src" / "test" / "resources" / "ir_counter.json").is_file()

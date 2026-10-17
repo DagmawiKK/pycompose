@@ -19,6 +19,114 @@ from pycompose.cli.sync import sync_resources
 
 SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
 
+_NAME = r"[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?"
+_EXTRAS = r"(?:\[" + _NAME + r"(?:," + _NAME + r")*\])?"
+_OPERATOR = r"(?:===|==|!=|~=|<=|>=|<|>)"
+_VERSION = r"[A-Za-z0-9][A-Za-z0-9.*+!_-]*"
+_SPECIFIER = r"\s*" + _OPERATOR + r"\s*" + _VERSION
+_REQUIREMENT = re.compile(
+    _NAME + _EXTRAS + r"(?:" + _SPECIFIER + r"(?:," + _SPECIFIER + r")*)?"
+    r"(?:\s*;\s*\S.*)?"
+)
+_ARCHIVE_SUFFIXES = (".whl", ".tar.gz", ".zip")
+# First Android template whose host installs app requirements; older scaffolds
+# have no pip block and would drop a declared requirement without a word.
+_MIN_REQUIREMENTS_TEMPLATE = (0, 4, 0)
+
+
+def _requirements(project: Project) -> list[str]:
+    """Validate the app's declared package requirements.
+
+    Requirements are data the host's Chaquopy pip block installs at build
+    time: pure-Python packages and Android wheels available for the app's
+    Python version and ABIs. Only named package specifiers are accepted here,
+    so a mistyped path, pip option or wheel filename fails with one message
+    instead of an obscure Gradle error.
+
+    Args:
+        project: Project with an optional [python] requirements array.
+
+    Returns:
+        The stripped requirement specifiers, in declaration order.
+
+    Raises:
+        ProjectError: If the array or one of its entries is not a specifier.
+    """
+    requirements = project.table("python").get("requirements", [])
+    if not isinstance(requirements, list):
+        raise ProjectError("python.requirements must be an array of package specifiers")
+    result = []
+    for index, requirement in enumerate(requirements):
+        if (
+            not isinstance(requirement, str)
+            or not requirement.strip()
+            or any(ord(char) < 32 or ord(char) == 127 for char in requirement)
+        ):
+            raise ProjectError(
+                "python.requirements entries must be nonempty single-line strings",
+                index=index,
+            )
+        stripped = requirement.strip()
+        if stripped.casefold().endswith(_ARCHIVE_SUFFIXES):
+            raise ProjectError(
+                "python.requirements accepts named packages; build a wheel with "
+                "Chaquopy's toolchain and publish or mirror it to install it by name",
+                index=index,
+            )
+        if _REQUIREMENT.fullmatch(stripped) is None:
+            raise ProjectError(
+                "python.requirements entries must be pip package specifiers: "
+                "name, extras, version and optional environment marker",
+                index=index,
+            )
+        result.append(stripped)
+    return result
+
+
+def _scaffold_template_version(project: Project) -> tuple[int, ...] | None:
+    """Parse the project's template version, or None when it is unreadable.
+
+    Args:
+        project: Project with a toolchain table.
+
+    Returns:
+        Numeric version parts, or None when the field is absent or malformed.
+    """
+    value = project.table("toolchain").get("template_version")
+    if not isinstance(value, str):
+        return None
+    parts = value.split(".")
+    if any(re.fullmatch(r"\d+", part) is None for part in parts):
+        return None
+    return tuple(int(part) for part in parts)
+
+
+def _check_requirements_scaffold(project: Project, requirements: list[str]) -> None:
+    """Refuse requirements on a scaffold that would silently drop them.
+
+    Hosts generated before dependency support have no pip block, so declared
+    requirements would reach Gradle and vanish without a word. That failure is
+    silent, so it is raised here instead, before Gradle starts.
+
+    Args:
+        project: Project whose scaffold installs the requirements.
+        requirements: Validated requirement specifiers.
+
+    Raises:
+        ProjectError: If requirements are declared on an older template.
+    """
+    if not requirements:
+        return
+    version = _scaffold_template_version(project)
+    if version is not None and version >= _MIN_REQUIREMENTS_TEMPLATE:
+        return
+    raise ProjectError(
+        "python.requirements needs an Android scaffold from template 0.4.0 or "
+        "newer; create a project with pycompose init and copy its host/ over "
+        "this one's so the app installs what it declares",
+        template_version="unknown" if version is None else ".".join(map(str, version)),
+    )
+
 
 def _app_properties(project: Project, env: dict[str, str]) -> None:
     config = project.table("app")
@@ -53,6 +161,9 @@ def _app_properties(project: Project, env: dict[str, str]) -> None:
         raise ProjectError("Python source directory is missing", path=directory)
     env["ORG_GRADLE_PROJECT_pycomposeEntrypoint"] = entrypoint
     env["ORG_GRADLE_PROJECT_pycomposeSourceDir"] = str(directory)
+    requirements = _requirements(project)
+    _check_requirements_scaffold(project, requirements)
+    env["ORG_GRADLE_PROJECT_pycomposeRequirements"] = "\n".join(requirements)
     env["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"] = str(
         Path(__file__).resolve().parents[2]
     )
