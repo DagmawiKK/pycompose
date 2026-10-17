@@ -7,7 +7,7 @@ from pycompose.bridge.types import decode_action
 from pycompose.core.action_binding import BindingSpec, read_bindings
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.ir.generated_validators import SCHEMA_VERSION
+from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
 from pycompose.state import Actions, State, Store
 
 LOGGER = logging.getLogger(__name__)
@@ -109,6 +109,15 @@ class BridgeSurface:
                 bindings=self._bindings,
                 handlers=self._actions,
             )
+            if (
+                action.action_id in REGISTRY.lifecycle
+                and action.action_id not in self._actions
+            ):
+                # The host reports every lifecycle fact unconditionally, so
+                # whether one has a handler is the app's choice; an event
+                # nobody opted into is idle, not a fault worth a diagnostic.
+                LOGGER.debug("lifecycle event has no handler: %s", action.action_id)
+                return
             current = self._store.value
             next_state = (
                 self._actions.dispatch_binding(action.binding, current, action.payload)

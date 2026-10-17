@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import TypedDict
 
 import pytest
@@ -86,6 +87,45 @@ def test_lifecycle_events_reach_python_through_the_ordinary_action_queue() -> No
     ] == ("fr-FR")
     assert seen == ["resume", "landscape/fr-FR/3.0"]
     assert bridge.expose_latest_error() == ""
+
+
+def test_an_unhandled_lifecycle_event_is_idle_not_a_diagnostic(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """The host sends every lifecycle fact; ignoring one is the app's choice."""
+    store = Store(State(root=Text(id="text", text="home")))
+    bridge = BridgeSurface(store, Actions(on_resume))
+    before = bridge.expose_latest_snapshot()
+
+    with caplog.at_level(logging.DEBUG):
+        bridge.accept_action(
+            json.dumps(
+                {
+                    "actionId": "onConfigChanged",
+                    "payload": {
+                        "orientation": "landscape",
+                        "darkMode": True,
+                        "locale": "fr-FR",
+                        "density": 3.0,
+                    },
+                }
+            )
+        )
+
+    assert bridge.expose_latest_snapshot() == before
+    assert bridge.expose_latest_error() == ""
+    assert [
+        record.levelno for record in caplog.records if record.levelno >= logging.WARNING
+    ] == []
+
+
+def test_an_unhandled_catalog_action_is_still_a_diagnostic() -> None:
+    """A control wired to an action nobody handles remains a wiring fault."""
+    bridge = BridgeSurface(Store(State(root=Text(id="text", text="home"))), Actions())
+
+    bridge.accept_action('{"actionId":"increment","payload":{"by":1}}')
+
+    assert "unknown action" in bridge.expose_latest_error()
 
 
 @pytest.mark.parametrize(
