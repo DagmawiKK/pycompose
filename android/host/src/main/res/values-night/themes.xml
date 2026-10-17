@@ -1,0 +1,5 @@
+<resources>
+    <style name="Base.Theme.PyCompose" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/pycompose_window_background</item>
+    </style>
+</resources>
