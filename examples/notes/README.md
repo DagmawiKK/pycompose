@@ -9,7 +9,7 @@ host. Python declares the tree; the host draws it.
 ## Running it
 
 The Python lives in `app/`, which is where `pycompose init` puts it by default
-(`python.source_dir = "app"`, `python.entrypoint = "main:build"`). To get a
+(`python.source_dir = "app"`, `python.entrypoint = "main:app"`). To get a
 running Android project:
 
 ```bash
