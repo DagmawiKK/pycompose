@@ -236,15 +236,20 @@ def _interaction(interaction: dict[str, Any]) -> str:
     )
 
 
-def _state(state: dict[str, Any]) -> tuple[str, list[str], str | None]:
+def _state(
+    state: dict[str, Any], props: dict[str, Any]
+) -> tuple[str, list[str], str | None]:
     """Render the local that fetches one component's host-owned state holder.
 
     The holder is the renderer's, remembered per node id; the desired value and
     the report channel are ordinary props, so the app keeps naming its own
-    fields and the host never holds a Python object.
+    fields and the host never holds a Python object. Props the holder is
+    constructed from reach the renderer's call too, resolved where the ordinary
+    value props are resolved.
 
     Args:
         state: The component's raw ``state`` entry.
+        props: The component's declared props, by wire name.
 
     Returns:
         The Kotlin local declaration, the native arguments consuming it, and the
@@ -265,11 +270,11 @@ def _state(state: dict[str, Any]) -> tuple[str, list[str], str | None]:
         else [f"{native} = {held}.state" if gated else f"{native} = {held}"]
     )
     # Props the holder is constructed from also reach the renderer's call; the
-    # renderer resolves each against the holder's constructor, so a range or a
-    # step count never reaches the component itself.
+    # renderer resolves each against the holder's constructor, so a value-typed
+    # one arrives as its resolved local and never as raw tagged data.
     extras = "".join(
-        f", model.props.{_camel(extra)}"
-        for extra in STATE_CONSTRUCTOR_PROPS.get(state["kind"], ())
+        f", {_constructor_argument(name, props.get(name) or {})}"
+        for name in STATE_CONSTRUCTOR_PROPS.get(state["kind"], ())
     )
     dismiss = state.get("dismiss")
     if dismiss is not None:
@@ -285,13 +290,105 @@ def _state(state: dict[str, Any]) -> tuple[str, list[str], str | None]:
     )
 
 
+def _constructor_argument(name: str, spec: dict[str, Any]) -> str:
+    """The Kotlin expression a holder's constructor prop arrives as.
+
+    A value-typed prop crosses as tagged data and is resolved into a local
+    before this point; every other prop crosses as the model's own property.
+
+    Args:
+        name: The prop's schema name.
+        spec: Its schema entry.
+
+    Returns:
+        The expression the renderer's call names.
+    """
+    prop = _camel(name)
+    if spec.get("type") == "value" and "valueType" in spec:
+        return f"{prop}Value"
+    return f"model.props.{prop}"
+
+
+def _render_value(prop_name: str, spec: dict[str, Any], out: _Fragments) -> bool:
+    """Render a prop carrying a native value-family tag.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+        out: Collects the rendered pieces.
+
+    Returns:
+        True when the value could be resolved into a local.
+    """
+    family = spec["valueType"]
+    wire = f"model.props.{prop_name}"
+    declaration = ""
+    if not spec.get("required"):
+        declaration = f"val {prop_name}Wire = {wire}\n                "
+        wire = f"{prop_name}Wire"
+    call = resolver_call(family, wire) + ".getOrThrow()"
+    if spec.get("nullable"):
+        call = (
+            f"when ({wire}) {{\n"
+            "                    com.pycompose.ir.OptionalValue.Absent -> "
+            f"{spec['nativeDefault']}\n"
+            "                    com.pycompose.ir.OptionalValue.Null -> null\n"
+            f"                    is com.pycompose.ir.OptionalValue.Present -> "
+            f"{resolver_call(family, f'{wire}.value')}.getOrThrow()\n"
+            "                }"
+        )
+    elif not spec.get("required"):
+        call = f"if ({wire} != null) {call} else {spec['nativeDefault']}"
+    return out.add(
+        (
+            f"{declaration}val {prop_name}Value = {call}",
+            f"{prop_name} = {prop_name}Value",
+        )
+    )
+
+
+def _resolve_constructor(
+    state: dict[str, Any] | None,
+    props: dict[str, Any],
+    out: _Fragments,
+) -> bool:
+    """Resolve the value-typed props a holder is constructed from, into locals.
+
+    A constructor prop reaches the holder, never the component, so the ordinary
+    prop loop leaves it out -- but a value-typed one still crosses as tagged
+    data and needs the same resolver every other value prop gets. Only the
+    local is emitted: the holder's call names it, the component never does.
+
+    Args:
+        state: The component's raw ``state`` entry, or None.
+        props: The component's declared props, by wire name.
+        out: Collects the rendered pieces.
+
+    Returns:
+        False when one of the props cannot be resolved faithfully.
+    """
+    if state is None:
+        return True
+    for name in STATE_CONSTRUCTOR_PROPS.get(state["kind"], ()):
+        spec = props.get(name) or {}
+        if spec.get("type") != "value" or "valueType" not in spec:
+            continue
+        resolved = _Fragments()
+        if not _render_value(_camel(name), spec, resolved):
+            return False
+        out.locals.extend(resolved.locals)
+    return True
+
+
 def _transient(transient: dict[str, Any], props: dict[str, Any]) -> str:
     """Render the local that requests one component's host-fulfilled transient.
 
     Every prop is a request input the host consumes on the holder's behalf --
     the serial it compares, the message it shows, the occurrence it answers --
     so they all reach the renderer's context call by name, under the node's
-    identity, and none reaches the component itself.
+    identity, and none reaches the component itself. The component's modifier
+    is the exception: it is not a request but the call's own first argument,
+    built and passed by the adapter like anywhere else.
 
     Args:
         transient: The component's raw ``transient`` entry.
@@ -301,53 +398,12 @@ def _transient(transient: dict[str, Any], props: dict[str, Any]) -> str:
         The Kotlin local declaration.
     """
     entries = ", ".join(
-        f"{name} = model.props.{_camel(name)}" for name in sorted(props)
+        f"{name} = model.props.{_camel(name)}"
+        for name in sorted(props)
+        if name != "modifier"
     )
     call = TRANSIENT_CALLS[transient["kind"]]
     return f"val {transient['native']}Value = context.{call}(model.id, {entries})"
-
-
-def _host_locals(entry: dict[str, Any], out: _Fragments) -> str | None:
-    """Emit the locals that fill a component's host-owned parameters.
-
-    The renderer remembers a node's interaction source, its state holder and
-    the last serial it fulfilled; the locals fetch them and the arguments
-    consume them where the schema says. An attach family fills no parameter of
-    its own: its holder rides the modifier, rewritten into the component's
-    first argument behind the prop the app states.
-
-    Args:
-        entry: The component's schema entry.
-        out: The call fragments to extend.
-
-    Returns:
-        The expression gating the call for a composition-gated family, or
-        None when the component is always composed.
-    """
-    interaction = entry.get("interaction") or {}
-    observed = set((interaction.get("observations") or {}).values())
-    state = entry.get("state")
-    transient = entry.get("transient")
-    if observed:
-        out.locals.append(_interaction(interaction))
-        out.arguments.append(f"{interaction['native']} = interactionSourceValue")
-    gate: str | None = None
-    if state is not None:
-        local, arguments, gate = _state(state)
-        out.locals.append(local)
-        out.arguments.extend(arguments)
-        attach = STATE_ATTACH_GATES.get(state["kind"])
-        if attach is not None:
-            # The holder rides the modifier: the component's first argument is
-            # the attach itself, gated by the prop the app states.
-            out.arguments[0] = (
-                f"modifier = {state['native']}Value.attachTo("
-                f"modifier, model.props.{_camel(attach)})"
-            )
-    if transient is not None:
-        out.locals.append(_transient(transient, entry.get("props", {})))
-        out.arguments.append(f"{transient['native']} = {transient['native']}Value")
-    return gate
 
 
 def _slot_body(

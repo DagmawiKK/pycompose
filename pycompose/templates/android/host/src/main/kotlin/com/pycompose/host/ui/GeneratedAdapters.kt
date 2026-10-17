@@ -448,9 +448,10 @@ object GeneratedAdapters {
             }
             .register("Slider") { node, modifier, context ->
                 val model = node as SliderNode
+                val valueRangeValue = com.pycompose.renderer.generated.ValueResolver.range(model.props.valueRange).getOrThrow()
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.sliderColors(colorsWire).getOrThrow() else androidx.compose.material3.SliderDefaults.colors()
-                val stateValue = context.sliderState(model.props.value, model.props.onValueChangeFinished, model.props.valueRange, model.props.steps)
+                val stateValue = context.sliderState(model.props.value, model.props.onValueChangeFinished, valueRangeValue, model.props.steps)
                 Slider(
                     modifier = modifier,
                     colors = colorsValue,
@@ -460,7 +461,7 @@ object GeneratedAdapters {
             }
             .register("SnackbarHost") { node, modifier, context ->
                 val model = node as SnackbarHostNode
-                val hostStateValue = context.snackbar(model.id, actionLabel = model.props.actionLabel, message = model.props.message, modifier = model.props.modifier, onDismiss = model.props.onDismiss, serial = model.props.serial)
+                val hostStateValue = context.snackbar(model.id, actionLabel = model.props.actionLabel, message = model.props.message, onDismiss = model.props.onDismiss, serial = model.props.serial)
                 SnackbarHost(
                     modifier = modifier,
                     hostState = hostStateValue,

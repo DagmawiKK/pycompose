@@ -116,10 +116,16 @@ LAZY = {
 def test_a_slider_carries_its_range_and_steps_to_the_holder() -> None:
     """The holder is constructed from the app's range and steps, not defaults."""
     adapter = render("Slider", SLIDER)
+    # The range crosses as tagged data and reaches the holder resolved.
+    assert (
+        "val valueRangeValue = "
+        "com.pycompose.renderer.generated.ValueResolver.range("
+        "model.props.valueRange).getOrThrow()" in adapter
+    )
     assert (
         "val stateValue = context.sliderState("
         "model.props.value, model.props.onValueChangeFinished, "
-        "model.props.valueRange, model.props.steps)" in adapter
+        "valueRangeValue, model.props.steps)" in adapter
     )
     assert "state = stateValue" in adapter
     # The held props name no native parameter: the holder consumes them.

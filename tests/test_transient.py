@@ -252,12 +252,13 @@ def test_the_runtime_registry_round_trips_the_transient() -> None:
 SNACKBAR = {
     "props": {
         "message": {"type": "string", "required": True},
-        "actionLabel": {"type": "string", "nullable": True},
+        "actionLabel": {"type": "string"},
         "serial": {"type": "integer", "required": True},
         "onDismiss": {
             "type": "actionId",
             "payload": [{"name": "serial", "type": "integer"}],
         },
+        "modifier": {"type": "modifier"},
     },
     "children": {"allowed": False},
     "transient": {
@@ -279,8 +280,10 @@ def test_the_adapter_requests_the_transient_with_every_prop() -> None:
         "onDismiss = model.props.onDismiss, serial = model.props.serial)" in adapter
     )
     assert "hostState = hostStateValue" in adapter
-    # No prop reaches the component itself: the host consumes them all.
+    # No prop reaches the component itself: the host consumes them all, and
+    # the component's modifier stays its own argument.
     component = adapter.split("SnackbarHost(")[1].split(")")[0]
     assert "message" not in component
     assert "serial" not in component
     assert "onDismiss" not in component
+    assert "modifier = model.props.modifier" not in adapter
