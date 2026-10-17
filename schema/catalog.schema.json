@@ -151,6 +151,7 @@
           "additionalProperties": { "$ref": "#/$defs/slot" }
         },
         "state": { "$ref": "#/$defs/stateBlock" },
+        "transient": { "$ref": "#/$defs/transientBlock" },
         "interaction": { "$ref": "#/$defs/interactionBlock" },
         "wrapper": { "type": "string" },
         "scope": { "type": "string" },
@@ -195,6 +196,18 @@
         "value": { "type": "string" },
         "report": { "type": "string" },
         "dismiss": { "type": "string" }
+      }
+    },
+    "transientBlock": {
+      "type": "object",
+      "description": "ADR-0017 decisions 6-8 transient wire; `kind` membership is the TRANSIENT_KINDS vocabulary, not this file.",
+      "required": ["native", "kind", "serial", "occurrence"],
+      "additionalProperties": false,
+      "properties": {
+        "native": { "type": "string" },
+        "kind": { "type": "string" },
+        "serial": { "type": "string" },
+        "occurrence": { "type": "string" }
       }
     },
     "interactionBlock": {

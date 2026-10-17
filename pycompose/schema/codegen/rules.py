@@ -245,6 +245,7 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
     from pycompose.schema.codegen.state_rules import (
         _validate_interaction,
         _validate_state,
+        _validate_transient,
     )
 
     if not isinstance(comp.get("category"), str) or not comp["category"]:
@@ -270,3 +271,6 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
         name, props, children, comp.get("slots", {}), comp.get("interaction")
     )
     _validate_state(name, props, children, comp.get("slots", {}), comp.get("state"))
+    _validate_transient(
+        name, props, children, comp.get("slots", {}), comp.get("transient")
+    )

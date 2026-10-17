@@ -17,6 +17,7 @@ from typing import Protocol, cast
 
 from pycompose.core.registry_elements import ChildrenRule, SlotRule
 from pycompose.core.registry_props import InteractionRule, PropDef, StateRule
+from pycompose.core.registry_transient import TransientRule
 from pycompose.core.registry_vocabulary import ADAPTERS, SCOPES, WRAPPERS
 from pycompose.errors import ComponentRegistryError
 
@@ -163,6 +164,28 @@ def _reshaped(name: str, value: object) -> tuple[str, ...]:
     return tuple(value)
 
 
+def _transient(name: str, value: object) -> TransientRule | None:
+    """Parse a component's declared transient request.
+
+    Args:
+        name: The component's registry key, for the error message.
+        value: The raw ``transient`` field.
+
+    Returns:
+        The parsed rule, or None when the component declares none.
+
+    Raises:
+        ComponentRegistryError: If the field is present but malformed.
+    """
+    if value is None:
+        return None
+    if not isinstance(value, Mapping):
+        raise ComponentRegistryError(
+            f"component {name!r}: 'transient' must be an object"
+        )
+    return TransientRule.from_mapping(value, where=f"{name}.transient")
+
+
 @dataclass(frozen=True, slots=True)
 class ComponentSpec:
     """Concrete component definition (implements :class:`ComponentDef`).
@@ -195,6 +218,10 @@ class ComponentSpec:
             Codegen-only: it says which native parameter the renderer fills,
             which prop carries Python's desired state, and which prop reports
             settled changes.
+        transient: The host-fulfilled transient request this component
+            accepts, if any. Codegen-only: it says which native parameter the
+            renderer fills, which prop carries the serial the host compares,
+            and which occurrence reports the fulfilled serial back.
         opt_in: Opt-in markers the pinned declaration requires, if any.
             Codegen-only: the generated adapter file declares each one it needs.
         package: The Kotlin package the pinned composable lives in, so a
@@ -217,6 +244,7 @@ class ComponentSpec:
     slots: Mapping[str, SlotRule] = dataclass_field(default_factory=dict)
     interaction: InteractionRule | None = None
     state: StateRule | None = None
+    transient: TransientRule | None = None
     opt_in: tuple[str, ...] = ()
     package: str | None = None
     scope: str | None = None
@@ -313,6 +341,8 @@ class ComponentSpec:
             if isinstance(raw_state, Mapping)
             else None
         )
+        raw_transient = data.get("transient")
+        transient = _transient(name, raw_transient)
         return cls(
             name=name,
             category=category,
@@ -326,6 +356,7 @@ class ComponentSpec:
             slots=slots,
             interaction=interaction,
             state=state,
+            transient=transient,
             opt_in=_opt_in(name, data.get("optIn")),
             package=package,
             scope=cast("str | None", data.get("scope")),
@@ -353,6 +384,8 @@ class ComponentSpec:
             result["interaction"] = self.interaction.to_mapping()
         if self.state is not None:
             result["state"] = self.state.to_mapping()
+        if self.transient is not None:
+            result["transient"] = self.transient.to_mapping()
         if self.since is not None:
             result["since"] = self.since
         if self.reshaped:

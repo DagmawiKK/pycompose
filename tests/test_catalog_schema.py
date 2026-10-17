@@ -79,6 +79,34 @@ def test_the_shape_declares_no_vocabulary_enums() -> None:
     ), "closed vocabularies belong to the hub, not a JSON enum"
 
 
+def test_the_shape_names_the_transient_block() -> None:
+    """A transient is declared beside the state; the spec must name it."""
+    catalog = _catalog()
+    component = next(iter(catalog["components"].values()))
+    component["transient"] = {
+        "kind": "snackbar",
+        "native": "hostState",
+        "serial": "serial",
+        "occurrence": "onDismiss",
+    }
+    jsonschema.validate(instance=catalog, schema=_schema())
+
+
+def test_the_shape_refuses_an_unknown_transient_key() -> None:
+    """The transient block's keys are bounded exactly like the state's."""
+    catalog = _catalog()
+    component = next(iter(catalog["components"].values()))
+    component["transient"] = {
+        "kind": "snackbar",
+        "native": "hostState",
+        "serial": "serial",
+        "occurrence": "onDismiss",
+        "future": True,
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(instance=catalog, schema=_schema())
+
+
 def test_the_schema_and_the_validator_require_the_same_top_keys() -> None:
     """Required-keys is one fact: the spec and the function cannot drift."""
     assert set(_schema()["required"]) == set(rules.REGISTRY_KEYS)

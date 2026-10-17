@@ -8,7 +8,11 @@ wire stays expressible and the host never double-counts.
 import re
 from typing import Any
 
-from pycompose.core.registry_types import INTERACTION_KINDS, STATE_KINDS
+from pycompose.core.registry_types import (
+    INTERACTION_KINDS,
+    STATE_KINDS,
+    TRANSIENT_KINDS,
+)
 from pycompose.schema.codegen.adapter_helpers import (
     STATE_ATTACH_GATES,
     STATE_CONSTRUCTOR_PROPS,
@@ -21,6 +25,9 @@ from pycompose.schema.codegen.rules import (
 INTERACTION_KEYS = frozenset({"native", "observations"})
 
 STATE_KEYS = frozenset({"native", "kind", "value", "report", "dismiss"})
+
+TRANSIENT_KEYS = frozenset({"kind", "native", "serial", "occurrence"})
+"""Bounded keys of a transient declaration (ADR-0017 decisions 6-8)."""
 
 STATE_VALUE_TYPES = frozenset({"boolean", "number", "integer"})
 """Scalar prop types a state family can drive; the report answers in one.
@@ -242,3 +249,68 @@ def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None
         die(f"{where}: state kind {kind!r} needs the props {', '.join(missing)}")
     if gate is not None and props[gate].get("type") != "boolean":
         die(f"{where}: prop {gate!r} must be a boolean")
+
+
+def _validate_transient(
+    name: str,
+    props: dict[str, Any],
+    children: dict[str, Any],
+    slots: object,
+    transient: object,
+) -> None:
+    """Check a component's declared transient request against the vocabulary.
+
+    The transient is the host's request channel, not the app's: the schema
+    names the native parameter the remembered holder fills, the family whose
+    remember/fulfil/report logic applies, the prop carrying the serial the
+    host compares against the last one it handled, and the occurrence action
+    reporting the fulfilled serial back. Both named props are omitted from
+    the app's native arguments exactly as a state's are, because the host
+    consumes them on the holder's behalf.
+
+    Args:
+        name: Component name, for error messages.
+        props: The component's props; the serial and occurrence must be them.
+        children: The component's ``children`` object, whose native parameter
+            the transient holder must not reuse.
+        slots: The component's declared slots, which claim their own natives.
+        transient: The raw ``transient`` object, or None.
+    """
+    if transient is None:
+        return
+    where = f"component {name!r} transient"
+    if not isinstance(transient, dict):
+        die(f"{where} must be an object")
+    unknown = sorted(set(transient) - TRANSIENT_KEYS)
+    if unknown:
+        die(f"{where} has unknown keys: {', '.join(unknown)}")
+    natives = {children.get("native", "content")}
+    if isinstance(slots, dict):
+        natives.update(
+            slot["native"]
+            for slot in slots.values()
+            if isinstance(slot, dict) and isinstance(slot.get("native"), str)
+        )
+    claimed = natives | set(props)
+    _claimed_parameter(where, "native", transient.get("native"), claimed)
+    kind = transient.get("kind")
+    if not isinstance(kind, str) or kind not in TRANSIENT_KINDS:
+        die(
+            f"{where}: unknown transient kind {kind!r}; vocabulary: "
+            + ", ".join(sorted(TRANSIENT_KINDS))
+        )
+    serial = transient.get("serial")
+    serial_prop = props.get(serial) if isinstance(serial, str) else None
+    if serial_prop is None:
+        die(f"{where}: 'serial' must name one of the props")
+    if serial_prop.get("type") != "integer":
+        # The host compares serials numerically, one request after another;
+        # anything else would make "bumped" a string-editing question.
+        die(f"{where}: prop {serial!r} must be an integer")
+    occurrence = transient.get("occurrence")
+    reported = props.get(occurrence) if isinstance(occurrence, str) else None
+    if reported is None:
+        die(f"{where}: 'occurrence' must name one of the props")
+    if reported.get("type") != "actionId":
+        die(f"{where}: prop {occurrence!r} must be an actionId")
+    _validate_reported_payload(where, occurrence, reported, serial_prop["type"])

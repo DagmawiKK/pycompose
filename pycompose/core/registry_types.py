@@ -33,6 +33,7 @@ from pycompose.core.registry_elements import (
     SlotRule,
 )
 from pycompose.core.registry_props import InteractionRule, PropDef, StateRule
+from pycompose.core.registry_transient import TransientRule
 from pycompose.core.registry_vocabulary import (
     ADAPTERS,
     CONSUMERS,
@@ -44,6 +45,7 @@ from pycompose.core.registry_vocabulary import (
     SCOPES,
     SLOT_KINDS,
     STATE_KINDS,
+    TRANSIENT_KINDS,
     WRAPPERS,
 )
 from pycompose.errors import ComponentRegistryError
@@ -71,6 +73,8 @@ __all__ = [
     "STATE_KINDS",
     "SlotRule",
     "StateRule",
+    "TRANSIENT_KINDS",
+    "TransientRule",
     "WRAPPERS",
 ]
 

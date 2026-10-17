@@ -134,6 +134,15 @@ schema declares one, and the boolean prop named here decides whether the
 adapter attaches it to the modifier the call receives.
 """
 
+TRANSIENT_CALLS = {"snackbar": "snackbar"}
+"""The renderer method each transient family's request comes from.
+
+The family decides the remember/fulfil/report logic exactly as a state's
+``STATE_CALLS`` entry does; the schema decides which component asks for one.
+Every member of the vocabulary must appear here, or codegen has no renderer
+method to call.
+"""
+
 
 def qualify(source: str) -> str:
     """Fully qualify a Kotlin expression's leading type name.

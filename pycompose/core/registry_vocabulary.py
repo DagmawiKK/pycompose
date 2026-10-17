@@ -63,6 +63,19 @@ asked to drive a state object whose transitions it does not understand.
 ADAPTERS = ("generated", "manual")
 """Whether the Kotlin adapter is derived from the schema or written by hand."""
 
+TRANSIENT_KINDS = ("snackbar",)
+"""Transient families the host requests, fulfils and reports for a component.
+
+A transient is a serial-numbered fire-and-forget occurrence, not a continuous
+value: naming a snackbar's "current value" would be a lie (ADR-0017 decisions
+6-8). The host remembers the last serial it handled under the node's identity,
+shows a request whose serial it has not seen, and reports the fulfilled serial
+back as an action, so an identical re-rendered snapshot is a no-op while a
+deliberate repeat of identical content is a new serial. The vocabulary is
+closed for the same reason the state kinds are: the host must not be asked to
+fulfil a request whose semantics it does not understand.
+"""
+
 DECODED_TYPES = ("enum", "color", "resource")
 """Prop types whose Kotlin type is not the wire type, and so need a decoder."""
 
