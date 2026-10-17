@@ -17,7 +17,10 @@ from pycompose.schema.codegen.adapter_helpers import (
     RESOLVER_FALLBACK,
     RESOLVER_RETURN,
     SCALAR_KOTLIN,
+    STATE_ATTACH_GATES,
     STATE_CALLS,
+    STATE_CONSTRUCTOR_PROPS,
+    TRANSIENT_CALLS,
     _camel,
     _Fragments,
     qualify,
@@ -253,7 +256,21 @@ def _state(state: dict[str, Any]) -> tuple[str, list[str], str | None]:
     value = _camel(state["value"])
     report = _camel(state["report"])
     gated = state["kind"] in GATED_STATES
-    arguments = [f"{native} = {held}.state" if gated else f"{native} = {held}"]
+    # An attach family fills no parameter: its holder rides the modifier the
+    # composer rewrites, and the component is composed unconditionally.
+    attached = state["kind"] in STATE_ATTACH_GATES
+    arguments = (
+        []
+        if attached
+        else [f"{native} = {held}.state" if gated else f"{native} = {held}"]
+    )
+    # Props the holder is constructed from also reach the renderer's call; the
+    # renderer resolves each against the holder's constructor, so a range or a
+    # step count never reaches the component itself.
+    extras = "".join(
+        f", model.props.{_camel(extra)}"
+        for extra in STATE_CONSTRUCTOR_PROPS.get(state["kind"], ())
+    )
     dismiss = state.get("dismiss")
     if dismiss is not None:
         # The component announces a dismissal it has already carried out; the
@@ -262,10 +279,75 @@ def _state(state: dict[str, Any]) -> tuple[str, list[str], str | None]:
         arguments.append(f"{dismiss} = {{}}")
     return (
         f"val {held} = context.{STATE_CALLS[state['kind']]}("
-        f"model.props.{value}, model.props.{report})",
+        f"model.props.{value}, model.props.{report}{extras})",
         arguments,
         f"{held}.visible" if gated else None,
     )
+
+
+def _transient(transient: dict[str, Any], props: dict[str, Any]) -> str:
+    """Render the local that requests one component's host-fulfilled transient.
+
+    Every prop is a request input the host consumes on the holder's behalf --
+    the serial it compares, the message it shows, the occurrence it answers --
+    so they all reach the renderer's context call by name, under the node's
+    identity, and none reaches the component itself.
+
+    Args:
+        transient: The component's raw ``transient`` entry.
+        props: The component's declared props, by wire name.
+
+    Returns:
+        The Kotlin local declaration.
+    """
+    entries = ", ".join(
+        f"{name} = model.props.{_camel(name)}" for name in sorted(props)
+    )
+    call = TRANSIENT_CALLS[transient["kind"]]
+    return f"val {transient['native']}Value = context.{call}(model.id, {entries})"
+
+
+def _host_locals(entry: dict[str, Any], out: _Fragments) -> str | None:
+    """Emit the locals that fill a component's host-owned parameters.
+
+    The renderer remembers a node's interaction source, its state holder and
+    the last serial it fulfilled; the locals fetch them and the arguments
+    consume them where the schema says. An attach family fills no parameter of
+    its own: its holder rides the modifier, rewritten into the component's
+    first argument behind the prop the app states.
+
+    Args:
+        entry: The component's schema entry.
+        out: The call fragments to extend.
+
+    Returns:
+        The expression gating the call for a composition-gated family, or
+        None when the component is always composed.
+    """
+    interaction = entry.get("interaction") or {}
+    observed = set((interaction.get("observations") or {}).values())
+    state = entry.get("state")
+    transient = entry.get("transient")
+    if observed:
+        out.locals.append(_interaction(interaction))
+        out.arguments.append(f"{interaction['native']} = interactionSourceValue")
+    gate: str | None = None
+    if state is not None:
+        local, arguments, gate = _state(state)
+        out.locals.append(local)
+        out.arguments.extend(arguments)
+        attach = STATE_ATTACH_GATES.get(state["kind"])
+        if attach is not None:
+            # The holder rides the modifier: the component's first argument is
+            # the attach itself, gated by the prop the app states.
+            out.arguments[0] = (
+                f"modifier = {state['native']}Value.attachTo("
+                f"modifier, model.props.{_camel(attach)})"
+            )
+    if transient is not None:
+        out.locals.append(_transient(transient, entry.get("props", {})))
+        out.arguments.append(f"{transient['native']} = {transient['native']}Value")
+    return gate
 
 
 def _slot_body(

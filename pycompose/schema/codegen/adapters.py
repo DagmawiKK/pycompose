@@ -27,11 +27,10 @@ from typing import Any
 from pycompose.schema.codegen.adapter_calls import (
     _callback,
     _decoded,
-    _interaction,
+    _host_locals,
     _named_slot,
     _render_provider,
     _slot_body,
-    _state,
 )
 from pycompose.schema.codegen.adapter_helpers import (
     DECODED,
@@ -353,7 +352,12 @@ def render(name: str, entry: dict[str, Any]) -> str:
     interaction = entry.get("interaction") or {}
     observed = set((interaction.get("observations") or {}).values())
     state = entry.get("state")
+    transient = entry.get("transient")
     held = _held(state)
+    if transient is not None:
+        # Every prop of a transient component is a request input the host
+        # consumes on its behalf; none names a native parameter of its own.
+        held |= set(entry.get("props", {}))
     for prop, spec in entry.get("props", {}).items():
         if prop in observed or prop in held:
             # The host fills the source or the state holder; an observed prop
@@ -362,14 +366,7 @@ def render(name: str, entry: dict[str, Any]) -> str:
             continue
         if not _render_prop(prop, spec, out):
             return ""
-    if observed:
-        out.locals.append(_interaction(interaction))
-        out.arguments.append(f"{interaction['native']} = interactionSourceValue")
-    gate: str | None = None
-    if state is not None:
-        local, arguments, gate = _state(state)
-        out.locals.append(local)
-        out.arguments.extend(arguments)
+    gate = _host_locals(entry, out)
     for slot_name, slot in sorted(entry.get("slots", {}).items()):
         out.arguments.append(_named_slot(slot_name, slot))
 

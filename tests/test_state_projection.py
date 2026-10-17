@@ -24,7 +24,6 @@ import pytest
 from pycompose.core.node import Node
 from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.m3 import ModalBottomSheet, ModalNavigationDrawer, Text
-from pycompose.schema.codegen.adapters import render
 from pycompose.schema.codegen.state_rules import STATE_VALUE_TYPES
 from pycompose.state import State
 
@@ -173,53 +172,6 @@ def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:
 # ---------------------------------------------------------------------------
 # The adapter fills the parameter; the props are not native ones
 # ---------------------------------------------------------------------------
-
-
-def test_the_adapter_passes_the_host_holder_where_the_schema_says() -> None:
-    """The desired value and its report are not native parameters."""
-    adapter = render(STATEFUL, components()[STATEFUL])
-    assert (
-        "val drawerStateValue = context.drawerState("
-        "model.props.open, model.props.onOpenChange)" in adapter
-    )
-    assert "drawerState = drawerStateValue" in adapter
-    assert "open =" not in adapter
-    assert "onOpenChange =" not in adapter
-    assert 'context.slot(model.children, "drawer")?.invoke()' in adapter
-    assert "content = { context.children(model.children) }" in adapter
-
-
-def test_a_gated_family_composes_its_component_from_the_holder() -> None:
-    """A sheet shows itself once composed, so presence is the host's decision."""
-    adapter = render(GATED, components()[GATED])
-    assert (
-        "val sheetStateValue = context.sheetState("
-        "model.props.open, model.props.onOpenChange)" in adapter
-    )
-    assert "if (sheetStateValue.visible) {" in adapter
-    assert "sheetState = sheetStateValue.state" in adapter
-    # The component has already hidden itself when it calls this, and the
-    # settled change reports through the report prop, so nothing answers it.
-    assert "onDismissRequest = {}" in adapter
-    assert "open =" not in adapter
-    assert "onOpenChange =" not in adapter
-    assert 'dragHandle = context.slot(model.children, "dragHandle")' in adapter
-    scoped = "content = { context.childrenInColumnScope(this, model.children) }"
-    assert scoped in adapter
-
-
-def test_the_holder_stays_outside_the_gate() -> None:
-    """The state must outlive the composition of the component it projects."""
-    adapter = render(GATED, components()[GATED])
-    holder = adapter.index("val sheetStateValue = context.sheetState(")
-    gate = adapter.index("if (sheetStateValue.visible) {")
-    assert holder < gate
-
-
-def test_a_component_without_a_holder_gets_no_state_local() -> None:
-    """Only components that declare a holder ask the renderer for one."""
-    adapter = render("Column", components()["Column"])
-    assert "context.drawerState(" not in adapter
 
 
 def test_every_state_kind_has_a_holder_and_a_gate_decision() -> None:

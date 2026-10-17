@@ -23,6 +23,7 @@ from typing import Any
 import pytest
 
 from pycompose.core.registry_types import TRANSIENT_KINDS
+from pycompose.schema.codegen.adapters import render
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
 
@@ -246,3 +247,40 @@ def test_the_runtime_registry_round_trips_the_transient() -> None:
         TransientRule.from_mapping(
             {**transient, "native": 3}, where=f"{STATEFUL}.transient"
         )
+
+
+SNACKBAR = {
+    "props": {
+        "message": {"type": "string", "required": True},
+        "actionLabel": {"type": "string", "nullable": True},
+        "serial": {"type": "integer", "required": True},
+        "onDismiss": {
+            "type": "actionId",
+            "payload": [{"name": "serial", "type": "integer"}],
+        },
+    },
+    "children": {"allowed": False},
+    "transient": {
+        "kind": "snackbar",
+        "native": "hostState",
+        "serial": "serial",
+        "occurrence": "onDismiss",
+    },
+}
+"""A snackbar host entry as the catalog will carry it, before the catalog does."""
+
+
+def test_the_adapter_requests_the_transient_with_every_prop() -> None:
+    """The host consumes all four inputs on the component's behalf."""
+    adapter = render("SnackbarHost", SNACKBAR)
+    assert (
+        "val hostStateValue = context.snackbar(model.id, "
+        "actionLabel = model.props.actionLabel, message = model.props.message, "
+        "onDismiss = model.props.onDismiss, serial = model.props.serial)" in adapter
+    )
+    assert "hostState = hostStateValue" in adapter
+    # No prop reaches the component itself: the host consumes them all.
+    component = adapter.split("SnackbarHost(")[1].split(")")[0]
+    assert "message" not in component
+    assert "serial" not in component
+    assert "onDismiss" not in component
