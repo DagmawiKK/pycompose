@@ -27,6 +27,7 @@ from pycompose.components.base import Component
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
+from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.state import State
 from pycompose.testing.helpers import component_screen, read_golden
 
@@ -118,6 +119,7 @@ def test_modifier_padding_keywords_build_the_side_form() -> None:
             {
                 "type": "padding",
                 "value": {
+                    "type": "PaddingValues",
                     "start": {"type": "Dp", "value": 16},
                     "end": {"type": "Dp", "value": 16},
                     "bottom": {"type": "Dp", "value": 8},
@@ -141,6 +143,7 @@ def test_modifier_padding_over_a_uniform_value_overrides_only_its_side() -> None
             {
                 "type": "padding",
                 "value": {
+                    "type": "PaddingValues",
                     "start": {"type": "Dp", "value": 8},
                     "top": {"type": "Dp", "value": 8},
                     "end": {"type": "Dp", "value": 8},
@@ -158,16 +161,36 @@ def test_modifier_padding_without_a_value_or_refusing_a_mixed_form_is_refused() 
         Modifier().padding({"start": {"type": "Dp", "value": 4}}, top=1)
 
 
-def test_the_wire_padding_dict_still_validates_directly() -> None:
+def test_the_wire_padding_object_matches_the_bundled_schema() -> None:
     padded = Spacer(
-        id="gap", modifier=Modifier().padding({"start": {"type": "Dp", "value": 16}})
+        id="gap",
+        modifier=Modifier().padding(
+            {"type": "PaddingValues", "start": {"type": "Dp", "value": 16}}
+        ),
     )
 
     assert padded.props.to_wire()["modifier"] == {
         "operations": [
-            {"type": "padding", "value": {"start": {"type": "Dp", "value": 16}}}
+            {
+                "type": "padding",
+                "value": {
+                    "type": "PaddingValues",
+                    "start": {"type": "Dp", "value": 16},
+                },
+            }
         ]
     }
+    # The host parses this same schema: an untagged side dict is not wire, so
+    # Python refuses it at construction rather than rendering a blank frame.
+    with pytest.raises(IrValidationError):
+        Modifier().padding({"start": {"type": "Dp", "value": 16}})
+    candidate = emit_ir(State(root=padded), SCHEMA_VERSION)
+    jsonschema.validate(
+        json.loads(to_json_bytes(candidate)),
+        json.loads(
+            (Path(__file__).parents[1] / "schema" / "ir.schema.json").read_text()
+        ),
+    )
 
 
 @pytest.mark.parametrize(

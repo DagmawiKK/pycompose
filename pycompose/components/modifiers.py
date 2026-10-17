@@ -10,7 +10,7 @@ from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.ir.validator import validate_modifier
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
-from pycompose.values import Dp
+from pycompose.values import Dp, PaddingValues
 
 _PADDING_SIDES = ("start", "top", "end", "bottom")
 
@@ -60,7 +60,8 @@ class Modifier:
         emitted, so ``padding(4, top=4)`` is exactly ``padding(4)``.
 
         Args:
-            value: Padding in dp for every side, or the wire padding dict.
+            value: Padding in dp for every side, or the tagged PaddingValues
+                wire object.
             top: Top padding in dp, winning over value and vertical.
             start: Start padding in dp, winning over value and horizontal.
             end: End padding in dp, winning over value and horizontal.
@@ -106,7 +107,7 @@ class Modifier:
             return self._append("padding", value=sides["bottom"])
         return self._append(
             "padding",
-            value={name: Dp(amount) for name, amount in sides.items()},
+            value=PaddingValues(**{name: Dp(amount) for name, amount in sides.items()}),
         )
 
     def fill_max_width(self, fraction: int | float = 1) -> Modifier:

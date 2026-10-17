@@ -48,7 +48,7 @@ def validate_value(
     family: str,
     definitions: Mapping[str, Mapping[str, object]],
 ) -> None:
-    """Validate a complete tagged or record value against its expected family.
+    """Validate a complete tagged value against its expected native family.
 
     Invalid JSON, fields, types or ranges propagate IrValidationError.
 
@@ -77,23 +77,6 @@ def _value(
     _require(isinstance(value, Mapping), "Compose value must be a tagged object")
     data = cast("Mapping[str, object]", value)
     name = data.get("type")
-    if name is None:
-        # A record has no constructor tag -- PaddingValues is {start, top,
-        # end, bottom}, not {"type": ...} -- so the family names it and its
-        # parameters are validated exactly as a tagged value's would be.
-        record = definitions.get(family)
-        _require(
-            record is not None and record.get("kind") == "record",
-            "value needs a constructor type",
-        )
-        assert record is not None
-        _record(
-            data,
-            cast("Mapping[str, Mapping[str, object]]", record["parameters"]),
-            definitions,
-            depth,
-        )
-        return
     _require(isinstance(name, str), "value needs a constructor type")
     spec = definitions.get(cast("str", name))
     _require(spec is not None and spec.get("family") == family, "wrong value family")
@@ -103,20 +86,6 @@ def _value(
     for key, rule in parameters.items():
         if key not in data:
             _require(not rule.get("required", False), f"missing value field: {key}")
-        else:
-            _parameter(data[key], rule, definitions, depth + 1)
-
-
-def _record(
-    data: Mapping[str, object],
-    parameters: Mapping[str, Mapping[str, object]],
-    definitions: Mapping[str, Mapping[str, object]],
-    depth: int,
-) -> None:
-    _require(set(data) <= set(parameters), "unknown record field")
-    for key, rule in parameters.items():
-        if key not in data:
-            _require(not rule.get("required", False), f"missing record field: {key}")
         else:
             _parameter(data[key], rule, definitions, depth + 1)
 
