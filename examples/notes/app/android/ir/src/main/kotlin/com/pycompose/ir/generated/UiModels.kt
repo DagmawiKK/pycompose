@@ -60,6 +60,9 @@ data class Card(
 data class ColumnProps(
     val `horizontalAlignment`: String = "start",
     override val `modifier`: JsonObject? = null,
+    val `offset`: Double? = null,
+    val `onScrollIdle`: String? = null,
+    val `scrollable`: Boolean? = null,
 ) : UiProps
 
 @Serializable
@@ -157,7 +160,9 @@ data class IconButton(
 
 @Serializable
 data class LazyColumnProps(
+    val `firstVisibleIndex`: Long? = null,
     override val `modifier`: JsonObject? = null,
+    val `onScrollIdle`: String? = null,
     val `verticalArrangement`: String = "top",
 ) : UiProps
 

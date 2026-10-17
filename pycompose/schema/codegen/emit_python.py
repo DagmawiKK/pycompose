@@ -7,6 +7,7 @@ the components a Compose host composes.
 import json
 import keyword
 import re
+import textwrap
 from typing import Any
 
 from pycompose.schema.codegen.literals import (
@@ -253,8 +254,9 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
             "",
             "        Args:",
             *(
-                f"            {field}: {description}"
+                line
                 for field, description in arguments.items()
+                for line in _docstring_arg(field, description)
             ),
         ]
     )
@@ -380,6 +382,26 @@ def _python_slot_body(spec: dict[str, Any], children: str) -> tuple[list[str], s
         )
     combined = "slotted" if children == "()" else "normalized + slotted"
     return lines, combined
+
+
+def _docstring_arg(field: str, description: str) -> list[str]:
+    """Render one constructor Args entry inside the 88-column budget.
+
+    A long prop name plus its fixed note can cross the formatter's line
+    limit, and a generated file must survive the same lint as a hand-written
+    one, so the entry wraps at a word boundary under the Args indent.
+
+    Args:
+        field: The constructor parameter's name.
+        description: Its one-line note.
+
+    Returns:
+        The entry's lines, continuations indented under the first.
+    """
+    wrapped = textwrap.wrap(f"{field}: {description}", width=72) or [f"{field}:"]
+    return [f"            {wrapped[0]}"] + [
+        f"                {rest}" for rest in wrapped[1:]
+    ]
 
 
 def _python_argument(

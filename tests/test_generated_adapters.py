@@ -18,6 +18,7 @@ from typing import Any
 import pytest
 
 from pycompose.schema.codegen.adapters import (
+    _held,
     is_mechanical,
     render,
     render_file,
@@ -244,8 +245,13 @@ def test_no_optional_prop_is_passed_through() -> None:
         block = render(name, entry)
         if not block:
             continue
-        state = entry.get("state") or {}
-        held = {state.get("value"), state.get("report")} - {None}
+        # Everything a state declaration holds -- the desired value, its
+        # report, the holder's constructor props and the attach gate -- is
+        # passed to a host holder that takes it nullable by design, and so is
+        # every prop of a transient component, whose request the host fills.
+        held = _held(entry.get("state"))
+        if entry.get("transient") is not None:
+            held |= set(entry["props"])
         for prop, spec in entry["props"].items():
             if prop in held:
                 continue

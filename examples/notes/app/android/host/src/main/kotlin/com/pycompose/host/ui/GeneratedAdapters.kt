@@ -83,8 +83,9 @@ object GeneratedAdapters {
             .register("Column") { node, modifier, context ->
                 val model = node as ColumnNode
                 val horizontalAlignmentValue: androidx.compose.ui.Alignment.Horizontal = com.pycompose.renderer.PropResolver.horizontal(model.props.horizontalAlignment).getOrDefault(androidx.compose.ui.Alignment.Start)
+                val scrollStateValue = context.scrollState(model.props.offset, model.props.onScrollIdle)
                 Column(
-                    modifier = modifier,
+                    modifier = scrollStateValue.attachTo(modifier, model.props.scrollable),
                     horizontalAlignment = horizontalAlignmentValue,
                     content = { context.childrenInColumnScope(this, model.children) },
                 )
@@ -158,9 +159,11 @@ object GeneratedAdapters {
             .register("LazyColumn") { node, modifier, context ->
                 val model = node as LazyColumnNode
                 val verticalArrangementValue: androidx.compose.foundation.layout.Arrangement.Vertical = com.pycompose.renderer.PropResolver.arrangement(model.props.verticalArrangement).getOrDefault(androidx.compose.foundation.layout.Arrangement.Top)
+                val stateValue = context.lazyListState(model.props.firstVisibleIndex, model.props.onScrollIdle)
                 LazyColumn(
                     modifier = modifier,
                     verticalArrangement = verticalArrangementValue,
+                    state = stateValue,
                     content = { items(model.children.unslotted(), key = { it.id }) { context.node(it) } },
                 )
             }

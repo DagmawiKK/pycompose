@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.22.0",
+  "schemaVersion": "1.23.0",
   "supportedSchemaVersions": [
     "1.0.0",
     "1.1.0",
@@ -23,7 +23,8 @@
     "1.19.0",
     "1.20.0",
     "1.21.0",
-    "1.22.0"
+    "1.22.0",
+    "1.23.0"
   ],
   "minLibraryVersion": "0.1.0",
   "components": {
@@ -350,12 +351,38 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "onScrollIdle": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "offset",
+              "type": "number"
+            }
+          ]
+        },
+        "scrollable": {
+          "type": "boolean"
         }
       },
       "children": {
         "allowed": true,
         "min": 0,
         "provides": "ColumnScope"
+      },
+      "reshaped": [
+        "offset",
+        "onScrollIdle",
+        "scrollable"
+      ],
+      "state": {
+        "native": "scrollState",
+        "kind": "scroll",
+        "value": "offset",
+        "report": "onScrollIdle"
       }
     },
     "DismissibleDrawerSheet": {
@@ -756,6 +783,21 @@
       "category": "lists",
       "stability": "stable",
       "props": {
+        "firstVisibleIndex": {
+          "type": "integer"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onScrollIdle": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "firstVisibleIndex",
+              "type": "integer"
+            }
+          ]
+        },
         "verticalArrangement": {
           "type": "enum",
           "values": [
@@ -768,14 +810,21 @@
           ],
           "decode": "arrangement",
           "default": "top"
-        },
-        "modifier": {
-          "type": "modifier"
         }
       },
       "children": {
         "allowed": true,
         "kind": "items"
+      },
+      "reshaped": [
+        "firstVisibleIndex",
+        "onScrollIdle"
+      ],
+      "state": {
+        "native": "state",
+        "kind": "lazyList",
+        "value": "firstVisibleIndex",
+        "report": "onScrollIdle"
       }
     },
     "LinearProgressIndicator": {
@@ -1194,6 +1243,111 @@
         "topBar": {
           "native": "topBar"
         }
+      }
+    },
+    "Slider": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "SliderColors",
+          "nativeDefault": "androidx.compose.material3.SliderDefaults.colors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onValueChangeFinished": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "number"
+            }
+          ]
+        },
+        "steps": {
+          "type": "integer",
+          "default": 0
+        },
+        "value": {
+          "type": "number"
+        },
+        "valueRange": {
+          "type": "value",
+          "valueType": "Range",
+          "required": true
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "value",
+        "onValueChangeFinished",
+        "valueRange",
+        "steps"
+      ],
+      "state": {
+        "native": "state",
+        "kind": "slider",
+        "value": "value",
+        "report": "onValueChangeFinished"
+      }
+    },
+    "SnackbarHost": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "stable",
+      "since": "1.23.0",
+      "props": {
+        "message": {
+          "type": "string",
+          "required": true
+        },
+        "actionLabel": {
+          "type": "string"
+        },
+        "serial": {
+          "type": "integer",
+          "required": true
+        },
+        "onDismiss": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "serial",
+              "type": "integer"
+            }
+          ]
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "message",
+        "actionLabel",
+        "serial",
+        "onDismiss"
+      ],
+      "transient": {
+        "kind": "snackbar",
+        "native": "hostState",
+        "serial": "serial",
+        "occurrence": "onDismiss"
       }
     },
     "Spacer": {
@@ -2117,6 +2271,30 @@
       },
       "native": {
         "call": "androidx.compose.foundation.layout.WindowInsets"
+      }
+    },
+    "Range": {
+      "family": "Range",
+      "kind": "operator",
+      "kotlinType": "kotlin.ranges.ClosedFloatingPointRange",
+      "since": "1.23.0",
+      "source": {
+        "language": "kotlin",
+        "operator": "..",
+        "evidence": "kotlin/ranges/Ranges.kt"
+      },
+      "parameters": {
+        "start": {
+          "type": "float",
+          "required": true
+        },
+        "end": {
+          "type": "float",
+          "required": true
+        }
+      },
+      "native": {
+        "operator": ".."
       }
     },
     "RoundedCornerShape": {

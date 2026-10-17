@@ -48,6 +48,7 @@ import com.pycompose.ir.generated.NavigationBarItemColorsValue
 import com.pycompose.ir.generated.OffsetValue
 import com.pycompose.ir.generated.PaddingValuesValue
 import com.pycompose.ir.generated.RadioButtonColorsValue
+import com.pycompose.ir.generated.RangeValue
 import com.pycompose.ir.generated.RichTooltipColorsValue
 import com.pycompose.ir.generated.SegmentedButtonColorsValue
 import com.pycompose.ir.generated.SelectableChipColorsValue
@@ -87,6 +88,7 @@ import com.pycompose.ir.generated.WireFontStyle
 import com.pycompose.ir.generated.WireFontWeight
 import com.pycompose.ir.generated.WireOffset
 import com.pycompose.ir.generated.WirePaddingValues
+import com.pycompose.ir.generated.WireRange
 import com.pycompose.ir.generated.WireRoundedCornerShape
 import com.pycompose.ir.generated.WireSize
 import com.pycompose.ir.generated.WireSolidColor
@@ -1244,6 +1246,20 @@ object ValueResolver {
                     disabledSelectedColor = if ("disabledSelectedColor" in value.supplied) value.disabledSelectedColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     disabledUnselectedColor = if ("disabledUnselectedColor" in value.supplied) value.disabledUnselectedColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
+            }
+        }
+
+    @Composable
+    fun range(value: JsonElement): Result<kotlin.ranges.ClosedFloatingPointRange> {
+        val parsed = runCatching { ValueContract.readRange(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(range(parsed))
+    }
+
+    @Composable
+    fun range(value: RangeValue): kotlin.ranges.ClosedFloatingPointRange =
+        when (value) {
+            is WireRange -> {
+                value.start.toFloat()..value.end.toFloat()
             }
         }
 

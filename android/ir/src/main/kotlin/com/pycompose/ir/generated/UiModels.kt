@@ -143,6 +143,9 @@ data class CircularProgressIndicator(
 data class ColumnProps(
     val `horizontalAlignment`: String = "start",
     override val `modifier`: JsonObject? = null,
+    val `offset`: Double? = null,
+    val `onScrollIdle`: String? = null,
+    val `scrollable`: Boolean? = null,
 ) : UiProps
 
 @Serializable
@@ -320,7 +323,9 @@ data class Image(
 
 @Serializable
 data class LazyColumnProps(
+    val `firstVisibleIndex`: Long? = null,
     override val `modifier`: JsonObject? = null,
+    val `onScrollIdle`: String? = null,
     val `verticalArrangement`: String = "top",
 ) : UiProps
 
@@ -509,6 +514,48 @@ data class Scaffold(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Scaffold"
+}
+
+@Serializable
+data class SliderProps(
+    val `colors`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onValueChangeFinished`: String? = null,
+    val `steps`: Long = 0L,
+    val `value`: Double? = null,
+    val `valueRange`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("Slider")
+data class Slider(
+    override val id: String,
+    override val props: SliderProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "Slider"
+}
+
+@Serializable
+data class SnackbarHostProps(
+    val `actionLabel`: String? = null,
+    val `message`: String,
+    override val `modifier`: JsonObject? = null,
+    val `onDismiss`: String? = null,
+    val `serial`: Long,
+) : UiProps
+
+@Serializable
+@SerialName("SnackbarHost")
+data class SnackbarHost(
+    override val id: String,
+    override val props: SnackbarHostProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "SnackbarHost"
 }
 
 @Serializable

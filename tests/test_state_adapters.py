@@ -83,7 +83,7 @@ SLIDER = {
 
 SCROLL = {
     "props": {
-        "offset": {"type": "number", "nullable": True},
+        "offset": {"type": "number"},
         "onScrollIdle": {"type": "actionId", "payload": []},
         "scrollable": {"type": "boolean"},
     },

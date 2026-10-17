@@ -290,7 +290,7 @@ data class WireverticalGradient(
 ) : BrushValue
 
 object ValueContract {
-    const val SCHEMA_VERSION = "1.22.0"
+    const val SCHEMA_VERSION = "1.23.0"
     private val json = Json { classDiscriminator = "type" }
     val specs: JsonObject = json.parseToJsonElement(
         // Joined from a flat list: a chain of + this long overflows

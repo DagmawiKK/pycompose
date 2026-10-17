@@ -38,6 +38,8 @@ __all__ = [
     "RadioButton",
     "Row",
     "Scaffold",
+    "Slider",
+    "SnackbarHost",
     "Spacer",
     "Switch",
     "Text",
@@ -338,6 +340,9 @@ class Column(Component):
         id: str | None = None,
         horizontal_alignment: _ColumnHorizontalAlignment | None = None,
         modifier: Modifier | None = None,
+        offset: int | float | None = None,
+        on_scroll_idle: str | None = None,
+        scrollable: bool | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered Column.
@@ -346,11 +351,20 @@ class Column(Component):
             id: Stable instance key; None derives the node's path id.
             horizontal_alignment: Native horizontalAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
+            offset: Native offset; None uses its default.
+            on_scroll_idle: Native onScrollIdle; None uses its default.
+            scrollable: Native scrollable; None uses its default.
             children: Ordered child nodes with stable keys.
         """
         props: dict[str, JsonValue] = {}
         if horizontal_alignment is not None:
             props["horizontal_alignment"] = horizontal_alignment
+        if offset is not None:
+            props["offset"] = offset
+        if on_scroll_idle is not None:
+            props["on_scroll_idle"] = on_scroll_idle
+        if scrollable is not None:
+            props["scrollable"] = scrollable
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
@@ -378,9 +392,11 @@ class DismissibleDrawerSheet(Component):
 
         Args:
             id: Stable instance key; None derives the node's path id.
-            drawer_container_color: Native drawerContainerColor; None uses its default.
+            drawer_container_color: Native drawerContainerColor; None uses its
+                default.
             drawer_shape: Native drawerShape; None uses its default.
-            drawer_tonal_elevation: Native drawerTonalElevation; None uses its default.
+            drawer_tonal_elevation: Native drawerTonalElevation; None uses its
+                default.
             modifier: Native modifier; None uses its default.
             window_insets: Native windowInsets; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -747,7 +763,9 @@ class LazyColumn(Component):
         self,
         *,
         id: str | None = None,
+        first_visible_index: int | None = None,
         modifier: Modifier | None = None,
+        on_scroll_idle: str | None = None,
         vertical_arrangement: _LazyColumnVerticalArrangement | None = None,
         children: Content = (),
         items: Content | None = None,
@@ -756,7 +774,9 @@ class LazyColumn(Component):
 
         Args:
             id: Stable instance key; None derives the node's path id.
+            first_visible_index: Native firstVisibleIndex; None uses its default.
             modifier: Native modifier; None uses its default.
+            on_scroll_idle: Native onScrollIdle; None uses its default.
             vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
             items: Alternative spelling for items children.
@@ -765,6 +785,10 @@ class LazyColumn(Component):
             IrValidationError: If slot and children are both set.
         """
         props: dict[str, JsonValue] = {}
+        if first_visible_index is not None:
+            props["first_visible_index"] = first_visible_index
+        if on_scroll_idle is not None:
+            props["on_scroll_idle"] = on_scroll_idle
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
         if items is not None:
@@ -884,9 +908,11 @@ class ModalDrawerSheet(Component):
 
         Args:
             id: Stable instance key; None derives the node's path id.
-            drawer_container_color: Native drawerContainerColor; None uses its default.
+            drawer_container_color: Native drawerContainerColor; None uses its
+                default.
             drawer_shape: Native drawerShape; None uses its default.
-            drawer_tonal_elevation: Native drawerTonalElevation; None uses its default.
+            drawer_tonal_elevation: Native drawerTonalElevation; None uses its
+                default.
             modifier: Native modifier; None uses its default.
             window_insets: Native windowInsets; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -1221,6 +1247,88 @@ class Scaffold(Component):
         super().__init__(
             id=id, children=normalized + slotted, modifier=modifier, **props
         )
+
+
+class Slider(Component):
+    """Native Slider; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Slider"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_value_change_finished: str | None = None,
+        steps: int | None = None,
+        value: int | float | None = None,
+        value_range: JsonValue,
+    ) -> None:
+        """Construct a registered Slider.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_value_change_finished: Native onValueChangeFinished; None uses its
+                default.
+            steps: Native steps; None uses its default.
+            value: Native value; None uses its default.
+            value_range: Required native valueRange.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if enabled is not None:
+            props["enabled"] = enabled
+        if on_value_change_finished is not None:
+            props["on_value_change_finished"] = on_value_change_finished
+        if steps is not None:
+            props["steps"] = steps
+        if value is not None:
+            props["value"] = value
+        props["value_range"] = value_range
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class SnackbarHost(Component):
+    """Native SnackbarHost; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SnackbarHost"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        action_label: str | None = None,
+        message: str,
+        modifier: Modifier | None = None,
+        on_dismiss: str | None = None,
+        serial: int,
+    ) -> None:
+        """Construct a registered SnackbarHost.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            action_label: Native actionLabel; None uses its default.
+            message: Required native message.
+            modifier: Native modifier; None uses its default.
+            on_dismiss: Native onDismiss; None uses its default.
+            serial: Required native serial.
+        """
+        props: dict[str, JsonValue] = {}
+        if action_label is not None:
+            props["action_label"] = action_label
+        props["message"] = message
+        if on_dismiss is not None:
+            props["on_dismiss"] = on_dismiss
+        props["serial"] = serial
+        super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
 class Spacer(Component):

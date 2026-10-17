@@ -151,6 +151,9 @@ class Column(Component):
         id: str | None = None,
         horizontal_alignment: _ColumnHorizontalAlignment | None = None,
         modifier: Modifier | None = None,
+        offset: int | float | None = None,
+        on_scroll_idle: str | None = None,
+        scrollable: bool | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered Column.
@@ -159,11 +162,20 @@ class Column(Component):
             id: Stable instance key; None derives the node's path id.
             horizontal_alignment: Native horizontalAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
+            offset: Native offset; None uses its default.
+            on_scroll_idle: Native onScrollIdle; None uses its default.
+            scrollable: Native scrollable; None uses its default.
             children: Ordered child nodes with stable keys.
         """
         props: dict[str, JsonValue] = {}
         if horizontal_alignment is not None:
             props["horizontal_alignment"] = horizontal_alignment
+        if offset is not None:
+            props["offset"] = offset
+        if on_scroll_idle is not None:
+            props["on_scroll_idle"] = on_scroll_idle
+        if scrollable is not None:
+            props["scrollable"] = scrollable
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
@@ -362,7 +374,9 @@ class LazyColumn(Component):
         self,
         *,
         id: str | None = None,
+        first_visible_index: int | None = None,
         modifier: Modifier | None = None,
+        on_scroll_idle: str | None = None,
         vertical_arrangement: _LazyColumnVerticalArrangement | None = None,
         children: Content = (),
         items: Content | None = None,
@@ -371,7 +385,9 @@ class LazyColumn(Component):
 
         Args:
             id: Stable instance key; None derives the node's path id.
+            first_visible_index: Native firstVisibleIndex; None uses its default.
             modifier: Native modifier; None uses its default.
+            on_scroll_idle: Native onScrollIdle; None uses its default.
             vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
             items: Alternative spelling for items children.
@@ -380,6 +396,10 @@ class LazyColumn(Component):
             IrValidationError: If slot and children are both set.
         """
         props: dict[str, JsonValue] = {}
+        if first_visible_index is not None:
+            props["first_visible_index"] = first_visible_index
+        if on_scroll_idle is not None:
+            props["on_scroll_idle"] = on_scroll_idle
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
         if items is not None:

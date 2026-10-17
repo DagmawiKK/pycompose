@@ -31,6 +31,8 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -60,6 +62,8 @@ import com.pycompose.ir.generated.NavigationBarItem as NavigationBarItemNode
 import com.pycompose.ir.generated.RadioButton as RadioButtonNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
+import com.pycompose.ir.generated.Slider as SliderNode
+import com.pycompose.ir.generated.SnackbarHost as SnackbarHostNode
 import com.pycompose.ir.generated.Spacer as SpacerNode
 import com.pycompose.ir.generated.Switch as SwitchNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
@@ -169,8 +173,9 @@ object GeneratedAdapters {
             .register("Column") { node, modifier, context ->
                 val model = node as ColumnNode
                 val horizontalAlignmentValue: androidx.compose.ui.Alignment.Horizontal = com.pycompose.renderer.PropResolver.horizontal(model.props.horizontalAlignment).getOrDefault(androidx.compose.ui.Alignment.Start)
+                val scrollStateValue = context.scrollState(model.props.offset, model.props.onScrollIdle)
                 Column(
-                    modifier = modifier,
+                    modifier = scrollStateValue.attachTo(modifier, model.props.scrollable),
                     horizontalAlignment = horizontalAlignmentValue,
                     content = { context.childrenInColumnScope(this, model.children) },
                 )
@@ -291,9 +296,11 @@ object GeneratedAdapters {
             .register("LazyColumn") { node, modifier, context ->
                 val model = node as LazyColumnNode
                 val verticalArrangementValue: androidx.compose.foundation.layout.Arrangement.Vertical = com.pycompose.renderer.PropResolver.arrangement(model.props.verticalArrangement).getOrDefault(androidx.compose.foundation.layout.Arrangement.Top)
+                val stateValue = context.lazyListState(model.props.firstVisibleIndex, model.props.onScrollIdle)
                 LazyColumn(
                     modifier = modifier,
                     verticalArrangement = verticalArrangementValue,
+                    state = stateValue,
                     content = { items(model.children.unslotted(), key = { it.id }) { context.node(it) } },
                 )
             }
@@ -437,6 +444,26 @@ object GeneratedAdapters {
                     snackbarHost = { context.slot(model.children, "snackbarHost")?.invoke() },
                     topBar = { context.slot(model.children, "topBar")?.invoke() },
                     content = { padding -> Column(Modifier.padding(padding)) { context.children(model.children) } },
+                )
+            }
+            .register("Slider") { node, modifier, context ->
+                val model = node as SliderNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.sliderColors(colorsWire).getOrThrow() else androidx.compose.material3.SliderDefaults.colors()
+                val stateValue = context.sliderState(model.props.value, model.props.onValueChangeFinished, model.props.valueRange, model.props.steps)
+                Slider(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    state = stateValue,
+                )
+            }
+            .register("SnackbarHost") { node, modifier, context ->
+                val model = node as SnackbarHostNode
+                val hostStateValue = context.snackbar(model.id, actionLabel = model.props.actionLabel, message = model.props.message, modifier = model.props.modifier, onDismiss = model.props.onDismiss, serial = model.props.serial)
+                SnackbarHost(
+                    modifier = modifier,
+                    hostState = hostStateValue,
                 )
             }
             .register("Spacer") { node, modifier, context ->
