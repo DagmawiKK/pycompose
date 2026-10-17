@@ -1,6 +1,5 @@
 <resources>
-    <style name="Base.Theme.PyCompose" parent="android:style/Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@color/pycompose_window_background</item>
-    </style>
-    <style name="Theme.PyCompose" parent="Base.Theme.PyCompose" />
+    <!-- The platform theme owns the window and splash background shown before
+         Compose draws; the night variant is what keeps a dark device dark. -->
+    <style name="Theme.PyCompose" parent="android:style/Theme.DeviceDefault.Light.NoActionBar" />
 </resources>

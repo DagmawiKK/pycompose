@@ -1,5 +1,0 @@
-<resources>
-    <!-- Material 3 baseline `background`/`surface` token, matching what Compose
-         draws: the starting window and splash must not flash a platform colour. -->
-    <color name="pycompose_window_background">#FEF7FF</color>
-</resources>

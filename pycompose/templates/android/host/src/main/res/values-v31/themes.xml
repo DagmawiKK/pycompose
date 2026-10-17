@@ -1,5 +1,0 @@
-<resources>
-    <style name="Theme.PyCompose" parent="Base.Theme.PyCompose">
-        <item name="android:windowSplashScreenBackground">@color/pycompose_window_background</item>
-    </style>
-</resources>
