@@ -131,12 +131,13 @@ def _snapshot_on_editor(notes: Any) -> dict[str, Any]:
     repo.store([Note(1, "Only", "hello")])
     container = AppContainer(Notes(repo))
     notes.actions.install_container(container)
+    notes.actions.install_view(notes.app.session_view)
     install_context(
         AppContext(actions=notes.actions, container=container, notes=container.notes)
     )
     assert Snapshot is not None
     surface = BridgeSurface(
-        Store(notes.build(route="note:1", restore="", container=container)),
+        Store(notes.app.build(route="note:1", restore="")),
         notes.actions,
     )
     return json.loads(surface.expose_latest_snapshot())

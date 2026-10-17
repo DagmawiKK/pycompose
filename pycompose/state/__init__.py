@@ -3,14 +3,19 @@
 from __future__ import annotations
 
 from pycompose.state.actions import ActionHandler, Actions, Registry
+from pycompose.state.app import App
+from pycompose.state.app_action import ShellResponse, respond
 from pycompose.state.app_state import AppState
 from pycompose.state.state import State, Store
 
 __all__ = [
     "ActionHandler",
     "Actions",
+    "App",
     "AppState",
     "Registry",
+    "ShellResponse",
     "State",
     "Store",
+    "respond",
 ]

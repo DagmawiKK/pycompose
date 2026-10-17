@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from pycompose.bridge.runtime import RuntimeSession
-from pycompose.errors import BridgeError
+from pycompose.errors import BridgeError, StateError
 
 
 def test_runtime_build_action_reload_and_bad_reload_retains_snapshot(
@@ -15,23 +15,29 @@ def test_runtime_build_action_reload_and_bad_reload_retains_snapshot(
 ) -> None:
     module = tmp_path / "device_app.py"
     module.write_text("""from pycompose.m3 import Text
-from pycompose.state import State, Actions
+from pycompose.state import Actions, App, AppState, State
+class Shell(AppState):
+    route: str = "home"
 actions = Actions()
-def build(*, route="home"):
-    return State(root=Text(id="text", text=route))
+def view(shell):
+    return Text(id="text", text=shell.route)
+app = App(state=Shell, view=view, route="route")
 actions.register("increment",
     lambda state, _: State(root=Text(id="text", text="changed")))
 """)
     monkeypatch.syspath_prepend(str(tmp_path))
     try:
-        session = RuntimeSession("device_app:build", "restored", debug=True)
+        session = RuntimeSession("device_app:app", "restored", debug=True)
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "restored"
         session.accept_action('{"actionId":"increment","payload":{}}')
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "changed"
         module.write_text("""from pycompose.m3 import Text
-from pycompose.state import State
-def build(*, route="home"):
-    return State(root=Text(id="text", text="reloaded"))
+from pycompose.state import App, AppState
+class Shell(AppState):
+    route: str = "home"
+def view(shell):
+    return Text(id="text", text="reloaded")
+app = App(state=Shell, view=view, route="route")
 """)
         session.reload("restored")
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "reloaded"
@@ -44,19 +50,20 @@ def build(*, route="home"):
         sys.modules.pop("device_app", None)
 
 
-def test_saved_bytes_reach_build_and_survive_a_debug_reload(
+def test_saved_bytes_reach_the_view_and_survive_a_debug_reload(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     module = tmp_path / "restore_app.py"
     module.write_text("""from pycompose.m3 import Text
-from pycompose.state import State
-def build(*, restore=""):
+from pycompose.state import App, State
+def view(restore):
     return State(root=Text(id="text", text=restore or "fresh"), data={"seen": restore})
+app = App(view=view)
 """)
     monkeypatch.syspath_prepend(str(tmp_path))
     try:
         saved = '{"tasks":[{"id":1}]}'
-        session = RuntimeSession("restore_app:build", "home", debug=True, restore=saved)
+        session = RuntimeSession("restore_app:app", "home", debug=True, restore=saved)
         assert json.loads(session.snapshot())["root"]["props"]["text"] == saved
         session.reload("home", restore=saved)
         assert json.loads(session.snapshot())["root"]["props"]["text"] == saved
@@ -64,67 +71,71 @@ def build(*, restore=""):
         sys.modules.pop("restore_app", None)
 
 
-def test_an_app_that_declares_no_restore_parameter_still_starts(
+def test_an_app_that_ignores_the_saved_bytes_still_starts(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     module = tmp_path / "plain_app.py"
     module.write_text("""from pycompose.m3 import Text
-from pycompose.state import State
-def build(*, route="home"):
-    return State(root=Text(id="text", text=route))
+from pycompose.state import App, State
+def view(restore):
+    return State(root=Text(id="text", text="home"))
+app = App(view=view)
 """)
     monkeypatch.syspath_prepend(str(tmp_path))
     try:
-        session = RuntimeSession("plain_app:build", "home", debug=True, restore="{}")
+        session = RuntimeSession("plain_app:app", "home", debug=True, restore="{}")
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "home"
     finally:
         sys.modules.pop("plain_app", None)
 
 
-def test_session_calls_the_container_factory_once_and_hands_it_to_every_build(
+def test_session_calls_the_container_factory_once_and_keeps_it_across_reloads(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     module = tmp_path / "container_app.py"
-    module.write_text("""from pycompose.m3 import Text
-from pycompose.state import State
+    module.write_text("""from pycompose import context
+from pycompose.m3 import Text
+from pycompose.state import App, State
 class Container:
     def __init__(self):
         self.label = "first"
 built = []
 def container():
-    built.append(1)
-    return Container()
-def build(*, container=None):
-    built.append(container)
-    return State(root=Text(id="text", text=container.label))
+    made = Container()
+    built.append(made)
+    return made
+def view(restore):
+    return State(root=Text(id="text", text=context().container.label))
+app = App(view=view, container=container)
 """)
     monkeypatch.syspath_prepend(str(tmp_path))
     try:
-        session = RuntimeSession("container_app:build", "home", debug=True)
-        app = sys.modules["container_app"]
-        shared = app.built[-1]
-        assert shared.label == "first"
-        assert len(app.built) == 2  # factory call, then the container handed to build
-        module.write_text("""from pycompose.m3 import Text
-from pycompose.state import State
+        session = RuntimeSession("container_app:app", "home", debug=True)
+        app_module = sys.modules["container_app"]
+        shared = app_module.built[0]
+        assert len(app_module.built) == 1  # only the factory ran, once
+        module.write_text("""from pycompose import context
+from pycompose.m3 import Text
+from pycompose.state import App, State
 class Container:
     def __init__(self):
         self.label = "second"
 built = []
 def container():
-    built.append(1)
-    return Container()
-def build(*, container=None):
-    built.append(container)
-    container.label = "reloaded"
-    return State(root=Text(id="text", text=container.label))
+    made = Container()
+    built.append(made)
+    return made
+def view(restore):
+    context().container.label = "reloaded"
+    return State(root=Text(id="text", text=context().container.label))
+app = App(view=view, container=container)
 """)
         session.reload("home")
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "reloaded"
         reloaded = sys.modules["container_app"]
-        assert reloaded.built[-1] is shared
-        # Only build appended: the fresh module's factory was never called.
-        assert len(reloaded.built) == 1
+        # The fresh module's factory was never called: the session retained
+        # the container built before the reload.
+        assert reloaded.built == []
         assert shared.label == "reloaded"
     finally:
         sys.modules.pop("container_app", None)
@@ -134,39 +145,34 @@ def test_a_failed_reload_keeps_the_original_container(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     module = tmp_path / "rollback_container_app.py"
-    module.write_text("""from pycompose.m3 import Text
-from pycompose.state import State
+    module.write_text("""from pycompose import context
+from pycompose.m3 import Text
+from pycompose.state import App, State
 calls = []
 def container():
     return object()
-def build(*, container=None):
-    calls.append(container)
+def view(restore):
+    calls.append(context().container)
     return State(root=Text(id="text", text="original"))
+app = App(view=view, container=container)
 """)
     monkeypatch.syspath_prepend(str(tmp_path))
     try:
-        session = RuntimeSession("rollback_container_app:build", "home", debug=True)
+        session = RuntimeSession("rollback_container_app:app", "home", debug=True)
         sys.modules["rollback_container_app"].calls.clear()
         module.write_text('raise RuntimeError("broken app")\n')
         session.reload("home")
         assert "broken app" in session.error()
-        module.write_text("""from pycompose.m3 import Text
-from pycompose.state import State
+        module.write_text("""from pycompose import context
+from pycompose.m3 import Text
+from pycompose.state import App, State
 calls = []
 def container():
     return object()
-def build(*, container=None):
-    calls.append(container)
+def view(restore):
+    calls.append(context().container)
     return State(root=Text(id="text", text="recovered"))
-""")
-        module.write_text("""from pycompose.m3 import Text
-from pycompose.state import State
-calls = []
-def container():
-    return object()
-def build(*, container=None):
-    calls.append(container)
-    return State(root=Text(id="text", text="recovered"))
+app = App(view=view, container=container)
 """)
         session.reload("home")
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "recovered"
@@ -180,17 +186,30 @@ def test_a_non_callable_container_declaration_fails_closed(
 ) -> None:
     module = tmp_path / "bad_container_app.py"
     module.write_text("""from pycompose.m3 import Text
-from pycompose.state import State
-container = object()
-def build():
+from pycompose.state import App, State
+def view(restore):
     return State(root=Text(id="text", text="hi"))
+app = App(view=view, container=object())
 """)
     monkeypatch.syspath_prepend(str(tmp_path))
     try:
-        with pytest.raises(BridgeError, match="zero-argument callable"):
-            RuntimeSession("bad_container_app:build", "home", debug=True)
+        with pytest.raises(StateError, match="zero-argument callable"):
+            RuntimeSession("bad_container_app:app", "home", debug=True)
     finally:
         sys.modules.pop("bad_container_app", None)
+
+
+def test_entrypoint_that_names_no_app_export_fails_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    module = tmp_path / "no_export_app.py"
+    module.write_text('label = "not an app"\n')
+    monkeypatch.syspath_prepend(str(tmp_path))
+    try:
+        with pytest.raises(BridgeError, match="App export"):
+            RuntimeSession("no_export_app:build", "home", debug=True)
+    finally:
+        sys.modules.pop("no_export_app", None)
 
 
 def test_failed_reload_restores_the_app_module_graph(
@@ -200,11 +219,12 @@ def test_failed_reload_restores_the_app_module_graph(
     helper.write_text('label = "original"\n')
     app = tmp_path / "rollback_app.py"
     app.write_text("""from pycompose.m3 import Text
-from pycompose.state import State, Actions
+from pycompose.state import Actions, App, State
 import device_helper
 actions = Actions()
-def build():
+def view(restore):
     return State(root=Text(id="text", text=device_helper.label))
+app = App(view=view)
 def increment(state, payload):
     import device_helper
     return State(root=Text(id="text", text=device_helper.label))
@@ -212,7 +232,7 @@ actions.register("increment", increment)
 """)
     monkeypatch.syspath_prepend(str(tmp_path))
     try:
-        session = RuntimeSession("rollback_app:build", "home", debug=True)
+        session = RuntimeSession("rollback_app:app", "home", debug=True)
         helper.write_text('label = "failed candidate"\n')
         app.write_text('import device_helper\nraise RuntimeError("broken")\n')
         session.reload("home")

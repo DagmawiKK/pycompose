@@ -1,50 +1,37 @@
-"""The view-model: the notes plus the shell become one snapshot.
+"""The view-model: the notes plus the shell become one screen.
 
 The notes are read from storage when a screen needs them, rather than carried in
 the snapshot. That is what Phase 3 bought: a screen rendering a thousand notes no
 longer re-encodes them on every keystroke, and the host's ``Bundle`` never sees
-them at all. Only the session shell crosses the boundary.
+them at all. Only the session shell crosses the boundary. The version counter
+and the effects are the framework's to carry, so a screen here is a pure
+function of shell plus notes.
 """
 
 from __future__ import annotations
 
-from typing import cast
-
 from notes_app.domain.models import Note
-from notes_app.domain.usecases import Notes
-from notes_app.state import LIST_ROUTE, Session, note_in, seeded_session
+from notes_app.state import Session, note_in
 from notes_app.views import editor_screen, list_screen
-from pycompose.core.effect import Effect
-from pycompose.errors import StateError
-from pycompose.state import State
+from pycompose.core.node import Node
 
-NOTES = "notes"
+__all__ = ["editing_note", "screen", "showing_list"]
 
 
-def snapshot(
-    session: Session,
-    notes: list[Note],
-    version: int,
-    effects: tuple[Effect, ...] = (),
-) -> State:
-    """Return the snapshot one screen of this state produces.
+def screen(session: Session, notes: list[Note]) -> Node:
+    """Return the screen one shell produces.
 
     Args:
         session: The session shell.
         notes: The notes to render, newest first.
-        version: Monotonic snapshot counter, advanced once per change.
-        effects: One-shot host requests to run once with this snapshot.
 
     Returns:
-        A State carrying the screen and the session shell.
+        The root declaration for this shell.
     """
     editing = editing_note(session, notes)
-    root = (
-        list_screen(id="screen", notes=notes, session=session)
-        if editing is None
-        else editor_screen(id="screen", note=editing, session=session)
-    )
-    return State(root=root, version=version, app=session, effects=effects)
+    if editing is None:
+        return list_screen(id="screen", notes=notes, session=session)
+    return editor_screen(id="screen", note=editing, session=session)
 
 
 def editing_note(session: Session, notes: list[Note]) -> Note | None:
@@ -75,43 +62,3 @@ def showing_list(session: Session, notes: list[Note]) -> bool:
         True for the list route and for a detail route with no live note.
     """
     return editing_note(session, notes) is None
-
-
-def held(notes: Notes) -> list[Note]:
-    """Return every note the use cases hold, newest first.
-
-    Args:
-        notes: What the app can do with notes.
-
-    Returns:
-        The notes to render.
-    """
-    return notes.list()
-
-
-def of(state: State) -> Session:
-    """Return the session shell a snapshot was built from.
-
-    Args:
-        state: The snapshot a transition starts from.
-
-    Returns:
-        The decoded shell, or a fresh one when the data is unusable. A corrupt
-        shell must not stop the app starting.
-    """
-    try:
-        return cast("Session", Session.codec.decode(state.data))
-    except StateError:
-        return seeded_session()
-
-
-__all__ = [
-    "LIST_ROUTE",
-    "Note",
-    "Session",
-    "editing_note",
-    "held",
-    "of",
-    "showing_list",
-    "snapshot",
-]

@@ -38,7 +38,7 @@ def _app_properties(project: Project, env: dict[str, str]) -> None:
     env["ORG_GRADLE_PROJECT_pycomposeVersionName"] = version_name
     env["ORG_GRADLE_PROJECT_pycomposeVersionCode"] = str(version_code)
     python = project.table("python")
-    entrypoint = python.get("entrypoint", "main:build")
+    entrypoint = python.get("entrypoint", "main:app")
     source = python.get("source_dir", "app")
     if (
         not isinstance(entrypoint, str)

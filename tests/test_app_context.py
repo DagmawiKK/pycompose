@@ -144,17 +144,17 @@ def test_the_notes_screens_no_longer_take_a_registry_argument() -> None:
     assert "actions" in inspect.signature(list_screen).parameters
 
 
-def test_the_notes_snapshot_takes_no_registry() -> None:
+def test_the_notes_screen_takes_no_registry() -> None:
     """It used to exist only to thread one down."""
     sys.path.insert(0, str(APP))
     try:
-        from notes_app.view_model import snapshot
+        from notes_app.view_model import screen
     finally:
         sys.path.remove(str(APP))
 
     import inspect
 
-    assert "actions" not in inspect.signature(snapshot).parameters
+    assert "actions" not in inspect.signature(screen).parameters
 
 
 def test_only_actions_that_reach_storage_still_declare_a_dependency() -> None:
@@ -193,8 +193,11 @@ def test_the_app_still_renders_with_a_context_installed() -> None:
 
     supplied = AppContainer(Notes(MemoryNotesRepo([])))
     main.actions.install_container(supplied)
+    main.actions.install_view(main.app.session_view)
     install_context(
         AppContext(actions=main.actions, container=supplied, notes=supplied.notes)
     )
-    surface = BridgeSurface(Store(main.build(container=supplied)), main.actions)
+    surface = BridgeSurface(
+        Store(main.app.build(route="notes", restore="")), main.actions
+    )
     assert surface.expose_latest_snapshot() is not None

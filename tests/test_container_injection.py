@@ -154,19 +154,20 @@ def test_the_app_s_actions_run_without_a_bridge(notes: Any) -> None:
     from notes_app.domain import Notes
     from notes_app.domain.models import Note
 
-    # A session installs both of these. This test stands in for one, and must
+    # A session installs all of this. This test stands in for one, and must
     # do it before build: a composable reached during the first render resolves
     # its registry from the context.
     supplied = AppContainer(Notes(MemoryNotesRepo([Note(1, "Only")])))
     notes.actions.install_container(supplied)
+    notes.actions.install_view(notes.app.session_view)
     install_context(
         AppContext(actions=notes.actions, container=supplied, notes=supplied.notes)
     )
-    start = notes.build(route="notes", restore="", container=supplied)
+    start = notes.app.build(route="notes", restore="")
 
     # Call the decorated action itself, the way a developer would in a test.
     delete = notes.actions._contracts["notes_app.actions.delete_note"]
-    delete.function(start, {"note_id": 1}, notes=supplied.notes)
+    delete(start, {"note_id": 1}, notes=supplied.notes)
 
 
 # ---------------------------------------------------------------------------
@@ -231,8 +232,9 @@ def test_a_session_refuses_an_app_whose_actions_want_a_container_it_declares_non
     (app_dir / "__init__.py").write_text("")
     (app_dir / "main.py").write_text(
         "from typing import TypedDict\n"
-        "from pycompose import AppContext, action, install_context\n"
-        "from pycompose.state import Actions, State\n"
+        "from pycompose import action\n"
+        "from pycompose.core import Node\n"
+        "from pycompose.state import Actions, App, State\n"
         "\n"
         "class Nothing(TypedDict):\n"
         "    pass\n"
@@ -243,18 +245,16 @@ def test_a_session_refuses_an_app_whose_actions_want_a_container_it_declares_non
         "\n"
         "actions = Actions(wants)\n"
         "\n"
-        "def build(*, route: str = '', restore: str = '') -> State:\n"
-        "    return state_placeholder()\n"
-        "\n"
-        "def state_placeholder() -> State:\n"
-        "    from pycompose.core import Node\n"
+        "def view(restore: str) -> State:\n"
         "    return State(root=Node(id='root', type='Text', props={}))\n"
+        "\n"
+        "app = App(view=view)\n"
     )
     sys.path.insert(0, str(tmp_path))
     try:
         # At construction, before a single frame: the whole point of the check.
         with pytest.raises(BridgeError, match="declares none"):
-            RuntimeSession("unwired.main:build", "notes", debug=True)
+            RuntimeSession("unwired.main:app", "notes", debug=True)
     finally:
         sys.path.remove(str(tmp_path))
         for name in [n for n in sys.modules if n.startswith("unwired")]:
@@ -270,9 +270,9 @@ def test_the_notes_app_starts_with_its_container_installed(notes: Any) -> None:
     scratch = Path(tempfile.mkdtemp())
     use_root(scratch)
     try:
-        session = RuntimeSession("main:build", "notes", debug=True)
+        session = RuntimeSession("main:app", "notes", debug=True)
         assert session.error() == ""
-        container = notes.container()
+        container = notes.app.container()
         # What the session installed, reached the way an action reaches it.
         assert container.notes.list() == []
         assert notes.actions.injected == ("notes",)

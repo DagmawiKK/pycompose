@@ -124,10 +124,13 @@ def test_an_empty_registry_names_nothing_rather_than_raising() -> None:
 APP_SOURCE = """from typing import TypedDict
 from pycompose import Registry
 from pycompose.m3 import Text
-from pycompose.state import State
+from pycompose.state import App, AppState, State
 
 class Nothing(TypedDict):
     pass
+
+class Shell(AppState):
+    route: str = "home"
 
 actions = Registry()
 
@@ -135,8 +138,10 @@ actions = Registry()
 def ping(state: State, payload: Nothing) -> State:
     return State(root=Text(id="text", text="pong"))
 
-def build(*, route: str = "", restore: str = "") -> State:
-    return State(root=Text(id="text", text=route))
+def view(shell: Shell) -> Text:
+    return Text(id="text", text=shell.route)
+
+app = App(state=Shell, view=view, route="route")
 """
 
 
@@ -188,7 +193,7 @@ def generated(request: pytest.FixtureRequest, tmp_path: Path) -> Any:
 
 def test_a_registry_that_actually_works_starts(generated: Any) -> None:
     generated(APP_SOURCE)
-    session = RuntimeSession("reg_app.main:build", "home", debug=True)
+    session = RuntimeSession("reg_app.main:app", "home", debug=True)
     assert session.error() == ""
     assert json.loads(session.snapshot())["root"]["props"]["text"] == "home"
 
@@ -204,7 +209,7 @@ def test_a_registry_built_somewhere_else_is_refused(generated: Any) -> None:
         "from typing import TypedDict\n"
         "from pycompose import Registry\n"
         "from pycompose.m3 import Text\n"
-        "from pycompose.state import Actions, State\n"
+        "from pycompose.state import Actions, App, State\n"
         "\n"
         "class Nothing(TypedDict):\n"
         "    pass\n"
@@ -218,24 +223,29 @@ def test_a_registry_built_somewhere_else_is_refused(generated: Any) -> None:
         "# The misspelling: the actions are here, the registry is not.\n"
         "actions = Actions()\n"
         "\n"
-        "def build(*, route: str = '', restore: str = '') -> State:\n"
-        "    return State(root=Text(id='text', text=route))\n",
+        "def view(restore: str) -> State:\n"
+        "    return State(root=Text(id='text', text='home'))\n"
+        "\n"
+        "app = App(view=view)\n",
         name="misnamed",
     )
     with pytest.raises(BridgeError, match="holds nothing"):
-        RuntimeSession("misnamed.main:build", "home", debug=True)
+        RuntimeSession("misnamed.main:app", "home", debug=True)
 
 
 def test_an_app_with_no_actions_at_all_still_starts(generated: Any) -> None:
     """Declaring nothing is legitimate; declaring something empty is not."""
     generated(
         "from pycompose.m3 import Text\n"
-        "from pycompose.state import State\n"
-        "def build(*, route: str = '', restore: str = '') -> State:\n"
-        "    return State(root=Text(id='text', text=route))\n",
+        "from pycompose.state import App, AppState\n"
+        "class Shell(AppState):\n"
+        "    route: str = ''\n"
+        "def view(shell: Shell) -> Text:\n"
+        "    return Text(id='text', text=shell.route)\n"
+        "app = App(state=Shell, view=view, route='route')\n",
         name="silent",
     )
-    session = RuntimeSession("silent.main:build", "home", debug=True)
+    session = RuntimeSession("silent.main:app", "home", debug=True)
     assert json.loads(session.snapshot())["root"]["props"]["text"] == "home"
 
 

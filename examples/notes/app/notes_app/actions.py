@@ -1,7 +1,11 @@
 """The transitions a user can trigger.
 
-Each handler is pure: it reads the snapshot, returns a new one, touches nothing
-else. Navigation is *requested* rather than performed — an action returns a
+Each handler is session-native: its first parameter is ``session``, the shell
+itself rather than the whole snapshot, and returning that shell — or
+``respond(shell, *effects)`` — is the whole of the transition. The version
+counter, the rebuilt screen and the shell encoding are the framework's work.
+
+Navigation is *requested* rather than performed — an action returns a
 ``navigate`` effect and the host echoes the destination back as
 ``on_route_changed`` — which keeps the boundary one-directional and means Python
 never learns what a route means on the device.
@@ -15,10 +19,10 @@ from typing import Literal, TypedDict
 
 from notes_app.domain import Notes
 from notes_app.state import LIST_ROUTE, Session, detail_route, note_in
-from notes_app.view_model import editing_note, of, showing_list, snapshot
-from pycompose import Registry, context
+from notes_app.view_model import editing_note, showing_list
+from pycompose import Registry
 from pycompose.core.effect import Effect
-from pycompose.state import State
+from pycompose.state import ShellResponse, respond
 
 
 class NoteId(TypedDict):
@@ -62,93 +66,64 @@ class Config(TypedDict):
     density: float
 
 
-def _next(
-    state: State,
-    session: Session,
-    *,
-    effects: tuple[Effect, ...] = (),
-) -> State:
-    """Return the next snapshot after a change.
-
-    The notes are read back from the repository rather than threaded through,
-    because they are not part of the snapshot at all -- only the shell crosses
-    the boundary. The route is deliberately untouched: a handler that wants a
-    different screen asks the host for one, and the host echoes it back as
-    ``on_route_changed``.
-
-    Args:
-        state: Snapshot before the transition.
-        session: The session shell after the transition.
-        effects: One-shot host requests to run once with this snapshot.
-
-    Returns:
-        The next snapshot, one version on.
-    """
-    notes = context().notes.list()
-    return snapshot(session, notes, state.version + 1, effects=effects)
-
-
 actions = Registry()
 
 
 @actions
 def new_note(
-    state: State,
+    session: Session,
     payload: Nothing,
     *,
     notes: Notes,
-) -> State:
+) -> Session | ShellResponse:
     """Create a note and ask the host to open it.
 
     Args:
-        state: Snapshot before the tap.
+        session: The session shell before the tap.
         payload: Empty; this command takes no event fields.
         notes: What the app can do with notes.
 
     Returns:
-        The next snapshot, carrying a navigate effect for the new note.
+        The unchanged shell, carrying a navigate effect for the new note.
     """
     note_id = notes.create()
-    return _next(
-        state,
-        of(state),
-        effects=(
-            Effect("haptic"),
-            Effect("navigate", {"route": detail_route(note_id)}),
-        ),
+    return respond(
+        session,
+        Effect("haptic"),
+        Effect("navigate", {"route": detail_route(note_id)}),
     )
 
 
 @actions
-def open_note(state: State, payload: NoteId, *, notes: Notes) -> State:
+def open_note(
+    session: Session,
+    payload: NoteId,
+    *,
+    notes: Notes,
+) -> Session | ShellResponse:
     """Open one note's editor.
 
     Args:
-        state: Snapshot before the tap.
+        session: The session shell before the tap.
         payload: Note id bound by the row that was tapped.
         notes: What the app can do with notes.
 
     Returns:
-        The next snapshot, carrying a navigate effect for that note.
+        The unchanged shell when the note is gone, else a navigate effect for
+        that note. The route itself is not moved here: the host echoes it back
+        as on_route_changed, so there is exactly one source of truth for what
+        is showing.
     """
-    session = of(state)
     note_id = payload["note_id"]
     if notes.get(note_id) is None:
-        # The row names a note that no longer exists. Staying put beats navigating
-        # to a destination the view-model would immediately bounce back from.
-        return _next(state, session)
-    # The route is not moved here. The host echoes it back as on_route_changed,
-    # so there is exactly one source of truth for what is showing and this
-    # session is never rebuilt.
-    return _next(
-        state,
-        session,
-        effects=(Effect("navigate", {"route": detail_route(note_id)}),),
-    )
+        # The row names a note that no longer exists. Staying put beats
+        # navigating to a destination the view-model would bounce back from.
+        return session
+    return respond(session, Effect("navigate", {"route": detail_route(note_id)}))
 
 
 @actions
-def on_route_changed(state: State, payload: Route) -> State:
+def on_route_changed(session: Session, payload: Route) -> Session:
     """Render the screen the host asked for.
 
     The host owns the route string and hands it back as an ordinary inbound
@@ -156,92 +131,95 @@ def on_route_changed(state: State, payload: Route) -> State:
     view-model outlive a screen change.
 
     Args:
-        state: Snapshot before the route change.
+        session: The session shell before the route change.
         payload: The destination the host is now showing.
 
     Returns:
-        The next snapshot for that route, or an unchanged one when it is not a
+        The shell for that route, or the unchanged one when it is not a
         destination this app knows.
     """
-    session = of(state)
     route = payload["route"]
     if route != LIST_ROUTE and note_in(route) is None:
         # An unknown route is not a screen. Staying put beats rendering nothing.
-        return _next(state, session)
-    return _next(state, session.evolve(route=route))
+        return session
+    return session.evolve(route=route)
 
 
 @actions
-def set_title(state: State, payload: Edit, *, notes: Notes) -> State:
+def set_title(
+    session: Session,
+    payload: Edit,
+    *,
+    notes: Notes,
+) -> Session:
     """Record the title field's current text.
 
     Args:
-        state: Snapshot before the keystroke.
+        session: The session shell before the keystroke.
         payload: Bound note id, plus event-supplied field text.
         notes: What the app can do with notes.
 
     Returns:
-        The next snapshot with the note retitled.
+        The unchanged shell; the note itself was retitled in the repository.
     """
-    session = of(state)
     if not _is_editing(session, payload["note_id"], notes):
-        return _next(state, session)
+        return session
     notes.rename(payload["note_id"], payload["value"])
-    return _next(state, session)
+    return session
 
 
 @actions
-def set_title_caret(state: State, payload: Caret, *, notes: Notes) -> State:
+def set_title_caret(session: Session, payload: Caret) -> Session:
     """Record where the caret sits in the title.
 
     The field is controlled, so this is not a nicety: without a caret the
     snapshot would send, the next keystroke would reset where the user left it.
 
     Args:
-        state: Snapshot before the caret moved.
+        session: The session shell before the caret moved.
         payload: Note id bound by the field that owns the caret.
-        notes: What the app can do with notes.
 
     Returns:
-        The next snapshot with the caret where it was left.
+        The shell with the caret where it was left.
     """
-    session = of(state)
-    return _next(state, session.evolve(title_caret=int(payload["value"])))
+    return session.evolve(title_caret=int(payload["value"]))
 
 
 @actions
-def set_body_caret(state: State, payload: Caret, *, notes: Notes) -> State:
+def set_body_caret(session: Session, payload: Caret) -> Session:
     """Record where the caret sits in the body.
 
     Args:
-        state: Snapshot before the caret moved.
+        session: The session shell before the caret moved.
         payload: Note id bound by the field that owns the caret.
-        notes: What the app can do with notes.
 
     Returns:
-        The next snapshot with the caret where it was left.
+        The shell with the caret where it was left.
     """
-    session = of(state)
-    return _next(state, session.evolve(body_caret=int(payload["value"])))
+    return session.evolve(body_caret=int(payload["value"]))
 
 
 @actions
-def set_body(state: State, payload: Edit, *, notes: Notes) -> State:
+def set_body(
+    session: Session,
+    payload: Edit,
+    *,
+    notes: Notes,
+) -> Session:
     """Record the body field's current text.
 
     Args:
-        state: Snapshot before the keystroke.
+        session: The session shell before the keystroke.
         payload: Bound note id, plus event-supplied field text.
         notes: What the app can do with notes.
 
     Returns:
-        The next snapshot with the note's text replaced.
+        The unchanged shell; the note's text was replaced in the repository.
     """
-    session = of(state)
     if not _is_editing(session, payload["note_id"], notes):
-        return _next(state, session)
+        return session
     notes.retext(payload["note_id"], payload["value"])
-    return _next(state, session)
+    return session
 
 
 def _is_editing(session: Session, note_id: int, notes: Notes) -> bool:
@@ -263,48 +241,49 @@ def _is_editing(session: Session, note_id: int, notes: Notes) -> bool:
 
 
 @actions
-def delete_note(state: State, payload: NoteId, *, notes: Notes) -> State:
+def delete_note(
+    session: Session,
+    payload: NoteId,
+    *,
+    notes: Notes,
+) -> Session | ShellResponse:
     """Delete one note and return to the list.
 
     Args:
-        state: Snapshot before the tap.
+        session: The session shell before the tap.
         payload: Note id bound by the control that was tapped.
         notes: What the app can do with notes.
 
     Returns:
-        The next snapshot without that note, and a request to return to the list.
+        The unchanged shell when the note is already gone, else a request to
+        return to the list.
     """
-    session = of(state)
     if notes.get(payload["note_id"]) is None:
-        return _next(state, session)
+        return session
     notes.delete(payload["note_id"])
-    return _next(
-        state,
+    return respond(
         session,
-        effects=(Effect("haptic"), Effect("navigate", {"route": LIST_ROUTE})),
+        Effect("haptic"),
+        Effect("navigate", {"route": LIST_ROUTE}),
     )
 
 
 @actions
-def go_back(state: State, payload: Nothing) -> State:
+def go_back(session: Session, payload: Nothing) -> Session | ShellResponse:
     """Return to the list from the editor.
 
     Args:
-        state: Snapshot before the tap.
+        session: The session shell before the tap.
         payload: Empty; this command takes no event fields.
 
     Returns:
-        The next snapshot, carrying a navigate effect for the list.
+        The unchanged shell, carrying a navigate effect for the list.
     """
-    return _next(
-        state,
-        of(state),
-        effects=(Effect("navigate", {"route": LIST_ROUTE}),),
-    )
+    return respond(session, Effect("navigate", {"route": LIST_ROUTE}))
 
 
 @actions
-def set_about(state: State, payload: About) -> State:
+def set_about(session: Session, payload: About) -> Session:
     """Show or hide the about sheet.
 
     The sheet's own ``onOpenChange`` reports what it settled on through this
@@ -313,34 +292,34 @@ def set_about(state: State, payload: About) -> State:
     assigns the value it was handed rather than toggling what it believed.
 
     Args:
-        state: Snapshot before the change.
+        session: The session shell before the change.
         payload: The desired visibility the control or the sheet stated.
 
     Returns:
-        The same screen with the sheet's visibility assigned.
+        The shell with the sheet's visibility assigned.
     """
-    return _next(state, of(state).evolve(about_open=payload["open"]))
+    return session.evolve(about_open=payload["open"])
 
 
 @actions
-def set_previews(state: State, payload: Toggle) -> State:
+def set_previews(session: Session, payload: Toggle) -> Session:
     """Show or hide the line of body text under each row's title.
 
     The switch reports the state it settled on, so the handler assigns what it
     was handed rather than toggling what it believed.
 
     Args:
-        state: Snapshot before the flip.
+        session: The session shell before the flip.
         payload: The value the switch is now showing.
 
     Returns:
-        The same screen, showing or hiding every row's preview.
+        The shell showing or hiding every row's preview.
     """
-    return _next(state, of(state).evolve(previews=payload["value"]))
+    return session.evolve(previews=payload["value"])
 
 
 @actions
-def set_listing(state: State, payload: Listing) -> State:
+def set_listing(session: Session, payload: Listing) -> Session:
     """Show every note, or only the ones carrying text.
 
     Each bar item bakes the filter it stands for into its own binding, so the
@@ -349,44 +328,47 @@ def set_listing(state: State, payload: Listing) -> State:
     whole list for a value it does not know rather than an empty screen.
 
     Args:
-        state: Snapshot before the tap.
+        session: The session shell before the tap.
         payload: The filter baked into the item that was tapped.
 
     Returns:
-        The same screen, listing under that filter.
+        The shell listing under that filter.
     """
-    session = of(state)
-    return _next(state, session.evolve(listing=payload["value"]))
+    return session.evolve(listing=payload["value"])
 
 
 @actions
-def on_back_requested(state: State, payload: Nothing, *, notes: Notes) -> State:
+def on_back_requested(
+    session: Session,
+    payload: Nothing,
+    *,
+    notes: Notes,
+) -> Session | ShellResponse:
     """Handle the system back gesture the way a NavController would.
 
     Args:
-        state: Snapshot before the gesture.
+        session: The session shell before the gesture.
         payload: Empty; the host sends nothing extra.
         notes: What the app can do with notes.
 
     Returns:
-        The list from anywhere but the list, or a snapshot asking the host to
-        close the app when there is nowhere left to go back to.
+        The unchanged shell, asking the host to close the app when there is
+        nowhere left to go back to, and to return to the list otherwise.
     """
-    session = of(state)
     if showing_list(session, notes.list()):
-        return _next(state, session, effects=(Effect("finish"),))
-    return _next(state, session, effects=(Effect("navigate", {"route": LIST_ROUTE}),))
+        return respond(session, Effect("finish"))
+    return respond(session, Effect("navigate", {"route": LIST_ROUTE}))
 
 
 @actions
-def on_config_changed(state: State, payload: Config) -> State:
+def on_config_changed(session: Session, payload: Config) -> Session:
     """Repaint when the device's appearance changes.
 
     Args:
-        state: Snapshot before the configuration changed.
+        session: The session shell before the configuration changed.
         payload: Orientation, dark mode, locale and density, from the host.
 
     Returns:
-        The next snapshot in the palette matching the new appearance.
+        The shell in the palette matching the new appearance.
     """
-    return _next(state, of(state).evolve(dark=payload["dark_mode"]))
+    return session.evolve(dark=payload["dark_mode"])

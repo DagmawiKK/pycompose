@@ -226,7 +226,7 @@ def test_the_runtime_starts_this_app_and_its_actions_work() -> None:
     scratch = Path(tempfile.mkdtemp())
     use_root(scratch)
     try:
-        session = RuntimeSession("main:build", "notes", debug=True)
+        session = RuntimeSession("main:app", "notes", debug=True)
     finally:
         sys.path.remove(str(APP))
         sys.modules.pop("main", None)
@@ -271,7 +271,7 @@ def test_the_app_survives_a_hot_reload_of_a_module_inside_its_package() -> None:
     use_root(Path(tempfile.mkdtemp()))
     FileNotesRepo().store([Note(*held) for held in SEEDED])
     try:
-        session = RuntimeSession("main:build", "notes", debug=True)
+        session = RuntimeSession("main:app", "notes", debug=True)
         assert "Notes" in [
             props["text"] for props in nodes(json.loads(session.snapshot()), "Text")
         ]

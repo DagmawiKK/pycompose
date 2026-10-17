@@ -31,7 +31,7 @@ android {
         buildConfigField(
             "String",
             "PYCOMPOSE_ENTRYPOINT",
-            "\"${providers.gradleProperty("pycomposeEntrypoint").getOrElse("main:build")}\"",
+            "\"${providers.gradleProperty("pycomposeEntrypoint").getOrElse("main:app")}\"",
         )
     }
     testOptions.unitTests.isIncludeAndroidResources = true

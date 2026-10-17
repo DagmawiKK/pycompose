@@ -85,10 +85,11 @@ class Host:
         self.follow_navigation = follow_navigation
         self.repo: Any = repo if repo is not None else a_store()
         self.container = AppContainer(Notes(self.repo))
-        # A real session installs both of these while resolving the app's
-        # factory. A test driving the surface directly stands in for it, so it
+        # A real session installs all of this while resolving the entry
+        # object. A test driving the surface directly stands in for one, so it
         # says so once, in one place.
         app.actions.install_container(self.container)
+        app.actions.install_view(app.app.session_view)
         install_context(
             AppContext(
                 actions=app.actions,
@@ -97,13 +98,7 @@ class Host:
             )
         )
         self._bridge = BridgeSurface(
-            Store(
-                app.build(
-                    route=route or "notes",
-                    restore=restore,
-                    container=self.container,
-                )
-            ),
+            Store(app.app.build(route=route or "notes", restore=restore)),
             app.actions,
         )
 

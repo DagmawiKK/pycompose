@@ -24,7 +24,7 @@ from __future__ import annotations
 import threading
 from typing import Any
 
-__all__ = ["AppContext", "context", "has_context", "install"]
+__all__ = ["AppContext", "carried", "context", "has_context", "install"]
 
 _lock = threading.RLock()
 _current: AppContext | None = None
@@ -126,3 +126,27 @@ def context() -> AppContext:
             "session. The session installs one when it starts."
         )
     return _current
+
+
+def carried(container: object | None) -> dict[str, object]:
+    """Return the public values an app container holds, ready to spread.
+
+    Read through ``dir`` rather than ``vars`` so a container using ``__slots__``
+    works as well as a plain one; an app should not have to know which the
+    session happened to prefer.
+
+    Args:
+        container: The app's container, or None when it declared none.
+
+    Returns:
+        Each public, non-callable attribute, by name.
+    """
+    if container is None:
+        return {}
+    return {
+        name: value
+        for name in dir(container)
+        if not name.startswith("_")
+        for value in (getattr(container, name),)
+        if not callable(value)
+    }

@@ -36,7 +36,7 @@ from pathlib import Path
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeApplicationId"] == "com.example.app_demo"
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeVersionCode"] == "1"
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeVersionName"] == "0.1.0"
-assert os.environ["ORG_GRADLE_PROJECT_pycomposeEntrypoint"] == "main:build"
+assert os.environ["ORG_GRADLE_PROJECT_pycomposeEntrypoint"] == "main:app"
 source = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeSourceDir"])
 assert source == Path("app").resolve()
 runtime = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"])

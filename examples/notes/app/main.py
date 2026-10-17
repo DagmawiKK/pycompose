@@ -1,7 +1,10 @@
 """Notes — a two-screen MVVM app written entirely in Python.
 
-The host calls :func:`build` once per process, hands back the route it restored
-and the app state it saved, and expects a :class:`~pycompose.state.State` back.
+The session finds :data:`app` in this module and runs it: the entry object
+owns the shell seed, the view, and the container factory, and it performs the
+restore dance — the host's bytes are decoded through the shell's own codec,
+and a save that is unreadable or unreadable-as-this-app falls back to the
+seed, so a corrupt save leaves a working app rather than a crash.
 
 Layout, bottom to top:
 
@@ -14,12 +17,14 @@ Layout, bottom to top:
 * ``notes_app/theme.py`` -- the palette, chosen from a host-reported fact.
 * ``notes_app/handlers.py`` -- the action references screens bind to.
 * ``notes_app/views/`` -- composables, which describe UI and nothing else.
-* ``notes_app/view_model.py`` -- shell plus repository become one snapshot.
-* ``notes_app/actions.py`` -- the transitions a user can trigger.
+* ``notes_app/view_model.py`` -- shell plus repository become one screen.
+* ``notes_app/actions.py`` -- the transitions a user can trigger. Each is
+  session-native: its first parameter is the shell, and returning the shell
+  (or ``respond(shell, *effects)``) is the whole of the transition.
 
 There is no ``storage.py``. Encoding the state and decoding it back is derived
-from the declarations, so the app never writes a codec and never learns that the
-canonical JSON freeze turns arrays into tuples.
+from the declarations, so the app never writes a codec and never learns that
+the canonical JSON freeze turns arrays into tuples.
 
 **Why the notes are not in the state.** ``restore`` travels through the host's
 ``SavedStateHandle``, which is a ``Bundle`` with a hard limit measured in
@@ -38,78 +43,37 @@ on screen.
 
 from __future__ import annotations
 
-import json
-from typing import cast
-
 from notes_app.actions import actions
-from notes_app.container import AppContainer
 from notes_app.container import build as build_container
-from notes_app.state import LIST_ROUTE, Session, seeded_session
-from notes_app.view_model import snapshot
+from notes_app.state import Session, seeded_session
+from notes_app.view_model import screen
 
-from pycompose.errors import StateError
-from pycompose.state import State
+from pycompose import context
+from pycompose.core.node import Node
+from pycompose.state import App
 
-__all__ = ["actions", "build", "container"]
-
-
-def container() -> AppContainer:
-    """Build the app's long-lived objects, once per process.
-
-    The session looks for a module-level factory under exactly this name, calls
-    it a single time, and hands the result to every ``build`` for the life of
-    the process -- including after a hot reload, which is the point: reopening a
-    file on every keystroke would become the app's dominant cost.
-
-    Returns:
-        The container this session will retain.
-    """
-    return build_container()
+__all__ = ["actions", "app"]
 
 
-def build(
-    *,
-    route: str = LIST_ROUTE,
-    restore: str = "",
-    container: AppContainer | None = None,
-) -> State:
-    """Create the first snapshot for a freshly started process.
+def view(session: Session) -> Node:
+    """Compose the screen this shell is showing.
+
+    The notes are read from the repository the context carries, which the
+    session installed before this runs — the same way a handler reaches a
+    use case, by name, from the ambient.
 
     Args:
-        route: The route the host restored from its own saved state. This is the
-            authority on which screen is showing, and it wins over the route
-            recorded in ``restore``.
-        restore: JSON this app published previously, handed straight back by the
-            host. Empty on a first run.
-        container: The app's long-lived objects. The session builds and installs
-            one when this is None, which is the normal path; a test passes its
-            own so nothing touches disk.
+        session: The shell after rehydration, with the host's route applied.
 
     Returns:
-        The first snapshot for the requested route.
+        The screen for this shell.
     """
-    # Only a direct call without one, which the session never makes.
-    supplied = container if container is not None else build_container()
-    return snapshot(_rehydrated(restore).evolve(route=route), supplied.notes.list(), 0)
+    return screen(session, context().notes.list())
 
 
-def _rehydrated(restore: str) -> Session:
-    """Return the shell the host's saved bytes describe.
-
-    Args:
-        restore: Canonical JSON from a previous snapshot, or empty on a first run.
-
-    Returns:
-        The restored shell, or a fresh one when the bytes are unusable. A corrupt
-        save leaves a working app rather than a crash.
-    """
-    if not restore:
-        return seeded_session()
-    try:
-        decoded = json.loads(restore)
-        return cast("Session", Session.codec.decode(decoded))
-    except (StateError, ValueError):
-        # Siblings, not parent and child: the parse raises ValueError and the
-        # codec raises StateError, and a save that is either unreadable or
-        # unreadable-as-this-app is the same problem to the user.
-        return seeded_session()
+app = App(
+    state=seeded_session,
+    view=view,
+    container=build_container,
+    route="route",
+)

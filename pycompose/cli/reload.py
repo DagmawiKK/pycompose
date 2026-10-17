@@ -11,8 +11,10 @@ from pathlib import Path
 from types import ModuleType
 
 from pycompose.cli.project import Project, ProjectError, project_path
+from pycompose.core.context import AppContext, carried
+from pycompose.core.context import install as install_context
 from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.state import State
+from pycompose.state import Actions, App
 
 
 class AppReloader:
@@ -22,7 +24,7 @@ class AppReloader:
         self._schema = schema
         config = project.table("python")
         directory = config.get("source_dir", "app")
-        entrypoint = config.get("entrypoint", "main:build")
+        entrypoint = config.get("entrypoint", "main:app")
         if (
             not isinstance(directory, str)
             or not isinstance(entrypoint, str)
@@ -102,7 +104,8 @@ class AppReloader:
             Complete canonical JSON, without timestamps or diagnostic metadata.
 
         Raises:
-            ProjectError: If the app entrypoint does not return State.
+            ProjectError: If the entrypoint names no ``App`` export, or the app
+                produces no valid snapshot.
         """
         # Timestamp-based bytecode can otherwise hide rapid, equal-length edits.
         for path in self.directory.rglob("*.py"):
@@ -128,12 +131,25 @@ class AppReloader:
         self._loaded = True
         module = importlib.import_module(self._module)
         self._modules()
-        state = getattr(module, self._function)()
-        if not isinstance(state, State):
+        app = getattr(module, self._function, None)
+        if not isinstance(app, App):
             raise ProjectError(
-                "app entrypoint must return State",
+                "entrypoint must name the module's App export",
                 entrypoint=f"{self._module}:{self._function}",
             )
+        # The preview stands in for a session: the container is built fresh on
+        # every snapshot, so an edited repository shows up, and the context is
+        # installed, so a first render reaches a use case exactly as it will on
+        # the device.
+        container = app.container() if app.container is not None else None
+        install_context(
+            AppContext(
+                actions=Actions(),
+                container=container,
+                **carried(container),
+            )
+        )
+        state = app.build(route="", restore="")
         result = validate_ir(emit_ir(state, self._schema), debug=True)
         if result.snapshot is None:
             raise ProjectError("app did not produce a valid snapshot")

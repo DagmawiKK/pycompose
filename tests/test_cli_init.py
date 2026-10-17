@@ -43,7 +43,7 @@ def test_init_creates_config_python_entrypoint_and_resource_directories(
         "version_name": "0.1.0",
         "version_code": 1,
     }
-    assert config["python"] == {"entrypoint": "main:build", "source_dir": "app"}
+    assert config["python"] == {"entrypoint": "main:app", "source_dir": "app"}
     assert config["resources"]["path"] == "resources"
     assert config["signing"]["store_password_env"] == "PYCOMPOSE_STORE_PASSWORD"
     assert config["signing"]["key_password_env"] == "PYCOMPOSE_KEY_PASSWORD"
@@ -142,7 +142,9 @@ def test_generated_python_entrypoint_emits_valid_ir(tmp_path: Path) -> None:
     assert config["app"]["application_id"] == "com.example.app_demo_app"
     script = (
         "import main\nfrom pycompose.ir import emit_ir, validate_ir, to_json\n"
-        "candidate = emit_ir(main.build(), '1.0.0')\n"
+        "candidate = emit_ir(\n"
+        f"    main.app.build(route='', restore=''), '{SCHEMA_VERSION}'\n"
+        ")\n"
         "assert validate_ir(candidate).snapshot is candidate\nprint(to_json(candidate))"
     )
     result = subprocess.run(

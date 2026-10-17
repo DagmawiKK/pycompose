@@ -133,7 +133,7 @@ def send(bridge: BridgeSurface, handler: Any, instance: str, **payload: Any) -> 
 def test_demo_builds_a_valid_snapshot_of_instance_scoped_bindings(
     demo: ModuleType,
 ) -> None:
-    state = demo.build()
+    state = demo.app.build(route="", restore="")
     bridge = BridgeSurface(Store(state), demo.actions)
     snapshot = json.loads(bridge.expose_latest_snapshot() or "{}")
     bindings = snapshot["metadata"]["actionBindings"]
@@ -157,7 +157,7 @@ def test_demo_builds_a_valid_snapshot_of_instance_scoped_bindings(
 
 
 def test_demo_effects_ride_the_add_snapshot_only(demo: ModuleType) -> None:
-    bridge = BridgeSurface(Store(demo.build()), demo.actions)
+    bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
 
     def effects() -> list[dict]:
         snapshot = json.loads(bridge.expose_latest_snapshot() or "{}")
@@ -174,7 +174,7 @@ def test_demo_effects_ride_the_add_snapshot_only(demo: ModuleType) -> None:
 
 
 def test_demo_adds_completes_filters_and_deletes_tasks(demo: ModuleType) -> None:
-    bridge = BridgeSurface(Store(demo.build()), demo.actions)
+    bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
     screen = Screen(bridge)
     assert screen.heading() == ["Tasks", "1 active, 1 done"]
     assert screen.titles() == ["Read the PyCompose plan", "Try the todo demo"]
@@ -210,7 +210,7 @@ def test_demo_adds_completes_filters_and_deletes_tasks(demo: ModuleType) -> None
 
 
 def test_demo_reports_empty_filters_without_crashing(demo: ModuleType) -> None:
-    bridge = BridgeSurface(Store(demo.build()), demo.actions)
+    bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
     screen = Screen(bridge)
     send(bridge, demo.set_filter, "done")
     assert screen.titles() == ["Read the PyCompose plan"]
@@ -233,7 +233,7 @@ def send_lifecycle(bridge: BridgeSurface, handler: Any, **payload: Any) -> None:
 def test_demo_receives_host_lifecycle_events_by_their_camel_case_name(
     demo: ModuleType,
 ) -> None:
-    bridge = BridgeSurface(Store(demo.build()), demo.actions)
+    bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
     screen = Screen(bridge)
 
     def summary() -> str:
@@ -257,7 +257,7 @@ def test_demo_receives_host_lifecycle_events_by_their_camel_case_name(
 def test_demo_rejects_events_that_break_the_declared_contract(
     demo: ModuleType,
 ) -> None:
-    bridge = BridgeSurface(Store(demo.build()), demo.actions)
+    bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
     screen = Screen(bridge)
     before = bridge.expose_latest_snapshot()
 
@@ -276,7 +276,7 @@ def test_demo_rejects_events_that_break_the_declared_contract(
 def test_demo_survives_process_death_by_rehydrating_saved_data(
     demo: ModuleType,
 ) -> None:
-    first = BridgeSurface(Store(demo.build()), demo.actions)
+    first = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
     screen = Screen(first)
     send(first, demo.set_draft, "draft", value="Survive rotation")
     send(first, demo.add_task, "add")
@@ -289,7 +289,9 @@ def test_demo_survives_process_death_by_rehydrating_saved_data(
 
     # The host hands the published bytes straight back to a rebuilt process.
     saved = json.loads(first.expose_latest_snapshot())["metadata"]["data"]
-    rebuilt = BridgeSurface(Store(demo.build(restore=json.dumps(saved))), demo.actions)
+    rebuilt = BridgeSurface(
+        Store(demo.app.build(route="", restore=json.dumps(saved))), demo.actions
+    )
     after = Screen(rebuilt)
     assert after.titles() == screen.titles()
     assert after.heading()[1] == screen.heading()[1]
@@ -299,7 +301,9 @@ def test_demo_survives_process_death_by_rehydrating_saved_data(
 
 def test_demo_boots_cleanly_from_data_it_cannot_use(demo: ModuleType) -> None:
     for unusable in ("", "not json", "[]", '{"tasks": "no"}', '{"tasks": [1, 2]}'):
-        rebuilt = BridgeSurface(Store(demo.build(restore=unusable)), demo.actions)
+        rebuilt = BridgeSurface(
+            Store(demo.app.build(route="", restore=unusable)), demo.actions
+        )
         assert Screen(rebuilt).titles() == [
             "Read the PyCompose plan",
             "Try the todo demo",
@@ -319,5 +323,7 @@ def test_demo_keeps_the_rendersable_tasks_from_a_partly_corrupt_save(
             ],
         }
     )
-    rebuilt = BridgeSurface(Store(demo.build(restore=saved)), demo.actions)
+    rebuilt = BridgeSurface(
+        Store(demo.app.build(route="", restore=saved)), demo.actions
+    )
     assert Screen(rebuilt).titles() == ["Good", "Also good"]

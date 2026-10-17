@@ -128,8 +128,9 @@ def test_imported_user_module_edits_reload_before_entrypoint_and_cache_is_fresh(
     helper.write_text('TITLE = "First"\n')
     (project / "app" / "main.py").write_text(
         "from screen_text import TITLE\nfrom pycompose.components import Text\n"
-        "from pycompose.state import State\ndef build():\n"
+        "from pycompose.state import App, State\ndef view(restore):\n"
         '    return State(root=Text(id="greeting", text=TITLE))\n'
+        "app = App(view=view)\n"
     )
     with DevServer(load_project(project)) as server:
         initial = session(server)

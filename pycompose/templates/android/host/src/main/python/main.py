@@ -44,7 +44,7 @@ from pycompose.m3 import (
     TextButton,
     TextField,
 )
-from pycompose.state import Actions, State
+from pycompose.state import Actions, App, State
 
 
 @composable
@@ -317,21 +317,24 @@ def replace_root(state: State, text: str) -> State:
     return screen(next_model, state.version + 1)
 
 
-def build(*, route: str = "list", restore: str = "") -> State:  # noqa: ARG001
+def view(restore: str) -> State:
     """Create the first snapshot, rehydrating whatever the host saved.
 
+    This app keeps its state as ordinary JSON rather than a session shell, so
+    it owns its own restore dance and the entry object hands it the host's
+    bytes untouched.
+
     Args:
-        route: The route the host restored. This app has one screen, so the
-            route is accepted and ignored rather than left unhandled -- the host
-            sends it to every app, and an app that does not declare it simply
-            never receives it.
-        restore: Canonical JSON of the previous snapshot's app data, or empty on
-            a first run. Only the host's own bytes are ever handed back.
+        restore: Canonical JSON of the previous snapshot's app data, or empty
+            on a first run. Only the host's own bytes are ever handed back.
 
     Returns:
         The first todo screen, restored when the host supplied app data.
     """
     return screen(rehydrated(restore), 0)
+
+
+app: App[Any] = App(view=view)
 
 
 def rehydrated(restore: str) -> dict[str, Any]:

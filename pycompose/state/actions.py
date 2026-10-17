@@ -6,6 +6,7 @@ from collections.abc import Callable, Mapping
 from typing import Any, cast
 
 from pycompose.core.action_binding import BindingSpec, check_payload
+from pycompose.core.node import Node
 from pycompose.core.props import to_camel_case
 from pycompose.errors import StateError
 from pycompose.state.app_action import CONTAINER, AppAction
@@ -21,13 +22,28 @@ class Actions:
         self._handlers: dict[str, ActionHandler] = {}
         self._definitions = {definition.name: definition for definition in definitions}
         self._container: object | None = None
+        self._view: Callable[[Any], Node] | None = None
         self._contracts: dict[str, AppAction[Any, Any]] = {}
         if len(self._definitions) != len(definitions):
             raise StateError("duplicate app action definitions")
         for definition in definitions:
-            self.register(definition.name, cast(ActionHandler, definition.function))
-            self._contracts[definition.name] = definition
-            self._alias(definition)
+            self._adopt(definition)
+
+    def _adopt(self, definition: AppAction[Any, Any]) -> None:
+        """Register one definition under its qualified id and its bare alias.
+
+        Dispatch routes through the definition rather than the bare function it
+        wraps, which is what lets a session-native action decode its shell and
+        rebuild its screen on every path -- the runtime's and a direct test's
+        alike -- without either of them knowing the difference.
+
+        Args:
+            definition: The action to register.
+        """
+        definition.view = self._view
+        self.register(definition.name, cast("ActionHandler", definition))
+        self._contracts[definition.name] = definition
+        self._alias(definition)
 
     @property
     def injected(self) -> tuple[str, ...]:
@@ -58,6 +74,21 @@ class Actions:
         """
         self._container = container
 
+    def install_view(self, view: Callable[[Any], Node]) -> None:
+        """Hand this registry the app's view, for session-native actions.
+
+        The app declares its view on the entry object, before any snapshot
+        exists, so the view can only arrive afterwards -- the same as the
+        container.
+
+        Args:
+            view: The app's shell renderer, called to rebuild the screen a
+                session-native action moved.
+        """
+        self._view = view
+        for definition in self._definitions.values():
+            definition.view = view
+
     def _alias(self, definition: AppAction[Any, Any]) -> None:
         """Also register an action under its bare camelCase name.
 
@@ -72,7 +103,7 @@ class Actions:
         _, _, bare = definition.name.rpartition(".")
         alias = to_camel_case(bare)
         if alias and alias not in self._handlers:
-            self.register(alias, cast(ActionHandler, definition.function))
+            self.register(alias, cast("ActionHandler", definition))
             self._contracts.setdefault(alias, definition)
 
     def validate_bindings(self, bindings: Mapping[str, BindingSpec]) -> None:
@@ -277,16 +308,17 @@ class Registry(Actions):
         for definition in self._definitions.values():
             self._by_name[definition.name.rpartition(".")[2]] = definition
 
-    def __call__(self, function: Callable[..., State]) -> AppAction[Any, Any]:
+    def __call__(self, function: Callable[..., Any]) -> AppAction[Any, Any]:
         """Define an action and register it.
 
         Args:
-            function: A transition, in the shape ``@action`` accepts.
+            function: A transition, in the shape ``@action`` accepts: a
+                State/payload function, or a session/payload one.
 
         Returns:
             The definition, so it can be bound and called directly.
         """
-        definition: AppAction[State, Any] = AppAction(function)
+        definition: AppAction[Any, Any] = AppAction(function)
         self.add(definition)
         return definition
 
@@ -315,9 +347,7 @@ class Registry(Actions):
             )
         self._definitions[definition.name] = definition
         self._by_name[bare] = definition
-        self._contracts[definition.name] = definition
-        self.register(definition.name, cast("ActionHandler", definition.function))
-        self._alias(definition)
+        self._adopt(definition)
 
     def names(self) -> tuple[str, ...]:
         """Return the bare names of the actions this registry holds.

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import importlib
-import inspect
 import re
 import sys
 from collections.abc import Callable
@@ -11,25 +10,25 @@ from contextlib import suppress
 from pathlib import Path
 from threading import current_thread
 from types import ModuleType
-from typing import cast
+from typing import Any, cast
 
 from pycompose import async_task
 from pycompose.bridge.api import BridgeSurface
-from pycompose.core.context import AppContext
+from pycompose.core.context import AppContext, carried
 from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
-from pycompose.state import Actions, State, Store
+from pycompose.state import Actions, App, Store
 from pycompose.state.app_action import AppAction
 
 
 class RuntimeSession:
     """Worker-owned app lifetime, with transactional debug rebuilds.
 
-    The session is the app's container owner: it resolves the app's declared
-    ``container`` factory exactly once and hands the resulting object to every
-    subsequent ``build``, including after a debug reload. Repositories and
-    other long-lived objects therefore live for the session rather than for one
-    import of the app module.
+    The session finds the entry module's ``App`` export and runs it: the app
+    owns the shell, the view and the container factory, and the session calls
+    that factory exactly once, retaining the result across debug reloads.
+    Repositories and other long-lived objects therefore live for the session
+    rather than for one import of the app module.
     """
 
     def __init__(
@@ -40,7 +39,7 @@ class RuntimeSession:
             is None
         ):
             raise BridgeError("invalid app entrypoint")
-        self._module, self._function = entrypoint.split(":")
+        self._module, self._export = entrypoint.split(":")
         self._debug = debug
         self._worker = current_thread()
         self._error = ""
@@ -51,37 +50,37 @@ class RuntimeSession:
         if current_thread() is not self._worker:
             raise BridgeError("runtime calls must run on the owning worker")
 
-    def _resolve_container(self, module: ModuleType) -> object | None:
-        """Adopt the app's declared container once, then retain it.
+    def _resolve_container(self, app: App[Any]) -> object | None:
+        """Adopt the entry object's container factory once, then retain it.
 
         Args:
-            module: Freshly imported app module for this build.
+            app: The entry object this build discovered.
 
         Returns:
             The session container, or None when the app declares none.
-
-        Raises:
-            BridgeError: If the app declares a container that is not callable.
         """
         if self._container is not None:
             return self._container
-        factory = getattr(module, "container", None)
-        if factory is None:
+        if app.container is None:
             return None
-        if not callable(factory):
-            raise BridgeError("app container must be a zero-argument callable")
-        self._container = factory()
+        self._container = app.container()
         return self._container
 
     def _build(self, route: str, restore: str = "") -> BridgeSurface:
         module = importlib.import_module(self._module)
-        build = getattr(module, self._function)
-        signature = inspect.signature(build)
-        container = self._resolve_container(module)
+        app = getattr(module, self._export, None)
+        if not isinstance(app, App):
+            raise BridgeError(
+                "entrypoint must name the module's App export",
+                entrypoint=f"{self._module}:{self._export}",
+            )
+        container = self._resolve_container(app)
         actions = self._resolve_actions(module)
-        # Before `build`, because a composable reached during the first render
-        # resolves its registry from this. The module is already imported, so
-        # both halves of the context exist by now.
+        if app.session_view is not None:
+            actions.install_view(app.session_view)
+        # Before `app.build`, because a composable reached during the first
+        # render resolves its registry from this. The module is already
+        # imported, so both halves of the context exist by now.
         # The context carries the registry plus whatever the app's own container
         # holds, so a render function reaches a use case the same way Compose
         # reaches anything else: by name, from the ambient.
@@ -89,22 +88,12 @@ class RuntimeSession:
             AppContext(
                 actions=actions,
                 container=container,
-                **_carried(container),
+                **carried(container),
             )
         )
         self._check_injection(actions, container)
         actions.install_container(container)
-        arguments: dict[str, object] = {}
-        if "route" in signature.parameters:
-            arguments["route"] = route
-        if "container" in signature.parameters:
-            arguments["container"] = container
-        if "restore" in signature.parameters and restore:
-            # Only ever the host's own saved bytes, handed straight back.
-            arguments["restore"] = restore
-        state = build(**arguments)
-        if not isinstance(state, State):
-            raise BridgeError("app build must return State")
+        state = app.build(route=route, restore=restore)
         surface = BridgeSurface(Store(state), actions, debug=self._debug)
         if surface.expose_latest_snapshot() is None:
             raise BridgeError("app build produced no valid snapshot")
@@ -331,27 +320,3 @@ def reload(route: str, restore: str = "") -> None:
     """
     if _session is not None:
         _session.reload(route, restore)
-
-
-def _carried(container: object | None) -> dict[str, object]:
-    """Return the public values an app container holds.
-
-    Read through ``dir`` rather than ``vars`` so a container using ``__slots__``
-    works as well as a plain one; an app should not have to know which the
-    runtime happened to prefer.
-
-    Args:
-        container: The app's container, or None when it declared none.
-
-    Returns:
-        Each public, non-callable attribute, by name.
-    """
-    if container is None:
-        return {}
-    return {
-        name: value
-        for name in dir(container)
-        if not name.startswith("_")
-        for value in (getattr(container, name),)
-        if not callable(value)
-    }

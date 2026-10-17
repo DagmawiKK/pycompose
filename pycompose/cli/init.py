@@ -73,7 +73,7 @@ def init_project(name: str, *, directory: Path) -> tuple[Path, bool, bool]:
     config = (
         f"[app]\nname = {quoted}\napplication_id = {app_id}\n"
         'version_name = "0.1.0"\nversion_code = 1\n\n'
-        '[python]\nentrypoint = "main:build"\nsource_dir = "app"\n\n'
+        '[python]\nentrypoint = "main:app"\nsource_dir = "app"\n\n'
         '[resources]\npath = "resources"\n\n'
         '[signing]\nkeystore = ""\nkey_alias = ""\n'
         'store_password_env = "PYCOMPOSE_STORE_PASSWORD"\n'

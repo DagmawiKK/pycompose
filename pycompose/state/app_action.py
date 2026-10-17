@@ -11,6 +11,7 @@ from typing import (
     NotRequired,
     Required,
     TypeVar,
+    cast,
     get_args,
     get_origin,
     get_type_hints,
@@ -18,9 +19,12 @@ from typing import (
 )
 
 from pycompose.core.action_binding import ActionBinding, BindingSpec
+from pycompose.core.effect import Effect
+from pycompose.core.node import Node
 from pycompose.core.props import to_camel_case
 from pycompose.core.registry_types import PropDef
 from pycompose.errors import StateError
+from pycompose.state.app_state import AppState
 from pycompose.state.state import State
 
 S = TypeVar("S", bound=State)
@@ -41,6 +45,19 @@ class AppAction(Generic[S, P]):
         parameters = list(signature.parameters)
         if len(parameters) < 2:
             raise StateError("action must accept State and one TypedDict payload")
+        first = hints.get(parameters[0])
+        if first is not None and inspect.isclass(first) and issubclass(first, AppState):
+            # Session-native: the handler's first parameter is the app shell,
+            # decoded from the snapshot, rather than the snapshot itself.
+            self.shell: type[AppState] | None = first
+        elif parameters[0] == "session":
+            raise StateError(
+                "a session-first action must annotate its shell type",
+                parameter=parameters[0],
+            )
+        else:
+            self.shell = None
+        self.view: Callable[[Any], Node] | None = None
         payload = hints.get(parameters[1])
         if payload is None or not is_typeddict(payload):
             raise StateError("action payload must be annotated with a TypedDict")
@@ -90,11 +107,13 @@ class AppAction(Generic[S, P]):
                 )
         return tuple(extra)
 
-    def __call__(self, state: S, payload: P, **injected: Any) -> S:
+    def __call__(self, state: State, payload: P, **injected: Any) -> State:
         """Run the transition directly, without going through the runtime.
 
         This is what makes a test a two-liner: the action is called as if it
         were the function it decorates, and nothing about the host is involved.
+        A session-native action runs the same way: its shell comes off the
+        snapshot, and the shell it returns becomes the next one, version on.
 
         Args:
             state: Snapshot before the transition.
@@ -103,8 +122,52 @@ class AppAction(Generic[S, P]):
 
         Returns:
             The handler's next State.
+
+        Raises:
+            StateError: If a session-native action's snapshot carries no
+                matching shell, its return is neither that shell nor a
+                respond, or no view was installed to rebuild its screen.
         """
-        return self.function(state, payload, **injected)
+        if self.shell is None:
+            return self.function(state, payload, **injected)
+        shell_type = self.shell
+        shell = state.app
+        if not isinstance(shell, shell_type):
+            raise StateError(
+                "a session action runs on a snapshot carrying its shell",
+                action_id=self.name,
+                app=None if shell is None else type(shell).__name__,
+            )
+        result: Any = self.function(cast("Any", shell), payload, **injected)
+        effects: tuple[Effect, ...]
+        if isinstance(result, ShellResponse):
+            if not isinstance(result.shell, shell_type):
+                raise StateError(
+                    "respond() must carry the shell the action declared",
+                    action_id=self.name,
+                )
+            shell, effects = result.shell, result.effects
+        elif isinstance(result, shell_type):
+            shell, effects = result, ()
+        else:
+            raise StateError(
+                "a session action returns its shell, or respond(shell, *effects)",
+                action_id=self.name,
+            )
+        if self.view is None:
+            raise StateError(
+                "a session action needs the app's view, installed once at startup",
+                action_id=self.name,
+            )
+        return State(
+            root=self.view(shell),
+            version=state.version + 1,
+            app=shell,
+            effects=effects,
+            slices=state.slices,
+            schema_version=state.schema_version,
+            min_library_version=state.min_library_version,
+        )
 
     def bind(self, *, id: str, **values: Any) -> ActionBinding:
         """Declare a stable binding, leaving event-supplied fields unbound.
@@ -152,3 +215,36 @@ def action(function: Callable[..., S]) -> AppAction[S, P]:
         A definition whose bind method creates data-only native references.
     """
     return AppAction(function)
+
+
+class ShellResponse:
+    """A shell plus the one-shot effects its transition requests."""
+
+    __slots__ = ("effects", "shell")
+
+    def __init__(self, shell: AppState, effects: tuple[Effect, ...]) -> None:
+        """Carry a transition's result.
+
+        Args:
+            shell: The shell after the transition.
+            effects: One-shot host requests, run once in order.
+        """
+        self.shell = shell
+        self.effects = effects
+
+
+def respond(shell: AppState, *effects: Effect) -> ShellResponse:
+    """Return a shell together with the one-shot effects it requests.
+
+    This is how a session-native action asks the host for something -- a
+    navigation, a toast, a haptic tick. Returning the shell alone requests
+    no effects at all.
+
+    Args:
+        shell: The shell after the transition.
+        *effects: One-shot host requests, run once in order with this snapshot.
+
+    Returns:
+        A response the action may return in place of its shell.
+    """
+    return ShellResponse(shell, tuple(effects))
