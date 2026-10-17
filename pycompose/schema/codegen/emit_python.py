@@ -170,7 +170,10 @@ def render_python_components(
         lines.insert(index, "from pycompose.core.values import UNSET, _Unset")
     for name, spec in sorted(registry["components"].items()):
         for field, prop in sorted(spec["props"].items()):
-            if prop["type"] == "enum" and "valueType" not in prop:
+            # Enum props annotate with their token scale even when they also
+            # carry a valueType: the wire value is the bare token string, and
+            # the alias autocompletes the scale the validator enforces.
+            if prop["type"] == "enum":
                 lines.extend(
                     [
                         f"{_python_type(name, field, prop)} = Literal[",
@@ -190,10 +193,10 @@ def _python_prop(name: str) -> str:
 
 
 def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
-    if "valueType" in prop:
-        return "JsonValue"
     if prop["type"] == "enum":
         return f"_{component}{name[:1].upper() + name[1:]}"
+    if "valueType" in prop:
+        return "JsonValue"
     return {
         "string": "str",
         "color": "str",

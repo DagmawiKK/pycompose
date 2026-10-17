@@ -158,6 +158,18 @@ def test_modifier_padding_without_a_value_or_refusing_a_mixed_form_is_refused() 
         Modifier().padding({"start": {"type": "Dp", "value": 4}}, top=1)
 
 
+def test_the_wire_padding_dict_still_validates_directly() -> None:
+    padded = Spacer(
+        id="gap", modifier=Modifier().padding({"start": {"type": "Dp", "value": 16}})
+    )
+
+    assert padded.props.to_wire()["modifier"] == {
+        "operations": [
+            {"type": "padding", "value": {"start": {"type": "Dp", "value": 16}}}
+        ]
+    }
+
+
 @pytest.mark.parametrize(
     "component,valid",
     [

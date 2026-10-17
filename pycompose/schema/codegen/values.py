@@ -183,6 +183,20 @@ def method_name(family: str) -> str:
     return family[:1].lower() + family[1:]
 
 
+def _parameter_alias(family: str, field: str) -> str:
+    """Name the Literal alias for one enumerated value parameter.
+
+    Args:
+        family: The owning value family, e.g. ``materialIcon``.
+        field: The parameter name, e.g. ``name``.
+
+    Returns:
+        The alias the generated annotation refers to, e.g.
+        ``_MaterialIconName``.
+    """
+    return f"_{family[:1].upper() + family[1:]}" f"{field[:1].upper() + field[1:]}"
+
+
 def resolver_call(family: str, source: str) -> str:
     """Call the generated value resolver for one family over wire data.
 
@@ -208,6 +222,15 @@ def render_python(registry: dict[str, Any]) -> str:
 
     specs = definitions(registry)
     raw = _runtime_contract(registry)
+    # An enumerated string parameter annotates with a Literal of the exact
+    # vocabulary the runtime validator enforces, so the IDE completes the
+    # token list from the same manifest that fail-closes on a wrong token.
+    aliases = sorted(
+        (_parameter_alias(name, field), rule["values"])
+        for name, spec in specs.items()
+        for field, rule in spec["parameters"].items()
+        if rule["type"] == "string" and rule.get("values")
+    )
     optional = any(
         not p.get("required") for s in specs.values() for p in s["parameters"].values()
     )
@@ -220,6 +243,7 @@ def render_python(registry: dict[str, Any]) -> str:
         "from __future__ import annotations",
         "",
         "import json",
+        *(["from typing import Literal"] if aliases else []),
         "",
         "from pycompose.core.props import JsonValue",
         f"from pycompose.core.values import {imports}",
@@ -234,6 +258,10 @@ def render_python(registry: dict[str, Any]) -> str:
         "",
         "",
     ]
+    for alias, vocabulary in aliases:
+        lines.append(f"{alias} = Literal[")
+        lines.extend(f"    {json.dumps(value)}," for value in vocabulary)
+        lines.extend(["]", "", ""])
     scalar = {
         "int": "int",
         "long": "int",
@@ -249,6 +277,8 @@ def render_python(registry: dict[str, Any]) -> str:
         for field in ordered:
             rule = params[field]
             annotation = scalar.get(rule["type"], "JsonValue")
+            if rule["type"] == "string" and rule.get("values"):
+                annotation = _parameter_alias(name, field)
             if rule.get("nullable"):
                 annotation += " | None"
             default = ""

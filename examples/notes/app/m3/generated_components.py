@@ -57,6 +57,16 @@ _RowVerticalAlignment = Literal[
     "bottom",
 ]
 
+_TextStyle = Literal[
+    "bodyLarge",
+    "bodyMedium",
+    "bodySmall",
+    "titleLarge",
+    "titleMedium",
+    "titleSmall",
+    "headlineMedium",
+]
+
 
 class Card(Component):
     """Native Card; props and defaults follow the component manifest."""
@@ -766,7 +776,7 @@ class Text(Component):
         locale: str | None = None,
         modifier: Modifier | None = None,
         resource: str | None = None,
-        style: JsonValue | None = None,
+        style: _TextStyle | None = None,
         text: str,
     ) -> None:
         """Construct a registered Text.
