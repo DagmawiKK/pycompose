@@ -26,7 +26,7 @@ class Component(Node):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         children: Sequence[Node] = (),
         modifier: Modifier | Mapping[str, JsonValue | FrozenJsonValue] | None = None,
         **props: JsonValue,
@@ -34,7 +34,11 @@ class Component(Node):
         """Construct immutable IR and validate this component, not its subtree.
 
         Args:
-            id: Stable sibling key or already-qualified node id.
+            id: Stable sibling key or already-qualified node id. None leaves
+                identity to the emitter, which derives a deterministic path id
+                -- only for a node nothing addresses: a component carrying an
+                action binding or an action-bearing modifier must stay
+                nameable, so it keeps an explicit id.
             children: Child nodes in render order.
             modifier: Ordered Modifier or a modifier wire object.
             **props: Snake_case props declared by the component registry.
@@ -45,7 +49,7 @@ class Component(Node):
         for name in props:
             if name != to_snake_case(name):
                 raise IrValidationError(
-                    "prop name is not snake_case", node_id=id, prop=name
+                    "prop name is not snake_case", node_id=id or "", prop=name
                 )
         wire = cast(
             "dict[str, JsonValue | FrozenJsonValue]", props_from_kwargs(**props)
@@ -55,11 +59,14 @@ class Component(Node):
                 modifier.values if isinstance(modifier, Modifier) else modifier
             )
         super().__init__(
-            id=id, type=self.component_type, props=Props(wire), children=children
+            id=id or "", type=self.component_type, props=Props(wire), children=children
         )
         validate_component(self)
         keys: set[str] = set()
         for child in self.children:
+            if not child.id:
+                # The emitter derives these ids; they are not sibling keys.
+                continue
             if child.id in keys:
                 raise IrValidationError("duplicate child key", node_id=id, key=child.id)
             keys.add(child.id)

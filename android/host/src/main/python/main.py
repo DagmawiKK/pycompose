@@ -72,7 +72,6 @@ def task_row(*, task_id: int, title: str, done: bool) -> Node:
                 ),
             ),
             Text(
-                id="title",
                 text=title,
                 style="bodyLarge",
                 modifier=Modifier().fill_max_width(0.7),
@@ -112,7 +111,6 @@ def todo_app(*, tasks: list[Any], draft: str, selected: str, summary: str) -> No
     if not rows:
         rows = [
             Text(
-                id="empty",
                 text=EMPTY_MESSAGES[selected],
                 style="bodyMedium",
                 modifier=Modifier().padding(8),
@@ -121,7 +119,7 @@ def todo_app(*, tasks: list[Any], draft: str, selected: str, summary: str) -> No
     chips: list[Node] = []
     for index, (value, label) in enumerate(FILTERS):
         if index:
-            chips.append(Spacer(id=f"gap_{index}", modifier=Modifier().size(8)))
+            chips.append(Spacer(modifier=Modifier().size(8)))
         chips.append(
             FilterChip(
                 id=value,
@@ -136,13 +134,12 @@ def todo_app(*, tasks: list[Any], draft: str, selected: str, summary: str) -> No
         content=Column(
             id="body",
             children=[
-                Text(id="title", text="Tasks", style="titleLarge"),
+                Text(text="Tasks", style="titleLarge"),
                 Text(
-                    id="summary",
                     text=summary,
                     style="bodySmall",
                 ),
-                Spacer(id="gap_entry", modifier=Modifier().size(12)),
+                Spacer(modifier=Modifier().size(12)),
                 Row(
                     id="entry",
                     vertical_alignment="center",
@@ -154,7 +151,7 @@ def todo_app(*, tasks: list[Any], draft: str, selected: str, summary: str) -> No
                             on_value_change=set_draft.bind(id="draft"),
                             modifier=Modifier().fill_max_width(0.7),
                         ),
-                        Spacer(id="gap_add", modifier=Modifier().size(8)),
+                        Spacer(modifier=Modifier().size(8)),
                         Button(
                             id="add",
                             text="Add",
@@ -163,9 +160,9 @@ def todo_app(*, tasks: list[Any], draft: str, selected: str, summary: str) -> No
                         ),
                     ],
                 ),
-                Spacer(id="gap_filters", modifier=Modifier().size(12)),
+                Spacer(modifier=Modifier().size(12)),
                 Row(id="filters", children=chips),
-                Spacer(id="gap_list", modifier=Modifier().size(12)),
+                Spacer(modifier=Modifier().size(12)),
                 LazyColumn(
                     id="tasks",
                     items=rows,

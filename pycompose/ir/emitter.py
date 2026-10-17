@@ -14,6 +14,7 @@ from pycompose.core.ids import ROOT_ID, IdRegistry, child_id
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
 from pycompose.core.traversal import walk_nodes
+from pycompose.errors import IrValidationError
 from pycompose.ir.bindings import lower_bindings
 from pycompose.ir.data import lower_data
 from pycompose.ir.effects import lower_effects
@@ -73,13 +74,23 @@ def _emit_node(node: Node, node_id: str, ids: IdRegistry) -> Node:
         if entering:
             qualified = node_id
             if frames:
-                parent_id = frames[-1][0]
-                # Full-path ids stay stable; local ids become sibling keys.
-                qualified = (
-                    source.id
-                    if source.id.startswith(f"{parent_id}.")
-                    else child_id(parent_id, source.id)
-                )
+                parent_id, collected = frames[-1]
+                if source.id:
+                    # Full-path ids stay stable; local ids become sibling keys.
+                    qualified = (
+                        source.id
+                        if source.id.startswith(f"{parent_id}.")
+                        else child_id(parent_id, source.id)
+                    )
+                else:
+                    # An auto node: nothing can name it, so its position
+                    # among its siblings is its identity.
+                    if _addressable(source):
+                        raise IrValidationError(
+                            "a component with bindings needs an explicit id",
+                            node_type=source.type,
+                        )
+                    qualified = child_id(parent_id, len(collected))
             ids.claim(qualified, node_type=source.type)
             frames.append((qualified, []))
         else:
@@ -102,3 +113,41 @@ def _emit_node(node: Node, node_id: str, ids: IdRegistry) -> Node:
             if frames:
                 frames[-1][1].append(result)
     return result
+
+
+def _addressable(node: Node) -> bool:
+    """Report whether anything can name this node.
+
+    An action prop -- bound or a raw action id -- or a modifier operation
+    carrying one makes the node addressable: native fast values and effect
+    targets key on its id, so a positional identity would reattach state to
+    the wrong element after a list reorder.
+
+    Args:
+        node: Candidate node with no id of its own.
+
+    Returns:
+        ``True`` when the node must keep an explicit id.
+    """
+    definition = REGISTRY.components.get(node.type)
+    if definition is not None and any(
+        node.props.get(name) is not None
+        for name, rule in definition.props.items()
+        if rule.type == "actionId"
+    ):
+        return True
+    modifier = node.props.get("modifier")
+    if isinstance(modifier, Mapping):
+        operations = modifier.get("operations", ())
+        if isinstance(operations, list | tuple):
+            for operation in operations:
+                if not isinstance(operation, Mapping):
+                    continue
+                props = REGISTRY.modifiers.get(str(operation.get("type")))
+                if props is not None and any(
+                    name in operation
+                    for name, rule in props.items()
+                    if rule.type == "actionId"
+                ):
+                    return True
+    return False

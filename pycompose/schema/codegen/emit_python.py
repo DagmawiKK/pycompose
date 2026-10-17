@@ -239,7 +239,7 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
         "    def __init__(",
         "        self,",
         "        *,",
-        "        id: str,",
+        "        id: str | None = None,",
     ]
     signature, arguments = _python_signature(name, spec)
     lines.extend(signature)
@@ -325,7 +325,7 @@ def _python_signature(
         Signature lines, then one description per parameter.
     """
     lines: list[str] = []
-    arguments = {"id": "Stable instance key."}
+    arguments = {"id": "Stable instance key; None derives the node's path id."}
     for field, prop in sorted(spec["props"].items()):
         python_name = _python_prop(field)
         annotation, description = _python_argument(name, field, prop)

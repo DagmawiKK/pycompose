@@ -35,11 +35,19 @@ class _NodeFrame:
 
 
 class _Validation:
-    def __init__(self, debug: bool, schema_version: str = SCHEMA_VERSION) -> None:
+    def __init__(
+        self,
+        debug: bool,
+        schema_version: str = SCHEMA_VERSION,
+        derived_ids: bool = False,
+    ) -> None:
         from pycompose.ir.validator import ValidationIssue
 
         self.debug = debug
         self.schema_version = schema_version
+        # Construction accepts an empty id: the emitter derives one from the
+        # node's path before the snapshot boundary, where ids are mandatory.
+        self.derived_ids = derived_ids
         self.action_ids: frozenset[str] = frozenset()
         self.issues: list[ValidationIssue] = []
         self.ids: set[str] = set()
@@ -85,7 +93,7 @@ class _Validation:
     def identity(self, node: Node) -> bool:
         if (
             not isinstance(node.id, str)
-            or not node.id
+            or (not node.id and not self.derived_ids)
             or not isinstance(node.type, str)
             or not node.type
         ):
@@ -97,10 +105,11 @@ class _Validation:
         except IrValidationError:
             self.report("invalid node identity", node)
             return False
-        if node.id in self.ids:
+        if node.id and node.id in self.ids:
             self.report("duplicate node id", node)
             return False
-        self.ids.add(node.id)
+        if node.id:
+            self.ids.add(node.id)
         return True
 
     def prepare(self, node: Node) -> _NodeFrame | None:

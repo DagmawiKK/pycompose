@@ -34,9 +34,14 @@ def test_props_is_frozen_and_mapping_like() -> None:
     assert len(props) == 1
 
 
-def test_node_rejects_empty_id_with_context() -> None:
+def test_node_accepts_an_empty_id_for_the_emitter_to_derive() -> None:
+    # An empty id marks a display node: the emitter assigns its path id.
+    assert Node(id="", type="Text").id == ""
+
+
+def test_node_rejects_a_non_string_id_with_context() -> None:
     with pytest.raises(IrError) as excinfo:
-        Node(id="", type="Text")
+        Node(id=None, type="Text")  # type: ignore[arg-type]
     assert "node_type='Text'" in str(excinfo.value)
 
 

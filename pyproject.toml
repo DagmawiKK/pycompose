@@ -62,6 +62,7 @@ ignore = ["PLR0913", "PLR2004"]
 "examples/**/actions.py" = ["ARG001"]
 # Handlers here exist to be introspected, not run. An unused parameter is the
 # point: it is what proves the signature is parsed and nothing else is.
+"tests/test_auto_ids.py" = ["ARG001"]
 "tests/test_container_injection.py" = ["ARG001"]
 # Same reason: these actions exist to be counted and named, not dispatched.
 "tests/test_registry.py" = ["ARG001"]

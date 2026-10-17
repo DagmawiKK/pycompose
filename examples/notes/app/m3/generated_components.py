@@ -67,7 +67,7 @@ class Card(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         colors: JsonValue | None = None,
         elevation: JsonValue | None = None,
@@ -84,7 +84,7 @@ class Card(Component):
         """Construct a registered Card.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             colors: Native colors; None uses its default.
             elevation: Native elevation; None uses its default.
@@ -138,7 +138,7 @@ class Column(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         horizontal_alignment: _ColumnHorizontalAlignment | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -146,7 +146,7 @@ class Column(Component):
         """Construct a registered Column.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             horizontal_alignment: Native horizontalAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -167,7 +167,7 @@ class FloatingActionButton(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         container_color: JsonValue | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
@@ -182,7 +182,7 @@ class FloatingActionButton(Component):
         """Construct a registered FloatingActionButton.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             elevation: Native elevation; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -230,7 +230,7 @@ class HorizontalDivider(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         color: JsonValue | None = None,
         modifier: Modifier | None = None,
         thickness: int | float | None = None,
@@ -238,7 +238,7 @@ class HorizontalDivider(Component):
         """Construct a registered HorizontalDivider.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             color: Native color; None uses its default.
             modifier: Native modifier; None uses its default.
             thickness: Native thickness; None uses its default.
@@ -260,7 +260,7 @@ class Icon(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         content_description: str | None,
         image_vector: JsonValue,
         modifier: Modifier | None = None,
@@ -269,7 +269,7 @@ class Icon(Component):
         """Construct a registered Icon.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             content_description: Required native contentDescription.
             image_vector: Required native imageVector.
             modifier: Native modifier; None uses its default.
@@ -292,7 +292,7 @@ class IconButton(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
@@ -306,7 +306,7 @@ class IconButton(Component):
         """Construct a registered IconButton.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -351,7 +351,7 @@ class LazyColumn(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         modifier: Modifier | None = None,
         vertical_arrangement: _LazyColumnVerticalArrangement | None = None,
         children: Content = (),
@@ -360,7 +360,7 @@ class LazyColumn(Component):
         """Construct a registered LazyColumn.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -392,7 +392,7 @@ class LinearProgressIndicator(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         color: JsonValue | None = None,
         modifier: Modifier | None = None,
         progress: int | float,
@@ -401,7 +401,7 @@ class LinearProgressIndicator(Component):
         """Construct a registered LinearProgressIndicator.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             color: Native color; None uses its default.
             modifier: Native modifier; None uses its default.
             progress: Required native progress.
@@ -425,7 +425,7 @@ class ModalBottomSheet(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         modifier: Modifier | None = None,
         on_open_change: str | None = None,
         open: bool | None = None,
@@ -436,7 +436,7 @@ class ModalBottomSheet(Component):
         """Construct a registered ModalBottomSheet.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             on_open_change: Native onOpenChange; None uses its default.
             open: Native open; None uses its default.
@@ -476,7 +476,7 @@ class NavigationBar(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         container_color: JsonValue | None = None,
         modifier: Modifier | None = None,
         tonal_elevation: int | float | None = None,
@@ -487,7 +487,7 @@ class NavigationBar(Component):
         """Construct a registered NavigationBar.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
             tonal_elevation: Native tonalElevation; None uses its default.
@@ -524,7 +524,7 @@ class NavigationBarItem(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         always_show_label: bool | None = None,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
@@ -540,7 +540,7 @@ class NavigationBarItem(Component):
         """Construct a registered NavigationBarItem.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             always_show_label: Native alwaysShowLabel; None uses its default.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
@@ -585,7 +585,7 @@ class Row(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         modifier: Modifier | None = None,
         vertical_alignment: _RowVerticalAlignment | None = None,
         children: Content = (),
@@ -593,7 +593,7 @@ class Row(Component):
         """Construct a registered Row.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             vertical_alignment: Native verticalAlignment; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -614,7 +614,7 @@ class Scaffold(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         container_color: JsonValue | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -627,7 +627,7 @@ class Scaffold(Component):
         """Construct a registered Scaffold.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -681,13 +681,13 @@ class Spacer(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         modifier: Modifier | None = None,
     ) -> None:
         """Construct a registered Spacer.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
         """
         props: dict[str, JsonValue] = {}
@@ -703,7 +703,7 @@ class Switch(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         checked: bool,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
@@ -717,7 +717,7 @@ class Switch(Component):
         """Construct a registered Switch.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             checked: Required native checked.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
@@ -760,7 +760,7 @@ class Text(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         color: JsonValue | None = None,
         font_resource: str | None = None,
         locale: str | None = None,
@@ -772,7 +772,7 @@ class Text(Component):
         """Construct a registered Text.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             color: Native color; None uses its default.
             font_resource: Native fontResource; None uses its default.
             locale: Native locale; None uses its default.
@@ -805,7 +805,7 @@ class TextButton(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: str,
@@ -817,7 +817,7 @@ class TextButton(Component):
         """Construct a registered TextButton.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
@@ -849,7 +849,7 @@ class TextField(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         enabled: bool | None = None,
         label: str | None = None,
         modifier: Modifier | None = None,
@@ -861,7 +861,7 @@ class TextField(Component):
         """Construct a registered TextField.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             enabled: Native enabled; None uses its default.
             label: Native label; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -893,7 +893,7 @@ class VerticalDivider(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         color: JsonValue | None = None,
         modifier: Modifier | None = None,
         thickness: int | float | None = None,
@@ -901,7 +901,7 @@ class VerticalDivider(Component):
         """Construct a registered VerticalDivider.
 
         Args:
-            id: Stable instance key.
+            id: Stable instance key; None derives the node's path id.
             color: Native color; None uses its default.
             modifier: Native modifier; None uses its default.
             thickness: Native thickness; None uses its default.

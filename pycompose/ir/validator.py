@@ -311,7 +311,7 @@ def validate_component(node: Node) -> None:
     Args:
         node: Candidate component node.
     """
-    validation = _Validation(debug=True)
+    validation = _Validation(debug=True, derived_ids=True)
     frame = validation.prepare(node)
     if frame is None:
         return

@@ -166,8 +166,8 @@ class Node:
         Raises:
             IrError: If identity, props, slot or child types are invalid.
         """
-        if not isinstance(self.id, str) or not self.id:
-            raise IrError("node id must be non-empty", node_type=self.type)
+        if not isinstance(self.id, str):
+            raise IrError("node id must be a string", node_type=self.type)
         if not isinstance(self.type, str) or not self.type:
             raise IrError("node type must be non-empty", node_id=self.id)
         if self.slot is not None and (

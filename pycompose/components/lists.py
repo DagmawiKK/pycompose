@@ -21,7 +21,7 @@ class LazyColumn(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         items: Sequence[Node] = (),
         children: Sequence[Node] = (),
         modifier: Modifier | Mapping[str, JsonValue | FrozenJsonValue] | None = None,
@@ -30,7 +30,7 @@ class LazyColumn(Component):
         """Construct items using either the items or children spelling.
 
         Args:
-            id: Stable sibling key.
+            id: Stable sibling key; None derives the node's path id.
             items: Item nodes, each with an explicit stable id.
             children: Item nodes when items is omitted.
             modifier: Ordered Modifier or a modifier wire object.
@@ -40,5 +40,7 @@ class LazyColumn(Component):
             IrValidationError: If both items and children are supplied.
         """
         if items and children:
-            raise IrValidationError("cannot supply both items and children", node_id=id)
+            raise IrValidationError(
+                "cannot supply both items and children", node_id=id or ""
+            )
         super().__init__(id=id, children=items or children, modifier=modifier, **props)

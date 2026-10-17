@@ -42,7 +42,7 @@ class Scaffold(Component):
     def __init__(
         self,
         *,
-        id: str,
+        id: str | None = None,
         content: Node | Sequence[Node] | None = None,
         children: Sequence[Node] = (),
         modifier: Modifier | Mapping[str, JsonValue | FrozenJsonValue] | None = None,
@@ -51,7 +51,7 @@ class Scaffold(Component):
         """Construct content using either the content or children spelling.
 
         Args:
-            id: Stable sibling key.
+            id: Stable sibling key; None derives the node's path id.
             content: One content node or a sequence of content nodes.
             children: Content nodes when content is omitted.
             modifier: Ordered Modifier or a modifier wire object.
@@ -63,7 +63,7 @@ class Scaffold(Component):
         if content is not None:
             if children:
                 raise IrValidationError(
-                    "cannot supply both content and children", node_id=id
+                    "cannot supply both content and children", node_id=id or ""
                 )
             children = (content,) if isinstance(content, Node) else content
         super().__init__(id=id, children=children, modifier=modifier, **props)

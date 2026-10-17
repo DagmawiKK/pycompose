@@ -92,7 +92,7 @@ class _Expansion:
                 for child in frame.children
             )
             return
-        identity = f"{frame.prefix}.{node.id}" if frame.prefix else node.id
+        identity = f"{frame.prefix}.{node.id}" if frame.prefix and node.id else node.id
         unchanged = identity == node.id and len(frame.children) == len(node.children)
         unchanged = unchanged and all(
             left is right
