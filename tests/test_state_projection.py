@@ -25,6 +25,7 @@ from pycompose.core.node import Node
 from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.m3 import ModalBottomSheet, ModalNavigationDrawer, Text
 from pycompose.schema.codegen.adapters import render
+from pycompose.schema.codegen.state_rules import STATE_VALUE_TYPES
 from pycompose.state import State
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
@@ -118,8 +119,14 @@ def test_a_sheet_states_its_desired_value_and_reaches_its_handle_slot() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_every_declared_state_names_a_boolean_value_and_a_report() -> None:
-    """The whole catalog's declarations hold, not just the enabled ones."""
+def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> None:
+    """Every family drives one scalar, and the report carries that same scalar.
+
+    A drawer's desired value is a boolean, a scroll offset a number, a list's
+    first visible index an integer; whichever it is, the settled report fills a
+    payload field of the same type, so the host never guesses which scalar the
+    observation carries.
+    """
     for name, entry in sorted(components().items()):
         state = entry.get("state")
         if state is None:
@@ -127,11 +134,11 @@ def test_every_declared_state_names_a_boolean_value_and_a_report() -> None:
         props = entry["props"]
         assert state["native"] not in props, name
         value = props[state["value"]]
-        assert value["type"] == "boolean", name
+        assert value["type"] in STATE_VALUE_TYPES, name
         assert not value.get("required"), name
         report = props[state["report"]]
         assert report["type"] == "actionId", name
-        assert [field["type"] for field in report["payload"]] == ["boolean"], name
+        assert [field["type"] for field in report["payload"]] == [value["type"]], name
         # Neither is a native parameter of its own, so both are recorded as
         # reshaped rather than silently dropped.
         assert state["value"] in entry.get("reshaped", []), name
@@ -218,10 +225,17 @@ def test_a_component_without_a_holder_gets_no_state_local() -> None:
 def test_every_state_kind_has_a_holder_and_a_gate_decision() -> None:
     """A family without a renderer method or a gate decision cannot be emitted."""
     from pycompose.core.registry_types import STATE_KINDS
-    from pycompose.schema.codegen.adapters import GATED_STATES, STATE_CALLS
+    from pycompose.schema.codegen.adapters import (
+        GATED_STATES,
+        STATE_ATTACH_GATES,
+        STATE_CALLS,
+        STATE_CONSTRUCTOR_PROPS,
+    )
 
     assert set(STATE_CALLS) == set(STATE_KINDS)
     assert set(STATE_KINDS) >= GATED_STATES
+    assert set(STATE_ATTACH_GATES) <= set(STATE_KINDS)
+    assert set(STATE_CONSTRUCTOR_PROPS) <= set(STATE_KINDS)
 
 
 # ---------------------------------------------------------------------------
@@ -278,6 +292,45 @@ def _payload(registry: dict[str, Any], prop: str, component: str = STATEFUL) -> 
     return registry["components"][component]["props"][prop]["payload"][0]
 
 
+def _with_scrollable(registry: dict[str, Any], prop_type: str) -> None:
+    """Give the drawer a scroll state with one deliberately typed gate prop.
+
+    Args:
+        registry: The loaded catalog.
+        prop_type: The prop type to declare the gate with.
+    """
+    _state(registry).update(kind="scroll")
+    registry["components"][STATEFUL]["props"]["scrollable"] = {"type": prop_type}
+
+
+def test_a_numeric_desired_value_and_a_family_gate_load(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A number can drive a family the way a boolean drives a drawer.
+
+    The declaration itself is type-polymorphic: which scalar a family drives
+    is the family's business, and the report answers in the same scalar.
+    """
+
+    def mutate(registry: dict[str, Any]) -> None:
+        props = registry["components"][STATEFUL]["props"]
+        props["open"]["type"] = "number"
+        props["onOpenChange"]["payload"][0]["type"] = "number"
+
+    _load_with(tmp_path, monkeypatch, mutate)
+
+
+def test_a_modifier_riding_family_carries_its_boolean_gate_prop(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A family whose holder rides a modifier gates the attach with a boolean."""
+    _load_with(
+        tmp_path,
+        monkeypatch,
+        lambda registry: _with_scrollable(registry, "boolean"),
+    )
+
+
 @pytest.mark.parametrize(
     ("break_it", "expected"),
     [
@@ -322,8 +375,32 @@ def _payload(registry: dict[str, Any], prop: str, component: str = STATEFUL) -> 
             "must be a parameter name",
         ),
         (
+            lambda registry: _state(registry).update(kind="slider"),
+            "needs the props valueRange, steps",
+        ),
+        (
+            lambda registry: _state(registry).update(kind="scroll"),
+            "needs the props scrollable",
+        ),
+        (
+            lambda registry: _with_scrollable(registry, "number"),
+            "'scrollable' must be a boolean",
+        ),
+        (
+            lambda registry: registry["components"][STATEFUL]["props"]["open"].update(
+                type="string"
+            ),
+            "must be a boolean, number or integer",
+        ),
+        (
+            lambda registry: registry["components"][STATEFUL]["props"]["open"].update(
+                type="number"
+            ),
+            "needs one number payload field",
+        ),
+        (
             lambda registry: _state(registry).update(value="onOpenChange"),
-            "must be a boolean",
+            "must be a boolean, number or integer",
         ),
         (
             lambda registry: _state(registry).update(value="missing"),

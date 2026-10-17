@@ -9,6 +9,10 @@ import re
 from typing import Any
 
 from pycompose.core.registry_types import INTERACTION_KINDS, STATE_KINDS
+from pycompose.schema.codegen.adapter_helpers import (
+    STATE_ATTACH_GATES,
+    STATE_CONSTRUCTOR_PROPS,
+)
 from pycompose.schema.codegen.rules import (
     NATIVE_PARAMETER,
     die,
@@ -17,6 +21,15 @@ from pycompose.schema.codegen.rules import (
 INTERACTION_KEYS = frozenset({"native", "observations"})
 
 STATE_KEYS = frozenset({"native", "kind", "value", "report", "dismiss"})
+
+STATE_VALUE_TYPES = frozenset({"boolean", "number", "integer"})
+"""Scalar prop types a state family can drive; the report answers in one.
+
+A drawer's desired value is a boolean, a scroll offset a number, a list's
+first visible index an integer -- whichever it is, the settled report fills
+one payload field of the same type, so the host never guesses which scalar
+an observation carries.
+"""
 
 REPORTED_FIELD = re.compile(r"[a-z][A-Za-z0-9]*")
 
@@ -78,32 +91,34 @@ def _validate_interaction(
             die(f"{where}: observation {kind!r} must name one of the props")
         if prop.get("type") != "actionId":
             die(f"{where}: prop {observed!r} must be an actionId")
-        _validate_reported_payload(where, observed, prop)
+        _validate_reported_payload(where, observed, prop, "boolean")
 
 
 def _validate_reported_payload(
-    where: str, prop_name: object, prop: dict[str, Any]
+    where: str, prop_name: object, prop: dict[str, Any], field_type: str
 ) -> None:
-    """Check a host-reported prop carries exactly one boolean payload field.
+    """Check a host-reported prop carries exactly one payload field of a type.
 
-    The host fills one named boolean; more fields would mean the host guessed
+    The host fills one named field; more fields would mean the host guessed
     which one reports the value, which is what the planner refuses to do
-    everywhere else.
+    everywhere else. An interaction observation reports a boolean, and a
+    state's report answers in the scalar the family drives.
 
     Args:
         where: Where the prop was declared, for error messages.
         prop_name: The prop's schema name.
         prop: The prop's schema entry.
+        field_type: The single field's required scalar type.
     """
     payload = prop.get("payload")
     field = payload[0] if isinstance(payload, list) and len(payload) == 1 else None
     if (
         not isinstance(field, dict)
-        or field.get("type") != "boolean"
+        or field.get("type") != field_type
         or not isinstance(field.get("name"), str)
         or REPORTED_FIELD.fullmatch(field["name"]) is None
     ):
-        die(f"{where}: prop {prop_name!r} needs one boolean payload field")
+        die(f"{where}: prop {prop_name!r} needs one {field_type} payload field")
 
 
 def _claimed_parameter(where: str, key: str, value: object, claimed: set[str]) -> str:
@@ -185,17 +200,45 @@ def _validate_state(
     prop = props.get(value) if isinstance(value, str) else None
     if prop is None:
         die(f"{where}: 'value' must name one of the props")
-    if prop.get("type") != "boolean":
-        # The family drives one boolean -- a drawer is open or it is not -- so
-        # a prop of any other type cannot carry that family's desired state.
-        die(f"{where}: prop {value!r} must be a boolean")
+    if prop.get("type") not in STATE_VALUE_TYPES:
+        # The family drives one scalar -- a drawer is open or it is not, a
+        # scroll sits at an offset -- so a prop of any other type cannot carry
+        # that family's desired state.
+        die(f"{where}: prop {value!r} must be a boolean, number or integer")
     report = state.get("report")
     reported = props.get(report) if isinstance(report, str) else None
     if reported is None:
         die(f"{where}: 'report' must name one of the props")
     if reported.get("type") != "actionId":
         die(f"{where}: prop {report!r} must be an actionId")
-    _validate_reported_payload(where, report, reported)
+    _validate_reported_payload(where, report, reported, prop["type"])
     dismiss = state.get("dismiss")
     if dismiss is not None:
         _claimed_parameter(where, "dismiss", dismiss, claimed | {injected})
+    _validate_family_props(where, kind, props)
+
+
+def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None:
+    """Check the props a family needs beyond the desired value and its report.
+
+    A family's holder may need more than the two props the block names: a
+    ``SliderState`` is constructed from the range and the steps, and a family
+    whose holder rides the call's modifier gates the attach with a boolean
+    prop. Both are ordinary props the app states, held by the adapter on the
+    holder's behalf, so the block's own keys stay bounded.
+
+    Args:
+        where: Prefix for error messages.
+        kind: The declared state kind.
+        props: The component's props.
+    """
+    missing = [
+        extra for extra in STATE_CONSTRUCTOR_PROPS.get(kind, ()) if extra not in props
+    ]
+    gate = STATE_ATTACH_GATES.get(kind)
+    if gate is not None and gate not in props:
+        missing.append(gate)
+    if missing:
+        die(f"{where}: state kind {kind!r} needs the props {', '.join(missing)}")
+    if gate is not None and props[gate].get("type") != "boolean":
+        die(f"{where}: prop {gate!r} must be a boolean")

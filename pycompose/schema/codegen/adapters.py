@@ -41,7 +41,9 @@ from pycompose.schema.codegen.adapter_helpers import (
     RESOLVER_FALLBACK,
     RESOLVER_RETURN,
     SCALAR_KOTLIN,
+    STATE_ATTACH_GATES,
     STATE_CALLS,
+    STATE_CONSTRUCTOR_PROPS,
     _camel,
     _Fragments,
     _slot,
@@ -57,7 +59,9 @@ __all__ = [
     "RESOLVER_FALLBACK",
     "RESOLVER_RETURN",
     "SCALAR_KOTLIN",
+    "STATE_ATTACH_GATES",
     "STATE_CALLS",
+    "STATE_CONSTRUCTOR_PROPS",
     "composables",
     "extra_imports",
     "is_mechanical",
@@ -281,6 +285,29 @@ def _render_scalar(prop_name: str, spec: dict[str, Any], out: _Fragments) -> boo
     return True
 
 
+def _held(state: dict[str, Any] | None) -> set[str]:
+    """Return every prop a state declaration keeps from the native arguments.
+
+    The desired value and its report reach the holder, not the component, and
+    so does anything else the family holds: props the holder is constructed
+    from, and the boolean prop gating an attach through the modifier.
+
+    Args:
+        state: The component's raw ``state`` entry, or None.
+
+    Returns:
+        The prop names the adapter must not render as native arguments.
+    """
+    if state is None:
+        return set()
+    held = {state["value"], state["report"]}
+    held.update(STATE_CONSTRUCTOR_PROPS.get(state["kind"], ()))
+    gate = STATE_ATTACH_GATES.get(state["kind"])
+    if gate is not None:
+        held.add(gate)
+    return held
+
+
 def render(name: str, entry: dict[str, Any]) -> str:
     """Render one adapter, or an empty string when it cannot be derived.
 
@@ -324,7 +351,7 @@ def render(name: str, entry: dict[str, Any]) -> str:
     interaction = entry.get("interaction") or {}
     observed = set((interaction.get("observations") or {}).values())
     state = entry.get("state")
-    held = {state["value"], state["report"]} if state else set()
+    held = _held(state)
     for prop, spec in entry.get("props", {}).items():
         if prop in observed or prop in held:
             # The host fills the source or the state holder; an observed prop

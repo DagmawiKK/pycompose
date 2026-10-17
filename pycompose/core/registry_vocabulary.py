@@ -48,14 +48,16 @@ no second path table exists anywhere.
 INTERACTION_KINDS = ("press", "focus", "hover")
 """Interaction kinds the host can observe and report as actions."""
 
-STATE_KINDS = ("drawer", "sheet")
+STATE_KINDS = ("drawer", "sheet", "slider", "scroll", "lazyList")
 """State families the host creates, drives and reports for a component.
 
 A family is one host-side implementation: a drawer reconciles a desired
-open/closed value through gestures and animation, and a sheet does the same for
-a modal surface that has to be composed to be shown at all. The vocabulary is
-closed for the same reason the interaction kinds are: the host must not be asked
-to drive a state object whose transitions it does not understand.
+open/closed value through gestures and animation; a sheet does the same for a
+modal surface that has to be composed to be shown at all; a slider drives the
+thumb to a desired number and reports the settled one; scroll and lazyList
+report a resting position once scrolling comes to rest. The vocabulary is
+closed for the same reason the interaction kinds are: the host must not be
+asked to drive a state object whose transitions it does not understand.
 """
 
 ADAPTERS = ("generated", "manual")

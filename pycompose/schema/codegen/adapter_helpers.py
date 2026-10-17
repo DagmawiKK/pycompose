@@ -88,7 +88,13 @@ with no ``decode`` is refused, because guessing which family its values belong t
 is how an adapter silently renders the wrong alignment.
 """
 
-STATE_CALLS = {"drawer": "drawerState", "sheet": "sheetState"}
+STATE_CALLS = {
+    "drawer": "drawerState",
+    "sheet": "sheetState",
+    "slider": "sliderState",
+    "scroll": "scrollState",
+    "lazyList": "lazyListState",
+}
 """The renderer method each state family's host holder comes from.
 
 The family decides the create/drive/report logic; the schema decides which
@@ -106,6 +112,26 @@ presence is the only way to show one and absence the only way to let the app
 through. A gated family's holder carries the native state in ``state`` and the
 composition gate in ``visible``; any other family's holder is the native state
 itself.
+"""
+
+STATE_CONSTRUCTOR_PROPS = {"slider": ("valueRange", "steps")}
+"""Props each family's holder needs at construction, beyond value and report.
+
+A ``SliderState`` is built from the app's desired value, the settle report,
+the range and the steps, and owns the range and the steps for as long as it
+lives; they flow into the renderer call that creates the holder rather than
+into the component's own arguments. Every prop named here is held exactly as
+the desired value and its report are: the app states it, the adapter passes it
+to the holder, and it never reaches the component.
+"""
+
+STATE_ATTACH_GATES = {"scroll": "scrollable"}
+"""Props gating a family whose holder rides the call's modifier.
+
+``Column`` has no scroll parameter -- scrolling attaches through its modifier,
+so the state cannot fill a native parameter. The holder exists whenever the
+schema declares one, and the boolean prop named here decides whether the
+adapter attaches it to the modifier the call receives.
 """
 
 
