@@ -76,12 +76,14 @@ def root() -> Path:
     try:
         # Imported by name rather than written as an import statement: Chaquopy
         # exists only inside an APK, and a type checker run against the source
-        # tree should not have to be told about it.
-        app_dir = import_module("chaquopy").dir
+        # tree should not have to be told about it. ``java.android.context`` is
+        # the running Application, set before any app code runs, and its
+        # ``getFilesDir`` is the private directory the app may write to.
+        files_dir = import_module("java.android").context.getFilesDir()
     except (ImportError, AttributeError):
         pass
     else:
-        return Path(app_dir())
+        return Path(str(files_dir))
     return Path(os.environ.get("PYCOMPOSE_HOME", Path.cwd()))
 
 

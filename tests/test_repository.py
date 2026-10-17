@@ -8,8 +8,10 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
+from types import ModuleType, SimpleNamespace
 
 import pytest
 
@@ -192,6 +194,32 @@ def test_the_storage_root_is_the_app_directory_and_can_be_overridden(
 ) -> None:
     use_root(tmp_path)
     assert root() == tmp_path
+
+
+def test_the_storage_root_is_the_app_directory_on_a_device(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Chaquopy exposes the app's private files directory, and that is the root.
+
+    The module is faked rather than imported: it exists only inside an APK.
+    """
+    android = ModuleType("java.android")
+    android.context = SimpleNamespace(getFilesDir=lambda: str(tmp_path))
+    monkeypatch.setitem(sys.modules, "java.android", android)
+    monkeypatch.setattr("pycompose.repository._override", None)
+
+    assert root() == tmp_path
+
+
+def test_a_bridge_without_context_falls_back_to_the_environment(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """A hollow ``java.android`` must not shadow the documented fallback."""
+    monkeypatch.setitem(sys.modules, "java.android", ModuleType("java.android"))
+    monkeypatch.setattr("pycompose.repository._override", None)
+    monkeypatch.setenv("PYCOMPOSE_HOME", str(tmp_path / "env"))
+
+    assert root() == tmp_path / "env"
 
 
 def test_a_document_may_live_outside_the_root(tmp_path: Path) -> None:
