@@ -75,6 +75,15 @@ object ValueParser {
                 parameter(supplied, rule, depth + 1, specs)
             }
         }
+        spec["orderedParameters"]?.let { ordering ->
+            val ordered = (ordering as JsonArray).map { it.jsonPrimitive.content }
+            ordered.zipWithNext().forEach { (left, right) ->
+                require(
+                    checkNotNull(data.getValue(left).jsonPrimitive.doubleOrNull) <=
+                        checkNotNull(data.getValue(right).jsonPrimitive.doubleOrNull),
+                ) { "Value parameters must be ordered" }
+            }
+        }
     }
 
     private fun parameter(

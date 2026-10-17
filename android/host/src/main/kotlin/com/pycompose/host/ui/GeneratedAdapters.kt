@@ -68,6 +68,13 @@ import com.pycompose.ir.generated.Spacer as SpacerNode
 import com.pycompose.ir.generated.Switch as SwitchNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
 import com.pycompose.ir.generated.VerticalDivider as VerticalDividerNode
+import com.pycompose.renderer.attachTo
+import com.pycompose.renderer.drawerState
+import com.pycompose.renderer.lazyListState
+import com.pycompose.renderer.scrollState
+import com.pycompose.renderer.sheetState
+import com.pycompose.renderer.sliderState
+import com.pycompose.renderer.snackbar
 import com.pycompose.renderer.unslotted
 import kotlinx.serialization.json.JsonObject
 

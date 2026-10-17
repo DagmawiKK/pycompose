@@ -209,7 +209,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.0.0",
             props = mapOf(
-                "firstVisibleIndex" to PropertyRule("integer", required = false),
+                "firstVisibleIndex" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
                 "verticalArrangement" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom", "spaceEvenly", "spaceBetween", "spaceAround")),
@@ -338,7 +338,7 @@ object IrContract {
                 "enabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onValueChangeFinished" to PropertyRule("actionId", required = false),
-                "steps" to PropertyRule("integer", required = false),
+                "steps" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483645.0),
                 "value" to PropertyRule("number", required = false),
                 "valueRange" to PropertyRule("value", required = true, valueType = "Range"),
             ),

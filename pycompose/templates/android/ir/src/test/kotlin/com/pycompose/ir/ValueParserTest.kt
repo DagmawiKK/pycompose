@@ -81,12 +81,29 @@ class ValueParserTest {
                 """{"type":"horizontalGradient","colors":[]}""" to "Brush",
                 """{"type":"PaddingValues","start":{"type":"Dp","value":-2}}""" to "PaddingValues",
                 """{"type":"ThemeColor","name":"notAThemeToken"}""" to "Color",
+                """{"type":"Range","start":1.0,"end":0.0}""" to "Range",
             )
         invalid.forEach { (source, family) ->
             assertTrue(
                 ValueParser.validate(Json.parseToJsonElement(source), family).isFailure,
                 source,
             )
+        }
+    }
+
+    @Test fun stateIntegersFailBeforeNativeNarrowing() {
+        for (value in listOf(-1L, 2147483648L)) {
+            val nodes =
+                listOf(
+                    """"type":"Slider","props":{"steps":$value,
+                    "valueRange":{"type":"Range","start":0.0,"end":1.0}}""",
+                    """"type":"LazyColumn","props":{"firstVisibleIndex":$value}""",
+                )
+            nodes.forEach { node ->
+                val source = """{"version":"0.1.0","schemaVersion":"1.23.0",
+                    "root":{"id":"root",$node}}"""
+                assertTrue(IrParser().parse(source).isFailure, source)
+            }
         }
     }
 

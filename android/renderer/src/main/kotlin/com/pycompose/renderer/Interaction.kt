@@ -14,6 +14,8 @@ import com.pycompose.ir.generated.IrContract
 import kotlinx.coroutines.flow.collect
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.longOrNull
 
 /**
  * The host-created interaction source for one node, or null when it observes nothing.
@@ -71,10 +73,12 @@ private fun kindAndState(interaction: Interaction): Pair<String, Boolean>? =
 /**
  * Turns one observed interaction into an action, or reports why it cannot be one.
  *
- * The observation carries one boolean, so exactly one boolean field of the
- * declared payload receives it; two would mean the host picked a field the app
- * did not mean. The declaration is data, so nothing here needs the renderer or
- * the composition: the sink is testable on its own.
+ * The observation carries one primitive, and exactly one field of the declared
+ * payload whose type fits that primitive receives it; two would mean the host
+ * picked a field the app did not mean. A boolean fits boolean fields, an
+ * integer satisfies both numeric declarations, and a float needs a number one.
+ * The declaration is data, so nothing here needs the renderer or the
+ * composition: the sink is testable on its own.
  *
  * @param bindings Session bindings by action id.
  * @param actions Dispatcher that receives the action.
@@ -86,7 +90,7 @@ internal class ObservationSink(
     private val report: (String) -> Unit,
 ) {
     /**
-     * Report one observed interaction.
+     * Report one observed boolean, as the rail's settled flags.
      *
      * @param kind Interaction kind the action observes, for the message.
      * @param actionId The action observing it.
@@ -96,18 +100,65 @@ internal class ObservationSink(
         kind: String,
         actionId: String,
         value: Boolean,
+    ) = observe(kind, actionId, JsonPrimitive(value))
+
+    /**
+     * Report one observed integer, as the lazy list's settled index.
+     *
+     * @param kind Interaction kind the action observes, for the message.
+     * @param actionId The action observing it.
+     * @param value The new state of that kind.
+     */
+    fun observe(
+        kind: String,
+        actionId: String,
+        value: Int,
+    ) = observe(kind, actionId, JsonPrimitive(value))
+
+    /**
+     * Report one observed float, as the slider's settled value.
+     *
+     * @param kind Interaction kind the action observes, for the message.
+     * @param actionId The action observing it.
+     * @param value The new state of that kind.
+     */
+    fun observe(
+        kind: String,
+        actionId: String,
+        value: Float,
+    ) = observe(kind, actionId, JsonPrimitive(value))
+
+    /**
+     * Report one observed primitive under the single field its type fits.
+     *
+     * @param kind Interaction kind the action observes, for the message.
+     * @param actionId The action observing it.
+     * @param value The new state of that kind, as wire data.
+     */
+    fun observe(
+        kind: String,
+        actionId: String,
+        value: JsonPrimitive,
     ) {
         val fields =
             bindings[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
-        val boolean = fields.filterValues { it.type == "boolean" }
-        val field = boolean.keys.singleOrNull()
+        val types =
+            when {
+                value.isString -> setOf("string")
+                value.booleanOrNull != null -> setOf("boolean")
+                value.longOrNull != null -> setOf("integer", "number")
+                else -> setOf("number")
+            }
+        val candidates = fields.filterValues { it.type in types }
+        val field = candidates.keys.singleOrNull()
         if (field == null) {
             report(
                 "Cannot observe $kind for $actionId: " +
-                    "${boolean.size} boolean fields among ${fields.keys}",
+                    "${candidates.size} ${types.joinToString("/")} fields " +
+                    "among ${fields.keys}",
             )
             return
         }
-        actions.dispatch(actionId, JsonObject(mapOf(field to JsonPrimitive(value))))
+        actions.dispatch(actionId, JsonObject(mapOf(field to value)))
     }
 }

@@ -13,8 +13,9 @@ interface BridgeSurface {
 
     fun fetchLatestError(): String
 
+    /** True only when a new valid Python session replaced the previous one. */
     fun reload(
         route: String,
         restore: String = "",
-    )
+    ): Boolean
 }

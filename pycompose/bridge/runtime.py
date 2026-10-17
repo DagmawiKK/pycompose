@@ -149,7 +149,7 @@ class RuntimeSession:
         self._require_worker()
         return self._error or self._surface.expose_latest_error()
 
-    def reload(self, route: str, restore: str = "") -> None:
+    def reload(self, route: str, restore: str = "") -> bool:
         """Re-import app modules and build on this worker, retaining last-good IR.
 
         Only modules beside the app entrypoint are evicted, never the runtime.
@@ -159,15 +159,18 @@ class RuntimeSession:
         Args:
             route: Minimal route to supply when rebuilding the app.
             restore: Saved app data to hand back to the rebuilt app.
+
+        Returns:
+            Whether a new valid app session replaced the previous one.
         """
         self._require_worker()
         if not self._debug:
-            return
+            return False
         entry = sys.modules[self._module]
         filename = getattr(entry, "__file__", None)
         if not filename:
             self._error = "app module has no reloadable source"
-            return
+            return False
         top = sys.modules[self._module.split(".")[0]]
         directory = Path(getattr(top, "__file__", None) or filename).parent
         if "." in self._module:
@@ -188,9 +191,11 @@ class RuntimeSession:
                 del sys.modules[name]
             sys.modules.update(previous)
             self._error = str(exc)
+            return False
         else:
             self._surface = candidate
             self._error = ""
+            return True
 
 
 def _user_modules(directory: Path) -> dict[str, ModuleType]:
@@ -274,12 +279,16 @@ def fetch_latest_error() -> str:
     return " / ".join(part for part in parts if part)
 
 
-def reload(route: str, restore: str = "") -> None:
+def reload(route: str, restore: str = "") -> bool:
     """Invoke the debug rebuild hook on the Python worker.
 
     Args:
         route: Current minimal route.
         restore: Saved app data to hand back to the rebuilt app.
+
+    Returns:
+        Whether the debug rebuild replaced the app session.
     """
     if _session is not None:
-        _session.reload(route, restore)
+        return _session.reload(route, restore)
+    return False

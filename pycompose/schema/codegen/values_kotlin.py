@@ -27,6 +27,28 @@ def _kt_type(rule: dict[str, Any]) -> str:
     }[rule["type"]]
 
 
+def _native_type(spec: dict[str, Any]) -> str:
+    """The Kotlin type one family's resolver hands back.
+
+    The pin spells a generic family as its raw class, so the one family whose
+    type argument no artifact pins adds it here: an operator form builds its
+    value from decoded operands, and ``start..end`` is a range of exactly the
+    endpoint type -- a float operand is narrowed by its decode and lands as
+    ``Float`` where the wire field carried a double.
+
+    Args:
+        spec: One descriptor of the family.
+
+    Returns:
+        The family's Kotlin type, parameterized where its form binds operands.
+    """
+    if spec["kind"] != "operator":
+        return str(spec["kotlinType"])
+    first = spec["parameters"][next(iter(spec["parameters"]))]
+    operand = "Float" if first["type"] == "float" else _kt_type(first)
+    return f"{spec['kotlinType']}<{operand}>"
+
+
 def render_models(registry: dict[str, Any]) -> str:
     """Generate pure JVM sealed wire models and typed readers."""
     from pycompose.schema.codegen.literals import (
@@ -197,8 +219,8 @@ def render_native(registry: dict[str, Any]) -> str:
         "object ValueResolver {",
     ]
     for family in families:
-        native_type = next(
-            s["kotlinType"] for s in specs.values() if s["family"] == family
+        native_type = _native_type(
+            next(s for s in specs.values() if s["family"] == family)
         )
         method = method_name(family)
         markers = sorted(

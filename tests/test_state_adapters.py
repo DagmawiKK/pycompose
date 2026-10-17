@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from test_state_projection import GATED, STATEFUL, components
 
-from pycompose.schema.codegen.adapters import render
+from pycompose.schema.codegen.adapters import extra_imports, render
 
 
 def test_the_adapter_passes_the_host_holder_where_the_schema_says() -> None:
@@ -148,6 +148,8 @@ def test_a_scroll_holder_rides_the_modifier_behind_a_boolean() -> None:
     )
     # The stem is documentary: Column has no state parameter to fill.
     assert "scrollState =" not in adapter
+    assert "com.pycompose.renderer.attachTo" in extra_imports(SCROLL)
+    assert "com.pycompose.renderer.attachTo" not in extra_imports(SLIDER)
 
 
 def test_a_lazy_list_fills_the_state_parameter() -> None:

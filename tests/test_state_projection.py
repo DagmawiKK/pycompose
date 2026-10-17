@@ -23,6 +23,8 @@ import pytest
 
 from pycompose.core.node import Node
 from pycompose.ir import emit_ir, to_dict, validate_ir
+from pycompose.ir.generated_validators import REGISTRY
+from pycompose.ir.validator import validate_prop
 from pycompose.m3 import ModalBottomSheet, ModalNavigationDrawer, Text
 from pycompose.schema.codegen.state_rules import STATE_VALUE_TYPES
 from pycompose.state import State
@@ -31,6 +33,24 @@ SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.js
 
 CATALOG = json.loads(SCHEMA_PATH.read_text())
 """The parsed catalog, so the wire tests state the version they are tested at."""
+
+
+@pytest.mark.parametrize("value", [-1, 2**31])
+@pytest.mark.parametrize(
+    ("component", "prop"), [("Slider", "steps"), ("LazyColumn", "firstVisibleIndex")]
+)
+def test_state_integers_cannot_overflow_or_violate_native_bounds(
+    component: str, prop: str, value: int
+) -> None:
+    """The wire refuses native Int failures before the host can construct one.
+
+    Args:
+        component: Registered stateful component.
+        prop: Integer consumed by its holder.
+        value: Negative or overflowing native integer.
+    """
+    assert not validate_prop(value, REGISTRY.components[component].props[prop])
+
 
 STATEFUL = "ModalNavigationDrawer"
 

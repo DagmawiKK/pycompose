@@ -1254,6 +1254,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -1838,6 +1840,8 @@
             },
             "steps": {
               "default": 0,
+              "maximum": 2147483645,
+              "minimum": 0,
               "type": "integer"
             },
             "value": {
@@ -3278,6 +3282,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -4089,6 +4095,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -4997,6 +5005,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -6019,6 +6029,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -7041,6 +7053,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -8063,6 +8077,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -9085,6 +9101,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -10107,6 +10125,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -11129,6 +11149,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -12201,6 +12223,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -13329,6 +13353,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -14302,6 +14328,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -15190,6 +15218,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -16475,6 +16505,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -18173,6 +18205,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -20321,6 +20355,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -21291,6 +21327,8 @@
             },
             "steps": {
               "default": 0,
+              "maximum": 2147483645,
+              "minimum": 0,
               "type": "integer"
             },
             "value": {
@@ -21905,6 +21943,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -22730,6 +22770,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -23625,6 +23667,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -24520,6 +24564,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -25415,6 +25461,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -26310,6 +26358,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -27205,6 +27255,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {
@@ -28100,6 +28152,8 @@
           "additionalProperties": false,
           "properties": {
             "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer"
             },
             "modifier": {

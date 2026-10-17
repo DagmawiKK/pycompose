@@ -24,6 +24,17 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
+/**
+ * An accepted snapshot paired atomically with its native session lifetime.
+ *
+ * @param ir Validated wire data to render.
+ * @param epoch Host-local generation, retained on rotation and advanced on Python restart.
+ */
+data class SessionSnapshot(
+    val ir: ValidatedIr,
+    val epoch: Long,
+)
+
 /** Host owns only latest IR and minimal navigation state, never the Python Store. */
 class PyComposeViewModel(
     private val bridge: BridgeSurface,
@@ -44,14 +55,16 @@ class PyComposeViewModel(
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
     private val commands = Channel<Command>(QUEUE_CAPACITY)
     private val parser = IrParser()
-    private val mutableSnapshot = MutableStateFlow<ValidatedIr?>(null)
+    private val mutableSnapshot = MutableStateFlow<SessionSnapshot?>(null)
     private val mutableError = MutableStateFlow("")
-    val snapshot: StateFlow<ValidatedIr?> = mutableSnapshot.asStateFlow()
+    val snapshot: StateFlow<SessionSnapshot?> = mutableSnapshot.asStateFlow()
     val error: StateFlow<String> = mutableError.asStateFlow()
     private var route = savedState.get<String>("route") ?: "home"
     private var restore = savedState.get<String>(STATE) ?: ""
+    private var epoch = (savedState.get<Long>(EPOCH) ?: -1L) + 1L
 
     init {
+        savedState[EPOCH] = epoch
         // Background Python results arrive from any thread and are queued here, so
         // the worker still only ever sees them as ordinary actions.
         AsyncResult.listen { actionId, payload ->
@@ -76,7 +89,7 @@ class PyComposeViewModel(
                             val source = command.action.toJson()
                             val current =
                                 checkNotNull(mutableSnapshot.value) { "No active snapshot" }
-                            AppBindings.validateAction(source, current).getOrThrow()
+                            AppBindings.validateAction(source, current.ir).getOrThrow()
                             bridge.acceptAction(source)
                         }
                         is Command.Lifecycle -> {
@@ -85,7 +98,12 @@ class PyComposeViewModel(
                             Lifecycle.check(command.event, command.payload)
                             bridge.acceptAction(command.action.toJson())
                         }
-                        is Command.Reload -> bridge.reload(command.route, restore)
+                        is Command.Reload -> {
+                            if (bridge.reload(command.route, restore)) {
+                                epoch += 1
+                                savedState[EPOCH] = epoch
+                            }
+                        }
                         is Command.Navigate -> {
                             // A route change is an ordinary inbound action, not a
                             // reason to rebuild Python. Restarting here would
@@ -169,9 +187,10 @@ class PyComposeViewModel(
                 .onSuccess { candidate ->
                     // Effects belong to the snapshot that carried them: a repeat
                     // pull of an unchanged snapshot must not replay them.
-                    val changed = candidate.snapshot != mutableSnapshot.value?.snapshot
-                    if (changed) {
-                        mutableSnapshot.value = candidate
+                    val previous = mutableSnapshot.value
+                    val changed = candidate.snapshot != previous?.ir?.snapshot
+                    if (changed || previous?.epoch != epoch) {
+                        mutableSnapshot.value = SessionSnapshot(candidate, epoch)
                     }
                     mutableError.value = bridge.fetchLatestError()
                     if (changed) {
@@ -262,6 +281,7 @@ class PyComposeViewModel(
     companion object {
         private const val QUEUE_CAPACITY = 64
         private const val STATE = "pycompose.data"
+        private const val EPOCH = "pycompose.epoch"
 
         /**
          * Comfortably under Android's ~500 KB per-transaction Binder limit, so

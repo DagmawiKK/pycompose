@@ -14,6 +14,16 @@ from pycompose.schema.codegen.values_kotlin import (
 
 ROOT = Path(__file__).resolve().parents[1]
 
+
+def test_a_range_refuses_reversed_endpoints_before_native_construction() -> None:
+    """A reversed range cannot be used by a native slider's value coercion."""
+    from pycompose.errors import IrValidationError
+    from pycompose.values import Range
+
+    with pytest.raises(IrValidationError, match="ordered"):
+        Range(1.0, 0.0)
+
+
 RANGE_FAMILY = {
     "family": "Range",
     "kind": "operator",
@@ -58,7 +68,13 @@ def test_an_operator_family_builds_its_form_rather_than_a_call() -> None:
     assert '"Range",' in python
     native = render_native(registry)
     assert "value.start.toFloat()..value.end.toFloat()" in native
-    assert "Result<kotlin.ranges.ClosedFloatingPointRange>" in native
+    # The dump spells the raw class, so the emitter states the type argument
+    # the form itself binds: ``start..end`` is a range of the endpoint type.
+    assert "Result<kotlin.ranges.ClosedFloatingPointRange<Float>>" in native
+    assert (
+        "fun range(value: RangeValue): "
+        "kotlin.ranges.ClosedFloatingPointRange<Float>" in native
+    )
 
 
 def test_an_operator_family_needs_its_native_form(tmp_path: Path, monkeypatch) -> None:

@@ -102,7 +102,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.0.0",
             props = mapOf(
-                "firstVisibleIndex" to PropertyRule("integer", required = false),
+                "firstVisibleIndex" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
                 "verticalArrangement" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom", "spaceEvenly", "spaceBetween", "spaceAround")),

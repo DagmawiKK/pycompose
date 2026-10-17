@@ -156,6 +156,11 @@ def _runtime_contract(registry: dict[str, Any]) -> str:
         name: {
             "family": spec["family"],
             "since": spec["since"],
+            **(
+                {"orderedParameters": list(spec["parameters"])}
+                if spec["kind"] == "operator"
+                else {}
+            ),
             "parameters": {
                 field: rule_contract(rule) for field, rule in spec["parameters"].items()
             },

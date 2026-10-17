@@ -20,6 +20,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,7 +86,9 @@ class MainActivity : ComponentActivity() {
             PyComposeTheme {
                 Surface(Modifier.fillMaxSize()) {
                     Box(Modifier.safeDrawingPadding()) {
-                        snapshot?.let { renderer.Render(it) }
+                        snapshot?.let { session ->
+                            key(session.epoch) { renderer.Render(session.ir) }
+                        }
                         if (BuildConfig.DEBUG) {
                             Column(Modifier.align(Alignment.BottomEnd).padding(16.dp)) {
                                 if (error.isNotEmpty()) {

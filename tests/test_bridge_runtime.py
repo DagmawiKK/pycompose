@@ -39,11 +39,11 @@ def view(shell):
     return Text(id="text", text="reloaded")
 app = App(state=Shell, view=view, route="route")
 """)
-        session.reload("restored")
+        assert session.reload("restored") is True
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "reloaded"
         previous = session.snapshot()
         module.write_text('raise RuntimeError("broken app")\n')
-        session.reload("restored")
+        assert session.reload("restored") is False
         assert session.snapshot() == previous
         assert "broken app" in session.error()
     finally:

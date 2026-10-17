@@ -65,17 +65,18 @@ class ChaquopyBridge(
     override fun reload(
         route: String,
         restore: String,
-    ) {
+    ): Boolean {
         requireWorker()
-        if (debug) {
-            if (initialized) {
-                Python
-                    .getInstance()
-                    .getModule(MODULE)
-                    .callAttr("reload", route, restore)
-            } else {
-                start(route, restore)
-            }
+        if (!debug) return false
+        return if (!initialized) {
+            start(route, restore)
+            true
+        } else {
+            Python
+                .getInstance()
+                .getModule(MODULE)
+                .callAttr("reload", route, restore)
+                .toBoolean()
         }
     }
 

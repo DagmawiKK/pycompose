@@ -1250,13 +1250,13 @@ object ValueResolver {
         }
 
     @Composable
-    fun range(value: JsonElement): Result<kotlin.ranges.ClosedFloatingPointRange> {
+    fun range(value: JsonElement): Result<kotlin.ranges.ClosedFloatingPointRange<Float>> {
         val parsed = runCatching { ValueContract.readRange(value) }.getOrElse { return Result.failure(it) }
         return Result.success(range(parsed))
     }
 
     @Composable
-    fun range(value: RangeValue): kotlin.ranges.ClosedFloatingPointRange =
+    fun range(value: RangeValue): kotlin.ranges.ClosedFloatingPointRange<Float> =
         when (value) {
             is WireRange -> {
                 value.start.toFloat()..value.end.toFloat()

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Mapping
+from itertools import pairwise
 from typing import cast
 
 from pycompose.errors import IrValidationError
@@ -88,6 +89,12 @@ def _value(
             _require(not rule.get("required", False), f"missing value field: {key}")
         else:
             _parameter(data[key], rule, definitions, depth + 1)
+    ordered = cast("list[str]", spec.get("orderedParameters", []))
+    for left, right in pairwise(ordered):
+        _require(
+            cast("float", data[left]) <= cast("float", data[right]),
+            "value parameters must be ordered",
+        )
 
 
 def _parameter(

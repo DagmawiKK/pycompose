@@ -18,6 +18,51 @@ import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PyComposeViewModelTest {
+    @Test fun `reload changes the native session epoch even for identical IR`() =
+        runTest {
+            val bridge = FakeBridge()
+            val saved = SavedStateHandle()
+            val model = PyComposeViewModel(bridge, saved, StandardTestDispatcher(testScheduler))
+            advanceUntilIdle()
+            val first = checkNotNull(model.snapshot.value)
+
+            model.navigate("details")
+            advanceUntilIdle()
+            assertEquals(first.epoch, checkNotNull(model.snapshot.value).epoch)
+
+            model.reload()
+            advanceUntilIdle()
+            val reloaded = checkNotNull(model.snapshot.value)
+            assertTrue(reloaded.epoch > first.epoch)
+            assertEquals(first.ir.snapshot, reloaded.ir.snapshot)
+            model.close()
+
+            val rebuilt = PyComposeViewModel(bridge, saved, StandardTestDispatcher(testScheduler))
+            advanceUntilIdle()
+            assertTrue(checkNotNull(rebuilt.snapshot.value).epoch > reloaded.epoch)
+            rebuilt.close()
+        }
+
+    @Test fun `a failed reload preserves the native session epoch`() =
+        runTest {
+            val bridge = FakeBridge()
+            val model =
+                PyComposeViewModel(
+                    bridge,
+                    SavedStateHandle(),
+                    StandardTestDispatcher(testScheduler),
+                )
+            advanceUntilIdle()
+            val first = model.snapshot.value
+            bridge.reloadSucceeded = false
+
+            model.reload()
+            advanceUntilIdle()
+
+            assertSame(first, model.snapshot.value)
+            model.close()
+        }
+
     @Test fun `actions are FIFO and rejected snapshots keep the previous IR`() =
         runTest {
             val bridge = FakeBridge()
@@ -300,6 +345,7 @@ class PyComposeViewModelTest {
     }
 
     private class FakeBridge : BridgeSurface {
+        var reloadSucceeded = true
         val calls = mutableListOf<String>()
         val starts = mutableListOf<Start>()
 
@@ -357,8 +403,9 @@ class PyComposeViewModelTest {
         override fun reload(
             route: String,
             restore: String,
-        ) {
+        ): Boolean {
             calls.add("reload:$route")
+            return reloadSucceeded
         }
     }
 }
