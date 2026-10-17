@@ -6,9 +6,10 @@ dump reader, the AndroidX API scraper, the drift checker -- is repo-only: it
 reads paths under ``android/`` that do not exist in a wheel, and nothing an app
 builds calls it.
 
-That means those tests need ``tools/`` on the path, and pytest does not put it
-there. The shim used to be deleted along with a failing test rather than
-diagnosed; it is here now, and the reason is written down.
+That means those tests need the repo root on the path so ``tools.schema``
+resolves, and pytest does not put it there. The shim used to be deleted along
+with a failing test rather than diagnosed; it is here now, and the reason is
+written down.
 """
 
 from __future__ import annotations
@@ -21,10 +22,10 @@ from pathlib import Path
 
 import pytest
 
-TOOLS = Path(__file__).resolve().parent.parent / "tools"
+ROOT = Path(__file__).resolve().parent.parent
 
-if str(TOOLS) not in sys.path:
-    sys.path.insert(0, str(TOOLS))
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 
 @pytest.fixture(scope="session")

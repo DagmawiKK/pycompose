@@ -19,8 +19,8 @@ from test_classpath_dump import (
 def test_release_drift_is_reported_instead_of_silently_accepted(
     native_document,
 ) -> None:
-    from schema.check_upstream import DRIFT, compare_values
-    from schema.classpath_dump import inventory, source_defaults
+    from tools.schema.check_upstream import DRIFT, compare_values
+    from tools.schema.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]
     found = inventory(DUMP)
@@ -37,8 +37,8 @@ def test_release_drift_is_reported_instead_of_silently_accepted(
 def test_named_member_and_omission_drift_require_review(native_document) -> None:
     from dataclasses import replace
 
-    from schema.check_upstream import DRIFT, compare_values
-    from schema.classpath_dump import inventory, source_defaults
+    from tools.schema.check_upstream import DRIFT, compare_values
+    from tools.schema.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]
     registry = json.loads((ROOT / "schema/components.json").read_text())
@@ -64,8 +64,8 @@ def test_named_member_and_omission_drift_require_review(native_document) -> None
 
 
 def test_icon_vocabulary_drift_requires_review(native_document) -> None:
-    from schema.check_upstream import DRIFT, compare_values
-    from schema.classpath_dump import inventory, source_defaults
+    from tools.schema.check_upstream import DRIFT, compare_values
+    from tools.schema.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]
     registry = json.loads((ROOT / "schema/components.json").read_text())
@@ -81,8 +81,8 @@ def test_icon_vocabulary_drift_requires_review(native_document) -> None:
 
 
 def test_inline_value_overloads_are_not_collapsed_by_jvm_erasure(tmp_path) -> None:
-    from schema.classpath_dump import inventory
-    from schema.propose import bind
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.propose import bind
 
     records = [
         declaration(
@@ -136,8 +136,8 @@ def test_unused_pinned_constructor_is_generated_decoded_and_renders(
         render_models,
         render_native,
     )
-    from schema.classpath_dump import inventory
-    from schema.propose import propose_value
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.propose import propose_value
 
     assert native_document["bytecodeAudit"]["unmatchedTargetMethods"] == []
     source = next(

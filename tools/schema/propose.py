@@ -22,9 +22,10 @@ import sys
 from pathlib import Path
 from typing import Any
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+if __package__ in (None, ""):  # pragma: no cover - only when run as a script
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from schema.classpath_dump import (
+from tools.schema.classpath_dump import (
     DUMP_DIR,
     Inventory,
     inventory,
@@ -47,7 +48,7 @@ __all__ = [
     "value_families",
 ]
 
-from schema.propose_families import (
+from tools.schema.propose_families import (
     bind,
     propose_extension,
     propose_icons,
@@ -55,7 +56,7 @@ from schema.propose_families import (
     propose_value,
     propose_vocabulary,
 )
-from schema.propose_lookup import (
+from tools.schema.propose_lookup import (
     EXTENSIONS,
     ICONS,
     MEMBERS,
@@ -101,7 +102,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path)
     args = parser.parse_args(argv)
     try:
-        from schema.classpath_dump import source_defaults
+        from tools.schema.classpath_dump import source_defaults
 
         found = inventory(args.directory)
         evidence = source_defaults(args.directory)

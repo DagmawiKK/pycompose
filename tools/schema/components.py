@@ -16,11 +16,12 @@ from collections.abc import Iterable, Iterator
 from pathlib import Path
 from typing import Any, NamedTuple
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+if __package__ in (None, ""):  # pragma: no cover - only when run as a script
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pycompose.core.registry_types import SCOPE_PATHS
 from pycompose.schema.codegen.defaults import render_default
-from schema.classpath_dump import (
+from tools.schema.classpath_dump import (
     DUMP_DIR,
     Declaration,
     Inventory,
@@ -29,7 +30,7 @@ from schema.classpath_dump import (
     inventory,
     source_defaults,
 )
-from schema.propose import SCALARS, identity, source_name, value_families
+from tools.schema.propose import SCALARS, identity, source_name, value_families
 
 # The pin reports receivers as classifier paths; derive that form from the
 # closed scope vocabulary instead of transcribing it a second time.

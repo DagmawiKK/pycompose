@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from schema.classpath_dump import Inventory
-from schema.propose_lookup import ancestors, source_name
+from tools.schema.classpath_dump import Inventory
+from tools.schema.propose_lookup import ancestors, source_name
 
 
 def propose_icons(

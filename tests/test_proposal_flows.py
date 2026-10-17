@@ -19,8 +19,8 @@ def test_generated_native_calls_render_defaults_slots_and_events(
     from dataclasses import replace
 
     from pycompose.schema.codegen.native_calls import call_name, render_call
-    from schema.classpath_dump import Declaration, inventory, source_defaults
-    from schema.components import propose_components
+    from tools.schema.classpath_dump import Declaration, inventory, source_defaults
+    from tools.schema.components import propose_components
 
     assert native_document["provenance"]["bom"] == "2025.01.01"
     schema = Path("schema/components.json")
@@ -147,8 +147,8 @@ def test_cli_refuses_to_overwrite_the_approved_schema(tmp_path):
 
 
 def test_batch_preserves_overloads_and_reports_required_and_optional_gaps(tmp_path):
-    from schema.classpath_dump import inventory
-    from schema.components import propose_components
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.components import propose_components
 
     records = [
         declaration(
@@ -204,8 +204,8 @@ def test_batch_preserves_overloads_and_reports_required_and_optional_gaps(tmp_pa
 
 
 def test_styling_hooks_leave_the_component_denominator(tmp_path):
-    from schema.classpath_dump import inventory
-    from schema.components import propose_components
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.components import propose_components
 
     row_scope = type_doc("androidx/compose/foundation/layout/RowScope")
     missing = type_doc("example/Missing")
@@ -284,8 +284,8 @@ def test_styling_hooks_leave_the_component_denominator(tmp_path):
 
 
 def test_parameter_policies_use_types_not_component_or_parameter_names(tmp_path):
-    from schema.classpath_dump import inventory
-    from schema.components import propose_components
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.components import propose_components
 
     unit = type_doc("kotlin/Unit")
     record = declaration(
@@ -372,8 +372,8 @@ def test_parameter_policies_use_types_not_component_or_parameter_names(tmp_path)
 
 
 def test_unsafe_defaults_and_behavior_are_never_exposed_as_ignored_props(tmp_path):
-    from schema.classpath_dump import inventory
-    from schema.components import propose_components
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.components import propose_components
 
     record = declaration(
         parameters=[
@@ -414,8 +414,8 @@ def test_unsafe_defaults_and_behavior_are_never_exposed_as_ignored_props(tmp_pat
 
 def test_overloads_distinguished_by_a_required_parameter_stay_addressable(tmp_path):
     from pycompose.schema.codegen.native_calls import render_call
-    from schema.classpath_dump import inventory
-    from schema.components import propose_components
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.components import propose_components
 
     unit = type_doc("kotlin/Unit")
     records = [
@@ -445,8 +445,8 @@ def test_overloads_distinguished_by_a_required_parameter_stay_addressable(tmp_pa
 
 
 def test_overloads_a_call_cannot_tell_apart_are_refused(tmp_path):
-    from schema.classpath_dump import inventory
-    from schema.components import propose_components
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.components import propose_components
 
     unit = type_doc("kotlin/Unit")
     records = [
@@ -481,8 +481,8 @@ def test_overloads_a_call_cannot_tell_apart_are_refused(tmp_path):
 
 def test_optional_slot_without_null_policy_is_refused(tmp_path):
     from pycompose.schema.codegen.native_calls import render_call
-    from schema.classpath_dump import inventory
-    from schema.components import propose_components
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.components import propose_components
 
     unit = type_doc("kotlin/Unit")
     record = declaration(
@@ -522,8 +522,8 @@ def test_call_generation_refuses_blockers_and_opaque_expressions(tmp_path):
     import pytest
 
     from pycompose.schema.codegen.native_calls import render_call
-    from schema.classpath_dump import inventory
-    from schema.components import propose_components
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.components import propose_components
 
     write_inventory(
         tmp_path,

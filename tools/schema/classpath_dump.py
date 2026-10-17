@@ -16,9 +16,10 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+if __package__ in (None, ""):  # pragma: no cover - only when run as a script
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from schema.classpath_types import (  # noqa: F401 -- typed view re-exports
+from tools.schema.classpath_types import (  # noqa: F401 -- typed view re-exports
     BUILDERS,
     COMPOSABLE,
     DUMP_DIR,

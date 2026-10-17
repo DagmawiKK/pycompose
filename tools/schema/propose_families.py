@@ -15,14 +15,14 @@ from __future__ import annotations
 
 from typing import Any
 
-from schema.classpath_dump import (
+from tools.schema.classpath_dump import (
     Declaration,
     Inventory,
     opt_in_markers,
     required_opt_ins,
 )
-from schema.propose_icons import propose_icons
-from schema.propose_lookup import (
+from tools.schema.propose_icons import propose_icons
+from tools.schema.propose_lookup import (
     EXTENSIONS,
     ICONS,
     MEMBERS,

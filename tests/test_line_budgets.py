@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from limits import BUDGETS, DEFAULT_LIMIT, check
+from tools.limits import BUDGETS, DEFAULT_LIMIT, check
 
 ROOT = Path(__file__).resolve().parents[1]
 

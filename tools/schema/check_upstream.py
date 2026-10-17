@@ -8,11 +8,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+if __package__ in (None, ""):  # pragma: no cover - only when run as a script
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pycompose.core.registry_types import SCOPE_PATHS
-from schema.classpath_dump import DUMP_DIR, Inventory, inventory, source_defaults
-from schema.propose import refresh
+from tools.schema.classpath_dump import DUMP_DIR, Inventory, inventory, source_defaults
+from tools.schema.propose import refresh
 
 DERIVED = ("source", "kotlinType", "native", "omitted")
 """Fields the pinned compiler alone decides; approved policy only adds."""

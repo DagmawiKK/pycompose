@@ -153,7 +153,7 @@ def test_dump_extracts_exact_public_signatures_and_receivers(native_document) ->
         and d["owner"] == "androidx.compose.material3.ButtonColors"
         for d in document["declarations"]
     )
-    from schema.classpath_dump import inventory
+    from tools.schema.classpath_dump import inventory
 
     assert len(inventory(DUMP).ui) == len(public)
     assert document["bytecodeAudit"]["unmatchedTargetMethods"] == []
@@ -177,7 +177,7 @@ def test_dump_extracts_exact_public_signatures_and_receivers(native_document) ->
 
 
 def test_pinned_overloads_slots_and_scopes_survive_reading(native_document) -> None:
-    from schema.classpath_dump import inventory
+    from tools.schema.classpath_dump import inventory
 
     found = inventory(DUMP)
     assert len(found.ui) == sum(
@@ -257,7 +257,7 @@ def test_native_inventory_is_byte_stable(native_document) -> None:
 
 
 def test_inventory_retains_all_overloads_and_function_semantics(tmp_path: Path) -> None:
-    from schema.classpath_dump import inventory
+    from tools.schema.classpath_dump import inventory
 
     unit = type_doc("kotlin/Unit")
     records = [
@@ -331,7 +331,7 @@ def test_inventory_retains_all_overloads_and_function_semantics(tmp_path: Path) 
 def test_inventory_refuses_untrusted_or_incomplete_input(
     tmp_path: Path, defect: str
 ) -> None:
-    from schema.classpath_dump import inventory
+    from tools.schema.classpath_dump import inventory
 
     document = write_inventory(
         tmp_path,
@@ -369,7 +369,7 @@ def test_inventory_refuses_untrusted_or_incomplete_input(
 def test_inventory_preserves_recursive_types_and_distinguishes_builders(
     tmp_path: Path,
 ) -> None:
-    from schema.classpath_dump import inventory
+    from tools.schema.classpath_dump import inventory
 
     unit = type_doc("kotlin/Unit")
     extension = ("kotlin/ExtensionFunctionType",)
@@ -413,7 +413,7 @@ def test_inventory_preserves_recursive_types_and_distinguishes_builders(
 def test_gap_report_is_a_capability_worklist_not_a_support_claim(
     tmp_path: Path,
 ) -> None:
-    from schema.classpath_dump import inventory
+    from tools.schema.classpath_dump import inventory
 
     write_inventory(
         tmp_path,
@@ -444,7 +444,7 @@ def test_gap_report_is_a_capability_worklist_not_a_support_claim(
 
 
 def test_unread_referenced_support_blocks_the_inventory(tmp_path: Path) -> None:
-    from schema.classpath_dump import inventory
+    from tools.schema.classpath_dump import inventory
 
     support = declaration(
         name="operation",
@@ -466,7 +466,7 @@ def test_unread_referenced_support_blocks_the_inventory(tmp_path: Path) -> None:
 def test_unmatched_public_accessor_is_not_treated_as_inaccessible(
     tmp_path: Path,
 ) -> None:
-    from schema.classpath_dump import inventory
+    from tools.schema.classpath_dump import inventory
 
     public_getter = {
         "name": "getMonth",
@@ -499,7 +499,7 @@ def test_unmatched_public_accessor_is_not_treated_as_inaccessible(
 
 
 def test_vararg_can_be_omitted_without_a_default_expression(tmp_path: Path) -> None:
-    from schema.classpath_dump import inventory
+    from tools.schema.classpath_dump import inventory
 
     string = type_doc("kotlin/String")
     locales = parameter("locales", type_doc("kotlin/Array", string)) | {

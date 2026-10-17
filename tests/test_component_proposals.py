@@ -54,7 +54,7 @@ def assert_calls_resolve_to_recorded_identities(report, classes: Path) -> None:
 
 
 def test_pinned_ui_defaults_cover_every_exact_overload(native_document):
-    from schema.classpath_dump import inventory, source_defaults
+    from tools.schema.classpath_dump import inventory, source_defaults
 
     assert native_document["provenance"]["compiler"] == "2.0.21"
     found = inventory(DUMP)
@@ -64,8 +64,8 @@ def test_pinned_ui_defaults_cover_every_exact_overload(native_document):
 
 
 def test_pinned_unconstructible_types_and_enum_vocabularies(native_document) -> None:
-    from schema.classpath_dump import inventory, source_defaults
-    from schema.propose import bind
+    from tools.schema.classpath_dump import inventory, source_defaults
+    from tools.schema.propose import bind
 
     assert native_document["provenance"]["bom"] == "2025.01.01"
     found = inventory(DUMP)
@@ -82,8 +82,8 @@ def test_pinned_unconstructible_types_and_enum_vocabularies(native_document) -> 
 
 
 def test_pinned_denominator_separates_components_from_styling_hooks(native_document):
-    from schema.classpath_dump import inventory, source_defaults
-    from schema.components import propose_components
+    from tools.schema.classpath_dump import inventory, source_defaults
+    from tools.schema.components import propose_components
 
     assert native_document["provenance"]["bom"] == "2025.01.01"
     report = propose_components(
@@ -132,8 +132,8 @@ def test_the_shipped_catalog_carries_no_unexplained_prop(native_document) -> Non
     has to be listed there too; otherwise the gate stays red for a reason the
     schema alone does not show.
     """
-    from schema.check_upstream import compare
-    from schema.classpath_dump import inventory
+    from tools.schema.check_upstream import compare
+    from tools.schema.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.0.21"
     registry = json.loads(Path("schema/components.json").read_text())
@@ -148,8 +148,8 @@ def test_the_drift_check_re_derives_a_package_and_a_provider(native_document) ->
     all, so a stale one has to fail here rather than become a coercion nobody
     checked.
     """
-    from schema.check_upstream import compare
-    from schema.classpath_dump import inventory
+    from tools.schema.check_upstream import compare
+    from tools.schema.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.0.21"
     found = inventory(DUMP)
@@ -190,8 +190,8 @@ def test_the_drift_check_re_derives_receivers_and_provided_scopes(
     scope the pin never hands down -- fails here rather than becoming a call
     that cannot compile.
     """
-    from schema.check_upstream import compare
-    from schema.classpath_dump import inventory
+    from tools.schema.check_upstream import compare
+    from tools.schema.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.0.21"
     found = inventory(DUMP)
