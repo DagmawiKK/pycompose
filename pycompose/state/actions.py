@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+from types import ModuleType
 from typing import Any, cast
 
 from pycompose.core.action_binding import BindingSpec, check_payload
@@ -12,7 +13,7 @@ from pycompose.errors import StateError
 from pycompose.state.app_action import CONTAINER, AppAction
 from pycompose.state.state import State
 
-__all__ = ["ActionHandler", "Actions", "Registry"]
+__all__ = ["ActionHandler", "Actions", "Registry", "actions_for_module"]
 
 ActionHandler = Callable[[State, Any], State]
 
@@ -380,3 +381,57 @@ class Registry(Actions):
 
 RESERVED = frozenset(name for name in dir(Registry) if not name.startswith("_"))
 """Names a registry already uses. An action may not take one."""
+
+
+def actions_for_module(
+    module: ModuleType, view: Callable[[Any], Node] | None = None
+) -> tuple[Actions, str | None]:
+    """Return the action registry an app module declares, ready to render.
+
+    Discovery is shared by every seam that boots an app: the device runtime
+    and the preview both need the same registry, or a screen that reaches
+    ``actions`` from the context works on one and fails on the other. The
+    view installs here too, so a session-native action that cannot decode
+    is refused at boot rather than on whichever control a user taps first.
+
+    Args:
+        module: The freshly imported app module.
+        view: The app's shell renderer, when the entry declares one;
+            installed on the registry for session-native actions.
+
+    Returns:
+        The module's ``actions`` registry, or one auto-collected from its
+        module-level ``AppAction`` definitions, paired with a failure
+        message when the registry or the entry is unusable. An empty
+        registry is the quietest possible failure -- the app starts,
+        renders, and every control is inert because no binding resolves to
+        a handler -- so a registry that was declared and came out empty is
+        reported rather than rendered blank.
+    """
+    definitions = [
+        value for value in vars(module).values() if isinstance(value, AppAction)
+    ]
+    actions = getattr(module, "actions", None)
+    if actions is None:
+        actions = Actions(*definitions)
+    elif not isinstance(actions, Actions):
+        return Actions(), "app actions must be an Actions instance"
+    elif not actions.handlers():
+        return (
+            Actions(),
+            "app declared an actions registry but it holds nothing; check that "
+            "it is exported under the module-level name 'actions' and that the "
+            "actions are registered on it",
+        )
+    if view is not None:
+        actions.install_view(view)
+    elif any(
+        getattr(definition, "shell", None) is not None
+        for definition in actions.handlers().values()
+    ):
+        return (
+            Actions(),
+            "a session-native action needs the app's shell view; this entry "
+            "renders data mode",
+        )
+    return actions, None

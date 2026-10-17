@@ -14,7 +14,7 @@ from pycompose.cli.project import Project, ProjectError, project_path
 from pycompose.core.context import AppContext, carried
 from pycompose.core.context import install as install_context
 from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.state import Actions, App
+from pycompose.state import App, actions_for_module
 
 
 class AppReloader:
@@ -140,11 +140,15 @@ class AppReloader:
         # The preview stands in for a session: the container is built fresh on
         # every snapshot, so an edited repository shows up, and the context is
         # installed, so a first render reaches a use case exactly as it will on
-        # the device.
+        # the device. The registry is the module's own -- a screen that names
+        # an action from the context resolves it in the preview as on device.
         container = app.container() if app.container is not None else None
+        actions, problem = actions_for_module(module, app.session_view)
+        if problem is not None:
+            raise ProjectError(problem)
         install_context(
             AppContext(
-                actions=Actions(),
+                actions=actions,
                 container=container,
                 **carried(container),
             )

@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+from types import ModuleType
 from typing import TypedDict
 
 import pytest
 
+from pycompose import action
 from pycompose.components import Text
 from pycompose.core.effect import Effect
 from pycompose.errors import StateError
-from pycompose.state import AppState, Registry, State, respond
+from pycompose.state import AppState, Registry, State, actions_for_module, respond
 from pycompose.state.app_action import AppAction
 
 
@@ -196,3 +198,35 @@ def test_a_session_action_keeps_the_slices_it_did_not_touch() -> None:
 
     assert after.slices == slices
     assert after.app == Shell(about_open=True)
+
+
+def test_the_boot_seam_installs_the_shell_view_on_a_discovered_registry() -> None:
+    @action
+    def open_about(session: Shell, payload: Nothing) -> Shell:  # noqa: ARG001
+        return session.evolve(about_open=True)
+
+    module = ModuleType("entry")
+    module.open_about = open_about
+
+    actions, problem = actions_for_module(module, view)
+
+    assert problem is None
+    moved = actions.dispatch("openAbout", State(root=view(Shell()), app=Shell()))
+    assert moved.app == Shell(about_open=True)
+
+
+def test_a_data_mode_entry_defining_a_session_action_fails_at_boot() -> None:
+    @action
+    def open_about(session: Shell, payload: Nothing) -> Shell:  # noqa: ARG001
+        return session.evolve(about_open=True)
+
+    module = ModuleType("entry")
+    module.open_about = open_about
+
+    actions, problem = actions_for_module(module, None)
+
+    # Refused before the first frame, not on the first tap: a session-native
+    # action with no view installed can only fail once a user triggers it.
+    assert problem is not None
+    assert "shell" in problem
+    assert actions.handlers() == {}

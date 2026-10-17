@@ -15,6 +15,7 @@ from test_cli_init import cli
 
 from pycompose.cli.dev_server import DevServer
 from pycompose.cli.project import load_project
+from pycompose.ir.generated_validators import SCHEMA_VERSION
 
 
 def session(server: DevServer) -> dict[str, Any]:
@@ -157,3 +158,92 @@ def test_symlinked_resources_are_rejected_without_exposing_external_bytes(
         )
         assert failed["files"] == initial["files"]
         assert "resources/assets/secret" not in failed["files"]
+
+
+PREVIEW_APP = '''\
+from typing import TypedDict
+
+from pycompose import Registry, composable
+from pycompose.components import Button
+from pycompose.state import App, AppState
+
+
+class Nothing(TypedDict):
+    pass
+
+
+class Shell(AppState):
+    """The preview shell."""
+
+    taps: int = 0
+
+
+actions = Registry()
+
+
+@actions
+def tap(session: Shell, payload: Nothing) -> Shell:
+    """Count one tap.
+
+    Args:
+        session: The shell before the tap.
+        payload: Empty; this command takes no event fields.
+
+    Returns:
+        The shell with one more tap.
+    """
+    return Shell(taps=session.taps + 1)
+
+
+@composable
+def screen(session: Shell, actions: Registry | None = None) -> Button:
+    """Bind the button this preview must resolve the registry for.
+
+    Args:
+        session: The shell after the entry ran.
+        actions: The module's registry, filled from the app context.
+
+    Returns:
+        A bound button.
+    """
+    return Button(
+        id="tap_button",
+        text=f"tapped:{session.taps}",
+        on_click=actions.tap.bind(id="tap"),
+    )
+
+
+def view(session: Shell) -> Button:
+    """Render the screen for this shell.
+
+    Args:
+        session: The shell after the entry ran.
+
+    Returns:
+        The bound button screen.
+    """
+    return screen(id="screen", session=session)
+
+
+app = App(state=Shell, view=view)
+'''
+
+
+def test_the_preview_resolves_the_modules_actions_for_a_context_reaching_screen(
+    tmp_path: Path,
+) -> None:
+    from pycompose.cli.reload import AppReloader
+
+    assert cli(tmp_path, "init", "demo").returncode == 0
+    project = tmp_path / "demo"
+    (project / "app" / "main.py").write_text(PREVIEW_APP, encoding="utf-8")
+
+    reloader = AppReloader(load_project(project), SCHEMA_VERSION)
+    try:
+        snapshot = json.loads(reloader.snapshot())
+    finally:
+        # The reloader owns the import path and the user modules; without
+        # close() the demo's `main` would shadow the next app's entrypoint.
+        reloader.close()
+
+    assert snapshot["root"]["props"]["text"] == "tapped:0"

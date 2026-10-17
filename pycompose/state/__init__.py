@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
-from pycompose.state.actions import ActionHandler, Actions, Registry
+from pycompose.state.actions import (
+    ActionHandler,
+    Actions,
+    Registry,
+    actions_for_module,
+)
 from pycompose.state.app import App
 from pycompose.state.app_action import ShellResponse, respond
 from pycompose.state.app_state import AppState
@@ -17,5 +22,6 @@ __all__ = [
     "ShellResponse",
     "State",
     "Store",
+    "actions_for_module",
     "respond",
 ]

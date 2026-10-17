@@ -17,8 +17,7 @@ from pycompose.bridge.api import BridgeSurface
 from pycompose.core.context import AppContext, carried
 from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
-from pycompose.state import Actions, App, Store
-from pycompose.state.app_action import AppAction
+from pycompose.state import Actions, App, Store, actions_for_module
 
 
 class RuntimeSession:
@@ -75,9 +74,9 @@ class RuntimeSession:
                 entrypoint=f"{self._module}:{self._export}",
             )
         container = self._resolve_container(app)
-        actions = self._resolve_actions(module)
-        if app.session_view is not None:
-            actions.install_view(app.session_view)
+        actions, problem = actions_for_module(module, app.session_view)
+        if problem is not None:
+            raise BridgeError(problem)
         # Before `app.build`, because a composable reached during the first
         # render resolves its registry from this. The module is already
         # imported, so both halves of the context exist by now.
@@ -98,42 +97,6 @@ class RuntimeSession:
         if surface.expose_latest_snapshot() is None:
             raise BridgeError("app build produced no valid snapshot")
         return surface
-
-    def _resolve_actions(self, module: ModuleType) -> Actions:
-        """Return the registry this app declared.
-
-        Args:
-            module: The freshly imported app module.
-
-        Returns:
-            The app's registry, or an empty one when it declared none.
-
-        Raises:
-            BridgeError: If the declared registry is not an ``Actions``, or is
-                empty. An empty registry is the quietest possible failure: the
-                app starts, renders, and every control is inert because no
-                binding resolves to a handler. An app that *declares* one and it
-                comes out empty has misspelled something -- a renamed export, or
-                a Registry built in a different module -- so it is refused
-                rather than rendered blank. An app with no actions at all need
-                not declare a registry.
-        """
-        definitions = [
-            value for value in vars(module).values() if isinstance(value, AppAction)
-        ]
-        actions = getattr(module, "actions", None)
-        declared = actions is not None
-        if actions is None:
-            return Actions(*definitions)
-        if not isinstance(actions, Actions):
-            raise BridgeError("app actions must be an Actions instance")
-        if declared and not actions.handlers():
-            raise BridgeError(
-                "app declared an actions registry but it holds nothing; check that "
-                "it is exported under the module-level name 'actions' and that the "
-                "actions are registered on it"
-            )
-        return actions
 
     def _check_injection(self, actions: Actions, container: object | None) -> None:
         """Fail at startup when an action wants a container the app never declared.
