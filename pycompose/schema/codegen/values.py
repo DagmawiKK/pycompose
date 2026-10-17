@@ -11,7 +11,7 @@ from pycompose.core.props import to_snake_case
 from pycompose.core.values import FLOAT_MAX, FLOAT_MIN
 from pycompose.schema.codegen.defaults import render_default
 
-KINDS = {"scalar", "record", "factory", "constant", "reference"}
+KINDS = {"scalar", "record", "factory", "constant", "reference", "operator"}
 
 
 def validate_definitions(registry: dict[str, Any]) -> None:
@@ -25,6 +25,7 @@ def validate_definitions(registry: dict[str, Any]) -> None:
             die(f"invalid value constructor: {name}")
         if spec.get("kind") not in KINDS:
             die(f"unsupported value policy for {name}")
+        _validate_operator(name, spec)
         require_semver(spec.get("since"), f"valueTypes.{name}.since")
         if spec["since"] not in registry["supportedSchemaVersions"]:
             die(f"value {name} requires an unsupported schema")
@@ -46,6 +47,31 @@ def validate_definitions(registry: dict[str, Any]) -> None:
                     die(f"unknown value family: {prop['valueType']}")
                 if prop["type"] == "value" and "valueType" not in prop:
                     die("value props need a valueType")
+
+
+def _validate_operator(name: str, spec: dict[str, Any]) -> None:
+    """Fail generation on an operator family without its form or citation.
+
+    The range descriptor is the one family with no artifact to pin: its
+    evidence is the language-level operator (ADR-0017 decision 5), so the
+    native form drives the emitted expression, and the citation in the
+    source is what tells the re-derivation passes to skip the family rather
+    than invent a source the compiler never resolved.
+
+    Args:
+        name: The value constructor name.
+        spec: Its schema entry.
+    """
+    from pycompose.schema.codegen.rules import die
+
+    if spec.get("kind") != "operator":
+        return
+    native = spec.get("native") or {}
+    if native.get("operator") != "..":
+        die(f"value {name}: an operator family needs a native '..'")
+    source = spec.get("source") or {}
+    if source.get("language") != "kotlin" or source.get("operator") != "..":
+        die(f"value {name}: an operator family needs a language-level citation")
 
 
 def _validate_holders(name: str, spec: dict[str, Any]) -> None:

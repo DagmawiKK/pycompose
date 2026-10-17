@@ -262,6 +262,15 @@ def render_native(registry: dict[str, Any]) -> str:
                 )
             elif "constant" in native:
                 lines.append(f"                {native['constant']}")
+            elif "operator" in native:
+                # The one family with no factory to pin builds its value from
+                # the operator form itself: start..end over the wire operands.
+                operands = [
+                    _decode_parameter(f"value.{field}", rule)
+                    for field, rule in spec["parameters"].items()
+                ]
+                expression = native["operator"].join(operands)
+                lines.append(f"                {expression}")
             else:
                 lines.append(f"                {native['call']}(")
                 for field, rule in spec["parameters"].items():

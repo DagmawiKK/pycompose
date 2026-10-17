@@ -486,11 +486,13 @@ def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -
     registry = json.loads((ROOT / "schema/components.json").read_text())
     results = refresh(found, evidence, registry)
     derived = [item for item in results if "proposal" in item]
-    # Every approved binding carrying a source is re-derived, not silently skipped.
+    # Every approved binding carrying an artifact source is re-derived, not
+    # silently skipped; a language-level source is approved policy that no
+    # pin can reproduce (the range descriptor, ADR-0017 decision 5).
     assert {item["name"] for item in derived} == {
         name
         for name, spec in registry["valueTypes"].items()
-        if "family" in spec and "source" in spec
+        if "family" in spec and "source" in spec and "language" not in spec["source"]
     }
     for item in derived:
         approved = registry["valueTypes"][item["name"]]
@@ -555,3 +557,27 @@ def test_opt_in_evidence_comes_from_the_pin(native_document) -> None:
         "androidx.compose.material3.ExperimentalMaterial3Api"
     }
     assert required_opt_ins(stable, markers) == set()
+
+
+def test_a_language_level_family_is_reviewed_not_re_derived(native_document) -> None:
+    """The range descriptor pins no artifact; its citation is approved policy.
+
+    ``ClosedFloatingPointRange`` has no factory to pin (ADR-0017 decision 5),
+    so the family is skipped by re-derivation and stays exactly as approved,
+    and the drift check stays silent about it rather than inventing a source
+    the compiler never resolved.
+    """
+    from test_value_codegen import RANGE_FAMILY
+
+    from tools.schema.check_upstream import compare_values
+    from tools.schema.classpath_dump import inventory, source_defaults
+    from tools.schema.propose import refresh
+
+    assert native_document["provenance"]["compiler"] == "2.0.21"
+    found = inventory(DUMP)
+    evidence = source_defaults(DUMP)
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry["valueTypes"]["Range"] = json.loads(json.dumps(RANGE_FAMILY))
+    results = refresh(found, evidence, registry)
+    assert "Range" not in {item["name"] for item in results}
+    assert compare_values(registry, found, evidence) == []

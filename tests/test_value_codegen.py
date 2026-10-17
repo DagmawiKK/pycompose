@@ -14,6 +14,80 @@ from pycompose.schema.codegen.values_kotlin import (
 
 ROOT = Path(__file__).resolve().parents[1]
 
+RANGE_FAMILY = {
+    "family": "Range",
+    "kind": "operator",
+    "kotlinType": "kotlin.ranges.ClosedFloatingPointRange",
+    "since": "1.23.0",
+    "source": {
+        "language": "kotlin",
+        "operator": "..",
+        "evidence": "kotlin/ranges/Ranges.kt",
+    },
+    "parameters": {
+        "start": {"type": "float", "required": True},
+        "end": {"type": "float", "required": True},
+    },
+    "native": {"operator": ".."},
+}
+"""The range descriptor (ADR-0017 decision 5) as the catalog will carry it."""
+
+
+def _with_range() -> dict:
+    """Return a catalog copy carrying the range descriptor.
+
+    Returns:
+        The parsed catalog with one injected family entry.
+    """
+    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry["valueTypes"]["Range"] = json.loads(json.dumps(RANGE_FAMILY))
+    return registry
+
+
+def test_an_operator_family_builds_its_form_rather_than_a_call() -> None:
+    """A range crosses as tagged data and resolves through the operator form.
+
+    ``ClosedFloatingPointRange`` has no factory to pin, so the citation is
+    the language-level operator (ADR-0017 decision 5): the generated
+    resolver builds ``start..end`` where every other family calls an
+    artifact.
+    """
+    registry = _with_range()
+    python = render_python(registry)
+    assert "def Range(" in python
+    assert '"Range",' in python
+    native = render_native(registry)
+    assert "value.start.toFloat()..value.end.toFloat()" in native
+    assert "Result<kotlin.ranges.ClosedFloatingPointRange>" in native
+
+
+def test_an_operator_family_needs_its_native_form(tmp_path: Path, monkeypatch) -> None:
+    """The form is what the resolver emits; without it there is no resolver."""
+    from pycompose.schema.codegen import main, rules
+
+    registry = _with_range()
+    del registry["valueTypes"]["Range"]["native"]["operator"]
+    path = tmp_path / "components.json"
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(rules, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match="needs a native '..'"):
+        main.load_registry()
+
+
+def test_an_operator_family_needs_its_language_level_citation(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """The citation is what tells re-derivation to skip, not invent, a source."""
+    from pycompose.schema.codegen import main, rules
+
+    registry = _with_range()
+    del registry["valueTypes"]["Range"]["source"]["language"]
+    path = tmp_path / "components.json"
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(rules, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match="needs a language-level citation"):
+        main.load_registry()
+
 
 def test_app_values_include_transitive_dependencies_not_unrelated_factories() -> None:
     registry = json.loads((ROOT / "schema/components.json").read_text())

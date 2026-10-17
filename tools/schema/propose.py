@@ -74,6 +74,11 @@ def refresh(
 ) -> list[dict[str, Any]]:
     """Re-derive every approved binding without changing the approved schema.
 
+    A family whose source is language-level (the range descriptor, ADR-0017
+    decision 5) pins no artifact the compiler can resolve, so re-derivation
+    skips it: its citation is approved policy, reviewed by a human, and the
+    drift check stays silent rather than inventing a source.
+
     Args:
         found: The validated inventory of the current pin.
         evidence: Compiler-resolved defaults keyed by JVM identity.
@@ -85,7 +90,7 @@ def refresh(
     return [
         bind(found, evidence, registry, name)
         for name, spec in registry["valueTypes"].items()
-        if "family" in spec
+        if "family" in spec and "language" not in spec.get("source", {})
     ]
 
 
