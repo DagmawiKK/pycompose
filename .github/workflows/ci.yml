@@ -274,12 +274,19 @@ jobs:
               assert b"Lcom/pycompose/ir/generated/SliderProps;" not in dex
               # ...and the app's own m3 must be the only component catalog the
               # APK packs for Python; `pycompose build` excluded pycompose/m3.
+              # Chaquopy ships app sources as .py, or as sibling .pyc bytecode
+              # when the build machine can compile them (it then drops the .py
+              # sources), so either form proves the slice is what got packed.
               with zipfile.ZipFile(
                   io.BytesIO(archive.read("assets/chaquopy/app.imy"))
               ) as runtime:
                   packaged = runtime.namelist()
-              assert "m3/__init__.py" in packaged
-              assert not any(name.startswith("pycompose/m3/") for name in packaged)
+              assert {"m3/__init__.py", "m3/__init__.pyc"} & set(packaged), sorted(
+                  packaged
+              )
+              assert not any(
+                  name.startswith("pycompose/m3/") for name in packaged
+              ), sorted(packaged)
           PY
 
   resource-sync-check:
