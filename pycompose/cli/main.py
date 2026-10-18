@@ -302,7 +302,11 @@ def main(argv: list[str] | None = None) -> int:
     """
     arguments = list(sys.argv[1:] if argv is None else argv)
     if not arguments and console.interactive():
-        arguments = _chooser()
+        try:
+            arguments = _chooser()
+        except (EOFError, KeyboardInterrupt):
+            console.notice("aborted")
+            return 2
     args = _parser().parse_args(arguments)
     handlers = {
         "init": _init,
@@ -321,4 +325,7 @@ def main(argv: list[str] | None = None) -> int:
         return handlers[args.command](args)
     except (PyComposeError, OSError, subprocess.TimeoutExpired) as exc:
         console.error(args.command, str(exc))
+        return 2
+    except (EOFError, KeyboardInterrupt):
+        console.notice("aborted")
         return 2
