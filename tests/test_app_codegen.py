@@ -62,6 +62,23 @@ def slice_names() -> set[str]:
 
 
 # ---------------------------------------------------------------------------
+# The committed slice is current
+# ---------------------------------------------------------------------------
+
+
+def test_the_committed_slice_is_current() -> None:
+    """A stale example teaches the shape the codegen no longer produces.
+
+    This must stay ahead of every test that regenerates the example in place:
+    once the codegen has rewritten the tree, ``--check`` could only prove it
+    agrees with itself. Nothing else guards the committed slice -- ``gen.py
+    --check`` covers the framework catalog and the template.
+    """
+    result = run_app(NOTES_APP, "--check")
+    assert result.returncode == 0, result.stderr
+
+
+# ---------------------------------------------------------------------------
 # The slice is what the app uses
 # ---------------------------------------------------------------------------
 
