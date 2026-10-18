@@ -119,8 +119,9 @@ jobs:
           python -m pyperf compare_to reports/ir-performance/before.json reports/ir-performance/after.json --table > reports/ir-performance/comparison.txt
       - name: Phase timing
         run: |
-          python "$RUNNER_TEMP/ir-baseline/tools/bench_ir.py" --phases construction,emit,validate,bytes --processes 3 --values 5 --min-time 0.03 --quiet -o reports/ir-performance/before-phases.json
-          python tools/bench_ir.py --phases construction,emit,validate,bytes --processes 3 --values 5 --min-time 0.03 --quiet -o reports/ir-performance/after-phases.json
+          PHASES=construction,emit,validate,bytes,diff,patch,patch_pipeline
+          python "$RUNNER_TEMP/ir-baseline/tools/bench_ir.py" --phases "$PHASES" --processes 3 --values 5 --min-time 0.03 --quiet -o reports/ir-performance/before-phases.json
+          python tools/bench_ir.py --phases "$PHASES" --processes 3 --values 5 --min-time 0.03 --quiet -o reports/ir-performance/after-phases.json
       - name: Separate memory measurements
         run: |
           python "$RUNNER_TEMP/ir-baseline/tools/bench_ir.py" --memory-report reports/ir-performance/before-memory.json

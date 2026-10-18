@@ -5,6 +5,9 @@ Run with Python 3.12 from the repo root:
     python tools/bench_ir.py --memory-report memory.json
     python tools/bench_ir.py --phases construction,emit,validate,bytes -o phases.json
 
+The ``diff``, ``patch``, and ``patch_pipeline`` phases measure ADR-0018's patch
+path (one keystroke against the same shapes) next to the full-snapshot path.
+
 Compare matched machines with ``python -m pyperf compare_to before.json after.json``.
 tracemalloc reports peak/retained bytes, not total allocation churn. Results remain
 informational until runner variability establishes defensible regression thresholds.
@@ -29,6 +32,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from pycompose.core import Node, Props
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
+from pycompose.ir.model import IRRoot
+from pycompose.ir.patch import diff_nodes, patch_bytes
 from pycompose.state import State
 
 SHAPES = ("wide", "nested", "props", "drop", "optional")
@@ -79,12 +84,76 @@ def pipeline(state: State) -> bytes:
     return to_json_bytes(result.snapshot)
 
 
+def patch_pipeline(state: State, base: IRRoot) -> bytes:
+    result = validate_ir(emit_ir(state, "1.0.0"), debug=False)
+    assert result.snapshot is not None
+    ops = diff_nodes(base.root, result.snapshot.root)
+    return patch_bytes(result.snapshot, ops, base_serial=1, serial=2)
+
+
+def _edit_text(node: Node) -> tuple[Node, bool]:
+    """Rewrite the last node carrying ``text`` with one more character.
+
+    Args:
+        node: Subtree to rewrite.
+
+    Returns:
+        The possibly rebuilt node and whether the edit happened below it.
+    """
+    if "text" in node.props:
+        props = dict(node.props.values)
+        props["text"] = f"{props['text']}!"
+        return (
+            Node(
+                id=node.id,
+                type=node.type,
+                props=Props(props),
+                children=node.children,
+                slot=node.slot,
+            ),
+            True,
+        )
+    for index in range(len(node.children) - 1, -1, -1):
+        edited, done = _edit_text(node.children[index])
+        if done:
+            children = (*node.children[:index], edited, *node.children[index + 1 :])
+            return (
+                Node(
+                    id=node.id,
+                    type=node.type,
+                    props=node.props,
+                    children=children,
+                    slot=node.slot,
+                ),
+                True,
+            )
+    return node, False
+
+
+def mutate(state: State) -> State:
+    """Change one visible leaf's text; the keystroke the patch protocol targets.
+
+    Args:
+        state: State to copy with one edited leaf.
+
+    Returns:
+        The mutated state, structurally shared elsewhere.
+    """
+    root, edited = _edit_text(state.root)
+    assert edited, "bench shapes always carry a text leaf"
+    return State(root=root)
+
+
 def operations(size: int, shape: str) -> dict[str, Callable[[], object]]:
     state = build_state(size, shape)
     candidate = emit_ir(state, "1.0.0")
     result = validate_ir(candidate, debug=False)
     assert result.snapshot is not None
     safe = result.snapshot
+    edited_state = mutate(state)
+    edited = validate_ir(emit_ir(edited_state, "1.0.0"), debug=False)
+    assert edited.snapshot is not None
+    ops = diff_nodes(safe.root, edited.snapshot.root)
     return {
         "total": lambda: pipeline(build_state(size, shape)),
         "pipeline": lambda: pipeline(state),
@@ -92,6 +161,9 @@ def operations(size: int, shape: str) -> dict[str, Callable[[], object]]:
         "emit": lambda: emit_ir(state, "1.0.0"),
         "validate": lambda: validate_ir(candidate, debug=False),
         "bytes": lambda: to_json_bytes(safe),
+        "diff": lambda: diff_nodes(safe.root, edited.snapshot.root),
+        "patch": lambda: patch_bytes(edited.snapshot, ops, base_serial=1, serial=2),
+        "patch_pipeline": lambda: patch_pipeline(edited_state, safe),
     }
 
 

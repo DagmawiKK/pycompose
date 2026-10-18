@@ -17,7 +17,7 @@ from pycompose.errors import IrValidationError
 from pycompose.ir.model import IRRoot
 from pycompose.utils.json_canonical import canonical_json_bytes, thaw_json
 
-__all__ = ["node_to_dict", "to_dict", "to_json", "to_json_bytes"]
+__all__ = ["node_bytes", "node_to_dict", "to_dict", "to_json", "to_json_bytes"]
 
 
 def node_to_dict(node: Node) -> dict[str, JsonValue]:
@@ -88,27 +88,32 @@ def to_json(snapshot: Node | IRRoot) -> str:
     return to_json_bytes(snapshot).decode("utf-8")
 
 
-def to_json_bytes(snapshot: Node | IRRoot) -> bytes:
-    """Serialize a snapshot to canonical UTF-8 bytes.
+def node_bytes(node: Node) -> bytes:
+    """Serialize one node subtree to canonical UTF-8 bytes.
+
+    Unexpanded Python declarations raise :class:`IrValidationError`.
 
     Args:
-        snapshot: Node or versioned snapshot.
+        node: IR node to serialize.
 
     Returns:
-        Deterministic UTF-8 bytes.
+        Deterministic UTF-8 bytes for the subtree.
+    """
+    output = bytearray()
+    _write_node(output, node)
+    return bytes(output)
+
+
+def _write_node(output: bytearray, root: Node) -> None:
+    """Stream one node subtree into ``output`` in fixed key order.
+
+    Args:
+        output: Buffer the bytes are appended to.
+        root: Subtree to serialize.
 
     Raises:
         IrValidationError: If a Python declaration has not been expanded.
     """
-    output = bytearray()
-    root = snapshot if isinstance(snapshot, Node) else snapshot.root
-    if isinstance(snapshot, IRRoot):
-        output.extend(b"{")
-        if snapshot.metadata is not None:
-            output.extend(b'"metadata":')
-            output.extend(canonical_json_bytes(snapshot.metadata))
-            output.extend(b",")
-        output.extend(b'"root":')
     sibling_counts: list[int] = []
     for node, entering in walk_nodes(root):
         if isinstance(node, DeferredNode):
@@ -134,6 +139,29 @@ def to_json_bytes(snapshot: Node | IRRoot) -> bytes:
             output.extend(b',"type":')
             output.extend(canonical_json_bytes(node.type))
             output.extend(b"}")
+
+
+def to_json_bytes(snapshot: Node | IRRoot) -> bytes:
+    """Serialize a snapshot to canonical UTF-8 bytes.
+
+    Unexpanded Python declarations raise :class:`IrValidationError`.
+
+    Args:
+        snapshot: Node or versioned snapshot.
+
+    Returns:
+        Deterministic UTF-8 bytes.
+    """
+    output = bytearray()
+    root = snapshot if isinstance(snapshot, Node) else snapshot.root
+    if isinstance(snapshot, IRRoot):
+        output.extend(b"{")
+        if snapshot.metadata is not None:
+            output.extend(b'"metadata":')
+            output.extend(canonical_json_bytes(snapshot.metadata))
+            output.extend(b",")
+        output.extend(b'"root":')
+    _write_node(output, root)
     if isinstance(snapshot, IRRoot):
         output.extend(b',"schemaVersion":')
         output.extend(canonical_json_bytes(snapshot.schema_version))
