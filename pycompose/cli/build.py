@@ -132,6 +132,25 @@ def _check_requirements_scaffold(project: Project, requirements: list[str]) -> N
     )
 
 
+def _own_slice(directory: Path) -> str:
+    """Report whether the app imports its own generated component package.
+
+    The host excludes the library catalog from the packaged runtime when it
+    does: the slice is then the only copy of the components the app carries
+    (ADR-0014). The value is a plain Gradle property, so a raw wrapper build
+    keeps the catalog, which is what the fallback sample imports.
+
+    Args:
+        directory: The app's Python source directory.
+
+    Returns:
+        ``"true"`` or ``"false"``.
+    """
+    from pycompose.schema.codegen.app_slice import uses_generated_slice
+
+    return "true" if uses_generated_slice(directory) else "false"
+
+
 def _app_properties(project: Project, env: dict[str, str]) -> None:
     config = project.table("app")
     app_id = config.get("application_id")
@@ -165,6 +184,7 @@ def _app_properties(project: Project, env: dict[str, str]) -> None:
         raise ProjectError("Python source directory is missing", path=directory)
     env["ORG_GRADLE_PROJECT_pycomposeEntrypoint"] = entrypoint
     env["ORG_GRADLE_PROJECT_pycomposeSourceDir"] = str(directory)
+    env["ORG_GRADLE_PROJECT_pycomposeOwnSlice"] = _own_slice(directory)
     requirements = _requirements(project)
     _check_requirements_scaffold(project, requirements)
     env["ORG_GRADLE_PROJECT_pycomposeRequirements"] = "\n".join(requirements)

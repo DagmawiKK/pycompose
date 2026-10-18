@@ -36,6 +36,11 @@ android {
     }
     testOptions.unitTests.isIncludeAndroidResources = true
     bundle.language.enableSplit = false
+    // The app's generated component slice (ADR-0014); see ir/build.gradle.kts.
+    sourceSets
+        .getByName("main")
+        .kotlin
+        .srcDir(rootProject.file(".pycompose/generated/host/src/main/kotlin"))
     sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
     sourceSets.getByName("test").java.srcDir("../architecture/src/test/kotlin")
     lint {
@@ -74,10 +79,21 @@ chaquopy {
     }
 }
 
+// True when the app imports its own generated slice (ADR-0014); `pycompose
+// build` sets the property. A raw Gradle build keeps the library catalog,
+// which is what the fallback sample under src/main/python imports.
+val ownSlice = providers.gradleProperty("pycomposeOwnSlice").orNull == "true"
+
 val stageRuntime by tasks.registering(Sync::class) {
     from(providers.gradleProperty("pycomposeRuntimeDir").getOrElse(rootProject.file("..").path)) {
         include("pycompose/**/*.py", "pycompose/py.typed")
         exclude("pycompose/cli/**", "pycompose/templates/**", "pycompose/testing/**")
+        // The app's own slice is the only copy of the catalog's components it
+        // carries; shipping pycompose/m3 too would put every component back
+        // into the APK the slice exists to keep out.
+        if (ownSlice) {
+            exclude("pycompose/m3/**")
+        }
     }
     into(layout.buildDirectory.dir("generated/runtime"))
 }

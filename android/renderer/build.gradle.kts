@@ -18,6 +18,11 @@ android {
         compose = true
     }
     testOptions.unitTests.isIncludeAndroidResources = true
+    // The app's generated component slice (ADR-0014); see ir/build.gradle.kts.
+    sourceSets
+        .getByName("main")
+        .kotlin
+        .srcDir(rootProject.file(".pycompose/generated/renderer/src/main/kotlin"))
     sourceSets.getByName("test").java.srcDir("../architecture/src/test/kotlin")
     sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
 }

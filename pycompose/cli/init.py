@@ -31,6 +31,38 @@ def _copy_assets(source: Traversable, target: Path) -> None:
                 destination.chmod(0o755)
 
 
+def _generate_slice(target: Path) -> None:
+    """Generate the sample app's component slice so the scaffold is complete.
+
+    ``pycompose build`` regenerates the slice before every build, but a project
+    that has never been built is still expected to work: the packaged smoke
+    checks and a user's first script import the sample entrypoint, which needs
+    its generated package (ADR-0014).
+
+    Args:
+        target: The project root that was just scaffolded.
+
+    Raises:
+        InitError: If the slice cannot be generated from the packaged catalog.
+    """
+    import io
+    from contextlib import redirect_stderr, redirect_stdout
+
+    from pycompose.schema.codegen.app_slice import uses_generated_slice
+    from pycompose.schema.codegen.main import build_app
+
+    app = target / "app"
+    if not uses_generated_slice(app):
+        return
+    output = io.StringIO()
+    with redirect_stdout(output), redirect_stderr(output):
+        code = build_app(app, android_root=target)
+    if code:
+        raise InitError(
+            "component slice generation failed:\n" + output.getvalue().strip()
+        )
+
+
 def init_project(name: str, *, directory: Path) -> tuple[Path, bool, bool]:
     """Copy template assets and write config without replacing existing work.
 
@@ -107,4 +139,6 @@ def init_project(name: str, *, directory: Path) -> tuple[Path, bool, bool]:
         "x", encoding="utf-8", newline="\n"
     ) as output:
         output.write(config)
+    if android_scaffold:
+        _generate_slice(target)
     return target, True, android_scaffold

@@ -1,6 +1,11 @@
-"""Python entrypoint for the generated app."""
+"""Python entrypoint for the generated app.
 
-from pycompose.components import Text
+The components come from the app's own generated package, which the build
+regenerates from what this source references (ADR-0014), so the app ships the
+components it uses and nothing else.
+"""
+
+from m3 import Text
 from pycompose.state import App, AppState
 
 

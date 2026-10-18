@@ -31,6 +31,16 @@ EXCLUDED = frozenset(
         # label from resources/strings.json as a generated string instead, so
         # this file would collide with that app_name and is never shipped.
         "pycompose_app.xml",
+        # The generated slice is build output (ADR-0014): `pycompose build`
+        # regenerates it into .pycompose/generated, which the modules bind as a
+        # source directory, so a scaffold must not also receive this copy of
+        # the full catalog.
+        "generated",
+        "GeneratedAdapters.kt",
+        # The framework's own tests compile against that full catalog, which a
+        # scaffolded app does not have; they live with the library, which runs
+        # them, and not with the app, which never asked for them.
+        "test",
     }
 )
 

@@ -7,6 +7,15 @@ kotlin {
     jvmToolchain(17)
 }
 
+// The app's generated component slice (ADR-0014) is build output: `pycompose
+// build` regenerates it into this project-level tree before Gradle runs, and
+// this is the module that compiles it. The repository never creates it -- the
+// committed full catalog in src/main is what the library's own tests compile.
+kotlin.sourceSets
+    .getByName("main")
+    .kotlin
+    .srcDir(rootProject.file(".pycompose/generated/ir/src/main/kotlin"))
+
 kotlin.sourceSets
     .getByName("test")
     .kotlin

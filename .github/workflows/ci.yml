@@ -256,10 +256,30 @@ jobs:
           grep -F "package: name='com.example.app_wheel_smoke' versionCode='1' versionName='0.1.0'" badging.txt
           "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify "$apk"
           python - <<'PY'
+          import io
           import zipfile
+
           with zipfile.ZipFile("host/build/outputs/apk/debug/host-debug.apk") as archive:
               for abi in ("arm64-v8a", "x86_64"):
                   assert f"lib/{abi}/libpython3.12.so" in archive.namelist()
+              # Compiled evidence, not file existence (plan 17, step 8.3): the
+              # sample's slice is Text plus the framework floor, so an unused
+              # component's model must not be in the dex a device would run.
+              dex = b"".join(
+                  archive.read(name)
+                  for name in archive.namelist()
+                  if name.startswith("classes") and name.endswith(".dex")
+              )
+              assert b"Lcom/pycompose/ir/generated/TextProps;" in dex
+              assert b"Lcom/pycompose/ir/generated/SliderProps;" not in dex
+              # ...and the app's own m3 must be the only component catalog the
+              # APK packs for Python; `pycompose build` excluded pycompose/m3.
+              with zipfile.ZipFile(
+                  io.BytesIO(archive.read("assets/chaquopy/app.imy"))
+              ) as runtime:
+                  packaged = runtime.namelist()
+              assert "m3/__init__.py" in packaged
+              assert not any(name.startswith("pycompose/m3/") for name in packaged)
           PY
 
   resource-sync-check:
