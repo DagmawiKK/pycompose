@@ -31,10 +31,43 @@ from typing import Any
 APP_PACKAGE = "m3"
 """The app-side generated package, mirroring ``pycompose.m3``."""
 
-_IR_RELATIVE = Path("android/ir/src/main/kotlin/com/pycompose/ir/generated")
-_ADAPTERS_RELATIVE = Path(
-    "android/host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
+GENERATED_RELATIVE = Path(".pycompose/generated")
+"""Where a project's generated slice lives, relative to the project root.
+
+The scaffold's modules bind this tree through their build files, so it is build
+output rather than a module source: the CLI regenerates it before every build
+(ADR-0014), the template's ``.gitignore`` ignores it, and no second copy lives
+under ``android/``. The notes example generates into it too, and commits the
+result as the slice fixture.
+
+The layout mirrors the module trees the files used to sit in -- ``ir/``,
+``renderer/`` and ``host/`` -- so one ``srcDir`` per module binds exactly the
+files that module compiles.
+"""
+
+_IR_RELATIVE = GENERATED_RELATIVE / "ir/src/main/kotlin/com/pycompose/ir/generated"
+_VALUES_RELATIVE = (
+    GENERATED_RELATIVE
+    / "renderer/src/main/kotlin/com/pycompose/renderer/generated/ValueResolver.kt"
 )
+_ADAPTERS_RELATIVE = (
+    GENERATED_RELATIVE
+    / "host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
+)
+
+FLOOR_COMPONENTS = frozenset({"Image", "Text", "TextField"})
+"""Components every generated host compiles against, referenced or not.
+
+``host/.../ui/BuiltinComponents.kt`` is hand-written and always compiled: it
+registers the three components whose behavior is not mechanical and names their
+generated node classes by type, so a slice without them would emit a host that
+does not compile (plan 17, step 8.4). Keeping them in every slice is what lets
+those adapters stay hand-written once instead of being re-derived per app; the
+generated adapters file skips them for the same reason. Every other component
+enters a slice only because the app references it, and
+``tests/test_app_codegen.py`` scans the hand-written Kotlin so a new reference
+without a floor entry fails there rather than in a user's build.
+"""
 
 
 class AppCodegenError(Exception):

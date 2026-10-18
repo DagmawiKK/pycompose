@@ -169,6 +169,19 @@ def test_a_component_without_a_marker_contributes_no_annotation() -> None:
     assert "@file:OptIn" not in source
 
 
+def test_a_registry_with_no_mechanical_adapters_still_renders_the_object() -> None:
+    """The builtins call ``GeneratedAdapters.register`` unconditionally.
+
+    A slice that qualifies nothing -- the scaffolding sample is Text plus the
+    framework floor -- must still produce a file the host compiles against; an
+    absent file is an unresolved reference in BuiltinComponents, and a stale
+    file from a previous slice is a hidden fallback (plan 17, step 8.5).
+    """
+    source = render_file({"components": {}})
+    assert "object GeneratedAdapters" in source
+    assert "into.generated()" in source
+
+
 def test_a_manual_components_markers_never_reach_the_generated_file() -> None:
     """A hand-written adapter declares its own markers, in its own file."""
     declaration = {

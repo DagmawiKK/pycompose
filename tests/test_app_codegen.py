@@ -41,6 +41,13 @@ def run_app(app: Path, *extra: str) -> subprocess.CompletedProcess[str]:
     )
 
 
+SLICE = Path(".pycompose/generated")
+"""Where the example's committed Kotlin slice lives, relative to the app."""
+
+IR_GENERATED = SLICE / "ir/src/main/kotlin/com/pycompose/ir" / "generated"
+MODELS = IR_GENERATED / "UiModels.kt"
+
+
 @pytest.fixture(scope="module")
 def slice_names() -> set[str]:
     """Return the component names in the notes app's Kotlin slice.
@@ -48,9 +55,7 @@ def slice_names() -> set[str]:
     Returns:
         Every data class emitted as a component node.
     """
-    models = (
-        NOTES_APP / "android/ir/src/main/kotlin/com/pycompose/ir/generated/UiModels.kt"
-    )
+    models = NOTES_APP / MODELS
     if not models.exists():
         run_app(NOTES_APP)
     return set(re.findall(r"data class (\w+)Props\(", models.read_text()))
@@ -65,10 +70,14 @@ def test_the_slice_holds_exactly_the_components_the_app_references(
     slice_names: set[str],
 ) -> None:
     """Discovery is by AST name, so the slice follows the source."""
-    from pycompose.schema.codegen.app_slice import discover, load_catalog
+    from pycompose.schema.codegen.app_slice import (
+        FLOOR_COMPONENTS,
+        discover,
+        load_catalog,
+    )
 
     referenced = discover(NOTES_APP, load_catalog(ROOT / "schema/components.json"))
-    assert slice_names == referenced
+    assert slice_names == referenced | FLOOR_COMPONENTS
     assert len(slice_names) < len(
         CATALOG["components"]
     ), "the example no longer demonstrates anything if it uses everything"
@@ -80,10 +89,7 @@ def test_an_unused_component_is_absent_from_both_slices(slice_names: set[str]) -
     assert unused, "expected the example to leave something out"
 
     python_slice = (NOTES_APP / "m3/generated_components.py").read_text()
-    contract = (
-        NOTES_APP
-        / "android/ir/src/main/kotlin/com/pycompose/ir/generated/IrContract.kt"
-    ).read_text()
+    contract = (NOTES_APP / IR_GENERATED / "IrContract.kt").read_text()
     for name in unused:
         assert f"class {name}(" not in python_slice, f"{name} leaked into Python"
         assert f'"{name}"' not in contract, f"{name} leaked into the IR contract"
@@ -98,6 +104,56 @@ def test_the_two_slices_agree(slice_names: set[str]) -> None:
     python_slice = (NOTES_APP / "m3/generated_components.py").read_text()
     python_names = set(re.findall(r"^class (\w+)\(", python_slice, re.MULTILINE))
     assert python_names == slice_names
+
+
+def test_the_hand_written_sources_define_the_floor() -> None:
+    """Every generated component name in hand-written Kotlin is in the floor.
+
+    ``BuiltinComponents.kt`` compiles against generated node classes, so a
+    slice without them would emit a host that does not compile (plan 17, step
+    8.4). Scanning the modules keeps the floor complete when the hand-written
+    sources grow a reference, and keeps it honest when they lose one.
+    """
+    from pycompose.schema.codegen.app_slice import FLOOR_COMPONENTS
+
+    catalog = set(CATALOG["components"])
+    named: set[str] = set()
+    for module in ("ir", "renderer", "host"):
+        for path in sorted((ROOT / "android" / module / "src/main").rglob("*.kt")):
+            if "/generated/" in path.as_posix() or path.name == "GeneratedAdapters.kt":
+                continue
+            named |= set(
+                re.findall(
+                    r"import com\.pycompose\.ir\.generated\.(\w+)", path.read_text()
+                )
+            )
+    assert named & catalog == FLOOR_COMPONENTS, (
+        "hand-written Kotlin and FLOOR_COMPONENTS disagree; a reference outside "
+        "the floor emits a host that cannot compile against a slice"
+    )
+
+
+def test_a_builtin_only_app_still_gets_the_adapters_object(tmp_path: Path) -> None:
+    """The sample is Text plus the floor: zero mechanical adapters.
+
+    The builtins call ``GeneratedAdapters.register`` unconditionally, so the
+    object must exist even when nothing qualifies -- and must replace whatever
+    a previous, larger slice left there rather than letting it linger.
+    """
+    from pycompose.schema.codegen.main import build_app
+
+    app = tmp_path / "app"
+    app.mkdir()
+    (app / "view.py").write_text("from m3 import Text\n")
+    stale = (
+        app / SLICE / "host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
+    )
+    stale.parent.mkdir(parents=True)
+    stale.write_text("// a previous slice with mechanical adapters\n")
+    assert build_app(app) == 0
+    contents = stale.read_text()
+    assert "object GeneratedAdapters" in contents
+    assert "previous slice" not in contents
 
 
 # ---------------------------------------------------------------------------
@@ -180,9 +236,7 @@ def test_check_fails_when_the_slice_is_wrong() -> None:
         app = Path(raw) / "app"
         shutil_copy(NOTES_APP, app)
         run_app(app)
-        models = (
-            app / "android/ir/src/main/kotlin/com/pycompose/ir/generated/UiModels.kt"
-        )
+        models = app / MODELS
         models.write_text(models.read_text().replace("Spacer", "SpacerX"))
         result = run_app(app, "--check")
         assert result.returncode == 1
@@ -198,7 +252,7 @@ def shutil_copy(source: Path, destination: Path) -> None:
     """
     import shutil
 
-    shutil.copytree(source, destination, ignore=shutil.ignore_patterns("android"))
+    shutil.copytree(source, destination, ignore=shutil.ignore_patterns(".pycompose"))
 
 
 # ---------------------------------------------------------------------------
@@ -309,10 +363,10 @@ def test_the_two_roots_are_separate(tmp_path: Path) -> None:
     python_root = root / "app"
     android_root = root
     (python_root / "screen").mkdir(parents=True)
-    (android_root / "android/ir/src/main/kotlin/com/pycompose/ir/generated").mkdir(
+    (android_root / SLICE / "ir/src/main/kotlin/com/pycompose/ir/generated").mkdir(
         parents=True
     )
-    (android_root / "android/host/src/main/kotlin/com/pycompose/host/ui").mkdir(
+    (android_root / SLICE / "host/src/main/kotlin/com/pycompose/host/ui").mkdir(
         parents=True
     )
     (python_root / "screen" / "view.py").write_text(
@@ -322,10 +376,9 @@ def test_the_two_roots_are_separate(tmp_path: Path) -> None:
     assert build_app(python_root, android_root=android_root) == 0
 
     assert (python_root / "m3" / "generated_components.py").is_file()
-    assert (
-        android_root
-        / "android/ir/src/main/kotlin/com/pycompose/ir/generated/UiModels.kt"
-    ).is_file()
+    assert (android_root / MODELS).is_file()
+    # And nothing was written into the Python root's Android side.
+    assert not (python_root / SLICE).exists()
     # And nothing was written into the Android root's Python side.
     assert not (android_root / "m3").exists()
 
@@ -339,3 +392,4 @@ def test_the_python_root_still_works_alone(tmp_path: Path) -> None:
     (root / "view.py").write_text("from m3 import Button\n")
     assert build_app(root) == 0
     assert (root / "m3" / "generated_components.py").is_file()
+    assert (root / MODELS).is_file()

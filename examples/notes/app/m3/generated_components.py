@@ -20,6 +20,7 @@ __all__ = [
     "HorizontalDivider",
     "Icon",
     "IconButton",
+    "Image",
     "LazyColumn",
     "LinearProgressIndicator",
     "ModalBottomSheet",
@@ -362,6 +363,35 @@ class IconButton(Component):
             children = content_nodes(content, key="content")
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Image(Component):
+    """Native Image; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Image"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        content_description: str | None = None,
+        modifier: Modifier | None = None,
+        resource: str,
+    ) -> None:
+        """Construct a registered Image.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            content_description: Native contentDescription; None uses its default.
+            modifier: Native modifier; None uses its default.
+            resource: Required native resource.
+        """
+        props: dict[str, JsonValue] = {}
+        if content_description is not None:
+            props["content_description"] = content_description
+        props["resource"] = resource
+        super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
 class LazyColumn(Component):

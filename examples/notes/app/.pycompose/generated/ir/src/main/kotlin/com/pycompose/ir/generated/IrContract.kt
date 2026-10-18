@@ -96,6 +96,17 @@ object IrContract {
                 "onPress" to PropertyRule("actionId", required = false),
             ),
         ),
+        "Image" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.1.0",
+            props = mapOf(
+                "contentDescription" to PropertyRule("string", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "resource" to PropertyRule("resource", required = true, values = setOf("drawable", "asset")),
+            ),
+        ),
         "LazyColumn" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,

@@ -79,7 +79,7 @@ def _kt_props(name: str, props: dict[str, Any], base: str = "UiProps") -> list[s
 
 
 def render_generated_adapters(registry: dict[str, Any]) -> str:
-    """Emit every Kotlin adapter the schema derives, or nothing when none does.
+    """Emit every Kotlin adapter the schema derives, as one always-present object.
 
     Args:
         registry: The parsed schema.

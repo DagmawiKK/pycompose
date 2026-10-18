@@ -78,6 +78,11 @@ def build_app(
     example puts both in one directory, which is why a single root looked
     sufficient until it was not.
 
+    The Kotlin slice lands in the project's ``.pycompose/generated`` tree,
+    bound to the scaffold modules by their build files, and carries the app's
+    referenced components plus the framework floor every host compiles against
+    (``app_slice.FLOOR_COMPONENTS``).
+
     Args:
         python_root: Where the app's Python lives; receives the generated package.
         android_root: Where the Kotlin slice goes; defaults to ``python_root``.
@@ -89,7 +94,9 @@ def build_app(
     from pycompose.schema.codegen.app_slice import (
         _ADAPTERS_RELATIVE,
         _IR_RELATIVE,
+        _VALUES_RELATIVE,
         APP_PACKAGE,
+        FLOOR_COMPONENTS,
         AppCodegenError,
         discover,
         discover_values,
@@ -122,15 +129,15 @@ def build_app(
     except AppCodegenError as exc:
         print(f"gen.py: {exc}", file=sys.stderr)
         return 1
-    if not used:
-        print(
-            f"gen.py: {python_root} references no components; nothing to generate",
-            file=sys.stderr,
-        )
+    problem = _slicing_problem(registry, used, python_root)
+    if problem:
+        print(f"gen.py: {problem}", file=sys.stderr)
         return 1
 
     sliced = slice_registry(
-        registry, used, values=frozenset(discover_values(python_root, registry))
+        registry,
+        used | FLOOR_COMPONENTS,
+        values=frozenset(discover_values(python_root, registry)),
     )
 
     package = APP_PACKAGE
@@ -139,19 +146,13 @@ def build_app(
             render_python_components(sliced, package)
         ),
         python_root / package / "__init__.py": render_python_exports(sliced, package),
+        python_root / package / "values.py": render_python(sliced),
         native / _IR_RELATIVE / "UiModels.kt": render_kotlin_models(sliced),
         native / _IR_RELATIVE / "IrContract.kt": render_kotlin_registry(sliced),
-        python_root / package / "values.py": render_python(sliced),
         native / _IR_RELATIVE / "ValueModels.kt": render_models(sliced),
-        native / KOTLIN_VALUES_RELATIVE: render_native(sliced),
+        native / _VALUES_RELATIVE: render_native(sliced),
+        native / _ADAPTERS_RELATIVE: render_generated_adapters(sliced),
     }
-    adapters = render_generated_adapters(sliced)
-    if adapters:
-        artifacts[native / _ADAPTERS_RELATIVE] = adapters
-    for fixture in sorted((ROOT / "pycompose/testing/fixtures").glob("*.json")):
-        artifacts[native / "android/ir/src/test/resources" / fixture.name] = (
-            fixture.read_text(encoding="utf-8")
-        )
 
     if check:
         drifted = [
@@ -175,8 +176,8 @@ def build_app(
         if sliced["components"][name].get("adapter") == "manual"
     ]
     print(
-        f"gen.py: {python_root}: {len(used)} component(s) generated "
-        f"({len(artifacts)} artifact(s)); "
+        f"gen.py: {python_root}: {len(sliced['components'])} component(s) generated "
+        f"({len(used)} referenced, {len(artifacts)} artifact(s)); "
         + (
             f"hand-written adapters still needed for {', '.join(sorted(manual))}"
             if manual
@@ -184,6 +185,30 @@ def build_app(
         )
     )
     return 0
+
+
+def _slicing_problem(registry: dict[str, Any], used: set[str], app: Path) -> str | None:
+    """Explain why an app cannot be sliced, or None when it can.
+
+    Args:
+        registry: The parsed catalog.
+        used: The component names the app references.
+        app: The app's Python root, for the message.
+
+    Returns:
+        The problem to report, or None.
+    """
+    from pycompose.schema.codegen.app_slice import FLOOR_COMPONENTS
+
+    if not used:
+        return f"{app} references no components; nothing to generate"
+    floorless = FLOOR_COMPONENTS.difference(registry["components"])
+    if floorless:
+        return (
+            "catalog is missing components every host compiles against: "
+            + ", ".join(sorted(floorless))
+        )
+    return None
 
 
 def _mirror_template(artifacts: dict[Path, str]) -> None:
@@ -269,9 +294,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         KOTLIN_MODELS_PATH.with_name("ValueModels.kt"): render_models(registry),
         ROOT / KOTLIN_VALUES_RELATIVE: render_native(registry),
     }
-    adapters = render_generated_adapters(registry)
-    if adapters:
-        artifacts[KOTLIN_ADAPTERS_PATH] = adapters
+    artifacts[KOTLIN_ADAPTERS_PATH] = render_generated_adapters(registry)
     return artifacts
 
 
@@ -304,10 +327,11 @@ def main(argv: list[str] | None = None) -> int:
     artifacts = framework_artifacts(registry)
     _mirror_template(artifacts)
     for fixture in sorted((ROOT / "pycompose/testing/fixtures").glob("*.json")):
+        # The repository's own tests read these through the modules' test
+        # source sets. A scaffold ships no framework tests, so the template
+        # carries none.
         relative = Path("ir/src/test/resources") / fixture.name
-        contents = fixture.read_text(encoding="utf-8")
-        artifacts[ROOT / "android" / relative] = contents
-        artifacts[ROOT / "pycompose/templates/android" / relative] = contents
+        artifacts[ROOT / "android" / relative] = fixture.read_text(encoding="utf-8")
     if args.check:
         drifted = [
             str(artifact)

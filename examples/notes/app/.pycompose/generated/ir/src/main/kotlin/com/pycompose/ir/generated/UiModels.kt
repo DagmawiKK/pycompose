@@ -159,6 +159,24 @@ data class IconButton(
 }
 
 @Serializable
+data class ImageProps(
+    val `contentDescription`: String? = null,
+    override val `modifier`: JsonObject? = null,
+    val `resource`: String,
+) : UiProps
+
+@Serializable
+@SerialName("Image")
+data class Image(
+    override val id: String,
+    override val props: ImageProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "Image"
+}
+
+@Serializable
 data class LazyColumnProps(
     val `firstVisibleIndex`: Long? = null,
     override val `modifier`: JsonObject? = null,

@@ -161,13 +161,8 @@ def test_explicit_value_imports_are_kept_in_app_slice(tmp_path: Path) -> None:
     )
     assert build_app(tmp_path) == 0
     assert "def Size(" in (tmp_path / "m3/values.py").read_text()
-    assert (
-        "WireSize"
-        in (
-            tmp_path
-            / "android/ir/src/main/kotlin/com/pycompose/ir/generated/ValueModels.kt"
-        ).read_text()
-    )
+    slice_root = tmp_path / ".pycompose/generated/ir/src/main/kotlin/com/pycompose/ir"
+    assert "WireSize" in (slice_root / "generated" / "ValueModels.kt").read_text()
 
 
 def test_codegen_refuses_untyped_native_defaults(tmp_path: Path, monkeypatch) -> None:
