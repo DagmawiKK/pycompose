@@ -8,6 +8,8 @@ import pytest
 from test_cli_build import wrapper
 from test_cli_init import cli
 
+from pycompose.cli import main
+
 
 def test_config_show_prints_every_setting_and_its_source(tmp_path: Path) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
@@ -124,3 +126,28 @@ def test_config_set_without_a_value_is_actionable(tmp_path: Path) -> None:
     result = cli(tmp_path / "demo", "config", "set", "label")
     assert result.returncode == 2
     assert "config set takes" in result.stderr
+
+
+def test_interactive_config_reports_the_values_it_wrote(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """The summary must come from the files, not the pre-edit snapshot."""
+    assert cli(tmp_path, "init", "demo").returncode == 0
+    project = tmp_path / "demo"
+    monkeypatch.chdir(project)
+    answers = iter(["Notes", "com.acme.notes", "2.0.0", "9"])
+    monkeypatch.setattr(main.console, "interactive", lambda: True)
+    monkeypatch.setattr(main.console, "confirm", lambda *_args, **_kwargs: True)
+    monkeypatch.setattr(main.console, "ask", lambda *_args, **_kwargs: next(answers))
+    assert main.main(["config"]) == 0
+    printed = capsys.readouterr().out
+    final = printed.rsplit("Setting", 1)[-1]
+    assert "com.acme.notes" in final
+    assert "2.0.0" in final
+    assert "0.1.0" not in final
+    written = tomllib.loads((project / "pycompose.toml").read_text())
+    assert written["app"]["application_id"] == "com.acme.notes"
+    assert written["app"]["version_code"] == 9
+    assert json.loads((project / "resources" / "strings.json").read_text()) == {
+        "app_name": "Notes"
+    }

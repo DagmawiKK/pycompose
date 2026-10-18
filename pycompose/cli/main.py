@@ -222,7 +222,9 @@ def _config(args: argparse.Namespace) -> int:
         value = console.ask(setting.key, default=setting.value or None)
         if value != setting.value:
             change(project, setting.key, value)
-    _show_settings(settings(project))
+    # Project.config is a frozen snapshot of the file change() rewrote, so the
+    # refreshed table is read back from disk rather than from the loaded copy.
+    _show_settings(settings(load_project(Path.cwd())))
     console.notice("Install the change with: pycompose debug")
     return 0
 
