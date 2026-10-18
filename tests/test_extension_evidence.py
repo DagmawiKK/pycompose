@@ -4,8 +4,7 @@ import json
 
 import pytest
 
-from pycompose.errors import StateError
-from pycompose.extensions.evidence import (
+from pycompose.cli.extensions.evidence import (
     STAGES,
     EvidenceRecord,
     Target,
@@ -14,6 +13,7 @@ from pycompose.extensions.evidence import (
     record_status,
     summarize,
 )
+from pycompose.errors import StateError
 
 FINGERPRINT = "sha256:" + "a" * 64
 

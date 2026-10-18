@@ -98,11 +98,10 @@ val integrationModules =
 val stageRuntime by tasks.registering(Sync::class) {
     from(providers.gradleProperty("pycomposeRuntimeDir").getOrElse(rootProject.file("..").path)) {
         include("pycompose/**/*.py", "pycompose/py.typed")
+        // Planning, evidence and project tooling are CLI-tier: nothing on a device
+        // imports them, so they are excluded as directories, never by module list.
         exclude("pycompose/cli/**", "pycompose/templates/**", "pycompose/testing/**")
         // Reference recipes are ordinary opt-in consumers of the extension contract.
-        // Metadata, evidence records and planning tools never belong in an
-        // application runtime; the app itself only ever reads evidence.
-        exclude("pycompose/extensions/definition.py", "pycompose/extensions/evidence.py")
         exclude {
             it.path.startsWith("pycompose/integrations/") &&
                 it.name != "__init__.py" &&

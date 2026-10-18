@@ -1,4 +1,9 @@
-"""Read-only extension planning; discovery never imports integration code."""
+"""Read-only extension planning; discovery never imports integration code.
+
+Planning and evidence live beside the command that reports them, not in the
+``pycompose.extensions`` runtime package: nothing on a device reads a definition
+or an evidence record, and an application ships only the runtime package.
+"""
 
 from __future__ import annotations
 
@@ -6,6 +11,14 @@ import json
 import re
 from pathlib import Path
 
+from pycompose.cli.extensions.definition import Definition, plan
+from pycompose.cli.extensions.evidence import (
+    EvidenceRecord,
+    Target,
+    fingerprint,
+    load_records,
+    summarize,
+)
 from pycompose.cli.permissions import (
     effective_permissions,
     selected_permissions,
@@ -14,15 +27,12 @@ from pycompose.cli.permissions import (
 from pycompose.cli.project import Project, ProjectError, project_path
 from pycompose.cli.requirements import validate_requirements
 from pycompose.errors import StateError
-from pycompose.extensions.definition import Definition, plan
-from pycompose.extensions.evidence import (
-    EvidenceRecord,
-    Target,
-    fingerprint,
-    load_records,
-    summarize,
-)
 from pycompose.version import __version__
+
+#: Bundled definitions ship with the library metadata, never with an app.
+BUNDLED_DEFINITIONS = (
+    Path(__file__).resolve().parents[2] / "integrations" / "definitions"
+)
 
 #: The locked framework target; a build or device observation is authoritative.
 #: One typed value, so the plan report, the fingerprints and the status check
@@ -56,9 +66,7 @@ def _definitions(project: Project) -> list[Definition]:
             key = name.removeprefix("builtin:")
             if not re.fullmatch(r"[a-z][a-z0-9_]*", key):
                 raise ProjectError("invalid bundled extension name")
-            path = (
-                Path(__file__).parents[1] / "integrations/definitions" / f"{key}.toml"
-            )
+            path = BUNDLED_DEFINITIONS / f"{key}.toml"
         else:
             path = project_path(project.root, name)
         definitions.append(Definition.parse(path.read_text(encoding="utf-8")))
