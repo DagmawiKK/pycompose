@@ -97,6 +97,23 @@ class Project:
     root: Path
     config: dict[str, object]
 
+    @property
+    def android_root(self) -> Path:
+        """Return the confined native build root; old projects use the app root.
+
+        Returns:
+            The Android project directory, without creating or moving anything.
+
+        Raises:
+            ProjectError: If toolchain.android_dir is not a safe relative path.
+        """
+        directory = self.table("toolchain").get("android_dir", ".")
+        if directory == ".":
+            return self.root
+        if not isinstance(directory, str) or not directory:
+            raise ProjectError("toolchain.android_dir must be a relative directory")
+        return project_path(self.root, directory)
+
     def table(self, name: str) -> dict[str, object]:
         """Read a configuration table, rejecting non-table values.
 

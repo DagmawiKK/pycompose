@@ -177,13 +177,23 @@ def doctor(directory: Path) -> tuple[ToolCheck, ...]:
     Returns:
         SDK, JDK, ADB, wrapper, plugin and schema checks, without network installs.
     """
+    native = directory
     try:
-        sdk = _sdk_path(directory)
+        project = load_project(directory)
+        native = project.android_root
+        schema = check_project_versions(project)
+        schema_check = ToolCheck("Schema", f"{schema}; library {__version__}", True)
+    except (PyComposeError, OSError) as exc:
+        schema_check = ToolCheck(
+            "Schema", f"library supports {SCHEMA_VERSION}: {exc}", False
+        )
+    try:
+        sdk = _sdk_path(native)
         sdk_check = _sdk(sdk)
     except (OSError, ValueError) as exc:
         sdk = None
         sdk_check = ToolCheck("SDK", f"cannot read SDK configuration: {exc}", False)
-    wrapper = directory / ("gradlew.bat" if os.name == "nt" else "gradlew")
+    wrapper = native / ("gradlew.bat" if os.name == "nt" else "gradlew")
     result = [
         sdk_check,
         _jdk(),
@@ -193,13 +203,7 @@ def doctor(directory: Path) -> tuple[ToolCheck, ...]:
             str(wrapper) if wrapper.is_file() else "missing; Android scaffold required",
             wrapper.is_file() and (os.name == "nt" or os.access(wrapper, os.X_OK)),
         ),
-        *_plugins(directory),
+        *_plugins(native),
+        schema_check,
     ]
-    try:
-        schema = check_project_versions(load_project(directory))
-        result.append(ToolCheck("Schema", f"{schema}; library {__version__}", True))
-    except (PyComposeError, OSError) as exc:
-        result.append(
-            ToolCheck("Schema", f"library supports {SCHEMA_VERSION}: {exc}", False)
-        )
     return tuple(result)

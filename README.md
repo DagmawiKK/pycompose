@@ -25,6 +25,34 @@ decisions (`AGENTS.md` mirrors them at the root).
 
 ## Developer setup
 
+### Create an app
+
+```bash
+pycompose init notes
+cd notes
+pycompose debug                 # build, install, verify, launch
+```
+
+The visible project is just `app/`, `resources/`, and `pycompose.toml`. The
+versioned Android scaffold lives in `.pycompose/android/`; the CLI builds there
+without moving your Python source. Native sources are persistent and can be
+committed; its Gradle caches, generated files, and `local.properties` are ignored.
+Do not delete `.pycompose/android/` as though it were a disposable cache.
+Commit `.pycompose/resource-sync.json` alongside native resource outputs; it
+records which files the CLI may safely update after a clone.
+
+Use `pycompose config show` / `pycompose config set` for supported app settings.
+For advanced Android customization, open `.pycompose/android/` in Android Studio,
+or create a conventional root-level Android project with
+`pycompose init notes --native`. Existing root-level projects continue to work
+unchanged. Neither builds nor re-running `init` overwrite native customizations.
+
+The SDK can be supplied through `ANDROID_HOME` or the native project's
+`local.properties` (`.pycompose/android/local.properties` in the default layout).
+Always build through the CLI so the Python source and component slice are staged.
+
+### Work on PyCompose
+
 ```bash
 pip install -e ".[dev]"
 pre-commit install

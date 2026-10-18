@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 .venv/
 .gradle/
+.kotlin/
 **/build/
 local.properties
 *.apk
@@ -9,4 +10,5 @@ local.properties
 *.jks
 *.keystore
 .idea/
-.pycompose/
+.pycompose/*
+!.pycompose/resource-sync.json

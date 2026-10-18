@@ -234,10 +234,11 @@ def _redacted(text: str, secrets: tuple[str, ...]) -> str:
 
 def _artifacts(project: Project, kind: str, variant: str) -> tuple[Path, ...]:
     folder = "apk" if kind == "apk" else "bundle"
-    root = project_path(project.root, f"host/build/outputs/{folder}/{variant}")
+    native = project.android_root
+    root = project_path(native, f"host/build/outputs/{folder}/{variant}")
     result = []
     for path in sorted(root.rglob(f"*.{kind}")):
-        project_path(project.root, path.relative_to(project.root).as_posix())
+        project_path(native, path.relative_to(native).as_posix())
         try:
             with zipfile.ZipFile(path) as archive:
                 expected = (
@@ -290,7 +291,7 @@ def _codegen(project: Project) -> None:
     directory = project_path(project.root, source)
     if not uses_generated_slice(directory):
         return
-    if build_app(directory, android_root=project.root) != 0:
+    if build_app(directory, android_root=project.android_root) != 0:
         raise ProjectError("component slice generation failed", path=directory)
 
 
@@ -370,19 +371,18 @@ def build_project(
     if kind not in {"apk", "aab"}:
         raise ProjectError("build format must be apk or aab")
     check_project_versions(project)
-    wrapper = project_path(
-        project.root, "gradlew.bat" if os.name == "nt" else "gradlew"
-    )
+    native = project.android_root
+    wrapper = project_path(native, "gradlew.bat" if os.name == "nt" else "gradlew")
     if not wrapper.is_file() or not any(
-        (project.root / name).is_file()
-        for name in ("settings.gradle.kts", "settings.gradle")
+        (native / name).is_file() for name in ("settings.gradle.kts", "settings.gradle")
     ):
         raise ProjectError(
-            "Android scaffold is missing; build requires the Gradle wrapper "
-            "and host integration tickets"
+            "Android scaffold is missing; restore the native project directory",
+            path=native,
         )
     if os.name != "nt" and not os.access(wrapper, os.X_OK):
-        raise ProjectError("Gradle wrapper is not executable; run chmod +x gradlew")
+        relative = wrapper.relative_to(project.root)
+        raise ProjectError(f"Gradle wrapper is not executable; run chmod +x {relative}")
     env = dict(os.environ)
     _app_properties(project, env)
     secrets = _signing(project, env) if release else ()
@@ -394,7 +394,7 @@ def build_project(
     started = time.monotonic()
     code = _gradle(
         [str(wrapper), task, "--console=plain", "--no-daemon"],
-        cwd=project.root,
+        cwd=native,
         env=env,
         secrets=secrets,
     )

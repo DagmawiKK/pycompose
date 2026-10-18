@@ -148,4 +148,5 @@ def resource_files(project: Project) -> dict[str, bytes]:
             raise ProjectError("duplicate resource output/name", path=target)
         identities.add(identity)
         output[target] = value
-    return output
+    prefix = project.android_root.relative_to(project.root)
+    return {(prefix / name).as_posix(): value for name, value in output.items()}

@@ -13,10 +13,11 @@ The Python lives in `app/`, which is where `pycompose init` puts it by default
 running Android project:
 
 ```bash
-pycompose init notes                     # scaffolds the Android project
-cp -R examples/notes/app/. notes/app/    # drop this app in
-cp -R examples/notes/overlay/. notes/    # its launcher name and icon
-cd notes && pycompose run                # build, install, launch, watch edits
+pycompose init notes                       # app-focused project
+cp -R examples/notes/app/. notes/app/       # drop this app in
+cp -R examples/notes/overlay/resources/. notes/resources/
+cp -R examples/notes/overlay/host/. notes/.pycompose/android/host/
+cd notes && pycompose run                   # build, install, launch, watch edits
 ```
 
 `overlay/` carries the two things this app owns outside Python: `app_name` in
@@ -24,6 +25,12 @@ cd notes && pycompose run                # build, install, launch, watch edits
 `host/src/main/res/` draw the launcher icon — an adaptive icon whose monochrome
 layer gives it a themed-icon form. Both are ordinary Android resources, so both
 localize like every other string.
+
+The host is under `.pycompose/android/` in a default project. With
+`pycompose init notes --native` (or an existing root-level project), copy the
+overlay's `host/.` into `notes/host/` instead. Copy directory **contents** using
+the trailing `/.`; copying `app` into `app/` would leave the starter entrypoint
+unchanged and put the Notes entrypoint one level too deep.
 
 Or drive it with no device and no Gradle at all:
 

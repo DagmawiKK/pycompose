@@ -2,15 +2,21 @@
 
 import json
 import sys
+import tomllib
 from pathlib import Path
 
 import pytest
-from test_cli_init import cli
+from test_cli_init import NATIVE, cli
 
 from pycompose.ir.generated_validators import SCHEMA_VERSION
 
 
 def wrapper(project: Path, body: str) -> None:
+    config = project / "pycompose.toml"
+    if config.is_file():
+        project = project / tomllib.loads(config.read_text())["toolchain"].get(
+            "android_dir", "."
+        )
     (project / "settings.gradle.kts").write_text('include(":host")\n')
     script = project / "gradlew"
     script.write_text(f"#!{sys.executable}\n" + body)
@@ -38,7 +44,7 @@ assert os.environ["ORG_GRADLE_PROJECT_pycomposeVersionCode"] == "1"
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeVersionName"] == "0.1.0"
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeEntrypoint"] == "main:app"
 source = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeSourceDir"])
-assert source == Path("app").resolve()
+assert source == Path("../../app").resolve()
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeOwnSlice"] == "true"
 runtime = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"])
 assert (runtime / "pycompose/bridge/runtime.py").is_file()
@@ -57,13 +63,13 @@ with zipfile.ZipFile(output, "w") as archive:
     )
     result = cli(project, "build", *arguments)
     assert result.returncode == 0, result.stderr
-    assert json.loads((project / "invocation.json").read_text())[0] == task
+    assert json.loads((project / NATIVE / "invocation.json").read_text())[0] == task
     assert f"host/build/outputs/{kind}/{variant}/host-debug." in result.stdout
 
 
 def test_build_reports_the_deferred_android_scaffold(tmp_path: Path) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
-    (tmp_path / "demo" / "gradlew").unlink()
+    (tmp_path / "demo" / NATIVE / "gradlew").unlink()
     result = cli(tmp_path / "demo", "build")
     assert result.returncode == 2
     assert "Android scaffold" in result.stderr
@@ -115,13 +121,13 @@ with zipfile.ZipFile(output, "w") as archive:
     }
     result = cli(project, "build", kind, "--release", env=secrets)
     assert result.returncode == 0, result.stderr
-    assert task == json.loads((project / "invocation.json").read_text())[0]
+    assert task == json.loads((project / NATIVE / "invocation.json").read_text())[0]
     assert f"outputs/{folder}/release/host-release.{kind}" in result.stdout
     assert "[REDACTED]" in result.stdout and "[REDACTED]" in result.stderr
     assert not (project / "unexpected").exists()
     for secret in secrets.values():
         assert secret not in result.stdout + result.stderr
-        assert secret not in (project / "invocation.json").read_text()
+        assert secret not in (project / NATIVE / "invocation.json").read_text()
         assert secret not in config.read_text()
 
 
@@ -134,7 +140,7 @@ def test_release_missing_signing_configuration_does_not_launch_gradle(
     result = cli(project, "build", "apk", "--release")
     assert result.returncode == 2
     assert "signing.keystore" in result.stderr
-    assert not (project / "launched").exists()
+    assert not (project / NATIVE / "launched").exists()
 
 
 @pytest.mark.parametrize(
@@ -188,12 +194,12 @@ def test_build_rejects_schema_mismatch_and_resource_conflicts_before_gradle(
     )
     assert cli(project, "build").returncode == 2
     config.write_text(original)
-    raw = project / "host" / "src" / "main" / "res" / "values" / "strings.xml"
+    raw = project / NATIVE / "host/src/main/res/values/strings.xml"
     raw.parent.mkdir(parents=True, exist_ok=True)
     raw.write_bytes(b"user resource")
     assert cli(project, "build").returncode == 2
     assert raw.read_bytes() == b"user resource"
-    assert not (project / "launched").exists()
+    assert not (project / NATIVE / "launched").exists()
 
 
 def test_release_missing_password_env_is_actionable_and_does_not_launch_gradle(
@@ -217,15 +223,15 @@ def test_release_missing_password_env_is_actionable_and_does_not_launch_gradle(
     )
     assert result.returncode == 2
     assert "PYCOMPOSE_STORE_PASSWORD" in result.stderr
-    assert not (project / "launched").exists()
+    assert not (project / NATIVE / "launched").exists()
 
 
 def test_non_executable_gradle_wrapper_has_a_corrective_message(tmp_path: Path) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"
     wrapper(project, 'raise RuntimeError("must not launch")\n')
-    (project / "gradlew").chmod(0o644)
+    (project / NATIVE / "gradlew").chmod(0o644)
     result = cli(project, "build")
     assert result.returncode == 2
-    assert "chmod +x gradlew" in result.stderr
+    assert "chmod +x .pycompose/android/gradlew" in result.stderr
     assert "Traceback" not in result.stderr

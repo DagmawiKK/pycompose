@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 import pytest
-from test_cli_init import cli
+from test_cli_init import NATIVE, cli
 
 from pycompose.ir.generated_validators import SCHEMA_VERSION
 
@@ -19,16 +19,17 @@ def executable(path: Path, output: str, exit_code: int = 0) -> None:
     path.chmod(0o755)
 
 
+@pytest.mark.parametrize("local_sdk", [False, True])
 def test_doctor_reports_detected_tools_and_declared_plugin_versions(
-    tmp_path: Path,
+    tmp_path: Path, local_sdk: bool
 ) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"
-    (project / "gradle").mkdir(exist_ok=True)
-    (project / "gradle" / "libs.versions.toml").write_text(
+    (project / NATIVE / "gradle").mkdir(exist_ok=True)
+    (project / NATIVE / "gradle/libs.versions.toml").write_text(
         '[versions]\nagp = "8.9.1"\nchaquopy = "17.0.0"\n'
     )
-    executable(project / "gradlew", "Gradle fixture")
+    executable(project / NATIVE / "gradlew", "Gradle fixture")
     sdk = tmp_path / "sdk"
     (sdk / "platforms" / "android-35").mkdir(parents=True)
     (sdk / "platforms" / "android-35" / "android.jar").write_bytes(b"platform fixture")
@@ -46,6 +47,9 @@ def test_doctor_reports_detected_tools_and_declared_plugin_versions(
         "ANDROID_HOME": str(sdk),
         "ANDROID_SDK_ROOT": str(sdk),
     }
+    if local_sdk:
+        (project / NATIVE / "local.properties").write_text(f"sdk.dir={sdk}\n")
+        env.update(ANDROID_HOME="", ANDROID_SDK_ROOT="")
     result = subprocess.run(
         [sys.executable, "-m", "pycompose.cli", "doctor"],
         cwd=project,
@@ -70,8 +74,8 @@ def test_doctor_surfaces_a_broken_toolchain_instead_of_claiming_health(
     tmp_path: Path,
 ) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
-    (tmp_path / "demo" / "gradlew").unlink()
-    (tmp_path / "demo" / "gradle" / "libs.versions.toml").unlink()
+    (tmp_path / "demo" / NATIVE / "gradlew").unlink()
+    (tmp_path / "demo" / NATIVE / "gradle/libs.versions.toml").unlink()
     env = {
         **os.environ,
         "PYTHONPATH": str(Path(__file__).parents[1]),
@@ -124,8 +128,8 @@ def test_doctor_reports_schema_mismatch_and_unsupported_declared_plugins(
 ) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"
-    (project / "gradle").mkdir(exist_ok=True)
-    (project / "gradle" / "libs.versions.toml").write_text(
+    (project / NATIVE / "gradle").mkdir(exist_ok=True)
+    (project / NATIVE / "gradle/libs.versions.toml").write_text(
         '[versions]\nagp = "invalid"\nchaquopy = "18.0.0"\n'
     )
     config = project / "pycompose.toml"

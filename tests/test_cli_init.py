@@ -12,6 +12,8 @@ import pytest
 
 from pycompose.ir.generated_validators import SCHEMA_VERSION
 
+NATIVE = Path(".pycompose/android")
+
 
 def cli(
     directory: Path, *arguments: str, env: dict[str, str] | None = None
@@ -65,13 +67,13 @@ def test_init_creates_config_python_entrypoint_and_resource_directories(
         files("pycompose").joinpath("templates", "android", "template.toml").read_text()
     )
     assert config["toolchain"]["template_version"] == manifest["template_version"]
-    assert (project / "gradlew").stat().st_mode & 0o111
-    assert (project / "gradle" / "wrapper" / "gradle-wrapper.jar").is_file()
+    assert (project / NATIVE / "gradlew").stat().st_mode & 0o111
+    assert (project / NATIVE / "gradle/wrapper/gradle-wrapper.jar").is_file()
     # init generates the sample's slice once, so the project works before its
     # first build and never ships the full catalog (ADR-0014).
     assert (project / "app" / "m3" / "generated_components.py").is_file()
     slice_root = ".pycompose/generated/ir/src/main/kotlin/com/pycompose/ir/generated"
-    assert (project / slice_root / "UiModels.kt").is_file()
+    assert (project / NATIVE / slice_root / "UiModels.kt").is_file()
 
 
 def test_reinit_warns_and_preserves_every_existing_file(tmp_path: Path) -> None:

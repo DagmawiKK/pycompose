@@ -5,7 +5,7 @@ from pathlib import Path
 from xml.etree import ElementTree
 
 import pytest
-from test_cli_init import cli
+from test_cli_init import NATIVE, cli
 
 
 def test_sync_translates_named_resources_and_is_byte_stable(tmp_path: Path) -> None:
@@ -21,7 +21,7 @@ def test_sync_translates_named_resources_and_is_byte_stable(tmp_path: Path) -> N
     (resources / "fonts" / "body.ttf").write_bytes(b"font bytes")
     result = cli(project, "sync")
     assert result.returncode == 0, result.stderr
-    main = project / "host" / "src" / "main"
+    main = project / NATIVE / "host/src/main"
     assert (main / "res" / "drawable-hdpi" / "logo.png").read_bytes() == b"image bytes"
     assert (main / "assets" / "nested" / "data.bin").read_bytes() == b"asset bytes"
     assert (main / "res" / "font" / "body.ttf").read_bytes() == b"font bytes"
@@ -49,7 +49,7 @@ def test_sync_refuses_unmanaged_outputs_and_never_clobbers_raw_res(
 ) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"
-    raw = project / "host" / "src" / "main" / "res" / "values"
+    raw = project / NATIVE / "host/src/main/res/values"
     raw.mkdir(parents=True, exist_ok=True)
     (raw / "strings.xml").write_bytes(b"user strings")
     (raw / "colors.xml").write_bytes(b"user colors")
@@ -92,7 +92,7 @@ def test_sync_removes_only_unchanged_previously_generated_stale_files(
     source = project / "resources" / "assets" / "old.bin"
     source.write_bytes(b"managed")
     assert cli(project, "sync").returncode == 0
-    assets = project / "host" / "src" / "main" / "assets"
+    assets = project / NATIVE / "host/src/main/assets"
     (assets / "user.bin").write_bytes(b"user")
     source.unlink()
     assert cli(project, "sync", "--check").returncode == 1
@@ -109,7 +109,7 @@ def test_sync_refuses_locally_modified_generated_files_before_any_writes(
     source = project / "resources" / "assets" / "old.bin"
     source.write_bytes(b"managed")
     assert cli(project, "sync").returncode == 0
-    destination = project / "host" / "src" / "main" / "assets" / "old.bin"
+    destination = project / NATIVE / "host/src/main/assets/old.bin"
     destination.write_bytes(b"user edited")
     source.unlink()
     (project / "resources" / "strings.json").write_text('{"title":"new"}')
@@ -149,7 +149,7 @@ def test_locale_strings_preserve_android_literal_escaping(
     assert cli(project, "sync").returncode == 0
     text = (
         ElementTree.parse(
-            project / "host" / "src" / "main" / "res" / folder / "strings.xml"
+            project / NATIVE / "host/src/main/res" / folder / "strings.xml"
         )
         .getroot()[0]
         .text
@@ -184,9 +184,7 @@ def test_invalid_resources_fail_before_generating_outputs(
     result = cli(project, "sync")
     assert result.returncode == 2
     assert "Traceback" not in result.stderr
-    assert not (
-        project / "host" / "src" / "main" / "res" / "values" / "strings.xml"
-    ).exists()
+    assert not (project / NATIVE / "host/src/main/res/values/strings.xml").exists()
 
 
 def test_duplicate_drawable_names_and_locale_aliases_are_rejected(
@@ -212,8 +210,8 @@ def test_symlinked_source_and_output_paths_are_never_followed(tmp_path: Path) ->
     link.symlink_to(outside)
     assert cli(project, "sync").returncode == 2
     link.unlink()
-    (project / "host").rename(project / "original_host")
-    (project / "host").symlink_to(tmp_path)
+    (project / NATIVE / "host").rename(project / NATIVE / "original_host")
+    (project / NATIVE / "host").symlink_to(tmp_path)
     assert cli(project, "sync").returncode == 2
     assert outside.read_bytes() == b"keep"
 
@@ -224,7 +222,7 @@ def test_modified_active_outputs_are_not_overwritten_and_manifest_paths_cannot_e
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"
     assert cli(project, "sync").returncode == 0
-    strings = project / "host" / "src" / "main" / "res" / "values" / "strings.xml"
+    strings = project / NATIVE / "host/src/main/res/values/strings.xml"
     strings.write_bytes(b"user edit")
     assert cli(project, "sync").returncode == 2
     assert strings.read_bytes() == b"user edit"
@@ -232,7 +230,11 @@ def test_modified_active_outputs_are_not_overwritten_and_manifest_paths_cannot_e
         json.dumps(
             {
                 "version": 1,
-                "files": {"host/src/main/res/../../../../outside.txt": "0" * 64},
+                "files": {
+                    ".pycompose/android/host/src/main/res/../../../../outside.txt": (
+                        "0" * 64
+                    )
+                },
             }
         )
     )

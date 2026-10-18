@@ -24,10 +24,11 @@ def _owned(project: Project) -> dict[str, str]:
     ):
         raise ProjectError("invalid resource ownership manifest", path=MANIFEST)
     owned: dict[str, str] = {}
+    main = (project.android_root.relative_to(project.root) / MAIN).as_posix()
     for name, digest in data["files"].items():
         if (
             not isinstance(name, str)
-            or not name.startswith((f"{MAIN}/res/", f"{MAIN}/assets/"))
+            or not name.startswith((f"{main}/res/", f"{main}/assets/"))
             or not isinstance(digest, str)
             or re.fullmatch(r"[a-f0-9]{64}", digest) is None
         ):

@@ -49,9 +49,10 @@ elif "md5sum" in args:
         print("md5sum: not found", file=sys.stderr)
         raise SystemExit(1)
     if not value:
-        artifact = Path("host/build/outputs/apk/debug/host-debug.apk")
+        outputs = Path(".pycompose/android/host/build/outputs/apk")
+        artifact = outputs / "debug/host-debug.apk"
         if not artifact.is_file():
-            artifact = Path("host/build/outputs/apk/release/host-release.apk")
+            artifact = outputs / "release/host-release.apk"
         value = hashlib.md5(artifact.read_bytes(), usedforsecurity=False).hexdigest()
     print(value + "  /data/app/base.apk")
 elif "path" in args:

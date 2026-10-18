@@ -233,6 +233,9 @@ jobs:
           config = tomllib.loads((project / "pycompose.toml").read_text())
           assert config["python"]["entrypoint"] == "main:app"
           assert (project / ".gitignore").is_file()
+          assert {p.name for p in project.iterdir() if not p.name.startswith(".")} == {
+              "app", "resources", "pycompose.toml"
+          }
           for resource in ("assets", "drawables", "fonts"):
               assert (project / "resources" / resource).is_dir()
           sys.path.insert(0, str(project / "app"))
@@ -251,7 +254,7 @@ jobs:
         working-directory: ${{ runner.temp }}/wheel-smoke
         run: |
           "$RUNNER_TEMP/cli-venv/bin/pycompose" build apk
-          apk="host/build/outputs/apk/debug/host-debug.apk"
+          apk=".pycompose/android/host/build/outputs/apk/debug/host-debug.apk"
           "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging "$apk" > badging.txt
           grep -F "package: name='com.example.app_wheel_smoke' versionCode='1' versionName='0.1.0'" badging.txt
           "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify "$apk"
@@ -259,7 +262,8 @@ jobs:
           import io
           import zipfile
 
-          with zipfile.ZipFile("host/build/outputs/apk/debug/host-debug.apk") as archive:
+          apk = ".pycompose/android/host/build/outputs/apk/debug/host-debug.apk"
+          with zipfile.ZipFile(apk) as archive:
               for abi in ("arm64-v8a", "x86_64"):
                   assert f"lib/{abi}/libpython3.12.so" in archive.namelist()
               # Compiled evidence, not file existence (plan 17, step 8.3): the

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 from test_cli_build import wrapper
-from test_cli_init import cli
+from test_cli_init import NATIVE, cli
 
 REQUIREMENTS_WRAPPER = """import os, zipfile
 from pathlib import Path
@@ -39,13 +39,13 @@ def test_build_passes_requirements_as_data_without_editing_gradle(
         'numpy==1.26.2; python_version >= "3.12"',
     ]
     build_with_requirements(project, requirements)
-    gradle = project / "host" / "build.gradle.kts"
+    gradle = project / NATIVE / "host/build.gradle.kts"
     before = gradle.read_bytes()
 
     result = cli(project, "build")
 
     assert result.returncode == 0, result.stderr
-    passed = json.loads((project / "requirements.txt.value").read_text())
+    passed = json.loads((project / NATIVE / "requirements.txt.value").read_text())
     assert passed == requirements
     assert gradle.read_bytes() == before
 
@@ -58,7 +58,7 @@ def test_a_project_declaring_no_requirements_passes_none(tmp_path: Path) -> None
     result = cli(project, "build")
 
     assert result.returncode == 0, result.stderr
-    assert json.loads((project / "requirements.txt.value").read_text()) == []
+    assert json.loads((project / NATIVE / "requirements.txt.value").read_text()) == []
 
 
 @pytest.mark.parametrize(
@@ -92,7 +92,7 @@ def test_invalid_requirement_values_fail_before_gradle(
     assert result.returncode == 2
     assert "python.requirements" in result.stderr
     assert "Traceback" not in result.stderr
-    assert not (project / "launched").exists()
+    assert not (project / NATIVE / "launched").exists()
 
 
 @pytest.mark.parametrize(
@@ -127,7 +127,7 @@ def test_only_named_package_specifiers_are_accepted(
     assert result.returncode == 2
     assert "python.requirements" in result.stderr
     assert "Traceback" not in result.stderr
-    assert not (project / "launched").exists()
+    assert not (project / NATIVE / "launched").exists()
 
 
 def pin_template(project: Path, version: str | None) -> None:
@@ -163,7 +163,7 @@ def test_requirements_need_a_scaffold_that_installs_them(
     assert "python.requirements" in result.stderr
     assert "0.4.0" in result.stderr
     assert "Traceback" not in result.stderr
-    assert not (project / "requirements.txt.value").exists()
+    assert not (project / NATIVE / "requirements.txt.value").exists()
 
 
 def test_older_scaffolds_without_requirements_still_build(tmp_path: Path) -> None:
@@ -175,4 +175,4 @@ def test_older_scaffolds_without_requirements_still_build(tmp_path: Path) -> Non
     result = cli(project, "build")
 
     assert result.returncode == 0, result.stderr
-    assert json.loads((project / "requirements.txt.value").read_text()) == []
+    assert json.loads((project / NATIVE / "requirements.txt.value").read_text()) == []

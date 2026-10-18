@@ -18,9 +18,18 @@ class InitError(PyComposeError):
     """The project name or packaged template is invalid."""
 
 
-def _copy_assets(source: Traversable, target: Path) -> None:
+def _copy_assets(
+    source: Traversable, target: Path, *, android_root: Path | None = None
+) -> None:
     for asset in sorted(source.iterdir(), key=lambda entry: entry.name):
-        destination = target / asset.name
+        base = target
+        if (
+            android_root is not None
+            and asset.name not in {"app", "resources"}
+            and not asset.name.startswith(".")
+        ):
+            base = android_root
+        destination = base / asset.name
         if asset.is_dir():
             destination.mkdir()
             _copy_assets(asset, destination)
@@ -31,7 +40,7 @@ def _copy_assets(source: Traversable, target: Path) -> None:
                 destination.chmod(0o755)
 
 
-def _generate_slice(target: Path) -> None:
+def _generate_slice(target: Path, android_root: Path) -> None:
     """Generate the sample app's component slice so the scaffold is complete.
 
     ``pycompose build`` regenerates the slice before every build, but a project
@@ -41,6 +50,7 @@ def _generate_slice(target: Path) -> None:
 
     Args:
         target: The project root that was just scaffolded.
+        android_root: Native build root that consumes the generated Kotlin.
 
     Raises:
         InitError: If the slice cannot be generated from the packaged catalog.
@@ -56,19 +66,22 @@ def _generate_slice(target: Path) -> None:
         return
     output = io.StringIO()
     with redirect_stdout(output), redirect_stderr(output):
-        code = build_app(app, android_root=target)
+        code = build_app(app, android_root=android_root)
     if code:
         raise InitError(
             "component slice generation failed:\n" + output.getvalue().strip()
         )
 
 
-def init_project(name: str, *, directory: Path) -> tuple[Path, bool, bool]:
+def init_project(
+    name: str, *, directory: Path, native: bool = False
+) -> tuple[Path, bool, bool]:
     """Copy template assets and write config without replacing existing work.
 
     Args:
         name: Single project-directory name, starting with an ASCII letter.
         directory: Parent directory in which to create the project.
+        native: Expose the Android scaffold at the project root for customization.
 
     Returns:
         Project path, whether it was created, and Android scaffold availability.
@@ -102,6 +115,7 @@ def init_project(name: str, *, directory: Path) -> tuple[Path, bool, bool]:
         raise InitError("invalid template manifest fields")
     quoted = json.dumps(name)
     app_id = json.dumps("com.example.app_" + name.lower().replace("-", "_"))
+    android_dir = "." if native else ".pycompose/android"
     config = (
         f"[app]\nname = {quoted}\napplication_id = {app_id}\n"
         'version_name = "0.1.0"\nversion_code = 1\n\n'
@@ -121,6 +135,7 @@ def init_project(name: str, *, directory: Path) -> tuple[Path, bool, bool]:
         f'[toolchain]\nlibrary_version = "{__version__}"\n'
         f'schema_version = "{SCHEMA_VERSION}"\n'
         f"template_version = {json.dumps(template_version)}\n"
+        f"android_dir = {json.dumps(android_dir)}\n"
     )
     try:
         target.mkdir()
@@ -128,7 +143,20 @@ def init_project(name: str, *, directory: Path) -> tuple[Path, bool, bool]:
         if target.is_dir():
             return target, False, False
         raise
-    _copy_assets(template, target)
+    android_root = target / android_dir
+    android_root.mkdir(parents=True, exist_ok=True)
+    _copy_assets(template, target, android_root=android_root)
+    if not native:
+        # Native sources remain versionable and editable, not disposable cache.
+        # Their own ignore file excludes Gradle caches and generated artifacts.
+        ignore = target / ".gitignore"
+        ignore.write_text(
+            ignore.read_text(encoding="utf-8") + "!.pycompose/android/\n",
+            encoding="utf-8",
+        )
+        (android_root / ".gitignore").write_bytes(
+            template.joinpath(".gitignore").read_bytes()
+        )
     # The launcher label is an app string like any other, so it flows through
     # the same resource pipeline and localizes with it.
     with (target / "resources" / "strings.json").open(
@@ -140,5 +168,5 @@ def init_project(name: str, *, directory: Path) -> tuple[Path, bool, bool]:
     ) as output:
         output.write(config)
     if android_scaffold:
-        _generate_slice(target)
+        _generate_slice(target, android_root)
     return target, True, android_scaffold

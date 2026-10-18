@@ -44,4 +44,4 @@ def test_python_edit_produces_a_new_full_snapshot_without_gradle(
         )
         assert current["diagnostics"]["nodeCount"] == 1
         assert current["diagnostics"]["lastError"] is None
-        assert not (project / "host" / "build").exists()
+        assert not (project / ".pycompose/android/host/build").exists()

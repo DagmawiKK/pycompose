@@ -48,6 +48,11 @@ def _parser() -> argparse.ArgumentParser:
         "init", help="Create a project from packaged template assets"
     )
     init.add_argument("name", help="New project directory name")
+    init.add_argument(
+        "--native",
+        action="store_true",
+        help="Expose Android sources at the project root",
+    )
     run = commands.add_parser(
         "run", help="Build, install, launch, and watch a debug app"
     )
@@ -259,7 +264,9 @@ def _run(args: argparse.Namespace) -> int:
 
 
 def _init(args: argparse.Namespace) -> int:
-    path, created, scaffold = init_project(args.name, directory=Path.cwd())
+    path, created, scaffold = init_project(
+        args.name, directory=Path.cwd(), native=args.native
+    )
     if not created:
         console.warn(f"{path} already exists; no files changed.")
         return 0
