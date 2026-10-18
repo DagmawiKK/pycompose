@@ -40,6 +40,7 @@ class PyComposeViewModel(
     private val bridge: BridgeSurface,
     private val savedState: SavedStateHandle,
     dispatcher: CoroutineDispatcher,
+    initialConfig: JsonObject? = null,
 ) : ViewModel() {
     /** Set by the activity; when attached, any queued effects are immediately drained. */
     var effectRunner: EffectRunner? = null
@@ -65,6 +66,7 @@ class PyComposeViewModel(
 
     init {
         savedState[EPOCH] = epoch
+        initialConfig?.let { Lifecycle.check("onConfigChanged", it) }
         // Background Python results arrive from any thread and are queued here, so
         // the worker still only ever sees them as ordinary actions.
         AsyncResult.listen { actionId, payload ->
@@ -81,7 +83,16 @@ class PyComposeViewModel(
         val restored = route
         val saved = restore
         scope.launch {
-            perform { bridge.start(restored, saved) }
+            perform {
+                bridge.start(restored, saved)
+                // Facts Python cannot observe itself (appearance, size, locale) must
+                // reach it before the first pull: the pull is the frame the user
+                // sees, and an app that paints from these facts would otherwise
+                // render its default palette and flash when the report lands late.
+                initialConfig?.let { config ->
+                    bridge.acceptAction(Action("onConfigChanged", config).toJson())
+                }
+            }
             for (command in commands) {
                 perform {
                     when (command) {

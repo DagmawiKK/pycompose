@@ -39,6 +39,7 @@ import com.pycompose.host.ui.PyComposeTheme
 import com.pycompose.ir.Lifecycle
 import com.pycompose.renderer.ActionDispatcher
 import com.pycompose.renderer.Renderer
+import kotlinx.serialization.json.JsonObject
 
 class MainActivity : ComponentActivity() {
     private val model: PyComposeViewModel by viewModels {
@@ -53,7 +54,6 @@ class MainActivity : ComponentActivity() {
                 model::navigate,
             ) { message -> Log.w("PyCompose", message) }
         enableEdgeToEdge()
-        reportConfiguration()
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {
@@ -123,22 +123,27 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
-    /** Report the current configuration; it is the one fact Python cannot observe itself. */
-    private fun reportConfiguration() {
+    /**
+     * Report the current configuration; it is the one fact Python cannot observe
+     * itself. The initial report rides the ViewModel's first pull instead, so the
+     * first frame the user sees is already painted for this appearance.
+     */
+    private fun configurationPayload(): JsonObject {
         val configuration = resources.configuration
         val night = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        model.lifecycle(
-            "onConfigChanged",
-            Lifecycle.payload(
-                orientation =
-                    Lifecycle.orientation(
-                        configuration.orientation == Configuration.ORIENTATION_LANDSCAPE,
-                    ),
-                darkMode = night == Configuration.UI_MODE_NIGHT_YES,
-                locale = configuration.locales[0].toLanguageTag(),
-                density = configuration.densityDpi / 160.0,
-            ),
+        return Lifecycle.payload(
+            orientation =
+                Lifecycle.orientation(
+                    configuration.orientation == Configuration.ORIENTATION_LANDSCAPE,
+                ),
+            darkMode = night == Configuration.UI_MODE_NIGHT_YES,
+            locale = configuration.locales[0].toLanguageTag(),
+            density = configuration.densityDpi / 160.0,
         )
+    }
+
+    private fun reportConfiguration() {
+        model.lifecycle("onConfigChanged", configurationPayload())
     }
 
     /** The activity owns the bridge and the native effect capabilities it exposes. */
@@ -152,5 +157,6 @@ class MainActivity : ComponentActivity() {
             ),
             createSavedStateHandle(),
             (application as PyComposeApplication).pythonWorker,
+            initialConfig = configurationPayload(),
         )
 }

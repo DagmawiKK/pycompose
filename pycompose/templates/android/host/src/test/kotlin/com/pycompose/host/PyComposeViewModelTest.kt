@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.pycompose.host.bridge.BridgeSurface
 import com.pycompose.ir.EffectRequest
 import com.pycompose.ir.Effects
+import com.pycompose.ir.Lifecycle
 import com.pycompose.renderer.Action
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -61,6 +62,51 @@ class PyComposeViewModelTest {
 
             assertSame(first, model.snapshot.value)
             model.close()
+        }
+
+    @Test fun `the configuration report lands before the first pull`() =
+        runTest {
+            val bridge = FakeBridge()
+            val config =
+                Lifecycle.payload(
+                    orientation = "portrait",
+                    darkMode = true,
+                    locale = "en-US",
+                    density = 2.75,
+                )
+            val model =
+                PyComposeViewModel(
+                    bridge,
+                    SavedStateHandle(),
+                    StandardTestDispatcher(testScheduler),
+                    initialConfig = config,
+                )
+            advanceUntilIdle()
+
+            // The first pull is the first frame the user sees, so the facts Python
+            // cannot observe must land before it, not one snapshot later.
+            assertEquals(listOf("start:home", "action:1", "pull"), bridge.calls)
+            val envelope = bridge.sent.single()
+            assertTrue(envelope.contains("\"onConfigChanged\""), envelope)
+            assertTrue(envelope.contains("\"darkMode\":true"), envelope)
+            assertNotNull(model.snapshot.value)
+            model.close()
+        }
+
+    @Test fun `an initial configuration breaking the lifecycle contract fails at construction`() =
+        runTest {
+            val bridge = FakeBridge()
+            val failure =
+                runCatching {
+                    PyComposeViewModel(
+                        bridge,
+                        SavedStateHandle(),
+                        StandardTestDispatcher(testScheduler),
+                        initialConfig = Lifecycle.route("home"),
+                    )
+                }
+            assertTrue(failure.isFailure)
+            assertEquals(emptyList<String>(), bridge.calls)
         }
 
     @Test fun `actions are FIFO and rejected snapshots keep the previous IR`() =
