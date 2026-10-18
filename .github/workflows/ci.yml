@@ -216,7 +216,9 @@ jobs:
         run: |
           pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/cli-wheel" .
           python -m venv "$RUNNER_TEMP/cli-venv"
-          "$RUNNER_TEMP/cli-venv/bin/python" -m pip install --no-deps "$RUNNER_TEMP"/cli-wheel/pycompose-*.whl
+          # Install like a user: the CLI has a runtime dependency (rich), and a
+          # --no-deps install produced a wheel that could not import.
+          "$RUNNER_TEMP/cli-venv/bin/python" -m pip install "$RUNNER_TEMP"/cli-wheel/pycompose-*.whl
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/cli-venv/bin/pycompose" init wheel-smoke
           cd wheel-smoke
