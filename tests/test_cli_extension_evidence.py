@@ -101,15 +101,16 @@ def test_a_matching_record_reads_as_verified(tmp_path) -> None:
     assert entry["record"]["target"]["abis"] == ["arm64-v8a", "x86_64"]
 
 
-def test_evidence_for_one_abi_does_not_verify_the_other(tmp_path) -> None:
-    """An arm64-only run leaves the two-ABI target without evidence."""
+def test_evidence_for_one_abi_reports_partial_coverage_for_the_target(tmp_path) -> None:
+    """An arm64-only run is visible partial coverage, never a two-ABI pass."""
     project = prepare(tmp_path, document=evidence_document(abis=["arm64-v8a"]))
 
     entry = json.loads(cli(project, "extensions", "evidence").stdout)["evidence"][
         "example.custom"
     ]["example.roundtrip"]
 
-    assert entry["status"] == "untested"
+    assert entry["status"] == "partial"
+    assert entry["observedTargets"] == [["arm64-v8a"]]
 
 
 def test_changing_the_template_version_makes_a_record_stale(tmp_path) -> None:

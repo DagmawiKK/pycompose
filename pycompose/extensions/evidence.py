@@ -276,10 +276,14 @@ def summarize(
         together with the count of scenarios in each status.
     """
     latest: dict[tuple[str, str, Target], EvidenceRecord] = {}
+    others: dict[tuple[str, str], list[EvidenceRecord]] = {}
     for observed in records:
         # Keyed by target too: a later run on one target must not silently
         # replace an earlier observation of another.
         latest[(observed.extension, observed.scenario, observed.target)] = observed
+        seen = others.setdefault((observed.extension, observed.scenario), [])
+        if all(item != observed for item in seen):
+            seen.append(observed)
     view: dict[str, dict[str, object]] = {}
     for extension, scenarios in sorted(declared.items()):
         entries: dict[str, object] = {}
@@ -288,7 +292,19 @@ def summarize(
                 None if target is None else latest.get((extension, scenario, target))
             )
             if record is None:
-                entries[scenario] = {"status": "untested"}
+                # Nothing ran on this exact target. A run on another target is
+                # partial coverage and must stay visible: reporting it as
+                # untested would bury a failure that really was observed.
+                elsewhere = others.get((extension, scenario), [])
+                if not elsewhere:
+                    entries[scenario] = {"status": "untested"}
+                    continue
+                newest = max(elsewhere, key=lambda item: item.recorded)
+                entries[scenario] = {
+                    "status": "partial",
+                    "observedTargets": [sorted(item.target.abis) for item in elsewhere],
+                    "record": newest.to_json(),
+                }
                 continue
             entries[scenario] = {
                 "status": record_status(record, fingerprints[scenario], target),

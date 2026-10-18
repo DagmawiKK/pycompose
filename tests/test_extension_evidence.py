@@ -47,6 +47,44 @@ def test_declared_scenario_without_a_record_is_untested() -> None:
     assert counts == {"untested": 1}
 
 
+def test_another_targets_run_is_partial_coverage_not_untested() -> None:
+    """Partial coverage must stay visible instead of reading as never tried."""
+    both = Target(python="3.12", abis=("arm64-v8a", "x86_64"), min_sdk=24)
+    observed = record(target={"python": "3.12", "abis": ["arm64-v8a"], "minSdk": 24})
+
+    view, counts = summarize(
+        {"pycompose.sqlite": ["pycompose.sqlite.transaction"]},
+        {"pycompose.sqlite.transaction": FINGERPRINT},
+        [observed],
+        both,
+    )
+
+    entry = view["pycompose.sqlite"]["pycompose.sqlite.transaction"]
+    assert entry["status"] == "partial"
+    assert entry["observedTargets"] == [["arm64-v8a"]]
+    assert counts == {"partial": 1}
+
+
+def test_partial_coverage_still_shows_a_failure_that_was_observed_elsewhere() -> None:
+    """A failure on one target must not be hidden behind partial coverage."""
+    both = Target(python="3.12", abis=("arm64-v8a", "x86_64"), min_sdk=24)
+    failed = record(
+        target={"python": "3.12", "abis": ["arm64-v8a"], "minSdk": 24},
+        stages={**dict.fromkeys(STAGES, "pass"), "operations": "fail"},
+    )
+
+    view, _ = summarize(
+        {"pycompose.sqlite": ["pycompose.sqlite.transaction"]},
+        {"pycompose.sqlite.transaction": FINGERPRINT},
+        [failed],
+        both,
+    )
+
+    entry = view["pycompose.sqlite"]["pycompose.sqlite.transaction"]
+    assert entry["status"] == "partial"
+    assert entry["record"]["stages"]["operations"] == "fail"
+
+
 def test_all_stages_passing_with_matching_fingerprint_is_verified() -> None:
     assert record_status(record(), FINGERPRINT) == "verified"
 
