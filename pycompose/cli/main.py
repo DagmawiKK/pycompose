@@ -11,7 +11,7 @@ from pycompose.cli import console
 from pycompose.cli.build import build_project
 from pycompose.cli.config import KEYS, Setting, change, settings
 from pycompose.cli.doctor import doctor
-from pycompose.cli.extensions import show_plan
+from pycompose.cli.extensions import show_evidence, show_plan
 from pycompose.cli.init import init_project
 from pycompose.cli.install import Deploy, install_project
 from pycompose.cli.project import ProjectError, load_project
@@ -118,7 +118,9 @@ def _parser() -> argparse.ArgumentParser:
     extensions = commands.add_parser(
         "extensions", help="Plan extensions without importing their implementations"
     )
-    extensions.add_argument("action", choices=("plan",), nargs="?", default="plan")
+    extensions.add_argument(
+        "action", choices=("plan", "evidence"), nargs="?", default="plan"
+    )
     return parser
 
 
@@ -133,8 +135,11 @@ def _stubs(args: argparse.Namespace) -> int:
     return 0
 
 
-def _extensions(_args: argparse.Namespace) -> int:
-    return show_plan(load_project(Path.cwd()))
+def _extensions(args: argparse.Namespace) -> int:
+    project = load_project(Path.cwd())
+    if args.action == "evidence":
+        return show_evidence(project)
+    return show_plan(project)
 
 
 def _build(args: argparse.Namespace) -> int:

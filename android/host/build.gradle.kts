@@ -100,8 +100,9 @@ val stageRuntime by tasks.registering(Sync::class) {
         include("pycompose/**/*.py", "pycompose/py.typed")
         exclude("pycompose/cli/**", "pycompose/templates/**", "pycompose/testing/**")
         // Reference recipes are ordinary opt-in consumers of the extension contract.
-        // Metadata and planning tools never belong in an application runtime.
-        exclude("pycompose/extensions/definition.py")
+        // Metadata, evidence records and planning tools never belong in an
+        // application runtime; the app itself only ever reads evidence.
+        exclude("pycompose/extensions/definition.py", "pycompose/extensions/evidence.py")
         exclude {
             it.path.startsWith("pycompose/integrations/") &&
                 it.name != "__init__.py" &&

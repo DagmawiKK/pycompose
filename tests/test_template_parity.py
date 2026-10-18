@@ -50,3 +50,18 @@ def test_the_template_matches_the_modules_byte_for_byte() -> None:
             f"{path.relative_to(TEMPLATE)} differs from {source.relative_to(ROOT)}; "
             "run python tools/schema/gen.py"
         )
+
+
+def test_planning_modules_are_excluded_from_the_packaged_runtime() -> None:
+    """Metadata and evidence tooling must never ship inside an application.
+
+    An APK that carried the planner would expose the whole definition and
+    evidence format to an app that only ever produces outcomes, and would grow
+    every build by tooling it never calls.
+    """
+    gradle = (TEMPLATE / "host/build.gradle.kts").read_text(encoding="utf-8")
+
+    for module in ("definition.py", "evidence.py"):
+        assert (
+            f"pycompose/extensions/{module}" in gradle
+        ), f"pycompose/extensions/{module} would be packaged into every APK"
