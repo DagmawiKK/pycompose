@@ -13,10 +13,17 @@ The Python lives in `app/`, which is where `pycompose init` puts it by default
 running Android project:
 
 ```bash
-pycompose init notes                  # scaffolds the Android project
-cp -R examples/notes/app/. notes/app/ # drop this app in
-cd notes && pycompose run             # build, install, launch, watch edits
+pycompose init notes                     # scaffolds the Android project
+cp -R examples/notes/app/. notes/app/    # drop this app in
+cp -R examples/notes/overlay/. notes/    # its launcher name and icon
+cd notes && pycompose run                # build, install, launch, watch edits
 ```
+
+`overlay/` carries the two things this app owns outside Python: `app_name` in
+`resources/strings.json` is the launcher label, and the `app_icon*` vectors in
+`host/src/main/res/` draw the launcher icon — an adaptive icon whose monochrome
+layer gives it a themed-icon form. Both are ordinary Android resources, so both
+localize like every other string.
 
 Or drive it with no device and no Gradle at all:
 
