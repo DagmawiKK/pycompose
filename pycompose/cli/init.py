@@ -97,6 +97,12 @@ def init_project(name: str, *, directory: Path) -> tuple[Path, bool, bool]:
             return target, False, False
         raise
     _copy_assets(template, target)
+    # The launcher label is an app string like any other, so it flows through
+    # the same resource pipeline and localizes with it.
+    with (target / "resources" / "strings.json").open(
+        "w", encoding="utf-8", newline="\n"
+    ) as output:
+        output.write(json.dumps({"app_name": name}) + "\n")
     with (target / "pycompose.toml").open(
         "x", encoding="utf-8", newline="\n"
     ) as output:

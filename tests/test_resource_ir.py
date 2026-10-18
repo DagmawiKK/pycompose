@@ -59,7 +59,7 @@ def test_resource_screen_matches_shared_native_golden() -> None:
                 ),
                 Image(
                     id="image",
-                    resource="@drawable/ic_pycompose",
+                    resource="@drawable/app_icon",
                     content_description="PyCompose logo",
                 ),
                 Text(

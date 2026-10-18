@@ -27,6 +27,10 @@ EXCLUDED = frozenset(
         "dump-compose-api.gradle.kts",
         "dump-compose-defaults.gradle.kts",
         "tools",
+        # The sample host names itself; a scaffolded app gets its launcher
+        # label from resources/strings.json as a generated string instead, so
+        # this file would collide with that app_name and is never shipped.
+        "pycompose_app.xml",
     }
 )
 

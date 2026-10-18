@@ -55,7 +55,9 @@ def test_init_creates_config_python_entrypoint_and_resource_directories(
     assert config["toolchain"]["schema_version"] == SCHEMA_VERSION
     for resource in ("assets", "drawables", "fonts"):
         assert (project / "resources" / resource).is_dir()
-    assert json.loads((project / "resources" / "strings.json").read_text()) == {}
+    assert json.loads((project / "resources" / "strings.json").read_text()) == {
+        "app_name": "demo"
+    }
     assert (project / "app" / "main.py").is_file()
     assert (project / ".gitignore").is_file()
     assert result.stderr == ""
