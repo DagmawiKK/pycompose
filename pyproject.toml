@@ -9,7 +9,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
 dynamic = ["version"]
-dependencies = []
+dependencies = ["rich>=13.7"]
 
 [project.scripts]
 pycompose = "pycompose.cli.main:main"

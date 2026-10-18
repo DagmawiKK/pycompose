@@ -137,7 +137,19 @@ def test_existing_directory_symlink_warns_without_writing_into_target(
 
 
 @pytest.mark.parametrize(
-    "command", ["init", "run", "build", "sync", "doctor", "validate"]
+    "command",
+    [
+        "init",
+        "run",
+        "build",
+        "install",
+        "debug",
+        "release",
+        "config",
+        "sync",
+        "doctor",
+        "validate",
+    ],
 )
 def test_command_entry_points_have_help(tmp_path: Path, command: str) -> None:
     result = cli(tmp_path, command, "--help")

@@ -5,10 +5,14 @@ from __future__ import annotations
 import os
 import re
 import subprocess
-import sys
+import threading
+import time
 import zipfile
+from collections.abc import Callable
 from pathlib import Path
+from typing import IO
 
+from pycompose.cli.console import echo, echo_error, ok, step
 from pycompose.cli.project import (
     Project,
     ProjectError,
@@ -270,6 +274,63 @@ def _codegen(project: Project) -> None:
         raise ProjectError("component slice generation failed", path=directory)
 
 
+def _gradle(
+    command: list[str],
+    *,
+    cwd: Path,
+    env: dict[str, str],
+    secrets: tuple[str, ...],
+) -> int:
+    """Run Gradle, echoing both streams line by line with secrets removed.
+
+    The log is read while Gradle runs rather than collected afterwards: a
+    build takes minutes, and a wall of text that arrives all at once tells a
+    person nothing about where it is stuck. stdout keeps going to stdout and
+    stderr to stderr, so a script that reads either stream still sees what
+    Gradle wrote there.
+
+    Args:
+        command: argv of the Gradle wrapper invocation.
+        cwd: Project root the wrapper runs in.
+        env: Environment with signing properties already applied.
+        secrets: Values to replace before any line is printed.
+
+    Returns:
+        The wrapper's exit code.
+
+    Raises:
+        ProjectError: If Gradle's output pipes cannot be captured.
+    """
+    process = subprocess.Popen(
+        command,
+        cwd=cwd,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        errors="replace",
+        bufsize=1,
+    )
+    stdout, stderr = process.stdout, process.stderr
+    if stdout is None or stderr is None:
+        raise ProjectError("Gradle output could not be captured")
+
+    def pump(stream: IO[str], write: Callable[[str], None]) -> None:
+        for raw in stream:
+            write(_redacted(raw.rstrip("\n"), secrets))
+
+    readers = [
+        threading.Thread(target=pump, args=(stdout, echo)),
+        threading.Thread(target=pump, args=(stderr, echo_error)),
+    ]
+    for reader in readers:
+        reader.start()
+    code = process.wait()
+    for reader in readers:
+        reader.join()
+    return code
+
+
 def build_project(
     project: Project, *, kind: str = "apk", release: bool = False
 ) -> tuple[Path, ...]:
@@ -309,17 +370,17 @@ def build_project(
     _codegen(project)
     variant = "release" if release else "debug"
     task = f":host:{'assemble' if kind == 'apk' else 'bundle'}{variant.title()}"
-    result = subprocess.run(
+    step(f"{task} ({variant} {kind})")
+    started = time.monotonic()
+    code = _gradle(
         [str(wrapper), task, "--console=plain", "--no-daemon"],
         cwd=project.root,
         env=env,
-        capture_output=True,
-        text=True,
-        errors="replace",
-        check=False,
+        secrets=secrets,
     )
-    print(_redacted(result.stdout, secrets), end="")
-    print(_redacted(result.stderr, secrets), end="", file=sys.stderr)
-    if result.returncode:
-        raise ProjectError("Gradle task failed", task=task, exit_code=result.returncode)
-    return _artifacts(project, kind, variant)
+    elapsed = time.monotonic() - started
+    if code:
+        raise ProjectError("Gradle task failed", task=task, exit_code=code)
+    outputs = _artifacts(project, kind, variant)
+    ok(f"{task} finished in {elapsed:.1f}s")
+    return outputs
