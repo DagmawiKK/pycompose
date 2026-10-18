@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
@@ -63,74 +62,82 @@ class PyComposeViewModel(
     private var route = savedState.get<String>("route") ?: "home"
     private var restore = savedState.get<String>(STATE) ?: ""
     private var epoch = (savedState.get<Long>(EPOCH) ?: -1L) + 1L
+    private val resultSubscription: AutoCloseable
+    private val admissionSubscription: AutoCloseable
+    private val outcomeAdmission =
+        OutcomeAdmission(
+            accept = { enqueue(Command.Push(it)) },
+            rejected = { mutableError.value = "Async result rejected" },
+        )
 
     init {
         savedState[EPOCH] = epoch
         initialConfig?.let { Lifecycle.check("onConfigChanged", it) }
         // Background Python results arrive from any thread and are queued here, so
         // the worker still only ever sees them as ordinary actions.
-        AsyncResult.listen { actionId, payload ->
-            runCatching {
-                val element = Json.parseToJsonElement(payload)
-                require(element is JsonObject) { "Async result must be an object" }
-                Action(actionId, element)
-            }.onSuccess { action ->
-                enqueue(Command.Push(action))
-            }.onFailure { error ->
-                mutableError.value = "Async result failed: ${error.message}"
+        resultSubscription =
+            AsyncResult.listen { actionId, payload ->
+                outcomeAdmission.offer(actionId, payload)
             }
-        }
+        admissionSubscription = AsyncResult.listenAdmission(outcomeAdmission::offer)
         val restored = route
         val saved = restore
         scope.launch {
-            perform {
-                bridge.start(restored, saved)
-                // Facts Python cannot observe itself (appearance, size, locale) must
-                // reach it before the first pull: the pull is the frame the user
-                // sees, and an app that paints from these facts would otherwise
-                // render its default palette and flash when the report lands late.
-                initialConfig?.let { config ->
-                    bridge.acceptAction(Action("onConfigChanged", config).toJson())
-                }
-            }
-            for (command in commands) {
+            try {
                 perform {
-                    when (command) {
-                        is Command.Dispatch -> {
-                            val source = command.action.toJson()
-                            val current =
-                                checkNotNull(mutableSnapshot.value) { "No active snapshot" }
-                            AppBindings.validateAction(source, current.ir).getOrThrow()
-                            bridge.acceptAction(source)
-                        }
-                        is Command.Lifecycle -> {
-                            // Platform events validate against the lifecycle
-                            // contract alone: no snapshot has to exist yet.
-                            Lifecycle.check(command.event, command.payload)
-                            bridge.acceptAction(command.action.toJson())
-                        }
-                        is Command.Reload -> {
-                            if (bridge.reload(command.route, restore)) {
-                                epoch += 1
-                                savedState[EPOCH] = epoch
+                    bridge.start(restored, saved)
+                    // Facts Python cannot observe itself (appearance, size, locale) must
+                    // reach it before the first pull: the pull is the frame the user
+                    // sees, and an app that paints from these facts would otherwise
+                    // render its default palette and flash when the report lands late.
+                    initialConfig?.let { config ->
+                        bridge.acceptAction(Action("onConfigChanged", config).toJson())
+                    }
+                }
+                for (command in commands) {
+                    perform {
+                        when (command) {
+                            is Command.Dispatch -> {
+                                val source = command.action.toJson()
+                                val current =
+                                    checkNotNull(mutableSnapshot.value) { "No active snapshot" }
+                                AppBindings.validateAction(source, current.ir).getOrThrow()
+                                bridge.acceptAction(source)
                             }
-                        }
-                        is Command.Navigate -> {
-                            // A route change is an ordinary inbound action, not a
-                            // reason to rebuild Python. Restarting here would
-                            // discard the app's session on every navigation, which
-                            // is what makes a ViewModel impossible to retain.
-                            Lifecycle.check("onRouteChanged", command.action.payload)
-                            bridge.acceptAction(command.action.toJson())
-                        }
-                        is Command.Push -> {
-                            // A background result, delivered exactly as a tap would
-                            // be: the payload is the app's, and its handler's
-                            // declared contract is what checks it.
-                            bridge.acceptAction(command.action.toJson())
+                            is Command.Lifecycle -> {
+                                // Platform events validate against the lifecycle
+                                // contract alone: no snapshot has to exist yet.
+                                Lifecycle.check(command.event, command.payload)
+                                bridge.acceptAction(command.action.toJson())
+                            }
+                            is Command.Reload -> {
+                                if (bridge.reload(command.route, restore)) {
+                                    epoch += 1
+                                    savedState[EPOCH] = epoch
+                                }
+                            }
+                            is Command.Navigate -> {
+                                // A route change is an ordinary inbound action, not a
+                                // reason to rebuild Python. Restarting here would
+                                // discard the app's session on every navigation, which
+                                // is what makes a ViewModel impossible to retain.
+                                Lifecycle.check("onRouteChanged", command.action.payload)
+                                bridge.acceptAction(command.action.toJson())
+                            }
+                            is Command.Push -> {
+                                // A background result, delivered exactly as a tap would
+                                // be: the payload is the app's, and its handler's
+                                // declared contract is what checks it.
+                                bridge.acceptAction(command.action.toJson())
+                            }
                         }
                     }
                 }
+            } finally {
+                // Cancellation runs this synchronous teardown on the owning worker.
+                // Python retires interest now and closes resources on their own lanes.
+                runCatching { bridge.close() }
+                    .onFailure { mutableError.value = "Python cleanup failed" }
             }
         }
     }
@@ -180,11 +187,14 @@ class PyComposeViewModel(
         }
     }
 
-    private fun enqueue(command: Command) {
-        if (commands.trySend(command).isFailure) {
+    // Both Channel admission and MutableStateFlow writes are thread-safe.
+    private fun enqueue(command: Command): Boolean {
+        val accepted = commands.trySend(command).isSuccess
+        if (!accepted) {
             mutableError.value =
                 "Python action queue unavailable"
         }
+        return accepted
     }
 
     // Boundary failures become diagnostics, never UI crashes.
@@ -245,7 +255,8 @@ class PyComposeViewModel(
     fun close() {
         // A background result must never reach a closed view: the worker it would
         // re-render into no longer exists.
-        AsyncResult.listen(null)
+        resultSubscription.close()
+        admissionSubscription.close()
         effectRunner = null
         pendingEffects.clear()
         commands.close()

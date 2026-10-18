@@ -13,26 +13,18 @@ from pathlib import Path
 from typing import IO
 
 from pycompose.cli.console import echo, echo_error, ok, step
+from pycompose.cli.extensions import check_extensions, stage_extensions
 from pycompose.cli.project import (
     Project,
     ProjectError,
     check_project_versions,
     project_path,
 )
+from pycompose.cli.requirements import validate_requirements
 from pycompose.cli.sync import sync_resources
 
 SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
 
-_NAME = r"[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?"
-_EXTRAS = r"(?:\[" + _NAME + r"(?:," + _NAME + r")*\])?"
-_OPERATOR = r"(?:===|==|!=|~=|<=|>=|<|>)"
-_VERSION = r"[A-Za-z0-9][A-Za-z0-9.*+!_-]*"
-_SPECIFIER = r"\s*" + _OPERATOR + r"\s*" + _VERSION
-_REQUIREMENT = re.compile(
-    _NAME + _EXTRAS + r"(?:" + _SPECIFIER + r"(?:," + _SPECIFIER + r")*)?"
-    r"(?:\s*;\s*\S.*)?"
-)
-_ARCHIVE_SUFFIXES = (".whl", ".tar.gz", ".zip")
 # First Android template whose host installs app requirements; older scaffolds
 # have no pip block and would drop a declared requirement without a word.
 _MIN_REQUIREMENTS_TEMPLATE = (0, 4, 0)
@@ -53,38 +45,15 @@ def _requirements(project: Project) -> list[str]:
     Returns:
         The stripped requirement specifiers, in declaration order.
 
-    Raises:
-        ProjectError: If the array or one of its entries is not a specifier.
     """
-    requirements = project.table("python").get("requirements", [])
-    if not isinstance(requirements, list):
-        raise ProjectError("python.requirements must be an array of package specifiers")
-    result = []
-    for index, requirement in enumerate(requirements):
-        if (
-            not isinstance(requirement, str)
-            or not requirement.strip()
-            or any(ord(char) < 32 or ord(char) == 127 for char in requirement)
-        ):
-            raise ProjectError(
-                "python.requirements entries must be nonempty single-line strings",
-                index=index,
-            )
-        stripped = requirement.strip()
-        if stripped.casefold().endswith(_ARCHIVE_SUFFIXES):
-            raise ProjectError(
-                "python.requirements accepts named packages; build a wheel with "
-                "Chaquopy's toolchain and publish or mirror it to install it by name",
-                index=index,
-            )
-        if _REQUIREMENT.fullmatch(stripped) is None:
-            raise ProjectError(
-                "python.requirements entries must be pip package specifiers: "
-                "name, extras, version and optional environment marker",
-                index=index,
-            )
-        result.append(stripped)
-    return result
+    requirements = validate_requirements(
+        project.table("python").get("requirements", []), field="python.requirements"
+    )
+    report = check_extensions(project)
+    extra = validate_requirements(
+        report["requirements"], field="extension.requirements"
+    )
+    return list(dict.fromkeys([*requirements, *extra]))
 
 
 def _scaffold_template_version(project: Project) -> tuple[int, ...] | None:
@@ -386,6 +355,7 @@ def build_project(
     env = dict(os.environ)
     _app_properties(project, env)
     secrets = _signing(project, env) if release else ()
+    stage_extensions(project, env)
     sync_resources(project)
     _codegen(project)
     variant = "release" if release else "debug"

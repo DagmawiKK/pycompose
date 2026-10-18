@@ -154,6 +154,7 @@ class MainActivity : ComponentActivity() {
                 BuildConfig.PYCOMPOSE_ENTRYPOINT,
                 BuildConfig.DEBUG,
                 AsyncResult::deliver,
+                AsyncResult::offer,
             ),
             createSavedStateHandle(),
             (application as PyComposeApplication).pythonWorker,

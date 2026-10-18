@@ -1,11 +1,14 @@
 """Synchronous pull surface; the Android host owns the single Python worker."""
 
+from __future__ import annotations
+
 import logging
 from threading import current_thread
 
 from pycompose.bridge.types import decode_action
 from pycompose.core.action_binding import BindingSpec, read_bindings
 from pycompose.errors import BridgeError, SchemaError
+from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
 from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
 from pycompose.state import Actions, State, Store
@@ -54,6 +57,7 @@ class BridgeSurface:
         self._latest: str | None = None
         self._latest_error = ""
         self._bindings: dict[str, BindingSpec] = {}
+        self._deliveries = Dispatcher()
         try:
             self._latest, self._bindings = self._snapshot(store.value)
         except SchemaError:
@@ -104,8 +108,13 @@ class BridgeSurface:
         self._processing = True
         self._latest_error = ""
         try:
+            if self._deliveries.closed:
+                return
+            admitted = self._deliveries.resolve(action_json)
+            if admitted is None:
+                return
             action = decode_action(
-                action_json,
+                admitted,
                 bindings=self._bindings,
                 handlers=self._actions,
             )
@@ -119,15 +128,18 @@ class BridgeSurface:
                 LOGGER.debug("lifecycle event has no handler: %s", action.action_id)
                 return
             current = self._store.value
-            next_state = (
-                self._actions.dispatch_binding(action.binding, current, action.payload)
-                if action.binding is not None
-                else self._actions.dispatch(
-                    action.action_id,
-                    current,
-                    action.payload,
+            with self._deliveries.active():
+                next_state = (
+                    self._actions.dispatch_binding(
+                        action.binding, current, action.payload
+                    )
+                    if action.binding is not None
+                    else self._actions.dispatch(
+                        action.action_id,
+                        current,
+                        action.payload,
+                    )
                 )
-            )
             if _unchanged(next_state, current):
                 return
             snapshot, bindings = self._snapshot(next_state)
@@ -161,4 +173,15 @@ class BridgeSurface:
             Error text, or an empty string for a successful transition.
         """
         self._require_worker()
-        return self._latest_error
+        return self._latest_error or self._deliveries.diagnostic
+
+    def close(self, *, successor: BridgeSurface | None = None) -> None:
+        """Retire completion registrations and clean up or transfer used resources.
+
+        Args:
+            successor: Replacement after successful reload, or None on shutdown.
+        """
+        self._require_worker()
+        self._deliveries.retire(
+            successor._deliveries if successor is not None else None
+        )

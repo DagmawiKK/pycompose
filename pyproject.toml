@@ -9,15 +9,17 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
 dynamic = ["version"]
-dependencies = ["rich>=13.7"]
+dependencies = ["rich>=13.7", "packaging>=24", "defusedxml>=0.7"]
 
 [project.scripts]
 pycompose = "pycompose.cli.main:main"
 
 [project.optional-dependencies]
+httpx = ["httpx>=0.27,<0.29"]
 dev = [
     "bandit>=1.7",
     "hypothesis>=6.100",
+    "httpx>=0.27,<0.29",
     "import-linter==2.0",
     "jsonschema>=4.20",
     "mypy==1.11.2",
@@ -27,6 +29,7 @@ dev = [
     "pytest>=8.0",
     "ruff==0.6.9",
     "types-jsonschema>=4.20",
+    "types-defusedxml>=0.7",
 ]
 
 [tool.setuptools]
@@ -37,7 +40,7 @@ include = ["pycompose*"]
 exclude = ["pycompose.templates*"]
 
 [tool.setuptools.package-data]
-pycompose = ["py.typed", "schema/components.json", "schema/ir.schema.json", "testing/fixtures/*.json", "templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep"]
+pycompose = ["py.typed", "schema/components.json", "schema/ir.schema.json", "integrations/definitions/*.toml", "testing/fixtures/*.json", "templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pycompose.version.__version__" }
@@ -60,6 +63,7 @@ ignore = ["PLR0913", "PLR2004"]
 # fields at all. Those leave `payload` unread, which the contract makes
 # unavoidable rather than accidental.
 "examples/**/actions.py" = ["ARG001"]
+"examples/extensions/app/main.py" = ["ARG001"]
 # Handlers here exist to be introspected, not run. An unused parameter is the
 # point: it is what proves the signature is parsed and nothing else is.
 "tests/test_auto_ids.py" = ["ARG001"]
@@ -88,9 +92,17 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["cli", "testing", "m3", "composition", "components", "bridge", "async_task", "repository", "ir", "state", "schema", "core", "utils"]
+layers = ["cli", "testing", "m3", "composition", "components", "bridge", "integrations", "extensions", "async_task", "repository", "ir", "state", "schema", "core", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
+
+[[tool.importlinter.contracts]]
+name = "Extensions are consumers, never privileged core dependencies"
+type = "forbidden"
+source_modules = ["pycompose.extensions", "pycompose.bridge", "pycompose.async_task",
+                  "pycompose.repository", "pycompose.cli"]
+forbidden_modules = ["pycompose.integrations"]
+explanation = "Recipe discovery reads data; core never imports a concrete extension."
 
 [[tool.importlinter.contracts]]
 name = "Bridge is the only runtime boundary surface"
@@ -107,7 +119,7 @@ type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
                   "pycompose.ir", "pycompose.bridge", "pycompose.components",
                    "pycompose.utils", "pycompose.testing", "pycompose.m3", "pycompose.composition", "pycompose.async_task",
-                   "pycompose.repository"]
+                    "pycompose.repository", "pycompose.extensions", "pycompose.integrations"]
 forbidden_modules = ["pycompose.cli", "pycompose.templates"]
 explanation = "CLI and template assets are dev/tooling concerns, never runtime deps."
 
@@ -124,7 +136,7 @@ type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
                    "pycompose.ir", "pycompose.bridge", "pycompose.components",
                    "pycompose.utils", "pycompose.m3", "pycompose.composition", "pycompose.async_task",
-                   "pycompose.repository"]
+                    "pycompose.repository", "pycompose.extensions", "pycompose.integrations"]
 forbidden_modules = ["pycompose.testing"]
 explanation = "Testing consumes runtime public APIs; runtime stays independent of test data."
 

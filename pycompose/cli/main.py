@@ -11,6 +11,7 @@ from pycompose.cli import console
 from pycompose.cli.build import build_project
 from pycompose.cli.config import KEYS, Setting, change, settings
 from pycompose.cli.doctor import doctor
+from pycompose.cli.extensions import show_plan
 from pycompose.cli.init import init_project
 from pycompose.cli.install import Deploy, install_project
 from pycompose.cli.project import ProjectError, load_project
@@ -30,6 +31,7 @@ _MENU = (
     ("config", "Show or change the app name, id and version"),
     ("sync", "Sync named resources into the Android host"),
     ("doctor", "Report Android toolchain and schema compatibility"),
+    ("extensions", "Plan explicitly selected extension capabilities"),
     ("validate", "Validate IR JSON against the registry and wire schema"),
     ("stubs", "Print optional module type stubs"),
     ("init", "Create a project from packaged template assets"),
@@ -113,6 +115,10 @@ def _parser() -> argparse.ArgumentParser:
         "stubs", help="Print optional module type stubs without importing app code"
     )
     stubs.add_argument("path", type=Path)
+    extensions = commands.add_parser(
+        "extensions", help="Plan extensions without importing their implementations"
+    )
+    extensions.add_argument("action", choices=("plan",), nargs="?", default="plan")
     return parser
 
 
@@ -125,6 +131,10 @@ def _validate(args: argparse.Namespace) -> int:
 def _stubs(args: argparse.Namespace) -> int:
     print(generate_stubs(args.path), end="")
     return 0
+
+
+def _extensions(_args: argparse.Namespace) -> int:
+    return show_plan(load_project(Path.cwd()))
 
 
 def _build(args: argparse.Namespace) -> int:
@@ -329,6 +339,7 @@ def main(argv: list[str] | None = None) -> int:
         "doctor": _doctor,
         "run": _run,
         "stubs": _stubs,
+        "extensions": _extensions,
     }
     try:
         return handlers[args.command](args)

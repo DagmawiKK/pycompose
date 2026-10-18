@@ -11,12 +11,14 @@ from pathlib import Path
 from threading import current_thread
 from types import ModuleType
 from typing import Any, cast
+from uuid import uuid4
 
 from pycompose import async_task
 from pycompose.bridge.api import BridgeSurface
-from pycompose.core.context import AppContext, carried
+from pycompose.core.context import AppContext, carried, context
 from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
+from pycompose.extensions.environment import install as install_paths
 from pycompose.state import Actions, App, Store, actions_for_module
 
 
@@ -43,6 +45,7 @@ class RuntimeSession:
         self._worker = current_thread()
         self._error = ""
         self._container: object | None = None
+        self.identity = uuid4().hex
         self._surface = self._build(route, restore)
 
     def _require_worker(self) -> None:
@@ -176,6 +179,7 @@ class RuntimeSession:
         if "." in self._module:
             directory = directory.parent
         previous = _user_modules(directory)
+        previous_context = context()
         for name, module in previous.items():
             del sys.modules[name]
             cached = getattr(module, "__cached__", None)
@@ -190,12 +194,19 @@ class RuntimeSession:
             for name in _user_modules(directory):
                 del sys.modules[name]
             sys.modules.update(previous)
+            install_context(previous_context)
             self._error = str(exc)
             return False
         else:
+            self._surface.close(successor=candidate)
             self._surface = candidate
             self._error = ""
             return True
+
+    def close(self) -> None:
+        """Retire registered work and close its resources off the Compose thread."""
+        self._require_worker()
+        self._surface.close()
 
 
 def _user_modules(directory: Path) -> dict[str, ModuleType]:
@@ -216,7 +227,14 @@ def _user_modules(directory: Path) -> dict[str, ModuleType]:
 _session: RuntimeSession | None = None
 
 
-def start(entrypoint: str, route: str, debug: bool, restore: str = "") -> None:
+def start(
+    entrypoint: str,
+    route: str,
+    debug: bool,
+    restore: str = "",
+    files_dir: str = "",
+    cache_dir: str = "",
+) -> str:
     """Create the app session on the host's single worker.
 
     Args:
@@ -224,19 +242,49 @@ def start(entrypoint: str, route: str, debug: bool, restore: str = "") -> None:
         route: Restored minimal navigation state.
         debug: Enable debug-only reload and detailed diagnostics.
         restore: Saved app data handed back for ``build`` to rehydrate from.
+        files_dir: Private persistent path supplied as a host string.
+        cache_dir: Evictable private path supplied as a host string.
+
+    Returns:
+        A data-only session identity used to reject obsolete host teardown.
     """
     global _session  # noqa: PLW0603 -- one worker-owned session per Python process
+    if _session is not None:
+        _session.close()
+    install_paths(files_dir, cache_dir)
     _session = RuntimeSession(entrypoint, route, debug=debug, restore=restore)
+    return _session.identity
 
 
-def install_async_sink(sink: object) -> None:
+def close(identity: str = "") -> None:
+    """Retire an app on its worker without closing a replacement host's session.
+
+    Args:
+        identity: Host's session identity, or empty for explicit current-session close.
+    """
+    global _session  # noqa: PLW0603 -- host owns session start/close
+    if identity and (_session is None or _session.identity != identity):
+        return
+    if _session is not None:
+        _session.close()
+        _session = None
+    async_task.shutdown()
+    install_paths()
+    install_context(None)
+
+
+def install_async_sink(sink: object, admission: object = None) -> None:
     """Register where background results are delivered on this worker.
 
     Args:
         sink: A callable taking an action id and its canonical payload text, or
             None to stop delivering.
+        admission: Optional thread-safe native queue admission returning a boolean.
     """
-    async_task.install_sink(cast("Callable[[str, str], None]", sink))
+    async_task.install_sink(
+        cast("Callable[[str, str], None]", sink),
+        admission=cast("Callable[[str, str], bool] | None", admission),
+    )
 
 
 def accept_action(source: str) -> None:

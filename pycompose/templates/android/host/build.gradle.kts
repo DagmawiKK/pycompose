@@ -41,6 +41,9 @@ android {
         .getByName("main")
         .kotlin
         .srcDir(rootProject.file(".pycompose/generated/host/src/main/kotlin"))
+    sourceSets.getByName("main").manifest.srcFile(
+        providers.gradleProperty("pycomposeManifest").getOrElse("src/main/AndroidManifest.xml"),
+    )
     sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
     sourceSets.getByName("test").java.srcDir("../architecture/src/test/kotlin")
     lint {
@@ -83,11 +86,27 @@ chaquopy {
 // build` sets the property. A raw Gradle build keeps the library catalog,
 // which is what the fallback sample under src/main/python imports.
 val ownSlice = providers.gradleProperty("pycomposeOwnSlice").orNull == "true"
+val integrationModules =
+    providers
+        .gradleProperty("pycomposeIntegrationModules")
+        .orNull
+        ?.lines()
+        ?.filter(String::isNotBlank)
+        ?.toSet()
+        .orEmpty()
 
 val stageRuntime by tasks.registering(Sync::class) {
     from(providers.gradleProperty("pycomposeRuntimeDir").getOrElse(rootProject.file("..").path)) {
         include("pycompose/**/*.py", "pycompose/py.typed")
         exclude("pycompose/cli/**", "pycompose/templates/**", "pycompose/testing/**")
+        // Reference recipes are ordinary opt-in consumers of the extension contract.
+        // Metadata and planning tools never belong in an application runtime.
+        exclude("pycompose/extensions/definition.py")
+        exclude {
+            it.path.startsWith("pycompose/integrations/") &&
+                it.name != "__init__.py" &&
+                it.name.removeSuffix(".py") !in integrationModules
+        }
         // The app's own slice is the only copy of the catalog's components it
         // carries; shipping pycompose/m3 too would put every component back
         // into the APK the slice exists to keep out.

@@ -11,10 +11,12 @@ class ChaquopyBridge(
     private val entrypoint: String,
     private val debug: Boolean,
     private val asyncSink: (String, String) -> Unit,
+    private val outcomeAdmission: ((String, String) -> Boolean)? = null,
 ) : BridgeSurface {
     private val application = context.applicationContext
     private var owner: Thread? = null
     private var initialized = false
+    private var sessionId = ""
 
     override fun start(
         route: String,
@@ -26,17 +28,26 @@ class ChaquopyBridge(
         synchronized(startLock) {
             if (!Python.isStarted()) Python.start(AndroidPlatform(application))
         }
-        Python
-            .getInstance()
-            .getModule(MODULE)
-            .callAttr("start", entrypoint, route, debug, restore)
+        sessionId =
+            Python
+                .getInstance()
+                .getModule(MODULE)
+                .callAttr(
+                    "start",
+                    entrypoint,
+                    route,
+                    debug,
+                    restore,
+                    application.filesDir.absolutePath,
+                    application.cacheDir.absolutePath,
+                ).toString()
+        initialized = true
         // Background work needs somewhere to send its results before the app can
         // use it. Registered here, on the worker, so it is never half-installed.
         Python
             .getInstance()
             .getModule(MODULE)
-            .callAttr("install_async_sink", asyncSink)
-        initialized = true
+            .callAttr("install_async_sink", asyncSink, outcomeAdmission)
     }
 
     override fun acceptAction(action: String) {
@@ -78,6 +89,13 @@ class ChaquopyBridge(
                 .callAttr("reload", route, restore)
                 .toBoolean()
         }
+    }
+
+    override fun close() {
+        if (!initialized) return
+        requireWorker()
+        Python.getInstance().getModule(MODULE).callAttr("close", sessionId)
+        initialized = false
     }
 
     private fun requireWorker() {

@@ -2,6 +2,9 @@ package com.pycompose.host
 
 import android.os.Handler
 import android.os.Looper
+import com.pycompose.renderer.Action
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -18,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference
  */
 object AsyncResult {
     private val sink = AtomicReference<((String, String) -> Unit)?>(null)
+    private val admission = AtomicReference<((String, String) -> Boolean)?>(null)
     private val main = AtomicReference<Handler?>()
 
     /**
@@ -28,9 +32,23 @@ object AsyncResult {
      * the listener's job, not this object's -- swallowing the failure here
      * instead would leave no sign that a result was lost.
      */
-    fun listen(deliver: ((String, String) -> Unit)?) {
+    fun listen(deliver: ((String, String) -> Unit)?): AutoCloseable {
         sink.set(deliver)
+        return AutoCloseable { sink.compareAndSet(deliver, null) }
     }
+
+    /** Register only thread-safe queue admission, never UI or Python execution. */
+    fun listenAdmission(accept: ((String, String) -> Boolean)?): AutoCloseable {
+        admission.set(accept)
+        return AutoCloseable { admission.compareAndSet(accept, null) }
+    }
+
+    /** Acknowledged variant for registered outcomes. No unbounded Handler backlog. */
+    @JvmStatic
+    fun offer(
+        actionId: String,
+        payload: String,
+    ): Boolean = admission.get()?.invoke(actionId, payload) ?: false
 
     /**
      * Called from Python on whatever thread the work finished on.
@@ -50,4 +68,23 @@ object AsyncResult {
         val handler = main.get() ?: Handler(Looper.getMainLooper()).also { main.set(it) }
         handler.post { deliver(actionId, payload) }
     }
+}
+
+/** Producer-side data validation and acknowledged thread-safe admission only. */
+internal class OutcomeAdmission(
+    private val accept: (Action) -> Boolean,
+    private val rejected: () -> Unit,
+) {
+    fun offer(
+        actionId: String,
+        payload: String,
+    ): Boolean =
+        runCatching {
+            val element = Json.parseToJsonElement(payload)
+            require(element is JsonObject) { "Async result must be an object" }
+            accept(Action(actionId, element))
+        }.getOrElse {
+            rejected()
+            false
+        }
 }

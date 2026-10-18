@@ -40,7 +40,7 @@ from pycompose.errors import IrValidationError, StateError
 from pycompose.state.app_action import AppAction
 from pycompose.utils.json_canonical import canonical_json, check_json
 
-__all__ = ["configure", "last_error", "run", "shutdown"]
+__all__ = ["configure", "last_error", "post", "run", "shutdown"]
 
 #: Threads background work runs on unless the app says otherwise.
 #:
@@ -65,6 +65,7 @@ _outstanding = 0
 _executor: ThreadPoolExecutor | None = None
 _lock = threading.Lock()
 _sink: Callable[[str, str], None] | None = None
+_admission: Callable[[str, str], bool] | None = None
 _error = ""
 
 
@@ -116,7 +117,11 @@ def _queue_depth() -> int:
     return _workers * QUEUE_PER_WORKER
 
 
-def install_sink(sink: Callable[[str, str], None] | None) -> None:
+def install_sink(
+    sink: Callable[[str, str], None] | None,
+    *,
+    admission: Callable[[str, str], bool] | None = None,
+) -> None:
     """Register where a finished result is delivered.
 
     The host calls this once the worker is up. Until then, results have nowhere
@@ -125,10 +130,13 @@ def install_sink(sink: Callable[[str, str], None] | None) -> None:
     Args:
         sink: Receives an action id and its canonical payload text, or None to
             remove the sink.
+        admission: Acknowledged extension variant returning actual queue admission.
     """
     global _sink  # noqa: PLW0603 -- installed once per session, read from many
+    global _admission  # noqa: PLW0603 -- acknowledged variant of the same queue
     with _lock:
         _sink = sink
+        _admission = admission
 
 
 def last_error() -> str:
@@ -139,6 +147,28 @@ def last_error() -> str:
     """
     with _lock:
         return _error
+
+
+def post(action_id: str, payload: str) -> None:
+    """Post a registered extension outcome through the existing native queue.
+
+    Args:
+        action_id: Worker-registered one-shot completion identity.
+        payload: Validated canonical payload text.
+
+    Raises:
+        StateError: If the host is not listening or rejects queue admission.
+    """
+    with _lock:
+        sink = _sink
+        admission = _admission
+    if admission is not None:
+        if not admission(action_id, payload):
+            raise StateError("host rejected extension outcome")
+        return
+    if sink is None:
+        raise StateError("host is not listening for extension outcomes")
+    sink(action_id, payload)
 
 
 def _report(message: str) -> None:
@@ -310,7 +340,9 @@ def shutdown() -> None:
     threads from the previous build running.
     """
     global _executor, _sink, _error
+    global _admission  # noqa: PLW0603 -- clear the session's acknowledged sink
     with _lock:
         pool, _executor, _sink, _error = _executor, None, None, ""
+        _admission = None
     if pool is not None:
         pool.shutdown(wait=False, cancel_futures=True)

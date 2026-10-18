@@ -51,6 +51,32 @@ The SDK can be supplied through `ANDROID_HOME` or the native project's
 `local.properties` (`.pycompose/android/local.properties` in the default layout).
 Always build through the CLI so the Python source and component slice are staged.
 
+### Use Python libraries through extensions
+
+Normal Python libraries remain normal Python libraries. Optional extensions add
+owned execution and lifecycle coordination, not replacement HTTP or SQL interfaces.
+For the reference HTTPX and SQLite recipes, append to `pycompose.toml`:
+
+```toml
+[extensions]
+definitions = ["builtin:httpx", "builtin:sqlite"]
+
+[android]
+permissions = ["android.permission.INTERNET"]
+```
+
+`pycompose extensions plan` checks requirements without importing integrations.
+Builds install declared Python dependencies and stage only selected recipes.
+Permission choices feed a generated manifest; native source edits remain intact.
+Extensions require the lifecycle/build hooks in template 0.7.0 or newer; existing
+projects without extensions continue to build unchanged.
+
+See the [HTTPX/SQLite app](examples/extensions/README.md) and
+[contributor contract](examples/extensions/CONTRIBUTING.md). Capability planning
+is not proof of Android package compatibility: resolution, packaging, imports and
+actual operations need separate target-specific evidence. Asyncio, durable Android
+jobs and arbitrary native plugins are not implemented by this synchronous slice.
+
 ### Work on PyCompose
 
 ```bash

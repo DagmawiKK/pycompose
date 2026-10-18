@@ -18,4 +18,7 @@ interface BridgeSurface {
         route: String,
         restore: String = "",
     ): Boolean
+
+    /** Worker-owned teardown. Implementations without owned resources need no hook. */
+    fun close() {}
 }
