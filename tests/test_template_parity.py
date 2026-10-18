@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tools.template.sync import EXCLUDED
+from tools.template.sync import is_excluded
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "pycompose/templates/android"
@@ -24,12 +24,7 @@ def test_every_framework_source_is_carried_by_the_template() -> None:
     for module in MODULES:
         source_root = ANDROID / module / "src/main"
         for path in sorted(source_root.rglob("*")):
-            if not path.is_file() or "__pycache__" in path.parts:
-                continue
-            # Files the mirror never ships are the sample host's own: a
-            # scaffolded app replaces them with generated output, so carrying
-            # them would ship a second definition of the same resource.
-            if EXCLUDED.intersection(path.relative_to(source_root).parts):
+            if not path.is_file() or is_excluded(path.relative_to(source_root)):
                 continue
             counterpart = TEMPLATE / module / "src/main" / path.relative_to(source_root)
             assert counterpart.is_file(), (

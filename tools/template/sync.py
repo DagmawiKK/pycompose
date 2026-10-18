@@ -31,18 +31,45 @@ EXCLUDED = frozenset(
         # label from resources/strings.json as a generated string instead, so
         # this file would collide with that app_name and is never shipped.
         "pycompose_app.xml",
-        # The generated slice is build output (ADR-0014): `pycompose build`
-        # regenerates it into .pycompose/generated, which the modules bind as a
-        # source directory, so a scaffold must not also receive this copy of
-        # the full catalog.
-        "generated",
-        "GeneratedAdapters.kt",
-        # The framework's own tests compile against that full catalog, which a
-        # scaffolded app does not have; they live with the library, which runs
-        # them, and not with the app, which never asked for them.
-        "test",
     }
 )
+
+# Files and directories the template deliberately lacks, matched as path tails
+# rather than parts: a wider rule (say, any part named "generated") would also
+# swallow some future shipping file, silently narrowing what the parity test
+# guards. The `generated` trees are the catalog the modules used to carry --
+# `pycompose build` regenerates the app's slice into .pycompose/generated
+# instead (ADR-0014) -- and `src/test` is every module's own test tree, which
+# compiles against that full catalog a scaffolded app does not have.
+EXCLUDED_SUFFIXES = (
+    Path("com/pycompose/ir/generated"),
+    Path("com/pycompose/renderer/generated"),
+    Path("com/pycompose/host/ui/GeneratedAdapters.kt"),
+    Path("src/test"),
+)
+
+
+def is_excluded(relative: Path) -> bool:
+    """Report whether a module path stays with the library, not the template.
+
+    Both callers pass paths rooted differently -- ``sync.py`` walks ``android/``
+    and the parity test walks a module's ``src/main`` -- so entries are matched
+    against the tail of the path and each of its parents.
+
+    Args:
+        relative: Path below ``android/`` or below a module's ``src/main``.
+
+    Returns:
+        True when neither tool should require a template counterpart.
+    """
+    if EXCLUDED.intersection(relative.parts):
+        return True
+    candidates = (relative, *relative.parents)
+    return any(
+        candidate.parts[-len(suffix.parts) :] == suffix.parts
+        for candidate in candidates
+        for suffix in EXCLUDED_SUFFIXES
+    )
 
 
 def main() -> int:
@@ -55,7 +82,7 @@ def main() -> int:
     changed = []
     for path in sorted(source.rglob("*")):
         relative = path.relative_to(source)
-        if not path.is_file() or EXCLUDED.intersection(relative.parts):
+        if not path.is_file() or is_excluded(relative):
             continue
         destination = target / relative
         contents = path.read_bytes()
