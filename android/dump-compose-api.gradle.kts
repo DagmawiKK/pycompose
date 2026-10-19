@@ -4,6 +4,7 @@ import kotlinx.metadata.ExperimentalContextReceivers
 import kotlinx.metadata.KmAnnotationArgument
 import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.KmDeclarationContainer
+import kotlinx.metadata.KmFunction
 import kotlinx.metadata.KmType
 import kotlinx.metadata.KmTypeParameter
 import kotlinx.metadata.KmValueParameter
@@ -76,6 +77,7 @@ tasks.register("dumpComposeApi") {
         val declarations = mutableListOf<Map<String, Any?>>()
         val classFacts = mutableListOf<Map<String, Any?>>()
         val diagnostics = mutableListOf<Map<String, Any?>>()
+        val resolved = mutableListOf<Pair<String, Map<String, ClassApi>>>()
         val variants =
             rendererClasspath.incoming.artifacts.artifacts
                 .associateBy { it.file.canonicalPath }
@@ -114,10 +116,17 @@ tasks.register("dumpComposeApi") {
                     } else {
                         bytes
                     }
-                val extracted = ApiExtractor(coordinate, diagnostics).extract(classes)
-                declarations.addAll(extracted.declarations)
-                classFacts.addAll(extracted.classes)
+                resolved.add(coordinate to readClasses(classes))
             }
+        val valueClasses =
+            resolved
+                .flatMap { (_, classes) -> valueClassAbi(classes).entries }
+                .associate { it.toPair() }
+        resolved.forEach { (coordinate, classes) ->
+            val extracted = ApiExtractor(coordinate, diagnostics, valueClasses).extract(classes)
+            declarations.addAll(extracted.declarations)
+            classFacts.addAll(extracted.classes)
+        }
         val bomComponent =
             rendererClasspath.incoming.resolutionResult.allComponents
                 .single {
@@ -235,13 +244,16 @@ private class MethodApi(
 }
 
 /** Every annotation owns its array visitors; nested arrays never share state. */
+private fun annotationValue(value: Any?): Any? =
+    if (value is org.objectweb.asm.Type) mapOf("classDescriptor" to value.descriptor) else value
+
 private fun annotationValues(into: MutableMap<String, Any?>): AnnotationVisitor =
     object : AnnotationVisitor(Opcodes.ASM9) {
         override fun visit(
             name: String,
             value: Any?,
         ) {
-            into[name] = value
+            into[name] = annotationValue(value)
         }
 
         override fun visitEnum(
@@ -260,7 +272,7 @@ private fun annotationValues(into: MutableMap<String, Any?>): AnnotationVisitor 
                     name: String?,
                     value: Any?,
                 ) {
-                    items.add(value)
+                    items.add(annotationValue(value))
                 }
 
                 override fun visitEnum(
@@ -389,6 +401,94 @@ private fun decode(facts: ClassApi): KotlinClassMetadata? {
     )
 }
 
+private fun readClasses(bytes: ByteArray): Map<String, ClassApi> {
+    val classes = sortedMapOf<String, ClassApi>()
+    ZipInputStream(ByteArrayInputStream(bytes)).use { zip ->
+        var entry = zip.nextEntry
+        while (entry != null) {
+            if (entry.name.endsWith(".class")) {
+                val facts = readClass(zip.readBytes())
+                classes[facts.name] = facts
+            }
+            zip.closeEntry()
+            entry = zip.nextEntry
+        }
+    }
+    return classes
+}
+
+/** The actual unbox method, not a handwritten Kotlin-type/primitive table. */
+private fun valueClassAbi(classes: Map<String, ClassApi>): Map<String, String> =
+    classes
+        .mapNotNull { (owner, facts) ->
+            val parsed = decode(facts) as? KotlinClassMetadata.Class
+            if (parsed?.kmClass?.inlineClassUnderlyingType == null) return@mapNotNull null
+            val unbox =
+                facts.methods.singleOrNull {
+                    it.name == "unbox-impl" && it.descriptor.startsWith("()")
+                } ?: return@mapNotNull null
+            owner to unbox.descriptor.removePrefix("()")
+        }.toMap()
+
+/** Some interface metadata omits the physical value-class JVM signature. */
+@OptIn(ExperimentalContextReceivers::class)
+private fun KmFunction.jvmSignature(
+    facts: ClassApi,
+    valueClasses: Map<String, String>,
+    siblings: List<KmFunction>,
+): JvmMethodSignature? {
+    val declared = signature ?: return null
+    if (facts.method(declared) != null || declared.name != name) return declared
+    val lowered = loweredDescriptor(valueClasses) ?: return declared
+    if (lowered == declared.descriptor) return declared
+    // A native sibling with the same ABI must not lend its identity to a
+    // declaration whose own signature is missing.
+    if (siblings.count { it.name == name && it.loweredDescriptor(valueClasses) == lowered } != 1) {
+        return declared
+    }
+    val matched =
+        facts.methods.singleOrNull {
+            it.name.startsWith(declared.name + "-") &&
+                it.descriptor == lowered &&
+                it.access and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_BRIDGE) == 0
+        } ?: return declared
+    return JvmMethodSignature(matched.name, matched.descriptor)
+}
+
+@OptIn(ExperimentalContextReceivers::class)
+private fun KmFunction.loweredDescriptor(valueClasses: Map<String, String>): String? {
+    val declared = signature ?: return null
+    if (isSuspend) return null
+    val types =
+        contextReceiverTypes + listOfNotNull(receiverParameterType) +
+            valueParameters.map { it.type }
+    val arguments =
+        org.objectweb.asm.Type
+            .getArgumentTypes(declared.descriptor)
+    if (types.size != arguments.size) return null
+
+    fun lower(
+        type: KmType,
+        descriptor: String,
+    ): String {
+        val name = (type.classifier as? KmClassifier.Class)?.name?.replace('.', '$')
+        return if (!type.isNullable && descriptor == "L$name;") {
+            valueClasses[name] ?: descriptor
+        } else {
+            descriptor
+        }
+    }
+    return types.zip(arguments).joinToString("", "(", ")") { (type, argument) ->
+        lower(type, argument.descriptor)
+    } +
+        lower(
+            returnType,
+            org.objectweb.asm.Type
+                .getReturnType(declared.descriptor)
+                .descriptor,
+        )
+}
+
 private fun KmType.document(): Map<String, Any?> =
     mapOf(
         "classifier" to
@@ -438,6 +538,7 @@ private fun KmAnnotationArgument.document(): Any? =
 private class ApiExtractor(
     private val coordinate: String,
     private val diagnostics: MutableList<Map<String, Any?>>,
+    private val valueClasses: Map<String, String>,
 ) {
     /** One artifact's public API plus the class facts its hierarchy needs. */
     class Extracted(
@@ -446,19 +547,7 @@ private class ApiExtractor(
     )
 
     @OptIn(ExperimentalContextReceivers::class)
-    fun extract(bytes: ByteArray): Extracted {
-        val classes = sortedMapOf<String, ClassApi>()
-        ZipInputStream(ByteArrayInputStream(bytes)).use { zip ->
-            var entry = zip.nextEntry
-            while (entry != null) {
-                if (entry.name.endsWith(".class")) {
-                    val facts = readClass(zip.readBytes())
-                    classes[facts.name] = facts
-                }
-                zip.closeEntry()
-                entry = zip.nextEntry
-            }
-        }
+    fun extract(classes: Map<String, ClassApi>): Extracted {
         val metadata = classes.mapValues { (_, facts) -> decode(facts) }
         val declarations = mutableListOf<Map<String, Any?>>()
         for ((owner, facts) in classes) {
@@ -478,7 +567,7 @@ private class ApiExtractor(
             val dispatchReceiver =
                 if (parsed is KotlinClassMetadata.Class) classType(owner).document() else null
             for (function in container.functions) {
-                val signature = function.signature
+                val signature = function.jvmSignature(facts, valueClasses, container.functions)
                 val method = facts.method(signature)
                 val annotations =
                     (classAnnotations + method?.annotations.orEmpty())
@@ -721,7 +810,13 @@ private class ApiExtractor(
                 classVisibility == Visibility.PUBLIC
             ) {
                 val metadataSignatures =
-                    container.functions.mapNotNull { it.signature } +
+                    container.functions.mapNotNull {
+                        it.jvmSignature(
+                            facts,
+                            valueClasses,
+                            container.functions,
+                        )
+                    } +
                         container.properties.flatMap {
                             listOfNotNull(
                                 it.getterSignature,
