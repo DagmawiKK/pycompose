@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "comment": "Extraction closure for dumpComposeApi: which artifact groups may be extracted and the exact bytes of the pinned resolution. Groups are policy; artifacts are the frozen resolution. 'extracted' groups are enforced now (every resolved artifact must be listed, every listed artifact must be present and digest-matched); 'pending' groups are ratified for extraction at migration step 3, when they resolve and their artifacts are added here. Domains classify evidence and accounting; 'tooling' artifacts leave the app classpath at migration step 1b. Change only with the migration it belongs to.",
+  "groups": {
+    "androidx.activity": {"status": "pending", "category": "app-surface", "domain": "activity"},
+    "androidx.compose.animation": {"status": "extracted", "category": "app-surface", "domain": "animation"},
+    "androidx.compose.foundation": {"status": "extracted", "category": "app-surface", "domain": "foundation"},
+    "androidx.compose.material": {"status": "extracted", "category": "app-surface", "domain": "m2", "design": "m2"},
+    "androidx.compose.material3": {"status": "extracted", "category": "app-surface", "domain": "material3", "design": "m3"},
+    "androidx.compose.material3.adaptive": {"status": "pending", "category": "app-surface", "domain": "adaptive", "design": "m3"},
+    "androidx.compose.runtime": {"status": "extracted", "category": "app-surface", "domain": "runtime"},
+    "androidx.compose.ui": {"status": "extracted", "category": "app-surface", "domain": "ui"},
+    "androidx.constraintlayout": {"status": "pending", "category": "app-surface", "domain": "constraintlayout"},
+    "androidx.lifecycle": {"status": "pending", "category": "app-surface", "domain": "lifecycle"},
+    "androidx.navigation": {"status": "pending", "category": "app-surface", "domain": "navigation"},
+    "androidx.navigation3": {"status": "pending", "category": "app-surface", "domain": "navigation3"},
+    "androidx.navigationevent": {"status": "pending", "category": "adjacent", "domain": "navigationevent"},
+    "androidx.paging": {"status": "pending", "category": "app-surface", "domain": "paging"},
+    "androidx.savedstate": {"status": "pending", "category": "adjacent", "domain": "savedstate"},
+    "androidx.window": {"status": "pending", "category": "app-surface", "domain": "window"}
+  },
+  "artifacts": [
+    {"coordinate": "androidx.compose.animation:animation-android:1.7.7", "sha256": "aaace649691edd3f6780a8d60ee4a56457a795c38295e217817263162234d544", "domain": "animation"},
+    {"coordinate": "androidx.compose.animation:animation-core-android:1.7.7", "sha256": "9440abc727a44f36037b6ca79aaeb53de19a1ebc807be8e706383fec6b9158cf", "domain": "animation"},
+    {"coordinate": "androidx.compose.foundation:foundation-android:1.7.7", "sha256": "aa2e3c41f32d2c8bedc73b8d63179f63122dea0c387711b1aa2a012220eb48b9", "domain": "foundation"},
+    {"coordinate": "androidx.compose.foundation:foundation-layout-android:1.7.7", "sha256": "3a520b1cf8af9a7afb26686a614d26964ac6712981ac0eb10774e51f04c4837d", "domain": "foundation"},
+    {"coordinate": "androidx.compose.material3:material3-android:1.3.1", "sha256": "752473d4ea271f822858c313ec0d857ab05249021906f3005b30f2b1fcd0dcc0", "domain": "material3"},
+    {"coordinate": "androidx.compose.material:material-icons-core-android:1.7.7", "sha256": "88a2b58cfb8faeb7574a045a8263e4ff0559659889e196efa2f8eda1cfbee2d1", "domain": "icons"},
+    {"coordinate": "androidx.compose.material:material-ripple-android:1.7.7", "sha256": "2a98d9bf99f8042e08d842130b6221b9aee0a6a9846169f7b68d96e37be412c2", "domain": "m2"},
+    {"coordinate": "androidx.compose.runtime:runtime-android:1.7.7", "sha256": "ea0421c38884019a1840e3dc1d564bd41c57d3636b9b3bcccd7cfc76456a139e", "domain": "runtime"},
+    {"coordinate": "androidx.compose.runtime:runtime-saveable-android:1.7.7", "sha256": "aa29b588f4ce865d3268bd03bb78cfd1b746f201de73ad75ec4796f186349435", "domain": "runtime"},
+    {"coordinate": "androidx.compose.ui:ui-android:1.7.7", "sha256": "449a0582578f3da2e22381b652959358fee3bd470e22776723b2746db4b60c27", "domain": "ui"},
+    {"coordinate": "androidx.compose.ui:ui-geometry-android:1.7.7", "sha256": "876bd666832b72247441db18e4ff6a72ce9450fa5d670b95d6a86ac570f4b930", "domain": "ui"},
+    {"coordinate": "androidx.compose.ui:ui-graphics-android:1.7.7", "sha256": "134e9c50b93363a3af504d10c9749207ccfbb35a7c61dfd93a100531c9553b74", "domain": "ui"},
+    {"coordinate": "androidx.compose.ui:ui-test-manifest:1.7.7", "sha256": "1fa77f0af9bbec1108d7d20841fe79b6d73d1e1841d7d8b6205db4aa4f116a9d", "domain": "tooling"},
+    {"coordinate": "androidx.compose.ui:ui-text-android:1.7.7", "sha256": "6cb2d1c507700d220b9caa56ee38ff011fed8a3f5f9770898620e9b19e1cca90", "domain": "ui"},
+    {"coordinate": "androidx.compose.ui:ui-unit-android:1.7.7", "sha256": "ced34334d0dc5729bcee5476215321dd82ee365eb4d1e9cb8885f664f779f505", "domain": "ui"},
+    {"coordinate": "androidx.compose.ui:ui-util-android:1.7.7", "sha256": "d7f254a711059e6c177c0c13defa341831e2c56b734330cf98530ab093401748", "domain": "ui"}
+  ]
+}

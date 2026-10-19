@@ -21,11 +21,13 @@ EXCLUDED = frozenset(
         "build",
         "local.properties",
         "__pycache__",
-        # Build-time tools for developing the schema. They read :renderer's
-        # classpath and exist only for the repo's own tooling -- a scaffolded
-        # app is handed generated code, and never regenerates the catalog.
+        # Build-time tooling for developing the schema: the dump tasks read
+        # :renderer's classpath and the closure file pins what they may scan.
+        # They exist only for the repo's own tooling -- a scaffolded app is
+        # handed generated code, and never regenerates the catalog.
         "dump-compose-api.gradle.kts",
         "dump-compose-defaults.gradle.kts",
+        "compose-closure.json",
         "tools",
         # The sample host names itself; a scaffolded app gets its launcher
         # label from resources/strings.json as a generated string instead, so

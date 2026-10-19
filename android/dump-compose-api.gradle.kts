@@ -1,4 +1,5 @@
 import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import kotlinx.metadata.ClassKind
 import kotlinx.metadata.ExperimentalContextReceivers
 import kotlinx.metadata.KmAnnotationArgument
@@ -56,10 +57,13 @@ val apiRenderer = project(":renderer")
 tasks.register("dumpComposeApi") {
     group = "build"
     description = "Extract a lossless, version-proven Compose API inventory."
+    // Selection comes from compose-closure.json, never from a group prefix: every
+    // scanned artifact is listed there and must match its recorded digest.
     val rendererClasspath = apiRenderer.configurations.getByName("debugCompileClasspath")
     val output = layout.buildDirectory.file("compose-api/inventory.json")
     inputs.files(rendererClasspath)
     inputs.file("dump-compose-api.gradle.kts")
+    inputs.file("compose-closure.json")
     inputs.file("gradle/libs.versions.toml")
     val sourceInputs =
         project.fileTree(".") {
@@ -81,15 +85,56 @@ tasks.register("dumpComposeApi") {
         val variants =
             rendererClasspath.incoming.artifacts.artifacts
                 .associateBy { it.file.canonicalPath }
-        rendererClasspath.resolvedConfiguration.resolvedArtifacts
-            .filter {
-                it.moduleVersion.id.group
-                    .startsWith("androidx.compose")
-            }.sortedBy { it.moduleVersion.id.toString() }
+        val closure = ComposeClosure.read(project.file("compose-closure.json"))
+        val resolvedArtifacts = rendererClasspath.resolvedConfiguration.resolvedArtifacts
+        val resolvedCoordinates = resolvedArtifacts.map { it.moduleVersion.id.toString() }.toSet()
+        val missing = (closure.artifacts.keys - resolvedCoordinates).sorted()
+        check(missing.isEmpty()) {
+            "Compose closure file expects artifacts that are not resolved: ${missing.joinToString(
+                ", ",
+            )}"
+        }
+        val unexpected =
+            resolvedArtifacts
+                .filter {
+                    val coordinate = it.moduleVersion.id.toString()
+                    closure.statusOf(it.moduleVersion.id.group) == "extracted" &&
+                        coordinate !in closure.artifacts
+                }.map { it.moduleVersion.id.toString() }
+                .sorted()
+        check(unexpected.isEmpty()) {
+            "Compose closure file is missing resolved artifacts of extracted groups: " +
+                unexpected.joinToString(", ")
+        }
+        val pending =
+            resolvedArtifacts.filter {
+                closure.statusOf(it.moduleVersion.id.group) ==
+                    "pending"
+            }
+        if (pending.isNotEmpty()) {
+            val summary =
+                pending
+                    .groupBy { it.moduleVersion.id.group }
+                    .toSortedMap()
+                    .map { (group, artifacts) -> "$group (${artifacts.size})" }
+                    .joinToString(", ")
+            logger.lifecycle(
+                "dumpComposeApi: resolved artifacts of pending closure groups are not " +
+                    "extracted yet: $summary",
+            )
+        }
+        resolvedArtifacts
+            .filter { it.moduleVersion.id.toString() in closure.artifacts }
+            .sortedBy { it.moduleVersion.id.toString() }
             .forEach { artifact ->
                 val coordinate = artifact.moduleVersion.id.toString()
                 val file = artifact.file
                 val bytes = file.readBytes()
+                val expected = closure.artifacts.getValue(coordinate)
+                val actual = sha256(bytes)
+                check(actual == expected) {
+                    "Compose closure digest changed for $coordinate: expected $expected, got $actual"
+                }
                 val attributes = checkNotNull(variants[file.canonicalPath]).variant.attributes
                 val variantAttributes =
                     attributes.keySet().associate {
@@ -224,6 +269,33 @@ tasks.register("dumpComposeApi") {
 
 private fun sha256(bytes: ByteArray): String =
     MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
+
+/** The checked-in extraction closure: group policy plus the pinned artifact digests. */
+private class ComposeClosure(
+    private val groupStatus: Map<String, String>,
+    val artifacts: Map<String, String>,
+) {
+    fun statusOf(group: String): String? = groupStatus[group]
+
+    companion object {
+        fun read(file: File): ComposeClosure {
+            val document = JsonSlurper().parse(file) as Map<*, *>
+            check(
+                document["schema"] == 1,
+            ) { "Unsupported compose closure schema: ${document["schema"]}" }
+            val groups = LinkedHashMap<String, String>()
+            (document["groups"] as Map<*, *>).forEach { (name, raw) ->
+                groups[name.toString()] = (raw as Map<*, *>)["status"].toString()
+            }
+            val artifacts = LinkedHashMap<String, String>()
+            (document["artifacts"] as List<*>).forEach { raw ->
+                val artifact = raw as Map<*, *>
+                artifacts[artifact["coordinate"].toString()] = artifact["sha256"].toString()
+            }
+            return ComposeClosure(groups, artifacts)
+        }
+    }
+}
 
 private class ClassApi {
     var name = ""
