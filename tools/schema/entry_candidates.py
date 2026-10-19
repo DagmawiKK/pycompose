@@ -183,8 +183,8 @@ def derive(
         plan: A fresh call plan for exactly one pinned overload.
         declaration: The pinned declaration the plan records.
         registry: The approved catalog, for value families and scopes.
-        decision: Review input: ``category``, ``stability`` and optional
-            ``since``, none of which the pin decides.
+        decision: Review input: ``category`` and ``stability``, which the pin
+            cannot decide.
 
     Returns:
         The candidate entry plus the differences a reviewer must read.
@@ -194,6 +194,11 @@ def derive(
             carried by the wire.
     """
     name = plan["name"]
+    unknown = sorted(set(decision) - {"category", "stability"})
+    if unknown:
+        raise CandidateError(
+            f"{name}: the decision carries only category and stability; got {unknown}"
+        )
     for key in ("category", "stability"):
         if not isinstance(decision.get(key), str) or not decision[key]:
             raise CandidateError(f"{name}: the decision needs a non-empty {key!r}")
@@ -202,9 +207,10 @@ def derive(
         "package": declaration.package,
         "category": decision["category"],
         "stability": decision["stability"],
+        # A candidate enters the catalog now; older wire envelopes must not
+        # claim a component that did not exist when they were published.
+        "since": registry["schemaVersion"],
     }
-    if decision.get("since"):
-        entry["since"] = decision["since"]
     entry["source"] = dict(sorted(plan["source"].items()))
     if plan.get("optIn"):
         entry["optIn"] = sorted(plan["optIn"])

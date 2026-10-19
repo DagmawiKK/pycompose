@@ -15,7 +15,7 @@ object IrContract {
             slots = setOf("label", "leadingIcon", "trailingIcon"),
             childrenAllowed = false,
             minimumChildren = 0,
-            since = "1.0.0",
+            since = "1.23.0",
             props = mapOf(
                 "colors" to PropertyRule("value", required = false, valueType = "ChipColors"),
                 "elevation" to PropertyRule("value", required = false, valueType = "ChipElevation", nullable = true),
@@ -29,7 +29,7 @@ object IrContract {
             slots = setOf(),
             childrenAllowed = true,
             minimumChildren = 0,
-            since = "1.0.0",
+            since = "1.23.0",
             props = mapOf(
                 "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -150,7 +150,7 @@ object IrContract {
             slots = setOf("label", "leadingIcon", "trailingIcon"),
             childrenAllowed = false,
             minimumChildren = 0,
-            since = "1.0.0",
+            since = "1.23.0",
             props = mapOf(
                 "border" to PropertyRule("value", required = false, valueType = "BorderStroke", nullable = true),
                 "colors" to PropertyRule("value", required = false, valueType = "ChipColors"),

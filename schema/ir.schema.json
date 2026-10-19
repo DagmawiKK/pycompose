@@ -3319,109 +3319,6 @@
       ],
       "type": "object"
     },
-    "V_1_0_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_0_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_0_0_Box": {
       "properties": {
         "children": {
@@ -3571,87 +3468,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_0_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_0_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -3873,12 +3689,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_0_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_0_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_0_0_Box"
             },
             {
@@ -3886,9 +3696,6 @@
             },
             {
               "$ref": "#/definitions/V_1_0_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_0_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_0_0_LazyColumn"
@@ -4148,109 +3955,6 @@
       },
       "type": "object"
     },
-    "V_1_10_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_10_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_10_0_Box": {
       "properties": {
         "children": {
@@ -4461,87 +4165,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_10_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_10_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -4879,12 +4502,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_10_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_10_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_10_0_Box"
             },
             {
@@ -4895,9 +4512,6 @@
             },
             {
               "$ref": "#/definitions/V_1_10_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_10_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_10_0_FilterChip"
@@ -5238,116 +4852,6 @@
       },
       "type": "object"
     },
-    "V_1_11_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_11_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_11_0_Box": {
       "properties": {
         "children": {
@@ -5571,87 +5075,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_11_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_11_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -6082,12 +5505,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_11_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_11_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_11_0_Box"
             },
             {
@@ -6098,9 +5515,6 @@
             },
             {
               "$ref": "#/definitions/V_1_11_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_11_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_11_0_FilterChip"
@@ -6462,116 +5876,6 @@
       },
       "type": "object"
     },
-    "V_1_12_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_12_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_12_0_Box": {
       "properties": {
         "children": {
@@ -6795,87 +6099,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_12_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_12_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -7306,12 +6529,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_12_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_12_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_12_0_Box"
             },
             {
@@ -7322,9 +6539,6 @@
             },
             {
               "$ref": "#/definitions/V_1_12_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_12_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_12_0_FilterChip"
@@ -7686,116 +6900,6 @@
       },
       "type": "object"
     },
-    "V_1_13_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_13_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_13_0_Box": {
       "properties": {
         "children": {
@@ -8019,87 +7123,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_13_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_13_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -8530,12 +7553,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_13_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_13_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_13_0_Box"
             },
             {
@@ -8546,9 +7563,6 @@
             },
             {
               "$ref": "#/definitions/V_1_13_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_13_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_13_0_FilterChip"
@@ -8910,116 +7924,6 @@
       },
       "type": "object"
     },
-    "V_1_14_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_14_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_14_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_14_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_14_0_Box": {
       "properties": {
         "children": {
@@ -9243,87 +8147,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_14_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_14_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -9754,12 +8577,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_14_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_14_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_14_0_Box"
             },
             {
@@ -9770,9 +8587,6 @@
             },
             {
               "$ref": "#/definitions/V_1_14_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_14_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_14_0_FilterChip"
@@ -10134,116 +8948,6 @@
       },
       "type": "object"
     },
-    "V_1_15_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_15_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_15_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_15_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_15_0_Box": {
       "properties": {
         "children": {
@@ -10467,87 +9171,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_15_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_15_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -10978,12 +9601,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_15_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_15_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_15_0_Box"
             },
             {
@@ -10994,9 +9611,6 @@
             },
             {
               "$ref": "#/definitions/V_1_15_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_15_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_15_0_FilterChip"
@@ -11358,116 +9972,6 @@
       },
       "type": "object"
     },
-    "V_1_16_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_16_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_16_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_16_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_16_0_Box": {
       "properties": {
         "children": {
@@ -11691,87 +10195,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_16_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_16_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -12202,12 +10625,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_16_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_16_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_16_0_Box"
             },
             {
@@ -12218,9 +10635,6 @@
             },
             {
               "$ref": "#/definitions/V_1_16_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_16_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_16_0_FilterChip"
@@ -12582,116 +10996,6 @@
       },
       "type": "object"
     },
-    "V_1_17_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_17_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_17_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_17_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_17_0_Box": {
       "properties": {
         "children": {
@@ -12915,87 +11219,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_17_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_17_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -13426,12 +11649,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_17_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_17_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_17_0_Box"
             },
             {
@@ -13442,9 +11659,6 @@
             },
             {
               "$ref": "#/definitions/V_1_17_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_17_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_17_0_FilterChip"
@@ -13806,116 +12020,6 @@
       },
       "type": "object"
     },
-    "V_1_18_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_18_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_18_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_18_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_18_0_Box": {
       "properties": {
         "children": {
@@ -14189,87 +12293,6 @@
         },
         "type": {
           "const": "DismissibleNavigationDrawer"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_18_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_18_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -14750,12 +12773,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_18_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_18_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_18_0_Box"
             },
             {
@@ -14769,9 +12786,6 @@
             },
             {
               "$ref": "#/definitions/V_1_18_0_DismissibleNavigationDrawer"
-            },
-            {
-              "$ref": "#/definitions/V_1_18_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_18_0_FilterChip"
@@ -15136,116 +13150,6 @@
       },
       "type": "object"
     },
-    "V_1_19_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_19_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_19_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_19_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_19_0_Box": {
       "properties": {
         "children": {
@@ -15519,87 +13423,6 @@
         },
         "type": {
           "const": "DismissibleNavigationDrawer"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_19_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_19_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -16126,12 +13949,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_19_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_19_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_19_0_Box"
             },
             {
@@ -16145,9 +13962,6 @@
             },
             {
               "$ref": "#/definitions/V_1_19_0_DismissibleNavigationDrawer"
-            },
-            {
-              "$ref": "#/definitions/V_1_19_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_19_0_FilterChip"
@@ -16515,109 +14329,6 @@
       },
       "type": "object"
     },
-    "V_1_1_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_1_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_1_0_Box": {
       "properties": {
         "children": {
@@ -16767,87 +14478,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_1_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_1_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -17105,12 +14735,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_1_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_1_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_1_0_Box"
             },
             {
@@ -17118,9 +14742,6 @@
             },
             {
               "$ref": "#/definitions/V_1_1_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_1_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_1_0_Image"
@@ -17390,116 +15011,6 @@
         },
         "type": {
           "const": "TextField"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_20_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_20_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_20_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_20_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
         }
       },
       "type": "object"
@@ -17777,87 +15288,6 @@
         },
         "type": {
           "const": "DismissibleNavigationDrawer"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_20_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_20_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -18436,12 +15866,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_20_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_20_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_20_0_Box"
             },
             {
@@ -18455,9 +15879,6 @@
             },
             {
               "$ref": "#/definitions/V_1_20_0_DismissibleNavigationDrawer"
-            },
-            {
-              "$ref": "#/definitions/V_1_20_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_20_0_FilterChip"
@@ -18828,116 +16249,6 @@
       },
       "type": "object"
     },
-    "V_1_21_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_21_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_21_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_21_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_21_0_Box": {
       "properties": {
         "children": {
@@ -19211,87 +16522,6 @@
         },
         "type": {
           "const": "DismissibleNavigationDrawer"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_21_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_21_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -19923,12 +17153,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_21_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_21_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_21_0_Box"
             },
             {
@@ -19942,9 +17166,6 @@
             },
             {
               "$ref": "#/definitions/V_1_21_0_DismissibleNavigationDrawer"
-            },
-            {
-              "$ref": "#/definitions/V_1_21_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_21_0_FilterChip"
@@ -20314,116 +17535,6 @@
         },
         "type": {
           "const": "TextField"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_22_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_22_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_22_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/definitions/Family_Color"
-                }
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_22_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
         }
       },
       "type": "object"
@@ -20918,87 +18029,6 @@
         },
         "type": {
           "const": "DismissibleNavigationDrawer"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_22_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_BorderStroke"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "$ref": "#/definitions/Family_ChipColors"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_ChipElevation"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_22_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "$ref": "#/definitions/Family_Shape"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -22037,12 +19067,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_22_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_22_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_22_0_Box"
             },
             {
@@ -22065,9 +19089,6 @@
             },
             {
               "$ref": "#/definitions/V_1_22_0_DismissibleNavigationDrawer"
-            },
-            {
-              "$ref": "#/definitions/V_1_22_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_22_0_FilterChip"
@@ -25123,109 +22144,6 @@
       },
       "type": "object"
     },
-    "V_1_2_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_2_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_2_0_Box": {
       "properties": {
         "children": {
@@ -25375,87 +22293,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_2_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_2_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -25713,12 +22550,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_2_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_2_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_2_0_Box"
             },
             {
@@ -25726,9 +22557,6 @@
             },
             {
               "$ref": "#/definitions/V_1_2_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_2_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_2_0_Image"
@@ -26002,109 +22830,6 @@
       },
       "type": "object"
     },
-    "V_1_3_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_3_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_3_0_Box": {
       "properties": {
         "children": {
@@ -26315,87 +23040,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_3_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_3_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -26733,12 +23377,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_3_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_3_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_3_0_Box"
             },
             {
@@ -26749,9 +23387,6 @@
             },
             {
               "$ref": "#/definitions/V_1_3_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_3_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_3_0_FilterChip"
@@ -27092,109 +23727,6 @@
       },
       "type": "object"
     },
-    "V_1_4_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_4_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_4_0_Box": {
       "properties": {
         "children": {
@@ -27405,87 +23937,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_4_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_4_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -27823,12 +24274,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_4_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_4_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_4_0_Box"
             },
             {
@@ -27839,9 +24284,6 @@
             },
             {
               "$ref": "#/definitions/V_1_4_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_4_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_4_0_FilterChip"
@@ -28182,109 +24624,6 @@
       },
       "type": "object"
     },
-    "V_1_5_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_5_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_5_0_Box": {
       "properties": {
         "children": {
@@ -28495,87 +24834,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_5_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_5_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -28913,12 +25171,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_5_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_5_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_5_0_Box"
             },
             {
@@ -28929,9 +25181,6 @@
             },
             {
               "$ref": "#/definitions/V_1_5_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_5_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_5_0_FilterChip"
@@ -29272,109 +25521,6 @@
       },
       "type": "object"
     },
-    "V_1_6_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_6_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_6_0_Box": {
       "properties": {
         "children": {
@@ -29585,87 +25731,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_6_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_6_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -30003,12 +26068,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_6_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_6_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_6_0_Box"
             },
             {
@@ -30019,9 +26078,6 @@
             },
             {
               "$ref": "#/definitions/V_1_6_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_6_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_6_0_FilterChip"
@@ -30362,109 +26418,6 @@
       },
       "type": "object"
     },
-    "V_1_7_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_7_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_7_0_Box": {
       "properties": {
         "children": {
@@ -30675,87 +26628,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_7_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_7_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -31093,12 +26965,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_7_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_7_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_7_0_Box"
             },
             {
@@ -31109,9 +26975,6 @@
             },
             {
               "$ref": "#/definitions/V_1_7_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_7_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_7_0_FilterChip"
@@ -31452,109 +27315,6 @@
       },
       "type": "object"
     },
-    "V_1_8_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_8_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_8_0_Box": {
       "properties": {
         "children": {
@@ -31765,87 +27525,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_8_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_8_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -32183,12 +27862,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_8_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_8_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_8_0_Box"
             },
             {
@@ -32199,9 +27872,6 @@
             },
             {
               "$ref": "#/definitions/V_1_8_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_8_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_8_0_FilterChip"
@@ -32542,109 +28212,6 @@
       },
       "type": "object"
     },
-    "V_1_9_0_AssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "AssistChip"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_9_0_Badge": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "containerColor": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "Badge"
-        }
-      },
-      "type": "object"
-    },
     "V_1_9_0_Box": {
       "properties": {
         "children": {
@@ -32855,87 +28422,6 @@
         },
         "type": {
           "const": "Column"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_9_0_ElevatedAssistChip": {
-      "properties": {
-        "children": {
-          "items": {
-            "properties": {
-              "slot": {
-                "enum": [
-                  "label",
-                  "leadingIcon",
-                  "trailingIcon"
-                ]
-              }
-            },
-            "required": [
-              "slot"
-            ]
-          },
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "border": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "colors": {
-              "type": "object"
-            },
-            "elevation": {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "enabled": {
-              "default": true,
-              "type": "boolean"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_9_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "onClick": {
-              "enum": [
-                "increment",
-                "submit"
-              ]
-            },
-            "shape": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "onClick"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "ElevatedAssistChip"
         }
       },
       "type": "object"
@@ -33273,12 +28759,6 @@
         {
           "anyOf": [
             {
-              "$ref": "#/definitions/V_1_9_0_AssistChip"
-            },
-            {
-              "$ref": "#/definitions/V_1_9_0_Badge"
-            },
-            {
               "$ref": "#/definitions/V_1_9_0_Box"
             },
             {
@@ -33289,9 +28769,6 @@
             },
             {
               "$ref": "#/definitions/V_1_9_0_Column"
-            },
-            {
-              "$ref": "#/definitions/V_1_9_0_ElevatedAssistChip"
             },
             {
               "$ref": "#/definitions/V_1_9_0_FilterChip"

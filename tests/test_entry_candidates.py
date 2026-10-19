@@ -166,11 +166,11 @@ def test_a_plan_derives_props_slots_children_and_defaults(tmp_path: Path) -> Non
         plan(parameters, optIn=["androidx.compose.material3.ExperimentalMaterial3Api"]),
         found.declarations[0],
         registry,
-        {"category": "test", "stability": "stable", "since": "1.4.0"},
+        {"category": "test", "stability": "stable"},
     )
     entry = item.entry
     assert entry["package"] == PACKAGE
-    assert entry["since"] == "1.4.0"
+    assert entry["since"] == registry["schemaVersion"]
     assert entry["optIn"] == ["androidx.compose.material3.ExperimentalMaterial3Api"]
     assert entry["props"]["enabled"] == {"type": "boolean", "default": True}
     assert entry["props"]["onClick"] == {"type": "actionId", "required": True}
@@ -193,6 +193,17 @@ def test_a_plan_derives_props_slots_children_and_defaults(tmp_path: Path) -> Non
     }
     assert "content: app content children in RowScope" in item.review
     assert "label: required native slot; absence renders an empty lambda" in item.review
+
+
+def test_a_decision_cannot_backdate_a_candidate(tmp_path: Path) -> None:
+    found = synthetic(tmp_path)
+    with pytest.raises(CandidateError, match="since"):
+        derive(
+            plan({"modifier": modifier()}),
+            found.declarations[0],
+            catalog(),
+            {"category": "test", "stability": "stable", "since": "1.0.0"},
+        )
 
 
 def test_a_constant_family_derives_a_decoded_enum(tmp_path: Path) -> None:
@@ -391,11 +402,11 @@ def test_the_approved_pilot_entries_equal_their_derivation() -> None:
         derived = {
             key: value
             for key, value in entry.items()
-            if key not in {"category", "stability", "since"}
+            if key not in {"category", "stability"}
         }
         expected = {
             key: value
             for key, value in approved["components"][name].items()
-            if key not in {"category", "stability", "since"}
+            if key not in {"category", "stability"}
         }
         assert derived == expected, name

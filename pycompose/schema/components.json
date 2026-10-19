@@ -1887,6 +1887,7 @@
       "package": "androidx.compose.material3",
       "category": "input",
       "stability": "stable",
+      "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.material3:material3-android:1.4.0",
         "descriptor": "(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ChipColors;Landroidx/compose/material3/ChipElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
@@ -1944,6 +1945,7 @@
       "package": "androidx.compose.material3",
       "category": "input",
       "stability": "stable",
+      "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.material3:material3-android:1.4.0",
         "descriptor": "(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ChipColors;Landroidx/compose/material3/ChipElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
@@ -2007,6 +2009,7 @@
       "package": "androidx.compose.material3",
       "category": "status",
       "stability": "stable",
+      "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.material3:material3-android:1.4.0",
         "descriptor": "(Landroidx/compose/ui/Modifier;JJLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
