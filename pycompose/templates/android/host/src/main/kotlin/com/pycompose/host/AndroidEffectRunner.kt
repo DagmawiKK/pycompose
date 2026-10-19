@@ -3,9 +3,9 @@ package com.pycompose.host
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
 import android.view.HapticFeedbackConstants
 import android.widget.Toast
+import androidx.core.net.toUri
 import com.pycompose.ir.EffectRequest
 import com.pycompose.ir.Effects
 
@@ -51,7 +51,7 @@ class AndroidEffectRunner(
                         // No resolveActivity: package visibility is restricted
                         // from Android 11, so a missing handler surfaces as itself.
                         try {
-                            activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                            activity.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
                         } catch (_: ActivityNotFoundException) {
                             report("No app can open $url")
                         }

@@ -1,12 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
-android {
+extensions.configure<com.android.build.api.dsl.LibraryExtension> {
     namespace = "com.pycompose.renderer"
-    compileSdk = 35
+    compileSdk = 37
     defaultConfig {
         minSdk = 24
     }
@@ -23,7 +22,7 @@ android {
         .getByName("main")
         .kotlin
         .srcDir(rootProject.file(".pycompose/generated/renderer/src/main/kotlin"))
-    sourceSets.getByName("test").java.srcDir("../architecture/src/test/kotlin")
+    sourceSets.getByName("test").kotlin.srcDir("../architecture/src/test/kotlin")
     sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
 }
 

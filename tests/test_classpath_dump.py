@@ -72,7 +72,7 @@ def write_inventory(directory: Path, records: list[dict], **changes):
         "provenance": {
             "configuration": ":renderer:debugCompileClasspath",
             "bom": "2025.01.01",
-            "compiler": "2.0.21",
+            "compiler": "2.4.21",
             "bomConstraints": {"androidx.compose.material3:material3-android": "1.3.1"},
             "overrides": [],
             "sourceHashes": {

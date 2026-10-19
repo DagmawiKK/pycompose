@@ -102,7 +102,7 @@ def test_generated_native_calls_render_defaults_slots_and_events(
     init = tmp_path / "proof.gradle"
     init.write_text(
         "gradle.projectsEvaluated { gradle.rootProject.project(':host').android."
-        f"sourceSets.test.java.srcDir({json.dumps(str(tmp_path))}) }}"
+        f"sourceSets.test.kotlin.srcDir({json.dumps(str(tmp_path))}) }}"
     )
     result = subprocess.run(
         [
@@ -124,7 +124,10 @@ def test_generated_native_calls_render_defaults_slots_and_events(
     assert schema.read_bytes() == original
     assert_calls_resolve_to_recorded_identities(
         report,
-        Path("android/host/build/tmp/kotlin-classes/debugUnitTest/com/pycompose/proof"),
+        Path(
+            "android/host/build/intermediates/built_in_kotlinc/debugUnitTest/"
+            "compileDebugUnitTestKotlin/classes/com/pycompose/proof"
+        ),
     )
 
 

@@ -56,7 +56,7 @@ def assert_calls_resolve_to_recorded_identities(report, classes: Path) -> None:
 def test_pinned_ui_defaults_cover_every_exact_overload(native_document):
     from tools.schema.classpath_dump import inventory, source_defaults
 
-    assert native_document["provenance"]["compiler"] == "2.0.21"
+    assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     defaults = source_defaults(DUMP)
     assert len(found.ui) == 155
@@ -135,7 +135,7 @@ def test_the_shipped_catalog_carries_no_unexplained_prop(native_document) -> Non
     from tools.schema.check_upstream import compare
     from tools.schema.classpath_dump import inventory
 
-    assert native_document["provenance"]["compiler"] == "2.0.21"
+    assert native_document["provenance"]["compiler"] == "2.4.21"
     registry = json.loads(Path("schema/components.json").read_text())
     assert compare(registry, inventory(DUMP)) == []
 
@@ -151,7 +151,7 @@ def test_the_drift_check_re_derives_a_package_and_a_provider(native_document) ->
     from tools.schema.check_upstream import compare
     from tools.schema.classpath_dump import inventory
 
-    assert native_document["provenance"]["compiler"] == "2.0.21"
+    assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
 
     def edited(**changes) -> dict:
@@ -193,7 +193,7 @@ def test_the_drift_check_re_derives_receivers_and_provided_scopes(
     from tools.schema.check_upstream import compare
     from tools.schema.classpath_dump import inventory
 
-    assert native_document["provenance"]["compiler"] == "2.0.21"
+    assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
 
     def edited(name: str, **changes) -> dict:

@@ -1,9 +1,18 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import org.gradle.process.ExecOperations
 import java.security.MessageDigest
+import javax.inject.Inject
+
+interface ProcessServices {
+    @get:Inject
+    val operations: ExecOperations
+}
+
+val processServices = objects.newInstance<ProcessServices>()
 
 // Development-only evidence: pinned Compose sources, compiled to typed defaults.
-// Neither this compiler nor its output ships; see android/tools/*.kt.
+// Neither this compiler nor its output ships; see tools/SourceDefaults.kt.
 val sourceCompiler = configurations.create("composeSourceCompiler")
 
 dependencies {
@@ -126,16 +135,31 @@ tasks.register("dumpComposeDefaults") {
                 .getByName("debugCompileClasspath")
                 .files
         val nativeClasspath =
-            runtime.map { file ->
+            runtime.mapNotNull { file ->
                 if (file.extension != "aar") {
                     file
                 } else {
                     val jar = File(unpacked, file.nameWithoutExtension + ".jar")
-                    java.util.zip.ZipFile(file).use { zip ->
-                        val entry = checkNotNull(zip.getEntry("classes.jar"))
-                        jar.writeBytes(zip.getInputStream(entry).readBytes())
-                    }
-                    jar
+                    val hasClasses =
+                        java.util.zip.ZipFile(file).use { zip ->
+                            val entry = zip.getEntry("classes.jar")
+                            if (entry == null) {
+                                check(
+                                    zip.entries().toList().all {
+                                        it.isDirectory ||
+                                            it.name == "AndroidManifest.xml"
+                                    },
+                                ) {
+                                    "Missing classes.jar in nonempty AAR: $file"
+                                }
+                                logger.lifecycle("No bytecode in manifest-only AAR: $file")
+                                false
+                            } else {
+                                jar.writeBytes(zip.getInputStream(entry).readBytes())
+                                true
+                            }
+                        }
+                    if (hasClasses) jar else null
                 }
             }
 
@@ -156,26 +180,28 @@ tasks.register("dumpComposeDefaults") {
         )
 
         val compiled = File(directory, "source-tool")
-        javaexec {
-            classpath = sourceCompiler
-            mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
-            args(
-                "-no-stdlib",
-                "-no-reflect",
-                "-classpath",
-                sourceCompiler.asPath,
-                "-d",
-                compiled.absolutePath,
-                *tools.map { it.absolutePath }.toTypedArray(),
-            )
-        }.assertNormalExitValue()
+        processServices.operations
+            .javaexec {
+                classpath = sourceCompiler
+                mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+                args(
+                    "-no-stdlib",
+                    "-no-reflect",
+                    "-classpath",
+                    sourceCompiler.asPath,
+                    "-d",
+                    compiled.absolutePath,
+                    *tools.map { it.absolutePath }.toTypedArray(),
+                )
+            }.assertNormalExitValue()
 
         val defaults = File(directory, "defaults.json")
-        javaexec {
-            classpath = sourceCompiler + files(compiled)
-            mainClass.set("SourceDefaultsKt")
-            maxHeapSize = "3g"
-            args(request.absolutePath, defaults.absolutePath)
-        }.assertNormalExitValue()
+        processServices.operations
+            .javaexec {
+                classpath = sourceCompiler + files(compiled)
+                mainClass.set("SourceDefaultsKt")
+                maxHeapSize = "3g"
+                args(request.absolutePath, defaults.absolutePath)
+            }.assertNormalExitValue()
     }
 }

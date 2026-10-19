@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.chaquopy)
 }
 
-android {
+extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
     namespace = "com.pycompose.host"
-    compileSdk = 35
+    compileSdk = 37
     defaultConfig {
         applicationId =
             providers.gradleProperty("pycomposeApplicationId").getOrElse("com.pycompose.sample")
@@ -45,7 +44,7 @@ android {
         providers.gradleProperty("pycomposeManifest").getOrElse("src/main/AndroidManifest.xml"),
     )
     sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
-    sourceSets.getByName("test").java.srcDir("../architecture/src/test/kotlin")
+    sourceSets.getByName("test").kotlin.srcDir("../architecture/src/test/kotlin")
     lint {
         abortOnError = true
         warningsAsErrors = true

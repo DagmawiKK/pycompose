@@ -248,7 +248,7 @@ def test_pinned_source_defaults_generate_native_factories(native_document) -> No
 def test_internal_immutable_tokens_reduce_to_public_typed_defaults(
     native_document,
 ) -> None:
-    assert native_document["provenance"]["compiler"] == "2.0.21"
+    assert native_document["provenance"]["compiler"] == "2.4.21"
     # Resolve the immutable initializer chain, without referencing internal API
     # or transcribing token values into binding policy.
     resolve = ["--console=plain", "-PcomposeValueNames=buttonElevation"]
@@ -332,7 +332,7 @@ def test_unsafe_token_initializers_are_refused(
 ) -> None:
     import zipfile
 
-    assert native_document["provenance"]["compiler"] == "2.0.21"
+    assert native_document["provenance"]["compiler"] == "2.4.21"
     request_path = ROOT / DUMP / "source-request.json"
     request = json.loads(request_path.read_text())
     tool = ROOT / "android/tools"
@@ -483,7 +483,7 @@ def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -
     from tools.schema.classpath_dump import inventory, source_defaults
     from tools.schema.propose import refresh
 
-    assert native_document["provenance"]["compiler"] == "2.0.21"
+    assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     evidence = source_defaults(DUMP)
     registry = json.loads((ROOT / "schema/components.json").read_text())
@@ -537,7 +537,7 @@ def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -
 def test_opt_in_evidence_comes_from_the_pin(native_document) -> None:
     from tools.schema.classpath_dump import inventory, opt_in_markers, required_opt_ins
 
-    assert native_document["provenance"]["compiler"] == "2.0.21"
+    assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     markers = opt_in_markers(found)
     # The pin declares its own opt-in markers; nothing here is listed by hand.
@@ -576,7 +576,7 @@ def test_a_language_level_family_is_reviewed_not_re_derived(native_document) -> 
     from tools.schema.classpath_dump import inventory, source_defaults
     from tools.schema.propose import refresh
 
-    assert native_document["provenance"]["compiler"] == "2.0.21"
+    assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     evidence = source_defaults(DUMP)
     registry = json.loads((ROOT / "schema/components.json").read_text())
