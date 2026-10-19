@@ -30,6 +30,7 @@ from tools.schema.entry_candidates import (
     review_manifest,
     select,
     stage,
+    verify,
 )
 
 PACKAGE = "androidx.compose.material3.test"
@@ -384,6 +385,26 @@ def test_the_derivation_is_deterministic(tmp_path: Path) -> None:
         {"bom": "b", "compiler": "c"}, [second]
     )
     assert first.entry["source"] == recorded
+
+
+def test_a_held_out_compatible_binding_derives_and_verifies() -> None:
+    """A component the pilot did not enable still derives and verifies clean."""
+    if os.environ.get("PYCOMPOSE_NATIVE_API_TESTS") != "1":
+        pytest.skip("native CI runs the pinned artifact extraction")
+    from tools.schema.classpath_dump import source_defaults
+    from tools.schema.components import propose_components
+
+    approved = json.loads((ROOT / "schema/components.json").read_text())
+    found = inventory(DUMP)
+    plans = propose_components(found, source_defaults(DUMP), approved)
+    plan_record, pin = select(plans, found, "ElevatedSuggestionChip")
+    item = derive(
+        plan_record,
+        pin,
+        approved,
+        {"category": "test", "stability": "stable"},
+    )
+    assert verify(stage(approved, [item]), found, [item]) == []
 
 
 def test_the_approved_pilot_entries_equal_their_derivation() -> None:
