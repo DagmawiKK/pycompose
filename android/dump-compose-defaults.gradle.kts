@@ -3,12 +3,19 @@ import groovy.json.JsonSlurper
 import java.security.MessageDigest
 
 // Development-only evidence: pinned Compose sources, compiled to typed defaults.
-// Neither this compiler nor its output ships; see tools/SourceDefaults.kt.
+// Neither this compiler nor its output ships; see android/tools/*.kt.
 val sourceCompiler = configurations.create("composeSourceCompiler")
 
 dependencies {
     add(sourceCompiler.name, "org.jetbrains.kotlin:kotlin-compiler-embeddable:2.4.21")
     add(sourceCompiler.name, "com.google.code.gson:gson:2.11.0")
+}
+
+/** Digest of every tool source: the staleness contract covers both halves. */
+fun toolHash(tools: List<File>): String {
+    val digest = MessageDigest.getInstance("SHA-256")
+    tools.forEach { digest.update(it.readBytes()) }
+    return digest.digest().joinToString("") { "%02x".format(it) }
 }
 
 fun hex(bytes: ByteArray): String {
@@ -43,7 +50,12 @@ tasks.register("dumpComposeDefaults") {
     description = "Resolve pinned source defaults as typed, non-executable evidence."
     dependsOn("dumpComposeApi")
     val schema = rootProject.file("../schema/components.json")
-    val tool = rootProject.file("tools/SourceDefaults.kt")
+    val tools =
+        rootProject
+            .file("tools")
+            .listFiles()!!
+            .filter { it.extension == "kt" }
+            .sortedBy { it.name }
     val output = layout.buildDirectory.dir("compose-api")
     val bound = providers.provider { approvedBindings(schema) }
     val names =
@@ -59,7 +71,7 @@ tasks.register("dumpComposeDefaults") {
     inputs.property("names", names)
     inputs.property("sources", sources)
     inputs.file(schema)
-    inputs.file(tool)
+    inputs.files(tools)
     inputs.files(sourceCompiler)
 
     // Artifact, source and compiler inputs are revalidated on every invocation.
@@ -131,7 +143,7 @@ tasks.register("dumpComposeDefaults") {
         request.writeText(
             JsonOutput.toJson(
                 mapOf(
-                    "toolHash" to hex(tool.readBytes()),
+                    "toolHash" to toolHash(tools),
                     "inventoryHash" to hex(inventoryFile.readBytes()),
                     "sources" to archives,
                     "targets" to targets,
@@ -154,7 +166,7 @@ tasks.register("dumpComposeDefaults") {
                 sourceCompiler.asPath,
                 "-d",
                 compiled.absolutePath,
-                tool.absolutePath,
+                *tools.map { it.absolutePath }.toTypedArray(),
             )
         }.assertNormalExitValue()
 

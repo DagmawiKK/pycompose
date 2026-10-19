@@ -335,8 +335,11 @@ def test_unsafe_token_initializers_are_refused(
     assert native_document["provenance"]["compiler"] == "2.0.21"
     request_path = ROOT / DUMP / "source-request.json"
     request = json.loads(request_path.read_text())
-    tool = ROOT / "android/tools/SourceDefaults.kt"
-    assert request["toolHash"] == hashlib.sha256(tool.read_bytes()).hexdigest()
+    tool = ROOT / "android/tools"
+    digest = hashlib.sha256()
+    for half in sorted(tool.glob("*.kt")):
+        digest.update(half.read_bytes())
+    assert request["toolHash"] == digest.hexdigest()
     archive = tmp_path / "probe-sources.jar"
     with zipfile.ZipFile(archive, "w") as source:
         source.writestr(

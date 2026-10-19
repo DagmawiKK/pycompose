@@ -128,6 +128,15 @@ UNRESOLVED = {"kind": "unsupported", "reason": "source could not be pinned"}
 """Reported per binding, so one ambiguous declaration never blinds the catalog."""
 
 
+def _tool_digest() -> str:
+    """Digest every tool source in file-name order: both halves own the contract."""
+    digest = hashlib.sha256()
+    tools = Path(__file__).resolve().parents[2] / "android/tools"
+    for tool in sorted(tools.glob("*.kt")):
+        digest.update(tool.read_bytes())
+    return digest.hexdigest()
+
+
 def source_defaults(
     directory: Path = DUMP_DIR,
 ) -> dict[tuple[str, str, str], dict[str, Any]]:
@@ -141,12 +150,7 @@ def source_defaults(
         "stale source evidence; rerun dumpComposeDefaults",
     )
     _require(
-        data["toolHash"]
-        == hashlib.sha256(
-            (
-                Path(__file__).resolve().parents[2] / "android/tools/SourceDefaults.kt"
-            ).read_bytes()
-        ).hexdigest(),
+        data["toolHash"] == _tool_digest(),
         "stale source compiler; rerun dumpComposeDefaults",
     )
     artifacts = {item["coordinate"] for item in found.document["artifacts"]}
