@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "comment": "Extraction closure for dumpComposeApi: which artifact groups may be extracted and the exact bytes of the pinned resolution. Groups are policy; artifacts are the frozen resolution. 'extracted' groups are enforced now (every resolved artifact must be listed, every listed artifact must be present and digest-matched); 'pending' groups are ratified for extraction at migration step 3, when they resolve and their artifacts are added here. Domains classify evidence and accounting; 'tooling' artifacts leave the app classpath at migration step 1b. Change only with the migration it belongs to.",
+  "comment": "Extraction closure for dumpComposeApi: which artifact groups may be extracted and the exact bytes of the pinned resolution. Groups are policy; artifacts are the frozen extraction set; tooling artifacts resolve through a dedicated configuration (composeToolingClasspath), are verified, and are never extracted. 'extracted' groups are enforced now: every resolved artifact of those groups must be listed here as an extraction artifact or as tooling, every listed artifact must be present and digest-matched; 'pending' groups are ratified for extraction at migration step 3, when they resolve and their artifacts are added here. Domains classify evidence and accounting. Change only with the migration it belongs to.",
   "groups": {
     "androidx.activity": {"status": "pending", "category": "app-surface", "domain": "activity"},
     "androidx.compose.animation": {"status": "extracted", "category": "app-surface", "domain": "animation"},
@@ -32,9 +32,11 @@
     {"coordinate": "androidx.compose.ui:ui-android:1.7.7", "sha256": "449a0582578f3da2e22381b652959358fee3bd470e22776723b2746db4b60c27", "domain": "ui"},
     {"coordinate": "androidx.compose.ui:ui-geometry-android:1.7.7", "sha256": "876bd666832b72247441db18e4ff6a72ce9450fa5d670b95d6a86ac570f4b930", "domain": "ui"},
     {"coordinate": "androidx.compose.ui:ui-graphics-android:1.7.7", "sha256": "134e9c50b93363a3af504d10c9749207ccfbb35a7c61dfd93a100531c9553b74", "domain": "ui"},
-    {"coordinate": "androidx.compose.ui:ui-test-manifest:1.7.7", "sha256": "1fa77f0af9bbec1108d7d20841fe79b6d73d1e1841d7d8b6205db4aa4f116a9d", "domain": "tooling"},
     {"coordinate": "androidx.compose.ui:ui-text-android:1.7.7", "sha256": "6cb2d1c507700d220b9caa56ee38ff011fed8a3f5f9770898620e9b19e1cca90", "domain": "ui"},
     {"coordinate": "androidx.compose.ui:ui-unit-android:1.7.7", "sha256": "ced34334d0dc5729bcee5476215321dd82ee365eb4d1e9cb8885f664f779f505", "domain": "ui"},
     {"coordinate": "androidx.compose.ui:ui-util-android:1.7.7", "sha256": "d7f254a711059e6c177c0c13defa341831e2c56b734330cf98530ab093401748", "domain": "ui"}
+  ],
+  "tooling": [
+    {"coordinate": "androidx.compose.ui:ui-test-manifest:1.7.7", "sha256": "1fa77f0af9bbec1108d7d20841fe79b6d73d1e1841d7d8b6205db4aa4f116a9d", "domain": "tooling"}
   ]
 }

@@ -111,6 +111,7 @@ def test_pending_groups_are_empty_and_extracted_groups_are_not(
 def test_the_gradle_task_consumes_the_closure_file() -> None:
     script = GRADLE_SCRIPT.read_text(encoding="utf-8")
     assert "compose-closure.json" in script
+    assert "composeToolingClasspath" in script
     assert 'startsWith("androidx.compose")' not in script
 
 
@@ -118,6 +119,23 @@ def test_the_file_is_sorted_for_stable_diffs(closure: dict[str, Any]) -> None:
     coordinates = [artifact["coordinate"] for artifact in closure["artifacts"]]
     assert coordinates == sorted(coordinates)
     assert list(closure["groups"]) == sorted(closure["groups"])
+
+
+def test_tooling_is_pinned_and_never_extracted(closure: dict[str, Any]) -> None:
+    artifacts = {artifact["coordinate"] for artifact in closure["artifacts"]}
+    tooling = closure["tooling"]
+    assert tooling, "tooling artifacts are part of the closure"
+    seen: set[str] = set()
+    for entry in tooling:
+        coordinate = entry["coordinate"]
+        assert COORDINATE.match(coordinate), coordinate
+        assert DIGEST.match(entry["sha256"]), coordinate
+        assert entry["domain"] == "tooling", coordinate
+        assert coordinate not in artifacts, coordinate
+        assert coordinate not in seen, coordinate
+        seen.add(coordinate)
+    coordinates = [entry["coordinate"] for entry in tooling]
+    assert coordinates == sorted(coordinates)
 
 
 @pytest.mark.skipif(
@@ -133,3 +151,4 @@ def test_the_inventory_matches_the_closure(closure: dict[str, Any]) -> None:
         artifact["coordinate"]: artifact["sha256"] for artifact in closure["artifacts"]
     }
     assert scanned == expected
+    assert not set(scanned) & {entry["coordinate"] for entry in closure["tooling"]}

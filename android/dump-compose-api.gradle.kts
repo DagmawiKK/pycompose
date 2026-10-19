@@ -24,7 +24,10 @@ import kotlinx.metadata.jvm.syntheticMethodForAnnotations
 import kotlinx.metadata.kind
 import kotlinx.metadata.modality
 import kotlinx.metadata.visibility
+import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
@@ -60,6 +63,22 @@ tasks.register("dumpComposeApi") {
     // Selection comes from compose-closure.json, never from a group prefix: every
     // scanned artifact is listed there and must match its recorded digest.
     val rendererClasspath = apiRenderer.configurations.getByName("debugCompileClasspath")
+    val closure = ComposeClosure.read(project.file("compose-closure.json"))
+    // Testing/tooling artifacts (ui-test-*, ui-tooling*) must never ride the app
+    // classpath: they drag junit, hamcrest and androidx.test into it. They resolve
+    // here instead -- pinned by the closure, verified and never extracted.
+    val toolingClasspath =
+        apiRenderer.configurations.maybeCreate("composeToolingClasspath").apply {
+            isCanBeConsumed = false
+            isCanBeResolved = true
+            attributes { inheritFrom(rendererClasspath.attributes) }
+        }
+    closure.tooling.keys.forEach { coordinate ->
+        val dependency = apiRenderer.dependencies.create(coordinate) as ExternalModuleDependency
+        // The closure pins exact artifacts: transitive graphs are not wanted here.
+        dependency.isTransitive = false
+        apiRenderer.dependencies.add(toolingClasspath.name, dependency)
+    }
     val output = layout.buildDirectory.file("compose-api/inventory.json")
     inputs.files(rendererClasspath)
     inputs.file("dump-compose-api.gradle.kts")
@@ -85,9 +104,38 @@ tasks.register("dumpComposeApi") {
         val variants =
             rendererClasspath.incoming.artifacts.artifacts
                 .associateBy { it.file.canonicalPath }
-        val closure = ComposeClosure.read(project.file("compose-closure.json"))
         val resolvedArtifacts = rendererClasspath.resolvedConfiguration.resolvedArtifacts
         val resolvedCoordinates = resolvedArtifacts.map { it.moduleVersion.id.toString() }.toSet()
+        val toolingResolved =
+            apiRenderer.configurations
+                .getByName("composeToolingClasspath")
+                .resolvedConfiguration.resolvedArtifacts
+        val toolingCoordinates = toolingResolved.map { it.moduleVersion.id.toString() }.toSet()
+        val toolingMissing = (closure.tooling.keys - toolingCoordinates).sorted()
+        check(toolingMissing.isEmpty()) {
+            "Compose closure file expects tooling artifacts that are not resolved: " +
+                toolingMissing.joinToString(", ")
+        }
+        val toolingUnexpected = (toolingCoordinates - closure.tooling.keys).sorted()
+        check(toolingUnexpected.isEmpty()) {
+            "Compose tooling configuration resolved unpinned artifacts: " +
+                toolingUnexpected.joinToString(", ")
+        }
+        toolingResolved.forEach { artifact ->
+            val coordinate = artifact.moduleVersion.id.toString()
+            val expected = closure.tooling.getValue(coordinate)
+            val actual = sha256(artifact.file.readBytes())
+            check(actual == expected) {
+                "Compose closure tooling digest changed for $coordinate: expected $expected, got $actual"
+            }
+        }
+        val toolingOnAppClasspath = resolvedCoordinates.filter { it in closure.tooling }.sorted()
+        if (toolingOnAppClasspath.isNotEmpty()) {
+            logger.lifecycle(
+                "dumpComposeApi: tooling artifacts also resolve on the extraction classpath " +
+                    "(not extracted): ${toolingOnAppClasspath.joinToString(", ")}",
+            )
+        }
         val missing = (closure.artifacts.keys - resolvedCoordinates).sorted()
         check(missing.isEmpty()) {
             "Compose closure file expects artifacts that are not resolved: ${missing.joinToString(
@@ -99,7 +147,8 @@ tasks.register("dumpComposeApi") {
                 .filter {
                     val coordinate = it.moduleVersion.id.toString()
                     closure.statusOf(it.moduleVersion.id.group) == "extracted" &&
-                        coordinate !in closure.artifacts
+                        coordinate !in closure.artifacts &&
+                        coordinate !in closure.tooling
                 }.map { it.moduleVersion.id.toString() }
                 .sorted()
         check(unexpected.isEmpty()) {
@@ -274,6 +323,7 @@ private fun sha256(bytes: ByteArray): String =
 private class ComposeClosure(
     private val groupStatus: Map<String, String>,
     val artifacts: Map<String, String>,
+    val tooling: Map<String, String>,
 ) {
     fun statusOf(group: String): String? = groupStatus[group]
 
@@ -287,13 +337,30 @@ private class ComposeClosure(
             (document["groups"] as Map<*, *>).forEach { (name, raw) ->
                 groups[name.toString()] = (raw as Map<*, *>)["status"].toString()
             }
-            val artifacts = LinkedHashMap<String, String>()
-            (document["artifacts"] as List<*>).forEach { raw ->
-                val artifact = raw as Map<*, *>
-                artifacts[artifact["coordinate"].toString()] = artifact["sha256"].toString()
-            }
-            return ComposeClosure(groups, artifacts)
+            return ComposeClosure(
+                groups,
+                digestsOf(document["artifacts"] as List<*>),
+                digestsOf(document["tooling"] as List<*>),
+            )
         }
+
+        private fun digestsOf(entries: List<*>): Map<String, String> {
+            val digests = LinkedHashMap<String, String>()
+            entries.forEach { raw ->
+                val entry = raw as Map<*, *>
+                digests[entry["coordinate"].toString()] = entry["sha256"].toString()
+            }
+            return digests
+        }
+    }
+}
+
+/** Copy variant-driving attributes so a custom configuration resolves like its source. */
+private fun AttributeContainer.inheritFrom(source: AttributeContainer) {
+    @Suppress("UNCHECKED_CAST")
+    source.keySet().forEach { key ->
+        val attribute = key as Attribute<Any>
+        source.getAttribute(attribute)?.let { value -> attribute(attribute, value) }
     }
 }
 
