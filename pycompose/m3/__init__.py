@@ -5,6 +5,8 @@ from pycompose.components.modifiers import (
     Modifier,
 )
 from pycompose.m3.generated_components import (
+    AssistChip,
+    Badge,
     Box,
     Button,
     Card,
@@ -13,6 +15,7 @@ from pycompose.m3.generated_components import (
     Column,
     DismissibleDrawerSheet,
     DismissibleNavigationDrawer,
+    ElevatedAssistChip,
     FilterChip,
     FloatingActionButton,
     HorizontalDivider,
@@ -40,6 +43,8 @@ from pycompose.m3.generated_components import (
 )
 
 __all__ = [
+    "AssistChip",
+    "Badge",
     "Box",
     "Button",
     "Card",
@@ -48,6 +53,7 @@ __all__ = [
     "Column",
     "DismissibleDrawerSheet",
     "DismissibleNavigationDrawer",
+    "ElevatedAssistChip",
     "FilterChip",
     "FloatingActionButton",
     "HorizontalDivider",

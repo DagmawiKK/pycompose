@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissibleDrawerSheet
 import androidx.compose.material3.DismissibleNavigationDrawer
+import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -39,6 +42,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.pycompose.ir.generated.AssistChip as AssistChipNode
+import com.pycompose.ir.generated.Badge as BadgeNode
 import com.pycompose.ir.generated.Box as BoxNode
 import com.pycompose.ir.generated.Button as ButtonNode
 import com.pycompose.ir.generated.Card as CardNode
@@ -47,6 +52,7 @@ import com.pycompose.ir.generated.CircularProgressIndicator as CircularProgressI
 import com.pycompose.ir.generated.Column as ColumnNode
 import com.pycompose.ir.generated.DismissibleDrawerSheet as DismissibleDrawerSheetNode
 import com.pycompose.ir.generated.DismissibleNavigationDrawer as DismissibleNavigationDrawerNode
+import com.pycompose.ir.generated.ElevatedAssistChip as ElevatedAssistChipNode
 import com.pycompose.ir.generated.FilterChip as FilterChipNode
 import com.pycompose.ir.generated.FloatingActionButton as FloatingActionButtonNode
 import com.pycompose.ir.generated.HorizontalDivider as HorizontalDividerNode
@@ -84,6 +90,43 @@ object GeneratedAdapters {
     private fun ComponentRegistry.Builder.generated():
         ComponentRegistry.Builder =
         this
+            .register("AssistChip") { node, modifier, context ->
+                val model = node as AssistChipNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.chipColors(colorsWire).getOrThrow() else androidx.compose.material3.AssistChipDefaults.assistChipColors()
+                val elevationWire = model.props.elevation
+                val elevationValue = when (elevationWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> androidx.compose.material3.AssistChipDefaults.assistChipElevation()
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.chipElevation(elevationWire.value).getOrThrow()
+                }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.AssistChipDefaults.shape
+                AssistChip(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    elevation = elevationValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    label = { context.slot(model.children, "label")?.invoke() },
+                    leadingIcon = context.slot(model.children, "leadingIcon"),
+                    trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
+            .register("Badge") { node, modifier, context ->
+                val model = node as BadgeNode
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.BadgeDefaults.containerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.BadgeDefaults.containerColor)
+                    else -> androidx.compose.material3.BadgeDefaults.containerColor
+                }
+                Badge(
+                    modifier = modifier,
+                    containerColor = containerColorValue,
+                    content = { context.childrenInRowScope(this, model.children) },
+                )
+            }
             .register("Box") { node, modifier, context ->
                 val model = node as BoxNode
                 val contentAlignmentValue: androidx.compose.ui.Alignment = com.pycompose.renderer.PropResolver.alignment(model.props.contentAlignment).getOrDefault(androidx.compose.ui.Alignment.TopStart)
@@ -218,6 +261,37 @@ object GeneratedAdapters {
                     drawerState = drawerStateValue,
                     drawerContent = { context.slot(model.children, "drawer")?.invoke() },
                     content = { context.children(model.children) },
+                )
+            }
+            .register("ElevatedAssistChip") { node, modifier, context ->
+                val model = node as ElevatedAssistChipNode
+                val borderWire = model.props.border
+                val borderValue = when (borderWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.borderStroke(borderWire.value).getOrThrow()
+                }
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.chipColors(colorsWire).getOrThrow() else androidx.compose.material3.AssistChipDefaults.elevatedAssistChipColors()
+                val elevationWire = model.props.elevation
+                val elevationValue = when (elevationWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> androidx.compose.material3.AssistChipDefaults.elevatedAssistChipElevation()
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.chipElevation(elevationWire.value).getOrThrow()
+                }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.AssistChipDefaults.shape
+                ElevatedAssistChip(
+                    modifier = modifier,
+                    border = borderValue,
+                    colors = colorsValue,
+                    elevation = elevationValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    label = { context.slot(model.children, "label")?.invoke() },
+                    leadingIcon = context.slot(model.children, "leadingIcon"),
+                    trailingIcon = context.slot(model.children, "trailingIcon"),
                 )
             }
             .register("FilterChip") { node, modifier, context ->

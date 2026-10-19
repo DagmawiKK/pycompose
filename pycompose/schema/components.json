@@ -1882,6 +1882,154 @@
       "children": {
         "allowed": false
       }
+    },
+    "AssistChip": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ChipColors;Landroidx/compose/material3/ChipElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "AssistChip",
+        "name": "AssistChip",
+        "owner": "androidx.compose.material3.ChipKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "ChipColors",
+          "nativeDefault": "androidx.compose.material3.AssistChipDefaults.assistChipColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "ChipElevation",
+          "nativeDefault": "androidx.compose.material3.AssistChipDefaults.assistChipElevation()",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.AssistChipDefaults.shape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "label": {
+          "native": "label"
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      }
+    },
+    "ElevatedAssistChip": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ChipColors;Landroidx/compose/material3/ChipElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "ElevatedAssistChip",
+        "name": "ElevatedAssistChip",
+        "owner": "androidx.compose.material3.ChipKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "ChipColors",
+          "nativeDefault": "androidx.compose.material3.AssistChipDefaults.elevatedAssistChipColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "ChipElevation",
+          "nativeDefault": "androidx.compose.material3.AssistChipDefaults.elevatedAssistChipElevation()",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.AssistChipDefaults.shape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "label": {
+          "native": "label"
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      }
+    },
+    "Badge": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;JJLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Badge-eopBjH0",
+        "name": "Badge",
+        "owner": "androidx.compose.material3.BadgeKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.BadgeDefaults.containerColor"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "RowScope"
+      }
     }
   },
   "modifiers": {

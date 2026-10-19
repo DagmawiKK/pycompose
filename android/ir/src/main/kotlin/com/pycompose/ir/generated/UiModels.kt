@@ -32,6 +32,44 @@ data class IRRoot(
 )
 
 @Serializable
+data class AssistChipProps(
+    val `colors`: JsonElement? = null,
+    val `elevation`: OptionalValue = OptionalValue.Absent,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `shape`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("AssistChip")
+data class AssistChip(
+    override val id: String,
+    override val props: AssistChipProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "AssistChip"
+}
+
+@Serializable
+data class BadgeProps(
+    val `containerColor`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("Badge")
+data class Badge(
+    override val id: String,
+    override val props: BadgeProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "Badge"
+}
+
+@Serializable
 data class BoxProps(
     val `contentAlignment`: String = "topStart",
     override val `modifier`: JsonObject? = null,
@@ -196,6 +234,28 @@ data class DismissibleNavigationDrawer(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "DismissibleNavigationDrawer"
+}
+
+@Serializable
+data class ElevatedAssistChipProps(
+    val `border`: OptionalValue = OptionalValue.Absent,
+    val `colors`: JsonElement? = null,
+    val `elevation`: OptionalValue = OptionalValue.Absent,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `shape`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ElevatedAssistChip")
+data class ElevatedAssistChip(
+    override val id: String,
+    override val props: ElevatedAssistChipProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "ElevatedAssistChip"
 }
 
 @Serializable

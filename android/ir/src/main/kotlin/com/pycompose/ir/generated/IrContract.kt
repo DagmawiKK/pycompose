@@ -11,6 +11,30 @@ object IrContract {
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
+        "AssistChip" to ComponentRule(
+            slots = setOf("label", "leadingIcon", "trailingIcon"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.0.0",
+            props = mapOf(
+                "colors" to PropertyRule("value", required = false, valueType = "ChipColors"),
+                "elevation" to PropertyRule("value", required = false, valueType = "ChipElevation", nullable = true),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+            ),
+        ),
+        "Badge" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.0.0",
+            props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
         "Box" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -120,6 +144,21 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "onOpenChange" to PropertyRule("actionId", required = false),
                 "open" to PropertyRule("boolean", required = false),
+            ),
+        ),
+        "ElevatedAssistChip" to ComponentRule(
+            slots = setOf("label", "leadingIcon", "trailingIcon"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.0.0",
+            props = mapOf(
+                "border" to PropertyRule("value", required = false, valueType = "BorderStroke", nullable = true),
+                "colors" to PropertyRule("value", required = false, valueType = "ChipColors"),
+                "elevation" to PropertyRule("value", required = false, valueType = "ChipElevation", nullable = true),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
         "FilterChip" to ComponentRule(
