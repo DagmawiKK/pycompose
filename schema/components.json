@@ -2033,6 +2033,661 @@
         "kind": "content",
         "provides": "RowScope"
       }
+    },
+    "OutlinedButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ButtonColors;Landroidx/compose/material3/ButtonElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "OutlinedButton",
+        "name": "OutlinedButton",
+        "owner": "androidx.compose.material3.ButtonKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "ButtonColors",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.outlinedButtonColors()"
+        },
+        "contentPadding": {
+          "type": "value",
+          "valueType": "PaddingValues",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.ContentPadding"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "ButtonElevation",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.outlinedShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "RowScope"
+      }
+    },
+    "ElevatedButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ButtonColors;Landroidx/compose/material3/ButtonElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ElevatedButton",
+        "name": "ElevatedButton",
+        "owner": "androidx.compose.material3.ButtonKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "ButtonColors",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.elevatedButtonColors()"
+        },
+        "contentPadding": {
+          "type": "value",
+          "valueType": "PaddingValues",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.ContentPadding"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "ButtonElevation",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.elevatedButtonElevation()",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.elevatedShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "RowScope"
+      }
+    },
+    "FilledTonalButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ButtonColors;Landroidx/compose/material3/ButtonElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FilledTonalButton",
+        "name": "FilledTonalButton",
+        "owner": "androidx.compose.material3.ButtonKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "ButtonColors",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.filledTonalButtonColors()"
+        },
+        "contentPadding": {
+          "type": "value",
+          "valueType": "PaddingValues",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.ContentPadding"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "ButtonElevation",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.filledTonalButtonElevation()",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.filledTonalShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "RowScope"
+      }
+    },
+    "SuggestionChip": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ChipColors;Landroidx/compose/material3/ChipElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SuggestionChip",
+        "name": "SuggestionChip",
+        "owner": "androidx.compose.material3.ChipKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "ChipColors",
+          "nativeDefault": "androidx.compose.material3.SuggestionChipDefaults.suggestionChipColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "ChipElevation",
+          "nativeDefault": "androidx.compose.material3.SuggestionChipDefaults.suggestionChipElevation()",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SuggestionChipDefaults.shape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "icon": {
+          "native": "icon",
+          "nullable": true
+        },
+        "label": {
+          "native": "label"
+        }
+      }
+    },
+    "ElevatedSuggestionChip": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ChipColors;Landroidx/compose/material3/ChipElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ElevatedSuggestionChip",
+        "name": "ElevatedSuggestionChip",
+        "owner": "androidx.compose.material3.ChipKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "ChipColors",
+          "nativeDefault": "androidx.compose.material3.SuggestionChipDefaults.elevatedSuggestionChipColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "ChipElevation",
+          "nativeDefault": "androidx.compose.material3.SuggestionChipDefaults.elevatedSuggestionChipElevation()",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SuggestionChipDefaults.shape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "icon": {
+          "native": "icon",
+          "nullable": true
+        },
+        "label": {
+          "native": "label"
+        }
+      }
+    },
+    "InputChip": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SelectableChipColors;Landroidx/compose/material3/SelectableChipElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "InputChip",
+        "name": "InputChip",
+        "owner": "androidx.compose.material3.ChipKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "SelectableChipColors",
+          "nativeDefault": "androidx.compose.material3.InputChipDefaults.inputChipColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "SelectableChipElevation",
+          "nativeDefault": "androidx.compose.material3.InputChipDefaults.inputChipElevation()",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.InputChipDefaults.shape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "avatar": {
+          "native": "avatar",
+          "nullable": true
+        },
+        "label": {
+          "native": "label"
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      }
+    },
+    "ElevatedFilterChip": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SelectableChipColors;Landroidx/compose/material3/SelectableChipElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "ElevatedFilterChip",
+        "name": "ElevatedFilterChip",
+        "owner": "androidx.compose.material3.ChipKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "SelectableChipColors",
+          "nativeDefault": "androidx.compose.material3.FilterChipDefaults.elevatedFilterChipColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "SelectableChipElevation",
+          "nativeDefault": "androidx.compose.material3.FilterChipDefaults.elevatedFilterChipElevation()",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.FilterChipDefaults.shape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "label": {
+          "native": "label"
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      }
+    },
+    "TriStateCheckbox": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/state/ToggleableState;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/CheckboxColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "TriStateCheckbox",
+        "name": "TriStateCheckbox",
+        "owner": "androidx.compose.material3.CheckboxKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "CheckboxColors",
+          "nativeDefault": "androidx.compose.material3.CheckboxDefaults.colors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "state": {
+          "type": "value",
+          "valueType": "ToggleableState",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
+    "ListItem": {
+      "package": "androidx.compose.material3",
+      "category": "lists",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/material3/ListItemColors;FFLandroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ListItem-HXNGIdc",
+        "name": "ListItem",
+        "owner": "androidx.compose.material3.ListItemKt"
+      },
+      "props": {
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.ListItemDefaults.Elevation"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.ListItemDefaults.Elevation"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "headlineContent": {
+          "native": "headlineContent"
+        },
+        "leadingContent": {
+          "native": "leadingContent",
+          "nullable": true
+        },
+        "overlineContent": {
+          "native": "overlineContent",
+          "nullable": true
+        },
+        "supportingContent": {
+          "native": "supportingContent",
+          "nullable": true
+        },
+        "trailingContent": {
+          "native": "trailingContent",
+          "nullable": true
+        }
+      }
+    },
+    "NavigationDrawerItem": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/NavigationDrawerItemColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "NavigationDrawerItem",
+        "name": "NavigationDrawerItem",
+        "owner": "androidx.compose.material3.NavigationDrawerKt"
+      },
+      "props": {
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "badge": {
+          "native": "badge",
+          "nullable": true
+        },
+        "icon": {
+          "native": "icon",
+          "nullable": true
+        },
+        "label": {
+          "native": "label"
+        }
+      }
+    },
+    "DropdownMenu": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;JLandroidx/compose/foundation/ScrollState;Landroidx/compose/ui/window/PopupProperties;Landroidx/compose/ui/graphics/Shape;JFFLandroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "DropdownMenu-IlH_yew",
+        "name": "DropdownMenu",
+        "owner": "androidx.compose.material3.AndroidMenu_androidKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.MenuDefaults.containerColor"
+        },
+        "expanded": {
+          "type": "boolean",
+          "required": true
+        },
+        "onDismissRequest": {
+          "type": "actionId",
+          "required": true
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.ShadowElevation"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.shape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.TonalElevation"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      }
+    },
+    "DropdownMenuItem": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/material3/MenuItemColors;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "DropdownMenuItem",
+        "name": "DropdownMenuItem",
+        "owner": "androidx.compose.material3.AndroidMenu_androidKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "MenuItemColors",
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.itemColors()"
+        },
+        "contentPadding": {
+          "type": "value",
+          "valueType": "PaddingValues",
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.DropdownMenuItemContentPadding"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "text": {
+          "native": "text"
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      }
     }
   },
   "modifiers": {

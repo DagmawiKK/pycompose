@@ -992,6 +992,176 @@
       },
       "type": "object"
     },
+    "C_DropdownMenu": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "expanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDismissRequest": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "expanded",
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "DropdownMenu"
+        }
+      },
+      "type": "object"
+    },
+    "C_DropdownMenuItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "text",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_MenuItemColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "DropdownMenuItem"
+        }
+      },
+      "type": "object"
+    },
     "C_ElevatedAssistChip": {
       "properties": {
         "children": {
@@ -1069,6 +1239,313 @@
         },
         "type": {
           "const": "ElevatedAssistChip"
+        }
+      },
+      "type": "object"
+    },
+    "C_ElevatedButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ElevatedButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_ElevatedFilterChip": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_SelectableChipColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_SelectableChipElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ElevatedFilterChip"
+        }
+      },
+      "type": "object"
+    },
+    "C_ElevatedSuggestionChip": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_ChipColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ChipElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ElevatedSuggestionChip"
+        }
+      },
+      "type": "object"
+    },
+    "C_FilledTonalButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledTonalButton"
         }
       },
       "type": "object"
@@ -1435,6 +1912,82 @@
       },
       "type": "object"
     },
+    "C_InputChip": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "avatar",
+                  "label",
+                  "leadingIcon",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_SelectableChipColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_SelectableChipElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "InputChip"
+        }
+      },
+      "type": "object"
+    },
     "C_LazyColumn": {
       "properties": {
         "children": {
@@ -1534,6 +2087,94 @@
         },
         "type": {
           "const": "LinearProgressIndicator"
+        }
+      },
+      "type": "object"
+    },
+    "C_ListItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "headlineContent",
+                  "leadingContent",
+                  "overlineContent",
+                  "supportingContent",
+                  "trailingContent"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ListItem"
         }
       },
       "type": "object"
@@ -1848,6 +2489,122 @@
       },
       "type": "object"
     },
+    "C_NavigationDrawerItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "badge",
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationDrawerItem"
+        }
+      },
+      "type": "object"
+    },
+    "C_OutlinedButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedButton"
+        }
+      },
+      "type": "object"
+    },
     "C_RadioButton": {
       "properties": {
         "children": false,
@@ -2124,6 +2881,76 @@
       },
       "type": "object"
     },
+    "C_SuggestionChip": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_ChipColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ChipElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SuggestionChip"
+        }
+      },
+      "type": "object"
+    },
     "C_Switch": {
       "properties": {
         "children": {
@@ -2386,6 +3213,52 @@
         },
         "type": {
           "const": "TextField"
+        }
+      },
+      "type": "object"
+    },
+    "C_TriStateCheckbox": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_CheckboxColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "state": {
+              "$ref": "#/definitions/Family_ToggleableState"
+            }
+          },
+          "required": [
+            "onClick",
+            "state"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TriStateCheckbox"
         }
       },
       "type": "object"
@@ -3213,7 +4086,25 @@
               "$ref": "#/definitions/C_DismissibleNavigationDrawer"
             },
             {
+              "$ref": "#/definitions/C_DropdownMenu"
+            },
+            {
+              "$ref": "#/definitions/C_DropdownMenuItem"
+            },
+            {
               "$ref": "#/definitions/C_ElevatedAssistChip"
+            },
+            {
+              "$ref": "#/definitions/C_ElevatedButton"
+            },
+            {
+              "$ref": "#/definitions/C_ElevatedFilterChip"
+            },
+            {
+              "$ref": "#/definitions/C_ElevatedSuggestionChip"
+            },
+            {
+              "$ref": "#/definitions/C_FilledTonalButton"
             },
             {
               "$ref": "#/definitions/C_FilterChip"
@@ -3234,10 +4125,16 @@
               "$ref": "#/definitions/C_Image"
             },
             {
+              "$ref": "#/definitions/C_InputChip"
+            },
+            {
               "$ref": "#/definitions/C_LazyColumn"
             },
             {
               "$ref": "#/definitions/C_LinearProgressIndicator"
+            },
+            {
+              "$ref": "#/definitions/C_ListItem"
             },
             {
               "$ref": "#/definitions/C_ModalBottomSheet"
@@ -3253,6 +4150,12 @@
             },
             {
               "$ref": "#/definitions/C_NavigationBarItem"
+            },
+            {
+              "$ref": "#/definitions/C_NavigationDrawerItem"
+            },
+            {
+              "$ref": "#/definitions/C_OutlinedButton"
             },
             {
               "$ref": "#/definitions/C_RadioButton"
@@ -3273,6 +4176,9 @@
               "$ref": "#/definitions/C_Spacer"
             },
             {
+              "$ref": "#/definitions/C_SuggestionChip"
+            },
+            {
               "$ref": "#/definitions/C_Switch"
             },
             {
@@ -3283,6 +4189,9 @@
             },
             {
               "$ref": "#/definitions/C_TextField"
+            },
+            {
+              "$ref": "#/definitions/C_TriStateCheckbox"
             },
             {
               "$ref": "#/definitions/C_VerticalDivider"
@@ -20293,6 +21202,176 @@
       },
       "type": "object"
     },
+    "V_1_23_0_DropdownMenu": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "expanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDismissRequest": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "expanded",
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "DropdownMenu"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_DropdownMenuItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "text",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_MenuItemColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "DropdownMenuItem"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_ElevatedAssistChip": {
       "properties": {
         "children": {
@@ -20370,6 +21449,313 @@
         },
         "type": {
           "const": "ElevatedAssistChip"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_ElevatedButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ElevatedButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_ElevatedFilterChip": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_SelectableChipColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_SelectableChipElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ElevatedFilterChip"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_ElevatedSuggestionChip": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_ChipColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ChipElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ElevatedSuggestionChip"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_FilledTonalButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledTonalButton"
         }
       },
       "type": "object"
@@ -20736,6 +22122,82 @@
       },
       "type": "object"
     },
+    "V_1_23_0_InputChip": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "avatar",
+                  "label",
+                  "leadingIcon",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_SelectableChipColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_SelectableChipElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "InputChip"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_LazyColumn": {
       "properties": {
         "children": {
@@ -20835,6 +22297,94 @@
         },
         "type": {
           "const": "LinearProgressIndicator"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_ListItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "headlineContent",
+                  "leadingContent",
+                  "overlineContent",
+                  "supportingContent",
+                  "trailingContent"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ListItem"
         }
       },
       "type": "object"
@@ -21403,6 +22953,61 @@
       },
       "type": "object"
     },
+    "V_1_23_0_NavigationDrawerItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "badge",
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationDrawerItem"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Node": {
       "allOf": [
         {
@@ -21438,7 +23043,25 @@
               "$ref": "#/definitions/V_1_23_0_DismissibleNavigationDrawer"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_DropdownMenu"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_DropdownMenuItem"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_ElevatedAssistChip"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ElevatedButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ElevatedFilterChip"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ElevatedSuggestionChip"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_FilledTonalButton"
             },
             {
               "$ref": "#/definitions/V_1_23_0_FilterChip"
@@ -21459,10 +23082,16 @@
               "$ref": "#/definitions/V_1_23_0_Image"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_InputChip"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_LazyColumn"
             },
             {
               "$ref": "#/definitions/V_1_23_0_LinearProgressIndicator"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ListItem"
             },
             {
               "$ref": "#/definitions/V_1_23_0_ModalBottomSheet"
@@ -21478,6 +23107,12 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_NavigationBarItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_NavigationDrawerItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_OutlinedButton"
             },
             {
               "$ref": "#/definitions/V_1_23_0_RadioButton"
@@ -21498,6 +23133,9 @@
               "$ref": "#/definitions/V_1_23_0_Spacer"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_SuggestionChip"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_Switch"
             },
             {
@@ -21508,6 +23146,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_TextField"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_TriStateCheckbox"
             },
             {
               "$ref": "#/definitions/V_1_23_0_VerticalDivider"
@@ -21542,6 +23183,67 @@
         "type",
         "props"
       ],
+      "type": "object"
+    },
+    "V_1_23_0_OutlinedButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedButton"
+        }
+      },
       "type": "object"
     },
     "V_1_23_0_RadioButton": {
@@ -21820,6 +23522,76 @@
       },
       "type": "object"
     },
+    "V_1_23_0_SuggestionChip": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_ChipColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ChipElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SuggestionChip"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Switch": {
       "properties": {
         "children": {
@@ -22082,6 +23854,52 @@
         },
         "type": {
           "const": "TextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_TriStateCheckbox": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_CheckboxColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "state": {
+              "$ref": "#/definitions/Family_ToggleableState"
+            }
+          },
+          "required": [
+            "onClick",
+            "state"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TriStateCheckbox"
         }
       },
       "type": "object"

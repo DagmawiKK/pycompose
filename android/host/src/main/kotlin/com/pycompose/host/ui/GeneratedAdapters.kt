@@ -20,25 +20,37 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissibleDrawerSheet
 import androidx.compose.material3.DismissibleNavigationDrawer
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedAssistChip
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ElevatedFilterChip
+import androidx.compose.material3.ElevatedSuggestionChip
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -52,27 +64,39 @@ import com.pycompose.ir.generated.CircularProgressIndicator as CircularProgressI
 import com.pycompose.ir.generated.Column as ColumnNode
 import com.pycompose.ir.generated.DismissibleDrawerSheet as DismissibleDrawerSheetNode
 import com.pycompose.ir.generated.DismissibleNavigationDrawer as DismissibleNavigationDrawerNode
+import com.pycompose.ir.generated.DropdownMenu as DropdownMenuNode
+import com.pycompose.ir.generated.DropdownMenuItem as DropdownMenuItemNode
 import com.pycompose.ir.generated.ElevatedAssistChip as ElevatedAssistChipNode
+import com.pycompose.ir.generated.ElevatedButton as ElevatedButtonNode
+import com.pycompose.ir.generated.ElevatedFilterChip as ElevatedFilterChipNode
+import com.pycompose.ir.generated.ElevatedSuggestionChip as ElevatedSuggestionChipNode
+import com.pycompose.ir.generated.FilledTonalButton as FilledTonalButtonNode
 import com.pycompose.ir.generated.FilterChip as FilterChipNode
 import com.pycompose.ir.generated.FloatingActionButton as FloatingActionButtonNode
 import com.pycompose.ir.generated.HorizontalDivider as HorizontalDividerNode
 import com.pycompose.ir.generated.Icon as IconNode
 import com.pycompose.ir.generated.IconButton as IconButtonNode
+import com.pycompose.ir.generated.InputChip as InputChipNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
 import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
+import com.pycompose.ir.generated.ListItem as ListItemNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
 import com.pycompose.ir.generated.ModalDrawerSheet as ModalDrawerSheetNode
 import com.pycompose.ir.generated.ModalNavigationDrawer as ModalNavigationDrawerNode
 import com.pycompose.ir.generated.NavigationBar as NavigationBarNode
 import com.pycompose.ir.generated.NavigationBarItem as NavigationBarItemNode
+import com.pycompose.ir.generated.NavigationDrawerItem as NavigationDrawerItemNode
+import com.pycompose.ir.generated.OutlinedButton as OutlinedButtonNode
 import com.pycompose.ir.generated.RadioButton as RadioButtonNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
 import com.pycompose.ir.generated.Slider as SliderNode
 import com.pycompose.ir.generated.SnackbarHost as SnackbarHostNode
 import com.pycompose.ir.generated.Spacer as SpacerNode
+import com.pycompose.ir.generated.SuggestionChip as SuggestionChipNode
 import com.pycompose.ir.generated.Switch as SwitchNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
+import com.pycompose.ir.generated.TriStateCheckbox as TriStateCheckboxNode
 import com.pycompose.ir.generated.VerticalDivider as VerticalDividerNode
 import com.pycompose.renderer.attachTo
 import com.pycompose.renderer.drawerState
@@ -263,6 +287,54 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
+            .register("DropdownMenu") { node, modifier, context ->
+                val model = node as DropdownMenuNode
+                val borderWire = model.props.border
+                val borderValue = when (borderWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.borderStroke(borderWire.value).getOrThrow()
+                }
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.MenuDefaults.containerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.MenuDefaults.containerColor)
+                    else -> androidx.compose.material3.MenuDefaults.containerColor
+                }
+                val shadowElevationWire = model.props.shadowElevation
+                val shadowElevationValue = if (shadowElevationWire != null) shadowElevationWire.dp else androidx.compose.material3.MenuDefaults.ShadowElevation
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.MenuDefaults.shape
+                val tonalElevationWire = model.props.tonalElevation
+                val tonalElevationValue = if (tonalElevationWire != null) tonalElevationWire.dp else androidx.compose.material3.MenuDefaults.TonalElevation
+                DropdownMenu(
+                    modifier = modifier,
+                    border = borderValue,
+                    containerColor = containerColorValue,
+                    expanded = model.props.expanded,
+                    onDismissRequest = { context.actions.dispatch(model.props.onDismissRequest) },
+                    shadowElevation = shadowElevationValue,
+                    shape = shapeValue,
+                    tonalElevation = tonalElevationValue,
+                    content = { context.childrenInColumnScope(this, model.children) },
+                )
+            }
+            .register("DropdownMenuItem") { node, modifier, context ->
+                val model = node as DropdownMenuItemNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.menuItemColors(colorsWire).getOrThrow() else androidx.compose.material3.MenuDefaults.itemColors()
+                val contentPaddingWire = model.props.contentPadding
+                val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.MenuDefaults.DropdownMenuItemContentPadding
+                DropdownMenuItem(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    contentPadding = contentPaddingValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    leadingIcon = context.slot(model.children, "leadingIcon"),
+                    text = { context.slot(model.children, "text")?.invoke() },
+                    trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
             .register("ElevatedAssistChip") { node, modifier, context ->
                 val model = node as ElevatedAssistChipNode
                 val borderWire = model.props.border
@@ -292,6 +364,132 @@ object GeneratedAdapters {
                     label = { context.slot(model.children, "label")?.invoke() },
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
+            .register("ElevatedButton") { node, modifier, context ->
+                val model = node as ElevatedButtonNode
+                val borderWire = model.props.border
+                val borderValue = when (borderWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.borderStroke(borderWire.value).getOrThrow()
+                }
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.buttonColors(colorsWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.elevatedButtonColors()
+                val contentPaddingWire = model.props.contentPadding
+                val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.ContentPadding
+                val elevationWire = model.props.elevation
+                val elevationValue = when (elevationWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> androidx.compose.material3.ButtonDefaults.elevatedButtonElevation()
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.buttonElevation(elevationWire.value).getOrThrow()
+                }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.elevatedShape
+                ElevatedButton(
+                    modifier = modifier,
+                    border = borderValue,
+                    colors = colorsValue,
+                    contentPadding = contentPaddingValue,
+                    elevation = elevationValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    content = { context.childrenInRowScope(this, model.children) },
+                )
+            }
+            .register("ElevatedFilterChip") { node, modifier, context ->
+                val model = node as ElevatedFilterChipNode
+                val borderWire = model.props.border
+                val borderValue = when (borderWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.borderStroke(borderWire.value).getOrThrow()
+                }
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.selectableChipColors(colorsWire).getOrThrow() else androidx.compose.material3.FilterChipDefaults.elevatedFilterChipColors()
+                val elevationWire = model.props.elevation
+                val elevationValue = when (elevationWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> androidx.compose.material3.FilterChipDefaults.elevatedFilterChipElevation()
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.selectableChipElevation(elevationWire.value).getOrThrow()
+                }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.FilterChipDefaults.shape
+                ElevatedFilterChip(
+                    modifier = modifier,
+                    border = borderValue,
+                    colors = colorsValue,
+                    elevation = elevationValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    selected = model.props.selected,
+                    shape = shapeValue,
+                    label = { context.slot(model.children, "label")?.invoke() },
+                    leadingIcon = context.slot(model.children, "leadingIcon"),
+                    trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
+            .register("ElevatedSuggestionChip") { node, modifier, context ->
+                val model = node as ElevatedSuggestionChipNode
+                val borderWire = model.props.border
+                val borderValue = when (borderWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.borderStroke(borderWire.value).getOrThrow()
+                }
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.chipColors(colorsWire).getOrThrow() else androidx.compose.material3.SuggestionChipDefaults.elevatedSuggestionChipColors()
+                val elevationWire = model.props.elevation
+                val elevationValue = when (elevationWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> androidx.compose.material3.SuggestionChipDefaults.elevatedSuggestionChipElevation()
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.chipElevation(elevationWire.value).getOrThrow()
+                }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SuggestionChipDefaults.shape
+                ElevatedSuggestionChip(
+                    modifier = modifier,
+                    border = borderValue,
+                    colors = colorsValue,
+                    elevation = elevationValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    icon = context.slot(model.children, "icon"),
+                    label = { context.slot(model.children, "label")?.invoke() },
+                )
+            }
+            .register("FilledTonalButton") { node, modifier, context ->
+                val model = node as FilledTonalButtonNode
+                val borderWire = model.props.border
+                val borderValue = when (borderWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.borderStroke(borderWire.value).getOrThrow()
+                }
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.buttonColors(colorsWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.filledTonalButtonColors()
+                val contentPaddingWire = model.props.contentPadding
+                val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.ContentPadding
+                val elevationWire = model.props.elevation
+                val elevationValue = when (elevationWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> androidx.compose.material3.ButtonDefaults.filledTonalButtonElevation()
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.buttonElevation(elevationWire.value).getOrThrow()
+                }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.filledTonalShape
+                FilledTonalButton(
+                    modifier = modifier,
+                    border = borderValue,
+                    colors = colorsValue,
+                    contentPadding = contentPaddingValue,
+                    elevation = elevationValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    content = { context.childrenInRowScope(this, model.children) },
                 )
             }
             .register("FilterChip") { node, modifier, context ->
@@ -374,6 +572,32 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
+            .register("InputChip") { node, modifier, context ->
+                val model = node as InputChipNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.selectableChipColors(colorsWire).getOrThrow() else androidx.compose.material3.InputChipDefaults.inputChipColors()
+                val elevationWire = model.props.elevation
+                val elevationValue = when (elevationWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> androidx.compose.material3.InputChipDefaults.inputChipElevation()
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.selectableChipElevation(elevationWire.value).getOrThrow()
+                }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.InputChipDefaults.shape
+                InputChip(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    elevation = elevationValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    selected = model.props.selected,
+                    shape = shapeValue,
+                    avatar = context.slot(model.children, "avatar"),
+                    label = { context.slot(model.children, "label")?.invoke() },
+                    leadingIcon = context.slot(model.children, "leadingIcon"),
+                    trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
             .register("LazyColumn") { node, modifier, context ->
                 val model = node as LazyColumnNode
                 val verticalArrangementValue: androidx.compose.foundation.layout.Arrangement.Vertical = com.pycompose.renderer.PropResolver.arrangement(model.props.verticalArrangement).getOrDefault(androidx.compose.foundation.layout.Arrangement.Top)
@@ -403,6 +627,23 @@ object GeneratedAdapters {
                     progress = { progressValue.toFloat() },
                     color = colorValue,
                     trackColor = trackColorValue,
+                )
+            }
+            .register("ListItem") { node, modifier, context ->
+                val model = node as ListItemNode
+                val shadowElevationWire = model.props.shadowElevation
+                val shadowElevationValue = if (shadowElevationWire != null) shadowElevationWire.dp else androidx.compose.material3.ListItemDefaults.Elevation
+                val tonalElevationWire = model.props.tonalElevation
+                val tonalElevationValue = if (tonalElevationWire != null) tonalElevationWire.dp else androidx.compose.material3.ListItemDefaults.Elevation
+                ListItem(
+                    modifier = modifier,
+                    shadowElevation = shadowElevationValue,
+                    tonalElevation = tonalElevationValue,
+                    headlineContent = { context.slot(model.children, "headlineContent")?.invoke() },
+                    leadingContent = context.slot(model.children, "leadingContent"),
+                    overlineContent = context.slot(model.children, "overlineContent"),
+                    supportingContent = context.slot(model.children, "supportingContent"),
+                    trailingContent = context.slot(model.children, "trailingContent"),
                 )
             }
             .register("ModalBottomSheet") { node, modifier, context ->
@@ -487,6 +728,42 @@ object GeneratedAdapters {
                     label = context.slot(model.children, "label"),
                 )
             }
+            .register("NavigationDrawerItem") { node, modifier, context ->
+                val model = node as NavigationDrawerItemNode
+                NavigationDrawerItem(
+                    modifier = modifier,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    selected = model.props.selected,
+                    badge = context.slot(model.children, "badge"),
+                    icon = context.slot(model.children, "icon"),
+                    label = { context.slot(model.children, "label")?.invoke() },
+                )
+            }
+            .register("OutlinedButton") { node, modifier, context ->
+                val model = node as OutlinedButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.buttonColors(colorsWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.outlinedButtonColors()
+                val contentPaddingWire = model.props.contentPadding
+                val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.ContentPadding
+                val elevationWire = model.props.elevation
+                val elevationValue = when (elevationWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.buttonElevation(elevationWire.value).getOrThrow()
+                }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.outlinedShape
+                OutlinedButton(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    contentPadding = contentPaddingValue,
+                    elevation = elevationValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    content = { context.childrenInRowScope(this, model.children) },
+                )
+            }
             .register("RadioButton") { node, modifier, context ->
                 val model = node as RadioButtonNode
                 val colorsWire = model.props.colors
@@ -554,6 +831,29 @@ object GeneratedAdapters {
                     modifier = modifier,
                 )
             }
+            .register("SuggestionChip") { node, modifier, context ->
+                val model = node as SuggestionChipNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.chipColors(colorsWire).getOrThrow() else androidx.compose.material3.SuggestionChipDefaults.suggestionChipColors()
+                val elevationWire = model.props.elevation
+                val elevationValue = when (elevationWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> androidx.compose.material3.SuggestionChipDefaults.suggestionChipElevation()
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.chipElevation(elevationWire.value).getOrThrow()
+                }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SuggestionChipDefaults.shape
+                SuggestionChip(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    elevation = elevationValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    icon = context.slot(model.children, "icon"),
+                    label = { context.slot(model.children, "label")?.invoke() },
+                )
+            }
             .register("Switch") { node, modifier, context ->
                 val model = node as SwitchNode
                 val colorsWire = model.props.colors
@@ -580,6 +880,19 @@ object GeneratedAdapters {
                 ) {
                     Text(model.props.text)
                 }
+            }
+            .register("TriStateCheckbox") { node, modifier, context ->
+                val model = node as TriStateCheckboxNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.checkboxColors(colorsWire).getOrThrow() else androidx.compose.material3.CheckboxDefaults.colors()
+                val stateValue = com.pycompose.renderer.generated.ValueResolver.toggleableState(model.props.state).getOrThrow()
+                TriStateCheckbox(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    state = stateValue,
+                )
             }
             .register("VerticalDivider") { node, modifier, context ->
                 val model = node as VerticalDividerNode

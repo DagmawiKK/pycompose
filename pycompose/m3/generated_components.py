@@ -24,30 +24,42 @@ __all__ = [
     "Column",
     "DismissibleDrawerSheet",
     "DismissibleNavigationDrawer",
+    "DropdownMenu",
+    "DropdownMenuItem",
     "ElevatedAssistChip",
+    "ElevatedButton",
+    "ElevatedFilterChip",
+    "ElevatedSuggestionChip",
+    "FilledTonalButton",
     "FilterChip",
     "FloatingActionButton",
     "HorizontalDivider",
     "Icon",
     "IconButton",
     "Image",
+    "InputChip",
     "LazyColumn",
     "LinearProgressIndicator",
+    "ListItem",
     "ModalBottomSheet",
     "ModalDrawerSheet",
     "ModalNavigationDrawer",
     "NavigationBar",
     "NavigationBarItem",
+    "NavigationDrawerItem",
+    "OutlinedButton",
     "RadioButton",
     "Row",
     "Scaffold",
     "Slider",
     "SnackbarHost",
     "Spacer",
+    "SuggestionChip",
     "Switch",
     "Text",
     "TextButton",
     "TextField",
+    "TriStateCheckbox",
     "VerticalDivider",
 ]
 
@@ -581,6 +593,122 @@ class DismissibleNavigationDrawer(Component):
         )
 
 
+class DropdownMenu(Component):
+    """Native DropdownMenu; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "DropdownMenu"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        container_color: JsonValue | None = None,
+        expanded: bool,
+        modifier: Modifier | None = None,
+        on_dismiss_request: str,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered DropdownMenu.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            container_color: Native containerColor; None uses its default.
+            expanded: Required native expanded.
+            modifier: Native modifier; None uses its default.
+            on_dismiss_request: Required native onDismissRequest.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if container_color is not None:
+            props["container_color"] = container_color
+        props["expanded"] = expanded
+        props["on_dismiss_request"] = on_dismiss_request
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class DropdownMenuItem(Component):
+    """Native DropdownMenuItem; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "DropdownMenuItem"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        leading_icon: Content | None = None,
+        text: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered DropdownMenuItem.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            leading_icon: Nodes for the native leadingIcon slot.
+            text: Nodes for the native text slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        slotted: tuple[Node, ...] = ()
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if text is not None:
+            slotted += slot_nodes(text, key="text", slot="text")
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
 class ElevatedAssistChip(Component):
     """Native ElevatedAssistChip; props and defaults follow the component manifest."""
 
@@ -641,6 +769,252 @@ class ElevatedAssistChip(Component):
                 slot="trailingIcon",
             )
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class ElevatedButton(Component):
+    """Native ElevatedButton; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ElevatedButton"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
+        elevation: JsonValue | None | _Unset = UNSET,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered ElevatedButton.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            colors: Native colors; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            elevation: Native elevation; omitted uses its default; None is null.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if colors is not None:
+            props["colors"] = colors
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if not isinstance(elevation, _Unset):
+            props["elevation"] = elevation
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ElevatedFilterChip(Component):
+    """Native ElevatedFilterChip; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ElevatedFilterChip"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None | _Unset = UNSET,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        selected: bool,
+        shape: JsonValue | None = None,
+        label: Content | None = None,
+        leading_icon: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered ElevatedFilterChip.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; omitted uses its default; None is null.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            shape: Native shape; None uses its default.
+            label: Nodes for the native label slot.
+            leading_icon: Nodes for the native leadingIcon slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if colors is not None:
+            props["colors"] = colors
+        if not isinstance(elevation, _Unset):
+            props["elevation"] = elevation
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["selected"] = selected
+        if shape is not None:
+            props["shape"] = shape
+        slotted: tuple[Node, ...] = ()
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class ElevatedSuggestionChip(Component):
+    """Native ElevatedSuggestionChip;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ElevatedSuggestionChip"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None | _Unset = UNSET,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        shape: JsonValue | None = None,
+        icon: Content | None = None,
+        label: Content | None = None,
+    ) -> None:
+        """Construct a registered ElevatedSuggestionChip.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; omitted uses its default; None is null.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            shape: Native shape; None uses its default.
+            icon: Nodes for the native icon slot.
+            label: Nodes for the native label slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if colors is not None:
+            props["colors"] = colors
+        if not isinstance(elevation, _Unset):
+            props["elevation"] = elevation
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if shape is not None:
+            props["shape"] = shape
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class FilledTonalButton(Component):
+    """Native FilledTonalButton; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "FilledTonalButton"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
+        elevation: JsonValue | None | _Unset = UNSET,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered FilledTonalButton.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            colors: Native colors; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            elevation: Native elevation; omitted uses its default; None is null.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if colors is not None:
+            props["colors"] = colors
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if not isinstance(elevation, _Unset):
+            props["elevation"] = elevation
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class FilterChip(Component):
@@ -916,6 +1290,71 @@ class Image(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
+class InputChip(Component):
+    """Native InputChip; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "InputChip"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None | _Unset = UNSET,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        selected: bool,
+        shape: JsonValue | None = None,
+        avatar: Content | None = None,
+        label: Content | None = None,
+        leading_icon: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered InputChip.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; omitted uses its default; None is null.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            shape: Native shape; None uses its default.
+            avatar: Nodes for the native avatar slot.
+            label: Nodes for the native label slot.
+            leading_icon: Nodes for the native leadingIcon slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if not isinstance(elevation, _Unset):
+            props["elevation"] = elevation
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["selected"] = selected
+        if shape is not None:
+            props["shape"] = shape
+        slotted: tuple[Node, ...] = ()
+        if avatar is not None:
+            slotted += slot_nodes(avatar, key="avatar", slot="avatar")
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
 class LazyColumn(Component):
     """Native LazyColumn; props and defaults follow the component manifest."""
 
@@ -996,6 +1435,77 @@ class LinearProgressIndicator(Component):
         if track_color is not None:
             props["track_color"] = track_color
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class ListItem(Component):
+    """Native ListItem; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ListItem"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        shadow_elevation: int | float | None = None,
+        tonal_elevation: int | float | None = None,
+        headline_content: Content | None = None,
+        leading_content: Content | None = None,
+        overline_content: Content | None = None,
+        supporting_content: Content | None = None,
+        trailing_content: Content | None = None,
+    ) -> None:
+        """Construct a registered ListItem.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            headline_content: Nodes for the native headlineContent slot.
+            leading_content: Nodes for the native leadingContent slot.
+            overline_content: Nodes for the native overlineContent slot.
+            supporting_content: Nodes for the native supportingContent slot.
+            trailing_content: Nodes for the native trailingContent slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        slotted: tuple[Node, ...] = ()
+        if headline_content is not None:
+            slotted += slot_nodes(
+                headline_content,
+                key="headlineContent",
+                slot="headlineContent",
+            )
+        if leading_content is not None:
+            slotted += slot_nodes(
+                leading_content,
+                key="leadingContent",
+                slot="leadingContent",
+            )
+        if overline_content is not None:
+            slotted += slot_nodes(
+                overline_content,
+                key="overlineContent",
+                slot="overlineContent",
+            )
+        if supporting_content is not None:
+            slotted += slot_nodes(
+                supporting_content,
+                key="supportingContent",
+                slot="supportingContent",
+            )
+        if trailing_content is not None:
+            slotted += slot_nodes(
+                trailing_content,
+                key="trailingContent",
+                slot="trailingContent",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class ModalBottomSheet(Component):
@@ -1268,6 +1778,106 @@ class NavigationBarItem(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class NavigationDrawerItem(Component):
+    """Native NavigationDrawerItem; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationDrawerItem"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        selected: bool,
+        badge: Content | None = None,
+        icon: Content | None = None,
+        label: Content | None = None,
+    ) -> None:
+        """Construct a registered NavigationDrawerItem.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            badge: Nodes for the native badge slot.
+            icon: Nodes for the native icon slot.
+            label: Nodes for the native label slot.
+        """
+        props: dict[str, JsonValue] = {}
+        props["on_click"] = on_click
+        props["selected"] = selected
+        slotted: tuple[Node, ...] = ()
+        if badge is not None:
+            slotted += slot_nodes(badge, key="badge", slot="badge")
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class OutlinedButton(Component):
+    """Native OutlinedButton; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "OutlinedButton"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
+        elevation: JsonValue | None | _Unset = UNSET,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered OutlinedButton.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            elevation: Native elevation; omitted uses its default; None is null.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if not isinstance(elevation, _Unset):
+            props["elevation"] = elevation
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class RadioButton(Component):
     """Native RadioButton; props and defaults follow the component manifest."""
 
@@ -1516,6 +2126,56 @@ class Spacer(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
+class SuggestionChip(Component):
+    """Native SuggestionChip; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SuggestionChip"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None | _Unset = UNSET,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        shape: JsonValue | None = None,
+        icon: Content | None = None,
+        label: Content | None = None,
+    ) -> None:
+        """Construct a registered SuggestionChip.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; omitted uses its default; None is null.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            shape: Native shape; None uses its default.
+            icon: Nodes for the native icon slot.
+            label: Nodes for the native label slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if not isinstance(elevation, _Unset):
+            props["elevation"] = elevation
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if shape is not None:
+            props["shape"] = shape
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
 class Switch(Component):
     """Native Switch; props and defaults follow the component manifest."""
 
@@ -1703,6 +2363,42 @@ class TextField(Component):
         if selection is not None:
             props["selection"] = selection
         props["value"] = value
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class TriStateCheckbox(Component):
+    """Native TriStateCheckbox; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TriStateCheckbox"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        state: JsonValue,
+    ) -> None:
+        """Construct a registered TriStateCheckbox.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            state: Required native state.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["state"] = state
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
