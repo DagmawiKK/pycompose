@@ -150,6 +150,7 @@
           "type": "object",
           "additionalProperties": { "$ref": "#/$defs/slot" }
         },
+        "source": { "type": "object" },
         "state": { "$ref": "#/$defs/stateBlock" },
         "transient": { "$ref": "#/$defs/transientBlock" },
         "interaction": { "$ref": "#/$defs/interactionBlock" },

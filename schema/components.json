@@ -32,6 +32,13 @@
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
       "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Box",
+        "name": "Box",
+        "owner": "androidx.compose.foundation.layout.BoxKt"
+      },
       "props": {
         "contentAlignment": {
           "type": "enum",
@@ -63,6 +70,13 @@
       "package": "androidx.compose.material3",
       "category": "buttons",
       "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ButtonColors;Landroidx/compose/material3/ButtonElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Button",
+        "name": "Button",
+        "owner": "androidx.compose.material3.ButtonKt"
+      },
       "props": {
         "colors": {
           "type": "value",
@@ -147,6 +161,13 @@
       "category": "layout",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Card",
+        "name": "Card",
+        "owner": "androidx.compose.material3.CardKt"
+      },
       "props": {
         "onClick": {
           "type": "actionId",
@@ -232,6 +253,13 @@
       "category": "input",
       "stability": "stable",
       "since": "1.3.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/CheckboxColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Checkbox",
+        "name": "Checkbox",
+        "owner": "androidx.compose.material3.CheckboxKt"
+      },
       "props": {
         "checked": {
           "type": "boolean",
@@ -304,6 +332,13 @@
       "category": "status",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;JFJIFLandroidx/compose/runtime/Composer;II)V",
+        "jvmName": "CircularProgressIndicator-4lLiAd8",
+        "name": "CircularProgressIndicator",
+        "owner": "androidx.compose.material3.ProgressIndicatorKt"
+      },
       "props": {
         "color": {
           "type": "color",
@@ -338,6 +373,13 @@
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
       "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Alignment$Horizontal;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Column",
+        "name": "Column",
+        "owner": "androidx.compose.foundation.layout.ColumnKt"
+      },
       "props": {
         "horizontalAlignment": {
           "type": "enum",
@@ -390,6 +432,13 @@
       "category": "layout",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "DismissibleDrawerSheet-afqeVBk",
+        "name": "DismissibleDrawerSheet",
+        "owner": "androidx.compose.material3.NavigationDrawerKt"
+      },
       "props": {
         "drawerShape": {
           "type": "value",
@@ -426,6 +475,13 @@
       "category": "layout",
       "stability": "stable",
       "since": "1.18.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/material3/DrawerState;ZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "DismissibleNavigationDrawer",
+        "name": "DismissibleNavigationDrawer",
+        "owner": "androidx.compose.material3.NavigationDrawerKt"
+      },
       "props": {
         "open": {
           "type": "boolean"
@@ -472,6 +528,13 @@
       "category": "input",
       "stability": "stable",
       "since": "1.3.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SelectableChipColors;Landroidx/compose/material3/SelectableChipElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "FilterChip",
+        "name": "FilterChip",
+        "owner": "androidx.compose.material3.ChipKt"
+      },
       "props": {
         "label": {
           "type": "string",
@@ -556,6 +619,13 @@
       "category": "buttons",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJLandroidx/compose/material3/FloatingActionButtonElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FloatingActionButton-X-z6DiA",
+        "name": "FloatingActionButton",
+        "owner": "androidx.compose.material3.FloatingActionButtonKt"
+      },
       "props": {
         "onClick": {
           "type": "actionId",
@@ -631,6 +701,13 @@
       "category": "layout",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;FJLandroidx/compose/runtime/Composer;II)V",
+        "jvmName": "HorizontalDivider-9IZ8Weo",
+        "name": "HorizontalDivider",
+        "owner": "androidx.compose.material3.DividerKt"
+      },
       "props": {
         "thickness": {
           "type": "dp",
@@ -655,6 +732,13 @@
       "category": "media",
       "stability": "stable",
       "since": "1.21.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/graphics/vector/ImageVector;Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Icon-ww6aTOc",
+        "name": "Icon",
+        "owner": "androidx.compose.material3.IconKt"
+      },
       "props": {
         "imageVector": {
           "type": "value",
@@ -685,6 +769,13 @@
       "category": "buttons",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/IconButtonColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "IconButton",
+        "name": "IconButton",
+        "owner": "androidx.compose.material3.IconButtonKt"
+      },
       "props": {
         "onClick": {
           "type": "actionId",
@@ -753,6 +844,13 @@
       "category": "media",
       "stability": "stable",
       "since": "1.1.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "owner": "androidx.compose.foundation.ImageKt",
+        "name": "Image",
+        "jvmName": "Image",
+        "descriptor": "(Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;Landroidx/compose/runtime/Composer;II)V"
+      },
       "props": {
         "resource": {
           "type": "resource",
@@ -782,6 +880,13 @@
       "package": "androidx.compose.foundation.lazy",
       "category": "lists",
       "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Alignment$Horizontal;Landroidx/compose/foundation/gestures/FlingBehavior;ZLandroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "LazyColumn",
+        "name": "LazyColumn",
+        "owner": "androidx.compose.foundation.lazy.LazyDslKt"
+      },
       "props": {
         "firstVisibleIndex": {
           "type": "integer",
@@ -837,6 +942,13 @@
       "optIn": [
         "androidx.compose.material3.ExperimentalMaterial3Api"
       ],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.ProgressIndicatorKt",
+        "name": "LinearProgressIndicator",
+        "jvmName": "LinearProgressIndicator-GJbTh5U",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;JJIFLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V"
+      },
       "props": {
         "progress": {
           "type": "number",
@@ -878,6 +990,13 @@
       "optIn": [
         "androidx.compose.material3.ExperimentalMaterial3Api"
       ],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/material3/SheetState;FZLandroidx/compose/ui/graphics/Shape;JJFJLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/material3/ModalBottomSheetProperties;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "ModalBottomSheet-YbuCTN8",
+        "name": "ModalBottomSheet",
+        "owner": "androidx.compose.material3.ModalBottomSheetKt"
+      },
       "props": {
         "open": {
           "type": "boolean"
@@ -923,6 +1042,13 @@
       "category": "layout",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ModalDrawerSheet-afqeVBk",
+        "name": "ModalDrawerSheet",
+        "owner": "androidx.compose.material3.NavigationDrawerKt"
+      },
       "props": {
         "drawerShape": {
           "type": "value",
@@ -959,6 +1085,13 @@
       "category": "layout",
       "stability": "stable",
       "since": "1.18.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/material3/DrawerState;ZJLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ModalNavigationDrawer-FHprtrg",
+        "name": "ModalNavigationDrawer",
+        "owner": "androidx.compose.material3.NavigationDrawerKt"
+      },
       "props": {
         "open": {
           "type": "boolean"
@@ -1005,6 +1138,13 @@
       "category": "layout",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "NavigationBar-HsRjFd4",
+        "name": "NavigationBar",
+        "owner": "androidx.compose.material3.NavigationBarKt"
+      },
       "props": {
         "containerColor": {
           "type": "color",
@@ -1036,6 +1176,13 @@
       "category": "layout",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/foundation/layout/RowScope;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;ZLandroidx/compose/material3/NavigationBarItemColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "NavigationBarItem",
+        "name": "NavigationBarItem",
+        "owner": "androidx.compose.material3.NavigationBarKt"
+      },
       "props": {
         "selected": {
           "type": "boolean",
@@ -1121,6 +1268,13 @@
       "category": "input",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/RadioButtonColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "RadioButton",
+        "name": "RadioButton",
+        "owner": "androidx.compose.material3.RadioButtonKt"
+      },
       "props": {
         "selected": {
           "type": "boolean",
@@ -1191,6 +1345,13 @@
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
       "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Vertical;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Row",
+        "name": "Row",
+        "owner": "androidx.compose.foundation.layout.RowKt"
+      },
       "props": {
         "verticalAlignment": {
           "type": "enum",
@@ -1216,6 +1377,13 @@
       "package": "androidx.compose.material3",
       "category": "layout",
       "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;IJJLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Scaffold-TvnljyQ",
+        "name": "Scaffold",
+        "owner": "androidx.compose.material3.ScaffoldKt"
+      },
       "props": {
         "containerColor": {
           "type": "color",
@@ -1255,6 +1423,13 @@
       "optIn": [
         "androidx.compose.material3.ExperimentalMaterial3Api"
       ],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/SliderState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SliderColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Slider",
+        "name": "Slider",
+        "owner": "androidx.compose.material3.SliderKt"
+      },
       "props": {
         "colors": {
           "type": "value",
@@ -1313,6 +1488,13 @@
       "category": "status",
       "stability": "stable",
       "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/SnackbarHostState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SnackbarHost",
+        "name": "SnackbarHost",
+        "owner": "androidx.compose.material3.SnackbarHostKt"
+      },
       "props": {
         "message": {
           "type": "string",
@@ -1358,6 +1540,13 @@
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
       "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V",
+        "jvmName": "Spacer",
+        "name": "Spacer",
+        "owner": "androidx.compose.foundation.layout.SpacerKt"
+      },
       "props": {
         "modifier": {
           "type": "modifier"
@@ -1372,6 +1561,13 @@
       "category": "input",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/material3/SwitchColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Switch",
+        "name": "Switch",
+        "owner": "androidx.compose.material3.SwitchKt"
+      },
       "props": {
         "checked": {
           "type": "boolean",
@@ -1454,6 +1650,13 @@
       "package": "androidx.compose.material3",
       "category": "typography",
       "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/foundation/text/TextAutoSize;JLandroidx/compose/ui/text/font/FontStyle;Landroidx/compose/ui/text/font/FontWeight;Landroidx/compose/ui/text/font/FontFamily;JLandroidx/compose/ui/text/style/TextDecoration;Landroidx/compose/ui/text/style/TextAlign;JIZIILkotlin/jvm/functions/Function1;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "Text-Nvy7gAk",
+        "name": "Text",
+        "owner": "androidx.compose.material3.TextKt"
+      },
       "props": {
         "text": {
           "type": "string",
@@ -1519,6 +1722,13 @@
       "category": "buttons",
       "stability": "stable",
       "since": "1.3.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/ButtonColors;Landroidx/compose/material3/ButtonElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "TextButton",
+        "name": "TextButton",
+        "owner": "androidx.compose.material3.ButtonKt"
+      },
       "props": {
         "text": {
           "type": "string",
@@ -1647,6 +1857,13 @@
       "category": "layout",
       "stability": "stable",
       "since": "1.22.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;FJLandroidx/compose/runtime/Composer;II)V",
+        "jvmName": "VerticalDivider-9IZ8Weo",
+        "name": "VerticalDivider",
+        "owner": "androidx.compose.material3.DividerKt"
+      },
       "props": {
         "thickness": {
           "type": "dp",

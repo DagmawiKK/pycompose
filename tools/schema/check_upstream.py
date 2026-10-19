@@ -13,6 +13,7 @@ if __package__ in (None, ""):  # pragma: no cover - only when run as a script
 
 from pycompose.core.registry_types import SCOPE_PATHS
 from tools.schema.classpath_dump import DUMP_DIR, Inventory, inventory, source_defaults
+from tools.schema.component_binding import resolutions
 from tools.schema.propose import refresh
 
 DERIVED = ("source", "kotlinType", "native", "omitted")
@@ -197,8 +198,23 @@ def scope_errors(name: str, entry: dict[str, Any], overloads: list[Any]) -> list
 
 
 def compare(registry: dict[str, Any], found: Inventory) -> list[str]:
-    """Report removed props and moved packages without merging overloads."""
+    """Report component drift against one selected pinned overload each.
+
+    Every entry is resolved to a single overload first -- a union of parameter
+    names across siblings cannot tell one signature from another, and a prop
+    that only a sibling declares used to pass. The selected identity must match
+    the recorded ``source``; a hand-written adapter keeps the union boundary
+    and says so by claiming no identity.
+
+    Args:
+        registry: The approved catalog.
+        found: The validated inventory of the current pin.
+
+    Returns:
+        One message per fact that no longer matches the pin.
+    """
     errors = []
+    resolved = {result.name: result for result in resolutions(registry, found)}
     for name, entry in registry["components"].items():
         overloads = [
             d
@@ -214,13 +230,21 @@ def compare(registry: dict[str, Any], found: Inventory) -> list[str]:
                 f"{name}: package {entry.get('package')!r} is not pinned "
                 f"({', '.join(sorted(packages))})"
             )
-        names = {p.name for d in overloads for p in d.parameters}
-        removed = entry["props"].keys() - set(entry.get("reshaped", [])) - names
-        errors.extend(
-            f"{name}.{prop}: no parameter in any pinned overload" for prop in removed
-        )
+            # Resolution is meaningless against a package the pin never
+            # declares; every name-level message would only restate this.
+            continue
         errors.extend(provider_errors(name, entry, overloads))
         errors.extend(scope_errors(name, entry, overloads))
+        resolution = resolved[name]
+        errors.extend(resolution.errors)
+        errors.extend(resolution.differences)
+        if resolution.mode == "manual":
+            names = {p.name for d in overloads for p in d.parameters}
+            removed = entry["props"].keys() - set(entry.get("reshaped", [])) - names
+            errors.extend(
+                f"{name}.{prop}: no parameter in any pinned overload"
+                for prop in removed
+            )
     return errors
 
 

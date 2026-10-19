@@ -186,6 +186,30 @@ def _transient(name: str, value: object) -> TransientRule | None:
     return TransientRule.from_mapping(value, where=f"{name}.transient")
 
 
+def _source(name: str, value: object) -> Mapping[str, str] | None:
+    """Parse a component's recorded pinned identity.
+
+    Args:
+        name: The component's registry key, for the error message.
+        value: The raw ``source`` field.
+
+    Returns:
+        The recorded identity, or None when the component claims none.
+
+    Raises:
+        ComponentRegistryError: If the field is present but malformed.
+    """
+    if value is None:
+        return None
+    if not isinstance(value, Mapping) or not all(
+        isinstance(key, str) and isinstance(item, str) for key, item in value.items()
+    ):
+        raise ComponentRegistryError(
+            f"component {name!r}: 'source' must be an object of strings"
+        )
+    return MappingProxyType(dict(value))
+
+
 @dataclass(frozen=True, slots=True)
 class ComponentSpec:
     """Concrete component definition (implements :class:`ComponentDef`).
@@ -230,6 +254,10 @@ class ComponentSpec:
         scope: The composition scope the pinned declaration extends, if any.
             Codegen-only: the adapter registers through the matching scoped
             method, and only a parent that provides the scope can compose it.
+        source: The exact pinned overload the generated call binds, as the
+            binding compiler resolves it: artifact, owner, name, JVM name and
+            JVM descriptor. Absent when the adapter is hand-written and
+            legitimately spans a family of overloads.
     """
 
     name: str
@@ -248,10 +276,13 @@ class ComponentSpec:
     opt_in: tuple[str, ...] = ()
     package: str | None = None
     scope: str | None = None
+    source: Mapping[str, str] | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
         object.__setattr__(self, "slots", MappingProxyType(dict(self.slots)))
+        if self.source is not None:
+            object.__setattr__(self, "source", MappingProxyType(dict(self.source)))
         if self.since is not None and (
             not isinstance(self.since, str) or not self.since
         ):
@@ -360,6 +391,7 @@ class ComponentSpec:
             opt_in=_opt_in(name, data.get("optIn")),
             package=package,
             scope=cast("str | None", data.get("scope")),
+            source=_source(name, data.get("source")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -398,4 +430,6 @@ class ComponentSpec:
             result["wrapper"] = self.wrapper
         if self.scope is not None:
             result["scope"] = self.scope
+        if self.source is not None:
+            result["source"] = dict(self.source)
         return result
