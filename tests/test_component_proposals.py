@@ -59,7 +59,7 @@ def test_pinned_ui_defaults_cover_every_exact_overload(native_document):
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     defaults = source_defaults(DUMP)
-    assert len(found.ui) == 155
+    assert len(found.ui) == 187
     assert all((s.owner, s.jvm_name, s.jvm_descriptor) in defaults for s in found.ui)
 
 
@@ -67,7 +67,7 @@ def test_pinned_unconstructible_types_and_enum_vocabularies(native_document) -> 
     from tools.schema.classpath_dump import inventory, source_defaults
     from tools.schema.propose import bind
 
-    assert native_document["provenance"]["bom"] == "2025.01.01"
+    assert native_document["provenance"]["bom"] == "2026.09.00"
     found = inventory(DUMP)
     evidence = source_defaults(DUMP)
     schema = json.loads(Path("schema/components.json").read_text())
@@ -85,7 +85,7 @@ def test_pinned_denominator_separates_components_from_styling_hooks(native_docum
     from tools.schema.classpath_dump import inventory, source_defaults
     from tools.schema.components import propose_components
 
-    assert native_document["provenance"]["bom"] == "2025.01.01"
+    assert native_document["provenance"]["bom"] == "2026.09.00"
     report = propose_components(
         inventory(DUMP),
         source_defaults(DUMP),
@@ -93,12 +93,12 @@ def test_pinned_denominator_separates_components_from_styling_hooks(native_docum
     )
     component_coverage = report["coverage"]["components"]
     hook_coverage = report["coverage"]["hooks"]
-    # Pin-derived denominators describe the committed dump (bom 2025.01.01) and
+    # Pin-derived denominators describe the committed dump (bom 2026.09.00) and
     # move only when the pinned evidence moves, never with catalog policy.
-    assert component_coverage["names"] == 99
-    assert component_coverage["overloads"] == 132
-    assert hook_coverage["names"] == 17
-    assert hook_coverage["overloads"] == 23
+    assert component_coverage["names"] == 118
+    assert component_coverage["overloads"] == 159
+    assert hook_coverage["names"] == 20
+    assert hook_coverage["overloads"] == 28
     # The callPlan/blocked split follows the protocols the catalog has activated,
     # so it must stay a decomposition rather than a memorized count.
     assert (
@@ -167,7 +167,7 @@ def test_the_drift_check_re_derives_a_package_and_a_provider(native_document) ->
 
     assert compare(edited(package="androidx.compose.example"), found) == [
         "LinearProgressIndicator: package 'androidx.compose.example' is not "
-        "pinned (androidx.compose.material3)"
+        "pinned (androidx.compose.material, androidx.compose.material3)"
     ]
     assert compare(edited(returns="Long"), found) == [
         "LinearProgressIndicator.progress: provider returns 'Long' is not "

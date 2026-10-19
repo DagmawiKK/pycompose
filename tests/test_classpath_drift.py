@@ -199,7 +199,7 @@ class GeneratedBindingProof {{
     init = tmp_path / "proof.gradle"
     init.write_text(
         "gradle.projectsEvaluated { gradle.rootProject.project(':host').android."
-        f"sourceSets.test.java.srcDir({json.dumps(str(tmp_path))}) }}"
+        f"sourceSets.test.kotlin.srcDir({json.dumps(str(tmp_path))}) }}"
     )
     result = subprocess.run(
         [

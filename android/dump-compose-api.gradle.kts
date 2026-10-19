@@ -136,6 +136,31 @@ tasks.register("dumpComposeApi") {
                     "(not extracted): ${toolingOnAppClasspath.joinToString(", ")}",
             )
         }
+        // Support artifacts sit inside extracted groups but carry no Android app
+        // surface: pin their bytes, prove they resolve, and never scan them.
+        val supportResolved =
+            resolvedArtifacts.filter { it.moduleVersion.id.toString() in closure.support }
+        val supportMissing = (closure.support.keys - resolvedCoordinates).sorted()
+        check(supportMissing.isEmpty()) {
+            "Compose closure file expects support artifacts that are not resolved: " +
+                supportMissing.joinToString(", ")
+        }
+        supportResolved.forEach { artifact ->
+            val coordinate = artifact.moduleVersion.id.toString()
+            val expected = closure.support.getValue(coordinate)
+            val actual = sha256(artifact.file.readBytes())
+            check(actual == expected) {
+                "Compose closure support digest changed for $coordinate: expected $expected, got $actual"
+            }
+        }
+        if (supportResolved.isNotEmpty()) {
+            logger.lifecycle(
+                "dumpComposeApi: support artifacts of extracted groups are not extracted: " +
+                    supportResolved.map { it.moduleVersion.id.toString() }.sorted().joinToString(
+                        ", ",
+                    ),
+            )
+        }
         val missing = (closure.artifacts.keys - resolvedCoordinates).sorted()
         check(missing.isEmpty()) {
             "Compose closure file expects artifacts that are not resolved: ${missing.joinToString(
@@ -148,7 +173,8 @@ tasks.register("dumpComposeApi") {
                     val coordinate = it.moduleVersion.id.toString()
                     closure.statusOf(it.moduleVersion.id.group) == "extracted" &&
                         coordinate !in closure.artifacts &&
-                        coordinate !in closure.tooling
+                        coordinate !in closure.tooling &&
+                        coordinate !in closure.support
                 }.map { it.moduleVersion.id.toString() }
                 .sorted()
         check(unexpected.isEmpty()) {
@@ -324,6 +350,7 @@ private class ComposeClosure(
     private val groupStatus: Map<String, String>,
     val artifacts: Map<String, String>,
     val tooling: Map<String, String>,
+    val support: Map<String, String>,
 ) {
     fun statusOf(group: String): String? = groupStatus[group]
 
@@ -337,11 +364,16 @@ private class ComposeClosure(
             (document["groups"] as Map<*, *>).forEach { (name, raw) ->
                 groups[name.toString()] = (raw as Map<*, *>)["status"].toString()
             }
-            return ComposeClosure(
-                groups,
-                digestsOf(document["artifacts"] as List<*>),
-                digestsOf(document["tooling"] as List<*>),
-            )
+            val artifacts = digestsOf(document["artifacts"] as List<*>)
+            val tooling = digestsOf(document["tooling"] as List<*>)
+            val support = digestsOf(document["support"] as List<*>)
+            val overlap =
+                (support.keys intersect artifacts.keys) + (support.keys intersect tooling.keys)
+            check(overlap.isEmpty()) {
+                "Compose closure support artifacts are also extracted or tooling: " +
+                    overlap.sorted().joinToString(", ")
+            }
+            return ComposeClosure(groups, artifacts, tooling, support)
         }
 
         private fun digestsOf(entries: List<*>): Map<String, String> {

@@ -236,8 +236,10 @@ def test_approved_value_families_reach_every_generated_artifact() -> None:
     assert '"On" -> androidx.compose.ui.state.ToggleableState.On' in native
     assert "androidx.compose.foundation.BorderStroke(" in native
     marker = "@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)"
-    assert f"{marker}\n    fun datePickerColors(value: JsonElement)" in native
-    assert f"{marker}\n    fun datePickerColors(value: DatePickerColorsValue)" in native
+    # 1.4.0 stabilized the date-picker colours factory, so only families the
+    # pin still gates carry the marker.
+    assert f"{marker}\n    fun timePickerLayoutType(value: JsonElement)" in native
+    assert f"{marker}\n    fun datePickerColors" not in native
     assert f"{marker}\n    fun checkboxColors" not in native
 
 

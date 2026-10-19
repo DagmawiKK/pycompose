@@ -18,7 +18,8 @@ from typing import Any
 from tools.schema.classpath_dump import (
     Declaration,
     Inventory,
-    opt_in_markers,
+    OptInIndex,
+    opt_in_index,
     required_opt_ins,
 )
 from tools.schema.propose_icons import propose_icons
@@ -40,6 +41,28 @@ from tools.schema.propose_lookup import (
     value_families,
 )
 
+#: The opt-in index a caller gets when no pin evidence is passed in.
+EMPTY_OPT_INS = OptInIndex()
+
+
+def _refuse_inaccessible(required: set[str], opt_ins: OptInIndex) -> None:
+    """Fail closed when a required marker cannot be named outside the pin.
+
+    Args:
+        required: The markers the binding would have to opt in to.
+        opt_ins: The pin's opt-in index.
+
+    Raises:
+        ValueError: A required marker is declared non-public upstream, so no
+            generated call site could ever name it.
+    """
+    inaccessible = sorted(required & opt_ins.inaccessible)
+    if inaccessible:
+        raise ValueError(
+            "opt-in marker is not accessible outside the pin: "
+            + ", ".join(inaccessible)
+        )
+
 
 def propose_value(
     source: Declaration,
@@ -50,7 +73,7 @@ def propose_value(
     role: str | None = None,
     approved_family: str | None = None,
     surface: tuple[str, ...] | None = None,
-    opt_ins: set[str] = frozenset(),
+    opt_ins: OptInIndex = EMPTY_OPT_INS,
 ) -> dict[str, Any]:
     """Derive an ordinary constructor/factory using reusable type/default policies.
 
@@ -63,7 +86,7 @@ def propose_value(
         approved_family: An approved family to preserve, so values stay
             interchangeable where the wire treats them alike.
         surface: Approved parameter names. Other optional arguments remain native.
-        opt_ins: The pin's opt-in markers; the entry carries the ones this
+        opt_ins: The pin's opt-in index; the entry carries the markers this
             declaration requires, so a generated call site can opt in exactly.
 
     Returns:
@@ -113,14 +136,15 @@ def propose_value(
         source.owner.replace("$", ".") if source.dispatch_receiver else source.package
     )
     call = native_type if constructor else owner + "." + source.name
-    required = sorted(required_opt_ins(source, opt_ins))
+    required = required_opt_ins(source, opt_ins)
+    _refuse_inaccessible(required, opt_ins)
     result = {
         "family": approved_family or family,
         "kind": _role(constructor, parameters, role),
         "kotlinType": native_type,
         "since": since,
         "source": identity(source),
-        **({"optIn": required} if required else {}),
+        **({"optIn": sorted(required)} if required else {}),
         "parameters": parameters,
         "native": {"call": call},
     }
@@ -156,7 +180,7 @@ def propose_members(
     *,
     since: str,
     prefix: str = "",
-    opt_ins: set[str] = frozenset(),
+    opt_ins: OptInIndex = EMPTY_OPT_INS,
     also_from: tuple[str, ...] = (),
 ) -> dict[str, Any]:
     """Propose a named-member binding: every public member of ``owner`` in ``family``.
@@ -171,7 +195,8 @@ def propose_members(
         family: An approved descriptor providing the wire family and Kotlin type.
         since: Schema version that introduced the binding.
         prefix: Optional native qualifier, e.g. a ``MaterialTheme`` holder.
-        opt_ins: The pin's opt-in markers; a member that needs one contributes it.
+        opt_ins: The pin's opt-in index; a member that needs a marker contributes
+            it, and an inaccessible marker fails the proposal closed.
         also_from: Further approved holders of the same vocabulary, such as an
             object whose members carry the family's type. A member keeps the
             holder it is read from, so nothing is renamed to fit one prefix.
@@ -211,6 +236,7 @@ def propose_members(
         required |= required_opt_ins(declaration, opt_ins)
     if not members and not entries:
         raise ValueError(f"no public {family['family']} members on {owner}")
+    _refuse_inaccessible(required, opt_ins)
     described = (
         "enum entries"
         if entries and not members
@@ -312,7 +338,7 @@ def propose_vocabulary(
     name: str,
     *,
     since: str,
-    markers: set[str],
+    index: OptInIndex,
 ) -> dict[str, Any] | None:
     """Propose a member, unit or icon vocabulary, or nothing the tables know.
 
@@ -326,7 +352,7 @@ def propose_vocabulary(
         approved: The family's approved descriptor, empty before first approval.
         name: The constructor name being rebound.
         since: Schema version that introduced the binding.
-        markers: The pin's opt-in markers; a member that needs one carries it.
+        index: The pin's opt-in index; a member that needs a marker carries it.
 
     Returns:
         The proposal, or None when the name is not one of these vocabularies.
@@ -339,7 +365,7 @@ def propose_vocabulary(
             approved,
             since=since,
             prefix=prefix,
-            opt_ins=markers,
+            opt_ins=index,
             also_from=also_from,
         )
     if name in EXTENSIONS:
@@ -360,11 +386,9 @@ def bind(
     """Propose one approved binding against the current pin, or explain the refusal."""
     approved = registry["valueTypes"].get(name, {})
     since = approved.get("since", registry["schemaVersion"])
-    markers = opt_in_markers(found)
+    index = opt_in_index(found)
     try:
-        proposal = propose_vocabulary(
-            found, approved, name, since=since, markers=markers
-        )
+        proposal = propose_vocabulary(found, approved, name, since=since, index=index)
         if proposal is not None:
             return {"name": name, "proposal": proposal}
     except ValueError as exc:
@@ -390,7 +414,7 @@ def bind(
                 surface=tuple(approved["parameters"])
                 if "parameters" in approved
                 else None,
-                opt_ins=markers,
+                opt_ins=index,
             )
             if "kotlinType" in approved:
                 if not assignable(found, approved, source.return_type.classifier):

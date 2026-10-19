@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 DUMP = Path("android/build/compose-api")
-ARTIFACT = "androidx.compose.material3:material3-android:1.3.1"
+ARTIFACT = "androidx.compose.material3:material3-android:1.4.0"
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -71,9 +71,9 @@ def write_inventory(directory: Path, records: list[dict], **changes):
         "formatVersion": 1,
         "provenance": {
             "configuration": ":renderer:debugCompileClasspath",
-            "bom": "2025.01.01",
+            "bom": "2026.09.00",
             "compiler": "2.4.21",
-            "bomConstraints": {"androidx.compose.material3:material3-android": "1.3.1"},
+            "bomConstraints": {"androidx.compose.material3:material3-android": "1.4.0"},
             "overrides": [],
             "sourceHashes": {
                 path.relative_to("android").as_posix(): hashlib.sha256(
@@ -107,7 +107,7 @@ def write_inventory(directory: Path, records: list[dict], **changes):
 def test_dump_extracts_exact_public_signatures_and_receivers(native_document) -> None:
     document = native_document
     assert document["formatVersion"] == 1
-    assert document["provenance"]["bom"] == "2025.01.01"
+    assert document["provenance"]["bom"] == "2026.09.00"
     artifacts = {a["coordinate"]: a for a in document["artifacts"]}
     assert ARTIFACT in artifacts
     assert all(len(a["sha256"]) == 64 for a in artifacts.values())
@@ -128,9 +128,10 @@ def test_dump_extracts_exact_public_signatures_and_receivers(native_document) ->
     assert "androidx/compose/runtime/Composable" not in click["type"]["annotations"]
     assert "androidx/compose/runtime/Composable" in content["type"]["annotations"]
     assert content["type"]["arguments"][-1]["type"]["classifier"] == "kotlin/Unit"
-    assert (
-        artifacts[ARTIFACT]["attributes"]["org.jetbrains.kotlin.platform.type"]
-        == "androidJvm"
+    # material3-android 1.4.0 publishes its Kotlin platform attribute as `jvm`;
+    # the artifact is still selected by its `-android` coordinate.
+    assert artifacts[ARTIFACT]["attributes"]["org.jetbrains.kotlin.platform.type"] == (
+        "jvm"
     )
     properties = [
         d for d in document["declarations"] if d["declarationKind"] == "property"
@@ -358,7 +359,7 @@ def test_inventory_refuses_untrusted_or_incomplete_input(
     elif defect == "stale":
         document["provenance"]["sourceHashes"]["dump-compose-api.gradle.kts"] = "0" * 64
     else:
-        coordinate = ARTIFACT.replace("1.3.1", "1.4.0")
+        coordinate = ARTIFACT.replace("1.4.0", "1.5.0")
         document["artifacts"][0]["coordinate"] = coordinate
         document["declarations"][0]["artifact"] = coordinate
     (tmp_path / "inventory.json").write_text(json.dumps(document))

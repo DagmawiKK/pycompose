@@ -29487,6 +29487,8 @@
           "enum": [
             "Clip",
             "Ellipsis",
+            "MiddleEllipsis",
+            "StartEllipsis",
             "Visible"
           ],
           "type": "string"
@@ -29569,19 +29571,29 @@
             "onErrorContainer",
             "onPrimary",
             "onPrimaryContainer",
+            "onPrimaryFixed",
+            "onPrimaryFixedVariant",
             "onSecondary",
             "onSecondaryContainer",
+            "onSecondaryFixed",
+            "onSecondaryFixedVariant",
             "onSurface",
             "onSurfaceVariant",
             "onTertiary",
             "onTertiaryContainer",
+            "onTertiaryFixed",
+            "onTertiaryFixedVariant",
             "outline",
             "outlineVariant",
             "primary",
             "primaryContainer",
+            "primaryFixed",
+            "primaryFixedDim",
             "scrim",
             "secondary",
             "secondaryContainer",
+            "secondaryFixed",
+            "secondaryFixedDim",
             "surface",
             "surfaceBright",
             "surfaceContainer",
@@ -29593,7 +29605,9 @@
             "surfaceTint",
             "surfaceVariant",
             "tertiary",
-            "tertiaryContainer"
+            "tertiaryContainer",
+            "tertiaryFixed",
+            "tertiaryFixedDim"
           ],
           "type": "string"
         },
@@ -30504,9 +30518,6 @@
       "additionalProperties": false,
       "properties": {
         "checkedContainerColor": {
-          "$ref": "#/definitions/Family_Color"
-        },
-        "checkedContentColor": {
           "$ref": "#/definitions/Family_Color"
         },
         "containerColor": {
@@ -31868,6 +31879,9 @@
           "$ref": "#/definitions/Family_Color"
         },
         "scrolledContainerColor": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "subtitleContentColor": {
           "$ref": "#/definitions/Family_Color"
         },
         "titleContentColor": {

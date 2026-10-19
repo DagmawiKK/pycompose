@@ -22,7 +22,7 @@ def test_generated_native_calls_render_defaults_slots_and_events(
     from tools.schema.classpath_dump import Declaration, inventory, source_defaults
     from tools.schema.components import propose_components
 
-    assert native_document["provenance"]["bom"] == "2025.01.01"
+    assert native_document["provenance"]["bom"] == "2026.09.00"
     schema = Path("schema/components.json")
     original = schema.read_bytes()
     report = propose_components(
@@ -101,7 +101,7 @@ def test_generated_native_calls_render_defaults_slots_and_events(
     (tmp_path / "GeneratedCallsProof.kt").write_text(source)
     init = tmp_path / "proof.gradle"
     init.write_text(
-        "gradle.projectsEvaluated { gradle.rootProject.project(':host').android."
+        "gradle.projectsEvaluated { gradle.rootProject.project(':renderer').android."
         f"sourceSets.test.kotlin.srcDir({json.dumps(str(tmp_path))}) }}"
     )
     result = subprocess.run(
@@ -110,7 +110,7 @@ def test_generated_native_calls_render_defaults_slots_and_events(
             "-Pkotlin.incremental=false",
             "--init-script",
             str(init),
-            ":host:testDebugUnitTest",
+            ":renderer:testDebugUnitTest",
             "--tests",
             "com.pycompose.proof.GeneratedCallsProof",
             "--console=plain",
@@ -125,7 +125,7 @@ def test_generated_native_calls_render_defaults_slots_and_events(
     assert_calls_resolve_to_recorded_identities(
         report,
         Path(
-            "android/host/build/intermediates/built_in_kotlinc/debugUnitTest/"
+            "android/renderer/build/intermediates/built_in_kotlinc/debugUnitTest/"
             "compileDebugUnitTestKotlin/classes/com/pycompose/proof"
         ),
     )

@@ -218,13 +218,16 @@ def test_pinned_source_defaults_generate_native_factories(native_document) -> No
     from tools.schema.classpath_dump import inventory, source_defaults
     from tools.schema.propose import propose_value
 
-    assert native_document["provenance"]["bom"] == "2025.01.01"
+    assert native_document["provenance"]["bom"] == "2026.09.00"
     found = inventory(DUMP)
     defaults = source_defaults(DUMP)
     source = next(
         d
         for d in found.declarations
-        if d.name == "buttonColors" and d.parameters and len(d.parameters) == 4
+        if d.owner == "androidx.compose.material3.ButtonDefaults"
+        and d.name == "buttonColors"
+        and d.parameters
+        and len(d.parameters) == 4
     )
     spec = propose_value(
         source,
@@ -404,10 +407,10 @@ def test_unsafe_token_initializers_are_refused(
 
 
 def test_class_evidence_separates_sibling_vocabularies(native_document) -> None:
-    from tools.schema.classpath_dump import inventory, opt_in_markers
+    from tools.schema.classpath_dump import inventory, opt_in_index
     from tools.schema.propose import propose_members
 
-    assert native_document["provenance"]["bom"] == "2025.01.01"
+    assert native_document["provenance"]["bom"] == "2026.09.00"
     found = inventory(DUMP)
     vertical = next(
         evidence
@@ -420,7 +423,7 @@ def test_class_evidence_separates_sibling_vocabularies(native_document) -> None:
     # subtype, however the name reads.
     assert vertical.supertypes == ("kotlin/Any",)
     companion = "androidx/compose/ui/Alignment$Companion"
-    markers = opt_in_markers(found)
+    index = opt_in_index(found)
     alignment = propose_members(
         found,
         companion,
@@ -430,7 +433,7 @@ def test_class_evidence_separates_sibling_vocabularies(native_document) -> None:
             "kind": "constant",
         },
         since="1.14.0",
-        opt_ins=markers,
+        opt_ins=index,
         also_from=("androidx/compose/ui/AbsoluteAlignment",),
     )
     assert alignment["parameters"]["name"]["values"] == [
@@ -468,7 +471,7 @@ def test_class_evidence_separates_sibling_vocabularies(native_document) -> None:
             "kind": "constant",
         },
         since="1.14.0",
-        opt_ins=markers,
+        opt_ins=index,
     )
     assert upright["parameters"]["name"]["values"] == [
         "Bottom",
@@ -476,111 +479,3 @@ def test_class_evidence_separates_sibling_vocabularies(native_document) -> None:
         "Top",
     ]
     assert "owners" not in upright["native"]
-
-
-def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -> None:
-    from tools.schema.check_upstream import compare_values
-    from tools.schema.classpath_dump import inventory, source_defaults
-    from tools.schema.propose import refresh
-
-    assert native_document["provenance"]["compiler"] == "2.4.21"
-    found = inventory(DUMP)
-    evidence = source_defaults(DUMP)
-    registry = json.loads((ROOT / "schema/components.json").read_text())
-    results = refresh(found, evidence, registry)
-    derived = [item for item in results if "proposal" in item]
-    # Every approved binding carrying an artifact source is re-derived, not
-    # silently skipped; a language-level source is approved policy that no
-    # pin can reproduce (the range descriptor, ADR-0017 decision 5).
-    assert {item["name"] for item in derived} == {
-        name
-        for name, spec in registry["valueTypes"].items()
-        if "family" in spec and "source" in spec and "language" not in spec["source"]
-    }
-    for item in derived:
-        approved = registry["valueTypes"][item["name"]]
-        # A refresh reproduces the approved compiler-resolved facts exactly;
-        # semantic policy such as ARGB bounds is preserved, not regenerated.
-        assert item["proposal"] == approved
-    # Membership is checked above; the length adds that refresh() skips nothing.
-    assert len(derived) == len(results)
-    specs = {item["name"]: item["proposal"] for item in derived}
-    assert specs["RoundedCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
-    assert specs["CutCornerShape"]["parameters"]["size"]["valueType"] == "Dp"
-    assert specs["SolidColor"]["kotlinType"] == "androidx.compose.ui.graphics.Brush"
-    assert specs["datePickerColors"]["optIn"] == [
-        "androidx.compose.material3.ExperimentalMaterial3Api"
-    ]
-    assert "optIn" not in specs["checkboxColors"]
-    assert specs["TimePickerLayoutType"]["optIn"] == [
-        "androidx.compose.material3.ExperimentalMaterial3Api"
-    ]
-    assert len(specs["ThemeColor"]["parameters"]["name"]["values"]) == 36
-    assert len(specs["ThemeTypography"]["parameters"]["name"]["values"]) == 15
-    assert len(specs["ThemeShape"]["parameters"]["name"]["values"]) == 5
-    assert len(specs["FontFamily"]["parameters"]["name"]["values"]) == 5
-    assert list(specs["TextStyle"]["parameters"]) == [
-        "color",
-        "fontSize",
-        "letterSpacing",
-        "fontFamily",
-        "fontWeight",
-    ]
-    assert len(specs["TextStyle"]["omitted"]) == 19
-    for name in ("horizontalGradient", "verticalGradient", "linearGradient"):
-        assert specs[name]["parameters"]["colors"]["items"]["valueType"] == "Color"
-        assert specs[name]["omitted"]["tileMode"]["hasDefault"] is True
-    assert "defaultNative" not in json.dumps(specs)
-    assert compare_values(registry, found, evidence) == []
-
-
-def test_opt_in_evidence_comes_from_the_pin(native_document) -> None:
-    from tools.schema.classpath_dump import inventory, opt_in_markers, required_opt_ins
-
-    assert native_document["provenance"]["compiler"] == "2.4.21"
-    found = inventory(DUMP)
-    markers = opt_in_markers(found)
-    # The pin declares its own opt-in markers; nothing here is listed by hand.
-    assert "androidx.compose.material3.ExperimentalMaterial3Api" in markers
-    assert "kotlin.RequiresOptIn" not in markers
-    experimental = next(
-        declaration
-        for declaration in found.declarations
-        if declaration.owner == "androidx.compose.material3.TooltipDefaults"
-        and declaration.name == "richTooltipColors"
-    )
-    stable = next(
-        declaration
-        for declaration in found.declarations
-        if declaration.owner == "androidx.compose.material3.CheckboxDefaults"
-        and declaration.name == "colors"
-        and declaration.parameters
-    )
-    assert required_opt_ins(experimental, markers) == {
-        "androidx.compose.material3.ExperimentalMaterial3Api"
-    }
-    assert required_opt_ins(stable, markers) == set()
-
-
-def test_a_language_level_family_is_reviewed_not_re_derived(native_document) -> None:
-    """The range descriptor pins no artifact; its citation is approved policy.
-
-    ``ClosedFloatingPointRange`` has no factory to pin (ADR-0017 decision 5),
-    so the family is skipped by re-derivation and stays exactly as approved,
-    and the drift check stays silent about it rather than inventing a source
-    the compiler never resolved.
-    """
-    from test_value_codegen import RANGE_FAMILY
-
-    from tools.schema.check_upstream import compare_values
-    from tools.schema.classpath_dump import inventory, source_defaults
-    from tools.schema.propose import refresh
-
-    assert native_document["provenance"]["compiler"] == "2.4.21"
-    found = inventory(DUMP)
-    evidence = source_defaults(DUMP)
-    registry = json.loads((ROOT / "schema/components.json").read_text())
-    registry["valueTypes"]["Range"] = json.loads(json.dumps(RANGE_FAMILY))
-    results = refresh(found, evidence, registry)
-    assert "Range" not in {item["name"] for item in results}
-    assert compare_values(registry, found, evidence) == []

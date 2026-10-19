@@ -222,19 +222,29 @@ object ValueResolver {
                     "onErrorContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onErrorContainer
                     "onPrimary" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimary
                     "onPrimaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryContainer
+                    "onPrimaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryFixed
+                    "onPrimaryFixedVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryFixedVariant
                     "onSecondary" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondary
                     "onSecondaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryContainer
+                    "onSecondaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryFixed
+                    "onSecondaryFixedVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryFixedVariant
                     "onSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.onSurface
                     "onSurfaceVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
                     "onTertiary" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiary
                     "onTertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryContainer
+                    "onTertiaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryFixed
+                    "onTertiaryFixedVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryFixedVariant
                     "outline" -> androidx.compose.material3.MaterialTheme.colorScheme.outline
                     "outlineVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.outlineVariant
                     "primary" -> androidx.compose.material3.MaterialTheme.colorScheme.primary
                     "primaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer
+                    "primaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryFixed
+                    "primaryFixedDim" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryFixedDim
                     "scrim" -> androidx.compose.material3.MaterialTheme.colorScheme.scrim
                     "secondary" -> androidx.compose.material3.MaterialTheme.colorScheme.secondary
                     "secondaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryContainer
+                    "secondaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryFixed
+                    "secondaryFixedDim" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryFixedDim
                     "surface" -> androidx.compose.material3.MaterialTheme.colorScheme.surface
                     "surfaceBright" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceBright
                     "surfaceContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainer
@@ -247,6 +257,8 @@ object ValueResolver {
                     "surfaceVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant
                     "tertiary" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiary
                     "tertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryContainer
+                    "tertiaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryFixed
+                    "tertiaryFixedDim" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryFixedDim
                     else -> error("Unknown native constant")
                 }
             }

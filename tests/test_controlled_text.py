@@ -194,7 +194,7 @@ def test_a_caret_moved_without_the_text_changing_is_not_reported() -> None:
     from the same callback that reports the text. Moving the caret with an arrow
     key produces no text change and so no event. Making it observable needs
     TextFieldState, which arrived in material3 1.4.0-alpha; this project is on
-    compose-bom 2025.01.01, which resolves to 1.3.x.
+    compose-bom 2026.09.00, which resolves to 1.4.x.
     """
     assert "no selection callback of its" in ADAPTER.read_text()
 

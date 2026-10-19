@@ -26,8 +26,10 @@ from tools.schema.classpath_dump import (
     Declaration,
     Inventory,
     Kind,
+    OptInIndex,
     Parameter,
     inventory,
+    opt_in_index,
     source_defaults,
 )
 from tools.schema.propose import SCALARS, identity, source_name, value_families
@@ -157,15 +159,6 @@ def _symbols(expression: dict[str, Any]) -> Iterator[str]:
         yield from _symbols(expression["receiver"])
 
 
-def _opt_ins(annotations: list[str]) -> set[str]:
-    """List the opt-in markers of one declaration's annotations."""
-    return {
-        a.replace("/", ".")
-        for a in annotations
-        if a.rsplit("/", 1)[-1].startswith("Experimental")
-    }
-
-
 def _scope_providers(declarations: Iterable[Declaration]) -> set[str]:
     """Classifiers an app composes *inside*, not merely passes as a parameter.
 
@@ -214,6 +207,7 @@ def _plan(
     defaults: dict[str, Any],
     default_markers: dict[str, set[str]],
     scope_providers: set[str],
+    index: OptInIndex,
 ) -> dict[str, Any]:
     """Plan one exact overload, recording every capability it would need."""
     parameters: dict[str, Any] = {}
@@ -249,10 +243,22 @@ def _plan(
             "required": parameter.required,
             "hasDefault": parameter.has_default,
         }
-    opt_ins = _opt_ins(source.annotations)
+    opt_ins = index.of(source)
     for spec in parameters.values():
         for symbol in _symbols(spec.get("default", {})):
             opt_ins.update(default_markers.get(symbol, set()))
+    inaccessible = sorted(opt_ins & index.inaccessible)
+    if inaccessible:
+        gaps.append(
+            {
+                "parameter": None,
+                "required": True,
+                "reason": (
+                    "opt-in marker is not accessible outside the pin: "
+                    + ", ".join(inaccessible)
+                ),
+            }
+        )
     return {
         "name": source.name,
         "surface": _surface(source, scope_providers),
@@ -451,6 +457,7 @@ def propose_components(
 ) -> dict[str, Any]:
     """Derive byte-stable, unapproved plans for all UI overloads in the inventory."""
     families = value_families(registry)
+    index = opt_in_index(found)
     default_markers: dict[str, set[str]] = {}
     for declaration in found.declarations:
         holder = (
@@ -459,9 +466,7 @@ def propose_components(
             else declaration.package
         )
         symbol = holder + "." + declaration.name
-        default_markers.setdefault(symbol, set()).update(
-            _opt_ins(declaration.annotations)
-        )
+        default_markers.setdefault(symbol, set()).update(index.of(declaration))
     # Every representable argument is passed explicitly, so the arguments a call
     # carries are what Kotlin resolves on; overloads those arguments cannot tell
     # apart are refused rather than silently bound to a sibling.
@@ -473,6 +478,7 @@ def propose_components(
             defaults.get((source.owner, source.jvm_name, source.jvm_descriptor), {}),
             default_markers,
             scope_providers,
+            index,
         )
         for source in sorted(
             found.ui,

@@ -43,6 +43,23 @@ dependencies {
     // The icon vocabulary resolves to `Icons.<Style>.<Name>` properties, which
     // material3 does not put on the compile classpath.
     implementation(libs.compose.material.icons.core)
+    // The completion release's integration domains. They have to resolve on the
+    // extraction classpath so dumpComposeApi can account for every ratified
+    // app-facing group, and the renderer binds them as each domain lands.
+    // Testing/tooling artifacts never ride this classpath.
+    implementation(libs.activity.compose)
+    implementation(libs.constraintlayout.compose)
+    implementation(libs.lifecycle.compose)
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.navigation.compose)
+    implementation(libs.navigation3.ui)
+    implementation(libs.paging.compose)
+    implementation(libs.window)
+    implementation(libs.compose.material3.adaptive.navigation.suite)
+    implementation(libs.compose.material3.adaptive)
+    // Material 2 is a design profile of its own (pycompose.m2), never a default
+    // of the Material 3 namespace.
+    implementation(libs.compose.material)
     testImplementation(libs.compose.test)
     testImplementation(libs.robolectric)
     testImplementation(libs.junit4)

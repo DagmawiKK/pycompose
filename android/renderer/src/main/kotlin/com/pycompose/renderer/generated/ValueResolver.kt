@@ -553,19 +553,29 @@ object ValueResolver {
                     "onErrorContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onErrorContainer
                     "onPrimary" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimary
                     "onPrimaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryContainer
+                    "onPrimaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryFixed
+                    "onPrimaryFixedVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryFixedVariant
                     "onSecondary" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondary
                     "onSecondaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryContainer
+                    "onSecondaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryFixed
+                    "onSecondaryFixedVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryFixedVariant
                     "onSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.onSurface
                     "onSurfaceVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
                     "onTertiary" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiary
                     "onTertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryContainer
+                    "onTertiaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryFixed
+                    "onTertiaryFixedVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryFixedVariant
                     "outline" -> androidx.compose.material3.MaterialTheme.colorScheme.outline
                     "outlineVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.outlineVariant
                     "primary" -> androidx.compose.material3.MaterialTheme.colorScheme.primary
                     "primaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer
+                    "primaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryFixed
+                    "primaryFixedDim" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryFixedDim
                     "scrim" -> androidx.compose.material3.MaterialTheme.colorScheme.scrim
                     "secondary" -> androidx.compose.material3.MaterialTheme.colorScheme.secondary
                     "secondaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryContainer
+                    "secondaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryFixed
+                    "secondaryFixedDim" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryFixedDim
                     "surface" -> androidx.compose.material3.MaterialTheme.colorScheme.surface
                     "surfaceBright" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceBright
                     "surfaceContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainer
@@ -578,20 +588,20 @@ object ValueResolver {
                     "surfaceVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant
                     "tertiary" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiary
                     "tertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryContainer
+                    "tertiaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryFixed
+                    "tertiaryFixedDim" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryFixedDim
                     else -> error("Unknown native constant")
                 }
             }
         }
 
     @Composable
-    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     fun datePickerColors(value: JsonElement): Result<androidx.compose.material3.DatePickerColors> {
         val parsed = runCatching { ValueContract.readDatePickerColors(value) }.getOrElse { return Result.failure(it) }
         return Result.success(datePickerColors(parsed))
     }
 
     @Composable
-    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     fun datePickerColors(value: DatePickerColorsValue): androidx.compose.material3.DatePickerColors =
         when (value) {
             is WiredatePickerColors -> {
@@ -626,14 +636,12 @@ object ValueResolver {
         }
 
     @Composable
-    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     fun displayMode(value: JsonElement): Result<androidx.compose.material3.DisplayMode> {
         val parsed = runCatching { ValueContract.readDisplayMode(value) }.getOrElse { return Result.failure(it) }
         return Result.success(displayMode(parsed))
     }
 
     @Composable
-    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     fun displayMode(value: DisplayModeValue): androidx.compose.material3.DisplayMode =
         when (value) {
             is WireDisplayMode -> {
@@ -868,7 +876,6 @@ object ValueResolver {
                     disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     disabledContentColor = if ("disabledContentColor" in value.supplied) value.disabledContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     checkedContainerColor = if ("checkedContainerColor" in value.supplied) value.checkedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
-                    checkedContentColor = if ("checkedContentColor" in value.supplied) value.checkedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
             }
             is WireiconToggleButtonColors -> {
@@ -1684,6 +1691,8 @@ object ValueResolver {
                 when (value.name) {
                     "Clip" -> androidx.compose.ui.text.style.TextOverflow.Clip
                     "Ellipsis" -> androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    "MiddleEllipsis" -> androidx.compose.ui.text.style.TextOverflow.MiddleEllipsis
+                    "StartEllipsis" -> androidx.compose.ui.text.style.TextOverflow.StartEllipsis
                     "Visible" -> androidx.compose.ui.text.style.TextOverflow.Visible
                     else -> error("Unknown native constant")
                 }
@@ -1818,14 +1827,12 @@ object ValueResolver {
         }
 
     @Composable
-    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     fun topAppBarColors(value: JsonElement): Result<androidx.compose.material3.TopAppBarColors> {
         val parsed = runCatching { ValueContract.readTopAppBarColors(value) }.getOrElse { return Result.failure(it) }
         return Result.success(topAppBarColors(parsed))
     }
 
     @Composable
-    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     fun topAppBarColors(value: TopAppBarColorsValue): androidx.compose.material3.TopAppBarColors =
         when (value) {
             is WirecenterAlignedTopAppBarColors -> {
@@ -1862,6 +1869,7 @@ object ValueResolver {
                     navigationIconContentColor = if ("navigationIconContentColor" in value.supplied) value.navigationIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     titleContentColor = if ("titleContentColor" in value.supplied) value.titleContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     actionIconContentColor = if ("actionIconContentColor" in value.supplied) value.actionIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    subtitleContentColor = if ("subtitleContentColor" in value.supplied) value.subtitleContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
             }
         }
