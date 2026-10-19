@@ -7,7 +7,7 @@ import java.security.MessageDigest
 val sourceCompiler = configurations.create("composeSourceCompiler")
 
 dependencies {
-    add(sourceCompiler.name, "org.jetbrains.kotlin:kotlin-compiler-embeddable:2.0.21")
+    add(sourceCompiler.name, "org.jetbrains.kotlin:kotlin-compiler-embeddable:2.4.21")
     add(sourceCompiler.name, "com.google.code.gson:gson:2.11.0")
 }
 
@@ -60,6 +60,7 @@ tasks.register("dumpComposeDefaults") {
     inputs.property("sources", sources)
     inputs.file(schema)
     inputs.file(tool)
+    inputs.files(sourceCompiler)
 
     // Artifact, source and compiler inputs are revalidated on every invocation.
     doLast {

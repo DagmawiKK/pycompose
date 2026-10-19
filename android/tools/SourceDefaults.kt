@@ -1,7 +1,17 @@
 // Development-only compiler frontend. Emit data, never source-expression strings.
+@file:Suppress("DEPRECATION_ERROR")
+@file:OptIn(
+    org.jetbrains.kotlin.CoreEnvironmentDeprecation::class,
+    org.jetbrains.kotlin.K1Deprecation::class,
+    org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi::class,
+    org.jetbrains.kotlin.config.CompilerConfiguration.Internals::class,
+    org.jetbrains.kotlin.config.MessageCollectorAccess::class,
+)
+
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
@@ -9,6 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -376,6 +387,7 @@ fun main(args: Array<String>) {
         val config = CompilerConfiguration().apply {
             put(CommonConfigurationKeys.MODULE_NAME, "compose-default-evidence")
             put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+            extensionsStorage = ExtensionStorage()
             addJvmClasspathRoots(request.getAsJsonArray("classpath").map { File(it.asString) })
         }
         val environment = KotlinCoreEnvironment.createForProduction(
