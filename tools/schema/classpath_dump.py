@@ -219,6 +219,7 @@ def _validate_inventory(data: dict[str, Any]) -> None:
     _require(bool(provenance["bomConstraints"]), "missing resolved BOM constraints")
     _require(bool(artifacts), "inventory has no resolved artifacts")
     _require(len(artifacts) == len(data["artifacts"]), "duplicate resolved artifact")
+    android_artifacts: set[str] = set()
     for artifact in artifacts.values():
         module, version = artifact["coordinate"].rsplit(":", 1)
         expected = provenance["bomConstraints"].get(module)
@@ -226,7 +227,20 @@ def _validate_inventory(data: dict[str, Any]) -> None:
             _require(
                 version == expected, "resolved artifact differs from BOM constraint"
             )
-        _require(artifact["variant"] in {"androidJvm", None}, "non-Android artifact")
+        attributes = artifact.get("attributes", {})
+        android_aar = (
+            artifact["variant"] == "jvm"
+            and attributes.get("org.jetbrains.kotlin.platform.type") == "jvm"
+            and attributes.get("org.gradle.jvm.environment") == "android"
+            and attributes.get("artifactType") == "aar"
+            and attributes.get("org.gradle.libraryelements") == "aar"
+        )
+        _require(
+            artifact["variant"] in {"androidJvm", None} or android_aar,
+            "non-Android artifact",
+        )
+        if artifact["variant"] == "androidJvm" or android_aar:
+            android_artifacts.add(artifact["coordinate"])
         _require(
             re.fullmatch(r"[0-9a-f]{64}", artifact["sha256"]) is not None,
             "invalid artifact hash",
@@ -246,7 +260,7 @@ def _validate_inventory(data: dict[str, Any]) -> None:
         )
         if record["disposition"] == "ui":
             _require(
-                artifacts[record["artifact"]]["variant"] == "androidJvm",
+                record["artifact"] in android_artifacts,
                 "M3 UI requires an Android variant",
             )
         _validate_declaration(record)
