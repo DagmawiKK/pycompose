@@ -22,6 +22,7 @@ __all__ = [
     "Box",
     "Button",
     "Card",
+    "CenterAlignedTopAppBar",
     "Checkbox",
     "CircularProgressIndicator",
     "Column",
@@ -49,10 +50,12 @@ __all__ = [
     "Image",
     "InputChip",
     "LargeFloatingActionButton",
+    "LargeTopAppBar",
     "LazyColumn",
     "LeadingIconTab",
     "LinearProgressIndicator",
     "ListItem",
+    "MediumTopAppBar",
     "ModalBottomSheet",
     "ModalDrawerSheet",
     "ModalNavigationDrawer",
@@ -72,6 +75,7 @@ __all__ = [
     "PermanentNavigationDrawer",
     "PrimaryScrollableTabRow",
     "PrimaryTabRow",
+    "PullToRefreshBox",
     "RadioButton",
     "Row",
     "Scaffold",
@@ -80,6 +84,7 @@ __all__ = [
     "ShortNavigationBar",
     "ShortNavigationBarItem",
     "Slider",
+    "Snackbar",
     "SnackbarHost",
     "Spacer",
     "SuggestionChip",
@@ -89,8 +94,10 @@ __all__ = [
     "Text",
     "TextButton",
     "TextField",
+    "TopAppBar",
     "TriStateCheckbox",
     "VerticalDivider",
+    "VerticalDragHandle",
     "WideNavigationRail",
     "WideNavigationRailItem",
 ]
@@ -121,6 +128,24 @@ _LazyColumnVerticalArrangement = Literal[
     "spaceEvenly",
     "spaceBetween",
     "spaceAround",
+]
+
+_PullToRefreshBoxContentAlignment = Literal[
+    "bottomCenter",
+    "bottomEnd",
+    "bottomLeft",
+    "bottomRight",
+    "bottomStart",
+    "center",
+    "centerEnd",
+    "centerLeft",
+    "centerRight",
+    "centerStart",
+    "topCenter",
+    "topEnd",
+    "topLeft",
+    "topRight",
+    "topStart",
 ]
 
 _RowVerticalAlignment = Literal[
@@ -494,6 +519,46 @@ class Card(Component):
             children = content_nodes(content, key="content")
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class CenterAlignedTopAppBar(Component):
+    """Native CenterAlignedTopAppBar;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "CenterAlignedTopAppBar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        expanded_height: int | float | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        title: Content | None = None,
+    ) -> None:
+        """Construct a registered CenterAlignedTopAppBar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            expanded_height: Native expandedHeight; None uses its default.
+            modifier: Native modifier; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            title: Nodes for the native title slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if expanded_height is not None:
+            props["expanded_height"] = expanded_height
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        slotted: tuple[Node, ...] = ()
+        if title is not None:
+            slotted += slot_nodes(title, key="title", slot="title")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class Checkbox(Component):
@@ -1853,6 +1918,49 @@ class LargeFloatingActionButton(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class LargeTopAppBar(Component):
+    """Native LargeTopAppBar; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LargeTopAppBar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        collapsed_height: int | float | None = None,
+        colors: JsonValue | None = None,
+        expanded_height: int | float | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        title: Content | None = None,
+    ) -> None:
+        """Construct a registered LargeTopAppBar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            collapsed_height: Native collapsedHeight; None uses its default.
+            colors: Native colors; None uses its default.
+            expanded_height: Native expandedHeight; None uses its default.
+            modifier: Native modifier; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            title: Nodes for the native title slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if collapsed_height is not None:
+            props["collapsed_height"] = collapsed_height
+        if colors is not None:
+            props["colors"] = colors
+        if expanded_height is not None:
+            props["expanded_height"] = expanded_height
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        slotted: tuple[Node, ...] = ()
+        if title is not None:
+            slotted += slot_nodes(title, key="title", slot="title")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
 class LazyColumn(Component):
     """Native LazyColumn; props and defaults follow the component manifest."""
 
@@ -2049,6 +2157,49 @@ class ListItem(Component):
                 key="trailingContent",
                 slot="trailingContent",
             )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class MediumTopAppBar(Component):
+    """Native MediumTopAppBar; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "MediumTopAppBar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        collapsed_height: int | float | None = None,
+        colors: JsonValue | None = None,
+        expanded_height: int | float | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        title: Content | None = None,
+    ) -> None:
+        """Construct a registered MediumTopAppBar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            collapsed_height: Native collapsedHeight; None uses its default.
+            colors: Native colors; None uses its default.
+            expanded_height: Native expandedHeight; None uses its default.
+            modifier: Native modifier; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            title: Nodes for the native title slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if collapsed_height is not None:
+            props["collapsed_height"] = collapsed_height
+        if colors is not None:
+            props["colors"] = colors
+        if expanded_height is not None:
+            props["expanded_height"] = expanded_height
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        slotted: tuple[Node, ...] = ()
+        if title is not None:
+            slotted += slot_nodes(title, key="title", slot="title")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
@@ -2987,6 +3138,52 @@ class PrimaryTabRow(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class PullToRefreshBox(Component):
+    """Native PullToRefreshBox; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "PullToRefreshBox"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        content_alignment: _PullToRefreshBoxContentAlignment | None = None,
+        is_refreshing: bool,
+        modifier: Modifier | None = None,
+        on_refresh: str,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered PullToRefreshBox.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            content_alignment: Native contentAlignment; None uses its default.
+            is_refreshing: Required native isRefreshing.
+            modifier: Native modifier; None uses its default.
+            on_refresh: Required native onRefresh.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if content_alignment is not None:
+            props["content_alignment"] = content_alignment
+        props["is_refreshing"] = is_refreshing
+        props["on_refresh"] = on_refresh
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class RadioButton(Component):
     """Native RadioButton; props and defaults follow the component manifest."""
 
@@ -3339,6 +3536,71 @@ class Slider(Component):
             props["value"] = value
         props["value_range"] = value_range
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class Snackbar(Component):
+    """Native Snackbar; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Snackbar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        action_content_color: JsonValue | None = None,
+        action_on_new_line: bool | None = None,
+        container_color: JsonValue | None = None,
+        content_color: JsonValue | None = None,
+        dismiss_action_content_color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        action: Content | None = None,
+        dismiss_action: Content | None = None,
+    ) -> None:
+        """Construct a registered Snackbar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            action_content_color: Native actionContentColor; None uses its default.
+            action_on_new_line: Native actionOnNewLine; None uses its default.
+            container_color: Native containerColor; None uses its default.
+            content_color: Native contentColor; None uses its default.
+            dismiss_action_content_color: Native dismissActionContentColor; None
+                uses its default.
+            modifier: Native modifier; None uses its default.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            action: Nodes for the native action slot.
+            dismiss_action: Nodes for the native dismissAction slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if action_content_color is not None:
+            props["action_content_color"] = action_content_color
+        if action_on_new_line is not None:
+            props["action_on_new_line"] = action_on_new_line
+        if container_color is not None:
+            props["container_color"] = container_color
+        if content_color is not None:
+            props["content_color"] = content_color
+        if dismiss_action_content_color is not None:
+            props["dismiss_action_content_color"] = dismiss_action_content_color
+        if shape is not None:
+            props["shape"] = shape
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if action is not None:
+            slotted += slot_nodes(action, key="action", slot="action")
+        if dismiss_action is not None:
+            slotted += slot_nodes(
+                dismiss_action,
+                key="dismissAction",
+                slot="dismissAction",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class SnackbarHost(Component):
@@ -3730,6 +3992,45 @@ class TextField(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
+class TopAppBar(Component):
+    """Native TopAppBar; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TopAppBar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        expanded_height: int | float | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        title: Content | None = None,
+    ) -> None:
+        """Construct a registered TopAppBar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            expanded_height: Native expandedHeight; None uses its default.
+            modifier: Native modifier; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            title: Nodes for the native title slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if expanded_height is not None:
+            props["expanded_height"] = expanded_height
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        slotted: tuple[Node, ...] = ()
+        if title is not None:
+            slotted += slot_nodes(title, key="title", slot="title")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
 class TriStateCheckbox(Component):
     """Native TriStateCheckbox; props and defaults follow the component manifest."""
 
@@ -3793,6 +4094,28 @@ class VerticalDivider(Component):
             props["color"] = color
         if thickness is not None:
             props["thickness"] = thickness
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class VerticalDragHandle(Component):
+    """Native VerticalDragHandle; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "VerticalDragHandle"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+    ) -> None:
+        """Construct a registered VerticalDragHandle.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+        """
+        props: dict[str, JsonValue] = {}
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 

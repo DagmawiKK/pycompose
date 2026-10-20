@@ -850,6 +850,74 @@
       },
       "type": "object"
     },
+    "C_CenterAlignedTopAppBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "title"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TopAppBarColors"
+            },
+            "expandedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "CenterAlignedTopAppBar"
+        }
+      },
+      "type": "object"
+    },
     "C_Checkbox": {
       "properties": {
         "children": false,
@@ -2555,6 +2623,96 @@
       },
       "type": "object"
     },
+    "C_LargeTopAppBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "title"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "collapsedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_TopAppBarColors"
+            },
+            "expandedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LargeTopAppBar"
+        }
+      },
+      "type": "object"
+    },
     "C_LazyColumn": {
       "properties": {
         "children": {
@@ -2810,6 +2968,96 @@
         },
         "type": {
           "const": "ListItem"
+        }
+      },
+      "type": "object"
+    },
+    "C_MediumTopAppBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "title"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "collapsedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_TopAppBarColors"
+            },
+            "expandedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "MediumTopAppBar"
         }
       },
       "type": "object"
@@ -3952,6 +4200,68 @@
       },
       "type": "object"
     },
+    "C_PullToRefreshBox": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomLeft",
+                "bottomRight",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerLeft",
+                "centerRight",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topLeft",
+                "topRight",
+                "topStart"
+              ]
+            },
+            "isRefreshing": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onRefresh": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "required": [
+            "isRefreshing",
+            "onRefresh"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "PullToRefreshBox"
+        }
+      },
+      "type": "object"
+    },
     "C_RadioButton": {
       "properties": {
         "children": false,
@@ -4443,6 +4753,91 @@
         },
         "type": {
           "const": "Slider"
+        }
+      },
+      "type": "object"
+    },
+    "C_Snackbar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "action",
+                  "dismissAction"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "actionContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "actionOnNewLine": {
+              "default": false,
+              "type": "boolean"
+            },
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "dismissActionContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Snackbar"
         }
       },
       "type": "object"
@@ -5018,6 +5413,74 @@
       },
       "type": "object"
     },
+    "C_TopAppBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "title"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TopAppBarColors"
+            },
+            "expandedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "TopAppBar"
+        }
+      },
+      "type": "object"
+    },
     "C_TriStateCheckbox": {
       "properties": {
         "children": false,
@@ -5118,6 +5581,32 @@
         },
         "type": {
           "const": "VerticalDivider"
+        }
+      },
+      "type": "object"
+    },
+    "C_VerticalDragHandle": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "VerticalDragHandle"
         }
       },
       "type": "object"
@@ -5969,6 +6458,9 @@
               "$ref": "#/definitions/C_Card"
             },
             {
+              "$ref": "#/definitions/C_CenterAlignedTopAppBar"
+            },
+            {
               "$ref": "#/definitions/C_Checkbox"
             },
             {
@@ -6050,6 +6542,9 @@
               "$ref": "#/definitions/C_LargeFloatingActionButton"
             },
             {
+              "$ref": "#/definitions/C_LargeTopAppBar"
+            },
+            {
               "$ref": "#/definitions/C_LazyColumn"
             },
             {
@@ -6060,6 +6555,9 @@
             },
             {
               "$ref": "#/definitions/C_ListItem"
+            },
+            {
+              "$ref": "#/definitions/C_MediumTopAppBar"
             },
             {
               "$ref": "#/definitions/C_ModalBottomSheet"
@@ -6119,6 +6617,9 @@
               "$ref": "#/definitions/C_PrimaryTabRow"
             },
             {
+              "$ref": "#/definitions/C_PullToRefreshBox"
+            },
+            {
               "$ref": "#/definitions/C_RadioButton"
             },
             {
@@ -6141,6 +6642,9 @@
             },
             {
               "$ref": "#/definitions/C_Slider"
+            },
+            {
+              "$ref": "#/definitions/C_Snackbar"
             },
             {
               "$ref": "#/definitions/C_SnackbarHost"
@@ -6170,10 +6674,16 @@
               "$ref": "#/definitions/C_TextField"
             },
             {
+              "$ref": "#/definitions/C_TopAppBar"
+            },
+            {
               "$ref": "#/definitions/C_TriStateCheckbox"
             },
             {
               "$ref": "#/definitions/C_VerticalDivider"
+            },
+            {
+              "$ref": "#/definitions/C_VerticalDragHandle"
             },
             {
               "$ref": "#/definitions/C_WideNavigationRail"
@@ -23045,6 +23555,74 @@
       },
       "type": "object"
     },
+    "V_1_23_0_CenterAlignedTopAppBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "title"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TopAppBarColors"
+            },
+            "expandedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "CenterAlignedTopAppBar"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Checkbox": {
       "properties": {
         "children": false,
@@ -24750,6 +25328,96 @@
       },
       "type": "object"
     },
+    "V_1_23_0_LargeTopAppBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "title"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "collapsedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_TopAppBarColors"
+            },
+            "expandedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LargeTopAppBar"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_LazyColumn": {
       "properties": {
         "children": {
@@ -25005,6 +25673,96 @@
         },
         "type": {
           "const": "ListItem"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_MediumTopAppBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "title"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "collapsedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_TopAppBarColors"
+            },
+            "expandedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "MediumTopAppBar"
         }
       },
       "type": "object"
@@ -25841,6 +26599,9 @@
               "$ref": "#/definitions/V_1_23_0_Card"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_CenterAlignedTopAppBar"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_Checkbox"
             },
             {
@@ -25922,6 +26683,9 @@
               "$ref": "#/definitions/V_1_23_0_LargeFloatingActionButton"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_LargeTopAppBar"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_LazyColumn"
             },
             {
@@ -25932,6 +26696,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_ListItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_MediumTopAppBar"
             },
             {
               "$ref": "#/definitions/V_1_23_0_ModalBottomSheet"
@@ -25991,6 +26758,9 @@
               "$ref": "#/definitions/V_1_23_0_PrimaryTabRow"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_PullToRefreshBox"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_RadioButton"
             },
             {
@@ -26013,6 +26783,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_Slider"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_Snackbar"
             },
             {
               "$ref": "#/definitions/V_1_23_0_SnackbarHost"
@@ -26042,10 +26815,16 @@
               "$ref": "#/definitions/V_1_23_0_TextField"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_TopAppBar"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_TriStateCheckbox"
             },
             {
               "$ref": "#/definitions/V_1_23_0_VerticalDivider"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_VerticalDragHandle"
             },
             {
               "$ref": "#/definitions/V_1_23_0_WideNavigationRail"
@@ -26671,6 +27450,68 @@
       },
       "type": "object"
     },
+    "V_1_23_0_PullToRefreshBox": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomLeft",
+                "bottomRight",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerLeft",
+                "centerRight",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topLeft",
+                "topRight",
+                "topStart"
+              ]
+            },
+            "isRefreshing": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onRefresh": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "required": [
+            "isRefreshing",
+            "onRefresh"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "PullToRefreshBox"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_RadioButton": {
       "properties": {
         "children": false,
@@ -27162,6 +28003,91 @@
         },
         "type": {
           "const": "Slider"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_Snackbar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "action",
+                  "dismissAction"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "actionContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "actionOnNewLine": {
+              "default": false,
+              "type": "boolean"
+            },
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "dismissActionContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Snackbar"
         }
       },
       "type": "object"
@@ -27737,6 +28663,74 @@
       },
       "type": "object"
     },
+    "V_1_23_0_TopAppBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "title"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TopAppBarColors"
+            },
+            "expandedHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "TopAppBar"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_TriStateCheckbox": {
       "properties": {
         "children": false,
@@ -27837,6 +28831,32 @@
         },
         "type": {
           "const": "VerticalDivider"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_VerticalDragHandle": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "VerticalDragHandle"
         }
       },
       "type": "object"

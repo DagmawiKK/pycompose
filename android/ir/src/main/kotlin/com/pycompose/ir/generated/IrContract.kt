@@ -106,6 +106,18 @@ object IrContract {
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
+        "CenterAlignedTopAppBar" to ComponentRule(
+            slots = setOf("title"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "colors" to PropertyRule("value", required = false, valueType = "TopAppBarColors"),
+                "expandedHeight" to PropertyRule("dp", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
+            ),
+        ),
         "Checkbox" to ComponentRule(
             slots = setOf(),
             childrenAllowed = false,
@@ -483,6 +495,19 @@ object IrContract {
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
+        "LargeTopAppBar" to ComponentRule(
+            slots = setOf("title"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "collapsedHeight" to PropertyRule("dp", required = false),
+                "colors" to PropertyRule("value", required = false, valueType = "TopAppBarColors"),
+                "expandedHeight" to PropertyRule("dp", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
+            ),
+        ),
         "LazyColumn" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -529,6 +554,19 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "shadowElevation" to PropertyRule("dp", required = false),
                 "tonalElevation" to PropertyRule("dp", required = false),
+            ),
+        ),
+        "MediumTopAppBar" to ComponentRule(
+            slots = setOf("title"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "collapsedHeight" to PropertyRule("dp", required = false),
+                "colors" to PropertyRule("value", required = false, valueType = "TopAppBarColors"),
+                "expandedHeight" to PropertyRule("dp", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
             ),
         ),
         "ModalBottomSheet" to ComponentRule(
@@ -773,6 +811,18 @@ object IrContract {
                 "selectedTabIndex" to PropertyRule("integer", required = true, minimum = -2147483648.0, maximum = 2147483647.0),
             ),
         ),
+        "PullToRefreshBox" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "contentAlignment" to PropertyRule("enum", required = false, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
+                "isRefreshing" to PropertyRule("boolean", required = true),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onRefresh" to PropertyRule("actionId", required = true),
+            ),
+        ),
         "RadioButton" to ComponentRule(
             slots = setOf(),
             childrenAllowed = false,
@@ -872,6 +922,21 @@ object IrContract {
                 "steps" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483645.0),
                 "value" to PropertyRule("number", required = false),
                 "valueRange" to PropertyRule("value", required = true, valueType = "Range"),
+            ),
+        ),
+        "Snackbar" to ComponentRule(
+            slots = setOf("action", "dismissAction"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "actionContentColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "actionOnNewLine" to PropertyRule("boolean", required = false),
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "contentColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "dismissActionContentColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
         "SnackbarHost" to ComponentRule(
@@ -998,6 +1063,18 @@ object IrContract {
                 "value" to PropertyRule("string", required = true),
             ),
         ),
+        "TopAppBar" to ComponentRule(
+            slots = setOf("title"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "colors" to PropertyRule("value", required = false, valueType = "TopAppBarColors"),
+                "expandedHeight" to PropertyRule("dp", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
+            ),
+        ),
         "TriStateCheckbox" to ComponentRule(
             slots = setOf(),
             childrenAllowed = false,
@@ -1020,6 +1097,15 @@ object IrContract {
                 "color" to PropertyRule("color", required = false, valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "thickness" to PropertyRule("dp", required = false),
+            ),
+        ),
+        "VerticalDragHandle" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
         "WideNavigationRail" to ComponentRule(

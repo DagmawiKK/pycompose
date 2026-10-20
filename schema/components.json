@@ -4080,6 +4080,324 @@
         "kind": "content",
         "provides": "ColumnScope"
       }
+    },
+    "TopAppBar": {
+      "package": "androidx.compose.material3",
+      "category": "app-bars",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;FLandroidx/compose/foundation/layout/WindowInsets;Landroidx/compose/material3/TopAppBarColors;Landroidx/compose/material3/TopAppBarScrollBehavior;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "TopAppBar-GHTll3U",
+        "name": "TopAppBar",
+        "owner": "androidx.compose.material3.AppBarKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "TopAppBarColors",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.topAppBarColors()"
+        },
+        "expandedHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "title": {
+          "native": "title"
+        }
+      }
+    },
+    "CenterAlignedTopAppBar": {
+      "package": "androidx.compose.material3",
+      "category": "app-bars",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;FLandroidx/compose/foundation/layout/WindowInsets;Landroidx/compose/material3/TopAppBarColors;Landroidx/compose/material3/TopAppBarScrollBehavior;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "CenterAlignedTopAppBar-GHTll3U",
+        "name": "CenterAlignedTopAppBar",
+        "owner": "androidx.compose.material3.AppBarKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "TopAppBarColors",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.topAppBarColors()"
+        },
+        "expandedHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "title": {
+          "native": "title"
+        }
+      }
+    },
+    "MediumTopAppBar": {
+      "package": "androidx.compose.material3",
+      "category": "app-bars",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;FFLandroidx/compose/foundation/layout/WindowInsets;Landroidx/compose/material3/TopAppBarColors;Landroidx/compose/material3/TopAppBarScrollBehavior;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "MediumTopAppBar-oKE7A98",
+        "name": "MediumTopAppBar",
+        "owner": "androidx.compose.material3.AppBarKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "collapsedHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.MediumAppBarCollapsedHeight"
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "TopAppBarColors",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.topAppBarColors()"
+        },
+        "expandedHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.MediumAppBarExpandedHeight"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "title": {
+          "native": "title"
+        }
+      }
+    },
+    "LargeTopAppBar": {
+      "package": "androidx.compose.material3",
+      "category": "app-bars",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;FFLandroidx/compose/foundation/layout/WindowInsets;Landroidx/compose/material3/TopAppBarColors;Landroidx/compose/material3/TopAppBarScrollBehavior;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "LargeTopAppBar-oKE7A98",
+        "name": "LargeTopAppBar",
+        "owner": "androidx.compose.material3.AppBarKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "collapsedHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.LargeAppBarCollapsedHeight"
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "TopAppBarColors",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.topAppBarColors()"
+        },
+        "expandedHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.LargeAppBarExpandedHeight"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "title": {
+          "native": "title"
+        }
+      }
+    },
+    "Snackbar": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/graphics/Shape;JJJJLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Snackbar-eQBnUkQ",
+        "name": "Snackbar",
+        "owner": "androidx.compose.material3.SnackbarKt"
+      },
+      "props": {
+        "actionContentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.SnackbarDefaults.actionContentColor"
+        },
+        "actionOnNewLine": {
+          "type": "boolean",
+          "default": false
+        },
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.SnackbarDefaults.color"
+        },
+        "contentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.SnackbarDefaults.contentColor"
+        },
+        "dismissActionContentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.SnackbarDefaults.dismissActionContentColor"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SnackbarDefaults.shape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "slots": {
+        "action": {
+          "native": "action",
+          "nullable": true
+        },
+        "dismissAction": {
+          "native": "dismissAction",
+          "nullable": true
+        }
+      }
+    },
+    "PullToRefreshBox": {
+      "package": "androidx.compose.material3.pulltorefresh",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/material3/pulltorefresh/PullToRefreshState;Landroidx/compose/ui/Alignment;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "PullToRefreshBox",
+        "name": "PullToRefreshBox",
+        "owner": "androidx.compose.material3.pulltorefresh.PullToRefreshKt"
+      },
+      "props": {
+        "contentAlignment": {
+          "type": "enum",
+          "values": [
+            "bottomCenter",
+            "bottomEnd",
+            "bottomLeft",
+            "bottomRight",
+            "bottomStart",
+            "center",
+            "centerEnd",
+            "centerLeft",
+            "centerRight",
+            "centerStart",
+            "topCenter",
+            "topEnd",
+            "topLeft",
+            "topRight",
+            "topStart"
+          ],
+          "decode": "alignment",
+          "default": "topStart"
+        },
+        "isRefreshing": {
+          "type": "boolean",
+          "required": true
+        },
+        "onRefresh": {
+          "type": "actionId",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "BoxScope"
+      }
+    },
+    "VerticalDragHandle": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/material3/DragHandleSizes;Landroidx/compose/material3/DragHandleColors;Landroidx/compose/material3/DragHandleShapes;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "VerticalDragHandle",
+        "name": "VerticalDragHandle",
+        "owner": "androidx.compose.material3.DragHandleKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
     }
   },
   "modifiers": {

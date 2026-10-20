@@ -176,6 +176,25 @@ data class Card(
 }
 
 @Serializable
+data class CenterAlignedTopAppBarProps(
+    val `colors`: JsonElement? = null,
+    val `expandedHeight`: Double? = null,
+    override val `modifier`: JsonObject? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("CenterAlignedTopAppBar")
+data class CenterAlignedTopAppBar(
+    override val id: String,
+    override val props: CenterAlignedTopAppBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "CenterAlignedTopAppBar"
+}
+
+@Serializable
 data class CheckboxProps(
     val `checked`: Boolean,
     val `enabled`: Boolean = true,
@@ -742,6 +761,26 @@ data class LargeFloatingActionButton(
 }
 
 @Serializable
+data class LargeTopAppBarProps(
+    val `collapsedHeight`: Double? = null,
+    val `colors`: JsonElement? = null,
+    val `expandedHeight`: Double? = null,
+    override val `modifier`: JsonObject? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("LargeTopAppBar")
+data class LargeTopAppBar(
+    override val id: String,
+    override val props: LargeTopAppBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "LargeTopAppBar"
+}
+
+@Serializable
 data class LazyColumnProps(
     val `firstVisibleIndex`: Long? = null,
     override val `modifier`: JsonObject? = null,
@@ -815,6 +854,26 @@ data class ListItem(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "ListItem"
+}
+
+@Serializable
+data class MediumTopAppBarProps(
+    val `collapsedHeight`: Double? = null,
+    val `colors`: JsonElement? = null,
+    val `expandedHeight`: Double? = null,
+    override val `modifier`: JsonObject? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("MediumTopAppBar")
+data class MediumTopAppBar(
+    override val id: String,
+    override val props: MediumTopAppBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "MediumTopAppBar"
 }
 
 @Serializable
@@ -1193,6 +1252,25 @@ data class PrimaryTabRow(
 }
 
 @Serializable
+data class PullToRefreshBoxProps(
+    val `contentAlignment`: String = "topStart",
+    val `isRefreshing`: Boolean,
+    override val `modifier`: JsonObject? = null,
+    val `onRefresh`: String,
+) : UiProps
+
+@Serializable
+@SerialName("PullToRefreshBox")
+data class PullToRefreshBox(
+    override val id: String,
+    override val props: PullToRefreshBoxProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "PullToRefreshBox"
+}
+
+@Serializable
 data class RadioButtonProps(
     val `colors`: JsonElement? = null,
     val `enabled`: Boolean = true,
@@ -1347,6 +1425,28 @@ data class Slider(
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "Slider"
+}
+
+@Serializable
+data class SnackbarProps(
+    val `actionContentColor`: JsonElement? = null,
+    val `actionOnNewLine`: Boolean = false,
+    val `containerColor`: JsonElement? = null,
+    val `contentColor`: JsonElement? = null,
+    val `dismissActionContentColor`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `shape`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("Snackbar")
+data class Snackbar(
+    override val id: String,
+    override val props: SnackbarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "Snackbar"
 }
 
 @Serializable
@@ -1537,6 +1637,25 @@ data class TextField(
 }
 
 @Serializable
+data class TopAppBarProps(
+    val `colors`: JsonElement? = null,
+    val `expandedHeight`: Double? = null,
+    override val `modifier`: JsonObject? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("TopAppBar")
+data class TopAppBar(
+    override val id: String,
+    override val props: TopAppBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "TopAppBar"
+}
+
+@Serializable
 data class TriStateCheckboxProps(
     val `colors`: JsonElement? = null,
     val `enabled`: Boolean = true,
@@ -1572,6 +1691,22 @@ data class VerticalDivider(
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "VerticalDivider"
+}
+
+@Serializable
+data class VerticalDragHandleProps(
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("VerticalDragHandle")
+data class VerticalDragHandle(
+    override val id: String,
+    override val props: VerticalDragHandleProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override val componentType: String get() = "VerticalDragHandle"
 }
 
 @Serializable

@@ -18,6 +18,7 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissibleDrawerSheet
@@ -43,9 +44,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LeadingIconTab
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -70,6 +73,7 @@ import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.ShortNavigationBar
 import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
@@ -77,12 +81,15 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.WideNavigationRail
 import androidx.compose.material3.WideNavigationRailItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pycompose.ir.generated.AlertDialog as AlertDialogNode
@@ -92,6 +99,7 @@ import com.pycompose.ir.generated.BasicAlertDialog as BasicAlertDialogNode
 import com.pycompose.ir.generated.Box as BoxNode
 import com.pycompose.ir.generated.Button as ButtonNode
 import com.pycompose.ir.generated.Card as CardNode
+import com.pycompose.ir.generated.CenterAlignedTopAppBar as CenterAlignedTopAppBarNode
 import com.pycompose.ir.generated.Checkbox as CheckboxNode
 import com.pycompose.ir.generated.CircularProgressIndicator as CircularProgressIndicatorNode
 import com.pycompose.ir.generated.Column as ColumnNode
@@ -118,10 +126,12 @@ import com.pycompose.ir.generated.IconButton as IconButtonNode
 import com.pycompose.ir.generated.IconToggleButton as IconToggleButtonNode
 import com.pycompose.ir.generated.InputChip as InputChipNode
 import com.pycompose.ir.generated.LargeFloatingActionButton as LargeFloatingActionButtonNode
+import com.pycompose.ir.generated.LargeTopAppBar as LargeTopAppBarNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
 import com.pycompose.ir.generated.LeadingIconTab as LeadingIconTabNode
 import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
 import com.pycompose.ir.generated.ListItem as ListItemNode
+import com.pycompose.ir.generated.MediumTopAppBar as MediumTopAppBarNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
 import com.pycompose.ir.generated.ModalDrawerSheet as ModalDrawerSheetNode
 import com.pycompose.ir.generated.ModalNavigationDrawer as ModalNavigationDrawerNode
@@ -141,6 +151,7 @@ import com.pycompose.ir.generated.PermanentDrawerSheet as PermanentDrawerSheetNo
 import com.pycompose.ir.generated.PermanentNavigationDrawer as PermanentNavigationDrawerNode
 import com.pycompose.ir.generated.PrimaryScrollableTabRow as PrimaryScrollableTabRowNode
 import com.pycompose.ir.generated.PrimaryTabRow as PrimaryTabRowNode
+import com.pycompose.ir.generated.PullToRefreshBox as PullToRefreshBoxNode
 import com.pycompose.ir.generated.RadioButton as RadioButtonNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
@@ -149,6 +160,7 @@ import com.pycompose.ir.generated.SecondaryTabRow as SecondaryTabRowNode
 import com.pycompose.ir.generated.ShortNavigationBar as ShortNavigationBarNode
 import com.pycompose.ir.generated.ShortNavigationBarItem as ShortNavigationBarItemNode
 import com.pycompose.ir.generated.Slider as SliderNode
+import com.pycompose.ir.generated.Snackbar as SnackbarNode
 import com.pycompose.ir.generated.SnackbarHost as SnackbarHostNode
 import com.pycompose.ir.generated.Spacer as SpacerNode
 import com.pycompose.ir.generated.SuggestionChip as SuggestionChipNode
@@ -156,8 +168,10 @@ import com.pycompose.ir.generated.Surface as SurfaceNode
 import com.pycompose.ir.generated.Switch as SwitchNode
 import com.pycompose.ir.generated.Tab as TabNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
+import com.pycompose.ir.generated.TopAppBar as TopAppBarNode
 import com.pycompose.ir.generated.TriStateCheckbox as TriStateCheckboxNode
 import com.pycompose.ir.generated.VerticalDivider as VerticalDividerNode
+import com.pycompose.ir.generated.VerticalDragHandle as VerticalDragHandleNode
 import com.pycompose.ir.generated.WideNavigationRail as WideNavigationRailNode
 import com.pycompose.ir.generated.WideNavigationRailItem as WideNavigationRailItemNode
 import com.pycompose.renderer.attachTo
@@ -319,6 +333,22 @@ object GeneratedAdapters {
                     border = borderValue,
                     interactionSource = interactionSourceValue,
                     content = { context.childrenInColumnScope(this, model.children) },
+                )
+            }
+            .register("CenterAlignedTopAppBar") { node, modifier, context ->
+                val model = node as CenterAlignedTopAppBarNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.topAppBarColors(colorsWire).getOrThrow() else androidx.compose.material3.TopAppBarDefaults.topAppBarColors()
+                val expandedHeightWire = model.props.expandedHeight
+                val expandedHeightValue = if (expandedHeightWire != null) expandedHeightWire.dp else androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.TopAppBarDefaults.windowInsets
+                CenterAlignedTopAppBar(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    expandedHeight = expandedHeightValue,
+                    windowInsets = windowInsetsValue,
+                    title = { context.slot(model.children, "title")?.invoke() },
                 )
             }
             .register("Checkbox") { node, modifier, context ->
@@ -846,6 +876,25 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
+            .register("LargeTopAppBar") { node, modifier, context ->
+                val model = node as LargeTopAppBarNode
+                val collapsedHeightWire = model.props.collapsedHeight
+                val collapsedHeightValue = if (collapsedHeightWire != null) collapsedHeightWire.dp else androidx.compose.material3.TopAppBarDefaults.LargeAppBarCollapsedHeight
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.topAppBarColors(colorsWire).getOrThrow() else androidx.compose.material3.TopAppBarDefaults.topAppBarColors()
+                val expandedHeightWire = model.props.expandedHeight
+                val expandedHeightValue = if (expandedHeightWire != null) expandedHeightWire.dp else androidx.compose.material3.TopAppBarDefaults.LargeAppBarExpandedHeight
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.TopAppBarDefaults.windowInsets
+                LargeTopAppBar(
+                    modifier = modifier,
+                    collapsedHeight = collapsedHeightValue,
+                    colors = colorsValue,
+                    expandedHeight = expandedHeightValue,
+                    windowInsets = windowInsetsValue,
+                    title = { context.slot(model.children, "title")?.invoke() },
+                )
+            }
             .register("LazyColumn") { node, modifier, context ->
                 val model = node as LazyColumnNode
                 val verticalArrangementValue: androidx.compose.foundation.layout.Arrangement.Vertical = com.pycompose.renderer.PropResolver.arrangement(model.props.verticalArrangement).getOrDefault(androidx.compose.foundation.layout.Arrangement.Top)
@@ -909,6 +958,25 @@ object GeneratedAdapters {
                     overlineContent = context.slot(model.children, "overlineContent"),
                     supportingContent = context.slot(model.children, "supportingContent"),
                     trailingContent = context.slot(model.children, "trailingContent"),
+                )
+            }
+            .register("MediumTopAppBar") { node, modifier, context ->
+                val model = node as MediumTopAppBarNode
+                val collapsedHeightWire = model.props.collapsedHeight
+                val collapsedHeightValue = if (collapsedHeightWire != null) collapsedHeightWire.dp else androidx.compose.material3.TopAppBarDefaults.MediumAppBarCollapsedHeight
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.topAppBarColors(colorsWire).getOrThrow() else androidx.compose.material3.TopAppBarDefaults.topAppBarColors()
+                val expandedHeightWire = model.props.expandedHeight
+                val expandedHeightValue = if (expandedHeightWire != null) expandedHeightWire.dp else androidx.compose.material3.TopAppBarDefaults.MediumAppBarExpandedHeight
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.TopAppBarDefaults.windowInsets
+                MediumTopAppBar(
+                    modifier = modifier,
+                    collapsedHeight = collapsedHeightValue,
+                    colors = colorsValue,
+                    expandedHeight = expandedHeightValue,
+                    windowInsets = windowInsetsValue,
+                    title = { context.slot(model.children, "title")?.invoke() },
                 )
             }
             .register("ModalBottomSheet") { node, modifier, context ->
@@ -1222,6 +1290,17 @@ object GeneratedAdapters {
                     tabs = { context.slot(model.children, "tabs")?.invoke() },
                 )
             }
+            .register("PullToRefreshBox") { node, modifier, context ->
+                val model = node as PullToRefreshBoxNode
+                val contentAlignmentValue: androidx.compose.ui.Alignment = com.pycompose.renderer.PropResolver.alignment(model.props.contentAlignment).getOrDefault(androidx.compose.ui.Alignment.TopStart)
+                PullToRefreshBox(
+                    modifier = modifier,
+                    contentAlignment = contentAlignmentValue,
+                    isRefreshing = model.props.isRefreshing,
+                    onRefresh = { context.actions.dispatch(model.props.onRefresh) },
+                    content = { context.childrenInBoxScope(this, model.children) },
+                )
+            }
             .register("RadioButton") { node, modifier, context ->
                 val model = node as RadioButtonNode
                 val colorsWire = model.props.colors
@@ -1354,6 +1433,43 @@ object GeneratedAdapters {
                     state = stateValue,
                 )
             }
+            .register("Snackbar") { node, modifier, context ->
+                val model = node as SnackbarNode
+                val actionContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.actionContentColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.SnackbarDefaults.actionContentColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.SnackbarDefaults.actionContentColor)
+                    else -> androidx.compose.material3.SnackbarDefaults.actionContentColor
+                }
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.SnackbarDefaults.color)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.SnackbarDefaults.color)
+                    else -> androidx.compose.material3.SnackbarDefaults.color
+                }
+                val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.SnackbarDefaults.contentColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.SnackbarDefaults.contentColor)
+                    else -> androidx.compose.material3.SnackbarDefaults.contentColor
+                }
+                val dismissActionContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.dismissActionContentColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.SnackbarDefaults.dismissActionContentColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.SnackbarDefaults.dismissActionContentColor)
+                    else -> androidx.compose.material3.SnackbarDefaults.dismissActionContentColor
+                }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SnackbarDefaults.shape
+                Snackbar(
+                    modifier = modifier,
+                    actionContentColor = actionContentColorValue,
+                    actionOnNewLine = model.props.actionOnNewLine,
+                    containerColor = containerColorValue,
+                    contentColor = contentColorValue,
+                    dismissActionContentColor = dismissActionContentColorValue,
+                    shape = shapeValue,
+                    action = context.slot(model.children, "action"),
+                    dismissAction = context.slot(model.children, "dismissAction"),
+                    content = { context.children(model.children) },
+                )
+            }
             .register("SnackbarHost") { node, modifier, context ->
                 val model = node as SnackbarHostNode
                 val hostStateValue = context.snackbar(model.id, actionLabel = model.props.actionLabel, message = model.props.message, onDismiss = model.props.onDismiss, serial = model.props.serial)
@@ -1464,6 +1580,22 @@ object GeneratedAdapters {
                     Text(model.props.text)
                 }
             }
+            .register("TopAppBar") { node, modifier, context ->
+                val model = node as TopAppBarNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.topAppBarColors(colorsWire).getOrThrow() else androidx.compose.material3.TopAppBarDefaults.topAppBarColors()
+                val expandedHeightWire = model.props.expandedHeight
+                val expandedHeightValue = if (expandedHeightWire != null) expandedHeightWire.dp else androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.TopAppBarDefaults.windowInsets
+                TopAppBar(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    expandedHeight = expandedHeightValue,
+                    windowInsets = windowInsetsValue,
+                    title = { context.slot(model.children, "title")?.invoke() },
+                )
+            }
             .register("TriStateCheckbox") { node, modifier, context ->
                 val model = node as TriStateCheckboxNode
                 val colorsWire = model.props.colors
@@ -1490,6 +1622,12 @@ object GeneratedAdapters {
                     modifier = modifier,
                     thickness = thicknessValue,
                     color = colorValue,
+                )
+            }
+            .register("VerticalDragHandle") { node, modifier, context ->
+                val model = node as VerticalDragHandleNode
+                VerticalDragHandle(
+                    modifier = modifier,
                 )
             }
             .register("WideNavigationRail") { node, modifier, context ->
