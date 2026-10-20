@@ -1,6 +1,7 @@
 """Extension discovery and admission through the public project CLI."""
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -145,8 +146,11 @@ def test_plan_reports_missing_host_runtime_before_build(tmp_path: Path) -> None:
     project = tmp_path / "demo"
     config = project / "pycompose.toml"
     config.write_text(
-        config.read_text().replace(
-            'template_version = "0.7.0"', 'template_version = "0.6.0"'
+        re.sub(
+            r'template_version = "[^"]+"',
+            'template_version = "0.6.0"',
+            config.read_text(),
+            count=1,
         )
     )
     select(project, ["builtin:sqlite"])

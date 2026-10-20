@@ -616,6 +616,44 @@
       },
       "type": "object"
     },
+    "C_BasicAlertDialog": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDismissRequest": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "required": [
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "BasicAlertDialog"
+        }
+      },
+      "type": "object"
+    },
     "C_Box": {
       "properties": {
         "children": {
@@ -2568,6 +2606,74 @@
       },
       "type": "object"
     },
+    "C_LeadingIconTab": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "text"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "selectedContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LeadingIconTab"
+        }
+      },
+      "type": "object"
+    },
     "C_LinearProgressIndicator": {
       "properties": {
         "children": false,
@@ -2871,6 +2977,35 @@
       },
       "type": "object"
     },
+    "C_ModalWideNavigationRail": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ModalWideNavigationRail"
+        }
+      },
+      "type": "object"
+    },
     "C_NavigationBar": {
       "properties": {
         "children": {
@@ -3069,6 +3204,164 @@
         },
         "type": {
           "const": "NavigationDrawerItem"
+        }
+      },
+      "type": "object"
+    },
+    "C_NavigationRailItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "alwaysShowLabel": {
+              "default": true,
+              "type": "boolean"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationRailItem"
+        }
+      },
+      "type": "object"
+    },
+    "C_NavigationSuiteItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "badge",
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationSuiteItem"
+        }
+      },
+      "type": "object"
+    },
+    "C_NavigationSuiteScaffold": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "navigationItems"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationSuiteScaffold"
         }
       },
       "type": "object"
@@ -3371,6 +3664,110 @@
         },
         "type": {
           "const": "OutlinedTextField"
+        }
+      },
+      "type": "object"
+    },
+    "C_PermanentDrawerSheet": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "drawerContainerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "drawerShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "drawerTonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "PermanentDrawerSheet"
+        }
+      },
+      "type": "object"
+    },
+    "C_PermanentNavigationDrawer": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "drawerContent"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "PermanentNavigationDrawer"
         }
       },
       "type": "object"
@@ -3882,6 +4279,116 @@
         },
         "type": {
           "const": "SecondaryTabRow"
+        }
+      },
+      "type": "object"
+    },
+    "C_ShortNavigationBar": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ShortNavigationBar"
+        }
+      },
+      "type": "object"
+    },
+    "C_ShortNavigationBarItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ShortNavigationBarItem"
         }
       },
       "type": "object"
@@ -4611,6 +5118,97 @@
         },
         "type": {
           "const": "VerticalDivider"
+        }
+      },
+      "type": "object"
+    },
+    "C_WideNavigationRail": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "WideNavigationRail"
+        }
+      },
+      "type": "object"
+    },
+    "C_WideNavigationRailItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "railExpanded": {
+              "type": "boolean"
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "onClick",
+            "railExpanded",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "WideNavigationRailItem"
         }
       },
       "type": "object"
@@ -5359,6 +5957,9 @@
               "$ref": "#/definitions/C_Badge"
             },
             {
+              "$ref": "#/definitions/C_BasicAlertDialog"
+            },
+            {
               "$ref": "#/definitions/C_Box"
             },
             {
@@ -5452,6 +6053,9 @@
               "$ref": "#/definitions/C_LazyColumn"
             },
             {
+              "$ref": "#/definitions/C_LeadingIconTab"
+            },
+            {
               "$ref": "#/definitions/C_LinearProgressIndicator"
             },
             {
@@ -5467,6 +6071,9 @@
               "$ref": "#/definitions/C_ModalNavigationDrawer"
             },
             {
+              "$ref": "#/definitions/C_ModalWideNavigationRail"
+            },
+            {
               "$ref": "#/definitions/C_NavigationBar"
             },
             {
@@ -5474,6 +6081,15 @@
             },
             {
               "$ref": "#/definitions/C_NavigationDrawerItem"
+            },
+            {
+              "$ref": "#/definitions/C_NavigationRailItem"
+            },
+            {
+              "$ref": "#/definitions/C_NavigationSuiteItem"
+            },
+            {
+              "$ref": "#/definitions/C_NavigationSuiteScaffold"
             },
             {
               "$ref": "#/definitions/C_OutlinedButton"
@@ -5489,6 +6105,12 @@
             },
             {
               "$ref": "#/definitions/C_OutlinedTextField"
+            },
+            {
+              "$ref": "#/definitions/C_PermanentDrawerSheet"
+            },
+            {
+              "$ref": "#/definitions/C_PermanentNavigationDrawer"
             },
             {
               "$ref": "#/definitions/C_PrimaryScrollableTabRow"
@@ -5510,6 +6132,12 @@
             },
             {
               "$ref": "#/definitions/C_SecondaryTabRow"
+            },
+            {
+              "$ref": "#/definitions/C_ShortNavigationBar"
+            },
+            {
+              "$ref": "#/definitions/C_ShortNavigationBarItem"
             },
             {
               "$ref": "#/definitions/C_Slider"
@@ -5546,6 +6174,12 @@
             },
             {
               "$ref": "#/definitions/C_VerticalDivider"
+            },
+            {
+              "$ref": "#/definitions/C_WideNavigationRail"
+            },
+            {
+              "$ref": "#/definitions/C_WideNavigationRailItem"
             }
           ]
         }
@@ -22177,6 +22811,44 @@
       },
       "type": "object"
     },
+    "V_1_23_0_BasicAlertDialog": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDismissRequest": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "required": [
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "BasicAlertDialog"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Box": {
       "properties": {
         "children": {
@@ -24129,6 +24801,74 @@
       },
       "type": "object"
     },
+    "V_1_23_0_LeadingIconTab": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "text"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "selectedContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LeadingIconTab"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_LinearProgressIndicator": {
       "properties": {
         "children": false,
@@ -24428,6 +25168,35 @@
         },
         "type": {
           "const": "ModalNavigationDrawer"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_ModalWideNavigationRail": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ModalWideNavigationRail"
         }
       },
       "type": "object"
@@ -24888,6 +25657,164 @@
       },
       "type": "object"
     },
+    "V_1_23_0_NavigationRailItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "alwaysShowLabel": {
+              "default": true,
+              "type": "boolean"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationRailItem"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_NavigationSuiteItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "badge",
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationSuiteItem"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_NavigationSuiteScaffold": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "navigationItems"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationSuiteScaffold"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Node": {
       "allOf": [
         {
@@ -24900,6 +25827,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_Badge"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_BasicAlertDialog"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Box"
@@ -24995,6 +25925,9 @@
               "$ref": "#/definitions/V_1_23_0_LazyColumn"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_LeadingIconTab"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_LinearProgressIndicator"
             },
             {
@@ -25010,6 +25943,9 @@
               "$ref": "#/definitions/V_1_23_0_ModalNavigationDrawer"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_ModalWideNavigationRail"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_NavigationBar"
             },
             {
@@ -25017,6 +25953,15 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_NavigationDrawerItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_NavigationRailItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_NavigationSuiteItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_NavigationSuiteScaffold"
             },
             {
               "$ref": "#/definitions/V_1_23_0_OutlinedButton"
@@ -25032,6 +25977,12 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_OutlinedTextField"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_PermanentDrawerSheet"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_PermanentNavigationDrawer"
             },
             {
               "$ref": "#/definitions/V_1_23_0_PrimaryScrollableTabRow"
@@ -25053,6 +26004,12 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_SecondaryTabRow"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ShortNavigationBar"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ShortNavigationBarItem"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Slider"
@@ -25089,6 +26046,12 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_VerticalDivider"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_WideNavigationRail"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_WideNavigationRailItem"
             }
           ]
         }
@@ -25420,6 +26383,110 @@
         },
         "type": {
           "const": "OutlinedTextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_PermanentDrawerSheet": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "drawerContainerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "drawerShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "drawerTonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "PermanentDrawerSheet"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_PermanentNavigationDrawer": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "drawerContent"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "PermanentNavigationDrawer"
         }
       },
       "type": "object"
@@ -25931,6 +26998,116 @@
         },
         "type": {
           "const": "SecondaryTabRow"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_ShortNavigationBar": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ShortNavigationBar"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_ShortNavigationBarItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ShortNavigationBarItem"
         }
       },
       "type": "object"
@@ -26660,6 +27837,97 @@
         },
         "type": {
           "const": "VerticalDivider"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_WideNavigationRail": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "WideNavigationRail"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_WideNavigationRailItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "railExpanded": {
+              "type": "boolean"
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "onClick",
+            "railExpanded",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "WideNavigationRailItem"
         }
       },
       "type": "object"

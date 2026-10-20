@@ -51,6 +51,16 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
+        "BasicAlertDialog" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "onDismissRequest" to PropertyRule("actionId", required = true),
+            ),
+        ),
         "Box" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -485,6 +495,19 @@ object IrContract {
                 "verticalArrangement" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom", "spaceEvenly", "spaceBetween", "spaceAround")),
             ),
         ),
+        "LeadingIconTab" to ComponentRule(
+            slots = setOf("icon", "text"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "selected" to PropertyRule("boolean", required = true),
+                "selectedContentColor" to PropertyRule("color", required = false, valueType = "Color"),
+            ),
+        ),
         "LinearProgressIndicator" to ComponentRule(
             slots = setOf(),
             childrenAllowed = false,
@@ -544,6 +567,15 @@ object IrContract {
                 "open" to PropertyRule("boolean", required = false),
             ),
         ),
+        "ModalWideNavigationRail" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
         "NavigationBar" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -582,6 +614,40 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
                 "selected" to PropertyRule("boolean", required = true),
+            ),
+        ),
+        "NavigationRailItem" to ComponentRule(
+            slots = setOf("icon", "label"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "alwaysShowLabel" to PropertyRule("boolean", required = false),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "selected" to PropertyRule("boolean", required = true),
+            ),
+        ),
+        "NavigationSuiteItem" to ComponentRule(
+            slots = setOf("badge", "icon", "label"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "selected" to PropertyRule("boolean", required = true),
+            ),
+        ),
+        "NavigationSuiteScaffold" to ComponentRule(
+            slots = setOf("navigationItems"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
         "OutlinedButton" to ComponentRule(
@@ -657,6 +723,28 @@ object IrContract {
                 "singleLine" to PropertyRule("boolean", required = false),
                 "textStyle" to PropertyRule("value", required = false, valueType = "TextStyle"),
                 "value" to PropertyRule("string", required = true),
+            ),
+        ),
+        "PermanentDrawerSheet" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "drawerContainerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "drawerShape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "drawerTonalElevation" to PropertyRule("dp", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
+            ),
+        ),
+        "PermanentNavigationDrawer" to ComponentRule(
+            slots = setOf("drawerContent"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
         "PrimaryScrollableTabRow" to ComponentRule(
@@ -745,6 +833,30 @@ object IrContract {
                 "contentColor" to PropertyRule("color", required = false, valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "selectedTabIndex" to PropertyRule("integer", required = true, minimum = -2147483648.0, maximum = 2147483647.0),
+            ),
+        ),
+        "ShortNavigationBar" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "contentColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
+            ),
+        ),
+        "ShortNavigationBarItem" to ComponentRule(
+            slots = setOf("icon", "label"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "selected" to PropertyRule("boolean", required = true),
             ),
         ),
         "Slider" to ComponentRule(
@@ -908,6 +1020,28 @@ object IrContract {
                 "color" to PropertyRule("color", required = false, valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "thickness" to PropertyRule("dp", required = false),
+            ),
+        ),
+        "WideNavigationRail" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
+        "WideNavigationRailItem" to ComponentRule(
+            slots = setOf("icon", "label"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "railExpanded" to PropertyRule("boolean", required = true),
+                "selected" to PropertyRule("boolean", required = true),
             ),
         ),
     )

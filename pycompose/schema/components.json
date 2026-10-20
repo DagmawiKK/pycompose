@@ -3650,6 +3650,436 @@
       "children": {
         "allowed": true
       }
+    },
+    "BasicAlertDialog": {
+      "package": "androidx.compose.material3",
+      "category": "overlays",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/window/DialogProperties;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "BasicAlertDialog",
+        "name": "BasicAlertDialog",
+        "owner": "androidx.compose.material3.AlertDialogKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "onDismissRequest": {
+          "type": "actionId",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "LeadingIconTab": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZJJLandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "LeadingIconTab-wqdebIU",
+        "name": "LeadingIconTab",
+        "owner": "androidx.compose.material3.TabKt"
+      },
+      "props": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "selectedContentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "(androidx.compose.material3.LocalContentColor).current"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "icon": {
+          "native": "icon"
+        },
+        "text": {
+          "native": "text"
+        }
+      }
+    },
+    "ShortNavigationBar": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;JJLandroidx/compose/foundation/layout/WindowInsets;ILkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ShortNavigationBar-kQ6Tpik",
+        "name": "ShortNavigationBar",
+        "owner": "androidx.compose.material3.ShortNavigationBarKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ShortNavigationBarDefaults.containerColor"
+        },
+        "contentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ShortNavigationBarDefaults.contentColor"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.ShortNavigationBarDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "ShortNavigationBarItem": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZILandroidx/compose/material3/NavigationItemColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ShortNavigationBarItem-6ZDA4I0",
+        "name": "ShortNavigationBarItem",
+        "owner": "androidx.compose.material3.ShortNavigationBarKt"
+      },
+      "props": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "icon": {
+          "native": "icon"
+        },
+        "label": {
+          "native": "label",
+          "nullable": true
+        }
+      }
+    },
+    "NavigationRailItem": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;ZLandroidx/compose/material3/NavigationRailItemColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "NavigationRailItem",
+        "name": "NavigationRailItem",
+        "owner": "androidx.compose.material3.NavigationRailKt"
+      },
+      "props": {
+        "alwaysShowLabel": {
+          "type": "boolean",
+          "default": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "icon": {
+          "native": "icon"
+        },
+        "label": {
+          "native": "label",
+          "nullable": true
+        }
+      }
+    },
+    "WideNavigationRail": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/material3/WideNavigationRailState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/WideNavigationRailColors;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/layout/WindowInsets;Landroidx/compose/foundation/layout/Arrangement$Vertical;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "WideNavigationRail",
+        "name": "WideNavigationRail",
+        "owner": "androidx.compose.material3.WideNavigationRailKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "WideNavigationRailItem": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/Modifier;ZILandroidx/compose/material3/NavigationItemColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "WideNavigationRailItem-pli-t6k",
+        "name": "WideNavigationRailItem",
+        "owner": "androidx.compose.material3.WideNavigationRailKt"
+      },
+      "props": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "railExpanded": {
+          "type": "boolean",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "icon": {
+          "native": "icon"
+        },
+        "label": {
+          "native": "label",
+          "nullable": true
+        }
+      }
+    },
+    "ModalWideNavigationRail": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/material3/WideNavigationRailState;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/WideNavigationRailColors;Lkotlin/jvm/functions/Function2;FLandroidx/compose/foundation/layout/WindowInsets;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/material3/ModalWideNavigationRailProperties;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "ModalWideNavigationRail-k3FuEkE",
+        "name": "ModalWideNavigationRail",
+        "owner": "androidx.compose.material3.WideNavigationRailKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "NavigationSuiteScaffold": {
+      "package": "androidx.compose.material3.adaptive.navigationsuite",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-adaptive-navigation-suite-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Ljava/lang/String;Landroidx/compose/material3/adaptive/navigationsuite/NavigationSuiteColors;JJLandroidx/compose/material3/adaptive/navigationsuite/NavigationSuiteScaffoldState;Landroidx/compose/foundation/layout/Arrangement$Vertical;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Alignment$Horizontal;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "NavigationSuiteScaffold-LDyHd3E",
+        "name": "NavigationSuiteScaffold",
+        "owner": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "slots": {
+        "navigationItems": {
+          "native": "navigationItems"
+        }
+      }
+    },
+    "NavigationSuiteItem": {
+      "package": "androidx.compose.material3.adaptive.navigationsuite",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-adaptive-navigation-suite-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Ljava/lang/String;ZLkotlin/jvm/functions/Function2;Landroidx/compose/material3/NavigationItemColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "NavigationSuiteItem-CKlOKsw",
+        "name": "NavigationSuiteItem",
+        "owner": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt"
+      },
+      "props": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "badge": {
+          "native": "badge",
+          "nullable": true
+        },
+        "icon": {
+          "native": "icon"
+        },
+        "label": {
+          "native": "label",
+          "nullable": true
+        }
+      }
+    },
+    "PermanentNavigationDrawer": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "PermanentNavigationDrawer",
+        "name": "PermanentNavigationDrawer",
+        "owner": "androidx.compose.material3.NavigationDrawerKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "slots": {
+        "drawerContent": {
+          "native": "drawerContent"
+        }
+      }
+    },
+    "PermanentDrawerSheet": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "PermanentDrawerSheet-afqeVBk",
+        "name": "PermanentDrawerSheet",
+        "owner": "androidx.compose.material3.NavigationDrawerKt"
+      },
+      "props": {
+        "drawerContainerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.DrawerDefaults.standardContainerColor"
+        },
+        "drawerShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.ui.graphics.RectangleShape"
+        },
+        "drawerTonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.PermanentDrawerElevation"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      }
     }
   },
   "modifiers": {

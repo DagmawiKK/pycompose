@@ -18,6 +18,7 @@ __all__ = [
     "AlertDialog",
     "AssistChip",
     "Badge",
+    "BasicAlertDialog",
     "Box",
     "Button",
     "Card",
@@ -49,19 +50,26 @@ __all__ = [
     "InputChip",
     "LargeFloatingActionButton",
     "LazyColumn",
+    "LeadingIconTab",
     "LinearProgressIndicator",
     "ListItem",
     "ModalBottomSheet",
     "ModalDrawerSheet",
     "ModalNavigationDrawer",
+    "ModalWideNavigationRail",
     "NavigationBar",
     "NavigationBarItem",
     "NavigationDrawerItem",
+    "NavigationRailItem",
+    "NavigationSuiteItem",
+    "NavigationSuiteScaffold",
     "OutlinedButton",
     "OutlinedCard",
     "OutlinedIconButton",
     "OutlinedIconToggleButton",
     "OutlinedTextField",
+    "PermanentDrawerSheet",
+    "PermanentNavigationDrawer",
     "PrimaryScrollableTabRow",
     "PrimaryTabRow",
     "RadioButton",
@@ -69,6 +77,8 @@ __all__ = [
     "Scaffold",
     "SecondaryScrollableTabRow",
     "SecondaryTabRow",
+    "ShortNavigationBar",
+    "ShortNavigationBarItem",
     "Slider",
     "SnackbarHost",
     "Spacer",
@@ -81,6 +91,8 @@ __all__ = [
     "TextField",
     "TriStateCheckbox",
     "VerticalDivider",
+    "WideNavigationRail",
+    "WideNavigationRailItem",
 ]
 
 
@@ -300,6 +312,34 @@ class Badge(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class BasicAlertDialog(Component):
+    """Native BasicAlertDialog; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "BasicAlertDialog"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        on_dismiss_request: str,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered BasicAlertDialog.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            on_dismiss_request: Required native onDismissRequest.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        props["on_dismiss_request"] = on_dismiss_request
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
@@ -1861,6 +1901,52 @@ class LazyColumn(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class LeadingIconTab(Component):
+    """Native LeadingIconTab; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LeadingIconTab"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        selected: bool,
+        selected_content_color: JsonValue | None = None,
+        icon: Content | None = None,
+        text: Content | None = None,
+    ) -> None:
+        """Construct a registered LeadingIconTab.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            selected_content_color: Native selectedContentColor; None uses its
+                default.
+            icon: Nodes for the native icon slot.
+            text: Nodes for the native text slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["selected"] = selected
+        if selected_content_color is not None:
+            props["selected_content_color"] = selected_content_color
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if text is not None:
+            slotted += slot_nodes(text, key="text", slot="text")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
 class LinearProgressIndicator(Component):
     """Native LinearProgressIndicator;
     props and defaults follow the component manifest."""
@@ -2127,6 +2213,32 @@ class ModalNavigationDrawer(Component):
         )
 
 
+class ModalWideNavigationRail(Component):
+    """Native ModalWideNavigationRail;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ModalWideNavigationRail"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered ModalWideNavigationRail.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class NavigationBar(Component):
     """Native NavigationBar; props and defaults follow the component manifest."""
 
@@ -2275,6 +2387,133 @@ class NavigationDrawerItem(Component):
         if label is not None:
             slotted += slot_nodes(label, key="label", slot="label")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class NavigationRailItem(Component):
+    """Native NavigationRailItem; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationRailItem"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        always_show_label: bool | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        selected: bool,
+        icon: Content | None = None,
+        label: Content | None = None,
+    ) -> None:
+        """Construct a registered NavigationRailItem.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            always_show_label: Native alwaysShowLabel; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            icon: Nodes for the native icon slot.
+            label: Nodes for the native label slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if always_show_label is not None:
+            props["always_show_label"] = always_show_label
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["selected"] = selected
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class NavigationSuiteItem(Component):
+    """Native NavigationSuiteItem; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationSuiteItem"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        selected: bool,
+        badge: Content | None = None,
+        icon: Content | None = None,
+        label: Content | None = None,
+    ) -> None:
+        """Construct a registered NavigationSuiteItem.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            badge: Nodes for the native badge slot.
+            icon: Nodes for the native icon slot.
+            label: Nodes for the native label slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["selected"] = selected
+        slotted: tuple[Node, ...] = ()
+        if badge is not None:
+            slotted += slot_nodes(badge, key="badge", slot="badge")
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class NavigationSuiteScaffold(Component):
+    """Native NavigationSuiteScaffold;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationSuiteScaffold"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        navigation_items: Content | None = None,
+    ) -> None:
+        """Construct a registered NavigationSuiteScaffold.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+            navigation_items: Nodes for the native navigationItems slot.
+        """
+        props: dict[str, JsonValue] = {}
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if navigation_items is not None:
+            slotted += slot_nodes(
+                navigation_items,
+                key="navigationItems",
+                slot="navigationItems",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class OutlinedButton(Component):
@@ -2570,6 +2809,97 @@ class OutlinedTextField(Component):
                 slot="trailingIcon",
             )
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class PermanentDrawerSheet(Component):
+    """Native PermanentDrawerSheet; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "PermanentDrawerSheet"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        drawer_container_color: JsonValue | None = None,
+        drawer_shape: JsonValue | None = None,
+        drawer_tonal_elevation: int | float | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered PermanentDrawerSheet.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            drawer_container_color: Native drawerContainerColor; None uses its
+                default.
+            drawer_shape: Native drawerShape; None uses its default.
+            drawer_tonal_elevation: Native drawerTonalElevation; None uses its
+                default.
+            modifier: Native modifier; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if drawer_container_color is not None:
+            props["drawer_container_color"] = drawer_container_color
+        if drawer_shape is not None:
+            props["drawer_shape"] = drawer_shape
+        if drawer_tonal_elevation is not None:
+            props["drawer_tonal_elevation"] = drawer_tonal_elevation
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class PermanentNavigationDrawer(Component):
+    """Native PermanentNavigationDrawer;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "PermanentNavigationDrawer"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        drawer_content: Content | None = None,
+    ) -> None:
+        """Construct a registered PermanentNavigationDrawer.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+            drawer_content: Nodes for the native drawerContent slot.
+        """
+        props: dict[str, JsonValue] = {}
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if drawer_content is not None:
+            slotted += slot_nodes(
+                drawer_content,
+                key="drawerContent",
+                slot="drawerContent",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class PrimaryScrollableTabRow(Component):
@@ -2883,6 +3213,85 @@ class SecondaryTabRow(Component):
         slotted: tuple[Node, ...] = ()
         if tabs is not None:
             slotted += slot_nodes(tabs, key="tabs", slot="tabs")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class ShortNavigationBar(Component):
+    """Native ShortNavigationBar; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ShortNavigationBar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        container_color: JsonValue | None = None,
+        content_color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered ShortNavigationBar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            content_color: Native contentColor; None uses its default.
+            modifier: Native modifier; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if content_color is not None:
+            props["content_color"] = content_color
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ShortNavigationBarItem(Component):
+    """Native ShortNavigationBarItem;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ShortNavigationBarItem"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        selected: bool,
+        icon: Content | None = None,
+        label: Content | None = None,
+    ) -> None:
+        """Construct a registered ShortNavigationBarItem.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            icon: Nodes for the native icon slot.
+            label: Nodes for the native label slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["selected"] = selected
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
@@ -3385,3 +3794,73 @@ class VerticalDivider(Component):
         if thickness is not None:
             props["thickness"] = thickness
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class WideNavigationRail(Component):
+    """Native WideNavigationRail; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "WideNavigationRail"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered WideNavigationRail.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class WideNavigationRailItem(Component):
+    """Native WideNavigationRailItem;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "WideNavigationRailItem"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        rail_expanded: bool,
+        selected: bool,
+        icon: Content | None = None,
+        label: Content | None = None,
+    ) -> None:
+        """Construct a registered WideNavigationRailItem.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            rail_expanded: Required native railExpanded.
+            selected: Required native selected.
+            icon: Nodes for the native icon slot.
+            label: Nodes for the native label slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["rail_expanded"] = rail_expanded
+        props["selected"] = selected
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)

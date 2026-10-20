@@ -35,7 +35,7 @@ def fingerprint() -> str:
         "requirements": ["some-library>=1"],
         "scenario": "example.roundtrip",
         "scenarioVersion": 1,
-        "template": "0.7.0",
+        "template": "0.7.1",
     }
     encoded = json.dumps(stable, sort_keys=True, separators=(",", ":"))
     return f"sha256:{hashlib.sha256(encoded.encode()).hexdigest()}"
@@ -116,7 +116,7 @@ def test_evidence_for_one_abi_reports_partial_coverage_for_the_target(tmp_path) 
 def test_changing_the_template_version_makes_a_record_stale(tmp_path) -> None:
     project = prepare(tmp_path, document=evidence_document())
     config = project / "pycompose.toml"
-    config.write_text(config.read_text().replace("0.7.0", "0.7.1"))
+    config.write_text(config.read_text().replace("0.7.1", "0.7.2"))
 
     report = json.loads(cli(project, "extensions", "evidence").stdout)
 

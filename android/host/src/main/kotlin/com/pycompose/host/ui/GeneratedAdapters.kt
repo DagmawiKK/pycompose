@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Badge
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -42,25 +43,32 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.LeadingIconTab
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.ModalWideNavigationRail
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PermanentDrawerSheet
+import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.SecondaryTabRow
+import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SuggestionChip
@@ -71,11 +79,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.WideNavigationRail
+import androidx.compose.material3.WideNavigationRailItem
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pycompose.ir.generated.AlertDialog as AlertDialogNode
 import com.pycompose.ir.generated.AssistChip as AssistChipNode
 import com.pycompose.ir.generated.Badge as BadgeNode
+import com.pycompose.ir.generated.BasicAlertDialog as BasicAlertDialogNode
 import com.pycompose.ir.generated.Box as BoxNode
 import com.pycompose.ir.generated.Button as ButtonNode
 import com.pycompose.ir.generated.Card as CardNode
@@ -106,19 +119,26 @@ import com.pycompose.ir.generated.IconToggleButton as IconToggleButtonNode
 import com.pycompose.ir.generated.InputChip as InputChipNode
 import com.pycompose.ir.generated.LargeFloatingActionButton as LargeFloatingActionButtonNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
+import com.pycompose.ir.generated.LeadingIconTab as LeadingIconTabNode
 import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
 import com.pycompose.ir.generated.ListItem as ListItemNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
 import com.pycompose.ir.generated.ModalDrawerSheet as ModalDrawerSheetNode
 import com.pycompose.ir.generated.ModalNavigationDrawer as ModalNavigationDrawerNode
+import com.pycompose.ir.generated.ModalWideNavigationRail as ModalWideNavigationRailNode
 import com.pycompose.ir.generated.NavigationBar as NavigationBarNode
 import com.pycompose.ir.generated.NavigationBarItem as NavigationBarItemNode
 import com.pycompose.ir.generated.NavigationDrawerItem as NavigationDrawerItemNode
+import com.pycompose.ir.generated.NavigationRailItem as NavigationRailItemNode
+import com.pycompose.ir.generated.NavigationSuiteItem as NavigationSuiteItemNode
+import com.pycompose.ir.generated.NavigationSuiteScaffold as NavigationSuiteScaffoldNode
 import com.pycompose.ir.generated.OutlinedButton as OutlinedButtonNode
 import com.pycompose.ir.generated.OutlinedCard as OutlinedCardNode
 import com.pycompose.ir.generated.OutlinedIconButton as OutlinedIconButtonNode
 import com.pycompose.ir.generated.OutlinedIconToggleButton as OutlinedIconToggleButtonNode
 import com.pycompose.ir.generated.OutlinedTextField as OutlinedTextFieldNode
+import com.pycompose.ir.generated.PermanentDrawerSheet as PermanentDrawerSheetNode
+import com.pycompose.ir.generated.PermanentNavigationDrawer as PermanentNavigationDrawerNode
 import com.pycompose.ir.generated.PrimaryScrollableTabRow as PrimaryScrollableTabRowNode
 import com.pycompose.ir.generated.PrimaryTabRow as PrimaryTabRowNode
 import com.pycompose.ir.generated.RadioButton as RadioButtonNode
@@ -126,6 +146,8 @@ import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
 import com.pycompose.ir.generated.SecondaryScrollableTabRow as SecondaryScrollableTabRowNode
 import com.pycompose.ir.generated.SecondaryTabRow as SecondaryTabRowNode
+import com.pycompose.ir.generated.ShortNavigationBar as ShortNavigationBarNode
+import com.pycompose.ir.generated.ShortNavigationBarItem as ShortNavigationBarItemNode
 import com.pycompose.ir.generated.Slider as SliderNode
 import com.pycompose.ir.generated.SnackbarHost as SnackbarHostNode
 import com.pycompose.ir.generated.Spacer as SpacerNode
@@ -136,6 +158,8 @@ import com.pycompose.ir.generated.Tab as TabNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
 import com.pycompose.ir.generated.TriStateCheckbox as TriStateCheckboxNode
 import com.pycompose.ir.generated.VerticalDivider as VerticalDividerNode
+import com.pycompose.ir.generated.WideNavigationRail as WideNavigationRailNode
+import com.pycompose.ir.generated.WideNavigationRailItem as WideNavigationRailItemNode
 import com.pycompose.renderer.attachTo
 import com.pycompose.renderer.drawerState
 import com.pycompose.renderer.lazyListState
@@ -229,6 +253,14 @@ object GeneratedAdapters {
                     modifier = modifier,
                     containerColor = containerColorValue,
                     content = { context.childrenInRowScope(this, model.children) },
+                )
+            }
+            .register("BasicAlertDialog") { node, modifier, context ->
+                val model = node as BasicAlertDialogNode
+                BasicAlertDialog(
+                    modifier = modifier,
+                    onDismissRequest = { context.actions.dispatch(model.props.onDismissRequest) },
+                    content = { context.children(model.children) },
                 )
             }
             .register("Box") { node, modifier, context ->
@@ -825,6 +857,23 @@ object GeneratedAdapters {
                     content = { items(model.children.unslotted(), key = { it.id }) { context.node(it) } },
                 )
             }
+            .register("LeadingIconTab") { node, modifier, context ->
+                val model = node as LeadingIconTabNode
+                val selectedContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.selectedContentColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault((androidx.compose.material3.LocalContentColor).current)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.LocalContentColor).current)
+                    else -> (androidx.compose.material3.LocalContentColor).current
+                }
+                LeadingIconTab(
+                    modifier = modifier,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    selected = model.props.selected,
+                    selectedContentColor = selectedContentColorValue,
+                    icon = { context.slot(model.children, "icon")?.invoke() },
+                    text = { context.slot(model.children, "text")?.invoke() },
+                )
+            }
             .register("LinearProgressIndicator") { node, modifier, context ->
                 val model = node as LinearProgressIndicatorNode
                 val progressValue = model.props.progress
@@ -908,6 +957,13 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
+            .register("ModalWideNavigationRail") { node, modifier, context ->
+                val model = node as ModalWideNavigationRailNode
+                ModalWideNavigationRail(
+                    modifier = modifier,
+                    content = { context.children(model.children) },
+                )
+            }
             .register("NavigationBar") { node, modifier, context ->
                 val model = node as NavigationBarNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
@@ -953,6 +1009,38 @@ object GeneratedAdapters {
                     badge = context.slot(model.children, "badge"),
                     icon = context.slot(model.children, "icon"),
                     label = { context.slot(model.children, "label")?.invoke() },
+                )
+            }
+            .register("NavigationRailItem") { node, modifier, context ->
+                val model = node as NavigationRailItemNode
+                NavigationRailItem(
+                    modifier = modifier,
+                    alwaysShowLabel = model.props.alwaysShowLabel,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    selected = model.props.selected,
+                    icon = { context.slot(model.children, "icon")?.invoke() },
+                    label = context.slot(model.children, "label"),
+                )
+            }
+            .register("NavigationSuiteItem") { node, modifier, context ->
+                val model = node as NavigationSuiteItemNode
+                NavigationSuiteItem(
+                    modifier = modifier,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    selected = model.props.selected,
+                    badge = context.slot(model.children, "badge"),
+                    icon = { context.slot(model.children, "icon")?.invoke() },
+                    label = context.slot(model.children, "label"),
+                )
+            }
+            .register("NavigationSuiteScaffold") { node, modifier, context ->
+                val model = node as NavigationSuiteScaffoldNode
+                NavigationSuiteScaffold(
+                    modifier = modifier,
+                    navigationItems = { context.slot(model.children, "navigationItems")?.invoke() },
+                    content = { context.children(model.children) },
                 )
             }
             .register("OutlinedButton") { node, modifier, context ->
@@ -1056,6 +1144,36 @@ object GeneratedAdapters {
                     suffix = context.slot(model.children, "suffix"),
                     supportingText = context.slot(model.children, "supportingText"),
                     trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
+            .register("PermanentDrawerSheet") { node, modifier, context ->
+                val model = node as PermanentDrawerSheetNode
+                val drawerContainerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.drawerContainerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.DrawerDefaults.standardContainerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.DrawerDefaults.standardContainerColor)
+                    else -> androidx.compose.material3.DrawerDefaults.standardContainerColor
+                }
+                val drawerShapeWire = model.props.drawerShape
+                val drawerShapeValue = if (drawerShapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(drawerShapeWire).getOrThrow() else androidx.compose.ui.graphics.RectangleShape
+                val drawerTonalElevationWire = model.props.drawerTonalElevation
+                val drawerTonalElevationValue = if (drawerTonalElevationWire != null) drawerTonalElevationWire.dp else androidx.compose.material3.DrawerDefaults.PermanentDrawerElevation
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.DrawerDefaults.windowInsets
+                PermanentDrawerSheet(
+                    modifier = modifier,
+                    drawerContainerColor = drawerContainerColorValue,
+                    drawerShape = drawerShapeValue,
+                    drawerTonalElevation = drawerTonalElevationValue,
+                    windowInsets = windowInsetsValue,
+                    content = { context.childrenInColumnScope(this, model.children) },
+                )
+            }
+            .register("PermanentNavigationDrawer") { node, modifier, context ->
+                val model = node as PermanentNavigationDrawerNode
+                PermanentNavigationDrawer(
+                    modifier = modifier,
+                    drawerContent = { context.slot(model.children, "drawerContent")?.invoke() },
+                    content = { context.children(model.children) },
                 )
             }
             .register("PrimaryScrollableTabRow") { node, modifier, context ->
@@ -1188,6 +1306,39 @@ object GeneratedAdapters {
                     contentColor = contentColorValue,
                     selectedTabIndex = model.props.selectedTabIndex.toInt(),
                     tabs = { context.slot(model.children, "tabs")?.invoke() },
+                )
+            }
+            .register("ShortNavigationBar") { node, modifier, context ->
+                val model = node as ShortNavigationBarNode
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.containerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.containerColor)
+                    else -> androidx.compose.material3.ShortNavigationBarDefaults.containerColor
+                }
+                val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.contentColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.contentColor)
+                    else -> androidx.compose.material3.ShortNavigationBarDefaults.contentColor
+                }
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.ShortNavigationBarDefaults.windowInsets
+                ShortNavigationBar(
+                    modifier = modifier,
+                    containerColor = containerColorValue,
+                    contentColor = contentColorValue,
+                    windowInsets = windowInsetsValue,
+                    content = { context.children(model.children) },
+                )
+            }
+            .register("ShortNavigationBarItem") { node, modifier, context ->
+                val model = node as ShortNavigationBarItemNode
+                ShortNavigationBarItem(
+                    modifier = modifier,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    selected = model.props.selected,
+                    icon = { context.slot(model.children, "icon")?.invoke() },
+                    label = context.slot(model.children, "label"),
                 )
             }
             .register("Slider") { node, modifier, context ->
@@ -1339,6 +1490,25 @@ object GeneratedAdapters {
                     modifier = modifier,
                     thickness = thicknessValue,
                     color = colorValue,
+                )
+            }
+            .register("WideNavigationRail") { node, modifier, context ->
+                val model = node as WideNavigationRailNode
+                WideNavigationRail(
+                    modifier = modifier,
+                    content = { context.children(model.children) },
+                )
+            }
+            .register("WideNavigationRailItem") { node, modifier, context ->
+                val model = node as WideNavigationRailItemNode
+                WideNavigationRailItem(
+                    modifier = modifier,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    railExpanded = model.props.railExpanded,
+                    selected = model.props.selected,
+                    icon = { context.slot(model.children, "icon")?.invoke() },
+                    label = context.slot(model.children, "label"),
                 )
             }
     fun register(into: ComponentRegistry.Builder):

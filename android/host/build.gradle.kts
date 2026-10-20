@@ -128,6 +128,8 @@ dependencies {
     implementation(project(":renderer"))
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
+    implementation(libs.compose.material3.adaptive.navigation.suite)
+    implementation(libs.compose.material3.adaptive)
     implementation(libs.activity.compose)
     implementation(libs.lifecycle.compose)
     implementation(libs.lifecycle.viewmodel)
