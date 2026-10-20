@@ -20,7 +20,7 @@ import kotlinx.serialization.json.booleanOrNull
 
 class RenderContext internal constructor(
     val actions: ActionDispatcher,
-    private val renderer: Renderer,
+    internal val renderer: Renderer,
     private val bindings: Map<String, AppBinding>,
 ) {
     @Composable fun node(node: UiNode) {
@@ -143,6 +143,55 @@ class RenderContext internal constructor(
         val filled = nodes.inSlot(slot)
         if (filled.isEmpty()) return null
         return { filled.forEach { child -> key(child.id) { node(child) } } }
+    }
+}
+
+/**
+ * A named slot whose native lambda carries a RowScope.
+ *
+ * The returned lambda has the receiver the pinned parameter expects, and
+ * passes the same receiver to each child so a scoped child composes under
+ * its provider. Empty stays null; the generated adapter supplies `{}` for
+ * a non-null parameter, preserving the native empty-lambda default.
+ */
+fun RenderContext.slotInRowScope(
+    nodes: List<UiNode>,
+    slot: String,
+): (@Composable RowScope.() -> Unit)? {
+    val filled = nodes.inSlot(slot)
+    if (filled.isEmpty()) return null
+    return {
+        filled.forEach { child ->
+            key(child.id) { renderer.ScopedNode(child, this@slotInRowScope, this) }
+        }
+    }
+}
+
+/** A named slot whose native lambda carries a ColumnScope, as [slotInRowScope]. */
+fun RenderContext.slotInColumnScope(
+    nodes: List<UiNode>,
+    slot: String,
+): (@Composable ColumnScope.() -> Unit)? {
+    val filled = nodes.inSlot(slot)
+    if (filled.isEmpty()) return null
+    return {
+        filled.forEach { child ->
+            key(child.id) { renderer.ScopedNode(child, this@slotInColumnScope, this) }
+        }
+    }
+}
+
+/** A named slot whose native lambda carries a BoxScope, as [slotInRowScope]. */
+fun RenderContext.slotInBoxScope(
+    nodes: List<UiNode>,
+    slot: String,
+): (@Composable BoxScope.() -> Unit)? {
+    val filled = nodes.inSlot(slot)
+    if (filled.isEmpty()) return null
+    return {
+        filled.forEach { child ->
+            key(child.id) { renderer.ScopedNode(child, this@slotInBoxScope, this) }
+        }
     }
 }
 

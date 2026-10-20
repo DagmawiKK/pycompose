@@ -152,6 +152,29 @@ def _validate_slot(
         # A nullable parameter takes a plain lambda, which cannot list items
         # lazily; composing them eagerly instead would be a different tree.
         die(f"{where}: an items slot cannot be nullable")
+    _validate_slot_provides(where, slot)
+
+
+def _validate_slot_provides(where: str, slot: dict[str, Any]) -> None:
+    """Check the optional receiver a named slot provides.
+
+    Args:
+        where: Human-readable location, for error messages.
+        slot: The raw slot object.
+    """
+    provides = slot.get("provides")
+    if provides is None:
+        return
+    if provides not in SCOPES:
+        die(f"{where}: 'provides' must be one of " + ", ".join(sorted(SCOPES)))
+    if slot.get("consume") is not None:
+        # Consuming a scope and providing one would need two nested lambdas;
+        # the renderer has no such shape.
+        die(f"{where}: cannot consume and provide a scope")
+    if slot.get("kind", "content") != "content":
+        # Items are emitted as keyed eager calls, which cannot carry a
+        # composable receiver.
+        die(f"{where}: 'provides' needs the content kind")
 
 
 def _validate_prop(name: str, prop_name: str, prop: dict[str, Any]) -> None:

@@ -4121,6 +4121,13 @@
       "slots": {
         "title": {
           "native": "title"
+        },
+        "navigationIcon": {
+          "native": "navigationIcon"
+        },
+        "actions": {
+          "native": "actions",
+          "provides": "RowScope"
         }
       }
     },
@@ -4164,6 +4171,13 @@
       "slots": {
         "title": {
           "native": "title"
+        },
+        "navigationIcon": {
+          "native": "navigationIcon"
+        },
+        "actions": {
+          "native": "actions",
+          "provides": "RowScope"
         }
       }
     },
@@ -4211,6 +4225,13 @@
       "slots": {
         "title": {
           "native": "title"
+        },
+        "navigationIcon": {
+          "native": "navigationIcon"
+        },
+        "actions": {
+          "native": "actions",
+          "provides": "RowScope"
         }
       }
     },
@@ -4258,6 +4279,13 @@
       "slots": {
         "title": {
           "native": "title"
+        },
+        "navigationIcon": {
+          "native": "navigationIcon"
+        },
+        "actions": {
+          "native": "actions",
+          "provides": "RowScope"
         }
       }
     },
@@ -4397,6 +4425,76 @@
       },
       "children": {
         "allowed": false
+      }
+    },
+    "BadgedBox": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "BadgedBox",
+        "name": "BadgedBox",
+        "owner": "androidx.compose.material3.BadgeKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "BoxScope"
+      },
+      "slots": {
+        "badge": {
+          "native": "badge",
+          "provides": "BoxScope"
+        }
+      }
+    },
+    "NavigationRail": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;JJLkotlin/jvm/functions/Function3;Landroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "NavigationRail-qi6gXK8",
+        "name": "NavigationRail",
+        "owner": "androidx.compose.material3.NavigationRailKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.NavigationRailDefaults.ContainerColor"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.NavigationRailDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "slots": {
+        "header": {
+          "native": "header",
+          "provides": "ColumnScope",
+          "nullable": true
+        }
       }
     }
   },

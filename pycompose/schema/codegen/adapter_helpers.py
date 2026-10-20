@@ -197,6 +197,9 @@ def _declared_slots(entry: dict[str, Any]) -> bool:
         and all(
             slot.get("kind", "content") in SLOT_KINDS
             and slot.get("consume") in {None, *CONSUMERS}
+            and slot.get("provides") in {None, *SCOPES}
+            and not (slot.get("provides") and slot.get("consume"))
+            and not (slot.get("provides") and slot.get("kind", "content") != "content")
             for slot in entry.get("slots", {}).values()
         )
     )

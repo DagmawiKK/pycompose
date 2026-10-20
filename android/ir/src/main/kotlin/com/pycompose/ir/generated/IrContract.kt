@@ -51,6 +51,15 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
+        "BadgedBox" to ComponentRule(
+            slots = setOf("badge"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
         "BasicAlertDialog" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -107,7 +116,7 @@ object IrContract {
             ),
         ),
         "CenterAlignedTopAppBar" to ComponentRule(
-            slots = setOf("title"),
+            slots = setOf("actions", "navigationIcon", "title"),
             childrenAllowed = false,
             minimumChildren = 0,
             since = "1.23.0",
@@ -496,7 +505,7 @@ object IrContract {
             ),
         ),
         "LargeTopAppBar" to ComponentRule(
-            slots = setOf("title"),
+            slots = setOf("actions", "navigationIcon", "title"),
             childrenAllowed = false,
             minimumChildren = 0,
             since = "1.23.0",
@@ -557,7 +566,7 @@ object IrContract {
             ),
         ),
         "MediumTopAppBar" to ComponentRule(
-            slots = setOf("title"),
+            slots = setOf("actions", "navigationIcon", "title"),
             childrenAllowed = false,
             minimumChildren = 0,
             since = "1.23.0",
@@ -652,6 +661,17 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
                 "selected" to PropertyRule("boolean", required = true),
+            ),
+        ),
+        "NavigationRail" to ComponentRule(
+            slots = setOf("header"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
             ),
         ),
         "NavigationRailItem" to ComponentRule(
@@ -1064,7 +1084,7 @@ object IrContract {
             ),
         ),
         "TopAppBar" to ComponentRule(
-            slots = setOf("title"),
+            slots = setOf("actions", "navigationIcon", "title"),
             childrenAllowed = false,
             minimumChildren = 0,
             since = "1.23.0",

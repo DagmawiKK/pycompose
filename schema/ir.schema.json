@@ -616,6 +616,43 @@
       },
       "type": "object"
     },
+    "C_BadgedBox": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "badge"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "BadgedBox"
+        }
+      },
+      "type": "object"
+    },
     "C_BasicAlertDialog": {
       "properties": {
         "children": {
@@ -857,6 +894,8 @@
             "properties": {
               "slot": {
                 "enum": [
+                  "actions",
+                  "navigationIcon",
                   "title"
                 ]
               }
@@ -2630,6 +2669,8 @@
             "properties": {
               "slot": {
                 "enum": [
+                  "actions",
+                  "navigationIcon",
                   "title"
                 ]
               }
@@ -2979,6 +3020,8 @@
             "properties": {
               "slot": {
                 "enum": [
+                  "actions",
+                  "navigationIcon",
                   "title"
                 ]
               }
@@ -3452,6 +3495,56 @@
         },
         "type": {
           "const": "NavigationDrawerItem"
+        }
+      },
+      "type": "object"
+    },
+    "C_NavigationRail": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "header"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationRail"
         }
       },
       "type": "object"
@@ -5420,6 +5513,8 @@
             "properties": {
               "slot": {
                 "enum": [
+                  "actions",
+                  "navigationIcon",
                   "title"
                 ]
               }
@@ -6446,6 +6541,9 @@
               "$ref": "#/definitions/C_Badge"
             },
             {
+              "$ref": "#/definitions/C_BadgedBox"
+            },
+            {
               "$ref": "#/definitions/C_BasicAlertDialog"
             },
             {
@@ -6579,6 +6677,9 @@
             },
             {
               "$ref": "#/definitions/C_NavigationDrawerItem"
+            },
+            {
+              "$ref": "#/definitions/C_NavigationRail"
             },
             {
               "$ref": "#/definitions/C_NavigationRailItem"
@@ -23321,6 +23422,43 @@
       },
       "type": "object"
     },
+    "V_1_23_0_BadgedBox": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "badge"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "BadgedBox"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_BasicAlertDialog": {
       "properties": {
         "children": {
@@ -23562,6 +23700,8 @@
             "properties": {
               "slot": {
                 "enum": [
+                  "actions",
+                  "navigationIcon",
                   "title"
                 ]
               }
@@ -25335,6 +25475,8 @@
             "properties": {
               "slot": {
                 "enum": [
+                  "actions",
+                  "navigationIcon",
                   "title"
                 ]
               }
@@ -25684,6 +25826,8 @@
             "properties": {
               "slot": {
                 "enum": [
+                  "actions",
+                  "navigationIcon",
                   "title"
                 ]
               }
@@ -26415,6 +26559,56 @@
       },
       "type": "object"
     },
+    "V_1_23_0_NavigationRail": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "header"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationRail"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_NavigationRailItem": {
       "properties": {
         "children": {
@@ -26587,6 +26781,9 @@
               "$ref": "#/definitions/V_1_23_0_Badge"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_BadgedBox"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_BasicAlertDialog"
             },
             {
@@ -26720,6 +26917,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_NavigationDrawerItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_NavigationRail"
             },
             {
               "$ref": "#/definitions/V_1_23_0_NavigationRailItem"
@@ -28670,6 +28870,8 @@
             "properties": {
               "slot": {
                 "enum": [
+                  "actions",
+                  "navigationIcon",
                   "title"
                 ]
               }

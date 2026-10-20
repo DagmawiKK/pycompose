@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -56,6 +57,7 @@ import androidx.compose.material3.ModalWideNavigationRail
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
@@ -95,6 +97,7 @@ import androidx.compose.ui.unit.dp
 import com.pycompose.ir.generated.AlertDialog as AlertDialogNode
 import com.pycompose.ir.generated.AssistChip as AssistChipNode
 import com.pycompose.ir.generated.Badge as BadgeNode
+import com.pycompose.ir.generated.BadgedBox as BadgedBoxNode
 import com.pycompose.ir.generated.BasicAlertDialog as BasicAlertDialogNode
 import com.pycompose.ir.generated.Box as BoxNode
 import com.pycompose.ir.generated.Button as ButtonNode
@@ -139,6 +142,7 @@ import com.pycompose.ir.generated.ModalWideNavigationRail as ModalWideNavigation
 import com.pycompose.ir.generated.NavigationBar as NavigationBarNode
 import com.pycompose.ir.generated.NavigationBarItem as NavigationBarItemNode
 import com.pycompose.ir.generated.NavigationDrawerItem as NavigationDrawerItemNode
+import com.pycompose.ir.generated.NavigationRail as NavigationRailNode
 import com.pycompose.ir.generated.NavigationRailItem as NavigationRailItemNode
 import com.pycompose.ir.generated.NavigationSuiteItem as NavigationSuiteItemNode
 import com.pycompose.ir.generated.NavigationSuiteScaffold as NavigationSuiteScaffoldNode
@@ -180,6 +184,9 @@ import com.pycompose.renderer.lazyListState
 import com.pycompose.renderer.scrollState
 import com.pycompose.renderer.sheetState
 import com.pycompose.renderer.sliderState
+import com.pycompose.renderer.slotInBoxScope
+import com.pycompose.renderer.slotInColumnScope
+import com.pycompose.renderer.slotInRowScope
 import com.pycompose.renderer.snackbar
 import com.pycompose.renderer.unslotted
 import kotlinx.serialization.json.JsonObject
@@ -269,6 +276,14 @@ object GeneratedAdapters {
                     content = { context.childrenInRowScope(this, model.children) },
                 )
             }
+            .register("BadgedBox") { node, modifier, context ->
+                val model = node as BadgedBoxNode
+                BadgedBox(
+                    modifier = modifier,
+                    badge = context.slotInBoxScope(model.children, "badge") ?: {},
+                    content = { context.childrenInBoxScope(this, model.children) },
+                )
+            }
             .register("BasicAlertDialog") { node, modifier, context ->
                 val model = node as BasicAlertDialogNode
                 BasicAlertDialog(
@@ -348,6 +363,8 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     expandedHeight = expandedHeightValue,
                     windowInsets = windowInsetsValue,
+                    actions = context.slotInRowScope(model.children, "actions") ?: {},
+                    navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() },
                     title = { context.slot(model.children, "title")?.invoke() },
                 )
             }
@@ -892,6 +909,8 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     expandedHeight = expandedHeightValue,
                     windowInsets = windowInsetsValue,
+                    actions = context.slotInRowScope(model.children, "actions") ?: {},
+                    navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() },
                     title = { context.slot(model.children, "title")?.invoke() },
                 )
             }
@@ -976,6 +995,8 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     expandedHeight = expandedHeightValue,
                     windowInsets = windowInsetsValue,
+                    actions = context.slotInRowScope(model.children, "actions") ?: {},
+                    navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() },
                     title = { context.slot(model.children, "title")?.invoke() },
                 )
             }
@@ -1077,6 +1098,23 @@ object GeneratedAdapters {
                     badge = context.slot(model.children, "badge"),
                     icon = context.slot(model.children, "icon"),
                     label = { context.slot(model.children, "label")?.invoke() },
+                )
+            }
+            .register("NavigationRail") { node, modifier, context ->
+                val model = node as NavigationRailNode
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.NavigationRailDefaults.ContainerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.NavigationRailDefaults.ContainerColor)
+                    else -> androidx.compose.material3.NavigationRailDefaults.ContainerColor
+                }
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.NavigationRailDefaults.windowInsets
+                NavigationRail(
+                    modifier = modifier,
+                    containerColor = containerColorValue,
+                    windowInsets = windowInsetsValue,
+                    header = context.slotInColumnScope(model.children, "header"),
+                    content = { context.childrenInColumnScope(this, model.children) },
                 )
             }
             .register("NavigationRailItem") { node, modifier, context ->
@@ -1593,6 +1631,8 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     expandedHeight = expandedHeightValue,
                     windowInsets = windowInsetsValue,
+                    actions = context.slotInRowScope(model.children, "actions") ?: {},
+                    navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() },
                     title = { context.slot(model.children, "title")?.invoke() },
                 )
             }

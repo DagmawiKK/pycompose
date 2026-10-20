@@ -236,12 +236,15 @@ class SlotRule:
         nullable: Whether the native parameter accepts null, so an empty slot
             is omitted instead of composed empty.
         consume: Slot scope the adapter consumes on the subtree's behalf.
+        provides: Composition scope the pinned slot lambda carries, handed to
+            the children so a scoped child composes under its provider.
     """
 
     native: str
     kind: str = "content"
     nullable: bool = False
     consume: str | None = None
+    provides: str | None = None
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> SlotRule:
@@ -273,11 +276,17 @@ class SlotRule:
             raise ComponentRegistryError(
                 f"{where}: 'consume' must be one of {', '.join(CONSUMERS)}"
             )
+        provides = data.get("provides")
+        if provides is not None and provides not in SCOPES:
+            raise ComponentRegistryError(
+                f"{where}: 'provides' must be one of {', '.join(SCOPES)}"
+            )
         return cls(
             native=native,
             kind=cast("str", kind),
             nullable=nullable,
             consume=cast("str | None", consume),
+            provides=cast("str | None", provides),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -293,4 +302,6 @@ class SlotRule:
             out["nullable"] = True
         if self.consume is not None:
             out["consume"] = self.consume
+        if self.provides is not None:
+            out["provides"] = self.provides
         return out

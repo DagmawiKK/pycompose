@@ -384,13 +384,25 @@ def place_slot(
     if receiver is not None:
         classifier = source_name(receiver)
         scope = SCOPE_NAMES.get(classifier)
-        if parameter != "content" or scope not in RENDERER_SCOPES:
+        if scope not in RENDERER_SCOPES:
             raise CandidateError(
                 f"{name}.{parameter}: slot receiver {classifier} has no "
-                "renderable children scope"
+                "renderable scope"
             )
-        children.update({"allowed": True, "kind": "content", "provides": scope})
-        review.append(f"{parameter}: app content children in {scope}")
+        if parameter == "content":
+            children.update({"allowed": True, "kind": "content", "provides": scope})
+            review.append(f"{parameter}: app content children in {scope}")
+            return
+        scoped: dict[str, Any] = {"native": parameter, "provides": scope}
+        if nullable:
+            scoped["nullable"] = True
+            review.append(f"{parameter}: nullable named slot in {scope}")
+        else:
+            review.append(
+                f"{parameter}: required native slot in {scope}; "
+                "absence renders an empty lambda"
+            )
+        slots[parameter] = scoped
         return
     if parameter == "content":
         children["allowed"] = True

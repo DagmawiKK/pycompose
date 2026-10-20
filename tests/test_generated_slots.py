@@ -153,6 +153,38 @@ def test_a_provider_hands_its_children_the_receiver() -> None:
         assert f"context.childrenIn{scope}(this, model.children)" in block, name
 
 
+def test_a_scoped_named_slot_hands_its_receiver_to_its_children() -> None:
+    """``actions``, ``header`` and ``badge`` carry receivers of their own.
+
+    A named slot is a separate lambda from the primary content, so it needs a
+    scoped renderer too; the non-null form keeps an empty lambda so the native
+    empty-lambda default survives.
+    """
+    from pycompose.schema.codegen.adapters import extra_imports
+
+    top = render("TopAppBar", components()["TopAppBar"])
+    assert 'actions = context.slotInRowScope(model.children, "actions") ?: {}' in top
+    assert (
+        'navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() }'
+        in top
+    )
+    assert "com.pycompose.renderer.slotInRowScope" in extra_imports(
+        components()["TopAppBar"]
+    )
+
+    rail = render("NavigationRail", components()["NavigationRail"])
+    assert 'header = context.slotInColumnScope(model.children, "header")' in rail
+    assert "com.pycompose.renderer.slotInColumnScope" in extra_imports(
+        components()["NavigationRail"]
+    )
+
+    badge = render("BadgedBox", components()["BadgedBox"])
+    assert 'badge = context.slotInBoxScope(model.children, "badge") ?: {}' in badge
+    assert "com.pycompose.renderer.slotInBoxScope" in extra_imports(
+        components()["BadgedBox"]
+    )
+
+
 @pytest.mark.parametrize(
     ("component", "change", "message"),
     [
@@ -177,6 +209,37 @@ def test_a_provider_hands_its_children_the_receiver() -> None:
         (
             "Card",
             {"children": {"allowed": True, "kind": "items", "provides": "RowScope"}},
+            "needs the content kind",
+        ),
+        (
+            "Scaffold",
+            {"slots": {"topBar": {"native": "topBar", "provides": "Touch"}}},
+            "'provides' must be one of",
+        ),
+        (
+            "Scaffold",
+            {
+                "slots": {
+                    "topBar": {
+                        "native": "topBar",
+                        "provides": "RowScope",
+                        "consume": "paddingValues",
+                    }
+                }
+            },
+            "cannot consume and provide a scope",
+        ),
+        (
+            "Scaffold",
+            {
+                "slots": {
+                    "topBar": {
+                        "native": "topBar",
+                        "kind": "items",
+                        "provides": "RowScope",
+                    }
+                }
+            },
             "needs the content kind",
         ),
     ],

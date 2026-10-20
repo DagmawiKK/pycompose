@@ -114,15 +114,13 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
             # Kotlin's own conversion is an extension property, so the import
             # is what makes ``model.props.x.dp`` resolve.
             qualified.add("androidx.compose.ui.unit.dp")
-    state = entry.get("state")
-    if state is not None:
+    if (state := entry.get("state")) is not None:
         qualified.add(f"com.pycompose.renderer.{STATE_CALLS[state['kind']]}")
-    if state is not None and state["kind"] in STATE_ATTACH_GATES:
-        # The holder rides the component's modifier, so the extension making
-        # that ride callable must be imported where the call is written.
-        qualified.add("com.pycompose.renderer.attachTo")
-    transient = entry.get("transient")
-    if transient is not None:
+        if state["kind"] in STATE_ATTACH_GATES:
+            # The holder rides the component's modifier, so the extension making
+            # that ride callable must be imported where the call is written.
+            qualified.add("com.pycompose.renderer.attachTo")
+    if (transient := entry.get("transient")) is not None:
         qualified.add(f"com.pycompose.renderer.{TRANSIENT_CALLS[transient['kind']]}")
     slots = [entry.get("children", {}), *entry.get("slots", {}).values()]
     for slot in slots:
@@ -134,6 +132,9 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
                     "androidx.compose.ui.Modifier",
                 }
             )
+    for slot in entry.get("slots", {}).values():
+        if provides := slot.get("provides"):
+            qualified.add(f"com.pycompose.renderer.slotIn{provides}")
     if entry.get("children", {}).get("kind") == "items":
         # The primary children are the unslotted ones, and an extension becomes
         # callable only where it is imported.

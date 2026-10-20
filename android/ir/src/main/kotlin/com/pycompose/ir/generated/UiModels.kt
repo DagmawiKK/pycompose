@@ -93,6 +93,22 @@ data class Badge(
 }
 
 @Serializable
+data class BadgedBoxProps(
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("BadgedBox")
+data class BadgedBox(
+    override val id: String,
+    override val props: BadgedBoxProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "BadgedBox"
+}
+
+@Serializable
 data class BasicAlertDialogProps(
     override val `modifier`: JsonObject? = null,
     val `onDismissRequest`: String,
@@ -1008,6 +1024,24 @@ data class NavigationDrawerItem(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "NavigationDrawerItem"
+}
+
+@Serializable
+data class NavigationRailProps(
+    val `containerColor`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("NavigationRail")
+data class NavigationRail(
+    override val id: String,
+    override val props: NavigationRailProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "NavigationRail"
 }
 
 @Serializable

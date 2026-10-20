@@ -167,6 +167,34 @@ class ScopedCompositionTest {
     }
 
     @Test
+    fun aScopedNamedSlotComposesItsChildThroughTheProvidedReceiver() {
+        // ``actions`` carries RowScope; ``NavigationBarItem`` needs exactly
+        // that receiver.  Placing it there proves the named-slot renderer
+        // hands the scope down instead of falling back to the unscoped path.
+        val source =
+            """
+            {"version":"0.1.0","schemaVersion":"1.23.0",
+             "metadata":{"actionBindings":{
+               "app.demo.item.1":{"handlerId":"demo.item","payload":{},"bound":{}}}},
+             "root":{"id":"root","type":"TopAppBar","props":{},"children":[
+               {"id":"root.title","type":"Text","props":{"text":"Title"},"slot":"title"},
+               {"id":"root.actions","type":"NavigationBarItem","props":{
+                 "selected":true,"onClick":"app.demo.item.1"},"slot":"actions","children":[
+                 {"id":"root.actions.icon","type":"Text","props":{"text":"Icon"},
+                  "slot":"icon"},
+                 {"id":"root.actions.label","type":"Text","props":{"text":"Action label"},
+                  "slot":"label"}]}]}}
+            """.trimIndent()
+        compose.setContent { PyComposeTheme { renderer().Render(parse(source)) } }
+
+        // A NavigationBarItem fills its RowScope, so it can squeeze the title;
+        // the proof is that the row-scoped child itself composes and clicks.
+        compose.onNodeWithText("Action label").assertIsDisplayed()
+        compose.onNodeWithText("Action label").performClick()
+        assertEquals(listOf("app.demo.item.1"), actions.map { it.actionId })
+    }
+
+    @Test
     fun anIndeterminateSpinnerComposesWithItsPinnedVocabulary() {
         val source =
             """

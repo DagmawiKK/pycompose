@@ -18,6 +18,7 @@ __all__ = [
     "AlertDialog",
     "AssistChip",
     "Badge",
+    "BadgedBox",
     "BasicAlertDialog",
     "Box",
     "Button",
@@ -63,6 +64,7 @@ __all__ = [
     "NavigationBar",
     "NavigationBarItem",
     "NavigationDrawerItem",
+    "NavigationRail",
     "NavigationRailItem",
     "NavigationSuiteItem",
     "NavigationSuiteScaffold",
@@ -341,6 +343,49 @@ class Badge(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class BadgedBox(Component):
+    """Native BadgedBox; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "BadgedBox"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        badge: Content | None = None,
+    ) -> None:
+        """Construct a registered BadgedBox.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            badge: Nodes for the native badge slot.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if badge is not None:
+            slotted += slot_nodes(badge, key="badge", slot="badge")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
 class BasicAlertDialog(Component):
     """Native BasicAlertDialog; props and defaults follow the component manifest."""
 
@@ -536,6 +581,8 @@ class CenterAlignedTopAppBar(Component):
         expanded_height: int | float | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
+        actions: Content | None = None,
+        navigation_icon: Content | None = None,
         title: Content | None = None,
     ) -> None:
         """Construct a registered CenterAlignedTopAppBar.
@@ -546,6 +593,8 @@ class CenterAlignedTopAppBar(Component):
             expanded_height: Native expandedHeight; None uses its default.
             modifier: Native modifier; None uses its default.
             window_insets: Native windowInsets; None uses its default.
+            actions: Nodes for the native actions slot.
+            navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
         props: dict[str, JsonValue] = {}
@@ -556,6 +605,14 @@ class CenterAlignedTopAppBar(Component):
         if window_insets is not None:
             props["window_insets"] = window_insets
         slotted: tuple[Node, ...] = ()
+        if actions is not None:
+            slotted += slot_nodes(actions, key="actions", slot="actions")
+        if navigation_icon is not None:
+            slotted += slot_nodes(
+                navigation_icon,
+                key="navigationIcon",
+                slot="navigationIcon",
+            )
         if title is not None:
             slotted += slot_nodes(title, key="title", slot="title")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
@@ -1933,6 +1990,8 @@ class LargeTopAppBar(Component):
         expanded_height: int | float | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
+        actions: Content | None = None,
+        navigation_icon: Content | None = None,
         title: Content | None = None,
     ) -> None:
         """Construct a registered LargeTopAppBar.
@@ -1944,6 +2003,8 @@ class LargeTopAppBar(Component):
             expanded_height: Native expandedHeight; None uses its default.
             modifier: Native modifier; None uses its default.
             window_insets: Native windowInsets; None uses its default.
+            actions: Nodes for the native actions slot.
+            navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
         props: dict[str, JsonValue] = {}
@@ -1956,6 +2017,14 @@ class LargeTopAppBar(Component):
         if window_insets is not None:
             props["window_insets"] = window_insets
         slotted: tuple[Node, ...] = ()
+        if actions is not None:
+            slotted += slot_nodes(actions, key="actions", slot="actions")
+        if navigation_icon is not None:
+            slotted += slot_nodes(
+                navigation_icon,
+                key="navigationIcon",
+                slot="navigationIcon",
+            )
         if title is not None:
             slotted += slot_nodes(title, key="title", slot="title")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
@@ -2175,6 +2244,8 @@ class MediumTopAppBar(Component):
         expanded_height: int | float | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
+        actions: Content | None = None,
+        navigation_icon: Content | None = None,
         title: Content | None = None,
     ) -> None:
         """Construct a registered MediumTopAppBar.
@@ -2186,6 +2257,8 @@ class MediumTopAppBar(Component):
             expanded_height: Native expandedHeight; None uses its default.
             modifier: Native modifier; None uses its default.
             window_insets: Native windowInsets; None uses its default.
+            actions: Nodes for the native actions slot.
+            navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
         props: dict[str, JsonValue] = {}
@@ -2198,6 +2271,14 @@ class MediumTopAppBar(Component):
         if window_insets is not None:
             props["window_insets"] = window_insets
         slotted: tuple[Node, ...] = ()
+        if actions is not None:
+            slotted += slot_nodes(actions, key="actions", slot="actions")
+        if navigation_icon is not None:
+            slotted += slot_nodes(
+                navigation_icon,
+                key="navigationIcon",
+                slot="navigationIcon",
+            )
         if title is not None:
             slotted += slot_nodes(title, key="title", slot="title")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
@@ -2538,6 +2619,57 @@ class NavigationDrawerItem(Component):
         if label is not None:
             slotted += slot_nodes(label, key="label", slot="label")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class NavigationRail(Component):
+    """Native NavigationRail; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationRail"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        container_color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        header: Content | None = None,
+    ) -> None:
+        """Construct a registered NavigationRail.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            modifier: Native modifier; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            header: Nodes for the native header slot.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if header is not None:
+            slotted += slot_nodes(header, key="header", slot="header")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class NavigationRailItem(Component):
@@ -4006,6 +4138,8 @@ class TopAppBar(Component):
         expanded_height: int | float | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
+        actions: Content | None = None,
+        navigation_icon: Content | None = None,
         title: Content | None = None,
     ) -> None:
         """Construct a registered TopAppBar.
@@ -4016,6 +4150,8 @@ class TopAppBar(Component):
             expanded_height: Native expandedHeight; None uses its default.
             modifier: Native modifier; None uses its default.
             window_insets: Native windowInsets; None uses its default.
+            actions: Nodes for the native actions slot.
+            navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
         props: dict[str, JsonValue] = {}
@@ -4026,6 +4162,14 @@ class TopAppBar(Component):
         if window_insets is not None:
             props["window_insets"] = window_insets
         slotted: tuple[Node, ...] = ()
+        if actions is not None:
+            slotted += slot_nodes(actions, key="actions", slot="actions")
+        if navigation_icon is not None:
+            slotted += slot_nodes(
+                navigation_icon,
+                key="navigationIcon",
+                slot="navigationIcon",
+            )
         if title is not None:
             slotted += slot_nodes(title, key="title", slot="title")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)

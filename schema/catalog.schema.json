@@ -184,7 +184,8 @@
         "native": { "type": "string" },
         "kind": { "type": "string" },
         "nullable": { "type": "boolean" },
-        "consume": { "type": "string" }
+        "consume": { "type": "string" },
+        "provides": { "type": "string" }
       }
     },
     "stateBlock": {

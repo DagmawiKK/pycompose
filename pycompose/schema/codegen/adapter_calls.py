@@ -464,6 +464,16 @@ def _named_slot(slot_name: str, slot: dict[str, Any]) -> str:
     native = slot["native"]
     kind = slot.get("kind", "content")
     consume = slot.get("consume")
+    provides = slot.get("provides")
+    if provides is not None:
+        # The native lambda carries the receiver, so the slot renderer hands
+        # that same receiver to scoped children.  A non-null parameter still
+        # needs a lambda when the format is empty; the empty lambda preserves
+        # the native default.
+        call = f'context.slotIn{provides}(model.children, "{slot_name}")'
+        if slot.get("nullable"):
+            return f"{native} = {call}"
+        return f"{native} = {call} ?: {{}}"
     if slot.get("nullable") and consume is None:
         return f'{native} = context.slot(model.children, "{slot_name}")'
     body, parameter = _slot_body("model.children", slot_name, kind, consume)
