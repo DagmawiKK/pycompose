@@ -14,6 +14,7 @@ from pycompose.core.values import UNSET, _Unset
 from pycompose.errors import IrValidationError
 
 __all__ = [
+    "AlertDialog",
     "AssistChip",
     "Badge",
     "Box",
@@ -28,8 +29,10 @@ __all__ = [
     "DropdownMenuItem",
     "ElevatedAssistChip",
     "ElevatedButton",
+    "ElevatedCard",
     "ElevatedFilterChip",
     "ElevatedSuggestionChip",
+    "ExtendedFloatingActionButton",
     "FilledTonalButton",
     "FilterChip",
     "FloatingActionButton",
@@ -48,6 +51,8 @@ __all__ = [
     "NavigationBarItem",
     "NavigationDrawerItem",
     "OutlinedButton",
+    "OutlinedCard",
+    "PrimaryTabRow",
     "RadioButton",
     "Row",
     "Scaffold",
@@ -55,7 +60,9 @@ __all__ = [
     "SnackbarHost",
     "Spacer",
     "SuggestionChip",
+    "Surface",
     "Switch",
+    "Tab",
     "Text",
     "TextButton",
     "TextField",
@@ -106,6 +113,84 @@ _TextStyle = Literal[
     "titleSmall",
     "headlineMedium",
 ]
+
+
+class AlertDialog(Component):
+    """Native AlertDialog; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "AlertDialog"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        container_color: JsonValue | None = None,
+        icon_content_color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        on_dismiss_request: str,
+        shape: JsonValue | None = None,
+        text_content_color: JsonValue | None = None,
+        title_content_color: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        confirm_button: Content | None = None,
+        dismiss_button: Content | None = None,
+        icon: Content | None = None,
+        text: Content | None = None,
+        title: Content | None = None,
+    ) -> None:
+        """Construct a registered AlertDialog.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            icon_content_color: Native iconContentColor; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_dismiss_request: Required native onDismissRequest.
+            shape: Native shape; None uses its default.
+            text_content_color: Native textContentColor; None uses its default.
+            title_content_color: Native titleContentColor; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            confirm_button: Nodes for the native confirmButton slot.
+            dismiss_button: Nodes for the native dismissButton slot.
+            icon: Nodes for the native icon slot.
+            text: Nodes for the native text slot.
+            title: Nodes for the native title slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if icon_content_color is not None:
+            props["icon_content_color"] = icon_content_color
+        props["on_dismiss_request"] = on_dismiss_request
+        if shape is not None:
+            props["shape"] = shape
+        if text_content_color is not None:
+            props["text_content_color"] = text_content_color
+        if title_content_color is not None:
+            props["title_content_color"] = title_content_color
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        slotted: tuple[Node, ...] = ()
+        if confirm_button is not None:
+            slotted += slot_nodes(
+                confirm_button,
+                key="confirmButton",
+                slot="confirmButton",
+            )
+        if dismiss_button is not None:
+            slotted += slot_nodes(
+                dismiss_button,
+                key="dismissButton",
+                slot="dismissButton",
+            )
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if text is not None:
+            slotted += slot_nodes(text, key="text", slot="text")
+        if title is not None:
+            slotted += slot_nodes(title, key="title", slot="title")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class AssistChip(Component):
@@ -834,6 +919,61 @@ class ElevatedButton(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class ElevatedCard(Component):
+    """Native ElevatedCard; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ElevatedCard"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered ElevatedCard.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if elevation is not None:
+            props["elevation"] = elevation
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class ElevatedFilterChip(Component):
     """Native ElevatedFilterChip; props and defaults follow the component manifest."""
 
@@ -952,6 +1092,58 @@ class ElevatedSuggestionChip(Component):
         if label is not None:
             slotted += slot_nodes(label, key="label", slot="label")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class ExtendedFloatingActionButton(Component):
+    """Native ExtendedFloatingActionButton;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ExtendedFloatingActionButton"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        container_color: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered ExtendedFloatingActionButton.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            elevation: Native elevation; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if elevation is not None:
+            props["elevation"] = elevation
+        props["on_click"] = on_click
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class FilledTonalButton(Component):
@@ -1878,6 +2070,99 @@ class OutlinedButton(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class OutlinedCard(Component):
+    """Native OutlinedCard; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "OutlinedCard"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered OutlinedCard.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if elevation is not None:
+            props["elevation"] = elevation
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class PrimaryTabRow(Component):
+    """Native PrimaryTabRow; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "PrimaryTabRow"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        container_color: JsonValue | None = None,
+        content_color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        selected_tab_index: int,
+        tabs: Content | None = None,
+    ) -> None:
+        """Construct a registered PrimaryTabRow.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            content_color: Native contentColor; None uses its default.
+            modifier: Native modifier; None uses its default.
+            selected_tab_index: Required native selectedTabIndex.
+            tabs: Nodes for the native tabs slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if content_color is not None:
+            props["content_color"] = content_color
+        props["selected_tab_index"] = selected_tab_index
+        slotted: tuple[Node, ...] = ()
+        if tabs is not None:
+            slotted += slot_nodes(tabs, key="tabs", slot="tabs")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
 class RadioButton(Component):
     """Native RadioButton; props and defaults follow the component manifest."""
 
@@ -2176,6 +2461,51 @@ class SuggestionChip(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class Surface(Component):
+    """Native Surface; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Surface"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered Surface.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            color: Native color; None uses its default.
+            modifier: Native modifier; None uses its default.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if color is not None:
+            props["color"] = color
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class Switch(Component):
     """Native Switch; props and defaults follow the component manifest."""
 
@@ -2230,6 +2560,52 @@ class Switch(Component):
                 key="thumbContent",
                 slot="thumbContent",
             )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class Tab(Component):
+    """Native Tab; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Tab"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        selected: bool,
+        selected_content_color: JsonValue | None = None,
+        icon: Content | None = None,
+        text: Content | None = None,
+    ) -> None:
+        """Construct a registered Tab.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            selected_content_color: Native selectedContentColor; None uses its
+                default.
+            icon: Nodes for the native icon slot.
+            text: Nodes for the native text slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["selected"] = selected
+        if selected_content_color is not None:
+            props["selected_content_color"] = selected_content_color
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if text is not None:
+            slotted += slot_nodes(text, key="text", slot="text")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 

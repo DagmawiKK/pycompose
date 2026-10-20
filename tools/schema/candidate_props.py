@@ -154,6 +154,10 @@ def _scalar_prop(
             f"{name}.{parameter}: no wire type for {spec.get('wireType')!r}"
         )
     prop: dict[str, Any] = {"type": wire}
+    if wire == "integer" and spec["type"].get("classifier") == "kotlin/Int":
+        prop["nativeType"] = "Int"
+        prop["minimum"] = -(2**31)
+        prop["maximum"] = 2**31 - 1
     if spec["required"]:
         prop["required"] = True
         if spec["type"]["nullable"]:

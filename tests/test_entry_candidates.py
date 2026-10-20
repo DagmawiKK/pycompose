@@ -11,18 +11,21 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+from typing import Any
 
 import pytest
 from test_classpath_dump import (
     DUMP,
     ROOT,
     declaration,
+    parameter,
+    type_doc,
     write_inventory,
 )
 
 from tools.schema.candidate_props import CandidateError
 from tools.schema.classpath_dump import Inventory, inventory
-from tools.schema.component_binding import identity
+from tools.schema.component_binding import identity, spell
 from tools.schema.entry_candidates import (
     check_fresh,
     derive,
@@ -319,6 +322,123 @@ def test_select_refuses_blocked_and_ambiguous_names(tmp_path: Path) -> None:
     second = plan({}, source=source(descriptor="(Lkotlin/jvm/functions/Function0;)V"))
     with pytest.raises(CandidateError, match="2 call plans"):
         select({"candidates": [first, second]}, found, "Widget")
+
+
+def test_identity_selects_one_of_several_call_plans(tmp_path: Path) -> None:
+    modifier_type = type_doc("androidx.compose.ui.Modifier")
+    modifier_parameter = parameter("modifier", modifier_type, has_default=True)
+    first = declaration(
+        name="Widget",
+        descriptor="(Landroidx/compose/ui/Modifier;)V",
+        parameters=[modifier_parameter],
+    )
+    second = declaration(
+        name="Widget",
+        descriptor="(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;)V",
+        parameters=[modifier_parameter],
+    )
+    write_inventory(tmp_path, [first, second])
+    found = inventory(tmp_path)
+    plans = {
+        "candidates": [
+            plan(
+                {"modifier": modifier()},
+                source=identity(found.declarations[0]),
+            ),
+            plan(
+                {"modifier": modifier()},
+                source=identity(found.declarations[1]),
+            ),
+        ]
+    }
+    chosen = spell(identity(found.declarations[1]))
+    selected, pin = select(plans, found, "Widget", identity=chosen)
+    assert selected["source"] == identity(found.declarations[1])
+    assert identity(pin) == identity(found.declarations[1])
+
+    item = derive(
+        selected,
+        pin,
+        catalog(),
+        {"category": "test", "stability": "stable", "identity": chosen},
+    )
+    assert item.entry["source"] == identity(found.declarations[1])
+    assert "identity" not in item.entry
+
+
+def test_identity_must_match_exactly_one_call_plan(tmp_path: Path) -> None:
+    found = synthetic(tmp_path)
+    first = plan({})
+    second = plan({}, source=source(descriptor="(Lkotlin/jvm/functions/Function0;)V"))
+    plans = {"candidates": [first, second]}
+    with pytest.raises(CandidateError, match="does not select one call plan"):
+        select(plans, found, "Widget", identity="not-a-plan")
+    with pytest.raises(CandidateError, match="does not disambiguate"):
+        select(
+            {"candidates": [first]}, found, "Widget", identity=spell(first["source"])
+        )
+
+
+def test_identity_must_be_a_non_empty_string(tmp_path: Path) -> None:
+    found = synthetic(tmp_path)
+    malformed: dict[str, Any] = {
+        "category": "test",
+        "stability": "stable",
+        "identity": 3,
+    }
+    with pytest.raises(CandidateError, match="identity needs a non-empty string"):
+        derive(plan({}), found.declarations[0], catalog(), malformed)
+
+
+def test_an_int_scalar_carries_its_native_narrowing(tmp_path: Path) -> None:
+    found = synthetic(tmp_path)
+    parameters = {
+        "modifier": modifier(),
+        "count": {
+            "policy": "scalar",
+            "wireType": "int",
+            "required": True,
+            "type": {"classifier": "kotlin/Int", "nullable": False},
+        },
+    }
+    item = derive(
+        plan(parameters),
+        found.declarations[0],
+        catalog(),
+        {"category": "test", "stability": "stable"},
+    )
+    assert item.entry["props"]["count"] == {
+        "type": "integer",
+        "nativeType": "Int",
+        "minimum": -(2**31),
+        "maximum": 2**31 - 1,
+        "required": True,
+    }
+
+
+def test_a_dp_default_renders_as_member_access(tmp_path: Path) -> None:
+    found = synthetic(tmp_path)
+    parameters = {
+        "modifier": modifier(),
+        "elevation": {
+            "policy": "value",
+            "family": "Dp",
+            "required": False,
+            "type": {"classifier": "androidx/compose/ui/unit/Dp", "nullable": False},
+            "default": {
+                "kind": "extensionProperty",
+                "symbol": "androidx.compose.ui.unit.dp",
+                "receiver": {"kind": "literal", "type": "kotlin/Int", "value": 0},
+            },
+        },
+    }
+    item = derive(
+        plan(parameters),
+        found.declarations[0],
+        catalog(family("Dp", "androidx.compose.ui.unit.Dp")),
+        {"category": "test", "stability": "stable"},
+    )
+    assert item.entry["props"]["elevation"]["nativeDefault"] == "(0).dp"
 
 
 def test_select_refuses_a_plan_the_pin_no_longer_declares(tmp_path: Path) -> None:

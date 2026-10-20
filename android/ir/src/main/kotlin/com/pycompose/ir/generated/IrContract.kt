@@ -11,6 +11,22 @@ object IrContract {
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
+        "AlertDialog" to ComponentRule(
+            slots = setOf("confirmButton", "dismissButton", "icon", "text", "title"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "iconContentColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onDismissRequest" to PropertyRule("actionId", required = true),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "textContentColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "titleContentColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "tonalElevation" to PropertyRule("dp", required = false),
+            ),
+        ),
         "AssistChip" to ComponentRule(
             slots = setOf("label", "leadingIcon", "trailingIcon"),
             childrenAllowed = false,
@@ -206,6 +222,20 @@ object IrContract {
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
+        "ElevatedCard" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "colors" to PropertyRule("value", required = false, valueType = "CardColors"),
+                "elevation" to PropertyRule("value", required = false, valueType = "CardElevation"),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+            ),
+        ),
         "ElevatedFilterChip" to ComponentRule(
             slots = setOf("label", "leadingIcon", "trailingIcon"),
             childrenAllowed = false,
@@ -232,6 +262,19 @@ object IrContract {
                 "colors" to PropertyRule("value", required = false, valueType = "ChipColors"),
                 "elevation" to PropertyRule("value", required = false, valueType = "ChipElevation", nullable = true),
                 "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+            ),
+        ),
+        "ExtendedFloatingActionButton" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "elevation" to PropertyRule("value", required = false, valueType = "FloatingActionButtonElevation"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
@@ -475,6 +518,32 @@ object IrContract {
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
+        "OutlinedCard" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "colors" to PropertyRule("value", required = false, valueType = "CardColors"),
+                "elevation" to PropertyRule("value", required = false, valueType = "CardElevation"),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+            ),
+        ),
+        "PrimaryTabRow" to ComponentRule(
+            slots = setOf("tabs"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "contentColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "selectedTabIndex" to PropertyRule("integer", required = true, minimum = -2147483648.0, maximum = 2147483647.0),
+            ),
+        ),
         "RadioButton" to ComponentRule(
             slots = setOf(),
             childrenAllowed = false,
@@ -562,6 +631,20 @@ object IrContract {
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
+        "Surface" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "border" to PropertyRule("value", required = false, valueType = "BorderStroke", nullable = true),
+                "color" to PropertyRule("color", required = false, valueType = "Color"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "shadowElevation" to PropertyRule("dp", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "tonalElevation" to PropertyRule("dp", required = false),
+            ),
+        ),
         "Switch" to ComponentRule(
             slots = setOf("thumbContent"),
             childrenAllowed = false,
@@ -576,6 +659,19 @@ object IrContract {
                 "onFocus" to PropertyRule("actionId", required = false),
                 "onHover" to PropertyRule("actionId", required = false),
                 "onPress" to PropertyRule("actionId", required = false),
+            ),
+        ),
+        "Tab" to ComponentRule(
+            slots = setOf("icon", "text"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "selected" to PropertyRule("boolean", required = true),
+                "selectedContentColor" to PropertyRule("color", required = false, valueType = "Color"),
             ),
         ),
         "Text" to ComponentRule(

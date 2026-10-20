@@ -66,6 +66,7 @@
         "valueType": { "type": "string" },
         "since": { "$ref": "#/$defs/semver" },
         "nativeDefault": { "type": "string" },
+        "nativeType": { "type": "string" },
         "nullable": { "type": "boolean" },
         "required": { "type": "boolean" },
         "content": { "$ref": "#/$defs/content" },

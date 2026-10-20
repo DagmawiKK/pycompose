@@ -314,6 +314,21 @@ def test_a_required_nullable_scalar_is_passed_through() -> None:
     assert "contentDescription = model.props.contentDescription" in block
 
 
+def test_an_int_scalar_is_narrowed_for_compose() -> None:
+    """The wire carries an integer as ``Long``; this parameter is Kotlin ``Int``."""
+    block = render("PrimaryTabRow", components()["PrimaryTabRow"])
+    assert "selectedTabIndex = model.props.selectedTabIndex.toInt()" in block
+
+
+def test_a_dp_default_is_the_extension_property_it_names() -> None:
+    """A literal dp default must not invent a synthetic import alias."""
+    surface = components()["Surface"]
+    assert surface["props"]["shadowElevation"]["nativeDefault"] == "(0).dp"
+    block = render("Surface", surface)
+    assert "else (0).dp" in block
+    assert "default_androidx" not in block
+
+
 def test_an_icon_is_resolved_from_the_pinned_vocabulary() -> None:
     """The wire names an icon; the host supplies the pinned ``ImageVector``."""
     block = render("Icon", components()["Icon"])

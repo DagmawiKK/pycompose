@@ -14,7 +14,7 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material.icons.sharp.*
 import androidx.compose.material.icons.twotone.*
-import androidx.compose.ui.unit.dp as default_androidx_compose_ui_unit_dp
+import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonElement
 import com.pycompose.ir.generated.BorderStrokeValue
 import com.pycompose.ir.generated.BrushValue
@@ -168,29 +168,29 @@ object ValueResolver {
         when (value) {
             is WirecardElevation -> {
                 androidx.compose.material3.CardDefaults.cardElevation(
-                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
-                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
-                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
-                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
-                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
-                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0.0).dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (0.0).dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (0.0).dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (1.0).dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (6.0).dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).dp,
                 )
             }
             is WireelevatedCardElevation -> {
                 androidx.compose.material3.CardDefaults.elevatedCardElevation(
-                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
-                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
-                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
-                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).default_androidx_compose_ui_unit_dp,
-                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
-                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (1.0).dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (8.0).dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (1.0).dp,
                 )
             }
             is WireoutlinedCardElevation -> {
                 androidx.compose.material3.CardDefaults.outlinedCardElevation(
-                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
-                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
-                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).default_androidx_compose_ui_unit_dp,
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0.0).dp,
+                    draggedElevation = if ("draggedElevation" in value.supplied) value.draggedElevation?.let { item -> dp(item) }!! else (6.0).dp,
+                    disabledElevation = if ("disabledElevation" in value.supplied) value.disabledElevation?.let { item -> dp(item) }!! else (0.0).dp,
                 )
             }
         }
@@ -291,26 +291,26 @@ object ValueResolver {
         when (value) {
             is WirebottomAppBarFabElevation -> {
                 androidx.compose.material3.FloatingActionButtonDefaults.bottomAppBarFabElevation(
-                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
-                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
-                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
-                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (0).dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (0).dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (0).dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (0).dp,
                 )
             }
             is WirefloatingActionButtonElevation -> {
                 androidx.compose.material3.FloatingActionButtonDefaults.elevation(
-                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
-                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
-                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (6.0).default_androidx_compose_ui_unit_dp,
-                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (8.0).default_androidx_compose_ui_unit_dp,
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (6.0).dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (6.0).dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (6.0).dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (8.0).dp,
                 )
             }
             is WireloweredElevation -> {
                 androidx.compose.material3.FloatingActionButtonDefaults.loweredElevation(
-                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
-                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
-                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).default_androidx_compose_ui_unit_dp,
-                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).default_androidx_compose_ui_unit_dp,
+                    defaultElevation = if ("defaultElevation" in value.supplied) value.defaultElevation?.let { item -> dp(item) }!! else (1.0).dp,
+                    pressedElevation = if ("pressedElevation" in value.supplied) value.pressedElevation?.let { item -> dp(item) }!! else (1.0).dp,
+                    focusedElevation = if ("focusedElevation" in value.supplied) value.focusedElevation?.let { item -> dp(item) }!! else (1.0).dp,
+                    hoveredElevation = if ("hoveredElevation" in value.supplied) value.hoveredElevation?.let { item -> dp(item) }!! else (3.0).dp,
                 )
             }
         }
@@ -702,10 +702,10 @@ object ValueResolver {
         when (value) {
             is WirePaddingValues -> {
                 androidx.compose.foundation.layout.PaddingValues(
-                    start = if ("start" in value.supplied) value.start?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
-                    top = if ("top" in value.supplied) value.top?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
-                    end = if ("end" in value.supplied) value.end?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
-                    bottom = if ("bottom" in value.supplied) value.bottom?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    start = if ("start" in value.supplied) value.start?.let { item -> dp(item) }!! else (0).dp,
+                    top = if ("top" in value.supplied) value.top?.let { item -> dp(item) }!! else (0).dp,
+                    end = if ("end" in value.supplied) value.end?.let { item -> dp(item) }!! else (0).dp,
+                    bottom = if ("bottom" in value.supplied) value.bottom?.let { item -> dp(item) }!! else (0).dp,
                 )
             }
         }
@@ -826,10 +826,10 @@ object ValueResolver {
         when (value) {
             is WireWindowInsets -> {
                 androidx.compose.foundation.layout.WindowInsets(
-                    left = if ("left" in value.supplied) value.left?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
-                    top = if ("top" in value.supplied) value.top?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
-                    right = if ("right" in value.supplied) value.right?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
-                    bottom = if ("bottom" in value.supplied) value.bottom?.let { item -> dp(item) }!! else (0).default_androidx_compose_ui_unit_dp,
+                    left = if ("left" in value.supplied) value.left?.let { item -> dp(item) }!! else (0).dp,
+                    top = if ("top" in value.supplied) value.top?.let { item -> dp(item) }!! else (0).dp,
+                    right = if ("right" in value.supplied) value.right?.let { item -> dp(item) }!! else (0).dp,
+                    bottom = if ("bottom" in value.supplied) value.bottom?.let { item -> dp(item) }!! else (0).dp,
                 )
             }
         }

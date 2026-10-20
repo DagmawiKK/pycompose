@@ -187,17 +187,17 @@ ordinary action, so the worker never freezes behind a request.
 
 ## Components
 
-35 Material 3 components. `*` marks experimental entries.
+54 Material 3 components. `*` marks experimental entries.
 
 | Category | Components |
 | --- | --- |
 | Typography | `Text` |
-| Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `Spacer`, `Card` |
-| Buttons | `Button`, `TextButton`, `IconButton`, `FloatingActionButton` |
-| Selection and input | `Checkbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `FilterChip`, `AssistChip`, `ElevatedAssistChip` |
-| Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet` |
-| Overlays and status | `ModalBottomSheet`\*, `SnackbarHost`, `Badge`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
-| Lists | `LazyColumn` |
+| Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard` |
+| Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `IconButton`, `FloatingActionButton`, `ExtendedFloatingActionButton` |
+| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
+| Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `NavigationDrawerItem`, `Tab`, `PrimaryTabRow`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet` |
+| Overlays and status | `ModalBottomSheet`\*, `SnackbarHost`, `AlertDialog`, `DropdownMenu`, `DropdownMenuItem`, `Badge`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
+| Lists | `LazyColumn`, `ListItem` |
 | Media and dividers | `Icon`, `Image`, `HorizontalDivider`, `VerticalDivider` |
 
 ## CLI

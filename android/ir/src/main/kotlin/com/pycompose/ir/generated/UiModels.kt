@@ -32,6 +32,29 @@ data class IRRoot(
 )
 
 @Serializable
+data class AlertDialogProps(
+    val `containerColor`: JsonElement? = null,
+    val `iconContentColor`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onDismissRequest`: String,
+    val `shape`: JsonElement? = null,
+    val `textContentColor`: JsonElement? = null,
+    val `titleContentColor`: JsonElement? = null,
+    val `tonalElevation`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("AlertDialog")
+data class AlertDialog(
+    override val id: String,
+    override val props: AlertDialogProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "AlertDialog"
+}
+
+@Serializable
 data class AssistChipProps(
     val `colors`: JsonElement? = null,
     val `elevation`: OptionalValue = OptionalValue.Absent,
@@ -325,6 +348,27 @@ data class ElevatedButton(
 }
 
 @Serializable
+data class ElevatedCardProps(
+    val `colors`: JsonElement? = null,
+    val `elevation`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `shape`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ElevatedCard")
+data class ElevatedCard(
+    override val id: String,
+    override val props: ElevatedCardProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "ElevatedCard"
+}
+
+@Serializable
 data class ElevatedFilterChipProps(
     val `border`: OptionalValue = OptionalValue.Absent,
     val `colors`: JsonElement? = null,
@@ -367,6 +411,26 @@ data class ElevatedSuggestionChip(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "ElevatedSuggestionChip"
+}
+
+@Serializable
+data class ExtendedFloatingActionButtonProps(
+    val `containerColor`: JsonElement? = null,
+    val `elevation`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `shape`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ExtendedFloatingActionButton")
+data class ExtendedFloatingActionButton(
+    override val id: String,
+    override val props: ExtendedFloatingActionButtonProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "ExtendedFloatingActionButton"
 }
 
 @Serializable
@@ -734,6 +798,46 @@ data class OutlinedButton(
 }
 
 @Serializable
+data class OutlinedCardProps(
+    val `colors`: JsonElement? = null,
+    val `elevation`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `shape`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("OutlinedCard")
+data class OutlinedCard(
+    override val id: String,
+    override val props: OutlinedCardProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "OutlinedCard"
+}
+
+@Serializable
+data class PrimaryTabRowProps(
+    val `containerColor`: JsonElement? = null,
+    val `contentColor`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `selectedTabIndex`: Long,
+) : UiProps
+
+@Serializable
+@SerialName("PrimaryTabRow")
+data class PrimaryTabRow(
+    override val id: String,
+    override val props: PrimaryTabRowProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "PrimaryTabRow"
+}
+
+@Serializable
 data class RadioButtonProps(
     val `colors`: JsonElement? = null,
     val `enabled`: Boolean = true,
@@ -870,6 +974,27 @@ data class SuggestionChip(
 }
 
 @Serializable
+data class SurfaceProps(
+    val `border`: OptionalValue = OptionalValue.Absent,
+    val `color`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `shadowElevation`: Double? = null,
+    val `shape`: JsonElement? = null,
+    val `tonalElevation`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("Surface")
+data class Surface(
+    override val id: String,
+    override val props: SurfaceProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "Surface"
+}
+
+@Serializable
 data class SwitchProps(
     val `checked`: Boolean,
     val `colors`: JsonElement? = null,
@@ -890,6 +1015,26 @@ data class Switch(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Switch"
+}
+
+@Serializable
+data class TabProps(
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `selected`: Boolean,
+    val `selectedContentColor`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("Tab")
+data class Tab(
+    override val id: String,
+    override val props: TabProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "Tab"
 }
 
 @Serializable

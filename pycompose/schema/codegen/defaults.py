@@ -51,9 +51,9 @@ def render_default(expression: dict[str, Any], imports: set[str]) -> str:
         if kind in {"property", "object"}:
             return symbol
         if kind == "extensionProperty":
-            alias = "default_" + symbol.replace(".", "_")
-            imports.add(f"import {symbol} as {alias}")
-            return f"({render_default(expression['receiver'], imports)}).{alias}"
+            member = symbol.rsplit(".", 1)[1]
+            imports.add(f"import {symbol}")
+            return f"({render_default(expression['receiver'], imports)}).{member}"
         if kind == "memberProperty":
             member = symbol.rsplit(".", 1)[1]
             return f"({render_default(expression['receiver'], imports)}).{member}"

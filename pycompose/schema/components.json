@@ -2688,6 +2688,360 @@
           "nullable": true
         }
       }
+    },
+    "Tab": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;JJLandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Tab-wqdebIU",
+        "name": "Tab",
+        "owner": "androidx.compose.material3.TabKt"
+      },
+      "props": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "selectedContentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "(androidx.compose.material3.LocalContentColor).current"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "icon": {
+          "native": "icon",
+          "nullable": true
+        },
+        "text": {
+          "native": "text",
+          "nullable": true
+        }
+      }
+    },
+    "PrimaryTabRow": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ILandroidx/compose/ui/Modifier;JJLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "PrimaryTabRow-pAZo6Ak",
+        "name": "PrimaryTabRow",
+        "owner": "androidx.compose.material3.TabRowKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContainerColor"
+        },
+        "contentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContentColor"
+        },
+        "selectedTabIndex": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "tabs": {
+          "native": "tabs"
+        }
+      }
+    },
+    "ElevatedCard": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ElevatedCard",
+        "name": "ElevatedCard",
+        "owner": "androidx.compose.material3.CardKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "CardColors",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.elevatedCardColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "CardElevation",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.elevatedCardElevation()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.elevatedShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      }
+    },
+    "OutlinedCard": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "OutlinedCard",
+        "name": "OutlinedCard",
+        "owner": "androidx.compose.material3.CardKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "CardColors",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.outlinedCardColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "CardElevation",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.outlinedCardElevation()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.outlinedShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      }
+    },
+    "ExtendedFloatingActionButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJLandroidx/compose/material3/FloatingActionButtonElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ExtendedFloatingActionButton-X-z6DiA",
+        "name": "ExtendedFloatingActionButton",
+        "owner": "androidx.compose.material3.FloatingActionButtonKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "FloatingActionButtonElevation",
+          "nativeDefault": "androidx.compose.material3.FloatingActionButtonDefaults.elevation()"
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.FloatingActionButtonDefaults.extendedFabShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "RowScope"
+      }
+    },
+    "Surface": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFFLandroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Surface-T9BRK9s",
+        "name": "Surface",
+        "owner": "androidx.compose.material3.SurfaceKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.ui.graphics.RectangleShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "AlertDialog": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;JJJJFLandroidx/compose/ui/window/DialogProperties;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "AlertDialog-Oix01E0",
+        "name": "AlertDialog",
+        "owner": "androidx.compose.material3.AndroidAlertDialog_androidKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.AlertDialogDefaults.containerColor"
+        },
+        "iconContentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.AlertDialogDefaults.iconContentColor"
+        },
+        "onDismissRequest": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.AlertDialogDefaults.shape"
+        },
+        "textContentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.AlertDialogDefaults.textContentColor"
+        },
+        "titleContentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.AlertDialogDefaults.titleContentColor"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.AlertDialogDefaults.TonalElevation"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "confirmButton": {
+          "native": "confirmButton"
+        },
+        "dismissButton": {
+          "native": "dismissButton",
+          "nullable": true
+        },
+        "icon": {
+          "native": "icon",
+          "nullable": true
+        },
+        "text": {
+          "native": "text",
+          "nullable": true
+        },
+        "title": {
+          "native": "title",
+          "nullable": true
+        }
+      }
     }
   },
   "modifiers": {

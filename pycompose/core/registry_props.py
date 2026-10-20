@@ -65,6 +65,9 @@ class PropDef:
             failure is a wrong alignment rather than an error.
         value_type: Optional approved native value family for tagged inputs.
         native_default: Native default provider used by generated adapters.
+        native_type: The narrower native Kotlin type when the wire type is
+            wider, as with ``Int`` integer props; None means the wire type is
+            already native.
         fallback: Native expression used in place of a decoded prop's per-decoder
             default, for the parameters where the hand-written adapter read the
             theme instead. Only valid together with ``decode``.
@@ -88,6 +91,7 @@ class PropDef:
     decode: str | None = None
     value_type: str | None = None
     native_default: str | None = None
+    native_type: str | None = None
     fallback: str | None = None
     nullable: bool = False
     provider: ProviderDef | None = None
@@ -183,6 +187,7 @@ class PropDef:
             decode=_decode(ptype, cast("str | None", data.get("decode"))),
             value_type=cast("str | None", data.get("valueType")),
             native_default=cast("str | None", data.get("nativeDefault")),
+            native_type=cast("str | None", data.get("nativeType")),
             fallback=cast("str | None", data.get("fallback")),
             nullable=cast("bool", data.get("nullable", False)),
             provider=(
@@ -205,6 +210,7 @@ class PropDef:
                 for key, value in {
                     "valueType": self.value_type,
                     "nativeDefault": self.native_default,
+                    "nativeType": self.native_type,
                     "fallback": self.fallback,
                     "nullable": True if self.nullable else None,
                 }.items()

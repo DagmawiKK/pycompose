@@ -346,3 +346,19 @@ def _dp_renderable(spec: dict[str, Any]) -> bool:
         True when the adapter can render the prop without a decision.
     """
     return bool(spec.get("required") or "default" in spec or "nativeDefault" in spec)
+
+
+def scalar_wire(prop_name: str, spec: dict[str, Any]) -> str:
+    """Read one scalar from the model, narrowing an Int-native wire value.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+
+    Returns:
+        Kotlin source for the value Compose receives.
+    """
+    wire = f"model.props.{prop_name}"
+    if spec.get("nativeType") == "Int":
+        wire += "?.toInt()" if spec.get("nullable") else ".toInt()"
+    return wire

@@ -52,6 +52,7 @@ from pycompose.schema.codegen.adapter_helpers import (
     _Fragments,
     _slot,
     is_mechanical,
+    scalar_wire,
 )
 
 __all__ = [
@@ -257,7 +258,7 @@ def _render_scalar(prop_name: str, spec: dict[str, Any], out: _Fragments) -> boo
         return False
     if spec.get("required") or "default" in spec:
         # A nullable property would not compile where Compose wants a value.
-        out.arguments.append(f"{prop_name} = model.props.{prop_name}")
+        out.arguments.append(f"{prop_name} = {scalar_wire(prop_name, spec)}")
     return True
 
 

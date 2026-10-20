@@ -6,8 +6,9 @@ turns that plan into a candidate registry entry:
 * identity comes from the pin -- one plan, one declaration, recorded ``source``
 * declarations and defaults come from the plan: props, payloads, slots and the
   compiler-resolved default expressions a closed wire can carry
-* taxonomy the pin cannot decide (``category``, ``stability``, ``since``) is
-  review input from a decisions file and is refused when missing
+* review input the pin cannot decide -- ``category`` and ``stability``, plus an
+  optional ``identity`` when several call plans compete -- is refused when
+  missing, stale or ambiguous
 
 A candidate is never the approved schema. ``--out`` stages an isolated copy of
 the catalog with the derived entries inserted; stale plans, ambiguous
@@ -86,7 +87,11 @@ def check_fresh(plans: dict[str, Any], found: Inventory) -> None:
 
 
 def select(
-    plans: dict[str, Any], found: Inventory, name: str
+    plans: dict[str, Any],
+    found: Inventory,
+    name: str,
+    *,
+    identity: str | None = None,
 ) -> tuple[dict[str, Any], Declaration]:
     """Select the one call plan and declaration behind a component name.
 
@@ -94,6 +99,8 @@ def select(
         plans: The fresh planner output.
         found: The validated inventory of the current pin.
         name: The component's schema name.
+        identity: The reviewed choice among competing call plans, spelled
+            exactly as the refusal lists it.
 
     Returns:
         The selected call plan and the pinned declaration it records.
@@ -118,8 +125,20 @@ def select(
         raise CandidateError(f"{name}: no call plan in the pinned inventory{detail}")
     if len(usable) > 1:
         identities = ", ".join(sorted(spell(c["source"]) for c in usable))
+        if identity is None:
+            raise CandidateError(
+                f"{name}: {len(usable)} call plans; select one by identity "
+                f"({identities})"
+            )
+        chosen = [c for c in usable if spell(c["source"]) == identity]
+        if len(chosen) != 1:
+            raise CandidateError(
+                f"{name}: identity does not select one call plan ({identities})"
+            )
+        usable = chosen
+    elif identity is not None:
         raise CandidateError(
-            f"{name}: {len(usable)} call plans; select one by identity ({identities})"
+            f"{name}: the pin offers one call plan; identity does not disambiguate"
         )
     plan = usable[0]
     declaration = _declaration(plan, found)
@@ -184,7 +203,8 @@ def derive(
         declaration: The pinned declaration the plan records.
         registry: The approved catalog, for value families and scopes.
         decision: Review input: ``category`` and ``stability``, which the pin
-            cannot decide.
+            cannot decide, and an optional ``identity`` that selected this
+            plan among competing call plans.
 
     Returns:
         The candidate entry plus the differences a reviewer must read.
@@ -194,14 +214,19 @@ def derive(
             carried by the wire.
     """
     name = plan["name"]
-    unknown = sorted(set(decision) - {"category", "stability"})
+    unknown = sorted(set(decision) - {"category", "stability", "identity"})
     if unknown:
         raise CandidateError(
-            f"{name}: the decision carries only category and stability; got {unknown}"
+            f"{name}: the decision carries only category, stability and "
+            f"identity; got {unknown}"
         )
     for key in ("category", "stability"):
         if not isinstance(decision.get(key), str) or not decision[key]:
             raise CandidateError(f"{name}: the decision needs a non-empty {key!r}")
+    if "identity" in decision and (
+        not isinstance(decision["identity"], str) or not decision["identity"]
+    ):
+        raise CandidateError(f"{name}: identity needs a non-empty string")
     props, children, slots, review = wire_shape(name, plan, family_index(registry))
     entry: dict[str, Any] = {
         "package": declaration.package,
@@ -315,7 +340,9 @@ def _derive_all(
         decision = decisions.get(name)
         if decision is None:
             raise CandidateError(f"{name}: no decision")
-        plan, declaration = select(plans, found, name)
+        plan, declaration = select(
+            plans, found, name, identity=decision.get("identity")
+        )
         derived.append(derive(plan, declaration, registry, decision))
     return derived
 
