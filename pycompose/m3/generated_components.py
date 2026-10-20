@@ -61,6 +61,8 @@ __all__ = [
     "ModalDrawerSheet",
     "ModalNavigationDrawer",
     "ModalWideNavigationRail",
+    "MultiChoiceSegmentedButton",
+    "MultiChoiceSegmentedButtonRow",
     "NavigationBar",
     "NavigationBarItem",
     "NavigationDrawerItem",
@@ -83,8 +85,10 @@ __all__ = [
     "Scaffold",
     "SecondaryScrollableTabRow",
     "SecondaryTabRow",
+    "SegmentedButton",
     "ShortNavigationBar",
     "ShortNavigationBarItem",
+    "SingleChoiceSegmentedButtonRow",
     "Slider",
     "Snackbar",
     "SnackbarHost",
@@ -2471,6 +2475,95 @@ class ModalWideNavigationRail(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class MultiChoiceSegmentedButton(Component):
+    """Native SegmentedButton; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "MultiChoiceSegmentedButton"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        checked: bool,
+        colors: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_checked_change: str,
+        shape: JsonValue,
+        label: Content | None = None,
+    ) -> None:
+        """Construct a registered MultiChoiceSegmentedButton.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            checked: Required native checked.
+            colors: Native colors; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_checked_change: Required native onCheckedChange.
+            shape: Required native shape.
+            label: Nodes for the native label slot.
+        """
+        props: dict[str, JsonValue] = {}
+        props["checked"] = checked
+        if colors is not None:
+            props["colors"] = colors
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_checked_change"] = on_checked_change
+        props["shape"] = shape
+        slotted: tuple[Node, ...] = ()
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class MultiChoiceSegmentedButtonRow(Component):
+    """Native MultiChoiceSegmentedButtonRow;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "MultiChoiceSegmentedButtonRow"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        space: int | float | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered MultiChoiceSegmentedButtonRow.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            space: Native space; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if space is not None:
+            props["space"] = space
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class NavigationBar(Component):
     """Native NavigationBar; props and defaults follow the component manifest."""
 
@@ -3545,6 +3638,54 @@ class SecondaryTabRow(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class SegmentedButton(Component):
+    """Native SegmentedButton; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SegmentedButton"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: str,
+        selected: bool,
+        shape: JsonValue,
+        label: Content | None = None,
+    ) -> None:
+        """Construct a registered SegmentedButton.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            shape: Required native shape.
+            label: Nodes for the native label slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["selected"] = selected
+        props["shape"] = shape
+        slotted: tuple[Node, ...] = ()
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
 class ShortNavigationBar(Component):
     """Native ShortNavigationBar; props and defaults follow the component manifest."""
 
@@ -3622,6 +3763,47 @@ class ShortNavigationBarItem(Component):
         if label is not None:
             slotted += slot_nodes(label, key="label", slot="label")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class SingleChoiceSegmentedButtonRow(Component):
+    """Native SingleChoiceSegmentedButtonRow;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SingleChoiceSegmentedButtonRow"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        space: int | float | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered SingleChoiceSegmentedButtonRow.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            space: Native space; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if space is not None:
+            props["space"] = space
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class Slider(Component):

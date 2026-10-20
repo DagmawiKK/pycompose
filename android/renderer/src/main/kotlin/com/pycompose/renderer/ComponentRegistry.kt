@@ -3,6 +3,8 @@ package com.pycompose.renderer
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material3.MultiChoiceSegmentedButtonRowScope
+import androidx.compose.material3.SingleChoiceSegmentedButtonRowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.pycompose.ir.generated.UiNode
@@ -16,12 +18,20 @@ typealias ColumnScopedNodeRenderer =
 
 typealias BoxScopedNodeRenderer = @Composable BoxScope.(UiNode, Modifier, RenderContext) -> Unit
 
+typealias SingleChoiceScopedNodeRenderer =
+    @Composable SingleChoiceSegmentedButtonRowScope.(UiNode, Modifier, RenderContext) -> Unit
+
+typealias MultiChoiceScopedNodeRenderer =
+    @Composable MultiChoiceSegmentedButtonRowScope.(UiNode, Modifier, RenderContext) -> Unit
+
 /** Immutable adapter table. Registration is explicit; no component dispatch chain. */
 class ComponentRegistry private constructor(
     private val adapters: Map<String, NodeRenderer>,
     private val rowScopedAdapters: Map<String, RowScopedNodeRenderer>,
     private val columnScopedAdapters: Map<String, ColumnScopedNodeRenderer>,
     private val boxScopedAdapters: Map<String, BoxScopedNodeRenderer>,
+    private val singleChoiceScopedAdapters: Map<String, SingleChoiceScopedNodeRenderer>,
+    private val multiChoiceScopedAdapters: Map<String, MultiChoiceScopedNodeRenderer>,
 ) {
     operator fun get(type: String): NodeRenderer? = adapters[type]
 
@@ -34,12 +44,22 @@ class ComponentRegistry private constructor(
     /** The BoxScope adapter for one type, composed under a BoxScope parent. */
     fun boxScoped(type: String): BoxScopedNodeRenderer? = boxScopedAdapters[type]
 
+    /** The single-choice segmented-row adapter for one type. */
+    fun singleChoiceScoped(type: String): SingleChoiceScopedNodeRenderer? =
+        singleChoiceScopedAdapters[type]
+
+    /** The multi-choice segmented-row adapter for one type. */
+    fun multiChoiceScoped(type: String): MultiChoiceScopedNodeRenderer? =
+        multiChoiceScopedAdapters[type]
+
     val types: Set<String>
         get() =
             adapters.keys +
                 rowScopedAdapters.keys +
                 columnScopedAdapters.keys +
-                boxScopedAdapters.keys
+                boxScopedAdapters.keys +
+                singleChoiceScopedAdapters.keys +
+                multiChoiceScopedAdapters.keys
 
     /** The composition scope a type requires, when only a scoped adapter exists. */
     fun scopeOf(type: String): String? =
@@ -47,6 +67,8 @@ class ComponentRegistry private constructor(
             type in rowScopedAdapters -> "RowScope"
             type in columnScopedAdapters -> "ColumnScope"
             type in boxScopedAdapters -> "BoxScope"
+            type in singleChoiceScopedAdapters -> "SingleChoiceSegmentedButtonRowScope"
+            type in multiChoiceScopedAdapters -> "MultiChoiceSegmentedButtonRowScope"
             else -> null
         }
 
@@ -55,6 +77,10 @@ class ComponentRegistry private constructor(
         private val rowScopedAdapters = linkedMapOf<String, RowScopedNodeRenderer>()
         private val columnScopedAdapters = linkedMapOf<String, ColumnScopedNodeRenderer>()
         private val boxScopedAdapters = linkedMapOf<String, BoxScopedNodeRenderer>()
+        private val singleChoiceScopedAdapters =
+            linkedMapOf<String, SingleChoiceScopedNodeRenderer>()
+        private val multiChoiceScopedAdapters =
+            linkedMapOf<String, MultiChoiceScopedNodeRenderer>()
 
         fun register(
             type: String,
@@ -92,6 +118,24 @@ class ComponentRegistry private constructor(
                 boxScopedAdapters[type] = renderer
             }
 
+        fun registerSingleChoiceSegmentedButtonRowScoped(
+            type: String,
+            renderer: SingleChoiceScopedNodeRenderer,
+        ): Builder =
+            apply {
+                claim(type)
+                singleChoiceScopedAdapters[type] = renderer
+            }
+
+        fun registerMultiChoiceSegmentedButtonRowScoped(
+            type: String,
+            renderer: MultiChoiceScopedNodeRenderer,
+        ): Builder =
+            apply {
+                claim(type)
+                multiChoiceScopedAdapters[type] = renderer
+            }
+
         /** One adapter per type: a scoped one is looked up through its scope alone. */
         private fun claim(type: String) {
             require(
@@ -99,7 +143,9 @@ class ComponentRegistry private constructor(
                     type !in adapters &&
                     type !in rowScopedAdapters &&
                     type !in columnScopedAdapters &&
-                    type !in boxScopedAdapters,
+                    type !in boxScopedAdapters &&
+                    type !in singleChoiceScopedAdapters &&
+                    type !in multiChoiceScopedAdapters,
             ) {
                 "Duplicate/empty adapter: $type"
             }
@@ -111,6 +157,8 @@ class ComponentRegistry private constructor(
                 rowScopedAdapters.toMap(),
                 columnScopedAdapters.toMap(),
                 boxScopedAdapters.toMap(),
+                singleChoiceScopedAdapters.toMap(),
+                multiChoiceScopedAdapters.toMap(),
             )
     }
 }

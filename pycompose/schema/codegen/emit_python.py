@@ -213,20 +213,30 @@ def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
     }[prop["type"]]
 
 
-def _python_class_docstring(name: str) -> list[str]:
-    """Render the generated class docstring, wrapped when the name is long.
+def _native_name(name: str, spec: dict[str, Any]) -> str:
+    """Return the native callable a schema entry binds."""
+    source = spec.get("source")
+    if isinstance(source, dict):
+        native = source.get("name")
+        if isinstance(native, str):
+            return native
+    return name
+
+
+def _python_class_docstring(native: str) -> list[str]:
+    """Render the generated class docstring, wrapped when the summary is long.
 
     Args:
-        name: The generated class name.
+        native: The native callable the schema entry binds.
 
     Returns:
         The docstring's source lines.
     """
-    summary = f"Native {name}; props and defaults follow the component manifest."
+    summary = f"Native {native}; props and defaults follow the component manifest."
     if len(f'    """{summary}"""') <= 88:
         return [f'    """{summary}"""']
     return [
-        f'    """Native {name};',
+        f'    """Native {native};',
         '    props and defaults follow the component manifest."""',
     ]
 
@@ -236,7 +246,7 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
     alias = spec["children"].get("kind")
     lines = [
         f"class {name}(Component):",
-        *_python_class_docstring(name),
+        *_python_class_docstring(_native_name(name, spec)),
         "",
         "    __slots__ = ()",
         f'    component_type = "{name}"',

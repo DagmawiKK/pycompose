@@ -3297,6 +3297,124 @@
       },
       "type": "object"
     },
+    "C_MultiChoiceSegmentedButton": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_SegmentedButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange",
+            "shape"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "MultiChoiceSegmentedButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_MultiChoiceSegmentedButtonRow": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "space": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "MultiChoiceSegmentedButtonRow"
+        }
+      },
+      "type": "object"
+    },
     "C_NavigationBar": {
       "properties": {
         "children": {
@@ -4686,6 +4804,73 @@
       },
       "type": "object"
     },
+    "C_SegmentedButton": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_SegmentedButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected",
+            "shape"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SegmentedButton"
+        }
+      },
+      "type": "object"
+    },
     "C_ShortNavigationBar": {
       "properties": {
         "children": {
@@ -4792,6 +4977,57 @@
         },
         "type": {
           "const": "ShortNavigationBarItem"
+        }
+      },
+      "type": "object"
+    },
+    "C_SingleChoiceSegmentedButtonRow": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "space": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "SingleChoiceSegmentedButtonRow"
         }
       },
       "type": "object"
@@ -6670,6 +6906,12 @@
               "$ref": "#/definitions/C_ModalWideNavigationRail"
             },
             {
+              "$ref": "#/definitions/C_MultiChoiceSegmentedButton"
+            },
+            {
+              "$ref": "#/definitions/C_MultiChoiceSegmentedButtonRow"
+            },
+            {
               "$ref": "#/definitions/C_NavigationBar"
             },
             {
@@ -6736,10 +6978,16 @@
               "$ref": "#/definitions/C_SecondaryTabRow"
             },
             {
+              "$ref": "#/definitions/C_SegmentedButton"
+            },
+            {
               "$ref": "#/definitions/C_ShortNavigationBar"
             },
             {
               "$ref": "#/definitions/C_ShortNavigationBarItem"
+            },
+            {
+              "$ref": "#/definitions/C_SingleChoiceSegmentedButtonRow"
             },
             {
               "$ref": "#/definitions/C_Slider"
@@ -26357,6 +26605,124 @@
         }
       ]
     },
+    "V_1_23_0_MultiChoiceSegmentedButton": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_SegmentedButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange",
+            "shape"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "MultiChoiceSegmentedButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_MultiChoiceSegmentedButtonRow": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "space": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "MultiChoiceSegmentedButtonRow"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_NavigationBar": {
       "properties": {
         "children": {
@@ -26910,6 +27276,12 @@
               "$ref": "#/definitions/V_1_23_0_ModalWideNavigationRail"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_MultiChoiceSegmentedButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_MultiChoiceSegmentedButtonRow"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_NavigationBar"
             },
             {
@@ -26976,10 +27348,16 @@
               "$ref": "#/definitions/V_1_23_0_SecondaryTabRow"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_SegmentedButton"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_ShortNavigationBar"
             },
             {
               "$ref": "#/definitions/V_1_23_0_ShortNavigationBarItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SingleChoiceSegmentedButtonRow"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Slider"
@@ -28043,6 +28421,73 @@
       },
       "type": "object"
     },
+    "V_1_23_0_SegmentedButton": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_SegmentedButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick",
+            "selected",
+            "shape"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SegmentedButton"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_ShortNavigationBar": {
       "properties": {
         "children": {
@@ -28149,6 +28594,57 @@
         },
         "type": {
           "const": "ShortNavigationBarItem"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SingleChoiceSegmentedButtonRow": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "space": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "SingleChoiceSegmentedButtonRow"
         }
       },
       "type": "object"

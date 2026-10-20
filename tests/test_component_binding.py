@@ -217,6 +217,32 @@ def test_a_recorded_source_must_equal_the_selected_overload(tmp_path: Path) -> N
     ), result.errors
 
 
+def test_a_schema_alias_resolves_through_its_native_name(tmp_path: Path) -> None:
+    """A schema alias keeps its own key while the source selects the pin."""
+    from tools.schema.classpath_dump import inventory
+    from tools.schema.component_binding import resolutions
+
+    record = widget([modifier(), string("label")], jvm="Widget")
+    catalog = registry(
+        {"label": {"type": "string", "required": True}},
+        source={
+            "artifact": "androidx.compose.material3:material3-android:1.4.0",
+            "owner": f"{PACKAGE}.WidgetKt",
+            "name": "Widget",
+            "jvmName": "Widget",
+            "descriptor": "(Landroidx/compose/ui/Modifier;)V",
+        },
+    )
+    catalog["components"]["AliasedWidget"] = catalog["components"].pop("Widget")
+    write_inventory(tmp_path, [record])
+
+    result = resolutions(catalog, inventory(tmp_path))[0]
+    assert result.name == "AliasedWidget"
+    assert result.mode == "derived"
+    assert result.source is not None and result.source["name"] == "Widget"
+    assert result.errors == ()
+
+
 def test_a_manual_adapter_claims_no_identity(tmp_path: Path) -> None:
     record = widget([modifier(), string("label")], jvm="Widget")
     result = resolve_one(

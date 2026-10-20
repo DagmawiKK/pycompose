@@ -98,7 +98,11 @@ def modifier() -> dict:
     }
 
 
-def synthetic(tmp_path: Path, parameters: list[dict] | None = None) -> Inventory:
+def synthetic(
+    tmp_path: Path,
+    parameters: list[dict] | None = None,
+    receiver: dict | None = None,
+) -> Inventory:
     """Load one synthetic pinned declaration a plan can record."""
     record = declaration(
         name="Widget",
@@ -109,6 +113,7 @@ def synthetic(tmp_path: Path, parameters: list[dict] | None = None) -> Inventory
             "descriptor": "(Landroidx/compose/ui/Modifier;)V",
             "matched": True,
         },
+        receiver=receiver,
         parameters=parameters or [],
     )
     write_inventory(tmp_path, [record])

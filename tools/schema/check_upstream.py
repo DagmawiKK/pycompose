@@ -45,7 +45,7 @@ def _derived(spec: dict[str, Any]) -> dict[str, Any]:
 
 
 def pinned_packages(found: Inventory, name: str) -> set[str]:
-    """Packages the pin declares for one composable name.
+    """Packages the pin declares for one native composable name.
 
     A name can also appear as a parameterless extension declaration in packages
     like semantics or content; those are not components, so declarations that
@@ -53,7 +53,7 @@ def pinned_packages(found: Inventory, name: str) -> set[str]:
 
     Args:
         found: The validated pinned inventory.
-        name: The component's schema name.
+        name: The component's native name.
 
     Returns:
         Every package a component of that name is pinned in.
@@ -216,15 +216,17 @@ def compare(registry: dict[str, Any], found: Inventory) -> list[str]:
     errors = []
     resolved = {result.name: result for result in resolutions(registry, found)}
     for name, entry in registry["components"].items():
+        source = entry.get("source")
+        native = source.get("name", name) if isinstance(source, dict) else name
         overloads = [
             d
             for d in found.declarations
-            if d.name == name and d.disposition in {"ui", "support"}
+            if d.name == native and d.disposition in {"ui", "support"}
         ]
         if not overloads:
             errors.append(f"{name}: no public composable in the pinned inventory")
             continue
-        packages = pinned_packages(found, name)
+        packages = pinned_packages(found, native)
         if entry.get("package") not in packages:
             errors.append(
                 f"{name}: package {entry.get('package')!r} is not pinned "

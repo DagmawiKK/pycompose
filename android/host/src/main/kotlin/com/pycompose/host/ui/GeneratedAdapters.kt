@@ -54,6 +54,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.ModalWideNavigationRail
+import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
@@ -72,8 +73,10 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.SecondaryTabRow
+import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.ShortNavigationBar
 import androidx.compose.material3.ShortNavigationBarItem
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -139,6 +142,8 @@ import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
 import com.pycompose.ir.generated.ModalDrawerSheet as ModalDrawerSheetNode
 import com.pycompose.ir.generated.ModalNavigationDrawer as ModalNavigationDrawerNode
 import com.pycompose.ir.generated.ModalWideNavigationRail as ModalWideNavigationRailNode
+import com.pycompose.ir.generated.MultiChoiceSegmentedButton as MultiChoiceSegmentedButtonNode
+import com.pycompose.ir.generated.MultiChoiceSegmentedButtonRow as MultiChoiceSegmentedButtonRowNode
 import com.pycompose.ir.generated.NavigationBar as NavigationBarNode
 import com.pycompose.ir.generated.NavigationBarItem as NavigationBarItemNode
 import com.pycompose.ir.generated.NavigationDrawerItem as NavigationDrawerItemNode
@@ -161,8 +166,10 @@ import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
 import com.pycompose.ir.generated.SecondaryScrollableTabRow as SecondaryScrollableTabRowNode
 import com.pycompose.ir.generated.SecondaryTabRow as SecondaryTabRowNode
+import com.pycompose.ir.generated.SegmentedButton as SegmentedButtonNode
 import com.pycompose.ir.generated.ShortNavigationBar as ShortNavigationBarNode
 import com.pycompose.ir.generated.ShortNavigationBarItem as ShortNavigationBarItemNode
+import com.pycompose.ir.generated.SingleChoiceSegmentedButtonRow as SingleChoiceSegmentedButtonRowNode
 import com.pycompose.ir.generated.Slider as SliderNode
 import com.pycompose.ir.generated.Snackbar as SnackbarNode
 import com.pycompose.ir.generated.SnackbarHost as SnackbarHostNode
@@ -1053,6 +1060,34 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
+            .registerMultiChoiceSegmentedButtonRowScoped("MultiChoiceSegmentedButton") { node, modifier, context ->
+                val model = node as MultiChoiceSegmentedButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.segmentedButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.SegmentedButtonDefaults.colors()
+                val contentPaddingWire = model.props.contentPadding
+                val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.SegmentedButtonDefaults.ContentPadding
+                val shapeValue = com.pycompose.renderer.generated.ValueResolver.shape(model.props.shape).getOrThrow()
+                SegmentedButton(
+                    modifier = modifier,
+                    checked = model.props.checked,
+                    colors = colorsValue,
+                    contentPadding = contentPaddingValue,
+                    enabled = model.props.enabled,
+                    onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
+                    shape = shapeValue,
+                    label = { context.slot(model.children, "label")?.invoke() },
+                )
+            }
+            .register("MultiChoiceSegmentedButtonRow") { node, modifier, context ->
+                val model = node as MultiChoiceSegmentedButtonRowNode
+                val spaceWire = model.props.space
+                val spaceValue = if (spaceWire != null) spaceWire.dp else androidx.compose.material3.SegmentedButtonDefaults.BorderWidth
+                MultiChoiceSegmentedButtonRow(
+                    modifier = modifier,
+                    space = spaceValue,
+                    content = { context.childrenInMultiChoiceSegmentedButtonRowScope(this, model.children) },
+                )
+            }
             .register("NavigationBar") { node, modifier, context ->
                 val model = node as NavigationBarNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
@@ -1425,6 +1460,24 @@ object GeneratedAdapters {
                     tabs = { context.slot(model.children, "tabs")?.invoke() },
                 )
             }
+            .registerSingleChoiceSegmentedButtonRowScoped("SegmentedButton") { node, modifier, context ->
+                val model = node as SegmentedButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.segmentedButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.SegmentedButtonDefaults.colors()
+                val contentPaddingWire = model.props.contentPadding
+                val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.SegmentedButtonDefaults.ContentPadding
+                val shapeValue = com.pycompose.renderer.generated.ValueResolver.shape(model.props.shape).getOrThrow()
+                SegmentedButton(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    contentPadding = contentPaddingValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    selected = model.props.selected,
+                    shape = shapeValue,
+                    label = { context.slot(model.children, "label")?.invoke() },
+                )
+            }
             .register("ShortNavigationBar") { node, modifier, context ->
                 val model = node as ShortNavigationBarNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
@@ -1456,6 +1509,16 @@ object GeneratedAdapters {
                     selected = model.props.selected,
                     icon = { context.slot(model.children, "icon")?.invoke() },
                     label = context.slot(model.children, "label"),
+                )
+            }
+            .register("SingleChoiceSegmentedButtonRow") { node, modifier, context ->
+                val model = node as SingleChoiceSegmentedButtonRowNode
+                val spaceWire = model.props.space
+                val spaceValue = if (spaceWire != null) spaceWire.dp else androidx.compose.material3.SegmentedButtonDefaults.BorderWidth
+                SingleChoiceSegmentedButtonRow(
+                    modifier = modifier,
+                    space = spaceValue,
+                    content = { context.childrenInSingleChoiceSegmentedButtonRowScope(this, model.children) },
                 )
             }
             .register("Slider") { node, modifier, context ->

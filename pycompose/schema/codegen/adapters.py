@@ -51,7 +51,9 @@ from pycompose.schema.codegen.adapter_helpers import (
     _camel,
     _Fragments,
     _slot,
+    composables,
     is_mechanical,
+    native_name,
     scalar_wire,
 )
 
@@ -73,28 +75,6 @@ __all__ = [
     "render",
     "render_file",
 ]
-
-
-def composables(name: str, entry: dict[str, Any]) -> set[str]:
-    """List the Compose imports one adapter needs beyond the component itself.
-
-    A flattened content slot is its own dependency: ``Button`` compiles without
-    ``Text`` in scope until the slot becomes a real ``Text`` call.
-
-    Args:
-        name: The component's schema name.
-        entry: Its schema entry.
-
-    Returns:
-        Simple class names the generated code references, excluding ``name``.
-    """
-    used = {
-        slot["composable"]
-        for spec in entry.get("props", {}).values()
-        if (slot := spec.get("content")) is not None
-    }
-    used.discard(name)
-    return used
 
 
 def extra_imports(entry: dict[str, Any]) -> set[str]:
@@ -419,8 +399,9 @@ def render(name: str, entry: dict[str, Any]) -> str:
         body_lines = "\n".join(f"{indent}    {line}" for line in out.trailing)
         tail = head + "\n" + body_lines + "\n" + indent + "}"
     node = f"{name}Node"
+    native = native_name(name, entry)
     prelude = "\n".join(f"                {line}" for line in out.locals)
-    call = f"{indent}{name}(\n{body}\n{indent}){tail}"
+    call = f"{indent}{native}(\n{body}\n{indent}){tail}"
     if gate is not None:
         # The holder stays outside the gate: the state must outlive the
         # composition of the component it projects.
@@ -458,8 +439,9 @@ def render_file(registry: dict[str, Any]) -> str:
             blocks.append(block)
             opt_ins.update(entry.get("optIn", ()))
             package = entry["package"]
-            imports.add(f"import {package}.{name}")
-            for extra in composables(name, entry):
+            native = native_name(name, entry)
+            imports.add(f"import {package}.{native}")
+            for extra in composables(native, entry):
                 imports.add(f"import {package}.{extra}")
             for qualified in extra_imports(entry):
                 imports.add(f"import {qualified}")

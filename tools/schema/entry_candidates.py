@@ -38,6 +38,7 @@ if __package__ in (None, ""):  # pragma: no cover - only when run as a script
 from tools.schema.candidate_props import (
     CandidateError,
     family_index,
+    scope_for,
     wire_shape,
 )
 from tools.schema.classpath_dump import DUMP_DIR, Declaration, Inventory, inventory
@@ -193,6 +194,20 @@ def _check_declared(plan: dict[str, Any], declaration: Declaration) -> None:
             raise CandidateError(
                 f"{plan['name']}.{parameter}: plan and pin disagree on defaults"
             )
+    planned_receiver = plan.get("receiver")
+    pinned_receiver = declaration.receiver
+    if (planned_receiver is None) != (pinned_receiver is None):
+        raise CandidateError(
+            f"{plan['name']}: plan and pin disagree on the declaration receiver"
+        )
+    if (
+        planned_receiver is not None
+        and pinned_receiver is not None
+        and planned_receiver.get("classifier") != pinned_receiver.classifier
+    ):
+        raise CandidateError(
+            f"{plan['name']}: plan and pin disagree on the declaration receiver"
+        )
 
 
 def derive(
@@ -200,6 +215,8 @@ def derive(
     declaration: Declaration,
     registry: dict[str, Any],
     decision: dict[str, Any],
+    *,
+    schema_name: str | None = None,
 ) -> Derived:
     """Derive one candidate entry from one selected call plan.
 
@@ -208,8 +225,11 @@ def derive(
         declaration: The pinned declaration the plan records.
         registry: The approved catalog, for value families and scopes.
         decision: Review input: ``category`` and ``stability``, which the pin
-            cannot decide, and an optional ``identity`` that selected this
-            plan among competing call plans.
+            cannot decide, an optional ``identity`` that selected this plan
+            among competing call plans, and an optional ``nativeName`` when the
+            schema gives one native overload its own component name.
+        schema_name: The schema component name, when it differs from the
+            native name the plan records.
 
     Returns:
         The candidate entry plus the differences a reviewer must read.
@@ -218,12 +238,14 @@ def derive(
         CandidateError: The decision is incomplete or the plan cannot be
             carried by the wire.
     """
-    name = plan["name"]
-    unknown = sorted(set(decision) - {"category", "stability", "identity"})
+    name = schema_name or plan["name"]
+    unknown = sorted(
+        set(decision) - {"category", "stability", "identity", "nativeName"}
+    )
     if unknown:
         raise CandidateError(
-            f"{name}: the decision carries only category, stability and "
-            f"identity; got {unknown}"
+            f"{name}: the decision carries only category, stability, identity "
+            f"and nativeName; got {unknown}"
         )
     for key in ("category", "stability"):
         if not isinstance(decision.get(key), str) or not decision[key]:
@@ -232,6 +254,14 @@ def derive(
         not isinstance(decision["identity"], str) or not decision["identity"]
     ):
         raise CandidateError(f"{name}: identity needs a non-empty string")
+    native = decision.get("nativeName", name)
+    if not isinstance(native, str) or not native:
+        raise CandidateError(f"{name}: nativeName needs a non-empty string")
+    if native != plan["name"]:
+        raise CandidateError(
+            f"{name}: nativeName {native!r} does not match the plan's "
+            f"{plan['name']!r}"
+        )
     props, children, slots, review = wire_shape(name, plan, family_index(registry))
     entry: dict[str, Any] = {
         "package": declaration.package,
@@ -248,6 +278,18 @@ def derive(
     entry["children"] = children
     if slots:
         entry["slots"] = slots
+    if declaration.receiver is not None:
+        classifier = declaration.receiver.classifier
+        planned = plan.get("receiver")
+        if planned is None or planned.get("classifier") != classifier:
+            raise CandidateError(
+                f"{name}: plan does not record the pinned declaration receiver"
+            )
+        scope = scope_for(classifier)
+        if scope is None:
+            raise CandidateError(f"{name}: receiver {classifier} has no closed scope")
+        entry["scope"] = scope
+        review.append(f"receiver: composes only inside {scope}")
     return Derived(name, entry, tuple(review))
 
 
@@ -345,10 +387,13 @@ def _derive_all(
         decision = decisions.get(name)
         if decision is None:
             raise CandidateError(f"{name}: no decision")
+        native = decision.get("nativeName", name)
+        if not isinstance(native, str) or not native:
+            raise CandidateError(f"{name}: nativeName needs a non-empty string")
         plan, declaration = select(
-            plans, found, name, identity=decision.get("identity")
+            plans, found, native, identity=decision.get("identity")
         )
-        derived.append(derive(plan, declaration, registry, decision))
+        derived.append(derive(plan, declaration, registry, decision, schema_name=name))
     return derived
 
 

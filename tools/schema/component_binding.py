@@ -98,11 +98,17 @@ def spell(source: dict[str, str]) -> str:
 def _candidates(
     name: str, entry: dict[str, Any], found: Inventory
 ) -> list[Declaration]:
-    """Every pinned declaration of one approved component in its package."""
+    """Every pinned declaration of one approved component in its package.
+
+    A schema name may alias a native overload shared with a sibling. The
+    recorded source still names the native callable, so lookup follows it.
+    """
+    source = entry.get("source")
+    native = source.get("name", name) if isinstance(source, dict) else name
     return [
         declaration
         for declaration in found.declarations
-        if declaration.name == name
+        if declaration.name == native
         and declaration.package == entry.get("package")
         and declaration.disposition in {"ui", "support"}
         and declaration.parameters

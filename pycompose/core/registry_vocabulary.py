@@ -26,17 +26,31 @@ A consumed scope is never lost: the adapter applies it in the one place Compose
 idiomatically applies it, and the app cannot apply it twice.
 """
 
-SCOPES = ("RowScope", "ColumnScope", "BoxScope")
+SCOPES = (
+    "RowScope",
+    "ColumnScope",
+    "BoxScope",
+    "SingleChoiceSegmentedButtonRowScope",
+    "MultiChoiceSegmentedButtonRowScope",
+)
 """Composition scopes a component can require or hand to its children.
 
 Closed like :data:`CONSUMERS`: the renderer owns one registration path per scope,
-so a name outside this tuple has no path to land in.
+so a name outside this tuple has no path to land in. The first three are layout
+scopes; the segmented-button rows add receivers whose members exist only inside
+their own content lambdas.
 """
 
 SCOPE_PATHS = {
     "RowScope": "androidx.compose.foundation.layout.RowScope",
     "ColumnScope": "androidx.compose.foundation.layout.ColumnScope",
     "BoxScope": "androidx.compose.foundation.layout.BoxScope",
+    "SingleChoiceSegmentedButtonRowScope": (
+        "androidx.compose.material3.SingleChoiceSegmentedButtonRowScope"
+    ),
+    "MultiChoiceSegmentedButtonRowScope": (
+        "androidx.compose.material3.MultiChoiceSegmentedButtonRowScope"
+    ),
 }
 """Name -> fully-qualified receiver path for every member of :data:`SCOPES`.
 

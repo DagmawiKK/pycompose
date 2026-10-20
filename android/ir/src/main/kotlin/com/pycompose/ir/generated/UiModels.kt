@@ -966,6 +966,45 @@ data class ModalWideNavigationRail(
 }
 
 @Serializable
+data class MultiChoiceSegmentedButtonProps(
+    val `checked`: Boolean,
+    val `colors`: JsonElement? = null,
+    val `contentPadding`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onCheckedChange`: String,
+    val `shape`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("MultiChoiceSegmentedButton")
+data class MultiChoiceSegmentedButton(
+    override val id: String,
+    override val props: MultiChoiceSegmentedButtonProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "MultiChoiceSegmentedButton"
+}
+
+@Serializable
+data class MultiChoiceSegmentedButtonRowProps(
+    override val `modifier`: JsonObject? = null,
+    val `space`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("MultiChoiceSegmentedButtonRow")
+data class MultiChoiceSegmentedButtonRow(
+    override val id: String,
+    override val props: MultiChoiceSegmentedButtonRowProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "MultiChoiceSegmentedButtonRow"
+}
+
+@Serializable
 data class NavigationBarProps(
     val `containerColor`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
@@ -1402,6 +1441,28 @@ data class SecondaryTabRow(
 }
 
 @Serializable
+data class SegmentedButtonProps(
+    val `colors`: JsonElement? = null,
+    val `contentPadding`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onClick`: String,
+    val `selected`: Boolean,
+    val `shape`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("SegmentedButton")
+data class SegmentedButton(
+    override val id: String,
+    override val props: SegmentedButtonProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "SegmentedButton"
+}
+
+@Serializable
 data class ShortNavigationBarProps(
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
@@ -1437,6 +1498,23 @@ data class ShortNavigationBarItem(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "ShortNavigationBarItem"
+}
+
+@Serializable
+data class SingleChoiceSegmentedButtonRowProps(
+    override val `modifier`: JsonObject? = null,
+    val `space`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("SingleChoiceSegmentedButtonRow")
+data class SingleChoiceSegmentedButtonRow(
+    override val id: String,
+    override val props: SingleChoiceSegmentedButtonRowProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "SingleChoiceSegmentedButtonRow"
 }
 
 @Serializable

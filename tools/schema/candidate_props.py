@@ -37,14 +37,23 @@ PAYLOAD_NAMES = {
 }
 """Single-argument callbacks whose payload a semantic name makes legible."""
 
-RENDERER_SCOPES = frozenset({"RowScope", "ColumnScope", "BoxScope"})
-"""Composition scopes the renderer composes children into."""
-
 DECODE_TOKENS = {classifier: token for token, classifier in DECODE_CLASSIFIERS.items()}
 """Pinned classifier back to its wire decode token."""
 
 SCOPE_NAMES = {path: scope for scope, path in SCOPE_PATHS.items()}
 """Pinned scope classifier back to its short approved name."""
+
+
+def scope_for(classifier: str) -> str | None:
+    """Return the closed scope name for a pinned receiver classifier.
+
+    Args:
+        classifier: A metadata classifier, slash-separated or source-spelled.
+
+    Returns:
+        The scope name, or None when the receiver is not a composition scope.
+    """
+    return SCOPE_NAMES.get(source_name(classifier))
 
 
 class CandidateError(ValueError):
@@ -383,8 +392,8 @@ def place_slot(
     nullable = bool(spec["type"]["nullable"])
     if receiver is not None:
         classifier = source_name(receiver)
-        scope = SCOPE_NAMES.get(classifier)
-        if scope not in RENDERER_SCOPES:
+        scope = scope_for(receiver)
+        if scope is None:
             raise CandidateError(
                 f"{name}.{parameter}: slot receiver {classifier} has no "
                 "renderable scope"

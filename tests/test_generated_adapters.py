@@ -10,6 +10,7 @@ the next schema change that reintroduces it fails here rather than at
 
 from __future__ import annotations
 
+import copy
 import json
 import re
 from pathlib import Path
@@ -95,6 +96,31 @@ def test_the_committed_file_matches_what_the_generator_produces() -> None:
     assert (
         render_file({"components": components()}).strip() == committed.strip()
     ), "GeneratedAdapters.kt is stale; run python tools/schema/gen.py"
+
+
+def test_an_alias_registers_its_schema_name_and_calls_its_native_name() -> None:
+    """Two native overloads may share a callable while keeping distinct names.
+
+    The schema key and generated node type use the alias; the recorded source
+    alone decides which native callable the adapter invokes.
+    """
+    entry = copy.deepcopy(components()["NavigationBarItem"])
+    entry["source"]["name"] = "NativeNavigationBarItem"
+    block = render("AliasedNavigationBarItem", entry)
+    assert '.registerRowScoped("AliasedNavigationBarItem")' in block
+    assert "val model = node as AliasedNavigationBarItemNode" in block
+    assert "\n                NativeNavigationBarItem(\n" in block
+    assert "\n                AliasedNavigationBarItem(\n" not in block
+
+    generated = render_file(
+        {
+            "components": {
+                "AliasedNavigationBarItem": entry,
+            }
+        }
+    )
+    assert "import androidx.compose.material3.NativeNavigationBarItem" in generated
+    assert "import androidx.compose.material3.AliasedNavigationBarItem" not in generated
 
 
 def test_each_component_is_registered_exactly_once_across_both_files() -> None:

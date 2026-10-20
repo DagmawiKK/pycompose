@@ -623,6 +623,31 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
+        "MultiChoiceSegmentedButton" to ComponentRule(
+            slots = setOf("label"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "checked" to PropertyRule("boolean", required = true),
+                "colors" to PropertyRule("value", required = false, valueType = "SegmentedButtonColors"),
+                "contentPadding" to PropertyRule("value", required = false, valueType = "PaddingValues"),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onCheckedChange" to PropertyRule("actionId", required = true),
+                "shape" to PropertyRule("value", required = true, valueType = "Shape"),
+            ),
+        ),
+        "MultiChoiceSegmentedButtonRow" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "space" to PropertyRule("dp", required = false),
+            ),
+        ),
         "NavigationBar" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -905,6 +930,21 @@ object IrContract {
                 "selectedTabIndex" to PropertyRule("integer", required = true, minimum = -2147483648.0, maximum = 2147483647.0),
             ),
         ),
+        "SegmentedButton" to ComponentRule(
+            slots = setOf("label"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "colors" to PropertyRule("value", required = false, valueType = "SegmentedButtonColors"),
+                "contentPadding" to PropertyRule("value", required = false, valueType = "PaddingValues"),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onClick" to PropertyRule("actionId", required = true),
+                "selected" to PropertyRule("boolean", required = true),
+                "shape" to PropertyRule("value", required = true, valueType = "Shape"),
+            ),
+        ),
         "ShortNavigationBar" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -927,6 +967,16 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
                 "selected" to PropertyRule("boolean", required = true),
+            ),
+        ),
+        "SingleChoiceSegmentedButtonRow" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "space" to PropertyRule("dp", required = false),
             ),
         ),
         "Slider" to ComponentRule(

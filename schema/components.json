@@ -4496,6 +4496,174 @@
           "nullable": true
         }
       }
+    },
+    "SingleChoiceSegmentedButtonRow": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;FLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SingleChoiceSegmentedButtonRow-uFdPcIQ",
+        "name": "SingleChoiceSegmentedButtonRow",
+        "owner": "androidx.compose.material3.SegmentedButtonKt"
+      },
+      "props": {
+        "space": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.BorderWidth"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "SingleChoiceSegmentedButtonRowScope"
+      }
+    },
+    "MultiChoiceSegmentedButtonRow": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;FLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "MultiChoiceSegmentedButtonRow-uFdPcIQ",
+        "name": "MultiChoiceSegmentedButtonRow",
+        "owner": "androidx.compose.material3.SegmentedButtonKt"
+      },
+      "props": {
+        "space": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.BorderWidth"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "MultiChoiceSegmentedButtonRowScope"
+      }
+    },
+    "SegmentedButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/SingleChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "SegmentedButton",
+        "name": "SegmentedButton",
+        "owner": "androidx.compose.material3.SegmentedButtonKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "SegmentedButtonColors",
+          "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.colors()"
+        },
+        "contentPadding": {
+          "type": "value",
+          "valueType": "PaddingValues",
+          "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.ContentPadding"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "label": {
+          "native": "label"
+        }
+      },
+      "scope": "SingleChoiceSegmentedButtonRowScope"
+    },
+    "MultiChoiceSegmentedButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/MultiChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "SegmentedButton",
+        "name": "SegmentedButton",
+        "owner": "androidx.compose.material3.SegmentedButtonKt"
+      },
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "SegmentedButtonColors",
+          "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.colors()"
+        },
+        "contentPadding": {
+          "type": "value",
+          "valueType": "PaddingValues",
+          "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.ContentPadding"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "value",
+              "type": "boolean"
+            }
+          ]
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "label": {
+          "native": "label"
+        }
+      },
+      "scope": "MultiChoiceSegmentedButtonRowScope"
     }
   },
   "modifiers": {

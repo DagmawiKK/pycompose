@@ -335,6 +335,42 @@ class _Fragments:
             self.trailing_parameter = parameter or self.trailing_parameter
 
 
+def native_name(name: str, entry: dict[str, Any]) -> str:
+    """Return the native callable a component schema entry binds.
+
+    A schema entry usually carries its native name. An overload that shares a
+    native name with a sibling gets a distinct schema name, and only its
+    recorded source says which callable the adapter must invoke.
+    """
+    source = entry.get("source")
+    if isinstance(source, dict):
+        native = source.get("name")
+        return native if isinstance(native, str) else name
+    return name
+
+
+def composables(name: str, entry: dict[str, Any]) -> set[str]:
+    """List the Compose imports one adapter needs beyond the component itself.
+
+    A flattened content slot is its own dependency: ``Button`` compiles without
+    ``Text`` in scope until the slot becomes a real ``Text`` call.
+
+    Args:
+        name: The native callable the adapter invokes.
+        entry: Its schema entry.
+
+    Returns:
+        Simple class names the generated code references, excluding ``name``.
+    """
+    used = {
+        slot["composable"]
+        for spec in entry.get("props", {}).values()
+        if (slot := spec.get("content")) is not None
+    }
+    used.discard(name)
+    return used
+
+
 def _dp_renderable(spec: dict[str, Any]) -> bool:
     """Report whether a dp prop has something to fall back on.
 
