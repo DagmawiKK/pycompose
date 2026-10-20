@@ -4664,6 +4664,127 @@
         }
       },
       "scope": "MultiChoiceSegmentedButtonRowScope"
+    },
+    "SearchBar": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SearchBar-Y92LkZI",
+        "name": "SearchBar",
+        "owner": "androidx.compose.material3.SearchBarKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "expanded": {
+          "type": "boolean",
+          "required": true
+        },
+        "onExpandedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "expanded",
+              "type": "boolean"
+            }
+          ]
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "slots": {
+        "inputField": {
+          "native": "inputField"
+        }
+      }
+    },
+    "DockedSearchBar": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "DockedSearchBar-EQC0FA8",
+        "name": "DockedSearchBar",
+        "owner": "androidx.compose.material3.SearchBarKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "expanded": {
+          "type": "boolean",
+          "required": true
+        },
+        "onExpandedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "expanded",
+              "type": "boolean"
+            }
+          ]
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.dockedShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "slots": {
+        "inputField": {
+          "native": "inputField"
+        }
+      }
     }
   },
   "modifiers": {

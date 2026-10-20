@@ -74,6 +74,19 @@ def test_a_named_slot_reaches_its_native_parameter() -> None:
         )
 
 
+def test_search_bars_separate_the_input_field_from_the_result_content() -> None:
+    """A search bar's input is a slot; results compose in the same ColumnScope."""
+    for name in ("SearchBar", "DockedSearchBar"):
+        block = render(name, components()[name])
+        assert (
+            'inputField = { context.slot(model.children, "inputField")?.invoke() }'
+            in block
+        )
+        assert (
+            "content = { context.childrenInColumnScope(this, model.children) }" in block
+        )
+
+
 def test_a_nullable_slot_keeps_compose_default() -> None:
     """FilterChip's icons are nullable, so empty must stay null.
 

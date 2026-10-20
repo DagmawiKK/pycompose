@@ -15,11 +15,19 @@ from tools.schema.candidate_props import CandidateError
 from tools.schema.entry_candidates import derive, select
 
 
-def test_an_event_payload_gets_a_semantic_name(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    ("callback", "field"),
+    [("onCheckedChange", "value"), ("onExpandedChange", "expanded")],
+)
+def test_an_event_payload_gets_a_semantic_name(
+    tmp_path: Path,
+    callback: str,
+    field: str,
+) -> None:
     found = synthetic(tmp_path)
     parameters = {
         "modifier": modifier(),
-        "onCheckedChange": {
+        callback: {
             "policy": "event",
             "required": True,
             "payload": [{"name": "arg0", "type": "boolean"}],
@@ -31,8 +39,8 @@ def test_an_event_payload_gets_a_semantic_name(tmp_path: Path) -> None:
         catalog(),
         {"category": "test", "stability": "stable"},
     )
-    assert item.entry["props"]["onCheckedChange"]["payload"] == [
-        {"name": "value", "type": "boolean"}
+    assert item.entry["props"][callback]["payload"] == [
+        {"name": field, "type": "boolean"}
     ]
 
 

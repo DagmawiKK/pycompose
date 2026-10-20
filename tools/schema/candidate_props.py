@@ -31,6 +31,7 @@ WIRE_SCALARS = {
 
 PAYLOAD_NAMES = {
     "onCheckedChange": "value",
+    "onExpandedChange": "expanded",
     "onOpenChange": "open",
     "onSelectionChange": "value",
     "onValueChange": "value",

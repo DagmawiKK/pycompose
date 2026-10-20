@@ -312,6 +312,27 @@ data class DismissibleNavigationDrawer(
 }
 
 @Serializable
+data class DockedSearchBarProps(
+    val `expanded`: Boolean,
+    override val `modifier`: JsonObject? = null,
+    val `onExpandedChange`: String,
+    val `shadowElevation`: Double? = null,
+    val `shape`: JsonElement? = null,
+    val `tonalElevation`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("DockedSearchBar")
+data class DockedSearchBar(
+    override val id: String,
+    override val props: DockedSearchBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "DockedSearchBar"
+}
+
+@Serializable
 data class DropdownMenuProps(
     val `border`: OptionalValue = OptionalValue.Absent,
     val `containerColor`: JsonElement? = null,
@@ -1398,6 +1419,28 @@ data class Scaffold(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Scaffold"
+}
+
+@Serializable
+data class SearchBarProps(
+    val `expanded`: Boolean,
+    override val `modifier`: JsonObject? = null,
+    val `onExpandedChange`: String,
+    val `shadowElevation`: Double? = null,
+    val `shape`: JsonElement? = null,
+    val `tonalElevation`: Double? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("SearchBar")
+data class SearchBar(
+    override val id: String,
+    override val props: SearchBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "SearchBar"
 }
 
 @Serializable

@@ -24,6 +24,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissibleDrawerSheet
 import androidx.compose.material3.DismissibleNavigationDrawer
+import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedAssistChip
@@ -71,6 +72,7 @@ import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.SegmentedButton
@@ -111,6 +113,7 @@ import com.pycompose.ir.generated.CircularProgressIndicator as CircularProgressI
 import com.pycompose.ir.generated.Column as ColumnNode
 import com.pycompose.ir.generated.DismissibleDrawerSheet as DismissibleDrawerSheetNode
 import com.pycompose.ir.generated.DismissibleNavigationDrawer as DismissibleNavigationDrawerNode
+import com.pycompose.ir.generated.DockedSearchBar as DockedSearchBarNode
 import com.pycompose.ir.generated.DropdownMenu as DropdownMenuNode
 import com.pycompose.ir.generated.DropdownMenuItem as DropdownMenuItemNode
 import com.pycompose.ir.generated.ElevatedAssistChip as ElevatedAssistChipNode
@@ -164,6 +167,7 @@ import com.pycompose.ir.generated.PullToRefreshBox as PullToRefreshBoxNode
 import com.pycompose.ir.generated.RadioButton as RadioButtonNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
+import com.pycompose.ir.generated.SearchBar as SearchBarNode
 import com.pycompose.ir.generated.SecondaryScrollableTabRow as SecondaryScrollableTabRowNode
 import com.pycompose.ir.generated.SecondaryTabRow as SecondaryTabRowNode
 import com.pycompose.ir.generated.SegmentedButton as SegmentedButtonNode
@@ -451,6 +455,25 @@ object GeneratedAdapters {
                     drawerState = drawerStateValue,
                     drawerContent = { context.slot(model.children, "drawer")?.invoke() },
                     content = { context.children(model.children) },
+                )
+            }
+            .register("DockedSearchBar") { node, modifier, context ->
+                val model = node as DockedSearchBarNode
+                val shadowElevationWire = model.props.shadowElevation
+                val shadowElevationValue = if (shadowElevationWire != null) shadowElevationWire.dp else androidx.compose.material3.SearchBarDefaults.ShadowElevation
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.dockedShape
+                val tonalElevationWire = model.props.tonalElevation
+                val tonalElevationValue = if (tonalElevationWire != null) tonalElevationWire.dp else androidx.compose.material3.SearchBarDefaults.TonalElevation
+                DockedSearchBar(
+                    modifier = modifier,
+                    expanded = model.props.expanded,
+                    onExpandedChange = { expanded -> context.event(model.props.onExpandedChange, JsonPrimitive(expanded)) },
+                    shadowElevation = shadowElevationValue,
+                    shape = shapeValue,
+                    tonalElevation = tonalElevationValue,
+                    inputField = { context.slot(model.children, "inputField")?.invoke() },
+                    content = { context.childrenInColumnScope(this, model.children) },
                 )
             }
             .register("DropdownMenu") { node, modifier, context ->
@@ -1412,6 +1435,28 @@ object GeneratedAdapters {
                     snackbarHost = { context.slot(model.children, "snackbarHost")?.invoke() },
                     topBar = { context.slot(model.children, "topBar")?.invoke() },
                     content = { padding -> Column(Modifier.padding(padding)) { context.children(model.children) } },
+                )
+            }
+            .register("SearchBar") { node, modifier, context ->
+                val model = node as SearchBarNode
+                val shadowElevationWire = model.props.shadowElevation
+                val shadowElevationValue = if (shadowElevationWire != null) shadowElevationWire.dp else androidx.compose.material3.SearchBarDefaults.ShadowElevation
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.inputFieldShape
+                val tonalElevationWire = model.props.tonalElevation
+                val tonalElevationValue = if (tonalElevationWire != null) tonalElevationWire.dp else androidx.compose.material3.SearchBarDefaults.TonalElevation
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.windowInsets
+                SearchBar(
+                    modifier = modifier,
+                    expanded = model.props.expanded,
+                    onExpandedChange = { expanded -> context.event(model.props.onExpandedChange, JsonPrimitive(expanded)) },
+                    shadowElevation = shadowElevationValue,
+                    shape = shapeValue,
+                    tonalElevation = tonalElevationValue,
+                    windowInsets = windowInsetsValue,
+                    inputField = { context.slot(model.children, "inputField")?.invoke() },
+                    content = { context.childrenInColumnScope(this, model.children) },
                 )
             }
             .register("SecondaryScrollableTabRow") { node, modifier, context ->

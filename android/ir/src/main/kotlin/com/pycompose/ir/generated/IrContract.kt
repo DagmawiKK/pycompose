@@ -193,6 +193,20 @@ object IrContract {
                 "open" to PropertyRule("boolean", required = false),
             ),
         ),
+        "DockedSearchBar" to ComponentRule(
+            slots = setOf("inputField"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "expanded" to PropertyRule("boolean", required = true),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onExpandedChange" to PropertyRule("actionId", required = true),
+                "shadowElevation" to PropertyRule("dp", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "tonalElevation" to PropertyRule("dp", required = false),
+            ),
+        ),
         "DropdownMenu" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -902,6 +916,21 @@ object IrContract {
             props = mapOf(
                 "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
+        "SearchBar" to ComponentRule(
+            slots = setOf("inputField"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "expanded" to PropertyRule("boolean", required = true),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onExpandedChange" to PropertyRule("actionId", required = true),
+                "shadowElevation" to PropertyRule("dp", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "tonalElevation" to PropertyRule("dp", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
             ),
         ),
         "SecondaryScrollableTabRow" to ComponentRule(
