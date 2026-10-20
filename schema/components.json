@@ -3042,6 +3042,614 @@
           "nullable": true
         }
       }
+    },
+    "OutlinedTextField": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/text/input/VisualTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/runtime/Composer;IIII)V",
+        "jvmName": "OutlinedTextField",
+        "name": "OutlinedTextField",
+        "owner": "androidx.compose.material3.OutlinedTextFieldKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "TextFieldColors",
+          "nativeDefault": "androidx.compose.material3.OutlinedTextFieldDefaults.colors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "isError": {
+          "type": "boolean",
+          "default": false
+        },
+        "minLines": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "default": 1
+        },
+        "onValueChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ]
+        },
+        "readOnly": {
+          "type": "boolean",
+          "default": false
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.OutlinedTextFieldDefaults.shape"
+        },
+        "singleLine": {
+          "type": "boolean",
+          "default": false
+        },
+        "textStyle": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "nativeDefault": "(androidx.compose.material3.LocalTextStyle).current"
+        },
+        "value": {
+          "type": "string",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "label": {
+          "native": "label",
+          "nullable": true
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "placeholder": {
+          "native": "placeholder",
+          "nullable": true
+        },
+        "prefix": {
+          "native": "prefix",
+          "nullable": true
+        },
+        "suffix": {
+          "native": "suffix",
+          "nullable": true
+        },
+        "supportingText": {
+          "native": "supportingText",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      }
+    },
+    "FilledIconButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/IconButtonColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FilledIconButton",
+        "name": "FilledIconButton",
+        "owner": "androidx.compose.material3.IconButtonKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "IconButtonColors",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.filledIconButtonColors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.filledShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "FilledIconToggleButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/IconToggleButtonColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FilledIconToggleButton",
+        "name": "FilledIconToggleButton",
+        "owner": "androidx.compose.material3.IconButtonKt"
+      },
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "IconToggleButtonColors",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.filledIconToggleButtonColors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "value",
+              "type": "boolean"
+            }
+          ]
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.filledShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "FilledTonalIconButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/IconButtonColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FilledTonalIconButton",
+        "name": "FilledTonalIconButton",
+        "owner": "androidx.compose.material3.IconButtonKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "IconButtonColors",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.filledTonalIconButtonColors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.filledShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "FilledTonalIconToggleButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/IconToggleButtonColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FilledTonalIconToggleButton",
+        "name": "FilledTonalIconToggleButton",
+        "owner": "androidx.compose.material3.IconButtonKt"
+      },
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "IconToggleButtonColors",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.filledTonalIconToggleButtonColors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "value",
+              "type": "boolean"
+            }
+          ]
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.filledShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "IconToggleButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/IconToggleButtonColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "IconToggleButton",
+        "name": "IconToggleButton",
+        "owner": "androidx.compose.material3.IconButtonKt"
+      },
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "IconToggleButtonColors",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.iconToggleButtonColors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "value",
+              "type": "boolean"
+            }
+          ]
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.standardShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "OutlinedIconButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/IconButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "OutlinedIconButton",
+        "name": "OutlinedIconButton",
+        "owner": "androidx.compose.material3.IconButtonKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "IconButtonColors",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.outlinedIconButtonColors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.outlinedShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "OutlinedIconToggleButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/IconToggleButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "OutlinedIconToggleButton",
+        "name": "OutlinedIconToggleButton",
+        "owner": "androidx.compose.material3.IconButtonKt"
+      },
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "IconToggleButtonColors",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.outlinedIconToggleButtonColors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "value",
+              "type": "boolean"
+            }
+          ]
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.outlinedShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "SecondaryTabRow": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ILandroidx/compose/ui/Modifier;JJLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SecondaryTabRow-pAZo6Ak",
+        "name": "SecondaryTabRow",
+        "owner": "androidx.compose.material3.TabRowKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContainerColor"
+        },
+        "contentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContentColor"
+        },
+        "selectedTabIndex": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "tabs": {
+          "native": "tabs"
+        }
+      }
+    },
+    "PrimaryScrollableTabRow": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ILandroidx/compose/ui/Modifier;Landroidx/compose/foundation/ScrollState;JJFLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;FLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "PrimaryScrollableTabRow-cx2KkNY",
+        "name": "PrimaryScrollableTabRow",
+        "owner": "androidx.compose.material3.TabRowKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContainerColor"
+        },
+        "contentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContentColor"
+        },
+        "edgePadding": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding"
+        },
+        "minTabWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth"
+        },
+        "selectedTabIndex": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "tabs": {
+          "native": "tabs"
+        }
+      }
+    },
+    "SecondaryScrollableTabRow": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ILandroidx/compose/ui/Modifier;Landroidx/compose/foundation/ScrollState;JJFLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;FLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SecondaryScrollableTabRow-cx2KkNY",
+        "name": "SecondaryScrollableTabRow",
+        "owner": "androidx.compose.material3.TabRowKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContainerColor"
+        },
+        "contentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContentColor"
+        },
+        "edgePadding": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding"
+        },
+        "minTabWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth"
+        },
+        "selectedTabIndex": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "tabs": {
+          "native": "tabs"
+        }
+      }
+    },
+    "LargeFloatingActionButton": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJLandroidx/compose/material3/FloatingActionButtonElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "LargeFloatingActionButton-X-z6DiA",
+        "name": "LargeFloatingActionButton",
+        "owner": "androidx.compose.material3.FloatingActionButtonKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "FloatingActionButtonElevation",
+          "nativeDefault": "androidx.compose.material3.FloatingActionButtonDefaults.elevation()"
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.FloatingActionButtonDefaults.largeShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
     }
   },
   "modifiers": {

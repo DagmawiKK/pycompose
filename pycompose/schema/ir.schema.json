@@ -1702,6 +1702,106 @@
       },
       "type": "object"
     },
+    "C_FilledIconButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_IconButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledIconButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_FilledIconToggleButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_IconToggleButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledIconToggleButton"
+        }
+      },
+      "type": "object"
+    },
     "C_FilledTonalButton": {
       "properties": {
         "children": {
@@ -1769,6 +1869,106 @@
         },
         "type": {
           "const": "FilledTonalButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_FilledTonalIconButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_IconButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledTonalIconButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_FilledTonalIconToggleButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_IconToggleButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledTonalIconToggleButton"
         }
       },
       "type": "object"
@@ -2099,6 +2299,58 @@
       },
       "type": "object"
     },
+    "C_IconToggleButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_IconToggleButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "IconToggleButton"
+        }
+      },
+      "type": "object"
+    },
     "C_Image": {
       "properties": {
         "children": false,
@@ -2207,6 +2459,60 @@
         },
         "type": {
           "const": "InputChip"
+        }
+      },
+      "type": "object"
+    },
+    "C_LargeFloatingActionButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_FloatingActionButtonElevation"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LargeFloatingActionButton"
         }
       },
       "type": "object"
@@ -2879,6 +3185,308 @@
       },
       "type": "object"
     },
+    "C_OutlinedIconButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_IconButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedIconButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_OutlinedIconToggleButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_IconToggleButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedIconToggleButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_OutlinedTextField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
+            "minLines": {
+              "default": 1,
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "singleLine": {
+              "default": false,
+              "type": "boolean"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedTextField"
+        }
+      },
+      "type": "object"
+    },
+    "C_PrimaryScrollableTabRow": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "tabs"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "edgePadding": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "minTabWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "selectedTabIndex": {
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "selectedTabIndex"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "PrimaryScrollableTabRow"
+        }
+      },
+      "type": "object"
+    },
     "C_PrimaryTabRow": {
       "properties": {
         "children": {
@@ -3094,6 +3702,186 @@
         },
         "type": {
           "const": "Scaffold"
+        }
+      },
+      "type": "object"
+    },
+    "C_SecondaryScrollableTabRow": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "tabs"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "edgePadding": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "minTabWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "selectedTabIndex": {
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "selectedTabIndex"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SecondaryScrollableTabRow"
+        }
+      },
+      "type": "object"
+    },
+    "C_SecondaryTabRow": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "tabs"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "selectedTabIndex": {
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "selectedTabIndex"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SecondaryTabRow"
         }
       },
       "type": "object"
@@ -4619,7 +5407,19 @@
               "$ref": "#/definitions/C_ExtendedFloatingActionButton"
             },
             {
+              "$ref": "#/definitions/C_FilledIconButton"
+            },
+            {
+              "$ref": "#/definitions/C_FilledIconToggleButton"
+            },
+            {
               "$ref": "#/definitions/C_FilledTonalButton"
+            },
+            {
+              "$ref": "#/definitions/C_FilledTonalIconButton"
+            },
+            {
+              "$ref": "#/definitions/C_FilledTonalIconToggleButton"
             },
             {
               "$ref": "#/definitions/C_FilterChip"
@@ -4637,10 +5437,16 @@
               "$ref": "#/definitions/C_IconButton"
             },
             {
+              "$ref": "#/definitions/C_IconToggleButton"
+            },
+            {
               "$ref": "#/definitions/C_Image"
             },
             {
               "$ref": "#/definitions/C_InputChip"
+            },
+            {
+              "$ref": "#/definitions/C_LargeFloatingActionButton"
             },
             {
               "$ref": "#/definitions/C_LazyColumn"
@@ -4676,6 +5482,18 @@
               "$ref": "#/definitions/C_OutlinedCard"
             },
             {
+              "$ref": "#/definitions/C_OutlinedIconButton"
+            },
+            {
+              "$ref": "#/definitions/C_OutlinedIconToggleButton"
+            },
+            {
+              "$ref": "#/definitions/C_OutlinedTextField"
+            },
+            {
+              "$ref": "#/definitions/C_PrimaryScrollableTabRow"
+            },
+            {
               "$ref": "#/definitions/C_PrimaryTabRow"
             },
             {
@@ -4686,6 +5504,12 @@
             },
             {
               "$ref": "#/definitions/C_Scaffold"
+            },
+            {
+              "$ref": "#/definitions/C_SecondaryScrollableTabRow"
+            },
+            {
+              "$ref": "#/definitions/C_SecondaryTabRow"
             },
             {
               "$ref": "#/definitions/C_Slider"
@@ -22439,6 +23263,106 @@
       },
       "type": "object"
     },
+    "V_1_23_0_FilledIconButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_IconButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledIconButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_FilledIconToggleButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_IconToggleButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledIconToggleButton"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_FilledTonalButton": {
       "properties": {
         "children": {
@@ -22506,6 +23430,106 @@
         },
         "type": {
           "const": "FilledTonalButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_FilledTonalIconButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_IconButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledTonalIconButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_FilledTonalIconToggleButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_IconToggleButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "FilledTonalIconToggleButton"
         }
       },
       "type": "object"
@@ -22836,6 +23860,58 @@
       },
       "type": "object"
     },
+    "V_1_23_0_IconToggleButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_IconToggleButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "IconToggleButton"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Image": {
       "properties": {
         "children": false,
@@ -22944,6 +24020,60 @@
         },
         "type": {
           "const": "InputChip"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_LargeFloatingActionButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_FloatingActionButtonElevation"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LargeFloatingActionButton"
         }
       },
       "type": "object"
@@ -23820,7 +24950,19 @@
               "$ref": "#/definitions/V_1_23_0_ExtendedFloatingActionButton"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_FilledIconButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_FilledIconToggleButton"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_FilledTonalButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_FilledTonalIconButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_FilledTonalIconToggleButton"
             },
             {
               "$ref": "#/definitions/V_1_23_0_FilterChip"
@@ -23838,10 +24980,16 @@
               "$ref": "#/definitions/V_1_23_0_IconButton"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_IconToggleButton"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_Image"
             },
             {
               "$ref": "#/definitions/V_1_23_0_InputChip"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_LargeFloatingActionButton"
             },
             {
               "$ref": "#/definitions/V_1_23_0_LazyColumn"
@@ -23877,6 +25025,18 @@
               "$ref": "#/definitions/V_1_23_0_OutlinedCard"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_OutlinedIconButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_OutlinedIconToggleButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_OutlinedTextField"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_PrimaryScrollableTabRow"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_PrimaryTabRow"
             },
             {
@@ -23887,6 +25047,12 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_Scaffold"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SecondaryScrollableTabRow"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SecondaryTabRow"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Slider"
@@ -24064,6 +25230,308 @@
         },
         "type": {
           "const": "OutlinedCard"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_OutlinedIconButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_IconButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedIconButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_OutlinedIconToggleButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_IconToggleButtonColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedIconToggleButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_OutlinedTextField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
+            "minLines": {
+              "default": 1,
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "singleLine": {
+              "default": false,
+              "type": "boolean"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedTextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_PrimaryScrollableTabRow": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "tabs"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "edgePadding": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "minTabWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "selectedTabIndex": {
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "selectedTabIndex"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "PrimaryScrollableTabRow"
         }
       },
       "type": "object"
@@ -24283,6 +25751,186 @@
         },
         "type": {
           "const": "Scaffold"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SecondaryScrollableTabRow": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "tabs"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "edgePadding": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "minTabWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "selectedTabIndex": {
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "selectedTabIndex"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SecondaryScrollableTabRow"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SecondaryTabRow": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "tabs"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "selectedTabIndex": {
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "selectedTabIndex"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SecondaryTabRow"
         }
       },
       "type": "object"

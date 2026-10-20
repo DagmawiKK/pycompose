@@ -187,15 +187,15 @@ ordinary action, so the worker never freezes behind a request.
 
 ## Components
 
-54 Material 3 components. `*` marks experimental entries.
+66 Material 3 components. `*` marks experimental entries.
 
 | Category | Components |
 | --- | --- |
 | Typography | `Text` |
 | Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard` |
-| Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `IconButton`, `FloatingActionButton`, `ExtendedFloatingActionButton` |
-| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
-| Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `NavigationDrawerItem`, `Tab`, `PrimaryTabRow`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet` |
+| Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `IconButton`, `FilledIconButton`, `FilledIconToggleButton`, `FilledTonalIconButton`, `FilledTonalIconToggleButton`, `IconToggleButton`, `OutlinedIconButton`, `OutlinedIconToggleButton`, `FloatingActionButton`, `LargeFloatingActionButton`, `ExtendedFloatingActionButton` |
+| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
+| Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `NavigationDrawerItem`, `Tab`, `SecondaryTabRow`, `PrimaryScrollableTabRow`, `SecondaryScrollableTabRow`, `PrimaryTabRow`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet` |
 | Overlays and status | `ModalBottomSheet`\*, `SnackbarHost`, `AlertDialog`, `DropdownMenu`, `DropdownMenuItem`, `Badge`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
 | Lists | `LazyColumn`, `ListItem` |
 | Media and dividers | `Icon`, `Image`, `HorizontalDivider`, `VerticalDivider` |

@@ -143,6 +143,7 @@ def render_python_components(
     names = sorted(registry["components"])
     lines = [
         f"# {GENERATED_NOTICE}",
+        "# ruff: noqa: PLR0912 -- one branch per slot; the schema sets the count.",
         f'"""Typed native component constructors; import from {package}."""',
         "",
         "from __future__ import annotations",

@@ -29,6 +29,14 @@ WIRE_SCALARS = {
 }
 """Plan scalar wire types the schema carries; a ``long`` has no exact one."""
 
+PAYLOAD_NAMES = {
+    "onCheckedChange": "value",
+    "onOpenChange": "open",
+    "onSelectionChange": "value",
+    "onValueChange": "value",
+}
+"""Single-argument callbacks whose payload a semantic name makes legible."""
+
 RENDERER_SCOPES = frozenset({"RowScope", "ColumnScope", "BoxScope"})
 """Composition scopes the renderer composes children into."""
 
@@ -326,19 +334,22 @@ def _enum_prop(
 def _event_prop(
     name: str, parameter: str, spec: dict[str, Any], review: list[str]
 ) -> dict[str, Any]:
-    """Derive an actionId prop, keeping the planner's argN payload names."""
+    """Derive an actionId prop, naming a single-argument payload for its callback."""
     prop: dict[str, Any] = {"type": "actionId"}
     if spec["required"]:
         prop["required"] = True
+    items = list(spec.get("payload") or ())
+    renamed = PAYLOAD_NAMES.get(parameter) if len(items) == 1 else None
     payload = []
-    for item in spec.get("payload") or ():
+    for item in items:
         wire = WIRE_SCALARS.get(str(item.get("type")))
         if wire is None:
             raise CandidateError(
                 f"{name}.{parameter}: payload type {item.get('type')!r} has no "
                 "wire type"
             )
-        payload.append({"name": item["name"], "type": wire})
+        field = renamed if renamed and item["name"] == "arg0" else item["name"]
+        payload.append({"name": field, "type": wire})
     if payload:
         prop["payload"] = payload
         review.append(

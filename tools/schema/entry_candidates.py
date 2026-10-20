@@ -141,6 +141,11 @@ def select(
             f"{name}: the pin offers one call plan; identity does not disambiguate"
         )
     plan = usable[0]
+    deprecated = (plan.get("annotations") or {}).get("kotlin/Deprecated")
+    if deprecated is not None:
+        message = deprecated.get("message") if isinstance(deprecated, dict) else None
+        detail = f": {message}" if message else ""
+        raise CandidateError(f"{name}: deprecated call plan{detail}")
     declaration = _declaration(plan, found)
     _check_declared(plan, declaration)
     return plan, declaration

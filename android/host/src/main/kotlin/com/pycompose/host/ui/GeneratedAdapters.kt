@@ -29,13 +29,19 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ElevatedSuggestionChip
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.InputChip
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
@@ -46,9 +52,15 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.OutlinedIconToggleButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SecondaryScrollableTabRow
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SuggestionChip
@@ -80,13 +92,19 @@ import com.pycompose.ir.generated.ElevatedCard as ElevatedCardNode
 import com.pycompose.ir.generated.ElevatedFilterChip as ElevatedFilterChipNode
 import com.pycompose.ir.generated.ElevatedSuggestionChip as ElevatedSuggestionChipNode
 import com.pycompose.ir.generated.ExtendedFloatingActionButton as ExtendedFloatingActionButtonNode
+import com.pycompose.ir.generated.FilledIconButton as FilledIconButtonNode
+import com.pycompose.ir.generated.FilledIconToggleButton as FilledIconToggleButtonNode
 import com.pycompose.ir.generated.FilledTonalButton as FilledTonalButtonNode
+import com.pycompose.ir.generated.FilledTonalIconButton as FilledTonalIconButtonNode
+import com.pycompose.ir.generated.FilledTonalIconToggleButton as FilledTonalIconToggleButtonNode
 import com.pycompose.ir.generated.FilterChip as FilterChipNode
 import com.pycompose.ir.generated.FloatingActionButton as FloatingActionButtonNode
 import com.pycompose.ir.generated.HorizontalDivider as HorizontalDividerNode
 import com.pycompose.ir.generated.Icon as IconNode
 import com.pycompose.ir.generated.IconButton as IconButtonNode
+import com.pycompose.ir.generated.IconToggleButton as IconToggleButtonNode
 import com.pycompose.ir.generated.InputChip as InputChipNode
+import com.pycompose.ir.generated.LargeFloatingActionButton as LargeFloatingActionButtonNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
 import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
 import com.pycompose.ir.generated.ListItem as ListItemNode
@@ -98,10 +116,16 @@ import com.pycompose.ir.generated.NavigationBarItem as NavigationBarItemNode
 import com.pycompose.ir.generated.NavigationDrawerItem as NavigationDrawerItemNode
 import com.pycompose.ir.generated.OutlinedButton as OutlinedButtonNode
 import com.pycompose.ir.generated.OutlinedCard as OutlinedCardNode
+import com.pycompose.ir.generated.OutlinedIconButton as OutlinedIconButtonNode
+import com.pycompose.ir.generated.OutlinedIconToggleButton as OutlinedIconToggleButtonNode
+import com.pycompose.ir.generated.OutlinedTextField as OutlinedTextFieldNode
+import com.pycompose.ir.generated.PrimaryScrollableTabRow as PrimaryScrollableTabRowNode
 import com.pycompose.ir.generated.PrimaryTabRow as PrimaryTabRowNode
 import com.pycompose.ir.generated.RadioButton as RadioButtonNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
+import com.pycompose.ir.generated.SecondaryScrollableTabRow as SecondaryScrollableTabRowNode
+import com.pycompose.ir.generated.SecondaryTabRow as SecondaryTabRowNode
 import com.pycompose.ir.generated.Slider as SliderNode
 import com.pycompose.ir.generated.SnackbarHost as SnackbarHostNode
 import com.pycompose.ir.generated.Spacer as SpacerNode
@@ -554,6 +578,37 @@ object GeneratedAdapters {
                     content = { context.childrenInRowScope(this, model.children) },
                 )
             }
+            .register("FilledIconButton") { node, modifier, context ->
+                val model = node as FilledIconButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledIconButtonColors()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledShape
+                FilledIconButton(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    content = { context.children(model.children) },
+                )
+            }
+            .register("FilledIconToggleButton") { node, modifier, context ->
+                val model = node as FilledIconToggleButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconToggleButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledIconToggleButtonColors()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledShape
+                FilledIconToggleButton(
+                    modifier = modifier,
+                    checked = model.props.checked,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
+                    shape = shapeValue,
+                    content = { context.children(model.children) },
+                )
+            }
             .register("FilledTonalButton") { node, modifier, context ->
                 val model = node as FilledTonalButtonNode
                 val borderWire = model.props.border
@@ -584,6 +639,37 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
                     content = { context.childrenInRowScope(this, model.children) },
+                )
+            }
+            .register("FilledTonalIconButton") { node, modifier, context ->
+                val model = node as FilledTonalIconButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledTonalIconButtonColors()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledShape
+                FilledTonalIconButton(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    content = { context.children(model.children) },
+                )
+            }
+            .register("FilledTonalIconToggleButton") { node, modifier, context ->
+                val model = node as FilledTonalIconToggleButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconToggleButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledTonalIconToggleButtonColors()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledShape
+                FilledTonalIconToggleButton(
+                    modifier = modifier,
+                    checked = model.props.checked,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
+                    shape = shapeValue,
+                    content = { context.children(model.children) },
                 )
             }
             .register("FilterChip") { node, modifier, context ->
@@ -666,6 +752,22 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
+            .register("IconToggleButton") { node, modifier, context ->
+                val model = node as IconToggleButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconToggleButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.iconToggleButtonColors()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.standardShape
+                IconToggleButton(
+                    modifier = modifier,
+                    checked = model.props.checked,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
+                    shape = shapeValue,
+                    content = { context.children(model.children) },
+                )
+            }
             .register("InputChip") { node, modifier, context ->
                 val model = node as InputChipNode
                 val colorsWire = model.props.colors
@@ -690,6 +792,26 @@ object GeneratedAdapters {
                     label = { context.slot(model.children, "label")?.invoke() },
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
+            .register("LargeFloatingActionButton") { node, modifier, context ->
+                val model = node as LargeFloatingActionButtonNode
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
+                    else -> androidx.compose.material3.FloatingActionButtonDefaults.containerColor
+                }
+                val elevationWire = model.props.elevation
+                val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.floatingActionButtonElevation(elevationWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.elevation()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.largeShape
+                LargeFloatingActionButton(
+                    modifier = modifier,
+                    containerColor = containerColorValue,
+                    elevation = elevationValue,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    content = { context.children(model.children) },
                 )
             }
             .register("LazyColumn") { node, modifier, context ->
@@ -876,6 +998,92 @@ object GeneratedAdapters {
                     content = { context.childrenInColumnScope(this, model.children) },
                 )
             }
+            .register("OutlinedIconButton") { node, modifier, context ->
+                val model = node as OutlinedIconButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.outlinedIconButtonColors()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.outlinedShape
+                OutlinedIconButton(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    onClick = { context.actions.dispatch(model.props.onClick) },
+                    shape = shapeValue,
+                    content = { context.children(model.children) },
+                )
+            }
+            .register("OutlinedIconToggleButton") { node, modifier, context ->
+                val model = node as OutlinedIconToggleButtonNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconToggleButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.outlinedIconToggleButtonColors()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.outlinedShape
+                OutlinedIconToggleButton(
+                    modifier = modifier,
+                    checked = model.props.checked,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
+                    shape = shapeValue,
+                    content = { context.children(model.children) },
+                )
+            }
+            .register("OutlinedTextField") { node, modifier, context ->
+                val model = node as OutlinedTextFieldNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.textFieldColors(colorsWire).getOrThrow() else androidx.compose.material3.OutlinedTextFieldDefaults.colors()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.OutlinedTextFieldDefaults.shape
+                val textStyleWire = model.props.textStyle
+                val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
+                OutlinedTextField(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    isError = model.props.isError,
+                    minLines = model.props.minLines.toInt(),
+                    onValueChange = { value -> context.event(model.props.onValueChange, JsonPrimitive(value)) },
+                    readOnly = model.props.readOnly,
+                    shape = shapeValue,
+                    singleLine = model.props.singleLine,
+                    textStyle = textStyleValue,
+                    value = model.props.value,
+                    label = context.slot(model.children, "label"),
+                    leadingIcon = context.slot(model.children, "leadingIcon"),
+                    placeholder = context.slot(model.children, "placeholder"),
+                    prefix = context.slot(model.children, "prefix"),
+                    suffix = context.slot(model.children, "suffix"),
+                    supportingText = context.slot(model.children, "supportingText"),
+                    trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
+            .register("PrimaryScrollableTabRow") { node, modifier, context ->
+                val model = node as PrimaryScrollableTabRowNode
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContainerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContainerColor)
+                    else -> androidx.compose.material3.TabRowDefaults.primaryContainerColor
+                }
+                val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContentColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContentColor)
+                    else -> androidx.compose.material3.TabRowDefaults.primaryContentColor
+                }
+                val edgePaddingWire = model.props.edgePadding
+                val edgePaddingValue = if (edgePaddingWire != null) edgePaddingWire.dp else androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding
+                val minTabWidthWire = model.props.minTabWidth
+                val minTabWidthValue = if (minTabWidthWire != null) minTabWidthWire.dp else androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth
+                PrimaryScrollableTabRow(
+                    modifier = modifier,
+                    containerColor = containerColorValue,
+                    contentColor = contentColorValue,
+                    edgePadding = edgePaddingValue,
+                    minTabWidth = minTabWidthValue,
+                    selectedTabIndex = model.props.selectedTabIndex.toInt(),
+                    tabs = { context.slot(model.children, "tabs")?.invoke() },
+                )
+            }
             .register("PrimaryTabRow") { node, modifier, context ->
                 val model = node as PrimaryTabRowNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
@@ -934,6 +1142,52 @@ object GeneratedAdapters {
                     snackbarHost = { context.slot(model.children, "snackbarHost")?.invoke() },
                     topBar = { context.slot(model.children, "topBar")?.invoke() },
                     content = { padding -> Column(Modifier.padding(padding)) { context.children(model.children) } },
+                )
+            }
+            .register("SecondaryScrollableTabRow") { node, modifier, context ->
+                val model = node as SecondaryScrollableTabRowNode
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContainerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContainerColor)
+                    else -> androidx.compose.material3.TabRowDefaults.secondaryContainerColor
+                }
+                val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContentColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContentColor)
+                    else -> androidx.compose.material3.TabRowDefaults.secondaryContentColor
+                }
+                val edgePaddingWire = model.props.edgePadding
+                val edgePaddingValue = if (edgePaddingWire != null) edgePaddingWire.dp else androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding
+                val minTabWidthWire = model.props.minTabWidth
+                val minTabWidthValue = if (minTabWidthWire != null) minTabWidthWire.dp else androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth
+                SecondaryScrollableTabRow(
+                    modifier = modifier,
+                    containerColor = containerColorValue,
+                    contentColor = contentColorValue,
+                    edgePadding = edgePaddingValue,
+                    minTabWidth = minTabWidthValue,
+                    selectedTabIndex = model.props.selectedTabIndex.toInt(),
+                    tabs = { context.slot(model.children, "tabs")?.invoke() },
+                )
+            }
+            .register("SecondaryTabRow") { node, modifier, context ->
+                val model = node as SecondaryTabRowNode
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContainerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContainerColor)
+                    else -> androidx.compose.material3.TabRowDefaults.secondaryContainerColor
+                }
+                val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContentColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContentColor)
+                    else -> androidx.compose.material3.TabRowDefaults.secondaryContentColor
+                }
+                SecondaryTabRow(
+                    modifier = modifier,
+                    containerColor = containerColorValue,
+                    contentColor = contentColorValue,
+                    selectedTabIndex = model.props.selectedTabIndex.toInt(),
+                    tabs = { context.slot(model.children, "tabs")?.invoke() },
                 )
             }
             .register("Slider") { node, modifier, context ->
