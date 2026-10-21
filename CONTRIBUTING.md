@@ -1,0 +1,146 @@
+# Contributing to PyCompose
+
+Thanks for helping. PyCompose is in early development, so the API, the
+component catalog, and these rules may change. Read this before opening an
+issue or a pull request.
+
+## Issue first, always
+
+**Do not open a pull request without an issue.** Every change starts as an
+issue so its scope can be agreed before code is written.
+
+- Search open and closed issues first; comment on an existing one instead of
+  opening a duplicate.
+- To work on an issue, comment on it and wait to be assigned. Unassigned work
+  may collide with changes already in progress.
+- Link the issue from your pull request (`Closes #123`).
+
+### What an issue must contain
+
+A bug report must include **reproducible steps**. An issue that cannot be
+reproduced cannot be fixed.
+
+- **What happened** and **what you expected**.
+- **Steps to reproduce**: the smallest app, command, or test that shows the
+  problem, starting from a clean `pycompose init` project where possible.
+- **Environment**: PyCompose version (`pycompose --version` or the commit),
+  Python version, OS, JDK, Android SDK platform, and device or emulator API
+  level and ABI.
+- **Output**: the full error, traceback, `pycompose doctor` report, or
+  `adb logcat` excerpt. Paste text, not screenshots.
+
+A feature or enhancement request should describe the problem it solves, the
+proposed API (a short Python snippet helps), and which parts it touches
+(Python, Kotlin, CLI, schema).
+
+## Development setup
+
+Requirements: Python 3.12+, JDK 17, Node.js (for commit-message linting), and
+for native work the Android SDK (platform 37, build-tools 34) via
+`ANDROID_HOME` or `local.properties`.
+
+```bash
+git clone https://github.com/DagmawiKK/pycompose
+cd pycompose
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+npm ci
+pre-commit install
+```
+
+`pre-commit install` installs both the `pre-commit` and `commit-msg` hooks.
+
+## Before you push
+
+CI runs the same checks as the Makefile. Run them locally first:
+
+```bash
+make fmt          # ruff format + fix, Spotless for Kotlin
+make lint         # ruff, mypy, bandit, pydoclint, import-linter, line budgets, Kotlin, workflows
+make test         # pytest, plus Kotlin unit tests when the Android toolchain is present
+make precommit    # every pre-commit hook on every file
+```
+
+Every one of these must pass. CI jobs, all blocking except the performance
+report:
+
+1. **Python** — `ruff check`, `ruff format --check`, `mypy` (strict), `bandit`,
+   `pydoclint` (Google-style docstrings), `lint-imports`, `tools/limits.py`,
+   `pytest`.
+2. **Schema and codegen** — `tools/schema/gen.py --check`,
+   `tools/template/sync.py --check`, schema and golden tests, wheel smoke.
+3. **Kotlin** — Spotless, Detekt, Android lint, unit tests including ArchUnit,
+   and the pinned Compose API inventory check.
+4. **Template build smoke** — `pycompose init`, an installed-wheel CLI run, and
+   a real debug APK build.
+5. **Resource sync** — `pycompose sync --check` on a fresh project.
+6. **Hot reload smoke** — `pytest -m hot_reload_smoke`.
+
+The **IR performance** job is informational: it benchmarks your change against
+its base. Check its report if you touch the IR, diffing, or bridge.
+
+## Rules the checks enforce
+
+- **Typing and docs.** Code under `pycompose/` passes `mypy --strict`. Public
+  functions carry Google-style docstrings that `pydoclint` accepts.
+- **Package boundaries.** Layering and forbidden imports are declared in
+  `[tool.importlinter]` in `pyproject.toml` and are blocking. Do not import
+  upward, skip layers, or import Android/Chaquopy modules from
+  `pycompose.bridge`. A new package or boundary comes with its contract in the
+  same change.
+- **Line budgets.** Hand-written files are limited to 500 lines (600 under
+  `tests/` and `tools/`), checked by `tools/limits.py`. Over budget means split
+  the file by responsibility, never suppress the check.
+- **Generated code is never hand-edited.** The component catalog
+  (`schema/components.json`) is the single source of truth. Change the catalog
+  or the generators in `tools/schema/`, run `make codegen`, and commit the
+  regenerated Python, Kotlin, validators, and schema together.
+- **Native template stays in sync.** `android/` and
+  `pycompose/templates/android/` are checked by `tools/template/sync.py --check`.
+- **No large files or secrets.** Files over 500 KB and private keys are
+  rejected by pre-commit.
+- **Tests.** New behaviour comes with tests; bug fixes come with a test that
+  fails without the fix.
+
+## Commit messages
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/)
+(see also this [semantic commit guide](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716)).
+`commitlint` enforces them in the `commit-msg` hook.
+
+```
+<type>(<optional scope>): <subject>
+```
+
+- **Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`,
+  `build`, `ci`, `chore`, `revert`.
+- **Scope** names the area, for example `schema`, `m3`, `components`, `cli`,
+  `ir`, `bridge`, `state`, `host`, `renderer`.
+- **Subject:** imperative mood, lowercase start, no trailing period, header at
+  most 72 characters.
+- **No filler words** in the subject: `phase`, `wip`, `some`, `update`, `nit`,
+  `stuff` are rejected.
+
+Examples from the history:
+
+```
+feat(schema): add segmented buttons and native scopes
+feat(m3): add scoped tooltip components
+docs: rewrite README for the current API
+test(schema): verify a held-out compatible binding
+```
+
+## Pull requests
+
+1. Fork the repository and branch from `main`.
+2. Keep each pull request to one issue and one logical change.
+3. Make sure every local check above passes.
+4. In the description, link the issue, summarise what changed and why, and
+   list how you verified it (tests added, commands run, device or emulator
+   used for native changes).
+5. Respond to review by pushing new commits; keep history readable.
+
+## License
+
+By contributing, you agree that your contributions are licensed under the
+[MIT License](LICENSE).
