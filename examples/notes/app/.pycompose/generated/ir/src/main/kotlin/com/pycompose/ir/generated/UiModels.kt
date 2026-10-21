@@ -32,6 +32,23 @@ data class IRRoot(
 )
 
 @Serializable
+data class AnimatedContentProps(
+    override val `modifier`: JsonObject? = null,
+    val `target`: String,
+) : UiProps
+
+@Serializable
+@SerialName("AnimatedContent")
+data class AnimatedContent(
+    override val id: String,
+    override val props: AnimatedContentProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "AnimatedContent"
+}
+
+@Serializable
 data class CardProps(
     val `border`: OptionalValue = OptionalValue.Absent,
     val `colors`: JsonElement? = null,
@@ -74,6 +91,23 @@ data class Column(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Column"
+}
+
+@Serializable
+data class CrossfadeProps(
+    override val `modifier`: JsonObject? = null,
+    val `target`: String,
+) : UiProps
+
+@Serializable
+@SerialName("Crossfade")
+data class Crossfade(
+    override val id: String,
+    override val props: CrossfadeProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "Crossfade"
 }
 
 @Serializable
@@ -307,6 +341,28 @@ data class Scaffold(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Scaffold"
+}
+
+@Serializable
+data class SearchBarInputFieldProps(
+    val `enabled`: Boolean = true,
+    val `expanded`: Boolean,
+    override val `modifier`: JsonObject? = null,
+    val `onExpandedChange`: String,
+    val `onQueryChange`: String,
+    val `onSearch`: String,
+    val `query`: String,
+) : UiProps
+
+@Serializable
+@SerialName("SearchBarInputField")
+data class SearchBarInputField(
+    override val id: String,
+    override val props: SearchBarInputFieldProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "SearchBarInputField"
 }
 
 @Serializable

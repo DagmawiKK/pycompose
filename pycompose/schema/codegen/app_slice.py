@@ -55,11 +55,20 @@ _ADAPTERS_RELATIVE = (
     / "host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
 )
 
-FLOOR_COMPONENTS = frozenset({"Image", "Text", "TextField"})
+FLOOR_COMPONENTS = frozenset(
+    {
+        "AnimatedContent",
+        "Crossfade",
+        "Image",
+        "SearchBarInputField",
+        "Text",
+        "TextField",
+    }
+)
 """Components every generated host compiles against, referenced or not.
 
 ``host/.../ui/BuiltinComponents.kt`` is hand-written and always compiled: it
-registers the three components whose behavior is not mechanical and names their
+registers the components whose behavior is not mechanical and names their
 generated node classes by type, so a slice without them would emit a host that
 does not compile (plan 17, step 8.4). Keeping them in every slice is what lets
 those adapters stay hand-written once instead of being re-derived per app; the

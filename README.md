@@ -187,23 +187,25 @@ ordinary action, so the worker never freezes behind a request.
 
 ## Components
 
-93 Material 3 components. `*` marks experimental entries.
+101 Material 3 components. `*` marks experimental entries.
 
 | Category | Components |
 | --- | --- |
 | Typography | `Text` |
-| Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard`, `PullToRefreshBox`, `VerticalDragHandle` |
-| App bars | `TopAppBar`\*, `CenterAlignedTopAppBar`\*, `MediumTopAppBar`\*, `LargeTopAppBar`\* |
+| Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard`, `PullToRefreshBox`, `VerticalDragHandle`, `FlowRow`\*, `FlowColumn`\* |
+| App bars | `TopAppBar`\*, `CenterAlignedTopAppBar`\*, `MediumTopAppBar`\*, `LargeTopAppBar`\*, `BottomAppBar` |
 | Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `SegmentedButton`, `MultiChoiceSegmentedButton`, `SingleChoiceSegmentedButtonRow`, `MultiChoiceSegmentedButtonRow`, `IconButton`, `FilledIconButton`, `FilledIconToggleButton`, `FilledTonalIconButton`, `FilledTonalIconToggleButton`, `IconToggleButton`, `OutlinedIconButton`, `OutlinedIconToggleButton`, `FloatingActionButton`, `LargeFloatingActionButton`, `ExtendedFloatingActionButton` |
-| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SearchBar`\*, `DockedSearchBar`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
+| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
 | Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `NavigationRail`, `NavigationRailItem`, `ShortNavigationBar`, `ShortNavigationBarItem`, `WideNavigationRail`, `WideNavigationRailItem`, `ModalWideNavigationRail`, `NavigationSuiteScaffold`, `NavigationSuiteItem`, `NavigationDrawerItem`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet`, `PermanentNavigationDrawer`, `PermanentDrawerSheet`, `Tab`, `LeadingIconTab`, `SecondaryTabRow`, `PrimaryTabRow`, `PrimaryScrollableTabRow`, `SecondaryScrollableTabRow` |
 | Overlays and status | `ModalBottomSheet`\*, `SnackbarHost`, `Snackbar`, `AlertDialog`, `BasicAlertDialog`\*, `DropdownMenu`, `DropdownMenuItem`, `Badge`, `BadgedBox`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
-| Lists | `LazyColumn`, `ListItem` |
+| Lists | `LazyColumn`, `LazyRow`, `ListItem` |
+| Animation | `AnimatedVisibility`, `AnimatedContent`, `Crossfade` |
 | Media and dividers | `Icon`, `Image`, `HorizontalDivider`, `VerticalDivider` |
 
 `SearchBar` and `DockedSearchBar` take the editable field through the
 `inputField` slot; suggestions and results are ordinary children and compose in
-`ColumnScope`.
+`ColumnScope`. `SearchBarInputField` is the same native field without a
+container, for layouts that place the field themselves.
 
 ## CLI
 

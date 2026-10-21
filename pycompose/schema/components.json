@@ -4785,6 +4785,320 @@
           "native": "inputField"
         }
       }
+    },
+    "SearchBarInputField": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.SearchBarDefaults",
+        "name": "InputField",
+        "jvmName": "InputField",
+        "descriptor": "(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V"
+      },
+      "props": {
+        "query": {
+          "type": "string",
+          "required": true
+        },
+        "onQueryChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "query",
+              "type": "string"
+            }
+          ],
+          "required": true
+        },
+        "onSearch": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "query",
+              "type": "string"
+            }
+          ],
+          "required": true
+        },
+        "expanded": {
+          "type": "boolean",
+          "required": true
+        },
+        "onExpandedChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "expanded",
+              "type": "boolean"
+            }
+          ],
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "placeholder": {
+          "native": "placeholder",
+          "nullable": true
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      },
+      "adapter": "manual"
+    },
+    "LazyRow": {
+      "package": "androidx.compose.foundation.lazy",
+      "category": "lists",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Vertical;Landroidx/compose/foundation/gestures/FlingBehavior;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "LazyRow",
+        "name": "LazyRow",
+        "owner": "androidx.compose.foundation.lazy.LazyDslKt"
+      },
+      "props": {
+        "firstVisibleIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onScrollIdle": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "firstVisibleIndex",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "items"
+      },
+      "reshaped": [
+        "firstVisibleIndex",
+        "onScrollIdle"
+      ],
+      "state": {
+        "native": "state",
+        "kind": "lazyList",
+        "value": "firstVisibleIndex",
+        "report": "onScrollIdle"
+      }
+    },
+    "FlowRow": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "layout",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalLayoutApi"
+      ],
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Alignment$Vertical;IILandroidx/compose/foundation/layout/FlowRowOverflow;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FlowRow",
+        "name": "FlowRow",
+        "owner": "androidx.compose.foundation.layout.FlowLayoutKt"
+      },
+      "props": {
+        "itemVerticalAlignment": {
+          "type": "enum",
+          "values": [
+            "top",
+            "center",
+            "bottom"
+          ],
+          "decode": "vertical",
+          "default": "top"
+        },
+        "maxItemsInEachRow": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647,
+          "default": 2147483647,
+          "nativeType": "Int"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
+    },
+    "FlowColumn": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "layout",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalLayoutApi"
+      ],
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Horizontal;IILandroidx/compose/foundation/layout/FlowColumnOverflow;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FlowColumn",
+        "name": "FlowColumn",
+        "owner": "androidx.compose.foundation.layout.FlowLayoutKt"
+      },
+      "props": {
+        "itemHorizontalAlignment": {
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end"
+          ],
+          "decode": "horizontal",
+          "default": "start"
+        },
+        "maxItemsInEachColumn": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647,
+          "default": 2147483647,
+          "nativeType": "Int"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
+    },
+    "AnimatedVisibility": {
+      "package": "androidx.compose.animation",
+      "category": "animation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.animation:animation-android:1.12.1",
+        "descriptor": "(ZLandroidx/compose/ui/Modifier;Landroidx/compose/animation/EnterTransition;Landroidx/compose/animation/ExitTransition;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "AnimatedVisibility",
+        "name": "AnimatedVisibility",
+        "owner": "androidx.compose.animation.AnimatedVisibilityKt"
+      },
+      "props": {
+        "visible": {
+          "type": "boolean",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
+    },
+    "AnimatedContent": {
+      "package": "androidx.compose.animation",
+      "category": "animation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.animation:animation-android:1.12.1",
+        "descriptor": "(Ljava/lang/Object;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Alignment;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "AnimatedContent",
+        "name": "AnimatedContent",
+        "owner": "androidx.compose.animation.AnimatedContentKt"
+      },
+      "props": {
+        "target": {
+          "type": "string",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      },
+      "adapter": "manual"
+    },
+    "Crossfade": {
+      "package": "androidx.compose.animation",
+      "category": "animation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.animation:animation-android:1.12.1",
+        "descriptor": "(Ljava/lang/Object;Landroidx/compose/ui/Modifier;Landroidx/compose/animation/core/FiniteAnimationSpec;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Crossfade",
+        "name": "Crossfade",
+        "owner": "androidx.compose.animation.CrossfadeKt"
+      },
+      "props": {
+        "target": {
+          "type": "string",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      },
+      "adapter": "manual"
+    },
+    "BottomAppBar": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;JJFLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "BottomAppBar-1oL4kX8",
+        "name": "BottomAppBar",
+        "owner": "androidx.compose.material3.AppBarKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0,
+        "provides": "RowScope"
+      }
     }
   },
   "modifiers": {

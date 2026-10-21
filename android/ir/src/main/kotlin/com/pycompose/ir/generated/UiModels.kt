@@ -55,6 +55,40 @@ data class AlertDialog(
 }
 
 @Serializable
+data class AnimatedContentProps(
+    override val `modifier`: JsonObject? = null,
+    val `target`: String,
+) : UiProps
+
+@Serializable
+@SerialName("AnimatedContent")
+data class AnimatedContent(
+    override val id: String,
+    override val props: AnimatedContentProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "AnimatedContent"
+}
+
+@Serializable
+data class AnimatedVisibilityProps(
+    override val `modifier`: JsonObject? = null,
+    val `visible`: Boolean,
+) : UiProps
+
+@Serializable
+@SerialName("AnimatedVisibility")
+data class AnimatedVisibility(
+    override val id: String,
+    override val props: AnimatedVisibilityProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "AnimatedVisibility"
+}
+
+@Serializable
 data class AssistChipProps(
     val `colors`: JsonElement? = null,
     val `elevation`: OptionalValue = OptionalValue.Absent,
@@ -123,6 +157,22 @@ data class BasicAlertDialog(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "BasicAlertDialog"
+}
+
+@Serializable
+data class BottomAppBarProps(
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("BottomAppBar")
+data class BottomAppBar(
+    override val id: String,
+    override val props: BottomAppBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "BottomAppBar"
 }
 
 @Serializable
@@ -270,6 +320,23 @@ data class Column(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "Column"
+}
+
+@Serializable
+data class CrossfadeProps(
+    override val `modifier`: JsonObject? = null,
+    val `target`: String,
+) : UiProps
+
+@Serializable
+@SerialName("Crossfade")
+data class Crossfade(
+    override val id: String,
+    override val props: CrossfadeProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "Crossfade"
 }
 
 @Serializable
@@ -658,6 +725,42 @@ data class FloatingActionButton(
 }
 
 @Serializable
+data class FlowColumnProps(
+    val `itemHorizontalAlignment`: String = "start",
+    val `maxItemsInEachColumn`: Long = 2147483647L,
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("FlowColumn")
+data class FlowColumn(
+    override val id: String,
+    override val props: FlowColumnProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "FlowColumn"
+}
+
+@Serializable
+data class FlowRowProps(
+    val `itemVerticalAlignment`: String = "top",
+    val `maxItemsInEachRow`: Long = 2147483647L,
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("FlowRow")
+data class FlowRow(
+    override val id: String,
+    override val props: FlowRowProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "FlowRow"
+}
+
+@Serializable
 data class HorizontalDividerProps(
     val `color`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
@@ -834,6 +937,24 @@ data class LazyColumn(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "LazyColumn"
+}
+
+@Serializable
+data class LazyRowProps(
+    val `firstVisibleIndex`: Long? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onScrollIdle`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("LazyRow")
+data class LazyRow(
+    override val id: String,
+    override val props: LazyRowProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "LazyRow"
 }
 
 @Serializable
@@ -1441,6 +1562,28 @@ data class SearchBar(
     override val slot: String? = null,
 ) : UiNode {
     override val componentType: String get() = "SearchBar"
+}
+
+@Serializable
+data class SearchBarInputFieldProps(
+    val `enabled`: Boolean = true,
+    val `expanded`: Boolean,
+    override val `modifier`: JsonObject? = null,
+    val `onExpandedChange`: String,
+    val `onQueryChange`: String,
+    val `onSearch`: String,
+    val `query`: String,
+) : UiProps
+
+@Serializable
+@SerialName("SearchBarInputField")
+data class SearchBarInputField(
+    override val id: String,
+    override val props: SearchBarInputFieldProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "SearchBarInputField"
 }
 
 @Serializable

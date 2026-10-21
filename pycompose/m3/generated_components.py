@@ -16,10 +16,13 @@ from pycompose.errors import IrValidationError
 
 __all__ = [
     "AlertDialog",
+    "AnimatedContent",
+    "AnimatedVisibility",
     "AssistChip",
     "Badge",
     "BadgedBox",
     "BasicAlertDialog",
+    "BottomAppBar",
     "Box",
     "Button",
     "Card",
@@ -27,6 +30,7 @@ __all__ = [
     "Checkbox",
     "CircularProgressIndicator",
     "Column",
+    "Crossfade",
     "DismissibleDrawerSheet",
     "DismissibleNavigationDrawer",
     "DockedSearchBar",
@@ -45,6 +49,8 @@ __all__ = [
     "FilledTonalIconToggleButton",
     "FilterChip",
     "FloatingActionButton",
+    "FlowColumn",
+    "FlowRow",
     "HorizontalDivider",
     "Icon",
     "IconButton",
@@ -54,6 +60,7 @@ __all__ = [
     "LargeFloatingActionButton",
     "LargeTopAppBar",
     "LazyColumn",
+    "LazyRow",
     "LeadingIconTab",
     "LinearProgressIndicator",
     "ListItem",
@@ -85,6 +92,7 @@ __all__ = [
     "Row",
     "Scaffold",
     "SearchBar",
+    "SearchBarInputField",
     "SecondaryScrollableTabRow",
     "SecondaryTabRow",
     "SegmentedButton",
@@ -127,6 +135,18 @@ _ColumnHorizontalAlignment = Literal[
     "start",
     "center",
     "end",
+]
+
+_FlowColumnItemHorizontalAlignment = Literal[
+    "start",
+    "center",
+    "end",
+]
+
+_FlowRowItemVerticalAlignment = Literal[
+    "top",
+    "center",
+    "bottom",
 ]
 
 _LazyColumnVerticalArrangement = Literal[
@@ -249,6 +269,62 @@ class AlertDialog(Component):
         if title is not None:
             slotted += slot_nodes(title, key="title", slot="title")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class AnimatedContent(Component):
+    """Native AnimatedContent; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "AnimatedContent"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        target: str,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered AnimatedContent.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            target: Required native target.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        props["target"] = target
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class AnimatedVisibility(Component):
+    """Native AnimatedVisibility; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "AnimatedVisibility"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        visible: bool,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered AnimatedVisibility.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            visible: Required native visible.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        props["visible"] = visible
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class AssistChip(Component):
@@ -416,6 +492,31 @@ class BasicAlertDialog(Component):
         """
         props: dict[str, JsonValue] = {}
         props["on_dismiss_request"] = on_dismiss_request
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class BottomAppBar(Component):
+    """Native BottomAppBar; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "BottomAppBar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered BottomAppBar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
@@ -744,6 +845,34 @@ class Column(Component):
             props["on_scroll_idle"] = on_scroll_idle
         if scrollable is not None:
             props["scrollable"] = scrollable
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Crossfade(Component):
+    """Native Crossfade; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Crossfade"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        target: str,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered Crossfade.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            target: Required native target.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        props["target"] = target
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
@@ -1743,6 +1872,75 @@ class FloatingActionButton(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class FlowColumn(Component):
+    """Native FlowColumn; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "FlowColumn"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        item_horizontal_alignment: _FlowColumnItemHorizontalAlignment | None = None,
+        max_items_in_each_column: int | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered FlowColumn.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            item_horizontal_alignment: Native itemHorizontalAlignment; None uses its
+                default.
+            max_items_in_each_column: Native maxItemsInEachColumn; None uses its
+                default.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        if item_horizontal_alignment is not None:
+            props["item_horizontal_alignment"] = item_horizontal_alignment
+        if max_items_in_each_column is not None:
+            props["max_items_in_each_column"] = max_items_in_each_column
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class FlowRow(Component):
+    """Native FlowRow; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "FlowRow"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        item_vertical_alignment: _FlowRowItemVerticalAlignment | None = None,
+        max_items_in_each_row: int | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered FlowRow.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            item_vertical_alignment: Native itemVerticalAlignment; None uses its
+                default.
+            max_items_in_each_row: Native maxItemsInEachRow; None uses its default.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        if item_vertical_alignment is not None:
+            props["item_vertical_alignment"] = item_vertical_alignment
+        if max_items_in_each_row is not None:
+            props["max_items_in_each_row"] = max_items_in_each_row
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class HorizontalDivider(Component):
     """Native HorizontalDivider; props and defaults follow the component manifest."""
 
@@ -2135,6 +2333,50 @@ class LazyColumn(Component):
             props["on_scroll_idle"] = on_scroll_idle
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
+        if items is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(items, key="items")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class LazyRow(Component):
+    """Native LazyRow; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LazyRow"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        first_visible_index: int | None = None,
+        modifier: Modifier | None = None,
+        on_scroll_idle: str | None = None,
+        children: Content = (),
+        items: Content | None = None,
+    ) -> None:
+        """Construct a registered LazyRow.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            first_visible_index: Native firstVisibleIndex; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_scroll_idle: Native onScrollIdle; None uses its default.
+            children: Ordered child nodes with stable keys.
+            items: Alternative spelling for items children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if first_visible_index is not None:
+            props["first_visible_index"] = first_visible_index
+        if on_scroll_idle is not None:
+            props["on_scroll_idle"] = on_scroll_idle
         if items is not None:
             if children:
                 raise IrValidationError(
@@ -3679,6 +3921,64 @@ class SearchBar(Component):
         super().__init__(
             id=id, children=normalized + slotted, modifier=modifier, **props
         )
+
+
+class SearchBarInputField(Component):
+    """Native InputField; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SearchBarInputField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        expanded: bool,
+        modifier: Modifier | None = None,
+        on_expanded_change: str,
+        on_query_change: str,
+        on_search: str,
+        query: str,
+        leading_icon: Content | None = None,
+        placeholder: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered SearchBarInputField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            expanded: Required native expanded.
+            modifier: Native modifier; None uses its default.
+            on_expanded_change: Required native onExpandedChange.
+            on_query_change: Required native onQueryChange.
+            on_search: Required native onSearch.
+            query: Required native query.
+            leading_icon: Nodes for the native leadingIcon slot.
+            placeholder: Nodes for the native placeholder slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["expanded"] = expanded
+        props["on_expanded_change"] = on_expanded_change
+        props["on_query_change"] = on_query_change
+        props["on_search"] = on_search
+        props["query"] = query
+        slotted: tuple[Node, ...] = ()
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if placeholder is not None:
+            slotted += slot_nodes(placeholder, key="placeholder", slot="placeholder")
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class SecondaryScrollableTabRow(Component):

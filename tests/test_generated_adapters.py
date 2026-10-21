@@ -45,6 +45,15 @@ def components() -> dict[str, Any]:
     return json.loads(SCHEMA_PATH.read_text())["components"]
 
 
+def test_flow_column_uses_the_native_item_alignment_parameter() -> None:
+    """``FlowColumn`` has no ``horizontalAlignment`` parameter; ``FlowRow``'s
+    sibling is ``itemHorizontalAlignment``. The generated call must use the
+    native name, not the shorter one Compose uses elsewhere."""
+    block = render("FlowColumn", components()["FlowColumn"])
+    assert "itemHorizontalAlignment = itemHorizontalAlignmentValue" in block
+    assert "horizontalAlignment = itemHorizontalAlignmentValue" not in block
+
+
 def test_a_component_marked_manual_generates_nothing() -> None:
     """``adapter: manual`` must be load-bearing, not decoration."""
     registry = components()

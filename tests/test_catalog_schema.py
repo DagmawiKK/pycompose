@@ -110,3 +110,18 @@ def test_the_shape_refuses_an_unknown_transient_key() -> None:
 def test_the_schema_and_the_validator_require_the_same_top_keys() -> None:
     """Required-keys is one fact: the spec and the function cannot drift."""
     assert set(_schema()["required"]) == set(rules.REGISTRY_KEYS)
+
+
+def test_the_search_input_field_requires_the_callbacks_native_needs() -> None:
+    """A native-required callback cannot be omitted on the wire.
+
+    ``SearchBarDefaults.InputField`` always takes query, search and expansion
+    callbacks. Optional action ids compile into nullable Kotlin properties and
+    a ``context.event`` call that has no action to dispatch, so the schema marks
+    the five required parameters required and keeps the icon slots nullable.
+    """
+    field = _catalog()["components"]["SearchBarInputField"]
+    for name in ("query", "expanded", "onQueryChange", "onSearch", "onExpandedChange"):
+        assert field["props"][name]["required"] is True, name
+    assert set(field["slots"]) == {"placeholder", "leadingIcon", "trailingIcon"}
+    assert all(slot["nullable"] for slot in field["slots"].values())

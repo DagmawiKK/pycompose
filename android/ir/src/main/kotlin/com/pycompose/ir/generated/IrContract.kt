@@ -27,6 +27,26 @@ object IrContract {
                 "tonalElevation" to PropertyRule("dp", required = false),
             ),
         ),
+        "AnimatedContent" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "target" to PropertyRule("string", required = true),
+            ),
+        ),
+        "AnimatedVisibility" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "visible" to PropertyRule("boolean", required = true),
+            ),
+        ),
         "AssistChip" to ComponentRule(
             slots = setOf("label", "leadingIcon", "trailingIcon"),
             childrenAllowed = false,
@@ -68,6 +88,15 @@ object IrContract {
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
                 "onDismissRequest" to PropertyRule("actionId", required = true),
+            ),
+        ),
+        "BottomAppBar" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
         "Box" to ComponentRule(
@@ -166,6 +195,16 @@ object IrContract {
                 "offset" to PropertyRule("number", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
                 "scrollable" to PropertyRule("boolean", required = false),
+            ),
+        ),
+        "Crossfade" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "target" to PropertyRule("string", required = true),
             ),
         ),
         "DismissibleDrawerSheet" to ComponentRule(
@@ -427,6 +466,28 @@ object IrContract {
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
+        "FlowColumn" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "itemHorizontalAlignment" to PropertyRule("enum", required = false, values = setOf("start", "center", "end")),
+                "maxItemsInEachColumn" to PropertyRule("integer", required = false, minimum = 1.0, maximum = 2147483647.0),
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
+        "FlowRow" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "itemVerticalAlignment" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom")),
+                "maxItemsInEachRow" to PropertyRule("integer", required = false, minimum = 1.0, maximum = 2147483647.0),
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
         "HorizontalDivider" to ComponentRule(
             slots = setOf(),
             childrenAllowed = false,
@@ -541,6 +602,17 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
                 "verticalArrangement" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom", "spaceEvenly", "spaceBetween", "spaceAround")),
+            ),
+        ),
+        "LazyRow" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "firstVisibleIndex" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onScrollIdle" to PropertyRule("actionId", required = false),
             ),
         ),
         "LeadingIconTab" to ComponentRule(
@@ -931,6 +1003,21 @@ object IrContract {
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
                 "tonalElevation" to PropertyRule("dp", required = false),
                 "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
+            ),
+        ),
+        "SearchBarInputField" to ComponentRule(
+            slots = setOf("leadingIcon", "placeholder", "trailingIcon"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "expanded" to PropertyRule("boolean", required = true),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onExpandedChange" to PropertyRule("actionId", required = true),
+                "onQueryChange" to PropertyRule("actionId", required = true),
+                "onSearch" to PropertyRule("actionId", required = true),
+                "query" to PropertyRule("string", required = true),
             ),
         ),
         "SecondaryScrollableTabRow" to ComponentRule(

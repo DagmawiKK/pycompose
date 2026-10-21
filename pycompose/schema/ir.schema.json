@@ -506,6 +506,76 @@
       },
       "type": "object"
     },
+    "C_AnimatedContent": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "target"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "AnimatedContent"
+        }
+      },
+      "type": "object"
+    },
+    "C_AnimatedVisibility": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "visible": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "visible"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "AnimatedVisibility"
+        }
+      },
+      "type": "object"
+    },
     "C_AssistChip": {
       "properties": {
         "children": {
@@ -687,6 +757,35 @@
         },
         "type": {
           "const": "BasicAlertDialog"
+        }
+      },
+      "type": "object"
+    },
+    "C_BottomAppBar": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "BottomAppBar"
         }
       },
       "type": "object"
@@ -1134,6 +1233,41 @@
         },
         "type": {
           "const": "Column"
+        }
+      },
+      "type": "object"
+    },
+    "C_Crossfade": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "target"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Crossfade"
         }
       },
       "type": "object"
@@ -2367,6 +2501,92 @@
       },
       "type": "object"
     },
+    "C_FlowColumn": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "itemHorizontalAlignment": {
+              "default": "start",
+              "enum": [
+                "center",
+                "end",
+                "start"
+              ]
+            },
+            "maxItemsInEachColumn": {
+              "default": 2147483647,
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "FlowColumn"
+        }
+      },
+      "type": "object"
+    },
+    "C_FlowRow": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "itemVerticalAlignment": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "top"
+              ]
+            },
+            "maxItemsInEachRow": {
+              "default": 2147483647,
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "FlowRow"
+        }
+      },
+      "type": "object"
+    },
     "C_HorizontalDivider": {
       "properties": {
         "children": false,
@@ -2898,6 +3118,46 @@
         },
         "type": {
           "const": "LazyColumn"
+        }
+      },
+      "type": "object"
+    },
+    "C_LazyRow": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onScrollIdle": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyRow"
         }
       },
       "type": "object"
@@ -4817,6 +5077,83 @@
         },
         "type": {
           "const": "SearchBar"
+        }
+      },
+      "type": "object"
+    },
+    "C_SearchBarInputField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "expanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onExpandedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onQueryChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onSearch": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "query": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "expanded",
+            "onExpandedChange",
+            "onQueryChange",
+            "onSearch",
+            "query"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SearchBarInputField"
         }
       },
       "type": "object"
@@ -6968,6 +7305,12 @@
               "$ref": "#/definitions/C_AlertDialog"
             },
             {
+              "$ref": "#/definitions/C_AnimatedContent"
+            },
+            {
+              "$ref": "#/definitions/C_AnimatedVisibility"
+            },
+            {
               "$ref": "#/definitions/C_AssistChip"
             },
             {
@@ -6978,6 +7321,9 @@
             },
             {
               "$ref": "#/definitions/C_BasicAlertDialog"
+            },
+            {
+              "$ref": "#/definitions/C_BottomAppBar"
             },
             {
               "$ref": "#/definitions/C_Box"
@@ -6999,6 +7345,9 @@
             },
             {
               "$ref": "#/definitions/C_Column"
+            },
+            {
+              "$ref": "#/definitions/C_Crossfade"
             },
             {
               "$ref": "#/definitions/C_DismissibleDrawerSheet"
@@ -7055,6 +7404,12 @@
               "$ref": "#/definitions/C_FloatingActionButton"
             },
             {
+              "$ref": "#/definitions/C_FlowColumn"
+            },
+            {
+              "$ref": "#/definitions/C_FlowRow"
+            },
+            {
               "$ref": "#/definitions/C_HorizontalDivider"
             },
             {
@@ -7080,6 +7435,9 @@
             },
             {
               "$ref": "#/definitions/C_LazyColumn"
+            },
+            {
+              "$ref": "#/definitions/C_LazyRow"
             },
             {
               "$ref": "#/definitions/C_LeadingIconTab"
@@ -7173,6 +7531,9 @@
             },
             {
               "$ref": "#/definitions/C_SearchBar"
+            },
+            {
+              "$ref": "#/definitions/C_SearchBarInputField"
             },
             {
               "$ref": "#/definitions/C_SecondaryScrollableTabRow"
@@ -23763,6 +24124,76 @@
       },
       "type": "object"
     },
+    "V_1_23_0_AnimatedContent": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "target"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "AnimatedContent"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_AnimatedVisibility": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "visible": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "visible"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "AnimatedVisibility"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_AssistChip": {
       "properties": {
         "children": {
@@ -23944,6 +24375,35 @@
         },
         "type": {
           "const": "BasicAlertDialog"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_BottomAppBar": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "BottomAppBar"
         }
       },
       "type": "object"
@@ -24391,6 +24851,41 @@
         },
         "type": {
           "const": "Column"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_Crossfade": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "target"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Crossfade"
         }
       },
       "type": "object"
@@ -25624,6 +26119,92 @@
       },
       "type": "object"
     },
+    "V_1_23_0_FlowColumn": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "itemHorizontalAlignment": {
+              "default": "start",
+              "enum": [
+                "center",
+                "end",
+                "start"
+              ]
+            },
+            "maxItemsInEachColumn": {
+              "default": 2147483647,
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "FlowColumn"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_FlowRow": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "itemVerticalAlignment": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "top"
+              ]
+            },
+            "maxItemsInEachRow": {
+              "default": 2147483647,
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "FlowRow"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_HorizontalDivider": {
       "properties": {
         "children": false,
@@ -26155,6 +26736,46 @@
         },
         "type": {
           "const": "LazyColumn"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_LazyRow": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "firstVisibleIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onScrollIdle": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyRow"
         }
       },
       "type": "object"
@@ -27441,6 +28062,12 @@
               "$ref": "#/definitions/V_1_23_0_AlertDialog"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_AnimatedContent"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_AnimatedVisibility"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_AssistChip"
             },
             {
@@ -27451,6 +28078,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_BasicAlertDialog"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_BottomAppBar"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Box"
@@ -27472,6 +28102,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_Column"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_Crossfade"
             },
             {
               "$ref": "#/definitions/V_1_23_0_DismissibleDrawerSheet"
@@ -27528,6 +28161,12 @@
               "$ref": "#/definitions/V_1_23_0_FloatingActionButton"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_FlowColumn"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_FlowRow"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_HorizontalDivider"
             },
             {
@@ -27553,6 +28192,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_LazyColumn"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_LazyRow"
             },
             {
               "$ref": "#/definitions/V_1_23_0_LeadingIconTab"
@@ -27646,6 +28288,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_SearchBar"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SearchBarInputField"
             },
             {
               "$ref": "#/definitions/V_1_23_0_SecondaryScrollableTabRow"
@@ -28643,6 +29288,83 @@
         },
         "type": {
           "const": "SearchBar"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SearchBarInputField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "expanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onExpandedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onQueryChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onSearch": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "query": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "expanded",
+            "onExpandedChange",
+            "onQueryChange",
+            "onSearch",
+            "query"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SearchBarInputField"
         }
       },
       "type": "object"

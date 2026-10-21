@@ -1,9 +1,19 @@
 package com.pycompose.host.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -14,7 +24,10 @@ import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import com.pycompose.ir.generated.AnimatedContent as AnimatedContentNode
+import com.pycompose.ir.generated.Crossfade as CrossfadeNode
 import com.pycompose.ir.generated.Image as ImageNode
+import com.pycompose.ir.generated.SearchBarInputField as SearchBarInputFieldNode
 import com.pycompose.ir.generated.Text as TextNode
 import com.pycompose.ir.generated.TextField as InputNode
 
@@ -52,7 +65,10 @@ object BuiltinComponents {
                 )
             }
 
-    private fun ComponentRegistry.Builder.controls(): ComponentRegistry.Builder = textInputs()
+    private fun ComponentRegistry.Builder.controls(): ComponentRegistry.Builder =
+        textInputs()
+            .searchFields()
+            .animations()
 
     private fun ComponentRegistry.Builder.textInputs(): ComponentRegistry.Builder =
         register("TextField") { node, modifier, context ->
@@ -93,6 +109,55 @@ object BuiltinComponents {
                     label = input.props.label?.let { text -> { Text(text) } },
                 )
             }
+        }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    private fun ComponentRegistry.Builder.searchFields(): ComponentRegistry.Builder =
+        register("SearchBarInputField") { node, modifier, context ->
+            val field = node as SearchBarInputFieldNode
+            // The native field owns the caret, but the app owns the text. Keeping
+            // the latest keystroke locally until the snapshot echoes it prevents
+            // an older snapshot from moving the caret to the start between keys.
+            var query by remember(field.id) { mutableStateOf(field.props.query) }
+            LaunchedEffect(field.props.query) {
+                if (field.props.query != query) query = field.props.query
+            }
+            SearchBarDefaults.InputField(
+                query = query,
+                onQueryChange = { value ->
+                    query = value
+                    context.event(field.props.onQueryChange, JsonPrimitive(value))
+                },
+                onSearch = { query ->
+                    context.event(field.props.onSearch, JsonPrimitive(query))
+                },
+                expanded = field.props.expanded,
+                onExpandedChange = { expanded ->
+                    context.event(field.props.onExpandedChange, JsonPrimitive(expanded))
+                },
+                modifier = modifier,
+                enabled = field.props.enabled,
+                placeholder = context.slot(field.children, "placeholder"),
+                leadingIcon = context.slot(field.children, "leadingIcon"),
+                trailingIcon = context.slot(field.children, "trailingIcon"),
+            )
+        }
+
+    private fun ComponentRegistry.Builder.animations(): ComponentRegistry.Builder =
+        register("AnimatedContent") { node, modifier, context ->
+            val animated = node as AnimatedContentNode
+            AnimatedContent(
+                targetState = animated.props.target,
+                modifier = modifier,
+                content = { target -> key(target) { context.children(animated.children) } },
+            )
+        }.register("Crossfade") { node, modifier, context ->
+            val crossfade = node as CrossfadeNode
+            Crossfade(
+                targetState = crossfade.props.target,
+                modifier = modifier,
+                content = { target -> key(target) { context.children(crossfade.children) } },
+            )
         }
 
     @Composable

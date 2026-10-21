@@ -15,8 +15,10 @@ from pycompose.core.values import UNSET, _Unset
 from pycompose.errors import IrValidationError
 
 __all__ = [
+    "AnimatedContent",
     "Card",
     "Column",
+    "Crossfade",
     "FloatingActionButton",
     "HorizontalDivider",
     "Icon",
@@ -29,6 +31,7 @@ __all__ = [
     "NavigationBarItem",
     "Row",
     "Scaffold",
+    "SearchBarInputField",
     "Spacer",
     "Switch",
     "Text",
@@ -68,6 +71,34 @@ _TextStyle = Literal[
     "titleSmall",
     "headlineMedium",
 ]
+
+
+class AnimatedContent(Component):
+    """Native AnimatedContent; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "AnimatedContent"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        target: str,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered AnimatedContent.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            target: Required native target.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        props["target"] = target
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class Card(Component):
@@ -178,6 +209,34 @@ class Column(Component):
             props["on_scroll_idle"] = on_scroll_idle
         if scrollable is not None:
             props["scrollable"] = scrollable
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Crossfade(Component):
+    """Native Crossfade; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Crossfade"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        target: str,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered Crossfade.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            target: Required native target.
+            children: Ordered child nodes with stable keys.
+        """
+        props: dict[str, JsonValue] = {}
+        props["target"] = target
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
@@ -731,6 +790,64 @@ class Scaffold(Component):
         super().__init__(
             id=id, children=normalized + slotted, modifier=modifier, **props
         )
+
+
+class SearchBarInputField(Component):
+    """Native InputField; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SearchBarInputField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        expanded: bool,
+        modifier: Modifier | None = None,
+        on_expanded_change: str,
+        on_query_change: str,
+        on_search: str,
+        query: str,
+        leading_icon: Content | None = None,
+        placeholder: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered SearchBarInputField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            expanded: Required native expanded.
+            modifier: Native modifier; None uses its default.
+            on_expanded_change: Required native onExpandedChange.
+            on_query_change: Required native onQueryChange.
+            on_search: Required native onSearch.
+            query: Required native query.
+            leading_icon: Nodes for the native leadingIcon slot.
+            placeholder: Nodes for the native placeholder slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["expanded"] = expanded
+        props["on_expanded_change"] = on_expanded_change
+        props["on_query_change"] = on_query_change
+        props["on_search"] = on_search
+        props["query"] = query
+        slotted: tuple[Node, ...] = ()
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if placeholder is not None:
+            slotted += slot_nodes(placeholder, key="placeholder", slot="placeholder")
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class Spacer(Component):
