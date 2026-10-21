@@ -89,6 +89,7 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -190,6 +191,7 @@ import com.pycompose.ir.generated.SnackbarHost as SnackbarHostNode
 import com.pycompose.ir.generated.Spacer as SpacerNode
 import com.pycompose.ir.generated.SuggestionChip as SuggestionChipNode
 import com.pycompose.ir.generated.Surface as SurfaceNode
+import com.pycompose.ir.generated.SwipeToDismissBox as SwipeToDismissBoxNode
 import com.pycompose.ir.generated.Switch as SwitchNode
 import com.pycompose.ir.generated.Tab as TabNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
@@ -209,6 +211,7 @@ import com.pycompose.renderer.slotInBoxScope
 import com.pycompose.renderer.slotInColumnScope
 import com.pycompose.renderer.slotInRowScope
 import com.pycompose.renderer.snackbar
+import com.pycompose.renderer.swipeState
 import com.pycompose.renderer.unslotted
 import kotlinx.serialization.json.JsonObject
 
@@ -1734,6 +1737,19 @@ object GeneratedAdapters {
                     shape = shapeValue,
                     tonalElevation = tonalElevationValue,
                     content = { context.children(model.children) },
+                )
+            }
+            .register("SwipeToDismissBox") { node, modifier, context ->
+                val model = node as SwipeToDismissBoxNode
+                val stateValue = context.swipeState(model.props.value, model.props.onValueChange)
+                SwipeToDismissBox(
+                    modifier = modifier,
+                    enableDismissFromStartToEnd = model.props.enableDismissFromStartToEnd,
+                    enableDismissFromEndToStart = model.props.enableDismissFromEndToStart,
+                    gesturesEnabled = model.props.gesturesEnabled,
+                    state = stateValue,
+                    backgroundContent = context.slotInRowScope(model.children, "backgroundContent") ?: {},
+                    content = { context.childrenInRowScope(this, model.children) },
                 )
             }
             .register("Switch") { node, modifier, context ->

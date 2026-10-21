@@ -129,6 +129,19 @@ internal class ObservationSink(
     ) = observe(kind, actionId, JsonPrimitive(value))
 
     /**
+     * Report one observed string, as a swipe's settled anchor.
+     *
+     * @param kind Interaction kind the action observes, for the message.
+     * @param actionId The action observing it.
+     * @param value The new state of that kind.
+     */
+    fun observe(
+        kind: String,
+        actionId: String,
+        value: String,
+    ) = observe(kind, actionId, JsonPrimitive(value))
+
+    /**
      * Report one observed primitive under the single field its type fits.
      *
      * @param kind Interaction kind the action observes, for the message.

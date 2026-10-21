@@ -411,7 +411,7 @@ class StateRule:
     Attributes:
         native: Native parameter the remembered holder fills.
         kind: State family, naming the host's create/drive/report logic.
-        value: Boolean prop carrying the desired state; absent drives nothing.
+        value: Prop carrying the desired state; absent drives nothing.
         report: ActionId prop reporting settled changes; absent reports nothing.
         dismiss: Native parameter through which the component announces a
             dismissal it has already carried out, if it has one.

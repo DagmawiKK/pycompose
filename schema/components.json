@@ -5655,6 +5655,74 @@
         "titleContentColor",
         "actionContentColor"
       ]
+    },
+    "SwipeToDismissBox": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/SwipeToDismissBoxState;Lkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;ZZZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SwipeToDismissBox",
+        "name": "SwipeToDismissBox",
+        "owner": "androidx.compose.material3.SwipeToDismissBoxKt"
+      },
+      "props": {
+        "value": {
+          "type": "enum",
+          "values": [
+            "settled",
+            "startToEnd",
+            "endToStart"
+          ]
+        },
+        "onValueChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ]
+        },
+        "enableDismissFromStartToEnd": {
+          "type": "boolean",
+          "default": true
+        },
+        "enableDismissFromEndToStart": {
+          "type": "boolean",
+          "default": true
+        },
+        "gesturesEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "RowScope"
+      },
+      "slots": {
+        "backgroundContent": {
+          "native": "backgroundContent",
+          "provides": "RowScope"
+        }
+      },
+      "reshaped": [
+        "value",
+        "onValueChange"
+      ],
+      "state": {
+        "native": "state",
+        "kind": "swipe",
+        "value": "value",
+        "report": "onValueChange"
+      }
     }
   },
   "modifiers": {

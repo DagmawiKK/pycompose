@@ -104,6 +104,7 @@ STATE_CALLS = {
     "tooltip": "tooltipState",
     "textInput": "textInputState",
     "search": "searchState",
+    "swipe": "swipeState",
 }
 """The renderer method each state family's host holder comes from.
 
@@ -223,6 +224,59 @@ def _declared_slots(entry: dict[str, Any]) -> bool:
     )
 
 
+def _held_props(entry: dict[str, Any]) -> set[str]:
+    """Collect the props a state holder consumes instead of rendering.
+
+    Args:
+        entry: The component's schema entry.
+
+    Returns:
+        Names the holder fills or observes, so they never reach a native
+        parameter and their wire type need not be renderable by an adapter.
+    """
+    state = entry.get("state")
+    if not isinstance(state, dict):
+        return set()
+    held = {
+        name for key in ("value", "report") if isinstance(name := state.get(key), str)
+    }
+    kind = state.get("kind")
+    if isinstance(kind, str):
+        held.update(STATE_CONSTRUCTOR_PROPS.get(kind, ()))
+        gate = STATE_ATTACH_GATES.get(kind)
+        if gate is not None:
+            held.add(gate)
+    return held
+
+
+def _mechanical_prop(spec: dict[str, Any]) -> bool:
+    """Report whether one prop renders without a human decision.
+
+    Args:
+        spec: The prop's schema entry.
+
+    Returns:
+        True when the adapter can resolve it from its declared type.
+    """
+    if "valueType" in spec:
+        if spec["type"] == "value" and (
+            spec.get("required") or "nativeDefault" in spec
+        ):
+            return True
+        # A colour prop takes a tagged value *or* the legacy string, and the
+        # adapter handles both explicitly; no other decoded family does.
+        return spec.get("type") == "color" and spec.get("decode") == "color"
+    if spec.get("type") in MECHANICAL:
+        return True
+    # A dp prop carries a plain number and needs no decoder, but only a prop
+    # with some default to fall back to can be rendered at all.
+    if spec.get("type") == "dp" and _dp_renderable(spec):
+        return True
+    # Decodable types need a named resolver; without one they cannot be
+    # rendered at all rather than rendered wrongly.
+    return spec.get("type") in DECODED and bool(spec.get("decode"))
+
+
 def is_mechanical(entry: dict[str, Any]) -> bool:
     """Report whether a component's adapter can be derived from its schema.
 
@@ -241,29 +295,11 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
         return False
     if not _declared_slots(entry):
         return False
-    for spec in entry.get("props", {}).values():
-        if "valueType" in spec:
-            if spec["type"] == "value" and (
-                spec.get("required") or "nativeDefault" in spec
-            ):
-                continue
-            # A colour prop takes a tagged value *or* the legacy string, and the
-            # adapter handles both explicitly; no other decoded family does.
-            if spec.get("type") == "color" and spec.get("decode") == "color":
-                continue
-            return False
-        if spec.get("type") in MECHANICAL:
-            continue
-        # A dp prop carries a plain number and needs no decoder, but only a
-        # prop with some default to fall back to can be rendered at all.
-        if spec.get("type") == "dp" and _dp_renderable(spec):
-            continue
-        # Decodable types need a named resolver; without one they cannot be
-        # rendered at all rather than rendered wrongly.
-        if spec.get("type") in DECODED and spec.get("decode"):
-            continue
-        return False
-    return True
+    held = _held_props(entry)
+    return all(
+        prop in held or _mechanical_prop(spec)
+        for prop, spec in entry.get("props", {}).items()
+    )
 
 
 def _slot(prop_name: str, spec: dict[str, Any]) -> tuple[str, str] | None:

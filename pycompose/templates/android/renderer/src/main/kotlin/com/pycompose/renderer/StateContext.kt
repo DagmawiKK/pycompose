@@ -6,6 +6,7 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -33,6 +34,18 @@ fun RenderContext.sheetState(
     open: Boolean?,
     report: String?,
 ): HostSheetState = rememberHostSheetState(open, report, observations::observe)
+
+/**
+ * The node's swipe projection, reporting the anchor it settled on.
+ *
+ * @param value Desired anchor; null leaves the state to gestures.
+ * @param report Action id settled anchors report to; null reports none.
+ */
+@Composable
+fun RenderContext.swipeState(
+    value: String?,
+    report: String?,
+): SwipeToDismissBoxState = rememberHostSwipeState(value, report, observations::observe)
 
 /**
  * The node's slider projection; a gesture reports only its finished value.

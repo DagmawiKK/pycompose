@@ -1983,6 +1983,27 @@ data class Surface(
 }
 
 @Serializable
+data class SwipeToDismissBoxProps(
+    val `enableDismissFromEndToStart`: Boolean = true,
+    val `enableDismissFromStartToEnd`: Boolean = true,
+    val `gesturesEnabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onValueChange`: String? = null,
+    val `value`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("SwipeToDismissBox")
+data class SwipeToDismissBox(
+    override val id: String,
+    override val props: SwipeToDismissBoxProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "SwipeToDismissBox"
+}
+
+@Serializable
 data class SwitchProps(
     val `checked`: Boolean,
     val `colors`: JsonElement? = null,

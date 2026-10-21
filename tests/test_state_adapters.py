@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from test_state_projection import GATED, STATEFUL, components
 
-from pycompose.schema.codegen.adapters import extra_imports, render
+from pycompose.schema.codegen.adapters import extra_imports, is_mechanical, render
 
 
 def test_the_adapter_passes_the_host_holder_where_the_schema_says() -> None:
@@ -181,3 +181,29 @@ def test_a_tooltip_holder_receives_persistence_after_value_and_report() -> None:
     )
     assert "isPersistent =" not in adapter
     assert "com.pycompose.renderer.tooltipState" in extra_imports(entry)
+
+
+def test_a_swipe_holder_reports_the_settled_anchor_and_fills_row_slots() -> None:
+    """The enum value and its report are held; both contents use RowScope."""
+    entry = components()["SwipeToDismissBox"]
+    adapter = render("SwipeToDismissBox", entry)
+    assert (
+        "val stateValue = context.swipeState("
+        "model.props.value, model.props.onValueChange)" in adapter
+    )
+    assert "state = stateValue" in adapter
+    # The holder consumes the desired anchor and its report.
+    assert "value =" not in adapter
+    assert "onValueChange =" not in adapter
+    assert (
+        "backgroundContent = context.slotInRowScope("
+        'model.children, "backgroundContent") ?: {}' in adapter
+    )
+    assert "content = { context.childrenInRowScope(this, model.children) }" in adapter
+    assert "com.pycompose.renderer.swipeState" in extra_imports(entry)
+    assert "com.pycompose.renderer.slotInRowScope" in extra_imports(entry)
+
+
+def test_a_held_enum_value_does_not_block_a_mechanical_adapter() -> None:
+    """Held props never reach a native parameter, so their type is no obstacle."""
+    assert is_mechanical(components()["SwipeToDismissBox"])

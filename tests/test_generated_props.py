@@ -15,6 +15,7 @@ from test_generated_adapters import (
     components,
 )
 
+from pycompose.schema.codegen.adapter_helpers import _held_props
 from pycompose.schema.codegen.adapters import (
     render,
 )
@@ -177,11 +178,15 @@ def test_every_enum_color_and_resource_prop_declares_its_decoder() -> None:
     rather than some other family with the same three values. Declared per prop,
     never inferred from the value set: inference breaks silently the day two
     families share a value set, and the failure is a wrong alignment rather than
-    an error.
+    an error. A state-held prop never reaches a native parameter, so the adapter
+    resolves it through its holder instead and needs no decoder.
     """
     registry = components()
     for name, entry in sorted(registry.items()):
+        held = _held_props(entry)
         for prop, spec in entry["props"].items():
+            if prop in held:
+                continue
             if spec["type"] in {"enum", "color", "resource"}:
                 assert spec.get(
                     "decode"

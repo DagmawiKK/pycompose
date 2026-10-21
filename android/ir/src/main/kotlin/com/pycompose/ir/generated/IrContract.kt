@@ -1283,6 +1283,20 @@ object IrContract {
                 "tonalElevation" to PropertyRule("dp", required = false),
             ),
         ),
+        "SwipeToDismissBox" to ComponentRule(
+            slots = setOf("backgroundContent"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "enableDismissFromEndToStart" to PropertyRule("boolean", required = false),
+                "enableDismissFromStartToEnd" to PropertyRule("boolean", required = false),
+                "gesturesEnabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onValueChange" to PropertyRule("actionId", required = false),
+                "value" to PropertyRule("enum", required = false, values = setOf("settled", "startToEnd", "endToStart")),
+            ),
+        ),
         "Switch" to ComponentRule(
             slots = setOf("thumbContent"),
             childrenAllowed = false,

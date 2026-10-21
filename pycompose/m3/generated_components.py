@@ -112,6 +112,7 @@ __all__ = [
     "StatefulSearchBarInputField",
     "SuggestionChip",
     "Surface",
+    "SwipeToDismissBox",
     "Switch",
     "Tab",
     "Text",
@@ -188,6 +189,12 @@ _RowVerticalAlignment = Literal[
     "top",
     "center",
     "bottom",
+]
+
+_SwipeToDismissBoxValue = Literal[
+    "settled",
+    "startToEnd",
+    "endToStart",
 ]
 
 _TextStyle = Literal[
@@ -4975,6 +4982,75 @@ class Surface(Component):
             props["tonal_elevation"] = tonal_elevation
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class SwipeToDismissBox(Component):
+    """Native SwipeToDismissBox; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SwipeToDismissBox"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enable_dismiss_from_end_to_start: bool | None = None,
+        enable_dismiss_from_start_to_end: bool | None = None,
+        gestures_enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_value_change: str | None = None,
+        value: _SwipeToDismissBoxValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        background_content: Content | None = None,
+    ) -> None:
+        """Construct a registered SwipeToDismissBox.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enable_dismiss_from_end_to_start: Native enableDismissFromEndToStart;
+                None uses its default.
+            enable_dismiss_from_start_to_end: Native enableDismissFromStartToEnd;
+                None uses its default.
+            gestures_enabled: Native gesturesEnabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_value_change: Native onValueChange; None uses its default.
+            value: Native value; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            background_content: Nodes for the native backgroundContent slot.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if enable_dismiss_from_end_to_start is not None:
+            props["enable_dismiss_from_end_to_start"] = enable_dismiss_from_end_to_start
+        if enable_dismiss_from_start_to_end is not None:
+            props["enable_dismiss_from_start_to_end"] = enable_dismiss_from_start_to_end
+        if gestures_enabled is not None:
+            props["gestures_enabled"] = gestures_enabled
+        if on_value_change is not None:
+            props["on_value_change"] = on_value_change
+        if value is not None:
+            props["value"] = value
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if background_content is not None:
+            slotted += slot_nodes(
+                background_content,
+                key="backgroundContent",
+                slot="backgroundContent",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class Switch(Component):

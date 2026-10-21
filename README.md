@@ -187,12 +187,12 @@ ordinary action, so the worker never freezes behind a request.
 
 ## Components
 
-109 Material 3 components. `*` marks experimental entries.
+110 Material 3 components. `*` marks experimental entries.
 
 | Category | Components |
 | --- | --- |
 | Typography | `Text` |
-| Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard`, `PullToRefreshBox`, `VerticalDragHandle`, `FlowRow`\*, `FlowColumn`\* |
+| Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard`, `PullToRefreshBox`, `SwipeToDismissBox`, `VerticalDragHandle`, `FlowRow`\*, `FlowColumn`\* |
 | App bars | `TopAppBar`\*, `CenterAlignedTopAppBar`\*, `MediumTopAppBar`\*, `LargeTopAppBar`\*, `BottomAppBar` |
 | Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `SegmentedButton`, `MultiChoiceSegmentedButton`, `SingleChoiceSegmentedButtonRow`, `MultiChoiceSegmentedButtonRow`, `IconButton`, `FilledIconButton`, `FilledIconToggleButton`, `FilledTonalIconButton`, `FilledTonalIconToggleButton`, `IconToggleButton`, `OutlinedIconButton`, `OutlinedIconToggleButton`, `FloatingActionButton`, `LargeFloatingActionButton`, `ExtendedFloatingActionButton` |
 | Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `StatefulSearchBarInputField`\*, `StatefulSearchBar`\*, `SearchBarStateInputField`\*, `ExpandedDockedSearchBar`\*, `ExpandedFullScreenSearchBar`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
@@ -248,6 +248,15 @@ payload, including native dismissal. Repeating a snapshot does not reopen a
 dismissed tooltip. Set `is_persistent=True` for actionable content and
 `has_action=True` for its native accessibility/keyboard behavior. Native tooltip
 arbitration permits one active tooltip at a time.
+
+`SwipeToDismissBox` takes ordinary children as the content row and a
+`background_content` slot behind it. Supply `value` (`"settled"`,
+`"startToEnd"`, or `"endToStart"`) and `on_value_change` to drive and observe
+the settled anchor; omit `value` to leave it to gestures. The report payload is
+one `value: str` field. The first snapshot seeds the anchor without a report;
+native swipes report the anchor they settled on. Both directions and gestures
+are enabled unless `enable_dismiss_from_start_to_end`,
+`enable_dismiss_from_end_to_start`, or `gestures_enabled` say otherwise.
 
 ## CLI
 

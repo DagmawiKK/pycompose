@@ -6,7 +6,7 @@ wire stays expressible and the host never double-counts.
 """
 
 import re
-from typing import Any
+from typing import Any, cast
 
 from pycompose.core.registry_types import (
     INTERACTION_KINDS,
@@ -35,10 +35,34 @@ STATE_VALUE_TYPES = frozenset({"boolean", "number", "integer"})
 A drawer's desired value is a boolean, a scroll offset a number, a list's
 first visible index an integer -- whichever it is, the settled report fills
 one payload field of the same type, so the host never guesses which scalar
-an observation carries.
+an observation carries. ``swipe`` is the one enum-valued family: its three
+anchors are a closed set, and its report answers in a string.
 """
 
+SWIPE_VALUES = ("settled", "startToEnd", "endToStart")
+"""The three anchors a swipe state drives, in lowerCamel wire spelling."""
+
 REPORTED_FIELD = re.compile(r"[a-z][A-Za-z0-9]*")
+
+
+def _claimed_natives(children: dict[str, Any], slots: object) -> set[str]:
+    """Collect the native parameters a component's content and slots claim.
+
+    Args:
+        children: The component's ``children`` object.
+        slots: The component's declared slots.
+
+    Returns:
+        Every native parameter named by the component's content shape.
+    """
+    natives = {children.get("native", "content")}
+    if isinstance(slots, dict):
+        natives.update(
+            slot["native"]
+            for slot in slots.values()
+            if isinstance(slot, dict) and isinstance(slot.get("native"), str)
+        )
+    return natives
 
 
 def _validate_interaction(
@@ -75,13 +99,7 @@ def _validate_interaction(
     injected = interaction.get("native")
     if not isinstance(injected, str) or not NATIVE_PARAMETER.match(injected):
         die(f"{where}: 'native' must be a parameter name")
-    natives = {children.get("native", "content")}
-    if isinstance(slots, dict):
-        natives.update(
-            slot["native"]
-            for slot in slots.values()
-            if isinstance(slot, dict) and isinstance(slot.get("native"), str)
-        )
+    natives = _claimed_natives(children, slots)
     if injected in natives or injected in props:
         die(f"{where}: 'native' repeats another parameter")
     observations = interaction.get("observations")
@@ -201,14 +219,7 @@ def _validate_state(
     unknown = sorted(set(state) - STATE_KEYS)
     if unknown:
         die(f"{where} has unknown keys: {', '.join(unknown)}")
-    natives = {children.get("native", "content")}
-    if isinstance(slots, dict):
-        natives.update(
-            slot["native"]
-            for slot in slots.values()
-            if isinstance(slot, dict) and isinstance(slot.get("native"), str)
-        )
-    claimed = natives | set(props)
+    claimed = _claimed_natives(children, slots) | set(props)
     injected = _claimed_parameter(where, "native", state.get("native"), claimed)
     kind = state.get("kind")
     if not isinstance(kind, str) or kind not in STATE_KINDS:
@@ -220,21 +231,10 @@ def _validate_state(
     prop = props.get(value) if isinstance(value, str) else None
     if prop is None:
         die(f"{where}: 'value' must name one of the props")
-    if kind == "textInput":
-        _validate_text_input(where, state, props)
+    reported_type = _validate_value_family(where, state, props, kind, value, prop)
+    if reported_type is None:
         return
-    if prop.get("type") not in STATE_VALUE_TYPES:
-        # The family drives one scalar -- a drawer is open or it is not, a
-        # scroll sits at an offset -- so a prop of any other type cannot carry
-        # that family's desired state.
-        die(f"{where}: prop {value!r} must be a boolean, number or integer")
-    report = state.get("report")
-    reported = props.get(report) if isinstance(report, str) else None
-    if reported is None:
-        die(f"{where}: 'report' must name one of the props")
-    if reported.get("type") != "actionId":
-        die(f"{where}: prop {report!r} must be an actionId")
-    _validate_reported_payload(where, report, reported, prop["type"])
+    _validate_report(where, state, props, reported_type)
     if kind == "search":
         # A search owner shares one editing projection with every nested
         # surface; the text and its atomic report are fixed names because the
@@ -244,6 +244,91 @@ def _validate_state(
     if dismiss is not None:
         _claimed_parameter(where, "dismiss", dismiss, claimed | {injected})
     _validate_family_props(where, kind, props)
+
+
+def _validate_value_family(
+    where: str,
+    state: dict[str, Any],
+    props: dict[str, Any],
+    kind: str,
+    value: object,
+    prop: dict[str, Any],
+) -> str | None:
+    """Check the desired value prop and name the report's field type.
+
+    A text input owns its whole editing report and returns None; a swipe
+    reports the settled anchor as a string; every other family drives one
+    scalar and reports that scalar's type.
+
+    Args:
+        where: Prefix for validation failures.
+        state: The state declaration.
+        props: The component's property contracts.
+        kind: The validated state family.
+        value: The prop name carrying the desired value.
+        prop: That prop's schema entry.
+
+    Returns:
+        The report field's type, or None when the family validates its own
+        report.
+    """
+    if kind == "textInput":
+        _validate_text_input(where, state, props)
+        return None
+    if kind == "swipe":
+        _validate_swipe(where, value, prop)
+        return "string"
+    if prop.get("type") not in STATE_VALUE_TYPES:
+        # The family drives one scalar -- a drawer is open or it is not, a
+        # scroll sits at an offset -- so a prop of any other type cannot carry
+        # that family's desired state.
+        die(f"{where}: prop {value!r} must be a boolean, number or integer")
+    return cast(str, prop["type"])
+
+
+def _validate_report(
+    where: str,
+    state: dict[str, Any],
+    props: dict[str, Any],
+    field_type: str,
+) -> None:
+    """Check the settled report prop and its single payload field.
+
+    Args:
+        where: Prefix for validation failures.
+        state: The state declaration.
+        props: The component's property contracts.
+        field_type: The scalar or string type the report carries.
+    """
+    report = state.get("report")
+    reported = props.get(report) if isinstance(report, str) else None
+    if reported is None:
+        die(f"{where}: 'report' must name one of the props")
+    if reported.get("type") != "actionId":
+        die(f"{where}: prop {report!r} must be an actionId")
+    _validate_reported_payload(where, report, reported, field_type)
+
+
+def _validate_swipe(where: str, value: object, prop: dict[str, Any]) -> None:
+    """Check the closed enum a swipe state drives.
+
+    The native holder has exactly three anchors, so the desired value must name
+    all of them and nothing else. The report answers in the lowerCamel string
+    spelling; a boolean or numeric prop would give the host no way to say which
+    anchor it settled on.
+
+    Args:
+        where: Prefix for validation failures.
+        value: The state's value prop name, for the message.
+        prop: The value prop's schema entry.
+    """
+    if prop.get("type") != "enum" or prop.get("values") != list(SWIPE_VALUES):
+        die(
+            f"{where}: prop {value!r} must be an enum with the values "
+            + ", ".join(SWIPE_VALUES)
+        )
+    if prop.get("required"):
+        die(f"{where}: prop {value!r} must be optional")
 
 
 def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None:

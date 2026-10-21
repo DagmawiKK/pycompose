@@ -6597,6 +6597,68 @@
       },
       "type": "object"
     },
+    "C_SwipeToDismissBox": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "backgroundContent"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enableDismissFromEndToStart": {
+              "default": true,
+              "type": "boolean"
+            },
+            "enableDismissFromStartToEnd": {
+              "default": true,
+              "type": "boolean"
+            },
+            "gesturesEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "value": {
+              "enum": [
+                "endToStart",
+                "settled",
+                "startToEnd"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "SwipeToDismissBox"
+        }
+      },
+      "type": "object"
+    },
     "C_Switch": {
       "properties": {
         "children": {
@@ -8319,6 +8381,9 @@
             },
             {
               "$ref": "#/definitions/C_Surface"
+            },
+            {
+              "$ref": "#/definitions/C_SwipeToDismissBox"
             },
             {
               "$ref": "#/definitions/C_Switch"
@@ -29270,6 +29335,9 @@
               "$ref": "#/definitions/V_1_23_0_Surface"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_SwipeToDismissBox"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_Switch"
             },
             {
@@ -31580,6 +31648,68 @@
         },
         "type": {
           "const": "Surface"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SwipeToDismissBox": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "backgroundContent"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enableDismissFromEndToStart": {
+              "default": true,
+              "type": "boolean"
+            },
+            "enableDismissFromStartToEnd": {
+              "default": true,
+              "type": "boolean"
+            },
+            "gesturesEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "value": {
+              "enum": [
+                "endToStart",
+                "settled",
+                "startToEnd"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "SwipeToDismissBox"
         }
       },
       "type": "object"

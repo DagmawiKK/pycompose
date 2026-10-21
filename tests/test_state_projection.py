@@ -26,7 +26,7 @@ from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.ir.generated_validators import REGISTRY
 from pycompose.ir.validator import validate_prop
 from pycompose.m3 import ModalBottomSheet, ModalNavigationDrawer, Text
-from pycompose.schema.codegen.state_rules import STATE_VALUE_TYPES
+from pycompose.schema.codegen.state_rules import STATE_VALUE_TYPES, SWIPE_VALUES
 from pycompose.state import State
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
@@ -139,12 +139,13 @@ def test_a_sheet_states_its_desired_value_and_reaches_its_handle_slot() -> None:
 
 
 def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> None:
-    """Scalar families report one value; editing reports one atomic editing value.
+    """Scalar families report one value; swipe and editing use closed shapes.
 
     A drawer's desired value is a boolean, a scroll offset a number, a list's
     first visible index an integer; whichever it is, the settled report fills a
     payload field of the same type, so the host never guesses which scalar the
-    observation carries.
+    observation carries. A swipe's three anchors are an enum and its report is
+    the lowerCamel string spelling of the anchor it reached.
     """
     for name, entry in sorted(components().items()):
         state = entry.get("state")
@@ -164,6 +165,16 @@ def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> Non
                 {"name": "selectionEnd", "type": "integer"},
                 {"name": "revision", "type": "integer"},
             ], name
+            continue
+        if state["kind"] == "swipe":
+            assert value["type"] == "enum", name
+            assert value["values"] == list(SWIPE_VALUES), name
+            assert not value.get("required"), name
+            report = props[state["report"]]
+            assert report["type"] == "actionId", name
+            assert [field["type"] for field in report["payload"]] == ["string"], name
+            assert state["value"] in entry.get("reshaped", []), name
+            assert state["report"] in entry.get("reshaped", []), name
             continue
         assert value["type"] in STATE_VALUE_TYPES, name
         assert not value.get("required"), name
@@ -420,6 +431,61 @@ def test_the_codegen_refuses_an_unrenderable_state(
     drives the wrong value or reports none at all, which is worse than not
     building at all.
     """
+    with pytest.raises(SystemExit, match=expected):
+        _load_with(tmp_path, monkeypatch, break_it)
+
+
+def test_a_swipe_names_the_closed_enum_and_its_string_report() -> None:
+    """The swipe's three anchors are the whole value set, not an open string."""
+    entry = components()["SwipeToDismissBox"]
+    assert entry["state"] == {
+        "native": "state",
+        "kind": "swipe",
+        "value": "value",
+        "report": "onValueChange",
+    }
+    assert entry["props"]["value"]["values"] == list(SWIPE_VALUES)
+    assert entry["props"]["onValueChange"]["payload"] == [
+        {"name": "value", "type": "string"}
+    ]
+
+
+@pytest.mark.parametrize(
+    ("break_it", "expected"),
+    [
+        (
+            lambda registry: registry["components"]["SwipeToDismissBox"]["props"][
+                "value"
+            ].update(type="string"),
+            "must be an enum with the values",
+        ),
+        (
+            lambda registry: registry["components"]["SwipeToDismissBox"]["props"][
+                "value"
+            ].update(values=["settled", "startToEnd"]),
+            "must be an enum with the values",
+        ),
+        (
+            lambda registry: registry["components"]["SwipeToDismissBox"]["props"][
+                "value"
+            ].update(required=True),
+            "must be optional",
+        ),
+        (
+            lambda registry: registry["components"]["SwipeToDismissBox"]["props"][
+                "onValueChange"
+            ]["payload"][0].update(type="boolean"),
+            "needs one string payload field",
+        ),
+    ],
+)
+def test_the_codegen_refuses_an_unrenderable_swipe(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    break_it: Callable[[dict[str, Any]], None],
+    expected: str,
+) -> None:
+    """A swipe family the host cannot map to its closed anchors is refused."""
     with pytest.raises(SystemExit, match=expected):
         _load_with(tmp_path, monkeypatch, break_it)
 

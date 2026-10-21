@@ -73,6 +73,7 @@ STATE_KINDS = (
     "tooltip",
     "textInput",
     "search",
+    "swipe",
 )
 """State families the host creates, drives and reports for a component.
 
@@ -84,9 +85,11 @@ report a resting position once scrolling comes to rest; a tooltip reconciles a
 desired visible value through hover, focus and long-press gestures; textInput
 reconciles text and selection with a revisioned atomic edit report; search
 shares one editing projection and one expansion state across a collapsed bar
-and every expanded surface. The vocabulary is closed for the same reason the
-interaction kinds are: the host must not be asked to drive a state object
-whose transitions it does not understand.
+and every expanded surface; a swipe reconciles a desired settled/dismissed
+anchor through horizontal gestures and reports the anchor it settled on. The
+vocabulary is closed for the same reason the interaction kinds are: the host
+must not be asked to drive a state object whose transitions it does not
+understand.
 """
 
 ADAPTERS = ("generated", "manual")
