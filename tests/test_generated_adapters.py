@@ -30,10 +30,19 @@ GENERATED = (
     Path(__file__).resolve().parent.parent
     / "android/host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
 )
-MANUAL = (
+MANUAL_DIR = (
     Path(__file__).resolve().parent.parent
-    / "android/host/src/main/kotlin/com/pycompose/host/ui/BuiltinComponents.kt"
+    / "android/host/src/main/kotlin/com/pycompose/host/ui"
 )
+
+
+def manual_sources() -> str:
+    """Read every hand-written adapter, excluding the generated registry."""
+    return "\n".join(
+        path.read_text()
+        for path in sorted(MANUAL_DIR.glob("*.kt"))
+        if path != GENERATED
+    )
 
 
 def components() -> dict[str, Any]:
@@ -140,7 +149,7 @@ def test_each_component_is_registered_exactly_once_across_both_files() -> None:
     # registers through its scope's method, which the same pattern catches.
     pattern = r'register(?:\w+)?\("(\w+)"'
     generated_names = re.findall(pattern, GENERATED.read_text())
-    manual_names = re.findall(pattern, MANUAL.read_text())
+    manual_names = re.findall(pattern, manual_sources())
 
     assert len(generated_names) == len(set(generated_names)), "duplicate in generated"
     assert len(manual_names) == len(set(manual_names)), "duplicate in manual"
@@ -157,7 +166,8 @@ def test_each_component_is_registered_exactly_once_across_both_files() -> None:
     scoped = {
         name: f"{stem}Scope"
         for stem, name in re.findall(
-            r'register(\w+?)Scoped\("(\w+)"\)', GENERATED.read_text()
+            r'register(\w+?)Scoped\("(\w+)"\)',
+            GENERATED.read_text() + manual_sources(),
         )
     }
     declared = {

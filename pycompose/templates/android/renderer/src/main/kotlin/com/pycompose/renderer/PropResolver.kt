@@ -3,7 +3,9 @@ package com.pycompose.renderer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -126,4 +128,21 @@ object PropResolver {
         runCatching {
             requireNotNull(values[value]) { "Unsupported value: $value" }
         }
+}
+
+/** Experimental Material 3 tooltip positions, separate from UI scalar conversions. */
+@OptIn(ExperimentalMaterial3Api::class)
+object TooltipPropResolver {
+    fun tooltipPosition(value: String): Result<TooltipAnchorPosition> =
+        PropResolver.enum(
+            value,
+            mapOf(
+                "above" to TooltipAnchorPosition.Above,
+                "below" to TooltipAnchorPosition.Below,
+                "left" to TooltipAnchorPosition.Left,
+                "right" to TooltipAnchorPosition.Right,
+                "start" to TooltipAnchorPosition.Start,
+                "end" to TooltipAnchorPosition.End,
+            ),
+        )
 }

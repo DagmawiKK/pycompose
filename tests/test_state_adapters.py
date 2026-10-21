@@ -161,3 +161,23 @@ def test_a_lazy_list_fills_the_state_parameter() -> None:
     )
     assert "state = stateValue" in adapter
     assert "firstVisibleIndex =" not in adapter
+
+
+def test_a_tooltip_holder_receives_persistence_after_value_and_report() -> None:
+    """Every holder follows the same constructor call convention."""
+    entry = {
+        "props": {
+            "visible": {"type": "boolean"},
+            "onVisibilityChange": {"type": "actionId", "payload": []},
+            "isPersistent": {"type": "boolean", "default": False},
+        },
+        "children": {"allowed": False},
+        "state": components()["TooltipBox"]["state"],
+    }
+    adapter = render("Tooltip", entry)
+    assert (
+        "context.tooltipState(model.props.visible, model.props.onVisibilityChange, "
+        "model.props.isPersistent)" in adapter
+    )
+    assert "isPersistent =" not in adapter
+    assert "com.pycompose.renderer.tooltipState" in extra_imports(entry)

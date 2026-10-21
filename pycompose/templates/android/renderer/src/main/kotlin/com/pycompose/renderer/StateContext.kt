@@ -6,6 +6,7 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
 
 /**
@@ -48,6 +49,21 @@ fun RenderContext.sliderState(
     valueRange: ClosedFloatingPointRange<Float>?,
     steps: Long?,
 ): SliderState = rememberHostSliderState(value, report, valueRange, steps, observations::observe)
+
+/**
+ * The node's tooltip projection, reporting visibility transitions.
+ *
+ * @param visible Desired visibility; null leaves the tooltip to its gestures.
+ * @param isPersistent Whether the native tooltip waits for an explicit dismissal.
+ * @param report Action id visibility changes report to; null reports none.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RenderContext.tooltipState(
+    visible: Boolean?,
+    report: String?,
+    isPersistent: Boolean,
+): TooltipState = rememberHostTooltipState(visible, isPersistent, report, observations::observe)
 
 /**
  * The node's scroll projection, attached through its modifier by the adapter.

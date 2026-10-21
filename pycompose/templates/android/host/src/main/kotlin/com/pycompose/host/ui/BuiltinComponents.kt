@@ -51,7 +51,7 @@ object BuiltinComponents {
                 ResourceText(
                     text.props,
                     modifier,
-                    color(text.props.color),
+                    nativeColor(text.props.color),
                     textStyle(text.props.style),
                     resources,
                 )
@@ -69,6 +69,7 @@ object BuiltinComponents {
         textInputs()
             .searchFields()
             .animations()
+            .tooltips()
 
     private fun ComponentRegistry.Builder.textInputs(): ComponentRegistry.Builder =
         register("TextField") { node, modifier, context ->
@@ -160,14 +161,6 @@ object BuiltinComponents {
             )
         }
 
-    @Composable
-    private fun color(value: JsonElement?): Color =
-        when (value) {
-            is JsonObject -> ValueResolver.color(value).getOrDefault(Color.Unspecified)
-            is JsonPrimitive -> PropResolver.color(value.content).getOrDefault(Color.Unspecified)
-            else -> Color.Unspecified
-        }
-
     @Composable private fun textStyle(value: JsonElement): androidx.compose.ui.text.TextStyle {
         if (value is JsonObject) return ValueResolver.textStyle(value).getOrThrow()
         return legacyTextStyle((value as JsonPrimitive).content)
@@ -190,3 +183,12 @@ object BuiltinComponents {
                 ).getOrDefault(bodyMedium)
         }
 }
+
+/** Resolve theme-aware color data for the hand-written native adapters. */
+@Composable
+internal fun nativeColor(value: JsonElement?): Color =
+    when (value) {
+        is JsonObject -> ValueResolver.color(value).getOrDefault(Color.Unspecified)
+        is JsonPrimitive -> PropResolver.color(value.content).getOrDefault(Color.Unspecified)
+        else -> Color.Unspecified
+    }

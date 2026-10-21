@@ -19,7 +19,14 @@ from pycompose.composition import slot_nodes
 from pycompose.core.node import Node, Props
 from pycompose.errors import IrError, IrValidationError
 from pycompose.ir import emit_ir, to_dict, validate_ir
-from pycompose.m3 import Column, Scaffold, Text
+from pycompose.m3 import (
+    Column,
+    PlainTooltip,
+    RichTooltip,
+    Scaffold,
+    Text,
+    TooltipBox,
+)
 from pycompose.state import State
 
 
@@ -37,16 +44,17 @@ def text_node(node_id: str, content: str = "hi", **extra: object) -> Node:
     return Node(id=node_id, type="Text", props=Props({"text": content}), **extra)  # type: ignore[arg-type]
 
 
-def snapshot(root: Node) -> dict:
+def snapshot(root: Node, schema_version: str = "1.0.0") -> dict:
     """Emit, validate and serialize one root.
 
     Args:
         root: The tree to publish.
+        schema_version: Wire contract version the tree is written against.
 
     Returns:
         The canonical wire snapshot.
     """
-    candidate = emit_ir(State(root=root), "1.0.0")
+    candidate = emit_ir(State(root=root), schema_version)
     assert validate_ir(candidate).snapshot is candidate
     return to_dict(candidate)
 
@@ -135,6 +143,57 @@ def test_a_slotted_child_still_needs_a_declared_slot_on_the_wire() -> None:
     assert result.snapshot is not None
     assert [child.type for child in result.snapshot.root.children] == []
     assert any("unknown slot" in issue.message for issue in result.issues)
+
+
+def test_tooltip_content_fills_the_box_slot_and_reaches_the_wire() -> None:
+    """The anchor is ordinary content; the scoped tooltip is a declared slot."""
+    root = snapshot(
+        TooltipBox(
+            id="tip",
+            visible=True,
+            is_persistent=True,
+            tooltip=PlainTooltip(
+                id="tip.tooltip",
+                show_caret=True,
+                children=(Text(id="tip.text", text="hint"),),
+            ),
+            children=(Text(id="tip.anchor", text="anchor"),),
+        ),
+        schema_version="1.23.0",
+    )["root"]
+    assert root["props"]["visible"] is True
+    assert root["props"]["isPersistent"] is True
+    assert [child.get("slot") for child in root["children"]] == [None, "tooltip"]
+    tooltip = root["children"][1]
+    assert tooltip["props"]["showCaret"] is True
+    assert [child["id"] for child in tooltip["children"]] == [
+        "root.tip.tooltip.tip.text"
+    ]
+
+
+def test_a_rich_tooltip_keeps_title_action_and_body_distinct() -> None:
+    """A title is not an action, and neither is the primary body text."""
+    root = snapshot(
+        TooltipBox(
+            id="tip",
+            tooltip=RichTooltip(
+                id="tip.tooltip",
+                title=Text(id="tip.title", text="title"),
+                action=Text(id="tip.action", text="action"),
+                children=(Text(id="tip.text", text="body"),),
+            ),
+            children=(Text(id="tip.anchor", text="anchor"),),
+        ),
+        schema_version="1.23.0",
+    )["root"]
+    tooltip = next(
+        child for child in root["children"] if child["type"] == "RichTooltip"
+    )
+    assert {child["id"]: child.get("slot") for child in tooltip["children"]} == {
+        "root.tip.tooltip.tip.action": "action",
+        "root.tip.tooltip.tip.text": None,
+        "root.tip.tooltip.tip.title": "title",
+    }
 
 
 def test_the_generated_constructor_slots_reach_the_wire() -> None:

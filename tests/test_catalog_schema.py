@@ -112,6 +112,26 @@ def test_the_schema_and_the_validator_require_the_same_top_keys() -> None:
     assert set(_schema()["required"]) == set(rules.REGISTRY_KEYS)
 
 
+def test_the_tooltip_trio_shares_a_scope_and_one_visibility_state() -> None:
+    """The box owns visibility; its scoped content cannot stand alone."""
+    components = _catalog()["components"]
+    box = components["TooltipBox"]
+    assert box["state"] == {
+        "native": "state",
+        "kind": "tooltip",
+        "value": "visible",
+        "report": "onVisibilityChange",
+    }
+    assert box["slots"]["tooltip"]["provides"] == "TooltipScope"
+    for name in ("PlainTooltip", "RichTooltip"):
+        assert components[name]["scope"] == "TooltipScope", name
+    for name in ("PlainTooltip", "RichTooltip"):
+        for prop in components[name]["props"].values():
+            if prop["type"] == "color":
+                assert prop["valueType"] == "Color"
+                assert prop["decode"] == "color"
+
+
 def test_the_search_input_field_requires_the_callbacks_native_needs() -> None:
     """A native-required callback cannot be omitted on the wire.
 

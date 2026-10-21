@@ -4588,6 +4588,81 @@
       },
       "type": "object"
     },
+    "C_PlainTooltip": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "maxWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "showCaret": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "PlainTooltip"
+        }
+      },
+      "type": "object"
+    },
     "C_PrimaryScrollableTabRow": {
       "properties": {
         "children": {
@@ -4890,6 +4965,110 @@
         },
         "type": {
           "const": "RadioButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_RichTooltip": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "action",
+                  "title"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "actionContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "maxWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "showCaret": {
+              "default": false,
+              "type": "boolean"
+            },
+            "titleContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "RichTooltip"
         }
       },
       "type": "object"
@@ -6276,6 +6455,79 @@
       },
       "type": "object"
     },
+    "C_TooltipBox": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "tooltip"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enableUserInput": {
+              "default": true,
+              "type": "boolean"
+            },
+            "focusable": {
+              "default": false,
+              "type": "boolean"
+            },
+            "hasAction": {
+              "default": false,
+              "type": "boolean"
+            },
+            "isPersistent": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onVisibilityChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "position": {
+              "default": "above",
+              "enum": [
+                "above",
+                "below",
+                "end",
+                "left",
+                "right",
+                "start"
+              ]
+            },
+            "visible": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "TooltipBox"
+        }
+      },
+      "type": "object"
+    },
     "C_TopAppBar": {
       "properties": {
         "children": {
@@ -7512,6 +7764,9 @@
               "$ref": "#/definitions/C_PermanentNavigationDrawer"
             },
             {
+              "$ref": "#/definitions/C_PlainTooltip"
+            },
+            {
               "$ref": "#/definitions/C_PrimaryScrollableTabRow"
             },
             {
@@ -7522,6 +7777,9 @@
             },
             {
               "$ref": "#/definitions/C_RadioButton"
+            },
+            {
+              "$ref": "#/definitions/C_RichTooltip"
             },
             {
               "$ref": "#/definitions/C_Row"
@@ -7585,6 +7843,9 @@
             },
             {
               "$ref": "#/definitions/C_TextField"
+            },
+            {
+              "$ref": "#/definitions/C_TooltipBox"
             },
             {
               "$ref": "#/definitions/C_TopAppBar"
@@ -28269,6 +28530,9 @@
               "$ref": "#/definitions/V_1_23_0_PermanentNavigationDrawer"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_PlainTooltip"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_PrimaryScrollableTabRow"
             },
             {
@@ -28279,6 +28543,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_RadioButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_RichTooltip"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Row"
@@ -28342,6 +28609,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_TextField"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_TooltipBox"
             },
             {
               "$ref": "#/definitions/V_1_23_0_TopAppBar"
@@ -28799,6 +29069,81 @@
       },
       "type": "object"
     },
+    "V_1_23_0_PlainTooltip": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "maxWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "showCaret": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "PlainTooltip"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_PrimaryScrollableTabRow": {
       "properties": {
         "children": {
@@ -29101,6 +29446,110 @@
         },
         "type": {
           "const": "RadioButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_RichTooltip": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "action",
+                  "title"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "actionContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "maxWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "showCaret": {
+              "default": false,
+              "type": "boolean"
+            },
+            "titleContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "RichTooltip"
         }
       },
       "type": "object"
@@ -30483,6 +30932,79 @@
         },
         "type": {
           "const": "TextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_TooltipBox": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "tooltip"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enableUserInput": {
+              "default": true,
+              "type": "boolean"
+            },
+            "focusable": {
+              "default": false,
+              "type": "boolean"
+            },
+            "hasAction": {
+              "default": false,
+              "type": "boolean"
+            },
+            "isPersistent": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onVisibilityChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "position": {
+              "default": "above",
+              "enum": [
+                "above",
+                "below",
+                "end",
+                "left",
+                "right",
+                "start"
+              ]
+            },
+            "visible": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "TooltipBox"
         }
       },
       "type": "object"

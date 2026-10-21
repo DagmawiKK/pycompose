@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
 package com.pycompose.renderer
 
 import androidx.compose.foundation.layout.BoxScope
@@ -5,6 +7,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.MultiChoiceSegmentedButtonRowScope
 import androidx.compose.material3.SingleChoiceSegmentedButtonRowScope
+import androidx.compose.material3.TooltipScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.pycompose.ir.generated.UiNode
@@ -24,51 +27,64 @@ typealias SingleChoiceScopedNodeRenderer =
 typealias MultiChoiceScopedNodeRenderer =
     @Composable MultiChoiceSegmentedButtonRowScope.(UiNode, Modifier, RenderContext) -> Unit
 
+typealias TooltipScopedNodeRenderer =
+    @Composable TooltipScope.(UiNode, Modifier, RenderContext) -> Unit
+
+/** Immutable tables for adapters whose receiver is supplied by a native content slot. */
+private class ScopedAdapters(
+    val row: Map<String, RowScopedNodeRenderer>,
+    val column: Map<String, ColumnScopedNodeRenderer>,
+    val box: Map<String, BoxScopedNodeRenderer>,
+    val singleChoice: Map<String, SingleChoiceScopedNodeRenderer>,
+    val multiChoice: Map<String, MultiChoiceScopedNodeRenderer>,
+    val tooltip: Map<String, TooltipScopedNodeRenderer>,
+)
+
 /** Immutable adapter table. Registration is explicit; no component dispatch chain. */
 class ComponentRegistry private constructor(
     private val adapters: Map<String, NodeRenderer>,
-    private val rowScopedAdapters: Map<String, RowScopedNodeRenderer>,
-    private val columnScopedAdapters: Map<String, ColumnScopedNodeRenderer>,
-    private val boxScopedAdapters: Map<String, BoxScopedNodeRenderer>,
-    private val singleChoiceScopedAdapters: Map<String, SingleChoiceScopedNodeRenderer>,
-    private val multiChoiceScopedAdapters: Map<String, MultiChoiceScopedNodeRenderer>,
+    private val scopes: ScopedAdapters,
 ) {
     operator fun get(type: String): NodeRenderer? = adapters[type]
 
     /** The RowScope adapter for one type, composed only under a RowScope parent. */
-    fun rowScoped(type: String): RowScopedNodeRenderer? = rowScopedAdapters[type]
+    fun rowScoped(type: String): RowScopedNodeRenderer? = scopes.row[type]
 
     /** The ColumnScope adapter for one type, composed under a ColumnScope parent. */
-    fun columnScoped(type: String): ColumnScopedNodeRenderer? = columnScopedAdapters[type]
+    fun columnScoped(type: String): ColumnScopedNodeRenderer? = scopes.column[type]
 
     /** The BoxScope adapter for one type, composed under a BoxScope parent. */
-    fun boxScoped(type: String): BoxScopedNodeRenderer? = boxScopedAdapters[type]
+    fun boxScoped(type: String): BoxScopedNodeRenderer? = scopes.box[type]
 
     /** The single-choice segmented-row adapter for one type. */
     fun singleChoiceScoped(type: String): SingleChoiceScopedNodeRenderer? =
-        singleChoiceScopedAdapters[type]
+        scopes.singleChoice[type]
 
     /** The multi-choice segmented-row adapter for one type. */
-    fun multiChoiceScoped(type: String): MultiChoiceScopedNodeRenderer? =
-        multiChoiceScopedAdapters[type]
+    fun multiChoiceScoped(type: String): MultiChoiceScopedNodeRenderer? = scopes.multiChoice[type]
+
+    /** The tooltip-scoped adapter for one type. */
+    fun tooltipScoped(type: String): TooltipScopedNodeRenderer? = scopes.tooltip[type]
 
     val types: Set<String>
         get() =
             adapters.keys +
-                rowScopedAdapters.keys +
-                columnScopedAdapters.keys +
-                boxScopedAdapters.keys +
-                singleChoiceScopedAdapters.keys +
-                multiChoiceScopedAdapters.keys
+                scopes.row.keys +
+                scopes.column.keys +
+                scopes.box.keys +
+                scopes.singleChoice.keys +
+                scopes.multiChoice.keys +
+                scopes.tooltip.keys
 
     /** The composition scope a type requires, when only a scoped adapter exists. */
     fun scopeOf(type: String): String? =
         when {
-            type in rowScopedAdapters -> "RowScope"
-            type in columnScopedAdapters -> "ColumnScope"
-            type in boxScopedAdapters -> "BoxScope"
-            type in singleChoiceScopedAdapters -> "SingleChoiceSegmentedButtonRowScope"
-            type in multiChoiceScopedAdapters -> "MultiChoiceSegmentedButtonRowScope"
+            type in scopes.row -> "RowScope"
+            type in scopes.column -> "ColumnScope"
+            type in scopes.box -> "BoxScope"
+            type in scopes.singleChoice -> "SingleChoiceSegmentedButtonRowScope"
+            type in scopes.multiChoice -> "MultiChoiceSegmentedButtonRowScope"
+            type in scopes.tooltip -> "TooltipScope"
             else -> null
         }
 
@@ -81,6 +97,7 @@ class ComponentRegistry private constructor(
             linkedMapOf<String, SingleChoiceScopedNodeRenderer>()
         private val multiChoiceScopedAdapters =
             linkedMapOf<String, MultiChoiceScopedNodeRenderer>()
+        private val tooltipScopedAdapters = linkedMapOf<String, TooltipScopedNodeRenderer>()
 
         fun register(
             type: String,
@@ -136,6 +153,15 @@ class ComponentRegistry private constructor(
                 multiChoiceScopedAdapters[type] = renderer
             }
 
+        fun registerTooltipScoped(
+            type: String,
+            renderer: TooltipScopedNodeRenderer,
+        ): Builder =
+            apply {
+                claim(type)
+                tooltipScopedAdapters[type] = renderer
+            }
+
         /** One adapter per type: a scoped one is looked up through its scope alone. */
         private fun claim(type: String) {
             require(
@@ -145,7 +171,8 @@ class ComponentRegistry private constructor(
                     type !in columnScopedAdapters &&
                     type !in boxScopedAdapters &&
                     type !in singleChoiceScopedAdapters &&
-                    type !in multiChoiceScopedAdapters,
+                    type !in multiChoiceScopedAdapters &&
+                    type !in tooltipScopedAdapters,
             ) {
                 "Duplicate/empty adapter: $type"
             }
@@ -154,11 +181,14 @@ class ComponentRegistry private constructor(
         fun build(): ComponentRegistry =
             ComponentRegistry(
                 adapters.toMap(),
-                rowScopedAdapters.toMap(),
-                columnScopedAdapters.toMap(),
-                boxScopedAdapters.toMap(),
-                singleChoiceScopedAdapters.toMap(),
-                multiChoiceScopedAdapters.toMap(),
+                ScopedAdapters(
+                    rowScopedAdapters.toMap(),
+                    columnScopedAdapters.toMap(),
+                    boxScopedAdapters.toMap(),
+                    singleChoiceScopedAdapters.toMap(),
+                    multiChoiceScopedAdapters.toMap(),
+                    tooltipScopedAdapters.toMap(),
+                ),
             )
     }
 }

@@ -60,9 +60,12 @@ FLOOR_COMPONENTS = frozenset(
         "AnimatedContent",
         "Crossfade",
         "Image",
+        "PlainTooltip",
+        "RichTooltip",
         "SearchBarInputField",
         "Text",
         "TextField",
+        "TooltipBox",
     }
 )
 """Components every generated host compiles against, referenced or not.

@@ -4874,7 +4874,7 @@
       "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Vertical;Landroidx/compose/foundation/gestures/FlingBehavior;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Vertical;Landroidx/compose/foundation/gestures/FlingBehavior;ZLandroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
         "jvmName": "LazyRow",
         "name": "LazyRow",
         "owner": "androidx.compose.foundation.lazy.LazyDslKt"
@@ -5048,7 +5048,10 @@
         "allowed": true,
         "min": 0
       },
-      "adapter": "manual"
+      "adapter": "manual",
+      "reshaped": [
+        "target"
+      ]
     },
     "Crossfade": {
       "package": "androidx.compose.animation",
@@ -5057,7 +5060,7 @@
       "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.animation:animation-android:1.12.1",
-        "descriptor": "(Ljava/lang/Object;Landroidx/compose/ui/Modifier;Landroidx/compose/animation/core/FiniteAnimationSpec;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "descriptor": "(Ljava/lang/Object;Landroidx/compose/ui/Modifier;Landroidx/compose/animation/core/FiniteAnimationSpec;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
         "jvmName": "Crossfade",
         "name": "Crossfade",
         "owner": "androidx.compose.animation.CrossfadeKt"
@@ -5075,7 +5078,10 @@
         "allowed": true,
         "min": 0
       },
-      "adapter": "manual"
+      "adapter": "manual",
+      "reshaped": [
+        "target"
+      ]
     },
     "BottomAppBar": {
       "package": "androidx.compose.material3",
@@ -5099,6 +5105,217 @@
         "min": 0,
         "provides": "RowScope"
       }
+    },
+    "TooltipBox": {
+      "package": "androidx.compose.material3",
+      "category": "overlays",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/window/PopupPositionProvider;Lkotlin/jvm/functions/Function3;Landroidx/compose/material3/TooltipState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;ZZZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "TooltipBox",
+        "name": "TooltipBox",
+        "owner": "androidx.compose.material3.TooltipKt"
+      },
+      "props": {
+        "visible": {
+          "type": "boolean"
+        },
+        "onVisibilityChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "visible",
+              "type": "boolean"
+            }
+          ]
+        },
+        "isPersistent": {
+          "type": "boolean",
+          "default": false
+        },
+        "position": {
+          "type": "enum",
+          "decode": "tooltipPosition",
+          "values": [
+            "above",
+            "below",
+            "left",
+            "right",
+            "start",
+            "end"
+          ],
+          "default": "above"
+        },
+        "focusable": {
+          "type": "boolean",
+          "default": false
+        },
+        "enableUserInput": {
+          "type": "boolean",
+          "default": true
+        },
+        "hasAction": {
+          "type": "boolean",
+          "default": false
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      },
+      "slots": {
+        "tooltip": {
+          "native": "tooltip",
+          "provides": "TooltipScope"
+        }
+      },
+      "state": {
+        "native": "state",
+        "kind": "tooltip",
+        "value": "visible",
+        "report": "onVisibilityChange"
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "visible",
+        "onVisibilityChange",
+        "isPersistent",
+        "position"
+      ]
+    },
+    "PlainTooltip": {
+      "package": "androidx.compose.material3",
+      "category": "overlays",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "scope": "TooltipScope",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/TooltipScope;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;FLandroidx/compose/ui/graphics/Shape;JJFFLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "PlainTooltip-gv3ox5I",
+        "name": "PlainTooltip",
+        "owner": "androidx.compose.material3.TooltipKt"
+      },
+      "props": {
+        "showCaret": {
+          "type": "boolean",
+          "default": false
+        },
+        "maxWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TooltipDefaults.plainTooltipMaxWidth"
+        },
+        "containerColor": {
+          "type": "color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TooltipDefaults.plainTooltipContainerColor",
+          "valueType": "Color"
+        },
+        "contentColor": {
+          "type": "color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TooltipDefaults.plainTooltipContentColor",
+          "valueType": "Color"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "showCaret"
+      ]
+    },
+    "RichTooltip": {
+      "package": "androidx.compose.material3",
+      "category": "overlays",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "scope": "TooltipScope",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/TooltipScope;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;FLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/RichTooltipColors;FFLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "RichTooltip-EkvW5A0",
+        "name": "RichTooltip",
+        "owner": "androidx.compose.material3.TooltipKt"
+      },
+      "props": {
+        "showCaret": {
+          "type": "boolean",
+          "default": false
+        },
+        "maxWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.TooltipDefaults.richTooltipMaxWidth"
+        },
+        "containerColor": {
+          "type": "color",
+          "decode": "color",
+          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
+          "valueType": "Color"
+        },
+        "contentColor": {
+          "type": "color",
+          "decode": "color",
+          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
+          "valueType": "Color"
+        },
+        "titleContentColor": {
+          "type": "color",
+          "decode": "color",
+          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
+          "valueType": "Color"
+        },
+        "actionContentColor": {
+          "type": "color",
+          "decode": "color",
+          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
+          "valueType": "Color"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      },
+      "slots": {
+        "title": {
+          "native": "title",
+          "nullable": true
+        },
+        "action": {
+          "native": "action",
+          "nullable": true
+        }
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "showCaret",
+        "containerColor",
+        "contentColor",
+        "titleContentColor",
+        "actionContentColor"
+      ]
     }
   },
   "modifiers": {

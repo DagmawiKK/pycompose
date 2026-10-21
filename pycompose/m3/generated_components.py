@@ -85,10 +85,12 @@ __all__ = [
     "OutlinedTextField",
     "PermanentDrawerSheet",
     "PermanentNavigationDrawer",
+    "PlainTooltip",
     "PrimaryScrollableTabRow",
     "PrimaryTabRow",
     "PullToRefreshBox",
     "RadioButton",
+    "RichTooltip",
     "Row",
     "Scaffold",
     "SearchBar",
@@ -110,6 +112,7 @@ __all__ = [
     "Text",
     "TextButton",
     "TextField",
+    "TooltipBox",
     "TopAppBar",
     "TriStateCheckbox",
     "VerticalDivider",
@@ -190,6 +193,15 @@ _TextStyle = Literal[
     "titleMedium",
     "titleSmall",
     "headlineMedium",
+]
+
+_TooltipBoxPosition = Literal[
+    "above",
+    "below",
+    "left",
+    "right",
+    "start",
+    "end",
 ]
 
 
@@ -3583,6 +3595,58 @@ class PermanentNavigationDrawer(Component):
         )
 
 
+class PlainTooltip(Component):
+    """Native PlainTooltip; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "PlainTooltip"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        container_color: JsonValue | None = None,
+        content_color: JsonValue | None = None,
+        max_width: int | float | None = None,
+        modifier: Modifier | None = None,
+        show_caret: bool | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered PlainTooltip.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            content_color: Native contentColor; None uses its default.
+            max_width: Native maxWidth; None uses its default.
+            modifier: Native modifier; None uses its default.
+            show_caret: Native showCaret; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if content_color is not None:
+            props["content_color"] = content_color
+        if max_width is not None:
+            props["max_width"] = max_width
+        if show_caret is not None:
+            props["show_caret"] = show_caret
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class PrimaryScrollableTabRow(Component):
     """Native PrimaryScrollableTabRow;
     props and defaults follow the component manifest."""
@@ -3760,6 +3824,77 @@ class RadioButton(Component):
             props["on_press"] = on_press
         props["selected"] = selected
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class RichTooltip(Component):
+    """Native RichTooltip; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "RichTooltip"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        action_content_color: JsonValue | None = None,
+        container_color: JsonValue | None = None,
+        content_color: JsonValue | None = None,
+        max_width: int | float | None = None,
+        modifier: Modifier | None = None,
+        show_caret: bool | None = None,
+        title_content_color: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        action: Content | None = None,
+        title: Content | None = None,
+    ) -> None:
+        """Construct a registered RichTooltip.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            action_content_color: Native actionContentColor; None uses its default.
+            container_color: Native containerColor; None uses its default.
+            content_color: Native contentColor; None uses its default.
+            max_width: Native maxWidth; None uses its default.
+            modifier: Native modifier; None uses its default.
+            show_caret: Native showCaret; None uses its default.
+            title_content_color: Native titleContentColor; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            action: Nodes for the native action slot.
+            title: Nodes for the native title slot.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if action_content_color is not None:
+            props["action_content_color"] = action_content_color
+        if container_color is not None:
+            props["container_color"] = container_color
+        if content_color is not None:
+            props["content_color"] = content_color
+        if max_width is not None:
+            props["max_width"] = max_width
+        if show_caret is not None:
+            props["show_caret"] = show_caret
+        if title_content_color is not None:
+            props["title_content_color"] = title_content_color
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if action is not None:
+            slotted += slot_nodes(action, key="action", slot="action")
+        if title is not None:
+            slotted += slot_nodes(title, key="title", slot="title")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class Row(Component):
@@ -4732,6 +4867,77 @@ class TextField(Component):
             props["selection"] = selection
         props["value"] = value
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class TooltipBox(Component):
+    """Native TooltipBox; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TooltipBox"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enable_user_input: bool | None = None,
+        focusable: bool | None = None,
+        has_action: bool | None = None,
+        is_persistent: bool | None = None,
+        modifier: Modifier | None = None,
+        on_visibility_change: str | None = None,
+        position: _TooltipBoxPosition | None = None,
+        visible: bool | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        tooltip: Content | None = None,
+    ) -> None:
+        """Construct a registered TooltipBox.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enable_user_input: Native enableUserInput; None uses its default.
+            focusable: Native focusable; None uses its default.
+            has_action: Native hasAction; None uses its default.
+            is_persistent: Native isPersistent; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_visibility_change: Native onVisibilityChange; None uses its default.
+            position: Native position; None uses its default.
+            visible: Native visible; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            tooltip: Nodes for the native tooltip slot.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if enable_user_input is not None:
+            props["enable_user_input"] = enable_user_input
+        if focusable is not None:
+            props["focusable"] = focusable
+        if has_action is not None:
+            props["has_action"] = has_action
+        if is_persistent is not None:
+            props["is_persistent"] = is_persistent
+        if on_visibility_change is not None:
+            props["on_visibility_change"] = on_visibility_change
+        if position is not None:
+            props["position"] = position
+        if visible is not None:
+            props["visible"] = visible
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if tooltip is not None:
+            slotted += slot_nodes(tooltip, key="tooltip", slot="tooltip")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class TopAppBar(Component):

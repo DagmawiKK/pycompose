@@ -33,6 +33,7 @@ RESOLVER_RETURN = {
     "resourceImage": "Painter?",
     "resourceText": "String?",
     "textStyle": "TextStyle",
+    "tooltipPosition": "TooltipAnchorPosition",
     "vertical": "Alignment.Vertical",
 }
 """What each decoder hands back.
@@ -52,6 +53,7 @@ RESOLVER_FALLBACK = {
     "resourceImage": "null",
     "resourceText": "null",
     "textStyle": "MaterialTheme.typography.bodyMedium",
+    "tooltipPosition": "TooltipAnchorPosition.Above",
     "vertical": "Alignment.Top",
 }
 """What a malformed value falls back to.
@@ -70,6 +72,8 @@ KOTLIN_TYPES = {
     "Painter": "androidx.compose.ui.graphics.painter.Painter",
     "PropResolver": "com.pycompose.renderer.PropResolver",
     "TextStyle": "androidx.compose.ui.text.TextStyle",
+    "TooltipAnchorPosition": "androidx.compose.material3.TooltipAnchorPosition",
+    "TooltipPropResolver": "com.pycompose.renderer.TooltipPropResolver",
 }
 """Package for every bare Compose name this generator emits.
 
@@ -77,6 +81,9 @@ Generated code names resolvers and their returns in full instead of importing
 them, the way the value path already did: one less import list to keep honest,
 and a name that cannot be shadowed by a prop.
 """
+
+RESOLVER_OWNER = {"tooltipPosition": "TooltipPropResolver"}
+"""Specialised native decoders; other non-resource decoders use PropResolver."""
 
 MECHANICAL = {"string", "boolean", "integer", "number", "actionId", "modifier"}
 """Schema prop types an adapter can render with no decision and no decoder.
@@ -94,6 +101,7 @@ STATE_CALLS = {
     "slider": "sliderState",
     "scroll": "scrollState",
     "lazyList": "lazyListState",
+    "tooltip": "tooltipState",
 }
 """The renderer method each state family's host holder comes from.
 
@@ -114,15 +122,19 @@ composition gate in ``visible``; any other family's holder is the native state
 itself.
 """
 
-STATE_CONSTRUCTOR_PROPS = {"slider": ("valueRange", "steps")}
+STATE_CONSTRUCTOR_PROPS = {
+    "slider": ("valueRange", "steps"),
+    "tooltip": ("isPersistent",),
+}
 """Props each family's holder needs at construction, beyond value and report.
 
 A ``SliderState`` is built from the app's desired value, the settle report,
 the range and the steps, and owns the range and the steps for as long as it
-lives; they flow into the renderer call that creates the holder rather than
-into the component's own arguments. Every prop named here is held exactly as
-the desired value and its report are: the app states it, the adapter passes it
-to the holder, and it never reaches the component.
+lives; a tooltip holder is built with its persistence policy. They flow into
+the renderer call that creates the holder rather than into the component's own
+arguments. Every prop named here is held exactly as the desired value and its
+report are: the app states it, the adapter passes it to the holder, and it
+never reaches the component.
 """
 
 STATE_ATTACH_GATES = {"scroll": "scrollable"}

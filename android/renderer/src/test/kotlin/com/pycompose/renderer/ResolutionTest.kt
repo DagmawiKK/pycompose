@@ -1,5 +1,7 @@
 package com.pycompose.renderer
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
@@ -31,6 +33,24 @@ class ResolutionTest {
         assertEquals(8.dp, PropResolver.dp(8.0).getOrThrow())
         assertTrue(PropResolver.horizontal("bad").isFailure)
         assertTrue(PropResolver.durationMs(-1).isFailure)
+    }
+
+    @Test
+    @OptIn(ExperimentalMaterial3Api::class)
+    fun `tooltip positions preserve logical and absolute directions`() {
+        val positions =
+            mapOf(
+                "above" to TooltipAnchorPosition.Above,
+                "below" to TooltipAnchorPosition.Below,
+                "left" to TooltipAnchorPosition.Left,
+                "right" to TooltipAnchorPosition.Right,
+                "start" to TooltipAnchorPosition.Start,
+                "end" to TooltipAnchorPosition.End,
+            )
+        positions.forEach { (wire, native) ->
+            assertEquals(native, TooltipPropResolver.tooltipPosition(wire).getOrThrow())
+        }
+        assertTrue(TooltipPropResolver.tooltipPosition("invalid").isFailure)
     }
 
     @Test

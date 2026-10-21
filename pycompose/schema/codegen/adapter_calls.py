@@ -15,6 +15,7 @@ from pycompose.schema.codegen.adapter_helpers import (
     NUMERIC_CONVERSIONS,
     NUMERIC_KOTLIN,
     RESOLVER_FALLBACK,
+    RESOLVER_OWNER,
     RESOLVER_RETURN,
     SCALAR_KOTLIN,
     STATE_ATTACH_GATES,
@@ -139,7 +140,7 @@ def _decoded(
     access = f"{wire}?.takeIf {{ it.isNotEmpty() }}" if optional else wire
     value = f"{prop_name}Value"
 
-    resolver = qualify("PropResolver")
+    resolver = qualify(RESOLVER_OWNER.get(decoder, "PropResolver"))
 
     if decoder.startswith("resource"):
         # A resource reference is a single wire string naming a kind and a name

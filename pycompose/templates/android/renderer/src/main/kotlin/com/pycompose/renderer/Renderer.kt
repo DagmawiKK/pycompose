@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
 package com.pycompose.renderer
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MultiChoiceSegmentedButtonRowScope
 import androidx.compose.material3.SingleChoiceSegmentedButtonRowScope
+import androidx.compose.material3.TooltipScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -265,6 +268,22 @@ fun RenderContext.slotInMultiChoiceSegmentedButtonRowScope(
     }
 }
 
+/** A named slot whose lambda carries a tooltip scope, as [slotInRowScope]. */
+fun RenderContext.slotInTooltipScope(
+    nodes: List<UiNode>,
+    slot: String,
+): (@Composable TooltipScope.() -> Unit)? {
+    val filled = nodes.inSlot(slot)
+    if (filled.isEmpty()) return null
+    return {
+        filled.forEach { child ->
+            key(child.id) {
+                renderer.ScopedNode(child, this@slotInTooltipScope, this)
+            }
+        }
+    }
+}
+
 /** Stateless registry-driven engine; only wire-validated snapshots enter this seam. */
 class Renderer(
     private val registry: ComponentRegistry,
@@ -376,6 +395,21 @@ class Renderer(
         scope: MultiChoiceSegmentedButtonRowScope,
     ) {
         val adapter = registry.multiChoiceScoped(node.componentType)
+        if (adapter == null) {
+            Node(node, context)
+            return
+        }
+        val modifier = modifierFor(node) ?: return
+        scope.adapter(node, modifier, context)
+    }
+
+    /** Compose one child of a tooltip slot, through its scoped adapter. */
+    @Composable internal fun ScopedNode(
+        node: UiNode,
+        context: RenderContext,
+        scope: TooltipScope,
+    ) {
+        val adapter = registry.tooltipScoped(node.componentType)
         if (adapter == null) {
             Node(node, context)
             return

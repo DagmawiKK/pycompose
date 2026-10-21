@@ -13,8 +13,10 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TooltipState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -225,6 +227,61 @@ internal fun rememberHostSliderState(
                 reportSettled()
             }
             lastDesired.value = value
+        }
+    }
+    return state
+}
+
+/**
+ * The host-owned tooltip state for one node, reconciled to the app's desired value.
+ *
+ * A tooltip has no settled callback of its own: hover, focus and long press show
+ * it through the native state, an outside click dismisses it, and a
+ * non-persistent tooltip closes on its own timer. The holder therefore reports
+ * the *visible* transition rather than a gesture callback, and treats a native
+ * change as the new baseline so the app's echo of that change cannot re-show a
+ * tooltip the user just dismissed.
+ *
+ * @param visible Desired visibility; null leaves the tooltip to its gestures.
+ * @param isPersistent Whether the native tooltip waits for an explicit dismissal.
+ * @param report Action id visibility changes report to; null reports none.
+ * @param observation Receives the observed value, the action id and its state.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun rememberHostTooltipState(
+    visible: Boolean?,
+    isPersistent: Boolean,
+    report: String?,
+    observation: (String, String, Boolean) -> Unit,
+): TooltipState {
+    val state = rememberTooltipState(isPersistent = isPersistent)
+    val lastDesired = remember(state) { mutableStateOf<Boolean?>(null) }
+    val settled = remember(state) { Settled(state.isVisible) }
+    val channel = rememberUpdatedState(report)
+    val currentObservation = rememberUpdatedState(observation)
+    LaunchedEffect(state, visible) {
+        if (visible != lastDesired.value) {
+            lastDesired.value = visible
+            when (visible) {
+                true -> {
+                    // Let the anchor's initial unfocused notification run first:
+                    // native keyboard handling dismisses a visible tooltip there.
+                    withFrameNanos { }
+                    state.show()
+                }
+                false -> state.dismiss()
+                null -> Unit
+            }
+        }
+    }
+    LaunchedEffect(state) {
+        snapshotFlow { state.isVisible }.collect { value ->
+            if (value != settled.value) {
+                settled.value = value
+                lastDesired.value = value
+                channel.value?.let { currentObservation.value("visible", it, value) }
+            }
         }
     }
     return state

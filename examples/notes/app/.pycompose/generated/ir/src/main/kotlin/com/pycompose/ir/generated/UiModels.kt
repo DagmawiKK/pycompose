@@ -310,6 +310,48 @@ data class NavigationBarItem(
 }
 
 @Serializable
+data class PlainTooltipProps(
+    val `containerColor`: JsonElement? = null,
+    val `contentColor`: JsonElement? = null,
+    val `maxWidth`: Double? = null,
+    override val `modifier`: JsonObject? = null,
+    val `showCaret`: Boolean = false,
+) : UiProps
+
+@Serializable
+@SerialName("PlainTooltip")
+data class PlainTooltip(
+    override val id: String,
+    override val props: PlainTooltipProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "PlainTooltip"
+}
+
+@Serializable
+data class RichTooltipProps(
+    val `actionContentColor`: JsonElement? = null,
+    val `containerColor`: JsonElement? = null,
+    val `contentColor`: JsonElement? = null,
+    val `maxWidth`: Double? = null,
+    override val `modifier`: JsonObject? = null,
+    val `showCaret`: Boolean = false,
+    val `titleContentColor`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("RichTooltip")
+data class RichTooltip(
+    override val id: String,
+    override val props: RichTooltipProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "RichTooltip"
+}
+
+@Serializable
 data class RowProps(
     override val `modifier`: JsonObject? = null,
     val `verticalAlignment`: String = "top",
@@ -468,6 +510,29 @@ data class TextField(
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "TextField"
+}
+
+@Serializable
+data class TooltipBoxProps(
+    val `enableUserInput`: Boolean = true,
+    val `focusable`: Boolean = false,
+    val `hasAction`: Boolean = false,
+    val `isPersistent`: Boolean = false,
+    override val `modifier`: JsonObject? = null,
+    val `onVisibilityChange`: String? = null,
+    val `position`: String = "above",
+    val `visible`: Boolean? = null,
+) : UiProps
+
+@Serializable
+@SerialName("TooltipBox")
+data class TooltipBox(
+    override val id: String,
+    override val props: TooltipBoxProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "TooltipBox"
 }
 
 @Serializable

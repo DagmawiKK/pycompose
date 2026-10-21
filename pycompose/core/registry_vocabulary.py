@@ -32,13 +32,14 @@ SCOPES = (
     "BoxScope",
     "SingleChoiceSegmentedButtonRowScope",
     "MultiChoiceSegmentedButtonRowScope",
+    "TooltipScope",
 )
 """Composition scopes a component can require or hand to its children.
 
 Closed like :data:`CONSUMERS`: the renderer owns one registration path per scope,
 so a name outside this tuple has no path to land in. The first three are layout
-scopes; the segmented-button rows add receivers whose members exist only inside
-their own content lambdas.
+scopes; the segmented-button rows and the tooltip add receivers whose members
+exist only inside their own content lambdas.
 """
 
 SCOPE_PATHS = {
@@ -51,6 +52,7 @@ SCOPE_PATHS = {
     "MultiChoiceSegmentedButtonRowScope": (
         "androidx.compose.material3.MultiChoiceSegmentedButtonRowScope"
     ),
+    "TooltipScope": "androidx.compose.material3.TooltipScope",
 }
 """Name -> fully-qualified receiver path for every member of :data:`SCOPES`.
 
@@ -62,16 +64,18 @@ no second path table exists anywhere.
 INTERACTION_KINDS = ("press", "focus", "hover")
 """Interaction kinds the host can observe and report as actions."""
 
-STATE_KINDS = ("drawer", "sheet", "slider", "scroll", "lazyList")
+STATE_KINDS = ("drawer", "sheet", "slider", "scroll", "lazyList", "tooltip")
 """State families the host creates, drives and reports for a component.
 
 A family is one host-side implementation: a drawer reconciles a desired
 open/closed value through gestures and animation; a sheet does the same for a
 modal surface that has to be composed to be shown at all; a slider drives the
 thumb to a desired number and reports the settled one; scroll and lazyList
-report a resting position once scrolling comes to rest. The vocabulary is
-closed for the same reason the interaction kinds are: the host must not be
-asked to drive a state object whose transitions it does not understand.
+report a resting position once scrolling comes to rest; a tooltip reconciles a
+desired visible value through hover, focus and long-press gestures. The
+vocabulary is closed for the same reason the interaction kinds are: the host
+must not be asked to drive a state object whose transitions it does not
+understand.
 """
 
 ADAPTERS = ("generated", "manual")
@@ -102,6 +106,7 @@ DECODERS = (
     "resourceImage",
     "resourceText",
     "textStyle",
+    "tooltipPosition",
     "vertical",
 )
 """The host resolvers a prop may name."""

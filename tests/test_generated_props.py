@@ -190,6 +190,7 @@ def test_every_enum_color_and_resource_prop_declares_its_decoder() -> None:
 
 def test_a_decoder_binds_to_a_resolver_that_exists() -> None:
     """A typo'd decoder name generates Kotlin that does not compile."""
+    from pycompose.schema.codegen.adapter_helpers import RESOLVER_OWNER
     from pycompose.schema.codegen.adapters import RESOLVER_FALLBACK, RESOLVER_RETURN
 
     declared = {
@@ -202,13 +203,27 @@ def test_a_decoder_binds_to_a_resolver_that_exists() -> None:
     for decoder in declared:
         assert decoder in RESOLVER_RETURN, decoder
         assert decoder in RESOLVER_FALLBACK, decoder
-    # Everything except the resource family resolves through PropResolver.
+    # Non-resource decoders must exist on their declared native resolver.
     for decoder in declared - {"resourceText", "resourceImage", "resourceFont"}:
         source = (
             pathlib.Path("android/renderer/src/main/kotlin")
             / "com/pycompose/renderer/PropResolver.kt"
         ).read_text()
         assert f"fun {decoder}(" in source, f"{decoder} has no resolver"
+        assert f"object {RESOLVER_OWNER.get(decoder, 'PropResolver')}" in source
+
+
+def test_tooltip_position_uses_its_native_decoder() -> None:
+    """Experimental positions have a declared resolver, never a guessed alignment."""
+    from pycompose.schema.codegen.adapters import render
+
+    entry = {
+        "props": {"position": components()["TooltipBox"]["props"]["position"]},
+        "children": {"allowed": False},
+    }
+    adapter = render("Tooltip", entry)
+    assert "com.pycompose.renderer.TooltipPropResolver.tooltipPosition(" in adapter
+    assert "androidx.compose.material3.TooltipAnchorPosition.Above" in adapter
 
 
 def decoded_example() -> tuple[str, str]:

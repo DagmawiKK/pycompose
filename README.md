@@ -187,7 +187,7 @@ ordinary action, so the worker never freezes behind a request.
 
 ## Components
 
-101 Material 3 components. `*` marks experimental entries.
+104 Material 3 components. `*` marks experimental entries.
 
 | Category | Components |
 | --- | --- |
@@ -197,7 +197,7 @@ ordinary action, so the worker never freezes behind a request.
 | Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `SegmentedButton`, `MultiChoiceSegmentedButton`, `SingleChoiceSegmentedButtonRow`, `MultiChoiceSegmentedButtonRow`, `IconButton`, `FilledIconButton`, `FilledIconToggleButton`, `FilledTonalIconButton`, `FilledTonalIconToggleButton`, `IconToggleButton`, `OutlinedIconButton`, `OutlinedIconToggleButton`, `FloatingActionButton`, `LargeFloatingActionButton`, `ExtendedFloatingActionButton` |
 | Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
 | Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `NavigationRail`, `NavigationRailItem`, `ShortNavigationBar`, `ShortNavigationBarItem`, `WideNavigationRail`, `WideNavigationRailItem`, `ModalWideNavigationRail`, `NavigationSuiteScaffold`, `NavigationSuiteItem`, `NavigationDrawerItem`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet`, `PermanentNavigationDrawer`, `PermanentDrawerSheet`, `Tab`, `LeadingIconTab`, `SecondaryTabRow`, `PrimaryTabRow`, `PrimaryScrollableTabRow`, `SecondaryScrollableTabRow` |
-| Overlays and status | `ModalBottomSheet`\*, `SnackbarHost`, `Snackbar`, `AlertDialog`, `BasicAlertDialog`\*, `DropdownMenu`, `DropdownMenuItem`, `Badge`, `BadgedBox`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
+| Overlays and status | `ModalBottomSheet`\*, `SnackbarHost`, `Snackbar`, `AlertDialog`, `BasicAlertDialog`\*, `DropdownMenu`, `DropdownMenuItem`, `TooltipBox`\*, `PlainTooltip`\*, `RichTooltip`\*, `Badge`, `BadgedBox`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
 | Lists | `LazyColumn`, `LazyRow`, `ListItem` |
 | Animation | `AnimatedVisibility`, `AnimatedContent`, `Crossfade` |
 | Media and dividers | `Icon`, `Image`, `HorizontalDivider`, `VerticalDivider` |
@@ -206,6 +206,18 @@ ordinary action, so the worker never freezes behind a request.
 `inputField` slot; suggestions and results are ordinary children and compose in
 `ColumnScope`. `SearchBarInputField` is the same native field without a
 container, for layouts that place the field themselves.
+
+`TooltipBox` anchors its `tooltip` slot to its ordinary children. Put
+`PlainTooltip` or `RichTooltip` directly in that slot: they require its native
+`TooltipScope`. Rich tooltips also accept `title` and `action` slots. Colors and
+dimensions use Material 3 defaults unless supplied.
+
+Omit `visible` for native long-press, hover and keyboard behavior. Changing it
+requests a show or dismissal; `on_visibility_change` reports a boolean `visible`
+payload, including native dismissal. Repeating a snapshot does not reopen a
+dismissed tooltip. Set `is_persistent=True` for actionable content and
+`has_action=True` for its native accessibility/keyboard behavior. Native tooltip
+arbitration permits one active tooltip at a time.
 
 ## CLI
 

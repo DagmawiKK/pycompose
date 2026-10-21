@@ -16,6 +16,8 @@ from m3.generated_components import (
     ModalBottomSheet,
     NavigationBar,
     NavigationBarItem,
+    PlainTooltip,
+    RichTooltip,
     Row,
     Scaffold,
     SearchBarInputField,
@@ -24,6 +26,7 @@ from m3.generated_components import (
     Text,
     TextButton,
     TextField,
+    TooltipBox,
     VerticalDivider,
 )
 from pycompose.components.modifiers import (
@@ -46,6 +49,8 @@ __all__ = [
     "Modifier",
     "NavigationBar",
     "NavigationBarItem",
+    "PlainTooltip",
+    "RichTooltip",
     "Row",
     "Scaffold",
     "SearchBarInputField",
@@ -54,5 +59,6 @@ __all__ = [
     "Text",
     "TextButton",
     "TextField",
+    "TooltipBox",
     "VerticalDivider",
 ]
