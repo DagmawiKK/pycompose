@@ -187,7 +187,7 @@ ordinary action, so the worker never freezes behind a request.
 
 ## Components
 
-104 Material 3 components. `*` marks experimental entries.
+105 Material 3 components. `*` marks experimental entries.
 
 | Category | Components |
 | --- | --- |
@@ -195,7 +195,7 @@ ordinary action, so the worker never freezes behind a request.
 | Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard`, `PullToRefreshBox`, `VerticalDragHandle`, `FlowRow`\*, `FlowColumn`\* |
 | App bars | `TopAppBar`\*, `CenterAlignedTopAppBar`\*, `MediumTopAppBar`\*, `LargeTopAppBar`\*, `BottomAppBar` |
 | Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `SegmentedButton`, `MultiChoiceSegmentedButton`, `SingleChoiceSegmentedButtonRow`, `MultiChoiceSegmentedButtonRow`, `IconButton`, `FilledIconButton`, `FilledIconToggleButton`, `FilledTonalIconButton`, `FilledTonalIconToggleButton`, `IconToggleButton`, `OutlinedIconButton`, `OutlinedIconToggleButton`, `FloatingActionButton`, `LargeFloatingActionButton`, `ExtendedFloatingActionButton` |
-| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
+| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `StatefulSearchBarInputField`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
 | Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `NavigationRail`, `NavigationRailItem`, `ShortNavigationBar`, `ShortNavigationBarItem`, `WideNavigationRail`, `WideNavigationRailItem`, `ModalWideNavigationRail`, `NavigationSuiteScaffold`, `NavigationSuiteItem`, `NavigationDrawerItem`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet`, `PermanentNavigationDrawer`, `PermanentDrawerSheet`, `Tab`, `LeadingIconTab`, `SecondaryTabRow`, `PrimaryTabRow`, `PrimaryScrollableTabRow`, `SecondaryScrollableTabRow` |
 | Overlays and status | `ModalBottomSheet`\*, `SnackbarHost`, `Snackbar`, `AlertDialog`, `BasicAlertDialog`\*, `DropdownMenu`, `DropdownMenuItem`, `TooltipBox`\*, `PlainTooltip`\*, `RichTooltip`\*, `Badge`, `BadgedBox`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
 | Lists | `LazyColumn`, `LazyRow`, `ListItem` |
@@ -206,6 +206,25 @@ ordinary action, so the worker never freezes behind a request.
 `inputField` slot; suggestions and results are ordinary children and compose in
 `ColumnScope`. `SearchBarInputField` is the same native field without a
 container, for layouts that place the field themselves.
+
+`StatefulSearchBarInputField` selects the native `TextFieldState` overload with
+explicit `expanded`/`on_expanded_change`. Supply `text`, `selection_start`,
+`selection_end`, `revision`, `on_edit`, and `on_search`. The edit handler's
+`TypedDict` has `text: str`, `selection_start: int`, `selection_end: int`, and
+`revision: int`; store and echo all four together. Selection uses **UTF-16 code
+units**, not Python string indices, and preserves reversed ranges. Native edits
+advance the revision; old echoes cannot undo newer typing. A deliberate app edit
+uses a greater revision. Keep the node id stable while editing; a new id starts
+from the snapshot. Start revisions at zero; if the signed 64-bit maximum is
+reached, further native edits are rejected with a diagnostic until a new node id
+starts a fresh sequence. Acknowledgements do not generate another edit report or reset
+unchanged IME composition. `on_search` receives `query: str`.
+
+This overload adds `read_only`, `text_style`, `prefix`, `suffix`, `shape`, and
+`colors`, retaining native defaults when absent. It is **partial coverage**:
+input/output transformations, explicit horizontal scroll control, interaction
+observations, and the shared `SearchBarState` overload remain gaps. Existing
+`SearchBarInputField`, `SearchBar`, and `DockedSearchBar` APIs are unchanged.
 
 `TooltipBox` anchors its `tooltip` slot to its ordinary children. Put
 `PlainTooltip` or `RichTooltip` directly in that slot: they require its native

@@ -161,4 +161,22 @@ internal class ObservationSink(
         }
         actions.dispatch(actionId, JsonObject(mapOf(field to value)))
     }
+
+    /** Atomic reports use declared field names rather than guessing among equal types. */
+    fun observe(
+        kind: String,
+        actionId: String,
+        value: JsonObject,
+    ) {
+        val fields =
+            bindings[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
+        if (fields.keys != value.keys) {
+            report("Cannot observe $kind for $actionId: expected ${fields.keys}, got ${value.keys}")
+            return
+        }
+        com.pycompose.ir.AppBindings.validatePayload(actionId, value, bindings).fold(
+            onSuccess = { actions.dispatch(actionId, value) },
+            onFailure = { report("Cannot observe $kind for $actionId: ${it.message}") },
+        )
+    }
 }

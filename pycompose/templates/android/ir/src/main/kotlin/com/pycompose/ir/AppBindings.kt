@@ -78,11 +78,22 @@ object AppBindings {
             val id = WireValidator.string(raw["actionId"], "actionId")
             val payload = raw["payload"] as? JsonObject ?: error("Invalid action payload")
             val bindings = read(ir.snapshot.metadata, ir.snapshot.schemaVersion)
+            validatePayload(id, payload, bindings).getOrThrow()
+            JsonAudit.scalars(raw)
+        }
+
+    /** Check a host-produced payload using the same contract as an inbound action. */
+    fun validatePayload(
+        id: String,
+        payload: JsonObject,
+        bindings: Map<String, AppBinding>,
+    ): Result<Unit> =
+        runCatching {
             val fields =
                 bindings[id]?.eventFields ?: checkNotNull(IrContract.actionPayloads[id]) {
                     "Unknown active action binding: $id"
                 }
             WireValidator.properties(payload, fields, "payload")
-            JsonAudit.scalars(raw)
+            JsonAudit.scalars(payload)
         }
 }

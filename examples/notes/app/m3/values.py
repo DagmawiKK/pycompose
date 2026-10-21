@@ -33,6 +33,7 @@ __all__ = [
     "cardElevation",
     "elevatedCardColors",
     "elevatedCardElevation",
+    "exposedDropdownMenuOutlinedTextFieldColors",
     "filledIconButtonColors",
     "filledTonalIconButtonColors",
     "floatingActionButtonElevation",
@@ -45,7 +46,9 @@ __all__ = [
     "outlinedCardColors",
     "outlinedCardElevation",
     "outlinedIconButtonColors",
+    "outlinedTextFieldColors",
     "switchColors",
+    "textFieldColors",
     "verticalGradient",
 ]
 
@@ -157,178 +160,290 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     ':"value","valueType":"Dp"},"hoveredElevation":{"ty'
     'pe":"value","valueType":"Dp"},"pressedElevation":{'
     '"type":"value","valueType":"Dp"}},"since":"1.13.0"'
-    '},"filledIconButtonColors":{"family":"IconButtonCo'
-    'lors","parameters":{"containerColor":{"type":"valu'
-    'e","valueType":"Color"},"disabledContainerColor":{'
-    '"type":"value","valueType":"Color"},"disabledConte'
-    'ntColor":{"type":"value","valueType":"Color"}},"si'
-    'nce":"1.13.0"},"filledTonalIconButtonColors":{"fam'
-    'ily":"IconButtonColors","parameters":{"containerCo'
+    '},"exposedDropdownMenuOutlinedTextFieldColors":{"f'
+    'amily":"TextFieldColors","parameters":{"disabledCo'
+    'ntainerColor":{"type":"value","valueType":"Color"}'
+    ',"errorContainerColor":{"type":"value","valueType"'
+    ':"Color"},"focusedContainerColor":{"type":"value",'
+    '"valueType":"Color"},"unfocusedContainerColor":{"t'
+    'ype":"value","valueType":"Color"}},"since":"1.13.0'
+    '"},"filledIconButtonColors":{"family":"IconButtonC'
+    'olors","parameters":{"containerColor":{"type":"val'
+    'ue","valueType":"Color"},"disabledContainerColor":'
+    '{"type":"value","valueType":"Color"},"disabledCont'
+    'entColor":{"type":"value","valueType":"Color"}},"s'
+    'ince":"1.13.0"},"filledTonalIconButtonColors":{"fa'
+    'mily":"IconButtonColors","parameters":{"containerC'
+    'olor":{"type":"value","valueType":"Color"},"disabl'
+    'edContainerColor":{"type":"value","valueType":"Col'
+    'or"},"disabledContentColor":{"type":"value","value'
+    'Type":"Color"}},"since":"1.13.0"},"floatingActionB'
+    'uttonElevation":{"family":"FloatingActionButtonEle'
+    'vation","parameters":{"defaultElevation":{"type":"'
+    'value","valueType":"Dp"},"focusedElevation":{"type'
+    '":"value","valueType":"Dp"},"hoveredElevation":{"t'
+    'ype":"value","valueType":"Dp"},"pressedElevation":'
+    '{"type":"value","valueType":"Dp"}},"since":"1.13.0'
+    '"},"horizontalGradient":{"family":"Brush","paramet'
+    'ers":{"colors":{"items":{"type":"value","valueType'
+    '":"Color"},"minItems":2,"required":true,"type":"li'
+    'st"},"endX":{"type":"float"},"startX":{"type":"flo'
+    'at"}},"since":"1.11.0"},"iconButtonColors":{"famil'
+    'y":"IconButtonColors","parameters":{"containerColo'
+    'r":{"type":"value","valueType":"Color"},"contentCo'
     'lor":{"type":"value","valueType":"Color"},"disable'
     'dContainerColor":{"type":"value","valueType":"Colo'
-    'r"},"disabledContentColor":{"type":"value","valueT'
-    'ype":"Color"}},"since":"1.13.0"},"floatingActionBu'
-    'ttonElevation":{"family":"FloatingActionButtonElev'
-    'ation","parameters":{"defaultElevation":{"type":"v'
-    'alue","valueType":"Dp"},"focusedElevation":{"type"'
-    ':"value","valueType":"Dp"},"hoveredElevation":{"ty'
-    'pe":"value","valueType":"Dp"},"pressedElevation":{'
-    '"type":"value","valueType":"Dp"}},"since":"1.13.0"'
-    '},"horizontalGradient":{"family":"Brush","paramete'
-    'rs":{"colors":{"items":{"type":"value","valueType"'
-    ':"Color"},"minItems":2,"required":true,"type":"lis'
-    't"},"endX":{"type":"float"},"startX":{"type":"floa'
-    't"}},"since":"1.11.0"},"iconButtonColors":{"family'
-    '":"IconButtonColors","parameters":{"containerColor'
-    '":{"type":"value","valueType":"Color"},"contentCol'
+    'r"}},"since":"1.13.0"},"linearGradient":{"family":'
+    '"Brush","parameters":{"colors":{"items":{"type":"v'
+    'alue","valueType":"Color"},"minItems":2,"required"'
+    ':true,"type":"list"},"end":{"type":"value","valueT'
+    'ype":"Offset"},"start":{"type":"value","valueType"'
+    ':"Offset"}},"since":"1.11.0"},"loweredElevation":{'
+    '"family":"FloatingActionButtonElevation","paramete'
+    'rs":{"defaultElevation":{"type":"value","valueType'
+    '":"Dp"},"focusedElevation":{"type":"value","valueT'
+    'ype":"Dp"},"hoveredElevation":{"type":"value","val'
+    'ueType":"Dp"},"pressedElevation":{"type":"value","'
+    'valueType":"Dp"}},"since":"1.13.0"},"materialIcon"'
+    ':{"family":"ImageVector","parameters":{"name":{"re'
+    'quired":true,"type":"string","values":["AutoMirror'
+    'ed.Filled.ArrowBack","AutoMirrored.Filled.ArrowFor'
+    'ward","AutoMirrored.Filled.ExitToApp","AutoMirrore'
+    'd.Filled.KeyboardArrowLeft","AutoMirrored.Filled.K'
+    'eyboardArrowRight","AutoMirrored.Filled.List","Aut'
+    'oMirrored.Filled.Send","AutoMirrored.Outlined.Arro'
+    'wBack","AutoMirrored.Outlined.ArrowForward","AutoM'
+    'irrored.Outlined.ExitToApp","AutoMirrored.Outlined'
+    '.KeyboardArrowLeft","AutoMirrored.Outlined.Keyboar'
+    'dArrowRight","AutoMirrored.Outlined.List","AutoMir'
+    'rored.Outlined.Send","AutoMirrored.Rounded.ArrowBa'
+    'ck","AutoMirrored.Rounded.ArrowForward","AutoMirro'
+    'red.Rounded.ExitToApp","AutoMirrored.Rounded.Keybo'
+    'ardArrowLeft","AutoMirrored.Rounded.KeyboardArrowR'
+    'ight","AutoMirrored.Rounded.List","AutoMirrored.Ro'
+    'unded.Send","AutoMirrored.Sharp.ArrowBack","AutoMi'
+    'rrored.Sharp.ArrowForward","AutoMirrored.Sharp.Exi'
+    'tToApp","AutoMirrored.Sharp.KeyboardArrowLeft","Au'
+    'toMirrored.Sharp.KeyboardArrowRight","AutoMirrored'
+    '.Sharp.List","AutoMirrored.Sharp.Send","AutoMirror'
+    'ed.TwoTone.ArrowBack","AutoMirrored.TwoTone.ArrowF'
+    'orward","AutoMirrored.TwoTone.ExitToApp","AutoMirr'
+    'ored.TwoTone.KeyboardArrowLeft","AutoMirrored.TwoT'
+    'one.KeyboardArrowRight","AutoMirrored.TwoTone.List'
+    '","AutoMirrored.TwoTone.Send","Filled.AccountBox",'
+    '"Filled.AccountCircle","Filled.Add","Filled.AddCir'
+    'cle","Filled.ArrowDropDown","Filled.Build","Filled'
+    '.Call","Filled.Check","Filled.CheckCircle","Filled'
+    '.Clear","Filled.Close","Filled.Create","Filled.Dat'
+    'eRange","Filled.Delete","Filled.Done","Filled.Edit'
+    '","Filled.Email","Filled.Face","Filled.Favorite","'
+    'Filled.FavoriteBorder","Filled.Home","Filled.Info"'
+    ',"Filled.KeyboardArrowDown","Filled.KeyboardArrowU'
+    'p","Filled.LocationOn","Filled.Lock","Filled.MailO'
+    'utline","Filled.Menu","Filled.MoreVert","Filled.No'
+    'tifications","Filled.Person","Filled.Phone","Fille'
+    'd.Place","Filled.PlayArrow","Filled.Refresh","Fill'
+    'ed.Search","Filled.Settings","Filled.Share","Fille'
+    'd.ShoppingCart","Filled.Star","Filled.ThumbUp","Fi'
+    'lled.Warning","Outlined.AccountBox","Outlined.Acco'
+    'untCircle","Outlined.Add","Outlined.AddCircle","Ou'
+    'tlined.ArrowDropDown","Outlined.Build","Outlined.C'
+    'all","Outlined.Check","Outlined.CheckCircle","Outl'
+    'ined.Clear","Outlined.Close","Outlined.Create","Ou'
+    'tlined.DateRange","Outlined.Delete","Outlined.Done'
+    '","Outlined.Edit","Outlined.Email","Outlined.Face"'
+    ',"Outlined.Favorite","Outlined.FavoriteBorder","Ou'
+    'tlined.Home","Outlined.Info","Outlined.KeyboardArr'
+    'owDown","Outlined.KeyboardArrowUp","Outlined.Locat'
+    'ionOn","Outlined.Lock","Outlined.MailOutline","Out'
+    'lined.Menu","Outlined.MoreVert","Outlined.Notifica'
+    'tions","Outlined.Person","Outlined.Phone","Outline'
+    'd.Place","Outlined.PlayArrow","Outlined.Refresh","'
+    'Outlined.Search","Outlined.Settings","Outlined.Sha'
+    're","Outlined.ShoppingCart","Outlined.Star","Outli'
+    'ned.ThumbUp","Outlined.Warning","Rounded.AccountBo'
+    'x","Rounded.AccountCircle","Rounded.Add","Rounded.'
+    'AddCircle","Rounded.ArrowDropDown","Rounded.Build"'
+    ',"Rounded.Call","Rounded.Check","Rounded.CheckCirc'
+    'le","Rounded.Clear","Rounded.Close","Rounded.Creat'
+    'e","Rounded.DateRange","Rounded.Delete","Rounded.D'
+    'one","Rounded.Edit","Rounded.Email","Rounded.Face"'
+    ',"Rounded.Favorite","Rounded.FavoriteBorder","Roun'
+    'ded.Home","Rounded.Info","Rounded.KeyboardArrowDow'
+    'n","Rounded.KeyboardArrowUp","Rounded.LocationOn",'
+    '"Rounded.Lock","Rounded.MailOutline","Rounded.Menu'
+    '","Rounded.MoreVert","Rounded.Notifications","Roun'
+    'ded.Person","Rounded.Phone","Rounded.Place","Round'
+    'ed.PlayArrow","Rounded.Refresh","Rounded.Search","'
+    'Rounded.Settings","Rounded.Share","Rounded.Shoppin'
+    'gCart","Rounded.Star","Rounded.ThumbUp","Rounded.W'
+    'arning","Sharp.AccountBox","Sharp.AccountCircle","'
+    'Sharp.Add","Sharp.AddCircle","Sharp.ArrowDropDown"'
+    ',"Sharp.Build","Sharp.Call","Sharp.Check","Sharp.C'
+    'heckCircle","Sharp.Clear","Sharp.Close","Sharp.Cre'
+    'ate","Sharp.DateRange","Sharp.Delete","Sharp.Done"'
+    ',"Sharp.Edit","Sharp.Email","Sharp.Face","Sharp.Fa'
+    'vorite","Sharp.FavoriteBorder","Sharp.Home","Sharp'
+    '.Info","Sharp.KeyboardArrowDown","Sharp.KeyboardAr'
+    'rowUp","Sharp.LocationOn","Sharp.Lock","Sharp.Mail'
+    'Outline","Sharp.Menu","Sharp.MoreVert","Sharp.Noti'
+    'fications","Sharp.Person","Sharp.Phone","Sharp.Pla'
+    'ce","Sharp.PlayArrow","Sharp.Refresh","Sharp.Searc'
+    'h","Sharp.Settings","Sharp.Share","Sharp.ShoppingC'
+    'art","Sharp.Star","Sharp.ThumbUp","Sharp.Warning",'
+    '"TwoTone.AccountBox","TwoTone.AccountCircle","TwoT'
+    'one.Add","TwoTone.AddCircle","TwoTone.ArrowDropDow'
+    'n","TwoTone.Build","TwoTone.Call","TwoTone.Check",'
+    '"TwoTone.CheckCircle","TwoTone.Clear","TwoTone.Clo'
+    'se","TwoTone.Create","TwoTone.DateRange","TwoTone.'
+    'Delete","TwoTone.Done","TwoTone.Edit","TwoTone.Ema'
+    'il","TwoTone.Face","TwoTone.Favorite","TwoTone.Fav'
+    'oriteBorder","TwoTone.Home","TwoTone.Info","TwoTon'
+    'e.KeyboardArrowDown","TwoTone.KeyboardArrowUp","Tw'
+    'oTone.LocationOn","TwoTone.Lock","TwoTone.MailOutl'
+    'ine","TwoTone.Menu","TwoTone.MoreVert","TwoTone.No'
+    'tifications","TwoTone.Person","TwoTone.Phone","Two'
+    'Tone.Place","TwoTone.PlayArrow","TwoTone.Refresh",'
+    '"TwoTone.Search","TwoTone.Settings","TwoTone.Share'
+    '","TwoTone.ShoppingCart","TwoTone.Star","TwoTone.T'
+    'humbUp","TwoTone.Warning"]}},"since":"1.21.0"},"na'
+    'vigationBarItemColors":{"family":"NavigationBarIte'
+    'mColors","parameters":{"disabledIconColor":{"type"'
+    ':"value","valueType":"Color"},"disabledTextColor":'
+    '{"type":"value","valueType":"Color"},"indicatorCol'
+    'or":{"type":"value","valueType":"Color"},"selected'
+    'IconColor":{"type":"value","valueType":"Color"},"s'
+    'electedTextColor":{"type":"value","valueType":"Col'
+    'or"},"unselectedIconColor":{"type":"value","valueT'
+    'ype":"Color"},"unselectedTextColor":{"type":"value'
+    '","valueType":"Color"}},"since":"1.13.0"},"outline'
+    'dCardColors":{"family":"CardColors","parameters":{'
+    '"containerColor":{"type":"value","valueType":"Colo'
+    'r"},"disabledContainerColor":{"type":"value","valu'
+    'eType":"Color"}},"since":"1.13.0"},"outlinedCardEl'
+    'evation":{"family":"CardElevation","parameters":{"'
+    'defaultElevation":{"type":"value","valueType":"Dp"'
+    '},"disabledElevation":{"type":"value","valueType":'
+    '"Dp"},"draggedElevation":{"type":"value","valueTyp'
+    'e":"Dp"}},"since":"1.13.0"},"outlinedIconButtonCol'
+    'ors":{"family":"IconButtonColors","parameters":{"c'
+    'ontainerColor":{"type":"value","valueType":"Color"'
+    '},"contentColor":{"type":"value","valueType":"Colo'
+    'r"},"disabledContainerColor":{"type":"value","valu'
+    'eType":"Color"}},"since":"1.13.0"},"outlinedTextFi'
+    'eldColors":{"family":"TextFieldColors","parameters'
+    '":{"cursorColor":{"type":"value","valueType":"Colo'
+    'r"},"disabledBorderColor":{"type":"value","valueTy'
+    'pe":"Color"},"disabledContainerColor":{"type":"val'
+    'ue","valueType":"Color"},"disabledLabelColor":{"ty'
+    'pe":"value","valueType":"Color"},"disabledLeadingI'
+    'conColor":{"type":"value","valueType":"Color"},"di'
+    'sabledPlaceholderColor":{"type":"value","valueType'
+    '":"Color"},"disabledPrefixColor":{"type":"value","'
+    'valueType":"Color"},"disabledSuffixColor":{"type":'
+    '"value","valueType":"Color"},"disabledSupportingTe'
+    'xtColor":{"type":"value","valueType":"Color"},"dis'
+    'abledTextColor":{"type":"value","valueType":"Color'
+    '"},"disabledTrailingIconColor":{"type":"value","va'
+    'lueType":"Color"},"errorBorderColor":{"type":"valu'
+    'e","valueType":"Color"},"errorContainerColor":{"ty'
+    'pe":"value","valueType":"Color"},"errorCursorColor'
+    '":{"type":"value","valueType":"Color"},"errorLabel'
+    'Color":{"type":"value","valueType":"Color"},"error'
+    'LeadingIconColor":{"type":"value","valueType":"Col'
+    'or"},"errorPlaceholderColor":{"type":"value","valu'
+    'eType":"Color"},"errorPrefixColor":{"type":"value"'
+    ',"valueType":"Color"},"errorSuffixColor":{"type":"'
+    'value","valueType":"Color"},"errorSupportingTextCo'
+    'lor":{"type":"value","valueType":"Color"},"errorTe'
+    'xtColor":{"type":"value","valueType":"Color"},"err'
+    'orTrailingIconColor":{"type":"value","valueType":"'
+    'Color"},"focusedBorderColor":{"type":"value","valu'
+    'eType":"Color"},"focusedContainerColor":{"type":"v'
+    'alue","valueType":"Color"},"focusedLabelColor":{"t'
+    'ype":"value","valueType":"Color"},"focusedLeadingI'
+    'conColor":{"type":"value","valueType":"Color"},"fo'
+    'cusedPlaceholderColor":{"type":"value","valueType"'
+    ':"Color"},"focusedPrefixColor":{"type":"value","va'
+    'lueType":"Color"},"focusedSuffixColor":{"type":"va'
+    'lue","valueType":"Color"},"focusedSupportingTextCo'
+    'lor":{"type":"value","valueType":"Color"},"focused'
+    'TextColor":{"type":"value","valueType":"Color"},"f'
+    'ocusedTrailingIconColor":{"type":"value","valueTyp'
+    'e":"Color"},"unfocusedBorderColor":{"type":"value"'
+    ',"valueType":"Color"},"unfocusedContainerColor":{"'
+    'type":"value","valueType":"Color"},"unfocusedLabel'
+    'Color":{"type":"value","valueType":"Color"},"unfoc'
+    'usedLeadingIconColor":{"type":"value","valueType":'
+    '"Color"},"unfocusedPlaceholderColor":{"type":"valu'
+    'e","valueType":"Color"},"unfocusedPrefixColor":{"t'
+    'ype":"value","valueType":"Color"},"unfocusedSuffix'
+    'Color":{"type":"value","valueType":"Color"},"unfoc'
+    'usedSupportingTextColor":{"type":"value","valueTyp'
+    'e":"Color"},"unfocusedTextColor":{"type":"value","'
+    'valueType":"Color"},"unfocusedTrailingIconColor":{'
+    '"type":"value","valueType":"Color"}},"since":"1.13'
+    '.0"},"switchColors":{"family":"SwitchColors","para'
+    'meters":{"checkedBorderColor":{"type":"value","val'
+    'ueType":"Color"},"disabledCheckedBorderColor":{"ty'
+    'pe":"value","valueType":"Color"}},"since":"1.13.0"'
+    '},"textFieldColors":{"family":"TextFieldColors","p'
+    'arameters":{"cursorColor":{"type":"value","valueTy'
+    'pe":"Color"},"disabledContainerColor":{"type":"val'
+    'ue","valueType":"Color"},"disabledIndicatorColor":'
+    '{"type":"value","valueType":"Color"},"disabledLabe'
+    'lColor":{"type":"value","valueType":"Color"},"disa'
+    'bledLeadingIconColor":{"type":"value","valueType":'
+    '"Color"},"disabledPlaceholderColor":{"type":"value'
+    '","valueType":"Color"},"disabledPrefixColor":{"typ'
+    'e":"value","valueType":"Color"},"disabledSuffixCol'
     'or":{"type":"value","valueType":"Color"},"disabled'
-    'ContainerColor":{"type":"value","valueType":"Color'
-    '"}},"since":"1.13.0"},"linearGradient":{"family":"'
-    'Brush","parameters":{"colors":{"items":{"type":"va'
-    'lue","valueType":"Color"},"minItems":2,"required":'
-    'true,"type":"list"},"end":{"type":"value","valueTy'
-    'pe":"Offset"},"start":{"type":"value","valueType":'
-    '"Offset"}},"since":"1.11.0"},"loweredElevation":{"'
-    'family":"FloatingActionButtonElevation","parameter'
-    's":{"defaultElevation":{"type":"value","valueType"'
-    ':"Dp"},"focusedElevation":{"type":"value","valueTy'
-    'pe":"Dp"},"hoveredElevation":{"type":"value","valu'
-    'eType":"Dp"},"pressedElevation":{"type":"value","v'
-    'alueType":"Dp"}},"since":"1.13.0"},"materialIcon":'
-    '{"family":"ImageVector","parameters":{"name":{"req'
-    'uired":true,"type":"string","values":["AutoMirrore'
-    'd.Filled.ArrowBack","AutoMirrored.Filled.ArrowForw'
-    'ard","AutoMirrored.Filled.ExitToApp","AutoMirrored'
-    '.Filled.KeyboardArrowLeft","AutoMirrored.Filled.Ke'
-    'yboardArrowRight","AutoMirrored.Filled.List","Auto'
-    'Mirrored.Filled.Send","AutoMirrored.Outlined.Arrow'
-    'Back","AutoMirrored.Outlined.ArrowForward","AutoMi'
-    'rrored.Outlined.ExitToApp","AutoMirrored.Outlined.'
-    'KeyboardArrowLeft","AutoMirrored.Outlined.Keyboard'
-    'ArrowRight","AutoMirrored.Outlined.List","AutoMirr'
-    'ored.Outlined.Send","AutoMirrored.Rounded.ArrowBac'
-    'k","AutoMirrored.Rounded.ArrowForward","AutoMirror'
-    'ed.Rounded.ExitToApp","AutoMirrored.Rounded.Keyboa'
-    'rdArrowLeft","AutoMirrored.Rounded.KeyboardArrowRi'
-    'ght","AutoMirrored.Rounded.List","AutoMirrored.Rou'
-    'nded.Send","AutoMirrored.Sharp.ArrowBack","AutoMir'
-    'rored.Sharp.ArrowForward","AutoMirrored.Sharp.Exit'
-    'ToApp","AutoMirrored.Sharp.KeyboardArrowLeft","Aut'
-    'oMirrored.Sharp.KeyboardArrowRight","AutoMirrored.'
-    'Sharp.List","AutoMirrored.Sharp.Send","AutoMirrore'
-    'd.TwoTone.ArrowBack","AutoMirrored.TwoTone.ArrowFo'
-    'rward","AutoMirrored.TwoTone.ExitToApp","AutoMirro'
-    'red.TwoTone.KeyboardArrowLeft","AutoMirrored.TwoTo'
-    'ne.KeyboardArrowRight","AutoMirrored.TwoTone.List"'
-    ',"AutoMirrored.TwoTone.Send","Filled.AccountBox","'
-    'Filled.AccountCircle","Filled.Add","Filled.AddCirc'
-    'le","Filled.ArrowDropDown","Filled.Build","Filled.'
-    'Call","Filled.Check","Filled.CheckCircle","Filled.'
-    'Clear","Filled.Close","Filled.Create","Filled.Date'
-    'Range","Filled.Delete","Filled.Done","Filled.Edit"'
-    ',"Filled.Email","Filled.Face","Filled.Favorite","F'
-    'illed.FavoriteBorder","Filled.Home","Filled.Info",'
-    '"Filled.KeyboardArrowDown","Filled.KeyboardArrowUp'
-    '","Filled.LocationOn","Filled.Lock","Filled.MailOu'
-    'tline","Filled.Menu","Filled.MoreVert","Filled.Not'
-    'ifications","Filled.Person","Filled.Phone","Filled'
-    '.Place","Filled.PlayArrow","Filled.Refresh","Fille'
-    'd.Search","Filled.Settings","Filled.Share","Filled'
-    '.ShoppingCart","Filled.Star","Filled.ThumbUp","Fil'
-    'led.Warning","Outlined.AccountBox","Outlined.Accou'
-    'ntCircle","Outlined.Add","Outlined.AddCircle","Out'
-    'lined.ArrowDropDown","Outlined.Build","Outlined.Ca'
-    'll","Outlined.Check","Outlined.CheckCircle","Outli'
-    'ned.Clear","Outlined.Close","Outlined.Create","Out'
-    'lined.DateRange","Outlined.Delete","Outlined.Done"'
-    ',"Outlined.Edit","Outlined.Email","Outlined.Face",'
-    '"Outlined.Favorite","Outlined.FavoriteBorder","Out'
-    'lined.Home","Outlined.Info","Outlined.KeyboardArro'
-    'wDown","Outlined.KeyboardArrowUp","Outlined.Locati'
-    'onOn","Outlined.Lock","Outlined.MailOutline","Outl'
-    'ined.Menu","Outlined.MoreVert","Outlined.Notificat'
-    'ions","Outlined.Person","Outlined.Phone","Outlined'
-    '.Place","Outlined.PlayArrow","Outlined.Refresh","O'
-    'utlined.Search","Outlined.Settings","Outlined.Shar'
-    'e","Outlined.ShoppingCart","Outlined.Star","Outlin'
-    'ed.ThumbUp","Outlined.Warning","Rounded.AccountBox'
-    '","Rounded.AccountCircle","Rounded.Add","Rounded.A'
-    'ddCircle","Rounded.ArrowDropDown","Rounded.Build",'
-    '"Rounded.Call","Rounded.Check","Rounded.CheckCircl'
-    'e","Rounded.Clear","Rounded.Close","Rounded.Create'
-    '","Rounded.DateRange","Rounded.Delete","Rounded.Do'
-    'ne","Rounded.Edit","Rounded.Email","Rounded.Face",'
-    '"Rounded.Favorite","Rounded.FavoriteBorder","Round'
-    'ed.Home","Rounded.Info","Rounded.KeyboardArrowDown'
-    '","Rounded.KeyboardArrowUp","Rounded.LocationOn","'
-    'Rounded.Lock","Rounded.MailOutline","Rounded.Menu"'
-    ',"Rounded.MoreVert","Rounded.Notifications","Round'
-    'ed.Person","Rounded.Phone","Rounded.Place","Rounde'
-    'd.PlayArrow","Rounded.Refresh","Rounded.Search","R'
-    'ounded.Settings","Rounded.Share","Rounded.Shopping'
-    'Cart","Rounded.Star","Rounded.ThumbUp","Rounded.Wa'
-    'rning","Sharp.AccountBox","Sharp.AccountCircle","S'
-    'harp.Add","Sharp.AddCircle","Sharp.ArrowDropDown",'
-    '"Sharp.Build","Sharp.Call","Sharp.Check","Sharp.Ch'
-    'eckCircle","Sharp.Clear","Sharp.Close","Sharp.Crea'
-    'te","Sharp.DateRange","Sharp.Delete","Sharp.Done",'
-    '"Sharp.Edit","Sharp.Email","Sharp.Face","Sharp.Fav'
-    'orite","Sharp.FavoriteBorder","Sharp.Home","Sharp.'
-    'Info","Sharp.KeyboardArrowDown","Sharp.KeyboardArr'
-    'owUp","Sharp.LocationOn","Sharp.Lock","Sharp.MailO'
-    'utline","Sharp.Menu","Sharp.MoreVert","Sharp.Notif'
-    'ications","Sharp.Person","Sharp.Phone","Sharp.Plac'
-    'e","Sharp.PlayArrow","Sharp.Refresh","Sharp.Search'
-    '","Sharp.Settings","Sharp.Share","Sharp.ShoppingCa'
-    'rt","Sharp.Star","Sharp.ThumbUp","Sharp.Warning","'
-    'TwoTone.AccountBox","TwoTone.AccountCircle","TwoTo'
-    'ne.Add","TwoTone.AddCircle","TwoTone.ArrowDropDown'
-    '","TwoTone.Build","TwoTone.Call","TwoTone.Check","'
-    'TwoTone.CheckCircle","TwoTone.Clear","TwoTone.Clos'
-    'e","TwoTone.Create","TwoTone.DateRange","TwoTone.D'
-    'elete","TwoTone.Done","TwoTone.Edit","TwoTone.Emai'
-    'l","TwoTone.Face","TwoTone.Favorite","TwoTone.Favo'
-    'riteBorder","TwoTone.Home","TwoTone.Info","TwoTone'
-    '.KeyboardArrowDown","TwoTone.KeyboardArrowUp","Two'
-    'Tone.LocationOn","TwoTone.Lock","TwoTone.MailOutli'
-    'ne","TwoTone.Menu","TwoTone.MoreVert","TwoTone.Not'
-    'ifications","TwoTone.Person","TwoTone.Phone","TwoT'
-    'one.Place","TwoTone.PlayArrow","TwoTone.Refresh","'
-    'TwoTone.Search","TwoTone.Settings","TwoTone.Share"'
-    ',"TwoTone.ShoppingCart","TwoTone.Star","TwoTone.Th'
-    'umbUp","TwoTone.Warning"]}},"since":"1.21.0"},"nav'
-    'igationBarItemColors":{"family":"NavigationBarItem'
-    'Colors","parameters":{"disabledIconColor":{"type":'
-    '"value","valueType":"Color"},"disabledTextColor":{'
-    '"type":"value","valueType":"Color"},"indicatorColo'
-    'r":{"type":"value","valueType":"Color"},"selectedI'
-    'conColor":{"type":"value","valueType":"Color"},"se'
-    'lectedTextColor":{"type":"value","valueType":"Colo'
-    'r"},"unselectedIconColor":{"type":"value","valueTy'
-    'pe":"Color"},"unselectedTextColor":{"type":"value"'
-    ',"valueType":"Color"}},"since":"1.13.0"},"outlined'
-    'CardColors":{"family":"CardColors","parameters":{"'
-    'containerColor":{"type":"value","valueType":"Color'
-    '"},"disabledContainerColor":{"type":"value","value'
-    'Type":"Color"}},"since":"1.13.0"},"outlinedCardEle'
-    'vation":{"family":"CardElevation","parameters":{"d'
-    'efaultElevation":{"type":"value","valueType":"Dp"}'
-    ',"disabledElevation":{"type":"value","valueType":"'
-    'Dp"},"draggedElevation":{"type":"value","valueType'
-    '":"Dp"}},"since":"1.13.0"},"outlinedIconButtonColo'
-    'rs":{"family":"IconButtonColors","parameters":{"co'
-    'ntainerColor":{"type":"value","valueType":"Color"}'
-    ',"contentColor":{"type":"value","valueType":"Color'
-    '"},"disabledContainerColor":{"type":"value","value'
-    'Type":"Color"}},"since":"1.13.0"},"switchColors":{'
-    '"family":"SwitchColors","parameters":{"checkedBord'
-    'erColor":{"type":"value","valueType":"Color"},"dis'
-    'abledCheckedBorderColor":{"type":"value","valueTyp'
-    'e":"Color"}},"since":"1.13.0"},"verticalGradient":'
-    '{"family":"Brush","parameters":{"colors":{"items":'
-    '{"type":"value","valueType":"Color"},"minItems":2,'
-    '"required":true,"type":"list"},"endY":{"type":"flo'
-    'at"},"startY":{"type":"float"}},"since":"1.11.0"}}'
+    'SupportingTextColor":{"type":"value","valueType":"'
+    'Color"},"disabledTextColor":{"type":"value","value'
+    'Type":"Color"},"disabledTrailingIconColor":{"type"'
+    ':"value","valueType":"Color"},"errorContainerColor'
+    '":{"type":"value","valueType":"Color"},"errorCurso'
+    'rColor":{"type":"value","valueType":"Color"},"erro'
+    'rIndicatorColor":{"type":"value","valueType":"Colo'
+    'r"},"errorLabelColor":{"type":"value","valueType":'
+    '"Color"},"errorLeadingIconColor":{"type":"value","'
+    'valueType":"Color"},"errorPlaceholderColor":{"type'
+    '":"value","valueType":"Color"},"errorPrefixColor":'
+    '{"type":"value","valueType":"Color"},"errorSuffixC'
+    'olor":{"type":"value","valueType":"Color"},"errorS'
+    'upportingTextColor":{"type":"value","valueType":"C'
+    'olor"},"errorTextColor":{"type":"value","valueType'
+    '":"Color"},"errorTrailingIconColor":{"type":"value'
+    '","valueType":"Color"},"focusedContainerColor":{"t'
+    'ype":"value","valueType":"Color"},"focusedIndicato'
+    'rColor":{"type":"value","valueType":"Color"},"focu'
+    'sedLabelColor":{"type":"value","valueType":"Color"'
+    '},"focusedLeadingIconColor":{"type":"value","value'
+    'Type":"Color"},"focusedPlaceholderColor":{"type":"'
+    'value","valueType":"Color"},"focusedPrefixColor":{'
+    '"type":"value","valueType":"Color"},"focusedSuffix'
+    'Color":{"type":"value","valueType":"Color"},"focus'
+    'edSupportingTextColor":{"type":"value","valueType"'
+    ':"Color"},"focusedTextColor":{"type":"value","valu'
+    'eType":"Color"},"focusedTrailingIconColor":{"type"'
+    ':"value","valueType":"Color"},"unfocusedContainerC'
+    'olor":{"type":"value","valueType":"Color"},"unfocu'
+    'sedIndicatorColor":{"type":"value","valueType":"Co'
+    'lor"},"unfocusedLabelColor":{"type":"value","value'
+    'Type":"Color"},"unfocusedLeadingIconColor":{"type"'
+    ':"value","valueType":"Color"},"unfocusedPlaceholde'
+    'rColor":{"type":"value","valueType":"Color"},"unfo'
+    'cusedPrefixColor":{"type":"value","valueType":"Col'
+    'or"},"unfocusedSuffixColor":{"type":"value","value'
+    'Type":"Color"},"unfocusedSupportingTextColor":{"ty'
+    'pe":"value","valueType":"Color"},"unfocusedTextCol'
+    'or":{"type":"value","valueType":"Color"},"unfocuse'
+    'dTrailingIconColor":{"type":"value","valueType":"C'
+    'olor"}},"since":"1.13.0"},"verticalGradient":{"fam'
+    'ily":"Brush","parameters":{"colors":{"items":{"typ'
+    'e":"value","valueType":"Color"},"minItems":2,"requ'
+    'ired":true,"type":"list"},"endY":{"type":"float"},'
+    '"startY":{"type":"float"}},"since":"1.11.0"}}'
 )
 
 
@@ -1191,6 +1306,35 @@ def elevatedCardElevation(
     )
 
 
+def exposedDropdownMenuOutlinedTextFieldColors(
+    focused_container_color: JsonValue | _Unset = UNSET,
+    unfocused_container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    error_container_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TextFieldColors data for native evaluation.
+
+    Args:
+        focused_container_color: Native focusedContainerColor argument.
+        unfocused_container_color: Native unfocusedContainerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        error_container_color: Native errorContainerColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "exposedDropdownMenuOutlinedTextFieldColors",
+        {
+            "focusedContainerColor": focused_container_color,
+            "unfocusedContainerColor": unfocused_container_color,
+            "disabledContainerColor": disabled_container_color,
+            "errorContainerColor": error_container_color,
+        },
+        DEFINITIONS,
+    )
+
+
 def filledIconButtonColors(
     container_color: JsonValue | _Unset = UNSET,
     disabled_container_color: JsonValue | _Unset = UNSET,
@@ -1512,6 +1656,149 @@ def outlinedIconButtonColors(
     )
 
 
+def outlinedTextFieldColors(
+    focused_text_color: JsonValue | _Unset = UNSET,
+    unfocused_text_color: JsonValue | _Unset = UNSET,
+    disabled_text_color: JsonValue | _Unset = UNSET,
+    error_text_color: JsonValue | _Unset = UNSET,
+    focused_container_color: JsonValue | _Unset = UNSET,
+    unfocused_container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    error_container_color: JsonValue | _Unset = UNSET,
+    cursor_color: JsonValue | _Unset = UNSET,
+    error_cursor_color: JsonValue | _Unset = UNSET,
+    focused_border_color: JsonValue | _Unset = UNSET,
+    unfocused_border_color: JsonValue | _Unset = UNSET,
+    disabled_border_color: JsonValue | _Unset = UNSET,
+    error_border_color: JsonValue | _Unset = UNSET,
+    focused_leading_icon_color: JsonValue | _Unset = UNSET,
+    unfocused_leading_icon_color: JsonValue | _Unset = UNSET,
+    disabled_leading_icon_color: JsonValue | _Unset = UNSET,
+    error_leading_icon_color: JsonValue | _Unset = UNSET,
+    focused_trailing_icon_color: JsonValue | _Unset = UNSET,
+    unfocused_trailing_icon_color: JsonValue | _Unset = UNSET,
+    disabled_trailing_icon_color: JsonValue | _Unset = UNSET,
+    error_trailing_icon_color: JsonValue | _Unset = UNSET,
+    focused_label_color: JsonValue | _Unset = UNSET,
+    unfocused_label_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    error_label_color: JsonValue | _Unset = UNSET,
+    focused_placeholder_color: JsonValue | _Unset = UNSET,
+    unfocused_placeholder_color: JsonValue | _Unset = UNSET,
+    disabled_placeholder_color: JsonValue | _Unset = UNSET,
+    error_placeholder_color: JsonValue | _Unset = UNSET,
+    focused_supporting_text_color: JsonValue | _Unset = UNSET,
+    unfocused_supporting_text_color: JsonValue | _Unset = UNSET,
+    disabled_supporting_text_color: JsonValue | _Unset = UNSET,
+    error_supporting_text_color: JsonValue | _Unset = UNSET,
+    focused_prefix_color: JsonValue | _Unset = UNSET,
+    unfocused_prefix_color: JsonValue | _Unset = UNSET,
+    disabled_prefix_color: JsonValue | _Unset = UNSET,
+    error_prefix_color: JsonValue | _Unset = UNSET,
+    focused_suffix_color: JsonValue | _Unset = UNSET,
+    unfocused_suffix_color: JsonValue | _Unset = UNSET,
+    disabled_suffix_color: JsonValue | _Unset = UNSET,
+    error_suffix_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TextFieldColors data for native evaluation.
+
+    Args:
+        focused_text_color: Native focusedTextColor argument.
+        unfocused_text_color: Native unfocusedTextColor argument.
+        disabled_text_color: Native disabledTextColor argument.
+        error_text_color: Native errorTextColor argument.
+        focused_container_color: Native focusedContainerColor argument.
+        unfocused_container_color: Native unfocusedContainerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        error_container_color: Native errorContainerColor argument.
+        cursor_color: Native cursorColor argument.
+        error_cursor_color: Native errorCursorColor argument.
+        focused_border_color: Native focusedBorderColor argument.
+        unfocused_border_color: Native unfocusedBorderColor argument.
+        disabled_border_color: Native disabledBorderColor argument.
+        error_border_color: Native errorBorderColor argument.
+        focused_leading_icon_color: Native focusedLeadingIconColor argument.
+        unfocused_leading_icon_color: Native unfocusedLeadingIconColor argument.
+        disabled_leading_icon_color: Native disabledLeadingIconColor argument.
+        error_leading_icon_color: Native errorLeadingIconColor argument.
+        focused_trailing_icon_color: Native focusedTrailingIconColor argument.
+        unfocused_trailing_icon_color: Native unfocusedTrailingIconColor argument.
+        disabled_trailing_icon_color: Native disabledTrailingIconColor argument.
+        error_trailing_icon_color: Native errorTrailingIconColor argument.
+        focused_label_color: Native focusedLabelColor argument.
+        unfocused_label_color: Native unfocusedLabelColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        error_label_color: Native errorLabelColor argument.
+        focused_placeholder_color: Native focusedPlaceholderColor argument.
+        unfocused_placeholder_color: Native unfocusedPlaceholderColor argument.
+        disabled_placeholder_color: Native disabledPlaceholderColor argument.
+        error_placeholder_color: Native errorPlaceholderColor argument.
+        focused_supporting_text_color: Native focusedSupportingTextColor argument.
+        unfocused_supporting_text_color: Native unfocusedSupportingTextColor argument.
+        disabled_supporting_text_color: Native disabledSupportingTextColor argument.
+        error_supporting_text_color: Native errorSupportingTextColor argument.
+        focused_prefix_color: Native focusedPrefixColor argument.
+        unfocused_prefix_color: Native unfocusedPrefixColor argument.
+        disabled_prefix_color: Native disabledPrefixColor argument.
+        error_prefix_color: Native errorPrefixColor argument.
+        focused_suffix_color: Native focusedSuffixColor argument.
+        unfocused_suffix_color: Native unfocusedSuffixColor argument.
+        disabled_suffix_color: Native disabledSuffixColor argument.
+        error_suffix_color: Native errorSuffixColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "outlinedTextFieldColors",
+        {
+            "focusedTextColor": focused_text_color,
+            "unfocusedTextColor": unfocused_text_color,
+            "disabledTextColor": disabled_text_color,
+            "errorTextColor": error_text_color,
+            "focusedContainerColor": focused_container_color,
+            "unfocusedContainerColor": unfocused_container_color,
+            "disabledContainerColor": disabled_container_color,
+            "errorContainerColor": error_container_color,
+            "cursorColor": cursor_color,
+            "errorCursorColor": error_cursor_color,
+            "focusedBorderColor": focused_border_color,
+            "unfocusedBorderColor": unfocused_border_color,
+            "disabledBorderColor": disabled_border_color,
+            "errorBorderColor": error_border_color,
+            "focusedLeadingIconColor": focused_leading_icon_color,
+            "unfocusedLeadingIconColor": unfocused_leading_icon_color,
+            "disabledLeadingIconColor": disabled_leading_icon_color,
+            "errorLeadingIconColor": error_leading_icon_color,
+            "focusedTrailingIconColor": focused_trailing_icon_color,
+            "unfocusedTrailingIconColor": unfocused_trailing_icon_color,
+            "disabledTrailingIconColor": disabled_trailing_icon_color,
+            "errorTrailingIconColor": error_trailing_icon_color,
+            "focusedLabelColor": focused_label_color,
+            "unfocusedLabelColor": unfocused_label_color,
+            "disabledLabelColor": disabled_label_color,
+            "errorLabelColor": error_label_color,
+            "focusedPlaceholderColor": focused_placeholder_color,
+            "unfocusedPlaceholderColor": unfocused_placeholder_color,
+            "disabledPlaceholderColor": disabled_placeholder_color,
+            "errorPlaceholderColor": error_placeholder_color,
+            "focusedSupportingTextColor": focused_supporting_text_color,
+            "unfocusedSupportingTextColor": unfocused_supporting_text_color,
+            "disabledSupportingTextColor": disabled_supporting_text_color,
+            "errorSupportingTextColor": error_supporting_text_color,
+            "focusedPrefixColor": focused_prefix_color,
+            "unfocusedPrefixColor": unfocused_prefix_color,
+            "disabledPrefixColor": disabled_prefix_color,
+            "errorPrefixColor": error_prefix_color,
+            "focusedSuffixColor": focused_suffix_color,
+            "unfocusedSuffixColor": unfocused_suffix_color,
+            "disabledSuffixColor": disabled_suffix_color,
+            "errorSuffixColor": error_suffix_color,
+        },
+        DEFINITIONS,
+    )
+
+
 def switchColors(
     checked_border_color: JsonValue | _Unset = UNSET,
     disabled_checked_border_color: JsonValue | _Unset = UNSET,
@@ -1530,6 +1817,149 @@ def switchColors(
         {
             "checkedBorderColor": checked_border_color,
             "disabledCheckedBorderColor": disabled_checked_border_color,
+        },
+        DEFINITIONS,
+    )
+
+
+def textFieldColors(
+    focused_text_color: JsonValue | _Unset = UNSET,
+    unfocused_text_color: JsonValue | _Unset = UNSET,
+    disabled_text_color: JsonValue | _Unset = UNSET,
+    error_text_color: JsonValue | _Unset = UNSET,
+    focused_container_color: JsonValue | _Unset = UNSET,
+    unfocused_container_color: JsonValue | _Unset = UNSET,
+    disabled_container_color: JsonValue | _Unset = UNSET,
+    error_container_color: JsonValue | _Unset = UNSET,
+    cursor_color: JsonValue | _Unset = UNSET,
+    error_cursor_color: JsonValue | _Unset = UNSET,
+    focused_indicator_color: JsonValue | _Unset = UNSET,
+    unfocused_indicator_color: JsonValue | _Unset = UNSET,
+    disabled_indicator_color: JsonValue | _Unset = UNSET,
+    error_indicator_color: JsonValue | _Unset = UNSET,
+    focused_leading_icon_color: JsonValue | _Unset = UNSET,
+    unfocused_leading_icon_color: JsonValue | _Unset = UNSET,
+    disabled_leading_icon_color: JsonValue | _Unset = UNSET,
+    error_leading_icon_color: JsonValue | _Unset = UNSET,
+    focused_trailing_icon_color: JsonValue | _Unset = UNSET,
+    unfocused_trailing_icon_color: JsonValue | _Unset = UNSET,
+    disabled_trailing_icon_color: JsonValue | _Unset = UNSET,
+    error_trailing_icon_color: JsonValue | _Unset = UNSET,
+    focused_label_color: JsonValue | _Unset = UNSET,
+    unfocused_label_color: JsonValue | _Unset = UNSET,
+    disabled_label_color: JsonValue | _Unset = UNSET,
+    error_label_color: JsonValue | _Unset = UNSET,
+    focused_placeholder_color: JsonValue | _Unset = UNSET,
+    unfocused_placeholder_color: JsonValue | _Unset = UNSET,
+    disabled_placeholder_color: JsonValue | _Unset = UNSET,
+    error_placeholder_color: JsonValue | _Unset = UNSET,
+    focused_supporting_text_color: JsonValue | _Unset = UNSET,
+    unfocused_supporting_text_color: JsonValue | _Unset = UNSET,
+    disabled_supporting_text_color: JsonValue | _Unset = UNSET,
+    error_supporting_text_color: JsonValue | _Unset = UNSET,
+    focused_prefix_color: JsonValue | _Unset = UNSET,
+    unfocused_prefix_color: JsonValue | _Unset = UNSET,
+    disabled_prefix_color: JsonValue | _Unset = UNSET,
+    error_prefix_color: JsonValue | _Unset = UNSET,
+    focused_suffix_color: JsonValue | _Unset = UNSET,
+    unfocused_suffix_color: JsonValue | _Unset = UNSET,
+    disabled_suffix_color: JsonValue | _Unset = UNSET,
+    error_suffix_color: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct TextFieldColors data for native evaluation.
+
+    Args:
+        focused_text_color: Native focusedTextColor argument.
+        unfocused_text_color: Native unfocusedTextColor argument.
+        disabled_text_color: Native disabledTextColor argument.
+        error_text_color: Native errorTextColor argument.
+        focused_container_color: Native focusedContainerColor argument.
+        unfocused_container_color: Native unfocusedContainerColor argument.
+        disabled_container_color: Native disabledContainerColor argument.
+        error_container_color: Native errorContainerColor argument.
+        cursor_color: Native cursorColor argument.
+        error_cursor_color: Native errorCursorColor argument.
+        focused_indicator_color: Native focusedIndicatorColor argument.
+        unfocused_indicator_color: Native unfocusedIndicatorColor argument.
+        disabled_indicator_color: Native disabledIndicatorColor argument.
+        error_indicator_color: Native errorIndicatorColor argument.
+        focused_leading_icon_color: Native focusedLeadingIconColor argument.
+        unfocused_leading_icon_color: Native unfocusedLeadingIconColor argument.
+        disabled_leading_icon_color: Native disabledLeadingIconColor argument.
+        error_leading_icon_color: Native errorLeadingIconColor argument.
+        focused_trailing_icon_color: Native focusedTrailingIconColor argument.
+        unfocused_trailing_icon_color: Native unfocusedTrailingIconColor argument.
+        disabled_trailing_icon_color: Native disabledTrailingIconColor argument.
+        error_trailing_icon_color: Native errorTrailingIconColor argument.
+        focused_label_color: Native focusedLabelColor argument.
+        unfocused_label_color: Native unfocusedLabelColor argument.
+        disabled_label_color: Native disabledLabelColor argument.
+        error_label_color: Native errorLabelColor argument.
+        focused_placeholder_color: Native focusedPlaceholderColor argument.
+        unfocused_placeholder_color: Native unfocusedPlaceholderColor argument.
+        disabled_placeholder_color: Native disabledPlaceholderColor argument.
+        error_placeholder_color: Native errorPlaceholderColor argument.
+        focused_supporting_text_color: Native focusedSupportingTextColor argument.
+        unfocused_supporting_text_color: Native unfocusedSupportingTextColor argument.
+        disabled_supporting_text_color: Native disabledSupportingTextColor argument.
+        error_supporting_text_color: Native errorSupportingTextColor argument.
+        focused_prefix_color: Native focusedPrefixColor argument.
+        unfocused_prefix_color: Native unfocusedPrefixColor argument.
+        disabled_prefix_color: Native disabledPrefixColor argument.
+        error_prefix_color: Native errorPrefixColor argument.
+        focused_suffix_color: Native focusedSuffixColor argument.
+        unfocused_suffix_color: Native unfocusedSuffixColor argument.
+        disabled_suffix_color: Native disabledSuffixColor argument.
+        error_suffix_color: Native errorSuffixColor argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "textFieldColors",
+        {
+            "focusedTextColor": focused_text_color,
+            "unfocusedTextColor": unfocused_text_color,
+            "disabledTextColor": disabled_text_color,
+            "errorTextColor": error_text_color,
+            "focusedContainerColor": focused_container_color,
+            "unfocusedContainerColor": unfocused_container_color,
+            "disabledContainerColor": disabled_container_color,
+            "errorContainerColor": error_container_color,
+            "cursorColor": cursor_color,
+            "errorCursorColor": error_cursor_color,
+            "focusedIndicatorColor": focused_indicator_color,
+            "unfocusedIndicatorColor": unfocused_indicator_color,
+            "disabledIndicatorColor": disabled_indicator_color,
+            "errorIndicatorColor": error_indicator_color,
+            "focusedLeadingIconColor": focused_leading_icon_color,
+            "unfocusedLeadingIconColor": unfocused_leading_icon_color,
+            "disabledLeadingIconColor": disabled_leading_icon_color,
+            "errorLeadingIconColor": error_leading_icon_color,
+            "focusedTrailingIconColor": focused_trailing_icon_color,
+            "unfocusedTrailingIconColor": unfocused_trailing_icon_color,
+            "disabledTrailingIconColor": disabled_trailing_icon_color,
+            "errorTrailingIconColor": error_trailing_icon_color,
+            "focusedLabelColor": focused_label_color,
+            "unfocusedLabelColor": unfocused_label_color,
+            "disabledLabelColor": disabled_label_color,
+            "errorLabelColor": error_label_color,
+            "focusedPlaceholderColor": focused_placeholder_color,
+            "unfocusedPlaceholderColor": unfocused_placeholder_color,
+            "disabledPlaceholderColor": disabled_placeholder_color,
+            "errorPlaceholderColor": error_placeholder_color,
+            "focusedSupportingTextColor": focused_supporting_text_color,
+            "unfocusedSupportingTextColor": unfocused_supporting_text_color,
+            "disabledSupportingTextColor": disabled_supporting_text_color,
+            "errorSupportingTextColor": error_supporting_text_color,
+            "focusedPrefixColor": focused_prefix_color,
+            "unfocusedPrefixColor": unfocused_prefix_color,
+            "disabledPrefixColor": disabled_prefix_color,
+            "errorPrefixColor": error_prefix_color,
+            "focusedSuffixColor": focused_suffix_color,
+            "unfocusedSuffixColor": unfocused_suffix_color,
+            "disabledSuffixColor": disabled_suffix_color,
+            "errorSuffixColor": error_suffix_color,
         },
         DEFINITIONS,
     )

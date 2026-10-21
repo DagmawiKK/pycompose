@@ -424,6 +424,35 @@ data class Spacer(
 }
 
 @Serializable
+data class StatefulSearchBarInputFieldProps(
+    val `colors`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    val `expanded`: Boolean,
+    override val `modifier`: JsonObject? = null,
+    val `onEdit`: String,
+    val `onExpandedChange`: String,
+    val `onSearch`: String,
+    val `readOnly`: Boolean = false,
+    val `revision`: Long,
+    val `selectionEnd`: Long,
+    val `selectionStart`: Long,
+    val `shape`: JsonElement? = null,
+    val `text`: String,
+    val `textStyle`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("StatefulSearchBarInputField")
+data class StatefulSearchBarInputField(
+    override val id: String,
+    override val props: StatefulSearchBarInputFieldProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "StatefulSearchBarInputField"
+}
+
+@Serializable
 data class SwitchProps(
     val `checked`: Boolean,
     val `colors`: JsonElement? = null,

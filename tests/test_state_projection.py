@@ -139,7 +139,7 @@ def test_a_sheet_states_its_desired_value_and_reaches_its_handle_slot() -> None:
 
 
 def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> None:
-    """Every family drives one scalar, and the report carries that same scalar.
+    """Scalar families report one value; editing reports one atomic editing value.
 
     A drawer's desired value is a boolean, a scroll offset a number, a list's
     first visible index an integer; whichever it is, the settled report fills a
@@ -153,6 +153,18 @@ def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> Non
         props = entry["props"]
         assert state["native"] not in props, name
         value = props[state["value"]]
+        if state["kind"] == "textInput":
+            assert value["type"] == "string", name
+            assert value["required"], name
+            report = props[state["report"]]
+            assert report["required"], name
+            assert report["payload"] == [
+                {"name": "text", "type": "string"},
+                {"name": "selectionStart", "type": "integer"},
+                {"name": "selectionEnd", "type": "integer"},
+                {"name": "revision", "type": "integer"},
+            ], name
+            continue
         assert value["type"] in STATE_VALUE_TYPES, name
         assert not value.get("required"), name
         report = props[state["report"]]

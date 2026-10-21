@@ -5955,6 +5955,116 @@
       },
       "type": "object"
     },
+    "C_StatefulSearchBarInputField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "expanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onExpandedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onSearch": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "revision": {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "expanded",
+            "onEdit",
+            "onExpandedChange",
+            "onSearch",
+            "revision",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "StatefulSearchBarInputField"
+        }
+      },
+      "type": "object"
+    },
     "C_SuggestionChip": {
       "properties": {
         "children": {
@@ -7822,6 +7932,9 @@
             },
             {
               "$ref": "#/definitions/C_Spacer"
+            },
+            {
+              "$ref": "#/definitions/C_StatefulSearchBarInputField"
             },
             {
               "$ref": "#/definitions/C_SuggestionChip"
@@ -28590,6 +28703,9 @@
               "$ref": "#/definitions/V_1_23_0_Spacer"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_StatefulSearchBarInputField"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_SuggestionChip"
             },
             {
@@ -30432,6 +30548,116 @@
         },
         "type": {
           "const": "Spacer"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_StatefulSearchBarInputField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "expanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onExpandedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onSearch": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "revision": {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "expanded",
+            "onEdit",
+            "onExpandedChange",
+            "onSearch",
+            "revision",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "StatefulSearchBarInputField"
         }
       },
       "type": "object"

@@ -35,6 +35,7 @@ __all__ = [
     "Scaffold",
     "SearchBarInputField",
     "Spacer",
+    "StatefulSearchBarInputField",
     "Switch",
     "Text",
     "TextButton",
@@ -1005,6 +1006,97 @@ class Spacer(Component):
         """
         props: dict[str, JsonValue] = {}
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class StatefulSearchBarInputField(Component):
+    """Native InputField; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "StatefulSearchBarInputField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        expanded: bool,
+        modifier: Modifier | None = None,
+        on_edit: str,
+        on_expanded_change: str,
+        on_search: str,
+        read_only: bool | None = None,
+        revision: int,
+        selection_end: int,
+        selection_start: int,
+        shape: JsonValue | None = None,
+        text: str,
+        text_style: JsonValue | None = None,
+        leading_icon: Content | None = None,
+        placeholder: Content | None = None,
+        prefix: Content | None = None,
+        suffix: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered StatefulSearchBarInputField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            enabled: Native enabled; None uses its default.
+            expanded: Required native expanded.
+            modifier: Native modifier; None uses its default.
+            on_edit: Required native onEdit.
+            on_expanded_change: Required native onExpandedChange.
+            on_search: Required native onSearch.
+            read_only: Native readOnly; None uses its default.
+            revision: Required native revision.
+            selection_end: Required native selectionEnd.
+            selection_start: Required native selectionStart.
+            shape: Native shape; None uses its default.
+            text: Required native text.
+            text_style: Native textStyle; None uses its default.
+            leading_icon: Nodes for the native leadingIcon slot.
+            placeholder: Nodes for the native placeholder slot.
+            prefix: Nodes for the native prefix slot.
+            suffix: Nodes for the native suffix slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["expanded"] = expanded
+        props["on_edit"] = on_edit
+        props["on_expanded_change"] = on_expanded_change
+        props["on_search"] = on_search
+        if read_only is not None:
+            props["read_only"] = read_only
+        props["revision"] = revision
+        props["selection_end"] = selection_end
+        props["selection_start"] = selection_start
+        if shape is not None:
+            props["shape"] = shape
+        props["text"] = text
+        if text_style is not None:
+            props["text_style"] = text_style
+        slotted: tuple[Node, ...] = ()
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if placeholder is not None:
+            slotted += slot_nodes(placeholder, key="placeholder", slot="placeholder")
+        if prefix is not None:
+            slotted += slot_nodes(prefix, key="prefix", slot="prefix")
+        if suffix is not None:
+            slotted += slot_nodes(suffix, key="suffix", slot="suffix")
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class Switch(Component):

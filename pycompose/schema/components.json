@@ -4913,6 +4913,56 @@
         "report": "onScrollIdle"
       }
     },
+    "StatefulSearchBarInputField": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": ["androidx.compose.material3.ExperimentalMaterial3Api"],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.SearchBarDefaults",
+        "name": "InputField",
+        "jvmName": "InputField",
+        "descriptor": "(Landroidx/compose/foundation/text/input/TextFieldState;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V"
+      },
+      "props": {
+        "text": {"type": "string", "required": true},
+        "selectionStart": {"type": "integer", "required": true, "minimum": 0, "maximum": 2147483647, "nativeType": "Int"},
+        "selectionEnd": {"type": "integer", "required": true, "minimum": 0, "maximum": 2147483647, "nativeType": "Int"},
+        "revision": {"type": "integer", "required": true, "minimum": 0, "maximum": 9223372036854775807},
+        "onEdit": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {"name": "text", "type": "string"},
+            {"name": "selectionStart", "type": "integer"},
+            {"name": "selectionEnd", "type": "integer"},
+            {"name": "revision", "type": "integer"}
+          ]
+        },
+        "onSearch": {"type": "actionId", "required": true, "payload": [{"name": "query", "type": "string"}]},
+        "expanded": {"type": "boolean", "required": true},
+        "onExpandedChange": {"type": "actionId", "required": true, "payload": [{"name": "expanded", "type": "boolean"}]},
+        "enabled": {"type": "boolean", "default": true},
+        "readOnly": {"type": "boolean", "default": false},
+        "textStyle": {"type": "value", "valueType": "TextStyle", "nativeDefault": "androidx.compose.material3.LocalTextStyle.current"},
+        "shape": {"type": "value", "valueType": "Shape", "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldShape"},
+        "colors": {"type": "value", "valueType": "TextFieldColors", "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldColors()"},
+        "modifier": {"type": "modifier"}
+      },
+      "children": {"allowed": false},
+      "slots": {
+        "placeholder": {"native": "placeholder", "nullable": true},
+        "leadingIcon": {"native": "leadingIcon", "nullable": true},
+        "trailingIcon": {"native": "trailingIcon", "nullable": true},
+        "prefix": {"native": "prefix", "nullable": true},
+        "suffix": {"native": "suffix", "nullable": true}
+      },
+      "state": {"native": "state", "kind": "textInput", "value": "text", "report": "onEdit"},
+      "adapter": "manual",
+      "reshaped": ["text", "selectionStart", "selectionEnd", "revision", "onEdit"]
+    },
     "FlowRow": {
       "package": "androidx.compose.foundation.layout",
       "category": "layout",

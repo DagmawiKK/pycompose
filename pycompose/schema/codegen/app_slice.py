@@ -63,6 +63,7 @@ FLOOR_COMPONENTS = frozenset(
         "PlainTooltip",
         "RichTooltip",
         "SearchBarInputField",
+        "StatefulSearchBarInputField",
         "Text",
         "TextField",
         "TooltipBox",

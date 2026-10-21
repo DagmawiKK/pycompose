@@ -102,6 +102,7 @@ STATE_CALLS = {
     "scroll": "scrollState",
     "lazyList": "lazyListState",
     "tooltip": "tooltipState",
+    "textInput": "textInputState",
 }
 """The renderer method each state family's host holder comes from.
 
@@ -125,6 +126,7 @@ itself.
 STATE_CONSTRUCTOR_PROPS = {
     "slider": ("valueRange", "steps"),
     "tooltip": ("isPersistent",),
+    "textInput": ("selectionStart", "selectionEnd", "revision"),
 }
 """Props each family's holder needs at construction, beyond value and report.
 

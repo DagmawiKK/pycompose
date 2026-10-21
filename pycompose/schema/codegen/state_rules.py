@@ -207,6 +207,9 @@ def _validate_state(
     prop = props.get(value) if isinstance(value, str) else None
     if prop is None:
         die(f"{where}: 'value' must name one of the props")
+    if kind == "textInput":
+        _validate_text_input(where, state, props)
+        return
     if prop.get("type") not in STATE_VALUE_TYPES:
         # The family drives one scalar -- a drawer is open or it is not, a
         # scroll sits at an offset -- so a prop of any other type cannot carry
@@ -249,6 +252,52 @@ def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None
         die(f"{where}: state kind {kind!r} needs the props {', '.join(missing)}")
     if gate is not None and props[gate].get("type") != "boolean":
         die(f"{where}: prop {gate!r} must be a boolean")
+
+
+def _validate_text_input(
+    where: str, state: dict[str, Any], props: dict[str, Any]
+) -> None:
+    """Text, selection and revision form one required editing projection.
+
+    Args:
+        where: Prefix for validation failures.
+        state: The text-input state declaration.
+        props: The component's property contracts.
+    """
+    expected = {
+        state["value"]: "string",
+        "selectionStart": "integer",
+        "selectionEnd": "integer",
+        "revision": "integer",
+    }
+    for name, kind in expected.items():
+        prop = props.get(name, {})
+        if prop.get("type") != kind or not prop.get("required"):
+            die(f"{where}: prop {name!r} must be a required {kind}")
+    for name in ("selectionStart", "selectionEnd", "revision"):
+        prop = props[name]
+        maximum = 9223372036854775807 if name == "revision" else 2147483647
+        if prop.get("minimum") != 0 or prop.get("maximum") != maximum:
+            die(f"{where}: prop {name!r} needs native nonnegative bounds")
+    report_name = state.get("report")
+    report = props.get(report_name, {}) if isinstance(report_name, str) else {}
+    payload = report.get("payload", [])
+    fields = {field["name"]: field["type"] for field in payload}
+    if (
+        report.get("type") != "actionId"
+        or not report.get("required")
+        or len(payload) != 4
+        or fields
+        != {
+            "text": "string",
+            "selectionStart": "integer",
+            "selectionEnd": "integer",
+            "revision": "integer",
+        }
+    ):
+        die(f"{where}: report needs the atomic text/selection/revision payload")
+    if state.get("dismiss") is not None:
+        die(f"{where}: textInput has no dismissal callback")
 
 
 def _validate_transient(

@@ -32,6 +32,7 @@ import com.pycompose.ir.generated.OffsetValue
 import com.pycompose.ir.generated.PaddingValuesValue
 import com.pycompose.ir.generated.ShapeValue
 import com.pycompose.ir.generated.SwitchColorsValue
+import com.pycompose.ir.generated.TextFieldColorsValue
 import com.pycompose.ir.generated.TextStyleValue
 import com.pycompose.ir.generated.TextUnitValue
 import com.pycompose.ir.generated.WindowInsetsValue
@@ -58,6 +59,7 @@ import com.pycompose.ir.generated.WirecardColors
 import com.pycompose.ir.generated.WirecardElevation
 import com.pycompose.ir.generated.WireelevatedCardColors
 import com.pycompose.ir.generated.WireelevatedCardElevation
+import com.pycompose.ir.generated.WireexposedDropdownMenuOutlinedTextFieldColors
 import com.pycompose.ir.generated.WirefilledIconButtonColors
 import com.pycompose.ir.generated.WirefilledTonalIconButtonColors
 import com.pycompose.ir.generated.WirefloatingActionButtonElevation
@@ -70,7 +72,9 @@ import com.pycompose.ir.generated.WirenavigationBarItemColors
 import com.pycompose.ir.generated.WireoutlinedCardColors
 import com.pycompose.ir.generated.WireoutlinedCardElevation
 import com.pycompose.ir.generated.WireoutlinedIconButtonColors
+import com.pycompose.ir.generated.WireoutlinedTextFieldColors
 import com.pycompose.ir.generated.WireswitchColors
+import com.pycompose.ir.generated.WiretextFieldColors
 import com.pycompose.ir.generated.WireverticalGradient
 
 object ValueResolver {
@@ -754,6 +758,119 @@ object ValueResolver {
                 androidx.compose.material3.SwitchDefaults.colors(
                     checkedBorderColor = if ("checkedBorderColor" in value.supplied) value.checkedBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
                     disabledCheckedBorderColor = if ("disabledCheckedBorderColor" in value.supplied) value.disabledCheckedBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                )
+            }
+        }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun textFieldColors(value: JsonElement): Result<androidx.compose.material3.TextFieldColors> {
+        val parsed = runCatching { ValueContract.readTextFieldColors(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(textFieldColors(parsed))
+    }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun textFieldColors(value: TextFieldColorsValue): androidx.compose.material3.TextFieldColors =
+        when (value) {
+            is WireexposedDropdownMenuOutlinedTextFieldColors -> {
+                androidx.compose.material3.ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                    focusedContainerColor = if ("focusedContainerColor" in value.supplied) value.focusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                    unfocusedContainerColor = if ("unfocusedContainerColor" in value.supplied) value.unfocusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                    errorContainerColor = if ("errorContainerColor" in value.supplied) value.errorContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Transparent,
+                )
+            }
+            is WireoutlinedTextFieldColors -> {
+                androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = if ("focusedTextColor" in value.supplied) value.focusedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedTextColor = if ("unfocusedTextColor" in value.supplied) value.unfocusedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTextColor = if ("disabledTextColor" in value.supplied) value.disabledTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorTextColor = if ("errorTextColor" in value.supplied) value.errorTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedContainerColor = if ("focusedContainerColor" in value.supplied) value.focusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedContainerColor = if ("unfocusedContainerColor" in value.supplied) value.unfocusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorContainerColor = if ("errorContainerColor" in value.supplied) value.errorContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    cursorColor = if ("cursorColor" in value.supplied) value.cursorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorCursorColor = if ("errorCursorColor" in value.supplied) value.errorCursorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedBorderColor = if ("focusedBorderColor" in value.supplied) value.focusedBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedBorderColor = if ("unfocusedBorderColor" in value.supplied) value.unfocusedBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledBorderColor = if ("disabledBorderColor" in value.supplied) value.disabledBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorBorderColor = if ("errorBorderColor" in value.supplied) value.errorBorderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedLeadingIconColor = if ("focusedLeadingIconColor" in value.supplied) value.focusedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedLeadingIconColor = if ("unfocusedLeadingIconColor" in value.supplied) value.unfocusedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLeadingIconColor = if ("disabledLeadingIconColor" in value.supplied) value.disabledLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorLeadingIconColor = if ("errorLeadingIconColor" in value.supplied) value.errorLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedTrailingIconColor = if ("focusedTrailingIconColor" in value.supplied) value.focusedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedTrailingIconColor = if ("unfocusedTrailingIconColor" in value.supplied) value.unfocusedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTrailingIconColor = if ("disabledTrailingIconColor" in value.supplied) value.disabledTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorTrailingIconColor = if ("errorTrailingIconColor" in value.supplied) value.errorTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedLabelColor = if ("focusedLabelColor" in value.supplied) value.focusedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedLabelColor = if ("unfocusedLabelColor" in value.supplied) value.unfocusedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorLabelColor = if ("errorLabelColor" in value.supplied) value.errorLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedPlaceholderColor = if ("focusedPlaceholderColor" in value.supplied) value.focusedPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedPlaceholderColor = if ("unfocusedPlaceholderColor" in value.supplied) value.unfocusedPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledPlaceholderColor = if ("disabledPlaceholderColor" in value.supplied) value.disabledPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorPlaceholderColor = if ("errorPlaceholderColor" in value.supplied) value.errorPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedSupportingTextColor = if ("focusedSupportingTextColor" in value.supplied) value.focusedSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedSupportingTextColor = if ("unfocusedSupportingTextColor" in value.supplied) value.unfocusedSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSupportingTextColor = if ("disabledSupportingTextColor" in value.supplied) value.disabledSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorSupportingTextColor = if ("errorSupportingTextColor" in value.supplied) value.errorSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedPrefixColor = if ("focusedPrefixColor" in value.supplied) value.focusedPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedPrefixColor = if ("unfocusedPrefixColor" in value.supplied) value.unfocusedPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledPrefixColor = if ("disabledPrefixColor" in value.supplied) value.disabledPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorPrefixColor = if ("errorPrefixColor" in value.supplied) value.errorPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedSuffixColor = if ("focusedSuffixColor" in value.supplied) value.focusedSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedSuffixColor = if ("unfocusedSuffixColor" in value.supplied) value.unfocusedSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSuffixColor = if ("disabledSuffixColor" in value.supplied) value.disabledSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorSuffixColor = if ("errorSuffixColor" in value.supplied) value.errorSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+            is WiretextFieldColors -> {
+                androidx.compose.material3.TextFieldDefaults.colors(
+                    focusedTextColor = if ("focusedTextColor" in value.supplied) value.focusedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedTextColor = if ("unfocusedTextColor" in value.supplied) value.unfocusedTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTextColor = if ("disabledTextColor" in value.supplied) value.disabledTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorTextColor = if ("errorTextColor" in value.supplied) value.errorTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedContainerColor = if ("focusedContainerColor" in value.supplied) value.focusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedContainerColor = if ("unfocusedContainerColor" in value.supplied) value.unfocusedContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledContainerColor = if ("disabledContainerColor" in value.supplied) value.disabledContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorContainerColor = if ("errorContainerColor" in value.supplied) value.errorContainerColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    cursorColor = if ("cursorColor" in value.supplied) value.cursorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorCursorColor = if ("errorCursorColor" in value.supplied) value.errorCursorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedIndicatorColor = if ("focusedIndicatorColor" in value.supplied) value.focusedIndicatorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedIndicatorColor = if ("unfocusedIndicatorColor" in value.supplied) value.unfocusedIndicatorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledIndicatorColor = if ("disabledIndicatorColor" in value.supplied) value.disabledIndicatorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorIndicatorColor = if ("errorIndicatorColor" in value.supplied) value.errorIndicatorColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedLeadingIconColor = if ("focusedLeadingIconColor" in value.supplied) value.focusedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedLeadingIconColor = if ("unfocusedLeadingIconColor" in value.supplied) value.unfocusedLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLeadingIconColor = if ("disabledLeadingIconColor" in value.supplied) value.disabledLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorLeadingIconColor = if ("errorLeadingIconColor" in value.supplied) value.errorLeadingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedTrailingIconColor = if ("focusedTrailingIconColor" in value.supplied) value.focusedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedTrailingIconColor = if ("unfocusedTrailingIconColor" in value.supplied) value.unfocusedTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledTrailingIconColor = if ("disabledTrailingIconColor" in value.supplied) value.disabledTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorTrailingIconColor = if ("errorTrailingIconColor" in value.supplied) value.errorTrailingIconColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedLabelColor = if ("focusedLabelColor" in value.supplied) value.focusedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedLabelColor = if ("unfocusedLabelColor" in value.supplied) value.unfocusedLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledLabelColor = if ("disabledLabelColor" in value.supplied) value.disabledLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorLabelColor = if ("errorLabelColor" in value.supplied) value.errorLabelColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedPlaceholderColor = if ("focusedPlaceholderColor" in value.supplied) value.focusedPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedPlaceholderColor = if ("unfocusedPlaceholderColor" in value.supplied) value.unfocusedPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledPlaceholderColor = if ("disabledPlaceholderColor" in value.supplied) value.disabledPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorPlaceholderColor = if ("errorPlaceholderColor" in value.supplied) value.errorPlaceholderColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedSupportingTextColor = if ("focusedSupportingTextColor" in value.supplied) value.focusedSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedSupportingTextColor = if ("unfocusedSupportingTextColor" in value.supplied) value.unfocusedSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSupportingTextColor = if ("disabledSupportingTextColor" in value.supplied) value.disabledSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorSupportingTextColor = if ("errorSupportingTextColor" in value.supplied) value.errorSupportingTextColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedPrefixColor = if ("focusedPrefixColor" in value.supplied) value.focusedPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedPrefixColor = if ("unfocusedPrefixColor" in value.supplied) value.unfocusedPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledPrefixColor = if ("disabledPrefixColor" in value.supplied) value.disabledPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorPrefixColor = if ("errorPrefixColor" in value.supplied) value.errorPrefixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    focusedSuffixColor = if ("focusedSuffixColor" in value.supplied) value.focusedSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    unfocusedSuffixColor = if ("unfocusedSuffixColor" in value.supplied) value.unfocusedSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    disabledSuffixColor = if ("disabledSuffixColor" in value.supplied) value.disabledSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                    errorSuffixColor = if ("errorSuffixColor" in value.supplied) value.errorSuffixColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
             }
         }

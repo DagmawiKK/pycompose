@@ -57,9 +57,10 @@ def test_the_schema_grew_without_becoming_permissive() -> None:
     # moves with every batch; the test pins the *congruence*, not the number.
     assert SCHEMA["schemaVersion"] == SCHEMA_VERSION
     assert {"1.5.0", "1.6.0", "1.7.0"} <= set(SCHEMA["supportedSchemaVersions"])
-    # The range form I tried first is not there, because the event channel
-    # carries one scalar and a range is two.
-    assert "selectionStart" not in json.dumps(SCHEMA)
+    # The legacy field remains scalar-only. The state-based search helper has
+    # a separate atomic editing contract; it must not silently change this API.
+    assert "selectionStart" not in SCHEMA["components"]["TextField"]["props"]
+    assert "selectionEnd" not in SCHEMA["components"]["TextField"]["props"]
 
 
 # ---------------------------------------------------------------------------

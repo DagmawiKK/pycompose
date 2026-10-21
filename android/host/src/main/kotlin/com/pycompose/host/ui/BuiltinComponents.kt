@@ -68,6 +68,7 @@ object BuiltinComponents {
     private fun ComponentRegistry.Builder.controls(): ComponentRegistry.Builder =
         textInputs()
             .searchFields()
+            .statefulSearchFields()
             .animations()
             .tooltips()
 
