@@ -72,6 +72,7 @@ STATE_KINDS = (
     "lazyList",
     "tooltip",
     "textInput",
+    "search",
 )
 """State families the host creates, drives and reports for a component.
 
@@ -81,10 +82,11 @@ modal surface that has to be composed to be shown at all; a slider drives the
 thumb to a desired number and reports the settled one; scroll and lazyList
 report a resting position once scrolling comes to rest; a tooltip reconciles a
 desired visible value through hover, focus and long-press gestures; textInput
-reconciles text and selection with a revisioned atomic edit report. The
-vocabulary is closed for the same reason the interaction kinds are: the host
-must not be asked to drive a state object whose transitions it does not
-understand.
+reconciles text and selection with a revisioned atomic edit report; search
+shares one editing projection and one expansion state across a collapsed bar
+and every expanded surface. The vocabulary is closed for the same reason the
+interaction kinds are: the host must not be asked to drive a state object
+whose transitions it does not understand.
 """
 
 ADAPTERS = ("generated", "manual")

@@ -554,6 +554,44 @@ data class ElevatedSuggestionChip(
 }
 
 @Serializable
+data class ExpandedDockedSearchBarProps(
+    override val `modifier`: JsonObject? = null,
+    val `shadowElevation`: Double? = null,
+    val `shape`: JsonElement? = null,
+    val `tonalElevation`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ExpandedDockedSearchBar")
+data class ExpandedDockedSearchBar(
+    override val id: String,
+    override val props: ExpandedDockedSearchBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "ExpandedDockedSearchBar"
+}
+
+@Serializable
+data class ExpandedFullScreenSearchBarProps(
+    val `collapsedShape`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `shadowElevation`: Double? = null,
+    val `tonalElevation`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ExpandedFullScreenSearchBar")
+data class ExpandedFullScreenSearchBar(
+    override val id: String,
+    override val props: ExpandedFullScreenSearchBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "ExpandedFullScreenSearchBar"
+}
+
+@Serializable
 data class ExtendedFloatingActionButtonProps(
     val `containerColor`: JsonElement? = null,
     val `elevation`: JsonElement? = null,
@@ -1629,6 +1667,28 @@ data class SearchBarInputField(
 }
 
 @Serializable
+data class SearchBarStateInputFieldProps(
+    val `colors`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onSearch`: String,
+    val `readOnly`: Boolean = false,
+    val `shape`: JsonElement? = null,
+    val `textStyle`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("SearchBarStateInputField")
+data class SearchBarStateInputField(
+    override val id: String,
+    override val props: SearchBarStateInputFieldProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "SearchBarStateInputField"
+}
+
+@Serializable
 data class SecondaryScrollableTabRowProps(
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
@@ -1823,6 +1883,32 @@ data class Spacer(
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
     override val componentType: String get() = "Spacer"
+}
+
+@Serializable
+data class StatefulSearchBarProps(
+    val `expanded`: Boolean? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onEdit`: String,
+    val `onExpandedChange`: String? = null,
+    val `revision`: Long,
+    val `selectionEnd`: Long,
+    val `selectionStart`: Long,
+    val `shadowElevation`: Double? = null,
+    val `shape`: JsonElement? = null,
+    val `text`: String,
+    val `tonalElevation`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("StatefulSearchBar")
+data class StatefulSearchBar(
+    override val id: String,
+    override val props: StatefulSearchBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override val componentType: String get() = "StatefulSearchBar"
 }
 
 @Serializable

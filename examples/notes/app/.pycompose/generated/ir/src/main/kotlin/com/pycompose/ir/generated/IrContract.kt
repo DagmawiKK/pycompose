@@ -62,6 +62,30 @@ object IrContract {
                 "target" to PropertyRule("string", required = true),
             ),
         ),
+        "ExpandedDockedSearchBar" to ComponentRule(
+            slots = setOf("inputField"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "shadowElevation" to PropertyRule("dp", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "tonalElevation" to PropertyRule("dp", required = false),
+            ),
+        ),
+        "ExpandedFullScreenSearchBar" to ComponentRule(
+            slots = setOf("inputField"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "collapsedShape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "shadowElevation" to PropertyRule("dp", required = false),
+                "tonalElevation" to PropertyRule("dp", required = false),
+            ),
+        ),
         "FloatingActionButton" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -254,6 +278,21 @@ object IrContract {
                 "query" to PropertyRule("string", required = true),
             ),
         ),
+        "SearchBarStateInputField" to ComponentRule(
+            slots = setOf("leadingIcon", "placeholder", "prefix", "suffix", "trailingIcon"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "colors" to PropertyRule("value", required = false, valueType = "TextFieldColors"),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onSearch" to PropertyRule("actionId", required = true),
+                "readOnly" to PropertyRule("boolean", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "textStyle" to PropertyRule("value", required = false, valueType = "TextStyle"),
+            ),
+        ),
         "Spacer" to ComponentRule(
             slots = setOf(),
             childrenAllowed = false,
@@ -261,6 +300,25 @@ object IrContract {
             since = "1.0.0",
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
+        "StatefulSearchBar" to ComponentRule(
+            slots = setOf("expandedBar", "inputField"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "expanded" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onEdit" to PropertyRule("actionId", required = true),
+                "onExpandedChange" to PropertyRule("actionId", required = false),
+                "revision" to PropertyRule("integer", required = true, minimum = 0.0, maximum = 9.223372036854776e+18),
+                "selectionEnd" to PropertyRule("integer", required = true, minimum = 0.0, maximum = 2147483647.0),
+                "selectionStart" to PropertyRule("integer", required = true, minimum = 0.0, maximum = 2147483647.0),
+                "shadowElevation" to PropertyRule("dp", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "text" to PropertyRule("string", required = true),
+                "tonalElevation" to PropertyRule("dp", required = false),
             ),
         ),
         "StatefulSearchBarInputField" to ComponentRule(

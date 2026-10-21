@@ -187,7 +187,7 @@ ordinary action, so the worker never freezes behind a request.
 
 ## Components
 
-105 Material 3 components. `*` marks experimental entries.
+109 Material 3 components. `*` marks experimental entries.
 
 | Category | Components |
 | --- | --- |
@@ -195,7 +195,7 @@ ordinary action, so the worker never freezes behind a request.
 | Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard`, `PullToRefreshBox`, `VerticalDragHandle`, `FlowRow`\*, `FlowColumn`\* |
 | App bars | `TopAppBar`\*, `CenterAlignedTopAppBar`\*, `MediumTopAppBar`\*, `LargeTopAppBar`\*, `BottomAppBar` |
 | Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `SegmentedButton`, `MultiChoiceSegmentedButton`, `SingleChoiceSegmentedButtonRow`, `MultiChoiceSegmentedButtonRow`, `IconButton`, `FilledIconButton`, `FilledIconToggleButton`, `FilledTonalIconButton`, `FilledTonalIconToggleButton`, `IconToggleButton`, `OutlinedIconButton`, `OutlinedIconToggleButton`, `FloatingActionButton`, `LargeFloatingActionButton`, `ExtendedFloatingActionButton` |
-| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `StatefulSearchBarInputField`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
+| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `StatefulSearchBarInputField`\*, `StatefulSearchBar`\*, `SearchBarStateInputField`\*, `ExpandedDockedSearchBar`\*, `ExpandedFullScreenSearchBar`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
 | Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `NavigationRail`, `NavigationRailItem`, `ShortNavigationBar`, `ShortNavigationBarItem`, `WideNavigationRail`, `WideNavigationRailItem`, `ModalWideNavigationRail`, `NavigationSuiteScaffold`, `NavigationSuiteItem`, `NavigationDrawerItem`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet`, `PermanentNavigationDrawer`, `PermanentDrawerSheet`, `Tab`, `LeadingIconTab`, `SecondaryTabRow`, `PrimaryTabRow`, `PrimaryScrollableTabRow`, `SecondaryScrollableTabRow` |
 | Overlays and status | `ModalBottomSheet`\*, `SnackbarHost`, `Snackbar`, `AlertDialog`, `BasicAlertDialog`\*, `DropdownMenu`, `DropdownMenuItem`, `TooltipBox`\*, `PlainTooltip`\*, `RichTooltip`\*, `Badge`, `BadgedBox`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
 | Lists | `LazyColumn`, `LazyRow`, `ListItem` |
@@ -222,9 +222,20 @@ unchanged IME composition. `on_search` receives `query: str`.
 
 This overload adds `read_only`, `text_style`, `prefix`, `suffix`, `shape`, and
 `colors`, retaining native defaults when absent. It is **partial coverage**:
-input/output transformations, explicit horizontal scroll control, interaction
-observations, and the shared `SearchBarState` overload remain gaps. Existing
-`SearchBarInputField`, `SearchBar`, and `DockedSearchBar` APIs are unchanged.
+input/output transformations, explicit horizontal scroll control, and
+interaction observations remain gaps. Existing `SearchBarInputField`,
+`SearchBar`, and `DockedSearchBar` APIs are unchanged.
+
+`StatefulSearchBar` owns one search. Supply `text`, `selection_start`,
+`selection_end`, `revision`, and `on_edit`; supply `expanded` and
+`on_expanded_change` to drive and observe expansion, or omit `expanded` to leave
+it to native focus and gestures. Its `input_field` slot holds a
+`SearchBarStateInputField`; its `expanded_bar` slot holds
+`ExpandedDockedSearchBar` or `ExpandedFullScreenSearchBar`, each with its own
+`input_field` slot. Every surface reads the owner's native editing and expansion
+state, so text, selection, and revision survive expanding, collapsing, or a
+snapshot pull. A field or expanded surface outside a `StatefulSearchBar` is
+diagnosed by the host instead of creating a second state.
 
 `TooltipBox` anchors its `tooltip` slot to its ordinary children. Put
 `PlainTooltip` or `RichTooltip` directly in that slot: they require its native

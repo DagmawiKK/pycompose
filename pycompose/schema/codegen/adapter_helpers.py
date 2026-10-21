@@ -103,6 +103,7 @@ STATE_CALLS = {
     "lazyList": "lazyListState",
     "tooltip": "tooltipState",
     "textInput": "textInputState",
+    "search": "searchState",
 }
 """The renderer method each state family's host holder comes from.
 
@@ -127,6 +128,7 @@ STATE_CONSTRUCTOR_PROPS = {
     "slider": ("valueRange", "steps"),
     "tooltip": ("isPersistent",),
     "textInput": ("selectionStart", "selectionEnd", "revision"),
+    "search": ("text", "selectionStart", "selectionEnd", "revision", "onEdit"),
 }
 """Props each family's holder needs at construction, beyond value and report.
 
@@ -200,6 +202,8 @@ def _declared_slots(entry: dict[str, Any]) -> bool:
         True when the primary children and every named slot use a kind and a
         consumer this generator renders.
     """
+    if any(slot.get("host") for slot in entry.get("slots", {}).values()):
+        return False
     children = entry.get("children", {})
     scoped = children.get("provides") in {None, *SCOPES} and not (
         "provides" in children and children.get("consume") is not None

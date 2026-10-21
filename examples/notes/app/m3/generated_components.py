@@ -19,6 +19,8 @@ __all__ = [
     "Card",
     "Column",
     "Crossfade",
+    "ExpandedDockedSearchBar",
+    "ExpandedFullScreenSearchBar",
     "FloatingActionButton",
     "HorizontalDivider",
     "Icon",
@@ -34,7 +36,9 @@ __all__ = [
     "Row",
     "Scaffold",
     "SearchBarInputField",
+    "SearchBarStateInputField",
     "Spacer",
+    "StatefulSearchBar",
     "StatefulSearchBarInputField",
     "Switch",
     "Text",
@@ -252,6 +256,118 @@ class Crossfade(Component):
         props["target"] = target
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ExpandedDockedSearchBar(Component):
+    """Native ExpandedDockedSearchBar;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ExpandedDockedSearchBar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        input_field: Content | None = None,
+    ) -> None:
+        """Construct a registered ExpandedDockedSearchBar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            input_field: Nodes for the native inputField slot.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if input_field is not None:
+            slotted += slot_nodes(input_field, key="inputField", slot="inputField")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
+class ExpandedFullScreenSearchBar(Component):
+    """Native ExpandedFullScreenSearchBar;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ExpandedFullScreenSearchBar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        collapsed_shape: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shadow_elevation: int | float | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        input_field: Content | None = None,
+    ) -> None:
+        """Construct a registered ExpandedFullScreenSearchBar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            collapsed_shape: Native collapsedShape; None uses its default.
+            modifier: Native modifier; None uses its default.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            input_field: Nodes for the native inputField slot.
+
+        Raises:
+            IrValidationError: If slot and children are both set.
+        """
+        props: dict[str, JsonValue] = {}
+        if collapsed_shape is not None:
+            props["collapsed_shape"] = collapsed_shape
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        normalized = content_nodes(children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if input_field is not None:
+            slotted += slot_nodes(input_field, key="inputField", slot="inputField")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class FloatingActionButton(Component):
@@ -986,6 +1102,76 @@ class SearchBarInputField(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class SearchBarStateInputField(Component):
+    """Native InputField; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SearchBarStateInputField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_search: str,
+        read_only: bool | None = None,
+        shape: JsonValue | None = None,
+        text_style: JsonValue | None = None,
+        leading_icon: Content | None = None,
+        placeholder: Content | None = None,
+        prefix: Content | None = None,
+        suffix: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered SearchBarStateInputField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_search: Required native onSearch.
+            read_only: Native readOnly; None uses its default.
+            shape: Native shape; None uses its default.
+            text_style: Native textStyle; None uses its default.
+            leading_icon: Nodes for the native leadingIcon slot.
+            placeholder: Nodes for the native placeholder slot.
+            prefix: Nodes for the native prefix slot.
+            suffix: Nodes for the native suffix slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_search"] = on_search
+        if read_only is not None:
+            props["read_only"] = read_only
+        if shape is not None:
+            props["shape"] = shape
+        if text_style is not None:
+            props["text_style"] = text_style
+        slotted: tuple[Node, ...] = ()
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if placeholder is not None:
+            slotted += slot_nodes(placeholder, key="placeholder", slot="placeholder")
+        if prefix is not None:
+            slotted += slot_nodes(prefix, key="prefix", slot="prefix")
+        if suffix is not None:
+            slotted += slot_nodes(suffix, key="suffix", slot="suffix")
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
 class Spacer(Component):
     """Native Spacer; props and defaults follow the component manifest."""
 
@@ -1006,6 +1192,72 @@ class Spacer(Component):
         """
         props: dict[str, JsonValue] = {}
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class StatefulSearchBar(Component):
+    """Native SearchBar; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "StatefulSearchBar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        expanded: bool | None = None,
+        modifier: Modifier | None = None,
+        on_edit: str,
+        on_expanded_change: str | None = None,
+        revision: int,
+        selection_end: int,
+        selection_start: int,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        text: str,
+        tonal_elevation: int | float | None = None,
+        expanded_bar: Content | None = None,
+        input_field: Content | None = None,
+    ) -> None:
+        """Construct a registered StatefulSearchBar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            expanded: Native expanded; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_edit: Required native onEdit.
+            on_expanded_change: Native onExpandedChange; None uses its default.
+            revision: Required native revision.
+            selection_end: Required native selectionEnd.
+            selection_start: Required native selectionStart.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            text: Required native text.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            expanded_bar: Nodes the host composes for the expandedBar slot.
+            input_field: Nodes for the native inputField slot.
+        """
+        props: dict[str, JsonValue] = {}
+        if expanded is not None:
+            props["expanded"] = expanded
+        props["on_edit"] = on_edit
+        if on_expanded_change is not None:
+            props["on_expanded_change"] = on_expanded_change
+        props["revision"] = revision
+        props["selection_end"] = selection_end
+        props["selection_start"] = selection_start
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        props["text"] = text
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        slotted: tuple[Node, ...] = ()
+        if expanded_bar is not None:
+            slotted += slot_nodes(expanded_bar, key="expandedBar", slot="expandedBar")
+        if input_field is not None:
+            slotted += slot_nodes(input_field, key="inputField", slot="inputField")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class StatefulSearchBarInputField(Component):

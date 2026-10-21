@@ -357,7 +357,12 @@ def _python_signature(
     for slot_name, slot in sorted(spec.get("slots", {}).items()):
         slot_arg = _python_prop(slot_name)
         lines.append(f"        {slot_arg}: Content | None = None,")
-        arguments[slot_arg] = f"Nodes for the native {slot['native']} slot."
+        native = slot.get("native")
+        arguments[slot_arg] = (
+            f"Nodes for the native {native} slot."
+            if native
+            else f"Nodes the host composes for the {slot_name} slot."
+        )
     return lines, arguments
 
 

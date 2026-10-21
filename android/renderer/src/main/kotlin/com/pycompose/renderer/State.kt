@@ -80,7 +80,7 @@ internal fun rememberHostDrawerState(
 }
 
 /** The settled value one node last reported, seeded where its composition started. */
-private class Settled<T>(
+internal class Settled<T>(
     var value: T,
 )
 

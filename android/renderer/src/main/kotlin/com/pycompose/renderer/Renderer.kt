@@ -23,6 +23,15 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 
+/**
+ * What one node's adapter may do: compose children, reach actions, and report.
+ *
+ * The surface stays one receiver rather than several collaborators so every
+ * hand-written adapter gets the same capabilities through the same parameter.
+ * That puts it just over detekt's default function count; splitting it would
+ * scatter the host boundary across unrelated types.
+ */
+@Suppress("TooManyFunctions")
 class RenderContext internal constructor(
     val actions: ActionDispatcher,
     internal val renderer: Renderer,
@@ -55,6 +64,19 @@ class RenderContext internal constructor(
      * caller hands the same three-argument function to the state helpers.
      */
     internal val observations = ObservationSink(bindings, actions, renderer.report)
+
+    /**
+     * Report one diagnostic for a node the host cannot compose as declared.
+     *
+     * A hand-written adapter calls this from a one-shot effect keyed by the
+     * node, so a recomposition does not repeat it. The message reaches the same
+     * sink as the renderer's own diagnostics.
+     *
+     * @param message The diagnostic to report.
+     */
+    fun diagnostic(message: String) {
+        renderer.report(message)
+    }
 
     fun event(
         actionId: String,

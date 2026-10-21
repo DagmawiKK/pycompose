@@ -69,6 +69,7 @@ object BuiltinComponents {
         textInputs()
             .searchFields()
             .statefulSearchFields()
+            .sharedSearchBars()
             .animations()
             .tooltips()
 

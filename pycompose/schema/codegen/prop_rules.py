@@ -105,6 +105,17 @@ def _validate_slots(
         _validate_slot(where, slot_name, slot, natives, props)
 
 
+def _validate_host_slot(where: str, slot: dict[str, Any]) -> None:
+    """Check a host slot declares no native policy at all.
+
+    Args:
+        where: Human-readable location, for error messages.
+        slot: The raw slot object, already known to carry ``host``.
+    """
+    if slot != {"host": True}:
+        die(f"{where}: a host slot declares only host=true")
+
+
 def _validate_slot(
     where: str,
     slot_name: str,
@@ -131,6 +142,9 @@ def _validate_slot(
     unknown = sorted(set(slot) - SLOT_KEYS)
     if unknown:
         die(f"{where} has unknown keys: {', '.join(unknown)}")
+    if "host" in slot:
+        _validate_host_slot(where, slot)
+        return
     native = slot.get("native")
     if not isinstance(native, str) or not NATIVE_PARAMETER.match(native):
         die(f"{where}: 'native' must be a parameter name")

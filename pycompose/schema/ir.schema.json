@@ -2024,6 +2024,174 @@
       },
       "type": "object"
     },
+    "C_ExpandedDockedSearchBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "inputField"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ExpandedDockedSearchBar"
+        }
+      },
+      "type": "object"
+    },
+    "C_ExpandedFullScreenSearchBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "inputField"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "collapsedShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ExpandedFullScreenSearchBar"
+        }
+      },
+      "type": "object"
+    },
     "C_ExtendedFloatingActionButton": {
       "properties": {
         "children": {
@@ -5337,6 +5505,76 @@
       },
       "type": "object"
     },
+    "C_SearchBarStateInputField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onSearch": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onSearch"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SearchBarStateInputField"
+        }
+      },
+      "type": "object"
+    },
     "C_SecondaryScrollableTabRow": {
       "properties": {
         "children": {
@@ -5951,6 +6189,134 @@
         },
         "type": {
           "const": "Spacer"
+        }
+      },
+      "type": "object"
+    },
+    "C_StatefulSearchBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "expandedBar",
+                  "inputField"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "expanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onExpandedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "revision": {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "onEdit",
+            "revision",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "StatefulSearchBar"
         }
       },
       "type": "object"
@@ -7742,6 +8108,12 @@
               "$ref": "#/definitions/C_ElevatedSuggestionChip"
             },
             {
+              "$ref": "#/definitions/C_ExpandedDockedSearchBar"
+            },
+            {
+              "$ref": "#/definitions/C_ExpandedFullScreenSearchBar"
+            },
+            {
               "$ref": "#/definitions/C_ExtendedFloatingActionButton"
             },
             {
@@ -7904,6 +8276,9 @@
               "$ref": "#/definitions/C_SearchBarInputField"
             },
             {
+              "$ref": "#/definitions/C_SearchBarStateInputField"
+            },
+            {
               "$ref": "#/definitions/C_SecondaryScrollableTabRow"
             },
             {
@@ -7932,6 +8307,9 @@
             },
             {
               "$ref": "#/definitions/C_Spacer"
+            },
+            {
+              "$ref": "#/definitions/C_StatefulSearchBar"
             },
             {
               "$ref": "#/definitions/C_StatefulSearchBarInputField"
@@ -26016,6 +26394,174 @@
       },
       "type": "object"
     },
+    "V_1_23_0_ExpandedDockedSearchBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "inputField"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ExpandedDockedSearchBar"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_ExpandedFullScreenSearchBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "inputField"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "collapsedShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ExpandedFullScreenSearchBar"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_ExtendedFloatingActionButton": {
       "properties": {
         "children": {
@@ -28511,6 +29057,12 @@
               "$ref": "#/definitions/V_1_23_0_ElevatedSuggestionChip"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_ExpandedDockedSearchBar"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ExpandedFullScreenSearchBar"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_ExtendedFloatingActionButton"
             },
             {
@@ -28673,6 +29225,9 @@
               "$ref": "#/definitions/V_1_23_0_SearchBarInputField"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_SearchBarStateInputField"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_SecondaryScrollableTabRow"
             },
             {
@@ -28701,6 +29256,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_Spacer"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_StatefulSearchBar"
             },
             {
               "$ref": "#/definitions/V_1_23_0_StatefulSearchBarInputField"
@@ -29934,6 +30492,76 @@
       },
       "type": "object"
     },
+    "V_1_23_0_SearchBarStateInputField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onSearch": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onSearch"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SearchBarStateInputField"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_SecondaryScrollableTabRow": {
       "properties": {
         "children": {
@@ -30548,6 +31176,134 @@
         },
         "type": {
           "const": "Spacer"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_StatefulSearchBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "expandedBar",
+                  "inputField"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "expanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "onExpandedChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
+            "revision": {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "onEdit",
+            "revision",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "StatefulSearchBar"
         }
       },
       "type": "object"

@@ -152,6 +152,19 @@ def _claimed_parameter(where: str, key: str, value: object, claimed: set[str]) -
     return value
 
 
+def _validate_search(where: str, state: dict[str, Any], props: dict[str, Any]) -> None:
+    """Check the editing projection a shared search owner exposes.
+
+    Args:
+        where: Prefix for validation failures.
+        state: The search state declaration.
+        props: The component's property contracts.
+    """
+    _validate_editing_projection(where, props, text="text", report="onEdit")
+    if state.get("dismiss") is not None:
+        die(f"{where}: search has no dismissal callback")
+
+
 def _validate_state(
     name: str,
     props: dict[str, Any],
@@ -222,6 +235,11 @@ def _validate_state(
     if reported.get("type") != "actionId":
         die(f"{where}: prop {report!r} must be an actionId")
     _validate_reported_payload(where, report, reported, prop["type"])
+    if kind == "search":
+        # A search owner shares one editing projection with every nested
+        # surface; the text and its atomic report are fixed names because the
+        # holder constructs both states from them.
+        _validate_search(where, state, props)
     dismiss = state.get("dismiss")
     if dismiss is not None:
         _claimed_parameter(where, "dismiss", dismiss, claimed | {injected})
@@ -254,18 +272,25 @@ def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None
         die(f"{where}: prop {gate!r} must be a boolean")
 
 
-def _validate_text_input(
-    where: str, state: dict[str, Any], props: dict[str, Any]
+def _validate_editing_projection(
+    where: str, props: dict[str, Any], *, text: str, report: str | None
 ) -> None:
     """Text, selection and revision form one required editing projection.
 
+    A component that owns editing names its text prop and its atomic report;
+    the bounds are the native UTF-16 selection limits, and the report carries
+    all four fields in one payload so a host acknowledgement can never apply a
+    text and a selection from different edits.
+
     Args:
         where: Prefix for validation failures.
-        state: The text-input state declaration.
         props: The component's property contracts.
+        text: Name of the required text prop.
+        report: Name of the action reporting the complete editing value, or
+            None when the declaration names no report.
     """
     expected = {
-        state["value"]: "string",
+        text: "string",
         "selectionStart": "integer",
         "selectionEnd": "integer",
         "revision": "integer",
@@ -279,13 +304,12 @@ def _validate_text_input(
         maximum = 9223372036854775807 if name == "revision" else 2147483647
         if prop.get("minimum") != 0 or prop.get("maximum") != maximum:
             die(f"{where}: prop {name!r} needs native nonnegative bounds")
-    report_name = state.get("report")
-    report = props.get(report_name, {}) if isinstance(report_name, str) else {}
-    payload = report.get("payload", [])
+    report_prop = props.get(report, {}) if report is not None else {}
+    payload = report_prop.get("payload", [])
     fields = {field["name"]: field["type"] for field in payload}
     if (
-        report.get("type") != "actionId"
-        or not report.get("required")
+        report_prop.get("type") != "actionId"
+        or not report_prop.get("required")
         or len(payload) != 4
         or fields
         != {
@@ -296,6 +320,24 @@ def _validate_text_input(
         }
     ):
         die(f"{where}: report needs the atomic text/selection/revision payload")
+
+
+def _validate_text_input(
+    where: str, state: dict[str, Any], props: dict[str, Any]
+) -> None:
+    """Validate a text-input family's editing projection and dismissal rule.
+
+    Args:
+        where: Prefix for validation failures.
+        state: The text-input state declaration.
+        props: The component's property contracts.
+    """
+    _validate_editing_projection(
+        where,
+        props,
+        text=state["value"],
+        report=state.get("report"),
+    )
     if state.get("dismiss") is not None:
         die(f"{where}: textInput has no dismissal callback")
 

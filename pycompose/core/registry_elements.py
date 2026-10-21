@@ -238,13 +238,17 @@ class SlotRule:
         consume: Slot scope the adapter consumes on the subtree's behalf.
         provides: Composition scope the pinned slot lambda carries, handed to
             the children so a scoped child composes under its provider.
+        host: Whether the host composes the slot with this node's native
+            state instead of passing it to a native parameter. A host slot
+            carries no native policy at all.
     """
 
-    native: str
+    native: str | None
     kind: str = "content"
     nullable: bool = False
     consume: str | None = None
     provides: str | None = None
+    host: bool = False
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> SlotRule:
@@ -261,6 +265,12 @@ class SlotRule:
             ComponentRegistryError: If the slot object is malformed.
         """
         native = data.get("native")
+        if "host" in data:
+            if data.get("host") is not True or set(data) != {"host"}:
+                raise ComponentRegistryError(
+                    f"{where}: a host slot has no native policy"
+                )
+            return cls(native=None, host=True)
         if not isinstance(native, str) or not native:
             raise ComponentRegistryError(f"{where}: 'native' must be a name")
         kind = data.get("kind", "content")
@@ -295,6 +305,8 @@ class SlotRule:
         Returns:
             A JSON-ready dict.
         """
+        if self.host:
+            return {"host": True}
         out: dict[str, object] = {"native": self.native}
         if self.kind != "content":
             out["kind"] = self.kind

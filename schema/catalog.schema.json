@@ -178,14 +178,18 @@
     },
     "slot": {
       "type": "object",
-      "required": ["native"],
+      "oneOf": [
+        { "required": ["native"], "not": { "required": ["host"] } },
+        { "required": ["host"], "maxProperties": 1 }
+      ],
       "additionalProperties": false,
       "properties": {
         "native": { "type": "string" },
         "kind": { "type": "string" },
         "nullable": { "type": "boolean" },
         "consume": { "type": "string" },
-        "provides": { "type": "string" }
+        "provides": { "type": "string" },
+        "host": { "const": true }
       }
     },
     "stateBlock": {
