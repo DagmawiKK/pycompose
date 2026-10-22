@@ -16,6 +16,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -29,17 +30,59 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.json.JsonPrimitive
 
 /**
+ * One node's projection protocol: drive its native holder when the app's desired
+ * value changes, and report each settled native value once.
+ *
+ * The holder belongs to the host and lives exactly as long as the node, so a
+ * snapshot pull never recreates state a gesture is moving. Driving only on a
+ * *change* of the desired value is the whole protocol: re-asserting an unchanged
+ * value would fight a user who just moved the holder by gesture. A native settle
+ * becomes the last desired value, so the app's echo of the report cannot re-drive
+ * it. The report baseline is read during composition, not in the observer: a
+ * holder without anchors yet can settle in the same dispatch as its first drive,
+ * before the observer's first read, and that settle must still be reported.
+ *
+ * Families differ only in what they pass. [lastDesired] starts at the desired
+ * value and is saveable where the holder is created at that value and restored.
+ *
+ * @param state The node's remembered native holder; both effects are keyed to it.
+ * @param desired The app's desired value; null drives nothing.
+ * @param lastDesired The last value driven or settled.
+ * @param settled Reads the holder's settled value in wire terms.
+ * @param report Dispatches one settled value to the app; null reports none.
+ * @param drive Moves the holder towards a desired value.
+ */
+@Suppress("LongParameterList")
+@Composable
+internal fun <V : Any> Reconcile(
+    state: Any,
+    desired: V?,
+    lastDesired: MutableState<V?>,
+    settled: () -> V,
+    report: ((V) -> Unit)?,
+    drive: suspend (V) -> Unit,
+) {
+    val baseline = remember(state) { Settled(settled()) }
+    val channel = rememberUpdatedState(report)
+    LaunchedEffect(state, desired) {
+        if (desired != lastDesired.value) {
+            lastDesired.value = desired
+            desired?.let { drive(it) }
+        }
+    }
+    LaunchedEffect(state) {
+        snapshotFlow(settled).collect { value ->
+            if (value != baseline.value) {
+                baseline.value = value
+                lastDesired.value = value
+                channel.value?.invoke(value)
+            }
+        }
+    }
+}
+
+/**
  * The host-owned drawer state for one node, reconciled to the app's desired value.
- *
- * The state belongs to the host and lives exactly as long as the node: it is
- * remembered under the node's key, so pulling a snapshot re-renders the tree
- * without recreating state a gesture is already moving. Python states the
- * desired value in the snapshot; the host drives the state towards it, gestures
- * and animation included, and reports each settled change as an action.
- *
- * Driving only on a *change* of the desired value is the whole protocol:
- * re-asserting the value on every snapshot would fight a user who just swiped
- * the drawer shut, and that change is exactly what the report tells the app.
  *
  * @param open Desired state; null leaves the state to the app's gestures.
  * @param report Action id settled changes report to; null reports none.
@@ -52,27 +95,13 @@ internal fun rememberHostDrawerState(
     observation: (String, String, Boolean) -> Unit,
 ): DrawerState {
     val state = rememberDrawerState(DrawerValue.Closed)
-    val settled = remember(state) { Settled(state.currentValue) }
-    LaunchedEffect(state, open) {
-        when (open) {
-            true -> state.open()
-            false -> state.close()
-            null -> Unit
-        }
-    }
-    val channel = rememberUpdatedState(report)
-    LaunchedEffect(state) {
-        // A report is a change from the value composition found. Seeding the
-        // baseline here would lose the first one: a drawer without anchors yet
-        // settles in the same dispatch as the drive, before this flow's first
-        // read.
-        snapshotFlow { state.currentValue }.collect { value ->
-            if (value != settled.value) {
-                settled.value = value
-                channel.value?.let { observation("open", it, value == DrawerValue.Open) }
-            }
-        }
-    }
+    Reconcile(
+        state,
+        open,
+        remember(state) { mutableStateOf<Boolean?>(null) },
+        settled = { state.currentValue == DrawerValue.Open },
+        report = report?.let { id -> { value -> observation("open", id, value) } },
+    ) { if (it) state.open() else state.close() }
     return state
 }
 
@@ -158,9 +187,7 @@ internal fun rememberHostSliderState(
  * A tooltip has no settled callback of its own: hover, focus and long press show
  * it through the native state, an outside click dismisses it, and a
  * non-persistent tooltip closes on its own timer. The holder therefore reports
- * the *visible* transition rather than a gesture callback, and treats a native
- * change as the new baseline so the app's echo of that change cannot re-show a
- * tooltip the user just dismissed.
+ * the *visible* transition rather than a gesture callback.
  *
  * @param visible Desired visibility; null leaves the tooltip to its gestures.
  * @param isPersistent Whether the native tooltip waits for an explicit dismissal.
@@ -176,32 +203,20 @@ internal fun rememberHostTooltipState(
     observation: (String, String, Boolean) -> Unit,
 ): TooltipState {
     val state = rememberTooltipState(isPersistent = isPersistent)
-    val lastDesired = remember(state) { mutableStateOf<Boolean?>(null) }
-    val settled = remember(state) { Settled(state.isVisible) }
-    val channel = rememberUpdatedState(report)
-    val currentObservation = rememberUpdatedState(observation)
-    LaunchedEffect(state, visible) {
-        if (visible != lastDesired.value) {
-            lastDesired.value = visible
-            when (visible) {
-                true -> {
-                    // Let the anchor's initial unfocused notification run first:
-                    // native keyboard handling dismisses a visible tooltip there.
-                    withFrameNanos { }
-                    state.show()
-                }
-                false -> state.dismiss()
-                null -> Unit
-            }
-        }
-    }
-    LaunchedEffect(state) {
-        snapshotFlow { state.isVisible }.collect { value ->
-            if (value != settled.value) {
-                settled.value = value
-                lastDesired.value = value
-                channel.value?.let { currentObservation.value("visible", it, value) }
-            }
+    Reconcile(
+        state,
+        visible,
+        remember(state) { mutableStateOf<Boolean?>(null) },
+        settled = { state.isVisible },
+        report = report?.let { id -> { value -> observation("visible", id, value) } },
+    ) {
+        if (it) {
+            // Let the anchor's initial unfocused notification run first:
+            // native keyboard handling dismisses a visible tooltip there.
+            withFrameNanos { }
+            state.show()
+        } else {
+            state.dismiss()
         }
     }
     return state
