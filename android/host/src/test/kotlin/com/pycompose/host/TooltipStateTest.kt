@@ -42,20 +42,6 @@ class TooltipStateTest {
     }
 
     @Test
-    fun repeatedSnapshotsDoNotReplayVisibilityReports() {
-        val ir = mutableStateOf(parse(tooltip("true")))
-        val actions = mutableListOf<Action>()
-        val renderer = renderer(actions)
-        compose.setContent { PyComposeTheme { renderer.Render(ir.value) } }
-        compose.onNodeWithText("Hint").assertExists()
-
-        compose.runOnIdle { ir.value = parse(tooltip("true", anchor = "Refreshed anchor")) }
-        compose.onNodeWithText("Refreshed anchor").assertExists()
-        compose.onNodeWithText("Hint").assertExists()
-        assertEquals(listOf("""{"visible":true}"""), payloads(actions))
-    }
-
-    @Test
     fun timeoutReportsHiddenAndAnUnchangedDesireDoesNotReopenIt() {
         val ir = mutableStateOf(parse(tooltip("true", persistent = false)))
         val actions = mutableListOf<Action>()

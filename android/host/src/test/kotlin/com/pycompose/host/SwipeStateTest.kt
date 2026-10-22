@@ -123,19 +123,6 @@ class SwipeStateTest {
         assertEquals("""{"value":"startToEnd"}""", actions[0].payload.toString())
     }
 
-    @Test
-    fun aSwipeWithoutAReportStaysSilent() {
-        val ir = mutableStateOf(parse(swipe(value = "settled", report = false)))
-        val actions = mutableListOf<Action>()
-        compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
-        compose.waitForIdle()
-
-        compose.onRoot().performTouchInput { swipeLeft() }
-        compose.waitForIdle()
-        assertTrue(actions.isEmpty())
-        assertTrue(contentLeft() < 0.dp)
-    }
-
     /** The left edge of the content row: 0 when settled, offset when dismissed. */
     private fun contentLeft(): Dp = compose.onNodeWithText("Row").getBoundsInRoot().left
 

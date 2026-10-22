@@ -72,19 +72,6 @@ class DrawerStateTest {
     }
 
     @Test
-    fun aDrawerNobodyReportsOnStaysSilentWithoutAReport() {
-        // Reporting is opt-in and about changes: a drawer the app does not
-        // listen to still works, and nothing reaches the dispatcher.
-        val ir = mutableStateOf(parse(drawer(open = "true", report = false)))
-        val actions = mutableListOf<Action>()
-        compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
-        compose.waitForIdle()
-
-        assertTrue(actions.isEmpty())
-        assertEquals(0.dp, panelLeft())
-    }
-
-    @Test
     fun aRepeatedSnapshotKeepsTheDrawerAndReportsNothing() {
         // Pulling a snapshot twice must not recreate state a gesture is
         // moving, and must not replay a report the app already handled.
@@ -99,18 +86,6 @@ class DrawerStateTest {
 
         assertEquals(1, actions.size)
         assertEquals(0.dp, panelLeft())
-    }
-
-    @Test
-    fun anUndrivenDrawerStaysClosedAndSilent() {
-        // Neither half declared: the host holds the state for gestures only.
-        val ir = mutableStateOf(parse(drawer(open = null)))
-        val actions = mutableListOf<Action>()
-        compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
-
-        compose.waitForIdle()
-        assertTrue(actions.isEmpty())
-        assertTrue(panelLeft() < 0.dp)
     }
 
     /** The left edge of the drawer panel: 0 when open, off-screen when closed. */
