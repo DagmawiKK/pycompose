@@ -18,6 +18,7 @@ from typing import cast
 
 from pycompose.core.node import Node, Props
 from pycompose.core.registry_types import ComponentDef
+from pycompose.core.reuse import SubtreeMemo
 from pycompose.core.traversal import NodeCycleError, walk_nodes
 from pycompose.errors import IrValidationError
 from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
@@ -52,6 +53,8 @@ class _Validation:
         self.issues: list[ValidationIssue] = []
         self.ids: set[str] = set()
         self.path: list[str] = []
+        # Clean subtrees from the last pass, with every id each one claims.
+        self.memo: SubtreeMemo[tuple[str, ...]] | None = None
 
     def report(self, message: str, node: Node, prop: str | None = None) -> None:
         from pycompose.ir.validator import ValidationIssue
@@ -221,25 +224,13 @@ class _Validation:
             # rather than the app's whole first frame.
             self.report("the root cannot fill a slot", root)
             root = replace(root, slot=None)
-        frames: list[_NodeFrame | None] = []
-        safe: Node | None = None
+        walk = _Walk(self)
         try:
-            for node, entering in walk_nodes(root):
+            for node, entering in walk_nodes(root, walk.prune):
                 if entering:
-                    self.path.append(node.id)
-                    parent = frames[-1] if frames else None
-                    enabled = not frames or (
-                        parent is not None and _child_allowed(parent, node)
-                    )
-                    frames.append(self.prepare(node) if enabled else None)
+                    walk.enter(node)
                 else:
-                    safe = self.finish(node, frames.pop())
-                    self.path.pop()
-                    parent = frames[-1] if frames else None
-                    if safe is not None and parent is not None:
-                        parent.children.append(safe)
-                        if safe.slot is None:
-                            parent.unslotted += 1
+                    walk.exit(node)
         except NodeCycleError as exc:
             if self.debug:
                 raise
@@ -252,7 +243,81 @@ class _Validation:
                 )
             )
             return None
-        return safe
+        return walk.safe
+
+
+@dataclass(slots=True)
+class _Visit:
+    frame: _NodeFrame | None
+    reused: tuple[str, ...] | None
+    issues: int
+    ids: list[str] = field(default_factory=list)
+
+
+class _Walk:
+    """One validation walk; a subtree that was clean last pass is not re-checked.
+
+    Validity of a subtree depends only on itself and the schema version, given
+    the parent accepts it, which is still checked here. Its ids are claimed
+    again, so a duplicate across subtrees is still found.
+    """
+
+    def __init__(self, validation: _Validation) -> None:
+        self.validation = validation
+        self.visits: list[_Visit] = []
+        self.candidate: tuple[str, ...] | None = None
+        self.safe: Node | None = None
+
+    def prune(self, node: Node) -> bool:
+        memo = self.validation.memo
+        self.candidate = (
+            memo.get(node, self.validation.schema_version) if memo is not None else None
+        )
+        return self.candidate is not None
+
+    def enter(self, node: Node) -> None:
+        validation = self.validation
+        validation.path.append(node.id)
+        reused, self.candidate = self.candidate, None
+        parent = self.visits[-1].frame if self.visits else None
+        enabled = not self.visits or (
+            parent is not None and _child_allowed(parent, node)
+        )
+        visit = _Visit(None, reused, len(validation.issues))
+        if not enabled:
+            # The parent refuses this node, so nothing beneath it survives.
+            visit.reused = None
+        elif reused is None:
+            visit.frame = validation.prepare(node)
+            if visit.frame is not None:
+                visit.ids.append(node.id)
+        elif validation.ids.isdisjoint(reused):
+            validation.ids.update(reused)
+            visit.ids.extend(reused)
+        else:
+            validation.report("duplicate node id", node)
+            visit.reused = None
+        self.visits.append(visit)
+
+    def exit(self, node: Node) -> None:
+        validation = self.validation
+        visit = self.visits.pop()
+        if visit.reused is not None:
+            safe: Node | None = node
+        else:
+            safe = validation.finish(node, visit.frame)
+            clean = safe is node and len(validation.issues) == visit.issues
+            if clean and validation.memo is not None:
+                validation.memo.put(node, tuple(visit.ids), validation.schema_version)
+        validation.path.pop()
+        self.safe = safe
+        if self.visits:
+            parent = self.visits[-1]
+            parent.ids.extend(visit.ids)
+            if safe is not None and parent.frame is not None:
+                parent.frame.children.append(safe)
+                if safe.slot is None:
+                    parent.frame.unslotted += 1
 
 
 def _child_allowed(parent: _NodeFrame, child: Node) -> bool:

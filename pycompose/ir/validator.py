@@ -17,6 +17,7 @@ from pycompose.core.action_binding import ActionBinding, BindingSpec, read_bindi
 from pycompose.core.node import Node
 from pycompose.core.registry_types import PropDef
 from pycompose.core.resources import valid_resource
+from pycompose.core.reuse import Reuse
 from pycompose.core.values import validate_bounds, validate_number, validate_value
 from pycompose.errors import ComponentRegistryError, IrValidationError
 from pycompose.ir.data import DATA_SCHEMA, read_data
@@ -231,7 +232,9 @@ def _section_ok(
     return True
 
 
-def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
+def validate_ir(
+    snapshot: IRRoot, *, debug: bool = True, reuse: Reuse | None = None
+) -> ValidationResult:
     """Validate a snapshot against the generated component registry.
 
     Debug failures raise IrValidationError with node/prop context. Version
@@ -242,6 +245,8 @@ def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
     Args:
         snapshot: Candidate full snapshot.
         debug: Raise on invalid IR instead of returning degradation diagnostics.
+        reuse: The session's subtrees that were clean last pass, skipped when
+            they recur; None validates every node.
 
     Returns:
         The validated snapshot and deterministic diagnostics.
@@ -255,6 +260,9 @@ def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
     )
     require_version(snapshot.version, minimum=MIN_LIBRARY_VERSION, field="version")
     validation = _Validation(debug, snapshot.schema_version)
+    if reuse is not None:
+        reuse.validated.start()
+        validation.memo = reuse.validated
     metadata = snapshot.metadata
     if metadata is not None:
         try:

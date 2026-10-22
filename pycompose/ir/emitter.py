@@ -8,14 +8,17 @@ retain split paths. Already qualified, unchanged branches preserve identity.
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import dataclass, field
+from typing import cast
 
-from pycompose.core.expansion import ExpansionMemo, expand_nodes
+from pycompose.core.expansion import expand_nodes
 from pycompose.core.ids import ROOT_ID, IdRegistry, child_id
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
+from pycompose.core.reuse import Reuse, SubtreeMemo
 from pycompose.core.traversal import walk_nodes
 from pycompose.errors import IrValidationError
-from pycompose.ir.bindings import lower_bindings
+from pycompose.ir.bindings import lower_props, record
 from pycompose.ir.data import lower_data
 from pycompose.ir.effects import lower_effects
 from pycompose.ir.generated_validators import (
@@ -30,9 +33,7 @@ from pycompose.state.state import State
 __all__ = ["emit_ir"]
 
 
-def emit_ir(
-    state: State, schema_version: str, memo: ExpansionMemo | None = None
-) -> IRRoot:
+def emit_ir(state: State, schema_version: str, reuse: Reuse | None = None) -> IRRoot:
     """Emit a full candidate snapshot without I/O, clock or environment reads.
 
     Unsupported schemas propagate SchemaError; stable-key collisions propagate
@@ -43,8 +44,8 @@ def emit_ir(
     Args:
         state: Frozen snapshot from the Store's current composition surface.
         schema_version: Requested wire contract version.
-        memo: The session's previous expansions, reused where a composable's
-            inputs are unchanged; None expands every declaration.
+        reuse: The session's results from the previous publish, reused where
+            a subtree is unchanged; None emits everything afresh.
 
     Returns:
         A versioned IR snapshot.
@@ -56,8 +57,18 @@ def emit_ir(
         maximum=SCHEMA_VERSION,
         supported=REGISTRY.supported_schema_versions or (SCHEMA_VERSION,),
     )
-    root = _emit_node(expand_nodes(state.root, memo), ROOT_ID, IdRegistry())
-    root, bindings = lower_bindings(root)
+    if reuse is not None:
+        reuse.emitted.start()
+    root, contracts = _emit_node(
+        expand_nodes(state.root, reuse.expansion if reuse else None),
+        IdRegistry(),
+        reuse.emitted if reuse else None,
+    )
+    bindings = (
+        cast("Mapping[str, JsonValue]", {"actionBindings": contracts})
+        if contracts
+        else None
+    )
     metadata: Mapping[str, JsonValue] | None = None
     # Binding contracts, effect requests and app data share one metadata object;
     # their keys never collide, so a merge preserves both declaration orders.
@@ -71,52 +82,143 @@ def emit_ir(
     return IRRoot(root=root, schema_version=schema_version, metadata=metadata)
 
 
-def _emit_node(node: Node, node_id: str, ids: IdRegistry) -> Node:
-    frames: list[tuple[str, list[Node]]] = []
-    result = node
-    for source, entering in walk_nodes(node):
-        if entering:
-            qualified = node_id
-            if frames:
-                parent_id, collected = frames[-1]
-                if source.id:
-                    # Full-path ids stay stable; local ids become sibling keys.
-                    qualified = (
-                        source.id
-                        if source.id.startswith(f"{parent_id}.")
-                        else child_id(parent_id, source.id)
-                    )
-                else:
-                    # An auto node: nothing can name it, so its position
-                    # among its siblings is its identity.
-                    if _addressable(source):
-                        raise IrValidationError(
-                            "a component with bindings needs an explicit id",
-                            node_type=source.type,
-                        )
-                    qualified = child_id(parent_id, len(collected))
-            ids.claim(qualified, node_type=source.type)
-            frames.append((qualified, []))
+@dataclass(frozen=True, slots=True)
+class _Emitted:
+    """One emitted subtree: its node, every (id, type) in it, and its bindings."""
+
+    node: Node
+    ids: tuple[tuple[str, str], ...]
+    contracts: tuple[tuple[str, object], ...]
+
+
+@dataclass(slots=True)
+class _Frame:
+    qualified: str
+    reused: _Emitted | None
+    context: object
+    children: list[Node] = field(default_factory=list)
+    ids: list[tuple[str, str]] = field(default_factory=list)
+    contracts: list[tuple[str, object]] = field(default_factory=list)
+
+
+class _Emission:
+    """Qualify ids and lower bindings in one walk, reusing unchanged subtrees.
+
+    A subtree's emission depends on the subtree and on where it hangs: its
+    parent's qualified id, and its position when it has no id of its own. Both
+    form the memo context, so a reused subtree is exactly what a fresh walk
+    would produce, and its ids and binding contracts are replayed, not redone.
+    """
+
+    def __init__(self, ids: IdRegistry, memo: SubtreeMemo[_Emitted] | None) -> None:
+        self.ids = ids
+        self.memo = memo
+        self.contracts: dict[str, object] = {}
+        self.frames: list[_Frame] = []
+        self.candidate: _Emitted | None = None
+
+    def context(self, source: Node) -> object:
+        parent = self.frames[-1]
+        return (parent.qualified, None if source.id else len(parent.children))
+
+    def prune(self, source: Node) -> bool:
+        self.candidate = (
+            self.memo.get(source, self.context(source))
+            if self.memo is not None and self.frames
+            else None
+        )
+        return self.candidate is not None
+
+    def enter(self, source: Node) -> None:
+        reused, self.candidate = self.candidate, None
+        context = self.context(source) if self.frames else None
+        if reused is not None:
+            self.frames.append(_Frame(reused.node.id, reused, context))
+            return
+        qualified = self.qualify(source)
+        self.ids.claim(qualified, node_type=source.type)
+        self.frames.append(_Frame(qualified, None, context))
+
+    def qualify(self, source: Node) -> str:
+        if not self.frames:
+            return ROOT_ID
+        parent = self.frames[-1].qualified
+        if source.id:
+            # Full-path ids stay stable; local ids become sibling keys.
+            return (
+                source.id
+                if source.id.startswith(f"{parent}.")
+                else child_id(parent, source.id)
+            )
+        # An auto node: nothing can name it, so its position among its
+        # siblings is its identity.
+        if _addressable(source):
+            raise IrValidationError(
+                "a component with bindings needs an explicit id",
+                node_type=source.type,
+            )
+        return child_id(parent, len(self.frames[-1].children))
+
+    def exit(self, source: Node) -> Node:
+        frame = self.frames.pop()
+        emitted = frame.reused
+        if emitted is not None:
+            for node_id, node_type in emitted.ids:
+                self.ids.claim(node_id, node_type=node_type)
+            for key, wire in emitted.contracts:
+                record(self.contracts, key, wire)
         else:
-            qualified, children = frames.pop()
-            unchanged = qualified == source.id and all(
+            emitted = self.build(source, frame)
+            if self.memo is not None and self.frames:
+                self.memo.put(source, emitted, frame.context)
+        if self.frames:
+            parent = self.frames[-1]
+            parent.children.append(emitted.node)
+            parent.ids.extend(emitted.ids)
+            parent.contracts.extend(emitted.contracts)
+        return emitted.node
+
+    def build(self, source: Node, frame: _Frame) -> _Emitted:
+        def declare(key: str, wire: object) -> None:
+            record(self.contracts, key, wire)
+            frame.contracts.append((key, wire))
+
+        props = lower_props(source.props, declare)
+        unchanged = (
+            frame.qualified == source.id
+            and props is source.props
+            and all(
                 left is right
-                for left, right in zip(children, source.children, strict=True)
+                for left, right in zip(frame.children, source.children, strict=True)
             )
-            result = (
-                source
-                if unchanged
-                else Node(
-                    id=qualified,
-                    type=source.type,
-                    props=source.props,
-                    children=tuple(children),
-                    slot=source.slot,
-                )
+        )
+        node = (
+            source
+            if unchanged
+            else Node(
+                id=frame.qualified,
+                type=source.type,
+                props=props,
+                children=tuple(frame.children),
+                slot=source.slot,
             )
-            if frames:
-                frames[-1][1].append(result)
-    return result
+        )
+        return _Emitted(
+            node, ((frame.qualified, source.type), *frame.ids), tuple(frame.contracts)
+        )
+
+
+def _emit_node(
+    root: Node, ids: IdRegistry, memo: SubtreeMemo[_Emitted] | None
+) -> tuple[Node, dict[str, object]]:
+    emission = _Emission(ids, memo)
+    result = root
+    for source, entering in walk_nodes(root, emission.prune):
+        if entering:
+            emission.enter(source)
+        else:
+            result = emission.exit(source)
+    return result, emission.contracts
 
 
 def _addressable(node: Node) -> bool:

@@ -8,6 +8,7 @@ from threading import current_thread
 from pycompose.bridge.types import decode_action
 from pycompose.core.action_binding import BindingSpec
 from pycompose.core.expansion import ExpansionMemo
+from pycompose.core.reuse import Reuse
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
@@ -63,7 +64,7 @@ class BridgeSurface:
         self._bindings: dict[str, BindingSpec] = {}
         self._deliveries = Dispatcher()
         # Debug re-expands a sample of reused composables to catch impure ones.
-        self._memo = ExpansionMemo(verify_every=VERIFY_EVERY if debug else 0)
+        self._reuse = Reuse(ExpansionMemo(verify_every=VERIFY_EVERY if debug else 0))
         try:
             self._latest, self._bindings = self._snapshot(store.value)
         except SchemaError:
@@ -92,7 +93,9 @@ class BridgeSurface:
 
     def _snapshot(self, state: State) -> tuple[str | None, dict[str, BindingSpec]]:
         result = validate_ir(
-            emit_ir(state, self._schema_version, self._memo), debug=self._debug
+            emit_ir(state, self._schema_version, self._reuse),
+            debug=self._debug,
+            reuse=self._reuse,
         )
         for issue in result.issues:
             LOGGER.warning("IR validation: %s", issue)
@@ -100,7 +103,7 @@ class BridgeSurface:
             return None, {}
         bindings = dict(result.bindings)
         self._actions.validate_bindings(bindings)
-        return to_json(result.snapshot), bindings
+        return to_json(result.snapshot, self._reuse), bindings
 
     def accept_action(self, action_json: str) -> None:
         """Process one action synchronously; errors never escape to the host.

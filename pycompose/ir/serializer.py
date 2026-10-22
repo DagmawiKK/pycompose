@@ -12,6 +12,7 @@ from __future__ import annotations
 from pycompose.core.expansion import DeferredNode
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
+from pycompose.core.reuse import Reuse, SubtreeMemo
 from pycompose.core.traversal import walk_nodes
 from pycompose.errors import IrValidationError
 from pycompose.ir.model import IRRoot
@@ -76,16 +77,18 @@ def to_dict(snapshot: Node | IRRoot) -> dict[str, JsonValue]:
     return dict(sorted(result.items()))
 
 
-def to_json(snapshot: Node | IRRoot) -> str:
+def to_json(snapshot: Node | IRRoot, reuse: Reuse | None = None) -> str:
     """Serialize a snapshot with sorted keys and compact UTF-8 JSON.
 
     Args:
         snapshot: Node or versioned snapshot.
+        reuse: The session's subtree bytes from the last pass, copied in
+            where a subtree recurs; None writes everything.
 
     Returns:
         Deterministic JSON text.
     """
-    return to_json_bytes(snapshot).decode("utf-8")
+    return to_json_bytes(snapshot, reuse).decode("utf-8")
 
 
 def node_bytes(node: Node) -> bytes:
@@ -104,18 +107,31 @@ def node_bytes(node: Node) -> bytes:
     return bytes(output)
 
 
-def _write_node(output: bytearray, root: Node) -> None:
+def _write_node(
+    output: bytearray, root: Node, memo: SubtreeMemo[bytes] | None = None
+) -> None:
     """Stream one node subtree into ``output`` in fixed key order.
+
+    A subtree whose bytes were recorded last pass is copied in whole, and every
+    subtree written here is recorded for the next one.
 
     Args:
         output: Buffer the bytes are appended to.
         root: Subtree to serialize.
+        memo: Last pass's subtree bytes; None writes everything.
 
     Raises:
         IrValidationError: If a Python declaration has not been expanded.
     """
     sibling_counts: list[int] = []
-    for node, entering in walk_nodes(root):
+    starts: list[int] = []
+    cached: list[bytes | None] = [None]
+
+    def prune(node: Node) -> bool:
+        cached[0] = memo.get(node) if memo is not None else None
+        return cached[0] is not None
+
+    for node, entering in walk_nodes(root, prune):
         if isinstance(node, DeferredNode):
             raise IrValidationError("expand Python declarations before serialization")
         if entering:
@@ -123,10 +139,18 @@ def _write_node(output: bytearray, root: Node) -> None:
                 if sibling_counts[-1]:
                     output.extend(b",")
                 sibling_counts[-1] += 1
+            starts.append(len(output))
+            reused, cached[0] = cached[0], None
+            if reused is not None:
+                output.extend(reused)
+                sibling_counts.append(-1)
+                continue
             output.extend(b'{"children":[' if node.children else b"{")
             sibling_counts.append(0)
         else:
-            sibling_counts.pop()
+            start = starts.pop()
+            if sibling_counts.pop() < 0:
+                continue
             if node.children:
                 output.extend(b"],")
             output.extend(b'"id":')
@@ -139,15 +163,19 @@ def _write_node(output: bytearray, root: Node) -> None:
             output.extend(b',"type":')
             output.extend(canonical_json_bytes(node.type))
             output.extend(b"}")
+            if memo is not None:
+                memo.put(node, bytes(memoryview(output)[start:]))
 
 
-def to_json_bytes(snapshot: Node | IRRoot) -> bytes:
+def to_json_bytes(snapshot: Node | IRRoot, reuse: Reuse | None = None) -> bytes:
     """Serialize a snapshot to canonical UTF-8 bytes.
 
     Unexpanded Python declarations raise :class:`IrValidationError`.
 
     Args:
         snapshot: Node or versioned snapshot.
+        reuse: The session's subtree bytes from the last pass, copied in
+            where a subtree recurs; None writes everything.
 
     Returns:
         Deterministic UTF-8 bytes.
@@ -161,7 +189,9 @@ def to_json_bytes(snapshot: Node | IRRoot) -> bytes:
             output.extend(canonical_json_bytes(snapshot.metadata))
             output.extend(b",")
         output.extend(b'"root":')
-    _write_node(output, root)
+    if reuse is not None:
+        reuse.serialized.start()
+    _write_node(output, root, reuse.serialized if reuse is not None else None)
     if isinstance(snapshot, IRRoot):
         output.extend(b',"schemaVersion":')
         output.extend(canonical_json_bytes(snapshot.schema_version))
