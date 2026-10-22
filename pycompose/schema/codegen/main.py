@@ -54,6 +54,7 @@ PYTHON_EXPORTS_PATH = ROOT / "pycompose/m3/__init__.py"
 KOTLIN_VALUES_RELATIVE = Path(
     "android/renderer/src/main/kotlin/com/pycompose/renderer/generated/ValueResolver.kt"
 )
+KOTLIN_DRIVES_RELATIVE = KOTLIN_VALUES_RELATIVE.with_name("HolderDrives.kt")
 
 
 def _read(path: Path) -> str | None:
@@ -112,6 +113,7 @@ def build_app(
         render_python_components,
         render_python_exports,
     )
+    from pycompose.schema.codegen.holders_kotlin import render_holder_drives
     from pycompose.schema.codegen.values import render_python
     from pycompose.schema.codegen.values_kotlin import (
         render_models,
@@ -151,6 +153,10 @@ def build_app(
         native / _IR_RELATIVE / "IrContract.kt": render_kotlin_registry(sliced),
         native / _IR_RELATIVE / "ValueModels.kt": render_models(sliced),
         native / _VALUES_RELATIVE: render_native(sliced),
+        # The renderer's own holder code calls every drive, used or not: unsliced.
+        native / _VALUES_RELATIVE.with_name("HolderDrives.kt"): render_holder_drives(
+            registry
+        ),
         native / _ADAPTERS_RELATIVE: render_generated_adapters(sliced),
     }
 
@@ -274,6 +280,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         render_validators,
     )
     from pycompose.schema.codegen.emit_wire import render_ir_schema
+    from pycompose.schema.codegen.holders_kotlin import render_holder_drives
     from pycompose.schema.codegen.values import render_python as render_values
     from pycompose.schema.codegen.values_kotlin import (
         render_models,
@@ -295,6 +302,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         ROOT / KOTLIN_VALUES_RELATIVE: render_native(registry),
     }
     artifacts[KOTLIN_ADAPTERS_PATH] = render_generated_adapters(registry)
+    artifacts[ROOT / KOTLIN_DRIVES_RELATIVE] = render_holder_drives(registry)
     return artifacts
 
 

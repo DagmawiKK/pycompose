@@ -12,8 +12,15 @@ if __package__ in (None, ""):  # pragma: no cover - only when run as a script
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pycompose.core.registry_types import SCOPE_PATHS
-from tools.schema.classpath_dump import DUMP_DIR, Inventory, inventory, source_defaults
+from tools.schema.classpath_dump import (
+    DUMP_DIR,
+    Inventory,
+    inventory,
+    source_defaults,
+    source_drives,
+)
 from tools.schema.component_binding import resolutions
+from tools.schema.holders import derive as derive_holders
 from tools.schema.propose import refresh
 
 DERIVED = ("source", "kotlinType", "native", "omitted")
@@ -281,6 +288,27 @@ def compare_values(
     return errors
 
 
+def compare_holders(
+    registry: dict[str, Any], found: Inventory, drives: dict
+) -> list[str]:
+    """Re-derive the ``holders`` section and report any difference.
+
+    Args:
+        registry: The approved catalog.
+        found: The validated inventory of the current pin.
+        drives: Drive evidence keyed by JVM identity.
+
+    Returns:
+        Refusals, plus one drift message carrying the re-derived section.
+    """
+    derived, errors = derive_holders(found, drives, registry)
+    if registry.get("holders", {}) != derived:
+        errors.append(
+            f"holders: {DRIFT}; derived: {json.dumps(derived, sort_keys=True)}"
+        )
+    return errors
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--directory", type=Path, default=DUMP_DIR)
@@ -289,8 +317,10 @@ def main(argv: list[str] | None = None) -> int:
     try:
         registry = json.loads(args.schema.read_text())
         found = inventory(args.directory)
-        errors = compare(registry, found) + compare_values(
-            registry, found, source_defaults(args.directory)
+        errors = (
+            compare(registry, found)
+            + compare_values(registry, found, source_defaults(args.directory))
+            + compare_holders(registry, found, source_drives(args.directory))
         )
         for error in errors:
             print(error, file=sys.stderr)

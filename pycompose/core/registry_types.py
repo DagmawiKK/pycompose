@@ -184,28 +184,32 @@ class AbstractComponentRegistry(ABC):
         ...
 
 
-def _value_types(value: object) -> dict[str, Mapping[str, object]]:
-    """Parse the declared structured-value encodings.
+def _named_objects(
+    data: Mapping[str, object], section: str
+) -> dict[str, Mapping[str, object]]:
+    """Parse an optional section of named objects the runtime carries but does not read.
 
     Args:
-        value: The raw ``valueTypes`` section, absent on older schemas.
+        data: The parsed registry JSON.
+        section: The section's key, e.g. ``valueTypes`` or ``holders``.
 
     Returns:
-        Each family's encoding and shape, by name.
+        Each entry's object, by name; empty when the section is absent.
 
     Raises:
         ComponentRegistryError: If the section is present but malformed.
     """
+    value = data.get(section)
     if value is None:
         return {}
     if not isinstance(value, Mapping):
-        raise ComponentRegistryError("'valueTypes' must be an object")
-    families: dict[str, Mapping[str, object]] = {}
+        raise ComponentRegistryError(f"{section!r} must be an object")
+    entries: dict[str, Mapping[str, object]] = {}
     for name, spec in value.items():
         if not isinstance(spec, Mapping):
-            raise ComponentRegistryError(f"valueTypes.{name} must be an object")
-        families[name] = dict(spec)
-    return families
+            raise ComponentRegistryError(f"{section}.{name} must be an object")
+        entries[name] = dict(spec)
+    return entries
 
 
 @dataclass(frozen=True, slots=True)
@@ -227,6 +231,8 @@ class Registry(AbstractComponentRegistry):
             Material3 carries thousands of parameters typed ``Color``, ``Dp`` or
             ``Shape``; these say how each family crosses as JSON, so a new
             Compose type costs one entry rather than a new mechanism.
+        holders: Each native state holder's derived drive table, by class.
+            Host codegen reads it; the Python runtime only carries it.
     """
 
     schema_version: str
@@ -242,11 +248,13 @@ class Registry(AbstractComponentRegistry):
     value_types: Mapping[str, Mapping[str, object]] = dataclass_field(
         default_factory=dict
     )
+    holders: Mapping[str, Mapping[str, object]] = dataclass_field(default_factory=dict)
 
     def __post_init__(self) -> None:
         object.__setattr__(
             self, "value_types", MappingProxyType(dict(self.value_types))
         )
+        object.__setattr__(self, "holders", MappingProxyType(dict(self.holders)))
         object.__setattr__(
             self, "supported_schema_versions", tuple(self.supported_schema_versions)
         )
@@ -326,7 +334,8 @@ class Registry(AbstractComponentRegistry):
             lifecycle=lifecycle,
             modifiers=_parse_modifiers(data.get("modifiers", {})),
             supported_schema_versions=tuple(supported),
-            value_types=_value_types(data.get("valueTypes")),
+            value_types=_named_objects(data, "valueTypes"),
+            holders=_named_objects(data, "holders"),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -361,10 +370,12 @@ class Registry(AbstractComponentRegistry):
             }
         if self.supported_schema_versions:
             result["supportedSchemaVersions"] = list(self.supported_schema_versions)
-        if self.value_types:
-            result["valueTypes"] = {
-                name: dict(spec) for name, spec in self.value_types.items()
-            }
+        for section, entries in (
+            ("valueTypes", self.value_types),
+            ("holders", self.holders),
+        ):
+            if entries:
+                result[section] = {name: dict(spec) for name, spec in entries.items()}
         return result
 
     def component(self, name: str) -> ComponentDef:

@@ -125,7 +125,8 @@ private fun resolveTargets(
         val defaults = Defaults(context)
         val results =
             request.getAsJsonArray("targets").map { record ->
-                resolveTarget(record.asJsonObject, declarations, defaults)
+                resolveTarget(record.asJsonObject, declarations, defaults) +
+                    driveEvidence(record.asJsonObject, declarations, context)
             }
         val added = defaults.missing.flatMap { index.declaring(it) }.filter { files.add(it) }
         if (added.isEmpty()) {

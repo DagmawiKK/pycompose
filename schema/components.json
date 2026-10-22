@@ -12183,5 +12183,53 @@
         ]
       }
     }
+  },
+  "holders": {
+    "androidx.compose.material3.DrawerState": {
+      "value": "androidx.compose.material3.DrawerValue",
+      "optIn": [],
+      "drives": {
+        "Closed": {
+          "method": "close"
+        },
+        "Open": {
+          "method": "open"
+        }
+      }
+    },
+    "androidx.compose.material3.SheetState": {
+      "value": "androidx.compose.material3.SheetValue",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "drives": {
+        "Hidden": {
+          "method": "hide"
+        },
+        "Expanded": {
+          "method": "expand"
+        },
+        "PartiallyExpanded": {
+          "method": "partialExpand"
+        }
+      }
+    },
+    "androidx.compose.material3.SwipeToDismissBoxState": {
+      "value": "androidx.compose.material3.SwipeToDismissBoxValue",
+      "optIn": [],
+      "drives": {
+        "StartToEnd": {
+          "method": "dismiss",
+          "anchor": true
+        },
+        "EndToStart": {
+          "method": "dismiss",
+          "anchor": true
+        },
+        "Settled": {
+          "method": "reset"
+        }
+      }
+    }
   }
 }

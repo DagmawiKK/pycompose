@@ -93,6 +93,13 @@ tasks.register("dumpComposeDefaults") {
         val records = inventory["declarations"] as List<Map<String, Any?>>
         val requested = names.get().split(',').toSet()
         val identities = sources.get().split(',').toSet()
+        // Classes a UI composable takes: their suspend members are drive evidence.
+        val holders =
+            records
+                .filter { it["disposition"] == "ui" }
+                .flatMap { it["parameters"] as List<Map<String, Any?>> }
+                .map { (it["type"] as Map<*, *>)["classifier"] }
+                .toSet()
         val targets =
             records.filter { record ->
                 val owner = record["owner"].toString().substringAfterLast('.')
@@ -103,9 +110,11 @@ tasks.register("dumpComposeDefaults") {
                 val supported = record["disposition"] == "support"
                 val named = requested.contains(record["name"].toString())
                 val constructed = record["name"] == "<init>" && requested.contains(owner)
+                val receiver = (record["dispatchReceiver"] as? Map<*, *>)?.get("classifier")
+                val drive = record["suspend"] == true && receiver in holders
                 record["disposition"] == "ui" ||
                     supported &&
-                    (named || constructed || identities.contains(identity))
+                    (named || constructed || drive || identities.contains(identity))
             }
         check(targets.isNotEmpty()) { "No matching public declarations" }
 

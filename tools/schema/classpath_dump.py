@@ -257,6 +257,30 @@ def source_defaults(
     directory: Path = DUMP_DIR,
 ) -> dict[tuple[str, str, str], dict[str, Any]]:
     """Read compiler-resolved defaults only while artifacts/tool inputs still match."""
+    result = {}
+    for key, declaration in _source_evidence(directory).items():
+        if not declaration["matched"]:
+            # One binding the sources could not pin must not blind the others;
+            # the proposal for it simply loses its defaults and shows as drift.
+            result[key] = {p: UNRESOLVED for p in declaration["defaults"]}
+            continue
+        result[key] = declaration["defaults"]
+    return result
+
+
+def source_drives(
+    directory: Path = DUMP_DIR,
+) -> dict[tuple[str, str, str], dict[str, Any]]:
+    """Read the anchor each holder suspend member drives to, from the same evidence."""
+    return {
+        key: declaration["drive"]
+        for key, declaration in _source_evidence(directory).items()
+        if "drive" in declaration
+    }
+
+
+def _source_evidence(directory: Path) -> dict[tuple[str, str, str], dict[str, Any]]:
+    """Validated source evidence keyed by JVM identity."""
     found = inventory(directory)
     data = json.loads((directory / "defaults.json").read_text(encoding="utf-8"))
     _require(data["formatVersion"] == 1, "unsupported source evidence format")
@@ -285,12 +309,7 @@ def source_defaults(
         jvm = declaration["jvm"]
         key = (declaration["owner"], jvm["name"], jvm["descriptor"])
         _require(key not in result, "ambiguous source evidence")
-        if not declaration["matched"]:
-            # One binding the sources could not pin must not blind the others;
-            # the proposal for it simply loses its defaults and shows as drift.
-            result[key] = {p: UNRESOLVED for p in declaration["defaults"]}
-            continue
-        result[key] = declaration["defaults"]
+        result[key] = declaration
     return result
 
 

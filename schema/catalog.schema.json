@@ -40,9 +40,39 @@
     "valueTypes": {
       "type": "object",
       "additionalProperties": { "$ref": "#/$defs/valueType" }
+    },
+    "holders": {
+      "type": "object",
+      "description": "Derived from pinned sources by tools/schema/holders.py and drift-checked by check_upstream.py; never hand-edited.",
+      "propertyNames": { "$ref": "#/$defs/dottedName" },
+      "additionalProperties": { "$ref": "#/$defs/holder" }
     }
   },
   "$defs": {
+    "holder": {
+      "type": "object",
+      "description": "One native state holder: its value enum and, per enum entry, the public suspend member driving it there.",
+      "required": ["value", "optIn", "drives"],
+      "additionalProperties": false,
+      "properties": {
+        "value": { "$ref": "#/$defs/dottedName" },
+        "optIn": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/dottedName" } },
+        "drives": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/identifier" },
+          "additionalProperties": {
+            "type": "object",
+            "required": ["method"],
+            "additionalProperties": false,
+            "properties": {
+              "method": { "$ref": "#/$defs/identifier" },
+              "anchor": { "const": true }
+            }
+          }
+        }
+      }
+    },
     "semver": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
     "identifier": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
     "dottedName": {
