@@ -258,6 +258,18 @@ native swipes report the anchor they settled on. Both directions and gestures
 are enabled unless `enable_dismiss_from_start_to_end`,
 `enable_dismiss_from_end_to_start`, or `gestures_enabled` say otherwise.
 
+`ModalBottomSheet` retains `open`/`on_open_change` and also accepts `value`
+(`"hidden"`, `"partiallyExpanded"`, `"expanded"`) with `on_value_change`.
+An explicit `value` takes precedence over `open`; its report carries one
+`value: str` field naming the actual settled anchor. Partial expansion requires
+a native partial anchor; short sheets or `skip_partially_expanded=True` fall
+back to expanded. Hidden sheets leave native composition after settling so they
+cannot block the app. The boolean observer reports visibility changes, while
+the anchor observer also reports partial/expanded changes. Initial display uses
+the native opening animation and reports the reconciled anchor. If that opening
+is dismissed before it commits, the observers report `hidden` and a failed
+`open` request.
+
 ## CLI
 
 | Command | What it does |

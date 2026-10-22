@@ -998,6 +998,30 @@
         "owner": "androidx.compose.material3.ModalBottomSheetKt"
       },
       "props": {
+        "value": {
+          "type": "enum",
+          "values": [
+            "hidden",
+            "partiallyExpanded",
+            "expanded"
+          ],
+          "since": "1.23.0"
+        },
+        "onValueChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "since": "1.23.0"
+        },
+        "skipPartiallyExpanded": {
+          "type": "boolean",
+          "default": false,
+          "since": "1.23.0"
+        },
         "open": {
           "type": "boolean"
         },
@@ -1027,7 +1051,10 @@
       },
       "reshaped": [
         "open",
-        "onOpenChange"
+        "onOpenChange",
+        "value",
+        "onValueChange",
+        "skipPartiallyExpanded"
       ],
       "state": {
         "native": "sheetState",

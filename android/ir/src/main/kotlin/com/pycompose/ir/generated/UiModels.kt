@@ -1076,7 +1076,10 @@ data class MediumTopAppBar(
 data class ModalBottomSheetProps(
     override val `modifier`: JsonObject? = null,
     val `onOpenChange`: String? = null,
+    val `onValueChange`: String? = null,
     val `open`: Boolean? = null,
+    val `skipPartiallyExpanded`: Boolean = false,
+    val `value`: String? = null,
 ) : UiProps
 
 @Serializable

@@ -21,6 +21,12 @@ from pycompose.schema.codegen.rules import (
     NATIVE_PARAMETER,
     die,
 )
+from pycompose.schema.codegen.state_anchors import (
+    SHEET_VALUES,
+    SWIPE_VALUES,
+    validate_anchor,
+    validate_optional_field,
+)
 
 INTERACTION_KEYS = frozenset({"native", "observations"})
 
@@ -35,12 +41,10 @@ STATE_VALUE_TYPES = frozenset({"boolean", "number", "integer"})
 A drawer's desired value is a boolean, a scroll offset a number, a list's
 first visible index an integer -- whichever it is, the settled report fills
 one payload field of the same type, so the host never guesses which scalar
-an observation carries. ``swipe`` is the one enum-valued family: its three
-anchors are a closed set, and its report answers in a string.
+an observation carries. ``swipe`` and ``sheet`` also carry closed enums: a
+swipe names its three anchors, and a sheet its three detents, with a string
+report for each.
 """
-
-SWIPE_VALUES = ("settled", "startToEnd", "endToStart")
-"""The three anchors a swipe state drives, in lowerCamel wire spelling."""
 
 REPORTED_FIELD = re.compile(r"[a-z][A-Za-z0-9]*")
 
@@ -276,7 +280,7 @@ def _validate_value_family(
         _validate_text_input(where, state, props)
         return None
     if kind == "swipe":
-        _validate_swipe(where, value, prop)
+        validate_anchor(where, value, prop, SWIPE_VALUES)
         return "string"
     if prop.get("type") not in STATE_VALUE_TYPES:
         # The family drives one scalar -- a drawer is open or it is not, a
@@ -309,28 +313,6 @@ def _validate_report(
     _validate_reported_payload(where, report, reported, field_type)
 
 
-def _validate_swipe(where: str, value: object, prop: dict[str, Any]) -> None:
-    """Check the closed enum a swipe state drives.
-
-    The native holder has exactly three anchors, so the desired value must name
-    all of them and nothing else. The report answers in the lowerCamel string
-    spelling; a boolean or numeric prop would give the host no way to say which
-    anchor it settled on.
-
-    Args:
-        where: Prefix for validation failures.
-        value: The state's value prop name, for the message.
-        prop: The value prop's schema entry.
-    """
-    if prop.get("type") != "enum" or prop.get("values") != list(SWIPE_VALUES):
-        die(
-            f"{where}: prop {value!r} must be an enum with the values "
-            + ", ".join(SWIPE_VALUES)
-        )
-    if prop.get("required"):
-        die(f"{where}: prop {value!r} must be optional")
-
-
 def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None:
     """Check the props a family needs beyond the desired value and its report.
 
@@ -355,6 +337,24 @@ def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None
         die(f"{where}: state kind {kind!r} needs the props {', '.join(missing)}")
     if gate is not None and props[gate].get("type") != "boolean":
         die(f"{where}: prop {gate!r} must be a boolean")
+    if kind == "sheet":
+        validate_anchor(where, "value", props["value"], SHEET_VALUES)
+        _validate_report(where, {"report": "onValueChange"}, props, "string")
+        validate_optional_field(where, props["onValueChange"], "onValueChange", "value")
+        presence = props.get("onOpenChange")
+        if presence is None:
+            die(f"{where}: sheet needs an 'onOpenChange' prop")
+        validate_optional_field(where, presence, "onOpenChange", "open")
+        policy = props["skipPartiallyExpanded"]
+        if (
+            policy.get("type") != "boolean"
+            or policy.get("required")
+            or policy.get("default") is not False
+        ):
+            die(
+                f"{where}: prop 'skipPartiallyExpanded' must be an optional boolean "
+                "defaulting to false"
+            )
 
 
 def _validate_editing_projection(

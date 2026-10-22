@@ -26,7 +26,8 @@ from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.ir.generated_validators import REGISTRY
 from pycompose.ir.validator import validate_prop
 from pycompose.m3 import ModalBottomSheet, ModalNavigationDrawer, Text
-from pycompose.schema.codegen.state_rules import STATE_VALUE_TYPES, SWIPE_VALUES
+from pycompose.schema.codegen.state_anchors import SWIPE_VALUES
+from pycompose.schema.codegen.state_rules import STATE_VALUE_TYPES
 from pycompose.state import State
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
@@ -238,7 +239,7 @@ def test_every_state_kind_has_a_holder_and_a_gate_decision() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _load_with(
+def load_with(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     mutate: Callable[[dict[str, Any]], None],
@@ -312,14 +313,14 @@ def test_a_numeric_desired_value_and_a_family_gate_load(
         props["open"]["type"] = "number"
         props["onOpenChange"]["payload"][0]["type"] = "number"
 
-    _load_with(tmp_path, monkeypatch, mutate)
+    load_with(tmp_path, monkeypatch, mutate)
 
 
 def test_a_modifier_riding_family_carries_its_boolean_gate_prop(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """A family whose holder rides a modifier gates the attach with a boolean."""
-    _load_with(
+    load_with(
         tmp_path,
         monkeypatch,
         lambda registry: _with_scrollable(registry, "boolean"),
@@ -432,7 +433,7 @@ def test_the_codegen_refuses_an_unrenderable_state(
     building at all.
     """
     with pytest.raises(SystemExit, match=expected):
-        _load_with(tmp_path, monkeypatch, break_it)
+        load_with(tmp_path, monkeypatch, break_it)
 
 
 def test_a_swipe_names_the_closed_enum_and_its_string_report() -> None:
@@ -487,7 +488,7 @@ def test_the_codegen_refuses_an_unrenderable_swipe(
 ) -> None:
     """A swipe family the host cannot map to its closed anchors is refused."""
     with pytest.raises(SystemExit, match=expected):
-        _load_with(tmp_path, monkeypatch, break_it)
+        load_with(tmp_path, monkeypatch, break_it)
 
 
 def test_the_codegen_refuses_a_second_reported_field(
@@ -495,7 +496,7 @@ def test_the_codegen_refuses_a_second_reported_field(
 ) -> None:
     """One boolean is the whole report; two fields would mean the host guesses."""
     with pytest.raises(SystemExit, match="needs one boolean payload field"):
-        _load_with(
+        load_with(
             tmp_path,
             monkeypatch,
             lambda registry: registry["components"][STATEFUL]["props"]["onOpenChange"][

@@ -33,7 +33,8 @@ def test_a_gated_family_composes_its_component_from_the_holder() -> None:
     adapter = render(GATED, components()[GATED])
     assert (
         "val sheetStateValue = context.sheetState("
-        "model.props.open, model.props.onOpenChange)" in adapter
+        "model.props.open, model.props.onOpenChange, model.props.value, "
+        "model.props.onValueChange, model.props.skipPartiallyExpanded)" in adapter
     )
     assert "if (sheetStateValue.visible) {" in adapter
     assert "sheetState = sheetStateValue.state" in adapter

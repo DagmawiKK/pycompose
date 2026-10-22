@@ -126,20 +126,22 @@ itself.
 """
 
 STATE_CONSTRUCTOR_PROPS = {
+    "sheet": ("value", "onValueChange", "skipPartiallyExpanded"),
     "slider": ("valueRange", "steps"),
     "tooltip": ("isPersistent",),
     "textInput": ("selectionStart", "selectionEnd", "revision"),
     "search": ("text", "selectionStart", "selectionEnd", "revision", "onEdit"),
 }
-"""Props each family's holder needs at construction, beyond value and report.
+"""Props each family's holder needs at construction, beyond its primary projection.
 
-A ``SliderState`` is built from the app's desired value, the settle report,
-the range and the steps, and owns the range and the steps for as long as it
-lives; a tooltip holder is built with its persistence policy. They flow into
-the renderer call that creates the holder rather than into the component's own
-arguments. Every prop named here is held exactly as the desired value and its
-report are: the app states it, the adapter passes it to the holder, and it
-never reaches the component.
+A ``SliderState`` is built from the range and the steps and owns them for as
+long as it lives; a tooltip holder is built with its persistence policy. A
+sheet carries a second projection beside its boolean presence -- the anchor and
+its report -- because one node states both. They flow into the renderer call
+that creates the holder rather than into the component's own arguments. Every
+prop named here is held exactly as the primary value and report are: the app
+states it, the adapter passes it to the holder, and it never reaches the
+component.
 """
 
 STATE_ATTACH_GATES = {"scroll": "scrollable"}

@@ -3664,8 +3664,25 @@
                 "submit"
               ]
             },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
             "open": {
               "type": "boolean"
+            },
+            "skipPartiallyExpanded": {
+              "default": false,
+              "type": "boolean"
+            },
+            "value": {
+              "enum": [
+                "expanded",
+                "hidden",
+                "partiallyExpanded"
+              ]
             }
           },
           "type": "object"
@@ -28099,8 +28116,25 @@
                 "submit"
               ]
             },
+            "onValueChange": {
+              "enum": [
+                "increment",
+                "submit"
+              ]
+            },
             "open": {
               "type": "boolean"
+            },
+            "skipPartiallyExpanded": {
+              "default": false,
+              "type": "boolean"
+            },
+            "value": {
+              "enum": [
+                "expanded",
+                "hidden",
+                "partiallyExpanded"
+              ]
             }
           },
           "type": "object"

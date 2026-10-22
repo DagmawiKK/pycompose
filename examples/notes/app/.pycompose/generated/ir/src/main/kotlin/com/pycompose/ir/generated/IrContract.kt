@@ -183,7 +183,10 @@ object IrContract {
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
                 "onOpenChange" to PropertyRule("actionId", required = false),
+                "onValueChange" to PropertyRule("actionId", required = false, since = "1.23.0"),
                 "open" to PropertyRule("boolean", required = false),
+                "skipPartiallyExpanded" to PropertyRule("boolean", required = false, since = "1.23.0"),
+                "value" to PropertyRule("enum", required = false, values = setOf("hidden", "partiallyExpanded", "expanded"), since = "1.23.0"),
             ),
         ),
         "NavigationBar" to ComponentRule(

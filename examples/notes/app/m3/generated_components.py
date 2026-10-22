@@ -64,6 +64,12 @@ _LazyColumnVerticalArrangement = Literal[
     "spaceAround",
 ]
 
+_ModalBottomSheetValue = Literal[
+    "hidden",
+    "partiallyExpanded",
+    "expanded",
+]
+
 _RowVerticalAlignment = Literal[
     "top",
     "center",
@@ -677,7 +683,10 @@ class ModalBottomSheet(Component):
         id: str | None = None,
         modifier: Modifier | None = None,
         on_open_change: str | None = None,
+        on_value_change: str | None = None,
         open: bool | None = None,
+        skip_partially_expanded: bool | None = None,
+        value: _ModalBottomSheetValue | None = None,
         children: Content = (),
         content: Content | None = None,
         drag_handle: Content | None = None,
@@ -688,7 +697,11 @@ class ModalBottomSheet(Component):
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             on_open_change: Native onOpenChange; None uses its default.
+            on_value_change: Native onValueChange; None uses its default.
             open: Native open; None uses its default.
+            skip_partially_expanded: Native skipPartiallyExpanded; None uses its
+                default.
+            value: Native value; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
             drag_handle: Nodes for the native dragHandle slot.
@@ -699,8 +712,14 @@ class ModalBottomSheet(Component):
         props: dict[str, JsonValue] = {}
         if on_open_change is not None:
             props["on_open_change"] = on_open_change
+        if on_value_change is not None:
+            props["on_value_change"] = on_value_change
         if open is not None:
             props["open"] = open
+        if skip_partially_expanded is not None:
+            props["skip_partially_expanded"] = skip_partially_expanded
+        if value is not None:
+            props["value"] = value
         if content is not None:
             if children:
                 raise IrValidationError(

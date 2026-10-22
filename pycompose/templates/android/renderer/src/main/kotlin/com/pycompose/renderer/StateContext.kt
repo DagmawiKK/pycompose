@@ -28,12 +28,23 @@ fun RenderContext.drawerState(
  *
  * @param open Desired open state; null drives nothing.
  * @param report Action id settled changes report to; null reports none.
+ * @param value Desired detent; when present it takes precedence over [open].
+ * @param valueReport Action id settled anchors report to; null reports none.
+ * @param skipPartiallyExpanded Native partial-anchor policy; null keeps its default.
  */
 @Composable
 fun RenderContext.sheetState(
     open: Boolean?,
     report: String?,
-): HostSheetState = rememberHostSheetState(open, report, observations::observe)
+    value: String? = null,
+    valueReport: String? = null,
+    skipPartiallyExpanded: Boolean? = null,
+): HostSheetState =
+    rememberHostSheetState(
+        SheetContract(open, report, value, valueReport),
+        skipPartiallyExpanded,
+        observations,
+    )
 
 /**
  * The node's swipe projection, reporting the anchor it settled on.

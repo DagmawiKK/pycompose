@@ -193,7 +193,7 @@ object GeneratedAdapters {
             }
             .register("ModalBottomSheet") { node, modifier, context ->
                 val model = node as ModalBottomSheetNode
-                val sheetStateValue = context.sheetState(model.props.open, model.props.onOpenChange)
+                val sheetStateValue = context.sheetState(model.props.open, model.props.onOpenChange, model.props.value, model.props.onValueChange, model.props.skipPartiallyExpanded)
                 if (sheetStateValue.visible) {
                     ModalBottomSheet(
                         modifier = modifier,
