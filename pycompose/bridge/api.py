@@ -6,7 +6,7 @@ import logging
 from threading import current_thread
 
 from pycompose.bridge.types import decode_action
-from pycompose.core.action_binding import BindingSpec, read_bindings
+from pycompose.core.action_binding import BindingSpec
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.extensions.delivery import Dispatcher
@@ -98,7 +98,7 @@ class BridgeSurface:
             LOGGER.warning("IR validation: %s", issue)
         if result.snapshot is None:
             return None, {}
-        bindings = read_bindings(result.snapshot.metadata)
+        bindings = dict(result.bindings)
         self._actions.validate_bindings(bindings)
         return to_json(result.snapshot), bindings
 

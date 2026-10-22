@@ -11,9 +11,9 @@ the entire candidate even when component policy would otherwise discard it.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 
-from pycompose.core.action_binding import ActionBinding, read_bindings
+from pycompose.core.action_binding import ActionBinding, BindingSpec, read_bindings
 from pycompose.core.node import Node
 from pycompose.core.registry_types import PropDef
 from pycompose.core.resources import valid_resource
@@ -187,10 +187,12 @@ class ValidationResult:
     Attributes:
         snapshot: Safe snapshot, or None when no root can be rendered.
         issues: Failures encountered in stable traversal order.
+        bindings: The snapshot's validated app bindings by id, parsed once here.
     """
 
     snapshot: IRRoot | None
     issues: tuple[ValidationIssue, ...] = ()
+    bindings: Mapping[str, BindingSpec] = field(default_factory=dict)
 
 
 def _section_ok(
@@ -298,7 +300,9 @@ def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
         safe = None
     elif root is not snapshot.root or metadata is not snapshot.metadata:
         safe = replace(snapshot, root=root, metadata=metadata)
-    return ValidationResult(snapshot=safe, issues=tuple(validation.issues))
+    return ValidationResult(
+        snapshot=safe, issues=tuple(validation.issues), bindings=bindings
+    )
 
 
 def validate_component(node: Node) -> None:
