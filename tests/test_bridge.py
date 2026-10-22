@@ -299,3 +299,71 @@ def test_invalid_initial_snapshot_is_unavailable_and_logged(
     )
     assert bridge.expose_latest_snapshot() is None
     assert caplog.records
+
+
+def _apply_ops(
+    node: dict[str, object], ops: list[dict[str, object]]
+) -> dict[str, object]:
+    """Apply envelope ops to a plain JSON tree, the way the host does."""
+
+    def rebuild(current: dict[str, object], op: dict[str, object]) -> dict[str, object]:
+        if current["id"] == op["id"]:
+            if op["op"] == "replaceSubtree":
+                return op["payload"]  # type: ignore[return-value]
+            props = {**current["props"], op["prop"]: op["value"]}  # type: ignore[dict-item]
+            return {**current, "props": props}
+        children = list(current.get("children", []))  # type: ignore[call-overload]
+        target = str(op["id"])
+        for index, child in enumerate(children):
+            if target == child["id"] or target.startswith(child["id"] + "."):
+                children[index] = rebuild(child, op)
+                return {**current, "children": children}
+        raise AssertionError(f"no node {target!r}")
+
+    for op in ops:
+        node = rebuild(node, op)
+    return node
+
+
+def _counter_bridge() -> BridgeSurface:
+    def row(text: str) -> Node:
+        return Node(id="count", type="Text", props=Props({"text": text}))
+
+    def screen(text: str) -> Node:
+        title = Node(id="title", type="Text", props=Props({"text": "Counter"}))
+        return Node(
+            id="screen", type="Column", props=Props({}), children=(title, row(text))
+        )
+
+    actions = Actions()
+    actions.register(
+        "increment",
+        lambda state, payload: replace(state, root=screen(str(payload["by"]))),
+    )
+    return BridgeSurface(Store(State(root=screen("0"))), actions)
+
+
+def test_a_pull_from_a_known_base_is_a_patch_that_rebuilds_the_latest() -> None:
+    bridge = _counter_bridge()
+    first = json.loads(bridge.expose_envelope(-1))
+    assert first["kind"] == "full"
+
+    bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
+    patch = json.loads(bridge.expose_envelope(first["serial"]))
+
+    assert (patch["kind"], patch["baseSerial"]) == ("patch", first["serial"])
+    assert [(op["op"], op["id"]) for op in patch["ops"]] == [("setProp", "root.count")]
+    latest = json.loads(bridge.expose_latest_snapshot() or "")
+    assert _apply_ops(first["root"], patch["ops"]) == latest["root"]
+    assert patch.get("metadata") == latest.get("metadata")
+
+
+def test_an_unknown_base_or_another_session_gets_the_whole_snapshot() -> None:
+    bridge = _counter_bridge()
+    first = json.loads(bridge.expose_envelope(-1))
+    assert (
+        json.loads(bridge.expose_envelope(first["serial"] + 10_000))["kind"] == "full"
+    )
+
+    other = json.loads(_counter_bridge().expose_envelope(-1))
+    assert other["serial"] != first["serial"]

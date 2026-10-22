@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import itertools
 import logging
 from threading import current_thread
 
@@ -13,12 +14,23 @@ from pycompose.errors import BridgeError, SchemaError
 from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
 from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
+from pycompose.ir.model import IRRoot
+from pycompose.ir.patch import diff_nodes, full_bytes, patch_bytes
 from pycompose.state import Actions, State, Store
 
 LOGGER = logging.getLogger(__name__)
 
 VERIFY_EVERY = 8
 """In debug, every n-th reused composable is expanded again and compared."""
+
+WINDOW = 8
+"""Published snapshots kept as patch bases for a host that is behind."""
+
+MAX_PATCH_OPS = 64
+"""Beyond this many ops, a whole snapshot is cheaper to send and to apply."""
+
+_SERIALS = itertools.count(1)
+"""Process-wide, so a serial never names another session's snapshot."""
 
 
 def _unchanged(candidate: State, current: State) -> bool:
@@ -60,13 +72,17 @@ class BridgeSurface:
         self._worker = current_thread()
         self._processing = False
         self._latest: str | None = None
+        self._published: list[tuple[int, IRRoot]] = []
         self._latest_error = ""
         self._bindings: dict[str, BindingSpec] = {}
         self._deliveries = Dispatcher()
         # Debug re-expands a sample of reused composables to catch impure ones.
         self._reuse = Reuse(ExpansionMemo(verify_every=VERIFY_EVERY if debug else 0))
         try:
-            self._latest, self._bindings = self._snapshot(store.value)
+            published = self._snapshot(store.value)
+            if published is not None:
+                self._bindings = published[2]
+                self._publish(published[0], published[1])
         except SchemaError:
             raise
         except Exception as exc:
@@ -91,7 +107,9 @@ class BridgeSurface:
             exc_info=self._debug,
         )
 
-    def _snapshot(self, state: State) -> tuple[str | None, dict[str, BindingSpec]]:
+    def _snapshot(
+        self, state: State
+    ) -> tuple[IRRoot, str, dict[str, BindingSpec]] | None:
         result = validate_ir(
             emit_ir(state, self._schema_version, self._reuse),
             debug=self._debug,
@@ -100,10 +118,16 @@ class BridgeSurface:
         for issue in result.issues:
             LOGGER.warning("IR validation: %s", issue)
         if result.snapshot is None:
-            return None, {}
+            return None
         bindings = dict(result.bindings)
         self._actions.validate_bindings(bindings)
-        return to_json(result.snapshot, self._reuse), bindings
+        return result.snapshot, to_json(result.snapshot, self._reuse), bindings
+
+    def _publish(self, root: IRRoot, text: str) -> None:
+        if text == self._latest:
+            return
+        self._latest = text
+        self._published = [*self._published[1 - WINDOW :], (next(_SERIALS), root)]
 
     def accept_action(self, action_json: str) -> None:
         """Process one action synchronously; errors never escape to the host.
@@ -153,12 +177,11 @@ class BridgeSurface:
                 )
             if _unchanged(next_state, current):
                 return
-            snapshot, bindings = self._snapshot(next_state)
-            if snapshot is not None:
+            published = self._snapshot(next_state)
+            if published is not None:
                 self._store.mutate(lambda _state: next_state)
-                self._bindings = bindings
-                if snapshot != self._latest:
-                    self._latest = snapshot
+                self._bindings = published[2]
+                self._publish(published[0], published[1])
         except Exception as exc:
             self._report("Action ignored", exc)
         finally:
@@ -176,6 +199,37 @@ class BridgeSurface:
             self._report("Snapshot unavailable: worker contract violation", exc)
             return None
         return self._latest
+
+    def expose_envelope(self, base_serial: int) -> str:
+        """Return the latest snapshot as a patch against the host's base, or whole.
+
+        A base still in the window gets the ops that turn it into the latest
+        snapshot (ADR-0018); an unknown, stale or other session's base, or a
+        change too large to patch, gets the whole snapshot under its serial.
+
+        Args:
+            base_serial: The serial of the snapshot the host holds; -1 for none.
+
+        Returns:
+            The envelope as canonical JSON, or empty before any valid snapshot.
+        """
+        try:
+            self._require_worker()
+        except BridgeError as exc:
+            self._report("Snapshot unavailable: worker contract violation", exc)
+            return ""
+        if not self._published:
+            return ""
+        serial, latest = self._published[-1]
+        base = next((root for s, root in self._published if s == base_serial), None)
+        if base is not None:
+            ops = diff_nodes(base.root, latest.root)
+            if len(ops) <= MAX_PATCH_OPS and all(op.id != latest.root.id for op in ops):
+                envelope = patch_bytes(
+                    latest, ops, base_serial=base_serial, serial=serial
+                )
+                return envelope.decode("utf-8")
+        return full_bytes(latest, serial=serial, reuse=self._reuse).decode("utf-8")
 
     def expose_latest_error(self) -> str:
         """Return the latest worker diagnostic as plain data.

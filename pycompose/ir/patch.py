@@ -22,6 +22,7 @@ from dataclasses import dataclass
 
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
+from pycompose.core.reuse import Reuse
 from pycompose.ir.model import IRRoot
 from pycompose.ir.serializer import node_bytes
 from pycompose.utils.json_canonical import FrozenJsonValue, canonical_json_bytes
@@ -136,7 +137,7 @@ def _compatible(old: Node, new: Node) -> bool:
     )
 
 
-def full_bytes(root: IRRoot, *, serial: int) -> bytes:
+def full_bytes(root: IRRoot, *, serial: int, reuse: Reuse | None = None) -> bytes:
     """Serialize the pull result carrying the whole snapshot.
 
     The result is the snapshot's own envelope plus ``kind`` and ``serial``, so
@@ -145,6 +146,7 @@ def full_bytes(root: IRRoot, *, serial: int) -> bytes:
     Args:
         root: The snapshot being published.
         serial: The serial this content is published under.
+        reuse: The session's subtree bytes, copied in where a subtree recurs.
 
     Returns:
         Canonical UTF-8 bytes.
@@ -154,7 +156,9 @@ def full_bytes(root: IRRoot, *, serial: int) -> bytes:
         output.extend(b',"metadata":')
         output.extend(canonical_json_bytes(root.metadata))
     output.extend(b',"root":')
-    output.extend(node_bytes(root.root))
+    output.extend(
+        node_bytes(root.root, reuse.serialized if reuse is not None else None)
+    )
     output.extend(b',"schemaVersion":')
     output.extend(canonical_json_bytes(root.schema_version))
     output.extend(b',"serial":')

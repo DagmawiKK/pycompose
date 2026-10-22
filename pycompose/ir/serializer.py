@@ -91,19 +91,20 @@ def to_json(snapshot: Node | IRRoot, reuse: Reuse | None = None) -> str:
     return to_json_bytes(snapshot, reuse).decode("utf-8")
 
 
-def node_bytes(node: Node) -> bytes:
+def node_bytes(node: Node, memo: SubtreeMemo[bytes] | None = None) -> bytes:
     """Serialize one node subtree to canonical UTF-8 bytes.
 
     Unexpanded Python declarations raise :class:`IrValidationError`.
 
     Args:
         node: IR node to serialize.
+        memo: Subtree bytes to copy in where a subtree recurs; None writes all.
 
     Returns:
         Deterministic UTF-8 bytes for the subtree.
     """
     output = bytearray()
-    _write_node(output, node)
+    _write_node(output, node, memo)
     return bytes(output)
 
 
