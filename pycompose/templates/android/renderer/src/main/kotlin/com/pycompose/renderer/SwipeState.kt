@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import com.pycompose.renderer.generated.driveTo
 
 /**
  * The host-owned swipe state for one node, reconciled to the app's desired anchor.
@@ -37,12 +38,6 @@ internal fun rememberHostSwipeState(
         rememberSaveable { mutableStateOf(value) },
         settled = { state.settledValue.wire },
         report = report?.let { id -> { anchor -> observation("value", id, anchor) } },
-    ) {
-        when (val anchor = it.anchor<SwipeToDismissBoxValue>()) {
-            SwipeToDismissBoxValue.Settled -> state.reset()
-            null -> Unit
-            else -> state.dismiss(anchor)
-        }
-    }
+    ) { it.anchor<SwipeToDismissBoxValue>()?.let { anchor -> state.driveTo(anchor) } }
     return state
 }

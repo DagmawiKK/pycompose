@@ -26,6 +26,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
+import com.pycompose.renderer.generated.driveTo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.json.JsonPrimitive
 
@@ -101,7 +102,7 @@ internal fun rememberHostDrawerState(
         remember(state) { mutableStateOf<Boolean?>(null) },
         settled = { state.currentValue == DrawerValue.Open },
         report = report?.let { id -> { value -> observation("open", id, value) } },
-    ) { if (it) state.open() else state.close() }
+    ) { state.driveTo(if (it) DrawerValue.Open else DrawerValue.Closed) }
     return state
 }
 

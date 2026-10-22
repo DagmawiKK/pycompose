@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import com.pycompose.renderer.generated.driveTo
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
@@ -225,7 +226,7 @@ private suspend fun SheetProjection.drive(
     if (desired == "hidden") {
         // Run the native hide, and only then let the composed sheet leave the tree.
         if (visible && (state.currentValue != SheetValue.Hidden || state.isAnimationRunning)) {
-            state.hide()
+            state.driveTo(SheetValue.Hidden)
         }
         present(false)
         return
@@ -262,27 +263,22 @@ private suspend fun SheetProjection.awaitOpening() {
     }.first { it }
 }
 
-/** Move to the requested visible anchor, preferring a native partial anchor. */
+/** Move to the requested visible anchor, or expanded where measurement has no partial one. */
 @OptIn(ExperimentalMaterial3Api::class)
 private suspend fun SheetProjection.reconcile(desired: String) {
-    when (desired) {
-        VISIBLE_REQUEST -> Unit
-        "expanded" ->
-            if (state.currentValue != SheetValue.Expanded) {
-                state.expand()
-            }
-        "partiallyExpanded" ->
-            when {
-                !state.hasPartiallyExpandedState ->
-                    if (state.currentValue != SheetValue.Expanded) {
-                        state.expand()
-                    } else if (settled == SheetValue.Expanded) {
-                        // Re-arm the baseline so the observer reports the
-                        // actual anchor even though it did not move.
-                        settled = SheetValue.PartiallyExpanded
-                    }
-                state.currentValue != SheetValue.PartiallyExpanded -> state.partialExpand()
-            }
+    val target = desired.anchor<SheetValue>() ?: return
+    val reachable =
+        if (target == SheetValue.PartiallyExpanded && !state.hasPartiallyExpandedState) {
+            SheetValue.Expanded
+        } else {
+            target
+        }
+    if (state.currentValue != reachable) {
+        state.driveTo(reachable)
+    } else if (reachable != target && settled == SheetValue.Expanded) {
+        // Re-arm the baseline so the observer reports the actual anchor even
+        // though it did not move.
+        settled = SheetValue.PartiallyExpanded
     }
 }
 
