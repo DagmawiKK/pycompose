@@ -95,24 +95,22 @@ with no ``decode`` is refused, because guessing which family its values belong t
 is how an adapter silently renders the wrong alignment.
 """
 
-STATE_CALLS = {
-    "drawer": "drawerState",
-    "sheet": "sheetState",
-    "slider": "sliderState",
-    "scroll": "scrollState",
-    "lazyList": "lazyListState",
-    "tooltip": "tooltipState",
-    "textInput": "textInputState",
-    "search": "searchState",
-    "swipe": "swipeState",
-}
-"""The renderer method each state family's host holder comes from.
 
-The family decides the create/drive/report logic; the schema decides which
-component has one, which native parameter it fills, and which props carry the
-desired value and report settled changes. Every member of the vocabulary must
-appear here, or codegen has no holder to hand the component.
-"""
+def state_call(kind: str) -> str:
+    """Name the renderer method a state family's host holder comes from.
+
+    The family decides the create/drive/report logic; the schema decides which
+    component has one. A family the renderer does not implement fails the
+    generated adapters' compile proof.
+
+    Args:
+        kind: A ``STATE_KINDS`` member.
+
+    Returns:
+        ``<kind>State``, e.g. ``drawerState``.
+    """
+    return f"{kind}State"
+
 
 GATED_STATES = frozenset({"sheet"})
 """State families whose native component must be composed conditionally.
@@ -151,15 +149,6 @@ STATE_ATTACH_GATES = {"scroll": "scrollable"}
 so the state cannot fill a native parameter. The holder exists whenever the
 schema declares one, and the boolean prop named here decides whether the
 adapter attaches it to the modifier the call receives.
-"""
-
-TRANSIENT_CALLS = {"snackbar": "snackbar"}
-"""The renderer method each transient family's request comes from.
-
-The family decides the remember/fulfil/report logic exactly as a state's
-``STATE_CALLS`` entry does; the schema decides which component asks for one.
-Every member of the vocabulary must appear here, or codegen has no renderer
-method to call.
 """
 
 

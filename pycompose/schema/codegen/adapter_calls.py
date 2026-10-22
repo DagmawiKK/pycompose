@@ -19,12 +19,11 @@ from pycompose.schema.codegen.adapter_helpers import (
     RESOLVER_RETURN,
     SCALAR_KOTLIN,
     STATE_ATTACH_GATES,
-    STATE_CALLS,
     STATE_CONSTRUCTOR_PROPS,
-    TRANSIENT_CALLS,
     _camel,
     _Fragments,
     qualify,
+    state_call,
 )
 from pycompose.schema.codegen.values import resolver_call
 
@@ -284,7 +283,7 @@ def _state(
         # answered with nothing rather than with a second channel.
         arguments.append(f"{dismiss} = {{}}")
     return (
-        f"val {held} = context.{STATE_CALLS[state['kind']]}("
+        f"val {held} = context.{state_call(state['kind'])}("
         f"model.props.{value}, model.props.{report}{extras})",
         arguments,
         f"{held}.visible" if gated else None,
@@ -403,7 +402,7 @@ def _transient(transient: dict[str, Any], props: dict[str, Any]) -> str:
         for name in sorted(props)
         if name != "modifier"
     )
-    call = TRANSIENT_CALLS[transient["kind"]]
+    call = transient["kind"]
     return f"val {transient['native']}Value = context.{call}(model.id, {entries})"
 
 

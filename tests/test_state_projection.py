@@ -218,17 +218,15 @@ def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_every_state_kind_has_a_holder_and_a_gate_decision() -> None:
-    """A family without a renderer method or a gate decision cannot be emitted."""
+def test_every_family_table_names_known_state_kinds() -> None:
+    """A gate, attach or constructor decision for an unknown family is a typo."""
     from pycompose.core.registry_types import STATE_KINDS
     from pycompose.schema.codegen.adapters import (
         GATED_STATES,
         STATE_ATTACH_GATES,
-        STATE_CALLS,
         STATE_CONSTRUCTOR_PROPS,
     )
 
-    assert set(STATE_CALLS) == set(STATE_KINDS)
     assert set(STATE_KINDS) >= GATED_STATES
     assert set(STATE_ATTACH_GATES) <= set(STATE_KINDS)
     assert set(STATE_CONSTRUCTOR_PROPS) <= set(STATE_KINDS)

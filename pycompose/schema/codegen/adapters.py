@@ -45,9 +45,7 @@ from pycompose.schema.codegen.adapter_helpers import (
     RESOLVER_RETURN,
     SCALAR_KOTLIN,
     STATE_ATTACH_GATES,
-    STATE_CALLS,
     STATE_CONSTRUCTOR_PROPS,
-    TRANSIENT_CALLS,
     _camel,
     _Fragments,
     _slot,
@@ -55,6 +53,7 @@ from pycompose.schema.codegen.adapter_helpers import (
     is_mechanical,
     native_name,
     scalar_wire,
+    state_call,
 )
 
 __all__ = [
@@ -66,9 +65,7 @@ __all__ = [
     "RESOLVER_RETURN",
     "SCALAR_KOTLIN",
     "STATE_ATTACH_GATES",
-    "STATE_CALLS",
     "STATE_CONSTRUCTOR_PROPS",
-    "TRANSIENT_CALLS",
     "composables",
     "extra_imports",
     "is_mechanical",
@@ -95,13 +92,13 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
             # is what makes ``model.props.x.dp`` resolve.
             qualified.add("androidx.compose.ui.unit.dp")
     if (state := entry.get("state")) is not None:
-        qualified.add(f"com.pycompose.renderer.{STATE_CALLS[state['kind']]}")
+        qualified.add(f"com.pycompose.renderer.{state_call(state['kind'])}")
         if state["kind"] in STATE_ATTACH_GATES:
             # The holder rides the component's modifier, so the extension making
             # that ride callable must be imported where the call is written.
             qualified.add("com.pycompose.renderer.attachTo")
     if (transient := entry.get("transient")) is not None:
-        qualified.add(f"com.pycompose.renderer.{TRANSIENT_CALLS[transient['kind']]}")
+        qualified.add(f"com.pycompose.renderer.{transient['kind']}")
     slots = [entry.get("children", {}), *entry.get("slots", {}).values()]
     for slot in slots:
         if slot.get("consume") == "paddingValues":

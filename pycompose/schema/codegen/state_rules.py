@@ -460,14 +460,7 @@ def _validate_transient(
     unknown = sorted(set(transient) - TRANSIENT_KEYS)
     if unknown:
         die(f"{where} has unknown keys: {', '.join(unknown)}")
-    natives = {children.get("native", "content")}
-    if isinstance(slots, dict):
-        natives.update(
-            slot["native"]
-            for slot in slots.values()
-            if isinstance(slot, dict) and isinstance(slot.get("native"), str)
-        )
-    claimed = natives | set(props)
+    claimed = _claimed_natives(children, slots) | set(props)
     _claimed_parameter(where, "native", transient.get("native"), claimed)
     kind = transient.get("kind")
     if not isinstance(kind, str) or kind not in TRANSIENT_KINDS:
