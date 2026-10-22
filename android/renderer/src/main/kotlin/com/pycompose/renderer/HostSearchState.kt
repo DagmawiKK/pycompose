@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * The native state one search owner shares with every surface below it.
@@ -54,7 +55,7 @@ val LocalHostSearchState = staticCompositionLocalOf<HostSearchState?> { null }
 internal fun rememberHostSearchBarState(
     expanded: Boolean?,
     report: String?,
-    observation: (String, String, Boolean) -> Unit,
+    observation: Observation,
 ): SearchBarState {
     // Seeding from the first composition only, rather than from a changing
     // remember key, keeps the state alive when the app flips the value: the
@@ -69,7 +70,10 @@ internal fun rememberHostSearchBarState(
         expanded,
         remember(state) { mutableStateOf(expanded) },
         settled = { state.currentValue == SearchBarValue.Expanded },
-        report = report?.let { id -> { value -> observation("expanded", id, value) } },
+        report =
+            report?.let { id ->
+                { value -> observation("expanded", id, JsonPrimitive(value)) }
+            },
     ) { if (it) state.animateToExpanded() else state.animateToCollapsed() }
     return state
 }

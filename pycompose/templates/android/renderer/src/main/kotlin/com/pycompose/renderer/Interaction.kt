@@ -17,6 +17,9 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.longOrNull
 
+/** One report from the host: the observed kind, the action id, and the value it carries. */
+internal typealias Observation = (kind: String, actionId: String, value: JsonPrimitive) -> Unit
+
 /**
  * The host-created interaction source for one node, or null when it observes nothing.
  *
@@ -34,7 +37,7 @@ import kotlinx.serialization.json.longOrNull
 internal fun rememberInteractionSource(
     id: String,
     actionIds: Map<String, String?>,
-    observation: (String, String, Boolean) -> Unit,
+    observation: Observation,
 ): MutableInteractionSource? {
     if (actionIds.values.none { it != null }) return null
     val source = remember(id) { MutableInteractionSource() }
@@ -46,7 +49,7 @@ internal fun rememberInteractionSource(
         source.interactions.collect { interaction ->
             val (kind, state) = kindAndState(interaction) ?: return@collect
             val actionId = current.value[kind] ?: return@collect
-            observation(kind, actionId, state)
+            observation(kind, actionId, JsonPrimitive(state))
         }
     }
     return source
@@ -90,59 +93,7 @@ internal class ObservationSink(
     private val report: (String) -> Unit,
 ) {
     /**
-     * Report one observed boolean, as the rail's settled flags.
-     *
-     * @param kind Interaction kind the action observes, for the message.
-     * @param actionId The action observing it.
-     * @param value The new state of that kind.
-     */
-    fun observe(
-        kind: String,
-        actionId: String,
-        value: Boolean,
-    ) = observe(kind, actionId, JsonPrimitive(value))
-
-    /**
-     * Report one observed integer, as the lazy list's settled index.
-     *
-     * @param kind Interaction kind the action observes, for the message.
-     * @param actionId The action observing it.
-     * @param value The new state of that kind.
-     */
-    fun observe(
-        kind: String,
-        actionId: String,
-        value: Int,
-    ) = observe(kind, actionId, JsonPrimitive(value))
-
-    /**
-     * Report one observed float, as the slider's settled value.
-     *
-     * @param kind Interaction kind the action observes, for the message.
-     * @param actionId The action observing it.
-     * @param value The new state of that kind.
-     */
-    fun observe(
-        kind: String,
-        actionId: String,
-        value: Float,
-    ) = observe(kind, actionId, JsonPrimitive(value))
-
-    /**
-     * Report one observed string, as a swipe's settled anchor.
-     *
-     * @param kind Interaction kind the action observes, for the message.
-     * @param actionId The action observing it.
-     * @param value The new state of that kind.
-     */
-    fun observe(
-        kind: String,
-        actionId: String,
-        value: String,
-    ) = observe(kind, actionId, JsonPrimitive(value))
-
-    /**
-     * Report one observed primitive under the single field its type fits.
+     * Report one observed primitive as a one-field record, under the single field its type fits.
      *
      * @param kind Interaction kind the action observes, for the message.
      * @param actionId The action observing it.
@@ -172,10 +123,10 @@ internal class ObservationSink(
             )
             return
         }
-        actions.dispatch(actionId, JsonObject(mapOf(field to value)))
+        observe(kind, actionId, JsonObject(mapOf(field to value)))
     }
 
-    /** Atomic reports use declared field names rather than guessing among equal types. */
+    /** Every report ends here: a record of the declared fields, validated before dispatch. */
     fun observe(
         kind: String,
         actionId: String,

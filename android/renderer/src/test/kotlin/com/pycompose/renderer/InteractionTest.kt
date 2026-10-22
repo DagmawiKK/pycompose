@@ -92,8 +92,8 @@ class InteractionTest {
             )
         val sink = ObservationSink(bindings, ActionDispatcher { actions.add(it) }, reports::add)
 
-        sink.observe("value", "app.demo.value.1", 0.5f)
-        sink.observe("firstVisibleIndex", "app.demo.index.1", 3)
+        sink.observe("value", "app.demo.value.1", JsonPrimitive(0.5f))
+        sink.observe("firstVisibleIndex", "app.demo.index.1", JsonPrimitive(3))
 
         assertTrue(reports.isEmpty())
         assertEquals("app.demo.value.1", actions[0].actionId)
@@ -122,7 +122,7 @@ class InteractionTest {
             )
         val sink = ObservationSink(bindings, ActionDispatcher { actions.add(it) }, reports::add)
 
-        sink.observe("value", "app.demo.value.1", 3)
+        sink.observe("value", "app.demo.value.1", JsonPrimitive(3))
 
         assertTrue(actions.isEmpty())
         assertTrue(reports.single().contains("2 integer/number fields"))
@@ -144,7 +144,7 @@ class InteractionTest {
                 reports::add,
             )
 
-        sink.observe("value", "app.demo.index.1", 0.5f)
+        sink.observe("value", "app.demo.index.1", JsonPrimitive(0.5f))
 
         assertTrue(actions.isEmpty())
         assertTrue(reports.single().contains("0 number fields"))

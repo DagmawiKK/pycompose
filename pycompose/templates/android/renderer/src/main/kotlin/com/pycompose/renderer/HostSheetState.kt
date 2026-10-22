@@ -20,6 +20,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
+import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * A sheet's data-only projections, with the explicit anchor taking precedence over [open].
@@ -312,9 +313,9 @@ private fun ObserveSheet(
                     projection.settled = SheetValue.Hidden
                     projection.present(false)
                     valueChannel.value?.let {
-                        sink.value.observe("value", it, SheetValue.Hidden.wire)
+                        sink.value.observe("value", it, JsonPrimitive(SheetValue.Hidden.wire))
                     }
-                    openChannel.value?.let { sink.value.observe("open", it, false) }
+                    openChannel.value?.let { sink.value.observe("open", it, JsonPrimitive(false)) }
                     return@collect
                 }
             }
@@ -324,10 +325,10 @@ private fun ObserveSheet(
                 projection.settled = snapshot.anchor
                 projection.present(isOpen)
                 valueChannel.value?.let {
-                    sink.value.observe("value", it, snapshot.anchor.wire)
+                    sink.value.observe("value", it, JsonPrimitive(snapshot.anchor.wire))
                 }
                 if (wasOpen != isOpen) {
-                    openChannel.value?.let { sink.value.observe("open", it, isOpen) }
+                    openChannel.value?.let { sink.value.observe("open", it, JsonPrimitive(isOpen)) }
                 }
             }
         }

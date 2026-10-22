@@ -93,7 +93,7 @@ internal fun <V : Any> Reconcile(
 internal fun rememberHostDrawerState(
     open: Boolean?,
     report: String?,
-    observation: (String, String, Boolean) -> Unit,
+    observation: Observation,
 ): DrawerState {
     val state = rememberDrawerState(DrawerValue.Closed)
     Reconcile(
@@ -101,7 +101,7 @@ internal fun rememberHostDrawerState(
         open,
         remember(state) { mutableStateOf<Boolean?>(null) },
         settled = { state.currentValue == DrawerValue.Open },
-        report = report?.let { id -> { value -> observation("open", id, value) } },
+        report = report?.let { id -> { value -> observation("open", id, JsonPrimitive(value)) } },
     ) { state.driveTo(if (it) DrawerValue.Open else DrawerValue.Closed) }
     return state
 }
@@ -145,7 +145,7 @@ internal fun rememberHostSliderState(
     report: String?,
     valueRange: ClosedFloatingPointRange<Float>?,
     steps: Long?,
-    observation: (String, String, Float) -> Unit,
+    observation: Observation,
 ): SliderState {
     val range = valueRange ?: (0f..1f)
     val count = (steps ?: 0L).toInt()
@@ -175,7 +175,9 @@ internal fun rememberHostSliderState(
         val current = state.value
         if (current != settled.value) {
             settled.value = current
-            channel.value?.let { action -> currentObservation.value("value", action, current) }
+            channel.value?.let { action ->
+                currentObservation.value("value", action, JsonPrimitive(current))
+            }
         }
     }
     LaunchedEffect(state) { state.onValueChangeFinished = reportSettled }
@@ -211,7 +213,7 @@ internal fun rememberHostTooltipState(
     visible: Boolean?,
     isPersistent: Boolean,
     report: String?,
-    observation: (String, String, Boolean) -> Unit,
+    observation: Observation,
 ): TooltipState {
     val state = rememberTooltipState(isPersistent = isPersistent)
     Reconcile(
@@ -219,7 +221,10 @@ internal fun rememberHostTooltipState(
         visible,
         remember(state) { mutableStateOf<Boolean?>(null) },
         settled = { state.isVisible },
-        report = report?.let { id -> { value -> observation("visible", id, value) } },
+        report =
+            report?.let { id ->
+                { value -> observation("visible", id, JsonPrimitive(value)) }
+            },
     ) {
         if (it) {
             // Let the anchor's initial unfocused notification run first:
@@ -250,7 +255,7 @@ internal fun rememberHostTooltipState(
 internal fun rememberHostScrollState(
     offset: Double?,
     report: String?,
-    observation: (String, String, Int) -> Unit,
+    observation: Observation,
 ): ScrollState {
     // Top, like the drawer starts closed: a stated offset is a drive from
     // there, and the drive's own settle is what reports the arrival.
@@ -300,7 +305,7 @@ fun ScrollState.attachTo(
 internal fun rememberHostLazyListState(
     index: Long?,
     report: String?,
-    observation: (String, String, Int) -> Unit,
+    observation: Observation,
 ): LazyListState {
     val state = rememberLazyListState()
     val lastDesired = rememberSaveable { mutableStateOf<Long?>(null) }
@@ -329,7 +334,7 @@ private fun ObserveIdlePosition(
     position: () -> Int,
     kind: String,
     report: String?,
-    observation: (String, String, Int) -> Unit,
+    observation: Observation,
 ) {
     val currentPosition = rememberUpdatedState(position)
     val currentObservation = rememberUpdatedState(observation)
@@ -350,7 +355,7 @@ private fun ObserveIdlePosition(
                 ) {
                     settled.value = value
                     channel.value?.let {
-                        currentObservation.value(kind, it, value)
+                        currentObservation.value(kind, it, JsonPrimitive(value))
                     }
                 }
             }
@@ -400,7 +405,7 @@ private val snackbarRequestSaver =
 internal fun rememberHostSnackbar(
     id: String,
     request: SnackbarRequest,
-    observation: (String, String, JsonPrimitive) -> Unit,
+    observation: Observation,
 ): SnackbarHostState {
     val state = remember(id) { SnackbarHostState() }
     // Keep the highest accepted request before keying the effect. Rejecting an
