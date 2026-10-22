@@ -61,11 +61,20 @@ internal object JsonAudit {
         error("Unterminated JSON string")
     }
 
-    fun scalars(root: JsonElement) {
+    /** Containers audited last pass are the same content when they recur; skip them. */
+    fun scalars(
+        root: JsonElement,
+        memo: IdentityMemo<Unit>? = null,
+    ) {
         val pending = ArrayDeque<JsonElement>()
         pending.addLast(root)
         while (pending.isNotEmpty()) {
-            when (val value = pending.removeLast()) {
+            val value = pending.removeLast()
+            if (value !is JsonPrimitive && memo != null) {
+                if (memo[value] != null) continue
+                memo[value] = Unit
+            }
+            when (value) {
                 is JsonObject -> {
                     value.keys.forEach(::unicode)
                     value.values.forEach(pending::addLast)

@@ -64,6 +64,15 @@ class ChaquopyBridge(
             .toString()
     }
 
+    override fun fetchLatest(baseSerial: Long): String {
+        requireWorker()
+        return Python
+            .getInstance()
+            .getModule(MODULE)
+            .callAttr("fetch_latest", baseSerial)
+            .toString()
+    }
+
     override fun fetchLatestError(): String {
         requireWorker()
         return Python

@@ -17,6 +17,9 @@ sealed interface UiNode {
 
     /** Slot this node fills in its parent; null is the primary slot. */
     val slot: String? get() = null
+
+    /** This node with [children] decoded apart; a leaf has none. */
+    fun withChildren(children: List<UiNode>): UiNode
 }
 
 sealed interface UiProps {
@@ -45,6 +48,7 @@ data class AnimatedContent(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "AnimatedContent"
 }
 
@@ -70,6 +74,7 @@ data class Card(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "Card"
 }
 
@@ -90,6 +95,7 @@ data class Column(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "Column"
 }
 
@@ -107,6 +113,7 @@ data class Crossfade(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "Crossfade"
 }
 
@@ -126,6 +133,7 @@ data class ExpandedDockedSearchBar(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "ExpandedDockedSearchBar"
 }
 
@@ -145,6 +153,7 @@ data class ExpandedFullScreenSearchBar(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "ExpandedFullScreenSearchBar"
 }
 
@@ -168,6 +177,7 @@ data class FloatingActionButton(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "FloatingActionButton"
 }
 
@@ -186,6 +196,7 @@ data class HorizontalDivider(
     override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "HorizontalDivider"
 }
 
@@ -205,6 +216,7 @@ data class Icon(
     override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "Icon"
 }
 
@@ -227,6 +239,7 @@ data class IconButton(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "IconButton"
 }
 
@@ -245,6 +258,7 @@ data class Image(
     override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "Image"
 }
 
@@ -264,6 +278,7 @@ data class LazyColumn(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "LazyColumn"
 }
 
@@ -283,6 +298,7 @@ data class LinearProgressIndicator(
     override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "LinearProgressIndicator"
 }
 
@@ -304,6 +320,7 @@ data class ModalBottomSheet(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "ModalBottomSheet"
 }
 
@@ -323,6 +340,7 @@ data class NavigationBar(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "NavigationBar"
 }
 
@@ -347,6 +365,7 @@ data class NavigationBarItem(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "NavigationBarItem"
 }
 
@@ -367,6 +386,7 @@ data class PlainTooltip(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "PlainTooltip"
 }
 
@@ -389,6 +409,7 @@ data class RichTooltip(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "RichTooltip"
 }
 
@@ -406,6 +427,7 @@ data class Row(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "Row"
 }
 
@@ -423,6 +445,7 @@ data class Scaffold(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "Scaffold"
 }
 
@@ -445,6 +468,7 @@ data class SearchBarInputField(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "SearchBarInputField"
 }
 
@@ -467,6 +491,7 @@ data class SearchBarStateInputField(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "SearchBarStateInputField"
 }
 
@@ -483,6 +508,7 @@ data class Spacer(
     override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "Spacer"
 }
 
@@ -509,6 +535,7 @@ data class StatefulSearchBar(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "StatefulSearchBar"
 }
 
@@ -538,6 +565,7 @@ data class StatefulSearchBarInputField(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "StatefulSearchBarInputField"
 }
 
@@ -561,6 +589,7 @@ data class Switch(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "Switch"
 }
 
@@ -583,6 +612,7 @@ data class Text(
     override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "Text"
 }
 
@@ -605,6 +635,7 @@ data class TextButton(
     override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "TextButton"
 }
 
@@ -627,6 +658,7 @@ data class TextField(
     override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "TextField"
 }
 
@@ -650,6 +682,7 @@ data class TooltipBox(
     override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "TooltipBox"
 }
 
@@ -668,6 +701,7 @@ data class VerticalDivider(
     override val slot: String? = null,
 ) : UiNode {
     override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "VerticalDivider"
 }
 

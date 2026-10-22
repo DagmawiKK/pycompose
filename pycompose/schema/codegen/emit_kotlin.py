@@ -114,6 +114,9 @@ def render_kotlin_models(registry: dict[str, Any]) -> str:
         "",
         "    /** Slot this node fills in its parent; null is the primary slot. */",
         "    val slot: String? get() = null",
+        "",
+        "    /** This node with [children] decoded apart; a leaf has none. */",
+        "    fun withChildren(children: List<UiNode>): UiNode",
         "}",
         "",
         "sealed interface UiProps {",
@@ -158,6 +161,14 @@ def render_kotlin_models(registry: dict[str, Any]) -> str:
         lines.append(") : UiNode {")
         if not spec["children"]["allowed"] and not spec.get("slots"):
             lines.append("    override val children: List<UiNode> get() = emptyList()")
+            lines.append(
+                "    override fun withChildren(children: List<UiNode>): UiNode = this"
+            )
+        else:
+            lines.append(
+                "    override fun withChildren(children: List<UiNode>): UiNode ="
+                " copy(children = children)"
+            )
         lines.extend(
             [
                 f"    override val componentType: String get() = {kotlin_string(name)}",

@@ -4,7 +4,6 @@ import com.pycompose.ir.generated.IRRoot
 import com.pycompose.ir.generated.IrContract
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.decodeFromJsonElement
 
 /** Only the parser can construct this proof that a snapshot passed the wire gate. */
 class ValidatedIr internal constructor(
@@ -32,21 +31,53 @@ class IrParser(
             classDiscriminator = "type"
         }
 
+    private val validated = ValidationCache()
+    private val audited = IdentityMemo<Unit>()
+    private val decoder = NodeDecoder(json)
+
     /** Decode one full snapshot and reject unsupported versions before rendering. */
     fun parse(source: String): Result<ValidatedIr> =
-        runCatching {
-            JsonAudit.uniqueKeys(source, json)
-            val raw =
-                json.parseToJsonElement(source) as? JsonObject
-                    ?: error("Snapshot must be an object")
-            VersionGate.check(
-                WireValidator.string(raw["schemaVersion"], "schemaVersion"),
-                WireValidator.string(raw["version"], "version"),
-                minSchemaVersion,
-            )
-            WireValidator.validate(raw)
-            JsonAudit.scalars(raw)
-            val snapshot = json.decodeFromJsonElement<IRRoot>(raw)
-            ValidatedIr(snapshot)
-        }
+        runCatching { read(source) }.mapCatching(::accept)
+
+    /** One JSON object with no duplicate keys anywhere in it. */
+    internal fun read(source: String): JsonObject {
+        JsonAudit.uniqueKeys(source, json)
+        return json.parseToJsonElement(source) as? JsonObject ?: error("Snapshot must be an object")
+    }
+
+    /**
+     * Validate and decode a snapshot already parsed to JSON.
+     *
+     * Subtrees that are the same objects as last time -- what a patched snapshot
+     * shares with its base -- are neither validated nor decoded again. A failure
+     * forgets everything, since a failed pass may have recorded subtrees whose
+     * descendants were never checked.
+     */
+    internal fun accept(raw: JsonObject): ValidatedIr =
+        runCatching { validated(raw) }.onFailure { forget() }.getOrThrow()
+
+    private fun validated(raw: JsonObject): ValidatedIr {
+        VersionGate.check(
+            WireValidator.string(raw["schemaVersion"], "schemaVersion"),
+            WireValidator.string(raw["version"], "version"),
+            minSchemaVersion,
+        )
+        WireValidator.validate(raw, validated)
+        audited.start()
+        JsonAudit.scalars(raw, audited)
+        return ValidatedIr(
+            IRRoot(
+                version = WireValidator.string(raw["version"], "version"),
+                schemaVersion = WireValidator.string(raw["schemaVersion"], "schemaVersion"),
+                root = decoder.decode(raw["root"] as JsonObject),
+                metadata = raw["metadata"] as? JsonObject,
+            ),
+        )
+    }
+
+    private fun forget() {
+        validated.reset()
+        audited.reset()
+        decoder.reset()
+    }
 }

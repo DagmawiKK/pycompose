@@ -7,8 +7,8 @@ import com.pycompose.ir.AppBindings
 import com.pycompose.ir.AppData
 import com.pycompose.ir.EffectRequest
 import com.pycompose.ir.Effects
-import com.pycompose.ir.IrParser
 import com.pycompose.ir.Lifecycle
+import com.pycompose.ir.SnapshotStream
 import com.pycompose.ir.ValidatedIr
 import com.pycompose.renderer.Action
 import kotlinx.coroutines.CoroutineDispatcher
@@ -54,7 +54,7 @@ class PyComposeViewModel(
     private val pendingEffects = mutableListOf<EffectRequest>()
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
     private val commands = Channel<Command>(QUEUE_CAPACITY)
-    private val parser = IrParser()
+    private val stream = SnapshotStream()
     private val mutableSnapshot = MutableStateFlow<SessionSnapshot?>(null)
     private val mutableError = MutableStateFlow("")
     val snapshot: StateFlow<SessionSnapshot?> = mutableSnapshot.asStateFlow()
@@ -112,6 +112,8 @@ class PyComposeViewModel(
                             }
                             is Command.Reload -> {
                                 if (bridge.reload(command.route, restore)) {
+                                    // A new Python session knows no serial the host holds.
+                                    stream.reset()
                                     epoch += 1
                                     savedState[EPOCH] = epoch
                                 }
@@ -202,8 +204,7 @@ class PyComposeViewModel(
     private fun perform(operation: () -> Unit) {
         try {
             operation()
-            val source = bridge.fetchLatestSnapshot()
-            val result = parser.parse(source)
+            val result = stream.accept(bridge.fetchLatest(stream.serial))
             result
                 .onSuccess { candidate ->
                     // Effects belong to the snapshot that carried them: a repeat
