@@ -7,11 +7,14 @@ import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from pycompose.core.registry_types import PropDef
 from pycompose.errors import IrValidationError
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
+
+if TYPE_CHECKING:
+    from pycompose.core.reuse import SubtreeMemo
 
 BINDING_PATTERN = r"app\.[A-Za-z0-9_.-]+"
 _BINDING = re.compile(BINDING_PATTERN)
@@ -111,11 +114,16 @@ class ActionBinding(str):
         raise AttributeError("action bindings are immutable")
 
 
-def read_bindings(metadata: Mapping[str, object] | None) -> dict[str, BindingSpec]:
+def read_bindings(
+    metadata: Mapping[str, object] | None,
+    memo: SubtreeMemo[BindingSpec] | None = None,
+) -> dict[str, BindingSpec]:
     """Parse data-only binding metadata with fail-closed field/type checks.
 
     Args:
         metadata: Snapshot metadata containing optional actionBindings.
+        memo: Specs parsed last pass, reused for a contract that is the same
+            frozen object under the same id; None parses every contract.
 
     Returns:
         Validated binding declarations by stable id.
@@ -126,40 +134,59 @@ def read_bindings(metadata: Mapping[str, object] | None) -> dict[str, BindingSpe
     raw = metadata.get("actionBindings", {}) if metadata is not None else {}
     if not isinstance(raw, Mapping):
         raise IrValidationError("actionBindings must be an object")
-    # Snapshot metadata is frozen JSON, so arrays arrive as tuples; thaw once to
-    # read declarations with the ordinary dict/list vocabulary.
-    declarations = cast("Mapping[str, object]", thaw_json(dict(raw)))
     result = {}
-    for key, value in declarations.items():
-        if (
-            not isinstance(key, str)
-            or _BINDING.fullmatch(key) is None
-            or not isinstance(value, Mapping)
-        ):
-            raise IrValidationError("invalid app binding declaration")
-        if set(value) != {"handlerId", "payload", "bound"}:
-            raise IrValidationError("invalid app binding fields")
-        handler, fields, bound = value["handlerId"], value["payload"], value["bound"]
-        if (
-            not isinstance(handler, str)
-            or not handler
-            or not isinstance(fields, Mapping)
-            or not isinstance(bound, Mapping)
-        ):
-            raise IrValidationError("invalid app binding contract")
-        rules = {}
-        for name, rule in fields.items():
-            if (
-                not isinstance(name, str)
-                or not isinstance(rule, Mapping)
-                or set(rule) - {"type", "required", "values"}
-            ):
-                raise IrValidationError("invalid app payload schema")
-            prop = PropDef.from_mapping(rule, where=name)
-            if prop.type not in {"string", "integer", "number", "boolean", "enum"}:
-                raise IrValidationError("unsupported app payload type")
-            rules[name] = prop
-        result[key] = BindingSpec(
-            handler, rules, cast("Mapping[str, FrozenJsonValue]", bound)
-        )
+    for key, frozen in raw.items():
+        spec = memo.get(frozen, key) if memo is not None else None
+        if spec is None:
+            spec = _read_binding(key, frozen)
+            if memo is not None:
+                memo.put(frozen, spec, key)
+        result[key] = spec
     return result
+
+
+def _read_binding(key: object, frozen: object) -> BindingSpec:
+    """Parse one binding declaration.
+
+    Args:
+        key: The binding id.
+        frozen: Its frozen contract.
+
+    Returns:
+        The validated declaration.
+
+    Raises:
+        IrValidationError: If the declaration or its fixed payload is malformed.
+    """
+    # Snapshot metadata is frozen JSON, so arrays arrive as tuples; thaw to read
+    # the declaration with the ordinary dict/list vocabulary.
+    value = thaw_json(frozen)
+    if (
+        not isinstance(key, str)
+        or _BINDING.fullmatch(key) is None
+        or not isinstance(value, Mapping)
+    ):
+        raise IrValidationError("invalid app binding declaration")
+    if set(value) != {"handlerId", "payload", "bound"}:
+        raise IrValidationError("invalid app binding fields")
+    handler, fields, bound = value["handlerId"], value["payload"], value["bound"]
+    if (
+        not isinstance(handler, str)
+        or not handler
+        or not isinstance(fields, Mapping)
+        or not isinstance(bound, Mapping)
+    ):
+        raise IrValidationError("invalid app binding contract")
+    rules = {}
+    for name, rule in fields.items():
+        if (
+            not isinstance(name, str)
+            or not isinstance(rule, Mapping)
+            or set(rule) - {"type", "required", "values"}
+        ):
+            raise IrValidationError("invalid app payload schema")
+        prop = PropDef.from_mapping(rule, where=name)
+        if prop.type not in {"string", "integer", "number", "boolean", "enum"}:
+            raise IrValidationError("unsupported app payload type")
+        rules[name] = prop
+    return BindingSpec(handler, rules, cast("Mapping[str, FrozenJsonValue]", bound))

@@ -262,6 +262,7 @@ def validate_ir(
     validation = _Validation(debug, snapshot.schema_version)
     if reuse is not None:
         reuse.validated.start()
+        reuse.bindings.start()
         validation.memo = reuse.validated
     metadata = snapshot.metadata
     if metadata is not None:
@@ -271,7 +272,7 @@ def validate_ir(
             validation.report("invalid metadata", snapshot.root)
             metadata = None
     try:
-        bindings = read_bindings(metadata)
+        bindings = read_bindings(metadata, reuse.bindings if reuse else None)
     except (IrValidationError, ComponentRegistryError):
         validation.report("invalid app action bindings", snapshot.root)
         return ValidationResult(None, tuple(validation.issues))

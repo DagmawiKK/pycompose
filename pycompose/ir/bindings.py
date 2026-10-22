@@ -7,6 +7,7 @@ from pycompose.core.action_binding import ActionBinding
 from pycompose.core.node import Props
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
+from pycompose.utils.json_canonical import freeze_json
 
 Declare = Callable[[str, object], None]
 """Records one binding id and its wire contract."""
@@ -55,7 +56,8 @@ def lower_props(props: Props, declare: Declare) -> Props:
 
     def wire(binding: ActionBinding) -> str:
         key = str(binding)
-        declare(key, binding.spec.to_wire())
+        # Frozen once here, so the contract keeps its identity in metadata.
+        declare(key, freeze_json(binding.spec.to_wire()))
         return key
 
     wire_props = props.to_wire()
