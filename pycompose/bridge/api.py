@@ -15,7 +15,7 @@ from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
 from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
 from pycompose.ir.model import IRRoot
-from pycompose.ir.patch import diff_nodes, full_bytes, patch_bytes
+from pycompose.ir.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
 from pycompose.state import Actions, State, Store
 
 LOGGER = logging.getLogger(__name__)
@@ -204,8 +204,8 @@ class BridgeSurface:
         """Return the latest snapshot as a patch against the host's base, or whole.
 
         A base still in the window gets the ops that turn it into the latest
-        snapshot (ADR-0018); an unknown, stale or other session's base, or a
-        change too large to patch, gets the whole snapshot under its serial.
+        snapshot (ADR-0018); an unknown, stale or other session's base, a
+        replaced root, or a change past MAX_PATCH_OPS gets the whole snapshot.
 
         Args:
             base_serial: The serial of the snapshot the host holds; -1 for none.
@@ -224,9 +224,12 @@ class BridgeSurface:
         base = next((root for s, root in self._published if s == base_serial), None)
         if base is not None:
             ops = diff_nodes(base.root, latest.root)
-            if len(ops) <= MAX_PATCH_OPS and all(op.id != latest.root.id for op in ops):
+            whole = any(
+                isinstance(op, ReplaceSubtree) and op.id == latest.root.id for op in ops
+            )
+            if len(ops) <= MAX_PATCH_OPS and not whole:
                 envelope = patch_bytes(
-                    latest, ops, base_serial=base_serial, serial=serial
+                    latest, ops, base_serial=base_serial, serial=serial, base=base
                 )
                 return envelope.decode("utf-8")
         return full_bytes(latest, serial=serial, reuse=self._reuse).decode("utf-8")

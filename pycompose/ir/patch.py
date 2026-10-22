@@ -17,8 +17,9 @@ has no finer structural operation (ADR-0018 decision 2).
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from typing import cast
 
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
@@ -175,28 +176,40 @@ def patch_bytes(
     *,
     base_serial: int,
     serial: int,
+    base: IRRoot | None = None,
 ) -> bytes:
     """Serialize the pull result carrying ops against the host's base.
 
-    Metadata (bindings, effects, app data) rides every envelope: it belongs to
-    the snapshot that carried it, and a prop-only patch that dropped it would
-    strand navigation and persistence (ADR-0018 decision 3).
+    Metadata (bindings, effects, app data) belongs to the snapshot that carried
+    it, so every envelope states it (ADR-0018 decision 3). Given the ``base``,
+    binding contracts travel as a ``bindings`` delta against the base's --
+    ``set`` for new or changed ids, ``remove`` for dropped ones -- since a
+    keystroke rarely changes any; effects and app data still travel whole.
 
     Args:
         root: The snapshot the ops lead to; supplies version and metadata.
         ops: Ops from :func:`diff_nodes`, in their deterministic order.
         base_serial: The serial the host declared it still holds.
         serial: The serial this content is published under.
+        base: The snapshot the host holds, for a bindings delta; None sends
+            the metadata whole.
 
     Returns:
         Canonical UTF-8 bytes.
     """
+    metadata: Mapping[str, object] | None = root.metadata
+    delta: dict[str, object] | None = None
+    if base is not None:
+        metadata, delta = _bindings_delta(base.metadata, root.metadata)
     output = bytearray(b'{"baseSerial":')
     output.extend(str(base_serial).encode())
+    if delta is not None:
+        output.extend(b',"bindings":')
+        output.extend(canonical_json_bytes(delta))
     output.extend(b',"kind":"patch"')
-    if root.metadata is not None:
+    if metadata is not None:
         output.extend(b',"metadata":')
-        output.extend(canonical_json_bytes(root.metadata))
+        output.extend(canonical_json_bytes(metadata))
     output.extend(b',"ops":[')
     for index, op in enumerate(ops):
         if index:
@@ -220,3 +233,33 @@ def patch_bytes(
     output.extend(canonical_json_bytes(root.version))
     output.extend(b"}")
     return bytes(output)
+
+
+def _bindings_delta(
+    base: Mapping[str, object] | None, current: Mapping[str, object] | None
+) -> tuple[Mapping[str, object] | None, dict[str, object]]:
+    """Split the bindings out of ``current`` as a delta against ``base``.
+
+    The delta is stated even when empty: its presence is what tells the host
+    the metadata beside it holds no bindings of its own.
+
+    Args:
+        base: The held snapshot's metadata.
+        current: The published snapshot's metadata.
+
+    Returns:
+        The other metadata sections (None when there are none), and the
+        bindings delta.
+    """
+    previous = cast("Mapping[str, object]", (base or {}).get("actionBindings", {}))
+    latest = cast("Mapping[str, object]", (current or {}).get("actionBindings", {}))
+    rest = {
+        key: value for key, value in (current or {}).items() if key != "actionBindings"
+    }
+    changed = {
+        key: value
+        for key, value in latest.items()
+        if not (previous.get(key) is value or previous.get(key) == value)
+    }
+    removed = sorted(key for key in previous if key not in latest)
+    return rest or None, {"remove": removed, "set": changed}
