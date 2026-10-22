@@ -37,6 +37,56 @@ class _Frame:
     children: list[Node] = field(default_factory=list)
 
 
+class ExpansionMemo:
+    """Reuse a deferred declaration's expansion while its inputs are unchanged.
+
+    A composable's output is a pure function of its definition and arguments
+    (the :class:`~pycompose.composition.Composable` contract). Arguments are
+    keyed by value for scalars and by identity otherwise, so a structurally
+    shared frozen State re-runs only the declarations whose inputs changed.
+    Each pass keeps exactly the entries it used, which bounds the memo by the
+    current tree and releases replaced inputs. With ``verify_every`` set, every
+    n-th reuse is expanded again and compared, so a composable reading anything
+    outside its arguments fails loudly instead of showing stale output.
+    """
+
+    def __init__(self, *, verify_every: int = 0) -> None:
+        """Start empty.
+
+        Args:
+            verify_every: Re-expand and compare every n-th reuse; 0 never does.
+        """
+        self.verify_every = verify_every
+        self._previous: dict[object, tuple[Node, tuple[Node, ...]]] = {}
+        self._current: dict[object, tuple[Node, tuple[Node, ...]]] = {}
+        self._reuses = 0
+
+    def _start(self) -> None:
+        self._previous, self._current = self._current, {}
+
+    def _lookup(self, key: object) -> tuple[Node, ...] | None:
+        entry = self._previous.get(key)
+        if entry is None:
+            return None
+        self._current[key] = entry
+        self._reuses += 1
+        verify = self.verify_every and self._reuses % self.verify_every == 0
+        return None if verify else entry[1]
+
+    def _store(self, key: object, node: Node, produced: tuple[Node, ...]) -> None:
+        cached = self._previous.get(key)
+        if cached is not None and cached[1] != produced:
+            raise IrValidationError(
+                "composable output changed while its inputs did not; "
+                "it reads something outside its arguments",
+                node_id=node.id,
+                source=node.source if isinstance(node, DeferredNode) else None,
+            )
+        # The entry holds the declaration, so its identity-keyed inputs stay
+        # alive and their ids cannot be reused by unrelated objects.
+        self._current[key] = (node, produced)
+
+
 class _Expansion:
     def __init__(self) -> None:
         self.active: set[int] = set()
@@ -80,17 +130,20 @@ class _Expansion:
                 reason=str(exc),
             ) from exc
 
-    def finish(self, frame: _Frame) -> None:
+    def finish(self, frame: _Frame, memo: ExpansionMemo | None) -> None:
         node = frame.node
         self.active.remove(id(node))
         self.path.pop()
         if isinstance(node, DeferredNode):
             self.definitions.remove(node.recursion_key)
             self.context.pop()
-            frame.output.extend(
+            produced = tuple(
                 child if node.slot is None else child.with_slot(node.slot)
                 for child in frame.children
             )
+            frame.output.extend(produced)
+            if memo is not None:
+                memo._store(_memo_key(frame), node, produced)
             return
         identity = f"{frame.prefix}.{node.id}" if frame.prefix and node.id else node.id
         unchanged = identity == node.id and len(frame.children) == len(node.children)
@@ -112,7 +165,13 @@ class _Expansion:
         frame.output.append(result)
 
 
-def expand_nodes(root: Node) -> Node:
+def _memo_key(frame: _Frame) -> object:
+    node = frame.node
+    assert isinstance(node, DeferredNode)
+    return (frame.prefix, node.id, node.slot, node.recursion_key)
+
+
+def expand_nodes(root: Node, memo: ExpansionMemo | None = None) -> Node:
     """Expand declarations iteratively, preserving untouched native branches.
 
     No context or function is retained in the result. Composable instance keys
@@ -122,6 +181,8 @@ def expand_nodes(root: Node) -> Node:
 
     Args:
         root: App declaration containing native nodes and deferred declarations.
+        memo: The previous pass's expansions to reuse where inputs are
+            unchanged; None expands everything.
 
     Returns:
         One native root with no deferred declarations anywhere beneath it.
@@ -131,12 +192,19 @@ def expand_nodes(root: Node) -> Node:
     """
     output: list[Node] = []
     expansion = _Expansion()
+    if memo is not None:
+        memo._start()
     pending = [(_Frame(root, "", output), True)]
     while pending:
         frame, entering = pending.pop()
         if not entering:
-            expansion.finish(frame)
+            expansion.finish(frame, memo)
             continue
+        if memo is not None and isinstance(frame.node, DeferredNode):
+            reused = memo._lookup(_memo_key(frame))
+            if reused is not None:
+                frame.output.extend(reused)
+                continue
         children = expansion.enter(frame)
         pending.append((frame, False))
         prefix = ""

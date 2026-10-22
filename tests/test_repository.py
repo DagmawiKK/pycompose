@@ -259,3 +259,15 @@ def test_the_newest_diagnostics_are_the_ones_kept() -> None:
     # The tail of what was written, in the order it was written.
     expected = names[-DIAGNOSTIC_HISTORY:]
     assert [line.split(":")[0].split()[-1] for line in kept] == expected
+
+
+def test_an_unchanged_document_shares_its_items_until_it_is_written() -> None:
+    """Immutable items are decoded once, so views keyed by identity see no change."""
+    document = Document("notes.json", Note)
+    document.save([Note(1, "First")])
+    first, again = document.load(), document.load()
+    assert first is not again
+    assert first[0] is again[0]
+
+    document.save([Note(1, "Renamed")])
+    assert document.load() == [Note(1, "Renamed")]

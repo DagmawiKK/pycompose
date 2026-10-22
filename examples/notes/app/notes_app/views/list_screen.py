@@ -56,7 +56,7 @@ def list_screen(
         note_row(
             id=f"row_{note.id}",
             note=note,
-            session=session,
+            previews=session.previews,
             theme=theme,
             actions=actions,
         )
@@ -339,7 +339,7 @@ def about_sheet(
 def note_row(
     *,
     note: Note,
-    session: Session,
+    previews: bool,
     theme: Theme,
     actions: Registry,
 ) -> Node:
@@ -353,7 +353,7 @@ def note_row(
 
     Args:
         note: The note this row shows.
-        session: The session shell, for whether previews are shown.
+        previews: Whether the row shows the note's preview line.
         theme: Colours to paint with.
         actions: The registry this screen binds its controls to.
 
@@ -368,7 +368,7 @@ def note_row(
             color=theme.on_surface,
         )
     ]
-    if session.previews:
+    if previews:
         caption.append(
             Text(
                 id="preview",

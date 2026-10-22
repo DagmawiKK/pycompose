@@ -7,6 +7,7 @@ from threading import current_thread
 
 from pycompose.bridge.types import decode_action
 from pycompose.core.action_binding import BindingSpec, read_bindings
+from pycompose.core.expansion import ExpansionMemo
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
@@ -14,6 +15,9 @@ from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
 from pycompose.state import Actions, State, Store
 
 LOGGER = logging.getLogger(__name__)
+
+VERIFY_EVERY = 8
+"""In debug, every n-th reused composable is expanded again and compared."""
 
 
 def _unchanged(candidate: State, current: State) -> bool:
@@ -58,6 +62,8 @@ class BridgeSurface:
         self._latest_error = ""
         self._bindings: dict[str, BindingSpec] = {}
         self._deliveries = Dispatcher()
+        # Debug re-expands a sample of reused composables to catch impure ones.
+        self._memo = ExpansionMemo(verify_every=VERIFY_EVERY if debug else 0)
         try:
             self._latest, self._bindings = self._snapshot(store.value)
         except SchemaError:
@@ -85,7 +91,9 @@ class BridgeSurface:
         )
 
     def _snapshot(self, state: State) -> tuple[str | None, dict[str, BindingSpec]]:
-        result = validate_ir(emit_ir(state, self._schema_version), debug=self._debug)
+        result = validate_ir(
+            emit_ir(state, self._schema_version, self._memo), debug=self._debug
+        )
         for issue in result.issues:
             LOGGER.warning("IR validation: %s", issue)
         if result.snapshot is None:

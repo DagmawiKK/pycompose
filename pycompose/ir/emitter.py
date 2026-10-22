@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from pycompose.core.expansion import expand_nodes
+from pycompose.core.expansion import ExpansionMemo, expand_nodes
 from pycompose.core.ids import ROOT_ID, IdRegistry, child_id
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
@@ -30,7 +30,9 @@ from pycompose.state.state import State
 __all__ = ["emit_ir"]
 
 
-def emit_ir(state: State, schema_version: str) -> IRRoot:
+def emit_ir(
+    state: State, schema_version: str, memo: ExpansionMemo | None = None
+) -> IRRoot:
     """Emit a full candidate snapshot without I/O, clock or environment reads.
 
     Unsupported schemas propagate SchemaError; stable-key collisions propagate
@@ -41,6 +43,8 @@ def emit_ir(state: State, schema_version: str) -> IRRoot:
     Args:
         state: Frozen snapshot from the Store's current composition surface.
         schema_version: Requested wire contract version.
+        memo: The session's previous expansions, reused where a composable's
+            inputs are unchanged; None expands every declaration.
 
     Returns:
         A versioned IR snapshot.
@@ -52,7 +56,7 @@ def emit_ir(state: State, schema_version: str) -> IRRoot:
         maximum=SCHEMA_VERSION,
         supported=REGISTRY.supported_schema_versions or (SCHEMA_VERSION,),
     )
-    root = _emit_node(expand_nodes(state.root), ROOT_ID, IdRegistry())
+    root = _emit_node(expand_nodes(state.root, memo), ROOT_ID, IdRegistry())
     root, bindings = lower_bindings(root)
     metadata: Mapping[str, JsonValue] | None = None
     # Binding contracts, effect requests and app data share one metadata object;

@@ -192,6 +192,12 @@ class Document(Generic[T]):
             raise StateError("document name must be a plain file name")
         self._codec = _codec_for(model)
         self._path = Path(directory) / name if directory is not None else root() / name
+        # Immutable items can be shared between loads, so an unchanged file
+        # returns the same objects: no re-decode, and views keyed by identity
+        # (ExpansionMemo) see unchanged items as unchanged.
+        params = getattr(self._codec.cls, "__dataclass_params__", None)
+        self._shareable = bool(params and params.frozen)
+        self._cached: tuple[tuple[int, int, int], list[object]] | None = None
 
     @property
     def path(self) -> Path:
@@ -213,7 +219,17 @@ class Document(Generic[T]):
             The stored items.
         """
         with _lock:
-            return cast("list[T]", self._read())
+            try:
+                stat = self._path.stat()
+                signature = (stat.st_ino, stat.st_size, stat.st_mtime_ns)
+            except OSError:
+                signature = None
+            if self._cached is not None and self._cached[0] == signature:
+                return cast("list[T]", list(self._cached[1]))
+            items = self._read()
+            if self._shareable and signature is not None:
+                self._cached = (signature, items)
+            return cast("list[T]", list(items))
 
     def save(self, items: Sequence[T]) -> None:
         """Replace everything held, atomically.
