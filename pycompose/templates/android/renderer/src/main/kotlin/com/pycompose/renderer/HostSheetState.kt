@@ -160,7 +160,7 @@ private class SheetProjection(
             // A save mid-drive re-drives the stated request, not the anchor the
             // native holder happened to reach before the save.
             pending != null -> pending
-            state.currentValue != SheetValue.Hidden -> state.currentValue.wireValue()
+            state.currentValue != SheetValue.Hidden -> state.currentValue.wire
             // Saved during the opening animation: the request must still reconcile.
             else -> lastDesired?.takeIf { it != "hidden" }
         }
@@ -316,7 +316,7 @@ private fun ObserveSheet(
                     projection.settled = SheetValue.Hidden
                     projection.present(false)
                     valueChannel.value?.let {
-                        sink.value.observe("value", it, SheetValue.Hidden.wireValue())
+                        sink.value.observe("value", it, SheetValue.Hidden.wire)
                     }
                     openChannel.value?.let { sink.value.observe("open", it, false) }
                     return@collect
@@ -328,7 +328,7 @@ private fun ObserveSheet(
                 projection.settled = snapshot.anchor
                 projection.present(isOpen)
                 valueChannel.value?.let {
-                    sink.value.observe("value", it, snapshot.anchor.wireValue())
+                    sink.value.observe("value", it, snapshot.anchor.wire)
                 }
                 if (wasOpen != isOpen) {
                     openChannel.value?.let { sink.value.observe("open", it, isOpen) }
@@ -355,15 +355,6 @@ private fun ObserveDismissal(projection: SheetProjection) {
             }
     }
 }
-
-/** The native enum's stable lowerCamel wire aliases. */
-@OptIn(ExperimentalMaterial3Api::class)
-private fun SheetValue.wireValue(): String =
-    when (this) {
-        SheetValue.Hidden -> "hidden"
-        SheetValue.PartiallyExpanded -> "partiallyExpanded"
-        SheetValue.Expanded -> "expanded"
-    }
 
 /**
  * One node's native holder and presence gate, consumed by generated adapters.

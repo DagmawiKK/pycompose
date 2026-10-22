@@ -105,6 +105,16 @@ internal fun rememberHostDrawerState(
     return state
 }
 
+/** A native anchor's wire alias: its entry name in lowerCamel, as every anchor family spells it. */
+internal val Enum<*>.wire: String get() = name.replaceFirstChar { it.lowercaseChar() }
+
+/** The native anchor a wire alias names, or null when the host cannot know it. */
+internal inline fun <reified E : Enum<E>> String.anchor(): E? =
+    enumValues<E>().firstOrNull {
+        it.wire ==
+            this
+    }
+
 /** The settled value one node last reported, seeded where its composition started. */
 internal class Settled<T>(
     var value: T,

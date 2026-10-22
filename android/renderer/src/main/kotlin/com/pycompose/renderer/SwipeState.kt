@@ -28,16 +28,17 @@ internal fun rememberHostSwipeState(
     report: String?,
     observation: (String, String, String) -> Unit,
 ): SwipeToDismissBoxState {
-    val initial = remember { value?.toSwipeValue() ?: SwipeToDismissBoxValue.Settled }
+    val initial =
+        remember { value?.anchor<SwipeToDismissBoxValue>() ?: SwipeToDismissBoxValue.Settled }
     val state = rememberSwipeToDismissBoxState(initialValue = initial)
     Reconcile(
         state,
         value,
         rememberSaveable { mutableStateOf(value) },
-        settled = { state.settledValue.toWireValue() },
+        settled = { state.settledValue.wire },
         report = report?.let { id -> { anchor -> observation("value", id, anchor) } },
     ) {
-        when (val anchor = it.toSwipeValue()) {
+        when (val anchor = it.anchor<SwipeToDismissBoxValue>()) {
             SwipeToDismissBoxValue.Settled -> state.reset()
             null -> Unit
             else -> state.dismiss(anchor)
@@ -45,20 +46,3 @@ internal fun rememberHostSwipeState(
     }
     return state
 }
-
-/** The native anchor a wire value names, or null when the host cannot know it. */
-private fun String.toSwipeValue(): SwipeToDismissBoxValue? =
-    when (this) {
-        "settled" -> SwipeToDismissBoxValue.Settled
-        "startToEnd" -> SwipeToDismissBoxValue.StartToEnd
-        "endToStart" -> SwipeToDismissBoxValue.EndToStart
-        else -> null
-    }
-
-/** The lowerCamel wire spelling of a native anchor. */
-private fun SwipeToDismissBoxValue.toWireValue(): String =
-    when (this) {
-        SwipeToDismissBoxValue.Settled -> "settled"
-        SwipeToDismissBoxValue.StartToEnd -> "startToEnd"
-        SwipeToDismissBoxValue.EndToStart -> "endToStart"
-    }
