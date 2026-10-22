@@ -34,6 +34,7 @@ only be written together with the files it budgets.
 
 EXCLUDED_PARTS = (
     ".git",
+    ".claude",
     ".venv",
     "build",
     "node_modules",
