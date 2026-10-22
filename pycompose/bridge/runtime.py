@@ -68,7 +68,9 @@ class RuntimeSession:
         self._container = app.container()
         return self._container
 
-    def _build(self, route: str, restore: str = "") -> BridgeSurface:
+    def _build(
+        self, route: str, restore: str = "", *, first_serial: int = 1
+    ) -> BridgeSurface:
         module = importlib.import_module(self._module)
         app = getattr(module, self._export, None)
         if not isinstance(app, App):
@@ -96,7 +98,9 @@ class RuntimeSession:
         self._check_injection(actions, container)
         actions.install_container(container)
         state = app.build(route=route, restore=restore)
-        surface = BridgeSurface(Store(state), actions, debug=self._debug)
+        surface = BridgeSurface(
+            Store(state), actions, debug=self._debug, first_serial=first_serial
+        )
         if surface.expose_latest_snapshot() is None:
             raise BridgeError("app build produced no valid snapshot")
         return surface
@@ -142,6 +146,18 @@ class RuntimeSession:
         """
         self._require_worker()
         return self._surface.expose_latest_snapshot() or ""
+
+    def envelope(self, base_serial: int) -> str:
+        """Return the latest snapshot as a full or patch pull envelope.
+
+        Args:
+            base_serial: Serial of the snapshot the host holds, or 0 for none.
+
+        Returns:
+            Envelope JSON, or an empty string when no valid snapshot exists.
+        """
+        self._require_worker()
+        return self._surface.expose_latest_envelope(base_serial) or ""
 
     def error(self) -> str:
         """Return a debug diagnostic without leaking Python exceptions or objects.
@@ -189,7 +205,9 @@ class RuntimeSession:
                     Path(cached).unlink(missing_ok=True)
         importlib.invalidate_caches()
         try:
-            candidate = self._build(route, restore)
+            candidate = self._build(
+                route, restore, first_serial=self._surface.serial + 1
+            )
         except Exception as exc:
             for name in _user_modules(directory):
                 del sys.modules[name]
@@ -308,6 +326,22 @@ def fetch_latest_snapshot() -> str:
         Snapshot JSON, or an empty string before initialization.
     """
     return _session.snapshot() if _session is not None else ""
+
+
+def fetch_latest_envelope(base_serial: int = 0) -> str:
+    """Pull the latest snapshot as an ADR-0018 full or patch envelope.
+
+    The host passes the serial of the snapshot it holds. While Python still
+    keeps that snapshot, the envelope carries only the ops against it;
+    otherwise it carries the full snapshot with its serial.
+
+    Args:
+        base_serial: Serial the host holds, or 0 before its first pull.
+
+    Returns:
+        Envelope JSON, or an empty string before initialization.
+    """
+    return _session.envelope(base_serial) if _session is not None else ""
 
 
 def fetch_latest_error() -> str:
