@@ -49,6 +49,18 @@ GROUPS: dict[str, tuple[str, str, str, str | None]] = {
 Change only with a decision.
 """
 
+COMPONENT_GROUPS = {
+    "androidx.compose.animation",
+    "androidx.compose.foundation",
+    "androidx.compose.material3",
+    "androidx.compose.material3.adaptive",
+}
+"""Groups whose public, Unit-returning composables are components (plan 31 step 1).
+
+M2 is extracted but contributes none: design profiles are never merged
+(ADR-0021).
+"""
+
 DOMAIN_OVERRIDES = {"icons", "tooling"}
 """Artifact domains that differ from the default domain of their group."""
 
@@ -76,6 +88,15 @@ def test_every_group_keeps_its_ratified_classification(
         assert group["category"] == category, name
         assert group["domain"] == domain, name
         assert group.get("design") == design, name
+
+
+def test_only_the_ratified_groups_contribute_components(
+    closure: dict[str, Any],
+) -> None:
+    flagged = {
+        name for name, group in closure["groups"].items() if group.get("components")
+    }
+    assert flagged == COMPONENT_GROUPS
 
 
 def test_artifacts_are_well_formed_and_classified(closure: dict[str, Any]) -> None:

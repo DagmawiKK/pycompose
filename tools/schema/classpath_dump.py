@@ -389,9 +389,11 @@ def _validate_inventory(data: dict[str, Any]) -> None:
         "unresolved target extraction errors",
     )
     records = data["declarations"]
-    _require(
-        any(d["disposition"] == "ui" for d in records), "empty public M3 inventory"
-    )
+    _require(any(d["disposition"] == "ui" for d in records), "no public components")
+    groups = json.loads((android / "compose-closure.json").read_text(encoding="utf-8"))
+    components = {
+        name for name, group in groups["groups"].items() if group.get("components")
+    }
     identities: set[tuple[str, str, str | None, str | None]] = set()
     for record in records:
         _require(
@@ -400,7 +402,11 @@ def _validate_inventory(data: dict[str, Any]) -> None:
         if record["disposition"] == "ui":
             _require(
                 record["artifact"] in android_artifacts,
-                "M3 UI requires an Android variant",
+                "a component requires an Android variant",
+            )
+            _require(
+                record["artifact"].split(":")[0] in components,
+                "component from a group the closure does not mark as components",
             )
         _validate_declaration(record)
         identity = (
@@ -444,11 +450,9 @@ def _validate_declaration(record: dict[str, Any]) -> None:
                 _require(
                     accessor["matched"] is True, "unmatched public property accessor"
                 )
+    if "inline" in record:
+        _require(type(record["inline"]) is bool, "unknown inline semantics")
     if disposition == "ui":
-        _require(
-            record["package"].startswith("androidx.compose.material3"),
-            "non-M3 component in denominator",
-        )
         _require(record["composable"] is True, "non-composable UI declaration")
         _require(
             record["returnType"]["classifier"] == "kotlin/Unit",
@@ -493,11 +497,11 @@ def _validate_type(value: dict[str, Any]) -> None:
 
 
 def summarise(directory: Path = DUMP_DIR) -> str:
-    """Report actual public M3 overloads separately from support and exclusions."""
+    """Report public component overloads separately from support and exclusions."""
     found = inventory(directory)
     return (
         f"BOM {found.bom}, Kotlin/Compose compiler {found.compiler}\n"
-        f"{len({d.name for d in found.ui})} public M3 component names, "
+        f"{len({d.name for d in found.ui})} public component names, "
         f"{len(found.ui)} overloads\n"
         f"{len(found.declarations)} total declarations; "
         "discovery is not adapter coverage"

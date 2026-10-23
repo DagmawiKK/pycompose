@@ -7,7 +7,7 @@
     }
   },
   "AnimatedContent": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "no call plan in the pinned inventory: no wire policy for #0, receiver/generic declaration needs a native protocol, slot scope needs a native protocol: androidx/compose/animation/AnimatedContentScope",
     "entry": {
       "package": "androidx.compose.animation",
       "category": "animation",
@@ -40,7 +40,7 @@
     }
   },
   "AnimatedVisibility": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "no call plan in the pinned inventory: no wire policy for androidx/compose/animation/core/MutableTransitionState, no wire policy for kotlin/Function1, receiver/generic declaration needs a native protocol, slot scope needs a native protocol: androidx/compose/animation/AnimatedVisibilityScope",
     "entry": {
       "package": "androidx.compose.animation",
       "category": "animation",
@@ -119,21 +119,16 @@
     }
   },
   "Box": {
-    "manual": "no call plan in the pinned inventory",
-    "entry": {
-      "package": "androidx.compose.foundation.layout",
+    "decision": {
       "category": "layout",
       "stability": "stable",
-      "source": {
-        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "Box",
-        "name": "Box",
-        "owner": "androidx.compose.foundation.layout.BoxKt"
-      },
+      "identity": "androidx.compose.foundation:foundation-layout-android:1.12.1 androidx.compose.foundation.layout.BoxKt.Box(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+    },
+    "patch": {
+      "since": null,
       "props": {
+        "propagateMinConstraints": null,
         "contentAlignment": {
-          "type": "enum",
           "values": [
             "topStart",
             "topCenter",
@@ -144,18 +139,12 @@
             "bottomStart",
             "bottomCenter",
             "bottomEnd"
-          ],
-          "decode": "alignment",
-          "default": "topStart"
-        },
-        "modifier": {
-          "type": "modifier"
+          ]
         }
       },
       "children": {
-        "allowed": true,
-        "min": 0,
-        "provides": "BoxScope"
+        "kind": null,
+        "min": 0
       }
     }
   },
@@ -369,18 +358,12 @@
     }
   },
   "Column": {
-    "manual": "no call plan in the pinned inventory",
-    "entry": {
-      "package": "androidx.compose.foundation.layout",
+    "decision": {
       "category": "layout",
-      "stability": "stable",
-      "source": {
-        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Alignment$Horizontal;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "Column",
-        "name": "Column",
-        "owner": "androidx.compose.foundation.layout.ColumnKt"
-      },
+      "stability": "stable"
+    },
+    "patch": {
+      "since": null,
       "props": {
         "horizontalAlignment": {
           "type": "enum",
@@ -391,9 +374,6 @@
           ],
           "decode": "horizontal",
           "default": "start"
-        },
-        "modifier": {
-          "type": "modifier"
         },
         "offset": {
           "type": "number"
@@ -412,9 +392,8 @@
         }
       },
       "children": {
-        "allowed": true,
-        "min": 0,
-        "provides": "ColumnScope"
+        "kind": null,
+        "min": 0
       },
       "reshaped": [
         "offset",
@@ -430,7 +409,7 @@
     }
   },
   "Crossfade": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "no call plan in the pinned inventory: no wire policy for #0, receiver/generic declaration needs a native protocol, slot-supplied arguments need typed context references",
     "entry": {
       "package": "androidx.compose.animation",
       "category": "animation",
@@ -816,7 +795,7 @@
     }
   },
   "FlowColumn": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "no call plan in the pinned inventory: slot scope needs a native protocol: androidx/compose/foundation/layout/FlowColumnScope",
     "entry": {
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
@@ -861,7 +840,7 @@
     }
   },
   "FlowRow": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "no call plan in the pinned inventory: slot scope needs a native protocol: androidx/compose/foundation/layout/FlowRowScope",
     "entry": {
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
@@ -990,7 +969,7 @@
     }
   },
   "Image": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "the pin's one call plan takes an ImageVector; the catalog binds the Painter overload through a resource wrapper",
     "entry": {
       "package": "androidx.compose.foundation",
       "category": "media",
@@ -1059,7 +1038,7 @@
     }
   },
   "LazyColumn": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "no call plan in the pinned inventory: no wire policy for kotlin/Function1",
     "entry": {
       "package": "androidx.compose.foundation.lazy",
       "category": "lists",
@@ -1120,7 +1099,7 @@
     }
   },
   "LazyRow": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "no call plan in the pinned inventory: no wire policy for kotlin/Function1",
     "entry": {
       "package": "androidx.compose.foundation.lazy",
       "category": "lists",
@@ -1175,7 +1154,7 @@
     }
   },
   "LinearProgressIndicator": {
-    "manual": "2 call plans; select one by identity (androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.ProgressIndicatorKt.LinearProgressIndicator-_5eSR-E(FLandroidx/compose/ui/Modifier;JJILandroidx/compose/runtime/Composer;II)V, androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.ProgressIndicatorKt.LinearProgressIndicator-rIrjwxo(Landroidx/compose/ui/Modifier;JJIFLandroidx/compose/runtime/Composer;II)V)",
+    "manual": "the catalog binds the provider overload (progress: () -> Float), which the planner refuses; the two plannable overloads are not it",
     "entry": {
       "package": "androidx.compose.material3",
       "category": "status",
@@ -1680,18 +1659,12 @@
     }
   },
   "Row": {
-    "manual": "no call plan in the pinned inventory",
-    "entry": {
-      "package": "androidx.compose.foundation.layout",
+    "decision": {
       "category": "layout",
-      "stability": "stable",
-      "source": {
-        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Vertical;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "Row",
-        "name": "Row",
-        "owner": "androidx.compose.foundation.layout.RowKt"
-      },
+      "stability": "stable"
+    },
+    "patch": {
+      "since": null,
       "props": {
         "verticalAlignment": {
           "type": "enum",
@@ -1702,15 +1675,11 @@
           ],
           "decode": "vertical",
           "default": "top"
-        },
-        "modifier": {
-          "type": "modifier"
         }
       },
       "children": {
-        "allowed": true,
-        "min": 0,
-        "provides": "RowScope"
+        "kind": null,
+        "min": 0
       }
     }
   },
@@ -1767,7 +1736,7 @@
     }
   },
   "SearchBarInputField": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "SearchBarDefaults.InputField has a dispatch receiver, so the planner plans it as a hook, not a component",
     "entry": {
       "package": "androidx.compose.material3",
       "category": "input",
@@ -1851,7 +1820,7 @@
     }
   },
   "SearchBarStateInputField": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "SearchBarDefaults.InputField has a dispatch receiver, so the planner plans it as a hook, not a component",
     "entry": {
       "package": "androidx.compose.material3",
       "category": "input",
@@ -2104,30 +2073,16 @@
     }
   },
   "Spacer": {
-    "manual": "no call plan in the pinned inventory",
-    "entry": {
-      "package": "androidx.compose.foundation.layout",
+    "decision": {
       "category": "layout",
-      "stability": "stable",
-      "source": {
-        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V",
-        "jvmName": "Spacer",
-        "name": "Spacer",
-        "owner": "androidx.compose.foundation.layout.SpacerKt"
-      },
-      "props": {
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": false
-      }
+      "stability": "stable"
+    },
+    "patch": {
+      "since": null
     }
   },
   "StatefulSearchBar": {
-    "manual": "2 call plans; select one by identity (androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarKt.SearchBar-WuY5d9Q(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/foundation/layout/WindowInsets;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V, androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarKt.SearchBar-Y92LkZI(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V)",
+    "manual": "the catalog binds the SearchBarState overload, which needs a wire policy for SearchBarState; the two plannable overloads are not it",
     "entry": {
       "package": "androidx.compose.material3",
       "category": "input",
@@ -2249,7 +2204,7 @@
     }
   },
   "StatefulSearchBarInputField": {
-    "manual": "no call plan in the pinned inventory",
+    "manual": "SearchBarDefaults.InputField has a dispatch receiver, so the planner plans it as a hook, not a component",
     "entry": {
       "package": "androidx.compose.material3",
       "category": "input",

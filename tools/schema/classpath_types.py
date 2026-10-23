@@ -232,7 +232,7 @@ class Inventory:
 
     @property
     def required_support(self) -> tuple[Declaration, ...]:
-        """Transitive member signatures of classes referenced by public M3 UI.
+        """Transitive member signatures of classes referenced by public components.
 
         This identifies unread support signatures, not app-generation dependency
         closure: native factory/default implementations need their own audit.

@@ -193,7 +193,8 @@ def test_pinned_overloads_slots_and_scopes_survive_reading(native_document) -> N
     basic = [
         d
         for d in found.declarations
-        if d.name == "BasicText" and d.disposition == "support"
+        # Foundation is a component group (compose-closure.json).
+        if d.name == "BasicText" and d.disposition == "ui"
     ]
     assert len(basic) == 2
     assert all("minLines" in {p.name for p in d.parameters} for d in basic)
@@ -207,7 +208,7 @@ def test_pinned_overloads_slots_and_scopes_survive_reading(native_document) -> N
     animation = [
         d
         for d in found.declarations
-        if d.name == "AnimatedVisibility" and d.disposition == "support"
+        if d.name == "AnimatedVisibility" and d.disposition == "ui"
     ]
     assert any(
         d.receiver and d.receiver.classifier.endswith("RowScope") for d in animation

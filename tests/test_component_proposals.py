@@ -22,8 +22,15 @@ def assert_calls_resolve_to_recorded_identities(report, classes: Path) -> None:
     optional argument out can let Kotlin bind a same-named sibling. The
     compiler's own choice is readable from the bytecode, so it is compared
     against the recorded JVM name and declared arguments rather than inferred.
+    An inline declaration compiles into its body and leaves no call to read;
+    for those, compiling with every argument named is the proof there is.
     """
     assert classes.is_dir(), f"no compiled facades in {classes}"
+    inline = {
+        (d["owner"], d["jvm"]["name"], d["jvm"]["descriptor"])
+        for d in json.loads((DUMP / "inventory.json").read_text())["declarations"]
+        if d.get("inline")
+    }
     targets = set()
     for path in sorted(classes.glob("*.class")):
         dumped = subprocess.run(
@@ -40,6 +47,9 @@ def assert_calls_resolve_to_recorded_identities(report, classes: Path) -> None:
     unresolved = []
     for plan in report["candidates"]:
         if plan["status"] != "call-plan":
+            continue
+        source = plan["source"]
+        if (source["owner"], source["jvmName"], source["descriptor"]) in inline:
             continue
         owner = (
             f"{plan['source']['owner'].replace('.', '/')}.{plan['source']['jvmName']}"
@@ -59,7 +69,7 @@ def test_pinned_ui_defaults_cover_every_exact_overload(native_document):
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     defaults = source_defaults(DUMP)
-    assert len(found.ui) == 187
+    assert len(found.ui) == 248
     assert all((s.owner, s.jvm_name, s.jvm_descriptor) in defaults for s in found.ui)
 
 
@@ -95,10 +105,10 @@ def test_pinned_denominator_separates_components_from_styling_hooks(native_docum
     hook_coverage = report["coverage"]["hooks"]
     # Pin-derived denominators describe the committed dump (bom 2026.09.00) and
     # move only when the pinned evidence moves, never with catalog policy.
-    assert component_coverage["names"] == 118
-    assert component_coverage["overloads"] == 159
-    assert hook_coverage["names"] == 20
-    assert hook_coverage["overloads"] == 28
+    assert component_coverage["names"] == 159
+    assert component_coverage["overloads"] == 218
+    assert hook_coverage["names"] == 22
+    assert hook_coverage["overloads"] == 30
     # The callPlan/blocked split follows the protocols the catalog has activated,
     # so it must stay a decomposition rather than a memorized count.
     assert (

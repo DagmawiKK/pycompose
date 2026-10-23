@@ -71,5 +71,5 @@ def test_unspecified_variant_cannot_supply_public_ui(tmp_path: Path) -> None:
     document = write_inventory(tmp_path, [declaration()])
     document["artifacts"][0]["variant"] = None
     (tmp_path / "inventory.json").write_text(json.dumps(document))
-    with pytest.raises(ValueError, match="M3 UI requires an Android variant"):
+    with pytest.raises(ValueError, match="a component requires an Android variant"):
         inventory(tmp_path)

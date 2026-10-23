@@ -361,11 +361,11 @@ def test_every_approved_component_resolves_to_one_pinned_overload(
     assert native_document["artifacts"]
     catalog = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     results = resolutions(catalog, inventory(DUMP))
-    assert Counter(result.mode for result in results) == {
-        "derived": 30,
-        "anchored": 1,
-        "manual": 1,
-    }
+    # Every catalog component resolves in exactly one mode; how many land in
+    # each follows policy, so only the partition is asserted.
+    modes = Counter(result.mode for result in results)
+    assert set(modes) <= {"derived", "anchored", "manual"}
+    assert sum(modes.values()) == len(catalog["components"])
     assert [result.name for result in results if result.errors] == []
     assert [result.name for result in results if result.differences] == []
     drifted = [
@@ -383,10 +383,11 @@ def test_the_resolved_face_is_the_generated_call(native_document) -> None:
 
     assert native_document["artifacts"]
     catalog = json.loads((ROOT / "schema/catalog.lock.json").read_text())
-    checked = 0
+    checked = skipped = 0
     for result in resolutions(catalog, inventory(DUMP)):
         entry = catalog["components"][result.name]
         if entry.get("wrapper") or entry.get("adapter") == "manual":
+            skipped += 1
             continue
         block = render(result.name, entry)
         arguments = set(re.findall(r"^\s{20,}(?!val\b)(\w+) = ", block, re.MULTILINE))
@@ -394,7 +395,7 @@ def test_the_resolved_face_is_the_generated_call(native_document) -> None:
             argument.name for argument in result.face.arguments
         }, result.name
         checked += 1
-    assert checked == 29
+    assert checked and checked + skipped == len(catalog["components"])
 
 
 def test_the_checker_is_green_on_the_approved_catalog(native_document) -> None:

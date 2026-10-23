@@ -364,8 +364,8 @@
       },
       "children": {
         "allowed": true,
-        "min": 0,
-        "provides": "BoxScope"
+        "provides": "BoxScope",
+        "min": 0
       }
     },
     "Button": {
@@ -733,6 +733,9 @@
         "owner": "androidx.compose.foundation.layout.ColumnKt"
       },
       "props": {
+        "modifier": {
+          "type": "modifier"
+        },
         "horizontalAlignment": {
           "type": "enum",
           "values": [
@@ -742,9 +745,6 @@
           ],
           "decode": "horizontal",
           "default": "start"
-        },
-        "modifier": {
-          "type": "modifier"
         },
         "offset": {
           "type": "number"
@@ -764,8 +764,8 @@
       },
       "children": {
         "allowed": true,
-        "min": 0,
-        "provides": "ColumnScope"
+        "provides": "ColumnScope",
+        "min": 0
       },
       "reshaped": [
         "offset",
@@ -4026,6 +4026,9 @@
         "owner": "androidx.compose.foundation.layout.RowKt"
       },
       "props": {
+        "modifier": {
+          "type": "modifier"
+        },
         "verticalAlignment": {
           "type": "enum",
           "values": [
@@ -4035,15 +4038,12 @@
           ],
           "decode": "vertical",
           "default": "top"
-        },
-        "modifier": {
-          "type": "modifier"
         }
       },
       "children": {
         "allowed": true,
-        "min": 0,
-        "provides": "RowScope"
+        "provides": "RowScope",
+        "min": 0
       }
     },
     "Scaffold": {

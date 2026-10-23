@@ -11,6 +11,7 @@ import kotlinx.metadata.KmTypeParameter
 import kotlinx.metadata.KmValueParameter
 import kotlinx.metadata.Visibility
 import kotlinx.metadata.declaresDefaultValue
+import kotlinx.metadata.isInline
 import kotlinx.metadata.isNullable
 import kotlinx.metadata.isSuspend
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -243,7 +244,13 @@ tasks.register("dumpComposeApi") {
                 .flatMap { (_, classes) -> valueClassAbi(classes).entries }
                 .associate { it.toPair() }
         resolved.forEach { (coordinate, classes) ->
-            val extracted = ApiExtractor(coordinate, diagnostics, valueClasses).extract(classes)
+            val extracted =
+                ApiExtractor(
+                    coordinate,
+                    closure.hasComponents(coordinate.substringBefore(':')),
+                    diagnostics,
+                    valueClasses,
+                ).extract(classes)
             declarations.addAll(extracted.declarations)
             classFacts.addAll(extracted.classes)
         }
@@ -330,7 +337,7 @@ tasks.register("dumpComposeApi") {
         )
         val ui = declarations.count { it["disposition"] == "ui" }
         logger.lifecycle(
-            "dumpComposeApi: $ui public M3 overloads, ${declarations.size} declarations, " +
+            "dumpComposeApi: $ui public component overloads, ${declarations.size} declarations, " +
                 "${diagnostics.size} extraction errors -> $target",
         )
         val targetErrors = diagnostics.filter { it["target"] == true }
@@ -338,7 +345,7 @@ tasks.register("dumpComposeApi") {
             targetErrors.take(20).joinToString("\n", "Compose extraction failed:\n")
         }
         check(overrides.isEmpty()) { "Compose BOM overrides: $overrides" }
-        check(ui > 0) { "The resolved classpath contains no public Material 3 UI." }
+        check(ui > 0) { "The resolved classpath contains no public components." }
     }
 }
 
@@ -348,11 +355,14 @@ private fun sha256(bytes: ByteArray): String =
 /** The checked-in extraction closure: group policy plus the pinned artifact digests. */
 private class ComposeClosure(
     private val groupStatus: Map<String, String>,
+    private val componentGroups: Set<String>,
     val artifacts: Map<String, String>,
     val tooling: Map<String, String>,
     val support: Map<String, String>,
 ) {
     fun statusOf(group: String): String? = groupStatus[group]
+
+    fun hasComponents(group: String): Boolean = group in componentGroups
 
     companion object {
         fun read(file: File): ComposeClosure {
@@ -361,8 +371,10 @@ private class ComposeClosure(
                 document["schema"] == 1,
             ) { "Unsupported compose closure schema: ${document["schema"]}" }
             val groups = LinkedHashMap<String, String>()
+            val componentGroups = mutableSetOf<String>()
             (document["groups"] as Map<*, *>).forEach { (name, raw) ->
                 groups[name.toString()] = (raw as Map<*, *>)["status"].toString()
+                if (raw["components"] == true) componentGroups.add(name.toString())
             }
             val artifacts = digestsOf(document["artifacts"] as List<*>)
             val tooling = digestsOf(document["tooling"] as List<*>)
@@ -373,7 +385,7 @@ private class ComposeClosure(
                 "Compose closure support artifacts are also extracted or tooling: " +
                     overlap.sorted().joinToString(", ")
             }
-            return ComposeClosure(groups, artifacts, tooling, support)
+            return ComposeClosure(groups, componentGroups, artifacts, tooling, support)
         }
 
         private fun digestsOf(entries: List<*>): Map<String, String> {
@@ -708,6 +720,8 @@ private fun KmAnnotationArgument.document(): Any? =
 
 private class ApiExtractor(
     private val coordinate: String,
+    // Whether this artifact's group contributes components (compose-closure.json).
+    private val components: Boolean,
     private val diagnostics: MutableList<Map<String, Any?>>,
     private val valueClasses: Map<String, String>,
 ) {
@@ -745,7 +759,6 @@ private class ApiExtractor(
                         .filterKeys { it != "kotlin/Metadata" }
                 val composable = annotations.containsKey(composeAnnotation)
                 val eligibility = exclusion(function.visibility, classVisibility, annotations)
-                val m3 = owner.startsWith("androidx/compose/material3/")
                 val reason =
                     when {
                         eligibility != null -> eligibility
@@ -758,7 +771,7 @@ private class ApiExtractor(
                 if (eligibility == null && method == null) {
                     diagnostics.add(
                         mapOf(
-                            "target" to m3,
+                            "target" to components,
                             "message" to
                                 "$coordinate $owner.${function.name}: unmatched $signature",
                         ),
@@ -775,6 +788,9 @@ private class ApiExtractor(
                         "name" to function.name,
                         "declarationKind" to "function",
                         "suspend" to function.isSuspend,
+                        // An inline call compiles into its body, so no call to
+                        // this identity appears in the caller's bytecode.
+                        "inline" to function.isInline,
                         "visibility" to function.visibility.name,
                         "classVisibility" to classVisibility.name,
                         "jvm" to facts.jvm(signature),
@@ -782,16 +798,16 @@ private class ApiExtractor(
                             when {
                                 eligibility == null && method == null -> "error"
                                 reason != null -> "excluded"
-                                m3 && composable && returnsUnit && !contextProvider -> "ui"
+                                components && composable && returnsUnit && !contextProvider -> "ui"
                                 else -> "support"
                             },
                         "category" to
                             when {
                                 reason != null -> "excluded"
-                                !m3 -> "foundation-ui-helper"
+                                !components -> "support"
                                 contextProvider -> "composition-provider"
                                 composable && !returnsUnit -> "composable-factory"
-                                else -> "material3"
+                                else -> "component"
                             },
                         "reason" to reason,
                         "composable" to composable,
@@ -878,7 +894,7 @@ private class ApiExtractor(
                 if (eligibility == null && reason == "unmatched property accessor/field") {
                     diagnostics.add(
                         mapOf(
-                            "target" to owner.startsWith("androidx/compose/material3/"),
+                            "target" to components,
                             "message" to "$coordinate $owner.${property.name}: $reason",
                         ),
                     )
@@ -943,7 +959,7 @@ private class ApiExtractor(
                     if (reason == "unmatched constructor") {
                         diagnostics.add(
                             mapOf(
-                                "target" to owner.startsWith("androidx/compose/material3/"),
+                                "target" to components,
                                 "message" to "$coordinate $owner: $reason",
                             ),
                         )
@@ -977,8 +993,7 @@ private class ApiExtractor(
                     )
                 }
             }
-            if (owner.startsWith("androidx/compose/material3/") &&
-                classVisibility == Visibility.PUBLIC
+            if (components && classVisibility == Visibility.PUBLIC
             ) {
                 val metadataSignatures =
                     container.functions.mapNotNull {

@@ -115,6 +115,14 @@ def select(
         if candidate["name"] == name and candidate["surface"] == "component"
     ]
     usable = [candidate for candidate in matches if candidate["status"] == "call-plan"]
+    if not matches:
+        surfaces = sorted(
+            {c["surface"] for c in plans["candidates"] if c["name"] == name}
+        )
+        if surfaces:
+            raise CandidateError(
+                f"{name}: planned as {', '.join(surfaces)}, not a component"
+            )
     if not usable:
         reasons: set[str] = set()
         for candidate in matches:
