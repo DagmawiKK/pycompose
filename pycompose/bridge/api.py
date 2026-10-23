@@ -16,6 +16,7 @@ from pycompose.core.reuse import Reuse
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
+from pycompose.ir.echoes import ECHOES_SCHEMA
 from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
 from pycompose.ir.model import IRRoot
 from pycompose.ir.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
@@ -35,9 +36,6 @@ MAX_PATCH_OPS = 64
 
 _SERIALS = itertools.count(1)
 """Process-wide, so a serial never names another session's snapshot."""
-
-ECHOES_SCHEMA = "1.23.0"
-"""First schema whose snapshots echo the host's report sequence numbers."""
 
 
 def _unchanged(candidate: State, current: State) -> bool:

@@ -16,7 +16,7 @@ def _node(root: dict[str, Any]) -> Node:
     built: dict[int, Node] = {}
     while pending:
         raw, ready = pending.pop()
-        if set(raw) - {"id", "type", "props", "children"}:
+        if set(raw) - {"id", "type", "props", "children", "slot"}:
             raise ProjectError("unknown node fields", node_id=raw["id"])
         children = raw.get("children", [])
         if not ready:
@@ -28,6 +28,7 @@ def _node(root: dict[str, Any]) -> Node:
                 type=raw["type"],
                 props=raw["props"],
                 children=tuple(built.pop(id(child)) for child in children),
+                slot=raw.get("slot"),
             )
     return built[id(root)]
 

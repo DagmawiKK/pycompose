@@ -21,6 +21,7 @@ from pycompose.core.reuse import Reuse
 from pycompose.core.values import validate_bounds, validate_number, validate_value
 from pycompose.errors import ComponentRegistryError, IrValidationError
 from pycompose.ir.data import DATA_SCHEMA, read_data
+from pycompose.ir.echoes import ECHOES_SCHEMA, read_echoes
 from pycompose.ir.effects import EFFECTS_SCHEMA, read_effects
 from pycompose.ir.generated_validators import (
     MIN_LIBRARY_VERSION,
@@ -43,14 +44,21 @@ __all__ = [
 ]
 
 
+_LONG = range(-(2**63), 2**63)
+"""The integers a host can hold: a Kotlin Long."""
+
+
+def _is_long(value: object) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value in _LONG
+
+
 _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     "string": lambda value, _: isinstance(value, str),
     "resource": lambda value, prop: valid_resource(value, prop.values),
     "color": lambda value, _: isinstance(value, str),
     "boolean": lambda value, _: isinstance(value, bool),
-    "integer": lambda value, _: isinstance(value, int) and not isinstance(value, bool),
-    "durationMs": lambda value, _: isinstance(value, int)
-    and not isinstance(value, bool),
+    "integer": lambda value, _: _is_long(value),
+    "durationMs": lambda value, _: _is_long(value),
     "number": lambda value, _: isinstance(value, int | float)
     and not isinstance(value, bool),
     "dp": lambda value, _: _is_native_float(value),
@@ -299,6 +307,15 @@ def validate_ir(
         "invalid app data",
         "app data requires newer schema",
         DATA_SCHEMA,
+        snapshot.root,
+    ) or not _section_ok(
+        validation,
+        metadata,
+        read_echoes,
+        None,
+        "invalid echoes",
+        "echoes require newer schema",
+        ECHOES_SCHEMA,
         snapshot.root,
     ):
         return ValidationResult(None, tuple(validation.issues))

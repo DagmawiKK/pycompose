@@ -5,8 +5,10 @@ node and prop the emitter offers traces to a registry entry.
 """
 
 import json
+import re
 from typing import Any
 
+from pycompose.core.action_binding import BINDING_PATTERN
 from pycompose.schema.codegen.rules import (
     SLOT_NAME,
     die,
@@ -225,7 +227,10 @@ def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
     elif ptype == "enum":
         value = {"enum": sorted(prop["values"])}
     elif ptype == "actionId":
-        value = {"enum": action_ids}
+        # A registry action, or an app binding; which schemas may carry the
+        # latter is the validator's call, not the wire's shape.
+        names = "|".join([*map(re.escape, action_ids), BINDING_PATTERN])
+        value = {"type": "string", "pattern": f"^(?:{names})" + r"(?![\s\S])"}
     elif ptype == "modifier":
         value = {
             "type": "object",

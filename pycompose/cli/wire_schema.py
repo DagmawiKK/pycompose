@@ -82,7 +82,7 @@ def _scalars(item: object, rule: dict[str, Any], path: str) -> None:
         and "pattern" in rule
         and re.search(rule["pattern"], item) is None
     ):
-        raise ProjectError("invalid resource reference", path=path)
+        raise ProjectError("value does not match its IR schema pattern", path=path)
 
 
 class WireSchema:
