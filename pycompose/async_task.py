@@ -31,13 +31,16 @@ state of the wrong shape.
 
 from __future__ import annotations
 
+import asyncio
+import inspect
 import threading
 from collections.abc import Callable, Mapping
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Any
 
 from pycompose.errors import IrValidationError, StateError
-from pycompose.state.app_action import AppAction
+from pycompose.state.app_action import APPLIED, AppAction, install_async_runner
+from pycompose.state.app_state import AppState
 from pycompose.utils.json_canonical import canonical_json, check_json
 
 __all__ = ["configure", "last_error", "post", "run", "shutdown"]
@@ -296,19 +299,19 @@ def _complete(
         return
     finally:
         _settle()
-    _deliver(result, action, bound)
+    _deliver(result, action.name, bound)
 
 
 def _deliver(
     result: object,
-    action: AppAction[Any],
+    action_id: str,
     bound: Mapping[str, Any],
 ) -> None:
     """Hand one finished result to the host.
 
     Args:
         result: What the work produced.
-        action: The handler the result is delivered to.
+        action_id: The handler id the result is delivered to.
         bound: Values bound into the delivered envelope.
     """
     try:
@@ -328,7 +331,7 @@ def _deliver(
         _report("async result arrived before the host was listening")
         return
     try:
-        sink(action.name, envelope)
+        sink(action_id, envelope)
     except Exception as exc:
         _report(f"async result not delivered: {exc}")
 
@@ -340,9 +343,105 @@ def shutdown() -> None:
     threads from the previous build running.
     """
     global _executor, _sink, _error
-    global _admission  # noqa: PLW0603 -- clear the session's acknowledged sink
+    global _admission, _loop  # noqa: PLW0603 -- clear the session's sinks and loop
     with _lock:
         pool, _executor, _sink, _error = _executor, None, None, ""
         _admission = None
+        loop, _loop = _loop, None
+        running = list(_running.values())
+        _running.clear()
+    for future in running:
+        future.cancel()
+    if loop is not None:
+        loop.call_soon_threadsafe(loop.stop)
     if pool is not None:
         pool.shutdown(wait=False, cancel_futures=True)
+
+
+_loop: asyncio.AbstractEventLoop | None = None
+"""The event loop async actions run on, started with the first one."""
+
+_running: dict[str, Future[None]] = {}
+"""The current run of each async action, cancelled when a newer one starts."""
+
+
+def _event_loop() -> asyncio.AbstractEventLoop:
+    """Return the loop async actions run on, starting it on first use.
+
+    Returns:
+        A loop running on its own daemon thread.
+    """
+    global _loop  # noqa: PLW0603 -- one loop per session, started lazily
+    with _lock:
+        if _loop is None:
+            _loop = asyncio.new_event_loop()
+            threading.Thread(target=_loop.run_forever, daemon=True).start()
+        return _loop
+
+
+def _start(
+    action: AppAction[Any],
+    shell: AppState,
+    payload: Mapping[str, Any],
+    injected: Mapping[str, Any],
+) -> None:
+    """Start one async action, cancelling the run it supersedes.
+
+    Args:
+        action: The async action dispatched.
+        shell: The session shell when it was dispatched.
+        payload: Its fields, by Python name.
+        injected: The dependencies it declared.
+    """
+    future = asyncio.run_coroutine_threadsafe(
+        _drive(action, shell, payload, injected), _event_loop()
+    )
+    with _lock:
+        previous = _running.get(action.name)
+        _running[action.name] = future
+    if previous is not None:
+        previous.cancel()
+
+
+async def _drive(
+    action: AppAction[Any],
+    shell: AppState,
+    payload: Mapping[str, Any],
+    injected: Mapping[str, Any],
+) -> None:
+    """Run an async action, sending back each state's changed fields.
+
+    Args:
+        action: The async action being run.
+        shell: The session shell it started from.
+        payload: Its fields, by Python name.
+        injected: The dependencies it declared.
+    """
+    codec = type(shell).codec
+    before = codec.encode(shell)
+
+    def send(produced: object) -> None:
+        nonlocal before
+        if not isinstance(produced, type(shell)):
+            _report(f"async action {action.name} produced {produced!r}, not its shell")
+            return
+        after = codec.encode(produced)
+        changes = {
+            key: value for key, value in after.items() if before.get(key) != value
+        }
+        before = after
+        if changes:
+            _deliver({"changes": canonical_json(changes)}, action.name + APPLIED, {})
+
+    try:
+        result = action.function(shell, **payload, **injected)
+        if inspect.isasyncgen(result):
+            async for produced in result:
+                send(produced)
+        else:
+            send(await result)
+    except Exception as exc:  # cancellation is not an Exception, so it ends the run
+        _report(f"async action {action.name} failed: {exc}")
+
+
+install_async_runner(_start)

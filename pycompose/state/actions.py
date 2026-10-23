@@ -10,7 +10,7 @@ from pycompose.core.action_binding import BindingSpec, check_payload
 from pycompose.core.node import Node
 from pycompose.core.props import to_camel_case
 from pycompose.errors import IrValidationError, StateError
-from pycompose.state.app_action import CONTAINER, AppAction
+from pycompose.state.app_action import APPLIED, CONTAINER, AppAction
 from pycompose.state.state import State
 
 __all__ = ["ActionHandler", "Actions", "Registry", "actions_for_module"]
@@ -44,6 +44,8 @@ class Actions:
         definition.view = self._view
         self.register(definition.name, definition.run)
         self._contracts[definition.name] = definition
+        if definition.asynchronous:
+            self.register(f"{definition.name}{APPLIED}", definition.apply)
         self._alias(definition)
 
     @property

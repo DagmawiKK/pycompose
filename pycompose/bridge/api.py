@@ -7,6 +7,7 @@ import logging
 from collections.abc import Mapping
 from threading import current_thread
 
+from pycompose import async_task  # noqa: F401 -- installs the async action runner
 from pycompose.bridge.types import MAIN_SURFACE, decode_action
 from pycompose.core.action_binding import BindingSpec
 from pycompose.core.expansion import ExpansionMemo

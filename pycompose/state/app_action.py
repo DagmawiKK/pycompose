@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import inspect
+import json
 from collections.abc import Callable, Mapping
 from typing import (
     Any,
@@ -30,6 +31,25 @@ S = TypeVar("S", bound=State)
 
 CONTAINER = "container"
 """The one parameter an action may ask the session to supply."""
+
+APPLIED = ":applied"
+"""Suffix of the id under which an async action's changes come back."""
+
+AsyncRunner = Callable[
+    ["AppAction[Any]", AppState, Mapping[str, Any], Mapping[str, Any]], None
+]
+"""Starts an async action off the worker; installed by ``pycompose.async_task``."""
+
+_runner: list[AsyncRunner] = []
+
+
+def install_async_runner(runner: AsyncRunner) -> None:
+    """Install what starts async actions off the worker.
+
+    Args:
+        runner: Starts one async action with its shell, fields and dependencies.
+    """
+    _runner[:] = [runner]
 
 
 class AppAction(Generic[S]):
@@ -62,6 +82,13 @@ class AppAction(Generic[S]):
         else:
             self.shell = None
         self.view: Callable[[Any], Node] | None = None
+        self.asynchronous = inspect.iscoroutinefunction(
+            function
+        ) or inspect.isasyncgenfunction(function)
+        if self.asynchronous and self.shell is None:
+            raise StateError(
+                "an async action must take the app shell first", action_id=self.name
+            )
         self.injected = tuple(
             parameter.name
             for parameter in parameters[1:]
@@ -110,6 +137,9 @@ class AppAction(Generic[S]):
     def run(self, state: State, payload: Mapping[str, Any], **injected: Any) -> State:
         """Run the transition for one dispatched payload.
 
+        An async action starts off the worker and leaves the snapshot as it is;
+        each state it produces comes back later as the fields it changed.
+
         Args:
             state: Snapshot before the transition.
             payload: The bound and event fields, merged, by Python name.
@@ -117,10 +147,44 @@ class AppAction(Generic[S]):
 
         Returns:
             The handler's next State.
+
+        Raises:
+            StateError: If an async action runs where nothing can start it.
         """
+        if self.asynchronous:
+            if not _runner or not isinstance(state.app, AppState):
+                raise StateError(
+                    "an async action runs only inside a session", action_id=self.name
+                )
+            _runner[0](self, state.app, payload, injected)
+            return state
         return self._transition(
             state, lambda target: self.function(target, **payload, **injected)
         )
+
+    def apply(self, state: State, payload: Mapping[str, Any]) -> State:
+        """Apply the fields an async run of this action changed.
+
+        They land on the session as it is now, not as it was when the run
+        started, so a change the user made meanwhile to another field stands.
+
+        Args:
+            state: Snapshot when the changes arrive.
+            payload: ``changes``: the changed fields, as canonical JSON.
+
+        Returns:
+            The next State, with those fields replaced.
+
+        Raises:
+            StateError: If the snapshot carries no shell to apply them to.
+        """
+        shell = state.app
+        if not isinstance(shell, AppState):
+            raise StateError("async changes arrived with no shell", action_id=self.name)
+        codec = type(shell).codec
+        changes = json.loads(str(payload["changes"]))
+        updated = codec.decode({**codec.encode(shell), **changes})
+        return self._transition(state, lambda _: updated)
 
     def _transition(self, state: State, call: Callable[[Any], Any]) -> State:
         """Run ``call`` on the snapshot, or on its shell for a session action.

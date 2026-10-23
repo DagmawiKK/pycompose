@@ -152,6 +152,11 @@ Button(text="Open", on_click=open_note.with_args(note_id=7))
 Keyword-only parameters are resolved from the app's container by name. The
 runtime discovers the registry by the module-level name `actions` (lowercase).
 
+An `async def` handler runs off the worker; an async generator yields each
+state as it goes, which is a loading state for free. What each state changed
+comes back and lands on the session as it is then, and a newer run of the
+same handler cancels the one it supersedes.
+
 **Identity** — a node needs no `id`. One declared without one is keyed by the
 line of code that declares it, so a conditional before it never shifts its
 identity. Only things declared in a loop that carry an action, and composables
