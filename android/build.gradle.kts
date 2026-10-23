@@ -51,6 +51,10 @@ subprojects {
     }
     tasks.withType<Test>().configureEach {
         useJUnitPlatform()
+        // -Ppycompose.recordScreenshots=true re-records the screenshot references.
+        providers.gradleProperty("pycompose.recordScreenshots").orNull?.let {
+            systemProperty("pycompose.recordScreenshots", it)
+        }
     }
 }
 

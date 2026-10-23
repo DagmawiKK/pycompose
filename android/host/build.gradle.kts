@@ -149,4 +149,8 @@ dependencies {
     testImplementation(libs.junit4)
     testRuntimeOnly(libs.junit.vintage)
     debugImplementation(libs.compose.test.manifest)
+    // Debug builds can show @Preview functions; the library's generated
+    // catalog of every component lives in src/debug and ships with no app.
+    debugImplementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
 }

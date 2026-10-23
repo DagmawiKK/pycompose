@@ -46,6 +46,7 @@ EXCLUDED_SUFFIXES = (
     Path("com/pycompose/ir/generated"),
     Path("com/pycompose/renderer/generated"),
     Path("com/pycompose/host/ui/GeneratedAdapters.kt"),
+    Path("com/pycompose/host/GeneratedPreviews.kt"),
     Path("src/test"),
 )
 

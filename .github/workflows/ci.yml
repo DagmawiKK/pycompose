@@ -179,6 +179,12 @@ jobs:
           pytest -q tests/test_classpath_dump.py tests/test_component_proposals.py tests/test_composegen.py
           python tools/schema/classpath_dump.py --report android/build/compose-api/capabilities.json
           python -m tools.composegen generate --check
+      - name: Upload screenshot differences (informational)
+        if: always() && hashFiles('android/host/build/reports/screenshots/summary.txt') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-differences
+          path: android/host/build/reports/screenshots/
       - name: Upload reports
         if: failure()
         uses: actions/upload-artifact@v4
