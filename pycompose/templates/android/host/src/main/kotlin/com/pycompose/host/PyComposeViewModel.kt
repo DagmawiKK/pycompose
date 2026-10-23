@@ -28,10 +28,12 @@ import kotlinx.serialization.json.JsonPrimitive
  *
  * @param ir Validated wire data to render.
  * @param epoch Host-local generation, retained on rotation and advanced on Python restart.
+ * @param trace The span of the command that produced it, closed by the frame that shows it.
  */
 data class SessionSnapshot(
     val ir: ValidatedIr,
     val epoch: Long,
+    val trace: Int = 0,
 )
 
 /** Host owns only latest IR and minimal navigation state, never the Python Store. */
@@ -53,7 +55,7 @@ class PyComposeViewModel(
         }
     private val pendingEffects = mutableListOf<EffectRequest>()
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
-    private val commands = Channel<Command>(QUEUE_CAPACITY)
+    private val commands = Channel<Queued>(QUEUE_CAPACITY)
     private val stream = SnapshotStream()
     private val mutableSnapshot = MutableStateFlow<SessionSnapshot?>(null)
     private val mutableError = MutableStateFlow("")
@@ -84,7 +86,7 @@ class PyComposeViewModel(
         val saved = restore
         scope.launch {
             try {
-                perform {
+                perform(ActionTrace.begin()) {
                     bridge.start(restored, saved)
                     // Facts Python cannot observe itself (appearance, size, locale) must
                     // reach it before the first pull: the pull is the frame the user
@@ -94,8 +96,8 @@ class PyComposeViewModel(
                         bridge.acceptAction(Action("onConfigChanged", config).toJson())
                     }
                 }
-                for (command in commands) {
-                    perform {
+                for ((command, cookie) in commands) {
+                    perform(cookie) {
                         when (command) {
                             is Command.Dispatch -> {
                                 val source = command.action.toJson()
@@ -191,8 +193,10 @@ class PyComposeViewModel(
 
     // Both Channel admission and MutableStateFlow writes are thread-safe.
     private fun enqueue(command: Command): Boolean {
-        val accepted = commands.trySend(command).isSuccess
+        val cookie = ActionTrace.begin()
+        val accepted = commands.trySend(Queued(command, cookie)).isSuccess
         if (!accepted) {
+            ActionTrace.end(cookie)
             mutableError.value =
                 "Python action queue unavailable"
         }
@@ -201,10 +205,15 @@ class PyComposeViewModel(
 
     // Boundary failures become diagnostics, never UI crashes.
     @Suppress("TooGenericExceptionCaught")
-    private fun perform(operation: () -> Unit) {
+    private fun perform(
+        cookie: Int,
+        operation: () -> Unit,
+    ) {
+        var shown = false
         try {
-            operation()
-            val result = stream.accept(bridge.fetchLatest(stream.serial))
+            ActionTrace.stage("pycompose.python", operation)
+            val envelope = ActionTrace.stage("pycompose.pull") { bridge.fetchLatest(stream.serial) }
+            val result = ActionTrace.stage("pycompose.apply") { stream.accept(envelope) }
             result
                 .onSuccess { candidate ->
                     // Effects belong to the snapshot that carried them: a repeat
@@ -212,7 +221,8 @@ class PyComposeViewModel(
                     val previous = mutableSnapshot.value
                     val changed = candidate.snapshot != previous?.ir?.snapshot
                     if (changed || previous?.epoch != epoch) {
-                        mutableSnapshot.value = SessionSnapshot(candidate, epoch)
+                        mutableSnapshot.value = SessionSnapshot(candidate, epoch, cookie)
+                        shown = true
                     }
                     mutableError.value = bridge.fetchLatestError()
                     if (changed) {
@@ -222,6 +232,9 @@ class PyComposeViewModel(
                 }.onFailure { mutableError.value = it.message ?: "Invalid IR snapshot" }
         } catch (failure: Exception) {
             mutableError.value = failure.message ?: "Python worker failure"
+        } finally {
+            // A command that changed nothing on screen has no frame to close its span.
+            if (!shown) ActionTrace.end(cookie)
         }
     }
 
@@ -267,6 +280,12 @@ class PyComposeViewModel(
     override fun onCleared() {
         close()
     }
+
+    /** A command and the trace span opened when it was queued. */
+    private data class Queued(
+        val command: Command,
+        val cookie: Int,
+    )
 
     private sealed interface Command {
         data class Dispatch(

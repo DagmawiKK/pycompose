@@ -56,6 +56,9 @@ extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
 chaquopy {
     defaultConfig {
         version = "3.12"
+        // `pycompose build` names the interpreter it runs on, so bytecode is
+        // compiled at build time instead of on the device at first start.
+        providers.gradleProperty("pycomposeBuildPython").orNull?.let { buildPython(it) }
         // App requirements arrive as newline-separated data from
         // pycompose.toml; the app never edits this file to add a package.
         val requirements =
@@ -136,6 +139,7 @@ dependencies {
     implementation(libs.lifecycle.savedstate)
     implementation(libs.coroutines.android)
     implementation(libs.serialization.json)
+    implementation(libs.tracing)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.archunit)
     testRuntimeOnly(libs.junit.platform.launcher)

@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import re
 import subprocess
+import sys
 import threading
 import time
 import zipfile
@@ -160,6 +161,7 @@ def _app_properties(project: Project, env: dict[str, str]) -> None:
     env["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"] = str(
         Path(__file__).resolve().parents[2]
     )
+    env["ORG_GRADLE_PROJECT_pycomposeBuildPython"] = sys.executable
 
 
 def _signing(project: Project, env: dict[str, str]) -> tuple[str, ...]:

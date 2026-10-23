@@ -48,6 +48,7 @@ assert source == Path("../../app").resolve()
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeOwnSlice"] == "true"
 runtime = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"])
 assert (runtime / "pycompose/bridge/runtime.py").is_file()
+assert Path(os.environ["ORG_GRADLE_PROJECT_pycomposeBuildPython"]).is_file()
 assert Path("host/src/main/res/values/strings.xml").is_file()
 Path("invocation.json").write_text(json.dumps(sys.argv[1:]))
 kind = "bundle" if "bundle" in sys.argv[1] else "apk"

@@ -88,6 +88,7 @@ class MainActivity : ComponentActivity() {
                     Box(Modifier.safeDrawingPadding()) {
                         snapshot?.let { session ->
                             key(session.epoch) { renderer.Render(session.ir) }
+                            ActionTrace.EndOnFrame(session)
                         }
                         if (BuildConfig.DEBUG) {
                             Column(Modifier.align(Alignment.BottomEnd).padding(16.dp)) {

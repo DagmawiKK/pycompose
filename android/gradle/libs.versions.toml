@@ -35,6 +35,7 @@ robolectric = { module = "org.robolectric:robolectric", version = "4.14.1" }
 compose-test = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version = "2.11.0" }
+tracing = { module = "androidx.tracing:tracing", version = "1.2.0" }
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.11.0" }
 lifecycle-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version = "2.11.0" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.9.0" }
