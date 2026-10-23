@@ -199,7 +199,9 @@ def patch_bytes(
     it, so every envelope states it (ADR-0018 decision 3). Given the ``base``,
     binding contracts travel as a ``bindings`` delta against the base's --
     ``set`` for new or changed ids, ``remove`` for dropped ones -- since a
-    keystroke rarely changes any; effects and app data still travel whole.
+    keystroke rarely changes any, and app data equal to the base's is not sent
+    again but named in ``keep``, for the host to carry over. Effects belong to
+    one transition and always travel whole.
 
     Args:
         root: The snapshot the ops lead to; supplies version and metadata.
@@ -215,13 +217,21 @@ def patch_bytes(
     """
     metadata: Mapping[str, object] | None = root.metadata
     delta: dict[str, object] | None = None
+    keep: list[str] = []
     if base is not None:
         metadata, delta = _bindings_delta(base.metadata, root.metadata)
+        held = (base.metadata or {}).get("data")
+        if metadata is not None and held is not None and metadata.get("data") == held:
+            metadata = {k: v for k, v in metadata.items() if k != "data"} or None
+            keep.append("data")
     output = bytearray(b'{"baseSerial":')
     output.extend(str(base_serial).encode())
     if delta is not None:
         output.extend(b',"bindings":')
         output.extend(canonical_json_bytes(delta))
+    if keep:
+        output.extend(b',"keep":')
+        output.extend(canonical_json_bytes(keep))
     output.extend(b',"kind":"patch"')
     if metadata is not None:
         output.extend(b',"metadata":')

@@ -353,3 +353,28 @@ def test_diff_is_empty_exactly_when_the_trees_are_equal(base: Node, new: Node) -
     base = _qualify(base, ROOT_ID)
     new = _qualify(new, ROOT_ID)
     assert (diff_nodes(base, new) == ()) == (base == new)
+
+
+def test_app_data_equal_to_the_base_is_kept_rather_than_sent_again() -> None:
+    base = _snapshot(_text("hi"), metadata={"data": {"note": "a"}})
+    root = _snapshot(_text("hi!"), metadata={"data": {"note": "a"}})
+    ops = diff_nodes(base.root, root.root)
+
+    value = json.loads(
+        patch_bytes(root, ops, base_serial=1, serial=2, surface="main", base=base)
+    )
+
+    assert value["keep"] == ["data"]
+    assert "metadata" not in value
+
+
+def test_changed_app_data_is_sent_whole() -> None:
+    base = _snapshot(_text("hi"), metadata={"data": {"note": "a"}})
+    root = _snapshot(_text("hi"), metadata={"data": {"note": "b"}})
+
+    value = json.loads(
+        patch_bytes(root, (), base_serial=1, serial=2, surface="main", base=base)
+    )
+
+    assert "keep" not in value
+    assert value["metadata"]["data"] == {"note": "b"}

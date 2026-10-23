@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import itertools
 import logging
+import time
 from collections.abc import Mapping
 from threading import current_thread
 
@@ -30,6 +31,9 @@ VERIFY_EVERY = 8
 
 WINDOW = 8
 """Published snapshots kept as patch bases for a host that is behind."""
+
+PASS_BUDGET = 0.1
+"""Seconds one action may take before debug reports it; taps behind it wait."""
 
 MAX_PATCH_OPS = 64
 """Beyond this many ops, a whole snapshot is cheaper to send and to apply."""
@@ -172,6 +176,7 @@ class BridgeSurface:
             return
         self._processing = True
         self._latest_error = ""
+        started = time.perf_counter()
         current = self._store.value
         echoed = False
         try:
@@ -221,6 +226,14 @@ class BridgeSurface:
             if echoed:
                 self._republish(current)
             self._processing = False
+            elapsed = time.perf_counter() - started
+            if self._debug and elapsed > PASS_BUDGET:
+                LOGGER.warning(
+                    "Action pass took %.0f ms, over the %.0f ms budget; every tap "
+                    "behind it waited",
+                    elapsed * 1000,
+                    PASS_BUDGET * 1000,
+                )
 
     def _publish_state(self, state: State) -> bool:
         """Publish ``state`` and make it the store's; False when it is invalid.

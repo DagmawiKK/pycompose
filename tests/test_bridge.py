@@ -444,3 +444,16 @@ def test_a_pull_or_an_action_for_another_surface_is_refused() -> None:
     )
 
     assert "unknown surface" in bridge.expose_latest_error()
+
+
+def test_a_pass_over_budget_is_reported_in_debug(
+    caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from pycompose.bridge import api
+
+    monkeypatch.setattr(api, "PASS_BUDGET", 0.0)
+    bridge = _counter_bridge()
+
+    bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
+
+    assert "over the 0 ms budget" in caplog.text

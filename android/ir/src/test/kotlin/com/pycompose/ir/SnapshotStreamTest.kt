@@ -87,6 +87,34 @@ class SnapshotStreamTest {
     }
 
     @Test
+    fun `a patch that keeps app data carries over the data the host holds`() {
+        val stream = SnapshotStream()
+        stream
+            .accept(
+                """{"kind":"full","metadata":{"data":{"note":"a"}},"root":${root("0")},
+                    "schemaVersion":"1.4.0","serial":1,"version":"0.1.0"}""",
+            ).getOrThrow()
+
+        val patched =
+            stream
+                .accept(
+                    patch
+                        .replace("\"kind\":\"patch\"", "\"keep\":[\"data\"],\"kind\":\"patch\"")
+                        .replace("\"schemaVersion\":\"1.0.0\"", "\"schemaVersion\":\"1.4.0\""),
+                ).getOrThrow()
+                .snapshot
+
+        assertEquals(
+            kotlinx.serialization.json.JsonObject(
+                mapOf(
+                    "note" to kotlinx.serialization.json.JsonPrimitive("a"),
+                ),
+            ),
+            patched.metadata?.get("data"),
+        )
+    }
+
+    @Test
     fun `a bare snapshot is whole and holds no serial`() {
         val stream = SnapshotStream()
         assertTrue(stream.accept(bare("0")).isSuccess)
