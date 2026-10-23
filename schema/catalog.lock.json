@@ -442,13 +442,6 @@
       "children": {
         "allowed": false
       },
-      "reshaped": [
-        "text",
-        "onClick",
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -456,7 +449,13 @@
           "focus": "onFocus",
           "hover": "onHover"
         }
-      }
+      },
+      "reshaped": [
+        "text",
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "Card": {
       "package": "androidx.compose.material3",
@@ -536,11 +535,6 @@
         "kind": "content",
         "provides": "ColumnScope"
       },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -548,7 +542,12 @@
           "focus": "onFocus",
           "hover": "onHover"
         }
-      }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "CenterAlignedTopAppBar": {
       "package": "androidx.compose.material3",
@@ -665,11 +664,6 @@
       "children": {
         "allowed": false
       },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -677,7 +671,12 @@
           "focus": "onFocus",
           "hover": "onHover"
         }
-      }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "CircularProgressIndicator": {
       "package": "androidx.compose.material3",
@@ -1811,11 +1810,6 @@
           "nullable": true
         }
       },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -1823,7 +1817,12 @@
           "focus": "onFocus",
           "hover": "onHover"
         }
-      }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "FloatingActionButton": {
       "package": "androidx.compose.material3",
@@ -1893,11 +1892,6 @@
         "allowed": true,
         "kind": "content"
       },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -1905,7 +1899,12 @@
           "focus": "onFocus",
           "hover": "onHover"
         }
-      }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "FlowColumn": {
       "package": "androidx.compose.foundation.layout",
@@ -2120,11 +2119,6 @@
         "allowed": true,
         "kind": "content"
       },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -2132,7 +2126,12 @@
           "focus": "onFocus",
           "hover": "onHover"
         }
-      }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "IconToggleButton": {
       "package": "androidx.compose.material3",
@@ -3086,11 +3085,6 @@
         }
       },
       "scope": "RowScope",
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -3098,7 +3092,12 @@
           "focus": "onFocus",
           "hover": "onHover"
         }
-      }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "NavigationDrawerItem": {
       "package": "androidx.compose.material3",
@@ -3924,11 +3923,6 @@
       "children": {
         "allowed": false
       },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -3936,7 +3930,12 @@
           "focus": "onFocus",
           "hover": "onHover"
         }
-      }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "RichTooltip": {
       "package": "androidx.compose.material3",
@@ -5292,11 +5291,6 @@
           "nullable": true
         }
       },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -5304,7 +5298,12 @@
           "focus": "onFocus",
           "hover": "onHover"
         }
-      }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "Tab": {
       "package": "androidx.compose.material3",
@@ -5488,13 +5487,6 @@
       "children": {
         "allowed": false
       },
-      "reshaped": [
-        "text",
-        "onClick",
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -5502,7 +5494,13 @@
           "focus": "onFocus",
           "hover": "onHover"
         }
-      }
+      },
+      "reshaped": [
+        "text",
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "TextField": {
       "package": "androidx.compose.material3",
@@ -5530,6 +5528,13 @@
         "modifier": {
           "type": "modifier"
         },
+        "label": {
+          "type": "string",
+          "content": {
+            "composable": "Text",
+            "parameter": "label"
+          }
+        },
         "selection": {
           "type": "integer"
         },
@@ -5541,13 +5546,6 @@
               "type": "integer"
             }
           ]
-        },
-        "label": {
-          "type": "string",
-          "content": {
-            "composable": "Text",
-            "parameter": "label"
-          }
         }
       },
       "children": {

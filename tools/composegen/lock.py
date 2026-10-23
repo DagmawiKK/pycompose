@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from tools.composegen.policy import Policy, merge, redundant
+from tools.composegen.rules import SHAPES, reshape
 from tools.schema.candidate_props import CandidateError
 from tools.schema.classpath_dump import (
     DUMP_DIR,
@@ -43,6 +44,9 @@ ORDER = (
     "holders",
 )
 """Section order in the lock, so a diff reads the same way every time."""
+
+REVIEW = frozenset({"category", "stability", "nativeName", "identity"})
+"""Decision keys the pin cannot answer: what the reviewer chose."""
 
 
 @dataclass
@@ -80,21 +84,23 @@ def planned(
 
     Returns:
         The derived entry.
+
+    Raises:
+        CandidateError: The decision names a key no review or rule reads.
     """
+    unknown = sorted(set(decision) - REVIEW - SHAPES)
+    if unknown:
+        raise CandidateError(f"{name}: unknown decision keys {unknown}")
     native = decision.get("nativeName", name)
     plan, declaration = select(plans, found, native, identity=decision.get("identity"))
     derived = derive(
         plan,
         declaration,
         sections,
-        {
-            key: decision[key]
-            for key in ("category", "stability", "nativeName", "identity")
-            if key in decision
-        },
+        {key: decision[key] for key in REVIEW if key in decision},
         schema_name=name,
     )
-    return derived.entry
+    return reshape(name, derived.entry, decision, plan)
 
 
 def generate(

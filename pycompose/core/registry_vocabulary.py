@@ -64,6 +64,9 @@ no second path table exists anywhere.
 INTERACTION_KINDS = ("press", "focus", "hover")
 """Interaction kinds the host can observe and report as actions."""
 
+INTERACTION_REPORTS = {"press": "pressed", "focus": "focused", "hover": "hovered"}
+"""The boolean payload field each observed interaction reports."""
+
 STATE_KINDS = (
     "drawer",
     "sheet",

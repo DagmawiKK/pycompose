@@ -132,6 +132,12 @@ def select(
                     reasons.add(reason)
         detail = f": {', '.join(sorted(reasons))}" if reasons else ""
         raise CandidateError(f"{name}: no call plan in the pinned inventory{detail}")
+    # A deprecated overload is never chosen, so it never competes for the name;
+    # when nothing else is left, the refusal below names the deprecation.
+    current = [
+        c for c in usable if "kotlin/Deprecated" not in (c.get("annotations") or {})
+    ]
+    usable = current or usable
     if len(usable) > 1:
         identities = ", ".join(sorted(spell(c["source"]) for c in usable))
         if identity is None:

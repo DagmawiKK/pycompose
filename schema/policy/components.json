@@ -2,8 +2,7 @@
   "AlertDialog": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.AndroidAlertDialog_androidKt.AlertDialog-Oix01E0(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;JJJJFLandroidx/compose/ui/window/DialogProperties;Landroidx/compose/runtime/Composer;III)V"
+      "stability": "stable"
     }
   },
   "AnimatedContent": {
@@ -151,7 +150,11 @@
   "Button": {
     "decision": {
       "category": "buttons",
-      "stability": "stable"
+      "stability": "stable",
+      "observe": true,
+      "flatten": [
+        "content"
+      ]
     },
     "patch": {
       "since": null,
@@ -164,60 +167,6 @@
         },
         "elevation": {
           "since": "1.11.0"
-        },
-        "text": {
-          "type": "string",
-          "required": true,
-          "content": {
-            "composable": "Text"
-          }
-        },
-        "onPress": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "pressed",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onFocus": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "focused",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onHover": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "hovered",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
-      "children": {
-        "kind": null,
-        "provides": null,
-        "allowed": false
-      },
-      "reshaped": [
-        "text",
-        "onClick",
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
-      "interaction": {
-        "native": "interactionSource",
-        "observations": {
-          "press": "onPress",
-          "focus": "onFocus",
-          "hover": "onHover"
         }
       }
     }
@@ -226,52 +175,11 @@
     "decision": {
       "category": "layout",
       "stability": "stable",
+      "observe": true,
       "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.CardKt.Card(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
-      "since": "1.22.0",
-      "props": {
-        "onPress": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "pressed",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onFocus": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "focused",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onHover": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "hovered",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
-      "interaction": {
-        "native": "interactionSource",
-        "observations": {
-          "press": "onPress",
-          "focus": "onFocus",
-          "hover": "onHover"
-        }
-      }
+      "since": "1.22.0"
     }
   },
   "CenterAlignedTopAppBar": {
@@ -294,52 +202,13 @@
   "Checkbox": {
     "decision": {
       "category": "input",
-      "stability": "stable"
+      "stability": "stable",
+      "observe": true
     },
     "patch": {
       "since": "1.3.0",
       "props": {
-        "colors": null,
-        "onPress": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "pressed",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onFocus": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "focused",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onHover": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "hovered",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
-      "interaction": {
-        "native": "interactionSource",
-        "observations": {
-          "press": "onPress",
-          "focus": "onFocus",
-          "hover": "onHover"
-        }
+        "colors": null
       }
     }
   },
@@ -481,21 +350,20 @@
           "native": "drawerContent"
         }
       },
-      "reshaped": [
-        "open",
-        "onOpenChange"
-      ],
       "state": {
         "value": "open",
         "report": "onOpenChange"
-      }
+      },
+      "reshaped": [
+        "open",
+        "onOpenChange"
+      ]
     }
   },
   "DockedSearchBar": {
     "decision": {
       "category": "input",
-      "stability": "experimental",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarKt.DockedSearchBar-EQC0FA8(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "stability": "experimental"
     }
   },
   "DropdownMenu": {
@@ -604,119 +472,31 @@
   "FilterChip": {
     "decision": {
       "category": "input",
-      "stability": "stable"
+      "stability": "stable",
+      "observe": true,
+      "flatten": [
+        "label"
+      ]
     },
     "patch": {
       "since": "1.3.0",
       "props": {
         "colors": null,
         "elevation": null,
-        "shape": null,
-        "label": {
-          "type": "string",
-          "required": true,
-          "content": {
-            "composable": "Text",
-            "parameter": "label"
-          }
-        },
-        "onPress": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "pressed",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onFocus": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "focused",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onHover": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "hovered",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
-      "slots": {
-        "label": null
-      },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
-      "interaction": {
-        "native": "interactionSource",
-        "observations": {
-          "press": "onPress",
-          "focus": "onFocus",
-          "hover": "onHover"
-        }
+        "shape": null
       }
     }
   },
   "FloatingActionButton": {
     "decision": {
       "category": "buttons",
-      "stability": "stable"
+      "stability": "stable",
+      "observe": true
     },
     "patch": {
       "since": "1.22.0",
-      "props": {
-        "onPress": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "pressed",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onFocus": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "focused",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onHover": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "hovered",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
       "children": {
         "kind": "content"
-      },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
-      "interaction": {
-        "native": "interactionSource",
-        "observations": {
-          "press": "onPress",
-          "focus": "onFocus",
-          "hover": "onHover"
-        }
       }
     }
   },
@@ -837,55 +617,16 @@
   "IconButton": {
     "decision": {
       "category": "buttons",
-      "stability": "stable"
+      "stability": "stable",
+      "observe": true
     },
     "patch": {
       "since": "1.22.0",
       "props": {
-        "shape": null,
-        "onPress": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "pressed",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onFocus": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "focused",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onHover": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "hovered",
-              "type": "boolean"
-            }
-          ]
-        }
+        "shape": null
       },
       "children": {
         "kind": "content"
-      },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
-      "interaction": {
-        "native": "interactionSource",
-        "observations": {
-          "press": "onPress",
-          "focus": "onFocus",
-          "hover": "onHover"
-        }
       }
     }
   },
@@ -906,6 +647,10 @@
       "props": {
         "alignment": null,
         "painter": null,
+        "contentDescription": {
+          "required": null,
+          "nullable": null
+        },
         "resource": {
           "type": "resource",
           "values": [
@@ -914,10 +659,6 @@
           ],
           "decode": "resourceImage",
           "required": true
-        },
-        "contentDescription": {
-          "required": null,
-          "nullable": null
         }
       },
       "wrapper": "ResourceImage",
@@ -1166,6 +907,11 @@
           ]
         }
       },
+      "state": {
+        "value": "open",
+        "report": "onOpenChange",
+        "dismiss": "onDismissRequest"
+      },
       "slots": {
         "dragHandle": {
           "native": "dragHandle",
@@ -1178,12 +924,7 @@
         "value",
         "onValueChange",
         "skipPartiallyExpanded"
-      ],
-      "state": {
-        "value": "open",
-        "report": "onOpenChange",
-        "dismiss": "onDismissRequest"
-      }
+      ]
     }
   },
   "ModalDrawerSheet": {
@@ -1227,14 +968,14 @@
           "native": "drawerContent"
         }
       },
-      "reshaped": [
-        "open",
-        "onOpenChange"
-      ],
       "state": {
         "value": "open",
         "report": "onOpenChange"
-      }
+      },
+      "reshaped": [
+        "open",
+        "onOpenChange"
+      ]
     }
   },
   "ModalWideNavigationRail": {
@@ -1269,52 +1010,11 @@
   "NavigationBarItem": {
     "decision": {
       "category": "layout",
-      "stability": "stable"
+      "stability": "stable",
+      "observe": true
     },
     "patch": {
-      "since": "1.22.0",
-      "props": {
-        "onPress": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "pressed",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onFocus": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "focused",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onHover": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "hovered",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
-      "interaction": {
-        "native": "interactionSource",
-        "observations": {
-          "press": "onPress",
-          "focus": "onFocus",
-          "hover": "onHover"
-        }
-      }
+      "since": "1.22.0"
     }
   },
   "NavigationDrawerItem": {
@@ -1440,52 +1140,11 @@
   "RadioButton": {
     "decision": {
       "category": "input",
-      "stability": "stable"
+      "stability": "stable",
+      "observe": true
     },
     "patch": {
-      "since": "1.22.0",
-      "props": {
-        "onPress": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "pressed",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onFocus": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "focused",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onHover": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "hovered",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
-      "interaction": {
-        "native": "interactionSource",
-        "observations": {
-          "press": "onPress",
-          "focus": "onFocus",
-          "hover": "onHover"
-        }
-      }
+      "since": "1.22.0"
     }
   },
   "RichTooltip": {
@@ -1861,16 +1520,16 @@
           "required": true
         }
       },
+      "state": {
+        "value": "value",
+        "report": "onValueChangeFinished"
+      },
       "reshaped": [
         "value",
         "onValueChangeFinished",
         "valueRange",
         "steps"
-      ],
-      "state": {
-        "value": "value",
-        "report": "onValueChangeFinished"
-      }
+      ]
     }
   },
   "Snackbar": {
@@ -2227,65 +1886,24 @@
           ]
         }
       },
-      "reshaped": [
-        "value",
-        "onValueChange"
-      ],
       "state": {
         "value": "value",
         "report": "onValueChange"
-      }
+      },
+      "reshaped": [
+        "value",
+        "onValueChange"
+      ]
     }
   },
   "Switch": {
     "decision": {
       "category": "input",
-      "stability": "stable"
+      "stability": "stable",
+      "observe": true
     },
     "patch": {
-      "since": "1.22.0",
-      "props": {
-        "onPress": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "pressed",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onFocus": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "focused",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onHover": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "hovered",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
-      "reshaped": [
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
-      "interaction": {
-        "native": "interactionSource",
-        "observations": {
-          "press": "onPress",
-          "focus": "onFocus",
-          "hover": "onHover"
-        }
-      }
+      "since": "1.22.0"
     }
   },
   "Tab": {
@@ -2366,7 +1984,11 @@
   "TextButton": {
     "decision": {
       "category": "buttons",
-      "stability": "stable"
+      "stability": "stable",
+      "observe": true,
+      "flatten": [
+        "content"
+      ]
     },
     "patch": {
       "since": "1.3.0",
@@ -2375,61 +1997,7 @@
         "colors": null,
         "contentPadding": null,
         "elevation": null,
-        "shape": null,
-        "text": {
-          "type": "string",
-          "required": true,
-          "content": {
-            "composable": "Text"
-          }
-        },
-        "onPress": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "pressed",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onFocus": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "focused",
-              "type": "boolean"
-            }
-          ]
-        },
-        "onHover": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "hovered",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
-      "children": {
-        "kind": null,
-        "provides": null,
-        "allowed": false
-      },
-      "reshaped": [
-        "text",
-        "onClick",
-        "onPress",
-        "onFocus",
-        "onHover"
-      ],
-      "interaction": {
-        "native": "interactionSource",
-        "observations": {
-          "press": "onPress",
-          "focus": "onFocus",
-          "hover": "onHover"
-        }
+        "shape": null
       }
     }
   },
@@ -2437,6 +2005,9 @@
     "decision": {
       "category": "input",
       "stability": "stable",
+      "flatten": [
+        "label"
+      ],
       "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.TextFieldKt.TextField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/text/input/VisualTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/runtime/Composer;IIII)V"
     },
     "patch": {
@@ -2462,13 +2033,6 @@
               "type": "integer"
             }
           ]
-        },
-        "label": {
-          "type": "string",
-          "content": {
-            "composable": "Text",
-            "parameter": "label"
-          }
         }
       },
       "adapter": "manual",
