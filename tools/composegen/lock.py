@@ -14,6 +14,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from tools.composegen.check import compare, compare_values
 from tools.composegen.overloads import extras
 from tools.composegen.policy import Policy, merge, redundant
 from tools.composegen.rules import SHAPES, reshape
@@ -167,6 +168,9 @@ def generate(
     holders, refused = derive_holders(found, source_drives(directory), lock)
     report.errors.extend(refused)
     lock["holders"] = holders
+    # What policy keeps -- held entries, value families -- still answers to the pin.
+    report.errors.extend(compare(lock, found))
+    report.errors.extend(compare_values(lock, found, source_defaults(directory)))
     return {key: lock[key] for key in ORDER if key in lock}, report
 
 

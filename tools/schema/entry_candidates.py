@@ -10,30 +10,18 @@ turns that plan into a candidate registry entry:
   optional ``identity`` when several call plans compete -- is refused when
   missing, stale or ambiguous
 
-A candidate is never the approved schema. ``--out`` stages an isolated copy of
-the catalog with the derived entries inserted; stale plans, ambiguous
-overloads, already-approved names and entries the production emitters refuse
-all stop the run before anything is written. Applying the reviewed copy stays
-a human act: this tool only ever reads the approved schema.
-
-    python tools/schema/entry_candidates.py AssistChip Badge \\
-        --decisions candidates-decisions.json \\
-        --out android/build/compose-api/candidate-registry.json \\
-        --review android/build/compose-api/candidate-review.json --summary
+``tools/composegen`` derives every catalog component through this module;
+``stage`` and ``verify`` check a derived entry inside an isolated copy of the
+catalog, the way the compiler's own gates check the lock.
 """
 
 from __future__ import annotations
 
-import argparse
 import copy
 import json
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-
-if __package__ in (None, ""):  # pragma: no cover - only when run as a script
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from tools.schema.candidate_props import (
     CandidateError,
@@ -41,7 +29,7 @@ from tools.schema.candidate_props import (
     scope_for,
     wire_shape,
 )
-from tools.schema.classpath_dump import DUMP_DIR, Declaration, Inventory, inventory
+from tools.schema.classpath_dump import Declaration, Inventory
 from tools.schema.component_binding import identity, resolutions, spell
 
 
@@ -368,7 +356,7 @@ def verify(
     Returns:
         One message per fact the pin or the emitters refuse.
     """
-    from tools.schema.check_upstream import compare
+    from tools.composegen.check import compare
 
     errors = compare(candidate, found)
     fresh = {item.name for item in derived}
@@ -387,129 +375,3 @@ def _framework_artifacts(candidate: dict[str, Any]) -> dict[Path, str]:
     from pycompose.schema.codegen.main import framework_artifacts
 
     return framework_artifacts(candidate)
-
-
-def review_manifest(plans: dict[str, Any], derived: list[Derived]) -> dict[str, Any]:
-    """Build the review manifest staged next to the candidate registry.
-
-    Args:
-        plans: The planner document the candidates came from.
-        derived: The derived candidates.
-
-    Returns:
-        A deterministic manifest of identity and differences per candidate.
-    """
-    return {
-        "formatVersion": 1,
-        "bom": plans["bom"],
-        "compiler": plans["compiler"],
-        "candidates": {
-            item.name: {
-                "source": item.entry["source"],
-                "review": list(item.review),
-            }
-            for item in sorted(derived, key=lambda item: item.name)
-        },
-    }
-
-
-def _derive_all(
-    plans: dict[str, Any],
-    found: Inventory,
-    registry: dict[str, Any],
-    decisions: dict[str, Any],
-    names: list[str],
-) -> list[Derived]:
-    """Derive one candidate per requested name, refusing duplicates."""
-    derived = []
-    for name in names:
-        if name in registry["components"]:
-            raise CandidateError(f"{name}: already approved")
-        decision = decisions.get(name)
-        if decision is None:
-            raise CandidateError(f"{name}: no decision")
-        native = decision.get("nativeName", name)
-        if not isinstance(native, str) or not native:
-            raise CandidateError(f"{name}: nativeName needs a non-empty string")
-        plan, declaration = select(
-            plans, found, native, identity=decision.get("identity")
-        )
-        derived.append(derive(plan, declaration, registry, decision, schema_name=name))
-    return derived
-
-
-def _write(
-    args: argparse.Namespace,
-    plans: dict[str, Any],
-    derived: list[Derived],
-    candidate: dict[str, Any],
-) -> None:
-    """Write the staged registry and review manifest, never the catalog."""
-    if args.out is not None:
-        if args.out.resolve() == args.schema.resolve():
-            raise CandidateError(
-                "--out is the approved schema; candidates are staged, never "
-                "approved by tooling"
-            )
-        args.out.write_text(dumps(candidate), encoding="utf-8")
-    if args.review is not None:
-        args.review.write_text(dumps(review_manifest(plans, derived)), encoding="utf-8")
-
-
-def _print_review(derived: list[Derived]) -> None:
-    """Print the compatibility differences of every derived candidate."""
-    for item in derived:
-        print(f"--- {item.name}")
-        for note in item.review:
-            print(f"  - {note}")
-
-
-def main(argv: list[str] | None = None) -> int:
-    """Derive, verify and stage candidates; never approve them.
-
-    Args:
-        argv: Command-line arguments, defaulting to ``sys.argv[1:]``.
-
-    Returns:
-        Process exit status: 0 staged, 1 verification refusal, 2 input error.
-    """
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("names", nargs="+")
-    parser.add_argument(
-        "--plans",
-        type=Path,
-        default=Path("android/build/compose-api/components.json"),
-    )
-    parser.add_argument("--decisions", type=Path, required=True)
-    parser.add_argument("--directory", type=Path, default=DUMP_DIR)
-    parser.add_argument("--schema", type=Path, default=Path("schema/catalog.lock.json"))
-    parser.add_argument("--out", type=Path)
-    parser.add_argument("--review", type=Path)
-    parser.add_argument("--summary", action="store_true")
-    args = parser.parse_args(argv)
-    try:
-        plans = json.loads(args.plans.read_text(encoding="utf-8"))
-        registry = json.loads(args.schema.read_text(encoding="utf-8"))
-        decisions = json.loads(args.decisions.read_text(encoding="utf-8"))
-        found = inventory(args.directory)
-        check_fresh(plans, found)
-        derived = _derive_all(plans, found, registry, decisions, args.names)
-        candidate = stage(registry, derived)
-        errors = verify(candidate, found, derived)
-        if errors:
-            for error in errors:
-                print(error, file=sys.stderr)
-            return 1
-        _write(args, plans, derived, candidate)
-        for item in derived:
-            print(f"{item.name}: candidate entry, {len(item.review)} difference(s)")
-        if args.summary:
-            _print_review(derived)
-        return 0
-    except (OSError, ValueError) as exc:
-        print(f"entry_candidates.py: {exc}", file=sys.stderr)
-        return 2
-
-
-if __name__ == "__main__":  # pragma: no cover - only when run as a script
-    raise SystemExit(main())

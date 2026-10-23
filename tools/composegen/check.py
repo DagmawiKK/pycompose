@@ -1,26 +1,18 @@
-"""Check approved bindings against the pinned inventory, never AndroidX main."""
+"""Check what the lock keeps by policy against the pin, never AndroidX main.
+
+``composegen generate`` runs these: every component's binding against its one
+selected pinned overload (a held entry's props, providers and scopes included)
+and every value family's descriptor against the derivation the pin implies.
+The holders section needs no check -- the compiler derives it.
+"""
 
 from __future__ import annotations
 
-import argparse
-import json
-import sys
-from pathlib import Path
 from typing import Any
 
-if __package__ in (None, ""):  # pragma: no cover - only when run as a script
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-
 from pycompose.core.registry_types import SCOPE_PATHS
-from tools.schema.classpath_dump import (
-    DUMP_DIR,
-    Inventory,
-    inventory,
-    source_defaults,
-    source_drives,
-)
+from tools.schema.classpath_dump import Inventory
 from tools.schema.component_binding import resolutions
-from tools.schema.holders import derive as derive_holders
 from tools.schema.propose import refresh
 
 DERIVED = ("source", "kotlinType", "native", "omitted")
@@ -286,49 +278,3 @@ def compare_values(
         if _derived(item["proposal"]) != _derived(spec):
             errors.append(f"{name}: {DRIFT}")
     return errors
-
-
-def compare_holders(
-    registry: dict[str, Any], found: Inventory, drives: dict
-) -> list[str]:
-    """Re-derive the ``holders`` section and report any difference.
-
-    Args:
-        registry: The approved catalog.
-        found: The validated inventory of the current pin.
-        drives: Drive evidence keyed by JVM identity.
-
-    Returns:
-        Refusals, plus one drift message carrying the re-derived section.
-    """
-    derived, errors = derive_holders(found, drives, registry)
-    if registry.get("holders", {}) != derived:
-        errors.append(
-            f"holders: {DRIFT}; derived: {json.dumps(derived, sort_keys=True)}"
-        )
-    return errors
-
-
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--directory", type=Path, default=DUMP_DIR)
-    parser.add_argument("--schema", type=Path, default=Path("schema/catalog.lock.json"))
-    args = parser.parse_args(argv)
-    try:
-        registry = json.loads(args.schema.read_text())
-        found = inventory(args.directory)
-        errors = (
-            compare(registry, found)
-            + compare_values(registry, found, source_defaults(args.directory))
-            + compare_holders(registry, found, source_drives(args.directory))
-        )
-        for error in errors:
-            print(error, file=sys.stderr)
-        return int(bool(errors))
-    except (OSError, ValueError) as exc:
-        print(f"check_upstream.py: {exc}", file=sys.stderr)
-        return 2
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

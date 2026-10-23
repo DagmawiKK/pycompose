@@ -8,7 +8,7 @@ from test_classpath_dump import DUMP, ROOT
 
 
 def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -> None:
-    from tools.schema.check_upstream import compare_values
+    from tools.composegen.check import compare_values
     from tools.schema.classpath_dump import inventory, source_defaults
     from tools.schema.propose import refresh
 
@@ -335,7 +335,7 @@ def test_a_language_level_family_is_reviewed_not_re_derived(native_document) -> 
     """
     from test_value_codegen import RANGE_FAMILY
 
-    from tools.schema.check_upstream import compare_values
+    from tools.composegen.check import compare_values
     from tools.schema.classpath_dump import inventory, source_defaults
     from tools.schema.propose import refresh
 

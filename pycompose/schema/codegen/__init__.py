@@ -5,9 +5,9 @@
 
 This lives inside the package rather than in ``tools/`` because ADR-0014 needs
 an installed ``pycompose`` to generate an app's component slice, and a wheel does
-not ship ``tools/``. The ``tools/schema`` scripts that need the network --
-``classpath_dump.py``, ``propose.py``, ``check_upstream.py`` -- stay outside, since
-nothing an app builds calls them.
+not ship ``tools/``. The tools that read the pinned evidence --
+``tools/schema`` and ``tools/composegen`` -- stay outside, since nothing an
+app builds calls them.
 
 Importing this package is not part of running an app. It is build-time code that
 happens to ship in the same distribution.

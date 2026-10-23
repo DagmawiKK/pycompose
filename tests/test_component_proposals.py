@@ -147,7 +147,7 @@ def test_the_shipped_catalog_carries_no_unexplained_prop(native_document) -> Non
     has to be listed there too; otherwise the gate stays red for a reason the
     schema alone does not show.
     """
-    from tools.schema.check_upstream import compare
+    from tools.composegen.check import compare
     from tools.schema.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
@@ -163,7 +163,7 @@ def test_the_drift_check_re_derives_a_package_and_a_provider(native_document) ->
     all, so a stale one has to fail here rather than become a coercion nobody
     checked.
     """
-    from tools.schema.check_upstream import compare
+    from tools.composegen.check import compare
     from tools.schema.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
@@ -205,7 +205,7 @@ def test_the_drift_check_re_derives_receivers_and_provided_scopes(
     scope the pin never hands down -- fails here rather than becoming a call
     that cannot compile.
     """
-    from tools.schema.check_upstream import compare
+    from tools.composegen.check import compare
     from tools.schema.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.4.21"

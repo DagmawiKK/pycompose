@@ -33,7 +33,7 @@ def _provided(expression: str, wire: str | None, target: str) -> str | None:
 
     ``wire`` is the Kotlin type the generator resolved the prop into, or None
     when that type is a family resolver's contract: the compiler checks the
-    lambda against the pinned parameter and check_upstream.py checks ``target``
+    lambda against the pinned parameter and composegen's check verifies ``target``
     against the pin, so no coercion is invented there.
 
     Args:

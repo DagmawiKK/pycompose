@@ -30,7 +30,6 @@ from tools.schema.entry_candidates import (
     check_fresh,
     derive,
     dumps,
-    review_manifest,
     select,
     stage,
     verify,
@@ -506,9 +505,6 @@ def test_the_derivation_is_deterministic(tmp_path: Path) -> None:
         {"category": "test", "stability": "stable"},
     )
     assert dumps(first.entry) == dumps(second.entry)
-    assert review_manifest({"bom": "b", "compiler": "c"}, [first]) == review_manifest(
-        {"bom": "b", "compiler": "c"}, [second]
-    )
     assert first.entry["source"] == recorded
 
 

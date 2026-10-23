@@ -323,7 +323,7 @@ def test_resolutions_are_deterministic(tmp_path: Path) -> None:
 
 
 def test_the_checker_reports_an_unrecorded_component(tmp_path: Path) -> None:
-    from tools.schema.check_upstream import compare
+    from tools.composegen.check import compare
     from tools.schema.classpath_dump import inventory
 
     write_inventory(tmp_path, [widget([modifier(), string("label")])])
@@ -336,7 +336,7 @@ def test_the_checker_reports_an_unrecorded_component(tmp_path: Path) -> None:
 def test_the_checker_reports_a_prop_no_single_overload_declares(
     tmp_path: Path,
 ) -> None:
-    from tools.schema.check_upstream import compare
+    from tools.composegen.check import compare
     from tools.schema.classpath_dump import inventory
 
     write_inventory(tmp_path, [widget([modifier(), string("label")])])
@@ -399,7 +399,7 @@ def test_the_resolved_face_is_the_generated_call(native_document) -> None:
 
 
 def test_the_checker_is_green_on_the_approved_catalog(native_document) -> None:
-    from tools.schema.check_upstream import compare
+    from tools.composegen.check import compare
     from tools.schema.classpath_dump import inventory
 
     assert native_document["artifacts"]

@@ -69,7 +69,7 @@ def _validate_scope(name: str, comp: dict[str, Any]) -> None:
     be looked up like a plain one: its receiver exists only inside the parent
     lambda that provides it, so the adapter registers through the matching
     scoped method. The vocabulary is closed, and the fact itself is re-derived
-    from the pinned inventory by ``check_upstream``.
+    from the pinned inventory by ``composegen``'s check.
 
     Args:
         name: Component name, for error messages.
@@ -305,7 +305,7 @@ def _validate_provider(name: str, prop_name: str, prop: dict[str, Any]) -> None:
     prop stays required because an absent value would need a call-site branch
     between two overload shapes, which the plan rejects (ADR-0016 decision 22).
     ``returns`` is the pinned lambda's return type: the generator needs it to
-    coerce the wire value, and check_upstream.py re-derives it from the pin.
+    coerce the wire value, and composegen's check re-derives it from the pin.
 
     Args:
         name: Component name, for error messages.

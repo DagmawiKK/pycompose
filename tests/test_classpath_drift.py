@@ -19,7 +19,7 @@ from test_classpath_dump import (
 def test_release_drift_is_reported_instead_of_silently_accepted(
     native_document,
 ) -> None:
-    from tools.schema.check_upstream import DRIFT, compare_values
+    from tools.composegen.check import DRIFT, compare_values
     from tools.schema.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]
@@ -37,7 +37,7 @@ def test_release_drift_is_reported_instead_of_silently_accepted(
 def test_named_member_and_omission_drift_require_review(native_document) -> None:
     from dataclasses import replace
 
-    from tools.schema.check_upstream import DRIFT, compare_values
+    from tools.composegen.check import DRIFT, compare_values
     from tools.schema.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]
@@ -64,7 +64,7 @@ def test_named_member_and_omission_drift_require_review(native_document) -> None
 
 
 def test_icon_vocabulary_drift_requires_review(native_document) -> None:
-    from tools.schema.check_upstream import DRIFT, compare_values
+    from tools.composegen.check import DRIFT, compare_values
     from tools.schema.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]

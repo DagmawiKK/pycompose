@@ -43,7 +43,7 @@
     },
     "holders": {
       "type": "object",
-      "description": "Derived from pinned sources by tools/schema/holders.py and drift-checked by check_upstream.py; never hand-edited.",
+      "description": "Derived from pinned sources by tools/schema/holders.py when composegen generates the lock; never hand-edited.",
       "propertyNames": { "$ref": "#/$defs/dottedName" },
       "additionalProperties": { "$ref": "#/$defs/holder" }
     }
