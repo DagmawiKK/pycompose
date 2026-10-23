@@ -13,7 +13,7 @@ from __future__ import annotations
 import sys
 from collections import Counter
 from collections.abc import Collection, Sequence
-from types import CodeType
+from types import CodeType, FrameType
 from typing import Final
 
 from pycompose.core.node import Node
@@ -23,6 +23,7 @@ __all__ = [
     "ROOT_ID",
     "Handles",
     "IdRegistry",
+    "call_location",
     "call_site",
     "child_id",
     "id_path",
@@ -81,12 +82,31 @@ def call_site(depth: int, skip: Collection[CodeType] = ()) -> str:
     Returns:
         A sibling key free of the id separator.
     """
-    frame = sys._getframe(depth + 1)
-    while frame.f_code in skip and frame.f_back is not None:
-        frame = frame.f_back
+    frame = _declaring_frame(depth + 1, skip)
     code = frame.f_code
     name = code.co_qualname.replace(_SEPARATOR, "/")
     return f"{name}:{frame.f_lineno}:{frame.f_lasti}"
+
+
+def call_location(depth: int, skip: Collection[CodeType] = ()) -> str:
+    """Name the file and line declaring a node, for a diagnostic.
+
+    Args:
+        depth: Frames between the caller of this function and the declaration.
+        skip: Constructor code objects to step over.
+
+    Returns:
+        ``path:line`` of the app code that made the declaration.
+    """
+    frame = _declaring_frame(depth + 1, skip)
+    return f"{frame.f_code.co_filename}:{frame.f_lineno}"
+
+
+def _declaring_frame(depth: int, skip: Collection[CodeType]) -> FrameType:
+    frame = sys._getframe(depth + 1)
+    while frame.f_code in skip and frame.f_back is not None:
+        frame = frame.f_back
+    return frame
 
 
 def sibling_keys(children: Sequence[Node]) -> tuple[tuple[str | int, bool], ...]:

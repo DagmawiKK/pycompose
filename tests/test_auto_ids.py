@@ -142,3 +142,11 @@ def test_a_named_sibling_equal_to_a_derived_key_is_refused() -> None:
 
     with pytest.raises(IrError, match="duplicate node id"):
         emit_ir(state, "1.0.0")
+
+
+def test_a_refused_prop_names_its_line_and_the_closest_value() -> None:
+    with pytest.raises(IrValidationError) as raised:
+        Text(text="a", style="titelLarge")  # type: ignore[arg-type]
+
+    assert raised.value.context["did_you_mean"] == "titleLarge"
+    assert str(raised.value.context["source"]).startswith(__file__)

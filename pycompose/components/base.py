@@ -3,14 +3,16 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from difflib import get_close_matches
 from types import CodeType
-from typing import Any, ClassVar, cast
+from typing import Any, ClassVar, NoReturn, cast
 
 from pycompose.components.modifiers import Modifier
 from pycompose.core import Node, Props
-from pycompose.core.ids import call_site
+from pycompose.core.ids import call_location, call_site
 from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
 from pycompose.errors import IrValidationError
+from pycompose.ir.generated_validators import REGISTRY
 from pycompose.ir.validator import validate_component
 from pycompose.state.app_action import AppAction
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
@@ -95,7 +97,10 @@ class Component(Node):
             children=children,
             site="" if id else call_site(0, _CONSTRUCTORS),
         )
-        validate_component(self)
+        try:
+            validate_component(self)
+        except IrValidationError as exc:
+            _refuse(exc, self)
         keys: set[str] = set()
         for child in self.children:
             if not child.id:
@@ -107,3 +112,30 @@ class Component(Node):
 
 
 _CONSTRUCTORS.add(Component.__init__.__code__)
+
+
+def _refuse(error: IrValidationError, node: Component) -> NoReturn:
+    """Add where a refused declaration is, and what its prop could have been.
+
+    Args:
+        error: The validator's refusal of this one node.
+        node: The node it refused.
+
+    Raises:
+        IrValidationError: The same refusal, naming the app's file and line,
+            and for a prop with a closed set of values, the values and the
+            closest one.
+    """
+    context = dict(error.context)
+    context["source"] = call_location(1, _CONSTRUCTORS)
+    prop = context.get("prop")
+    definition = REGISTRY.components.get(node.type)
+    rule = definition.props.get(str(prop)) if definition is not None else None
+    if rule is not None and rule.values:
+        allowed = [str(value) for value in rule.values]
+        context["expected"] = ", ".join(allowed)
+        value = node.props.get(str(prop))
+        close = get_close_matches(str(value), allowed, n=1) if value is not None else []
+        if close:
+            context["did_you_mean"] = close[0]
+    raise IrValidationError(error.args[0] if error.args else "", **context) from None
