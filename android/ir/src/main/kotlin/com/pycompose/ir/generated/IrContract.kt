@@ -99,6 +99,19 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
+        "BottomAppBarActions" to ComponentRule(
+            slots = setOf("actions", "floatingActionButton"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "contentPadding" to PropertyRule("value", required = false, valueType = "PaddingValues"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "tonalElevation" to PropertyRule("dp", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
+            ),
+        ),
         "Box" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -1276,6 +1289,21 @@ object IrContract {
                 "steps" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483645.0),
                 "value" to PropertyRule("number", required = false),
                 "valueRange" to PropertyRule("value", required = true, valueType = "Range"),
+            ),
+        ),
+        "SliderValue" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "colors" to PropertyRule("value", required = false, valueType = "SliderColors"),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onValueChange" to PropertyRule("actionId", required = true),
+                "onValueChangeFinished" to PropertyRule("actionId", required = false),
+                "steps" to PropertyRule("integer", required = false, minimum = -2147483648.0, maximum = 2147483647.0),
+                "value" to PropertyRule("number", required = true),
             ),
         ),
         "Snackbar" to ComponentRule(

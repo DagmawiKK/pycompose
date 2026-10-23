@@ -1,0 +1,26 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onValueChange": {
+    "bound": {},
+    "handlerId": "preview.onValueChange",
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "number"
+     }
+    }
+   }
+  }
+ },
+ "root": {
+  "id": "preview",
+  "props": {
+   "onValueChange": "app.preview.onValueChange",
+   "value": 0.5
+  },
+  "type": "SliderValue"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

@@ -1,0 +1,22 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.actions",
+    "props": {
+     "text": "actions"
+    },
+    "slot": "actions",
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {},
+  "type": "BottomAppBarActions"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

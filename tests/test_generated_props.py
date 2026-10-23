@@ -368,3 +368,30 @@ def test_an_index_must_be_an_integer_naming_a_slot(
     monkeypatch.setattr(rules, "SCHEMA_PATH", path)
     with pytest.raises(SystemExit, match="'indexOf' must be an integer naming a slot"):
         main.load_registry()
+
+
+def test_an_optional_callback_reaches_nobody_when_unbound() -> None:
+    """A nullable action id must not reach dispatch, which takes a String."""
+    from pycompose.schema.codegen.adapters import render as render_one
+
+    entry = {
+        "children": {"allowed": False},
+        "props": {
+            "onDone": {"type": "actionId"},
+            "onMove": {
+                "type": "actionId",
+                "payload": [{"name": "value", "type": "number"}],
+            },
+            "value": {"type": "number", "nativeType": "Float", "required": True},
+        },
+    }
+    block = render_one("Slider", entry)
+    assert (
+        "onDone = { model.props.onDone?.let { context.actions.dispatch(it) } }" in block
+    )
+    assert (
+        "onMove = { value -> model.props.onMove?.let "
+        "{ context.event(it, JsonPrimitive(value)) } }"
+    ) in block
+    # The wire carries a double; Compose takes a Float.
+    assert "value = model.props.value.toFloat()" in block

@@ -784,6 +784,85 @@
       },
       "type": "object"
     },
+    "C_BottomAppBarActions": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "actions",
+                  "floatingActionButton"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "BottomAppBarActions"
+        }
+      },
+      "type": "object"
+    },
     "C_Box": {
       "properties": {
         "children": {
@@ -6352,6 +6431,60 @@
       },
       "type": "object"
     },
+    "C_SliderValue": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_SliderColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onValueChangeFinished": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "steps": {
+              "default": 0,
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "value": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SliderValue"
+        }
+      },
+      "type": "object"
+    },
     "C_Snackbar": {
       "properties": {
         "children": {
@@ -8885,6 +9018,9 @@
               "$ref": "#/definitions/C_BottomAppBar"
             },
             {
+              "$ref": "#/definitions/C_BottomAppBarActions"
+            },
+            {
               "$ref": "#/definitions/C_Box"
             },
             {
@@ -9150,6 +9286,9 @@
             },
             {
               "$ref": "#/definitions/C_Slider"
+            },
+            {
+              "$ref": "#/definitions/C_SliderValue"
             },
             {
               "$ref": "#/definitions/C_Snackbar"
@@ -25561,6 +25700,85 @@
       },
       "type": "object"
     },
+    "V_1_23_0_BottomAppBarActions": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "actions",
+                  "floatingActionButton"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "BottomAppBarActions"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Box": {
       "properties": {
         "children": {
@@ -29718,6 +29936,9 @@
               "$ref": "#/definitions/V_1_23_0_BottomAppBar"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_BottomAppBarActions"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_Box"
             },
             {
@@ -29983,6 +30204,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_Slider"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SliderValue"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Snackbar"
@@ -31779,6 +32003,60 @@
         },
         "type": {
           "const": "Slider"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SliderValue": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_SliderColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onValueChangeFinished": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "steps": {
+              "default": 0,
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "value": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SliderValue"
         }
       },
       "type": "object"

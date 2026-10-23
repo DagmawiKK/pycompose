@@ -473,13 +473,15 @@ def test_overloads_a_call_cannot_tell_apart_are_refused(tmp_path):
     ]
     write_inventory(tmp_path, records)
     report = propose_components(inventory(tmp_path), {}, {})
-    # `track` has no wire policy, so both overloads accept the same arguments
-    # and neither can be selected by name.
-    assert {p["status"] for p in report["candidates"]} == {"blocked"}
-    assert all(
-        any(g["reason"].startswith("overload identity") for g in p["gaps"])
-        for p in report["candidates"]
+    # `track` has no wire policy, so both overloads accept the same arguments.
+    # Kotlin then picks the one leaving fewer defaults unspecified (spec 11.6):
+    # the plain overload is reachable, the detailed one never is.
+    status = {p["source"]["descriptor"]: p["status"] for p in report["candidates"]}
+    assert status == {"plain": "call-plan", "detailed": "blocked"}
+    detailed = next(
+        p for p in report["candidates"] if p["source"]["descriptor"] == "detailed"
     )
+    assert any(g["reason"].startswith("overload identity") for g in detailed["gaps"])
 
 
 def test_optional_slot_without_null_policy_is_refused(tmp_path):

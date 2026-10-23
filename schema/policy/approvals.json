@@ -1,8 +1,8 @@
 {
   "approved": {
-    "components.PrimaryScrollableTabRow.props.selectedTabIndex.indexOf:changed": "An out-of-range selectedTabIndex crashed the host; it now selects the nearest tab and reports (ADR-0005).",
-    "components.PrimaryTabRow.props.selectedTabIndex.indexOf:changed": "An out-of-range selectedTabIndex crashed the host; it now selects the nearest tab and reports (ADR-0005).",
-    "components.SecondaryScrollableTabRow.props.selectedTabIndex.indexOf:changed": "An out-of-range selectedTabIndex crashed the host; it now selects the nearest tab and reports (ADR-0005).",
-    "components.SecondaryTabRow.props.selectedTabIndex.indexOf:changed": "An out-of-range selectedTabIndex crashed the host; it now selects the nearest tab and reports (ADR-0005)."
+    "components.FlowColumn.optIn:changed": "The generated call never passes overflow, so Kotlin already binds the current overload (fewest unspecified defaults); the lock now records it, without the deprecated overload's experimental opt-in.",
+    "components.FlowColumn.source:changed": "The generated call never passes overflow, so Kotlin already binds the current overload (fewest unspecified defaults); the lock now records it, without the deprecated overload's experimental opt-in.",
+    "components.FlowRow.optIn:changed": "The generated call never passes overflow, so Kotlin already binds the current overload (fewest unspecified defaults); the lock now records it, without the deprecated overload's experimental opt-in.",
+    "components.FlowRow.source:changed": "The generated call never passes overflow, so Kotlin already binds the current overload (fewest unspecified defaults); the lock now records it, without the deprecated overload's experimental opt-in."
   }
 }

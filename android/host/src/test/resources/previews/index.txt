@@ -6,6 +6,7 @@ Badge
 BadgedBox
 BasicAlertDialog
 BottomAppBar
+BottomAppBarActions
 Box
 Button
 Card
@@ -95,6 +96,7 @@ ShortNavigationBar
 ShortNavigationBarItem
 SingleChoiceSegmentedButtonRow
 Slider
+SliderValue
 Snackbar
 SnackbarHost
 Spacer

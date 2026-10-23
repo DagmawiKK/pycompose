@@ -192,6 +192,9 @@ def _scalar_prop(
         prop["nativeType"] = "Int"
         prop["minimum"] = -(2**31)
         prop["maximum"] = 2**31 - 1
+    if wire == "number" and spec["type"].get("classifier") == "kotlin/Float":
+        # The wire carries a double; Compose takes a Float.
+        prop["nativeType"] = "Float"
     if spec["required"]:
         prop["required"] = True
         if spec["type"]["nullable"]:

@@ -24,6 +24,7 @@ __all__ = [
     "BadgedBox",
     "BasicAlertDialog",
     "BottomAppBar",
+    "BottomAppBarActions",
     "Box",
     "Button",
     "Card",
@@ -113,6 +114,7 @@ __all__ = [
     "ShortNavigationBarItem",
     "SingleChoiceSegmentedButtonRow",
     "Slider",
+    "SliderValue",
     "Snackbar",
     "SnackbarHost",
     "Spacer",
@@ -622,6 +624,57 @@ class BottomAppBar(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class BottomAppBarActions(Component):
+    """Native BottomAppBar; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "BottomAppBarActions"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        container_color: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        tonal_elevation: int | float | None = None,
+        window_insets: JsonValue | None = None,
+        actions: Content | None = None,
+        floating_action_button: Content | None = None,
+    ) -> None:
+        """Construct a registered BottomAppBarActions.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            modifier: Native modifier; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            actions: Nodes for the native actions slot.
+            floating_action_button: Nodes for the native floatingActionButton slot.
+        """
+        props: dict[str, PropValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        slotted: tuple[Node, ...] = ()
+        if actions is not None:
+            slotted += slot_nodes(actions, key="actions", slot="actions")
+        if floating_action_button is not None:
+            slotted += slot_nodes(
+                floating_action_button,
+                key="floatingActionButton",
+                slot="floatingActionButton",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class Box(Component):
@@ -5351,11 +5404,26 @@ class SingleChoiceSegmentedButtonRow(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class Slider(Component):
+class _Slider(Component):
     """Native Slider; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Slider"
+    required_keywords = frozenset(
+        {
+            "value_range",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "colors",
+            "enabled",
+            "on_value_change_finished",
+            "steps",
+            "value",
+            "value_range",
+        }
+    )
 
     def __init__(
         self,
@@ -5395,6 +5463,50 @@ class Slider(Component):
             props["value"] = value
         props["value_range"] = value_range
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class Slider(_Slider):
+    """Native Slider; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_value_change_finished: ActionTarget | None = None,
+        steps: int | None = None,
+        value: int | float | None = None,
+        value_range: JsonValue,
+    ) -> Slider: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_value_change: ActionTarget,
+        on_value_change_finished: ActionTarget | None = None,
+        steps: int | None = None,
+        value: int | float,
+    ) -> SliderValue: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class Snackbar(Component):
@@ -6964,6 +7076,67 @@ class OutlinedCardWithoutOnClick(OutlinedCard):
         Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
 
 
+class SliderValue(Slider):
+    """Native Slider; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SliderValue"
+    required_keywords = frozenset(
+        {
+            "on_value_change",
+            "value",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "colors",
+            "enabled",
+            "on_value_change",
+            "on_value_change_finished",
+            "steps",
+            "value",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_value_change: ActionTarget,
+        on_value_change_finished: ActionTarget | None = None,
+        steps: int | None = None,
+        value: int | float,
+    ) -> None:
+        """Construct a registered SliderValue.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_value_change: Required native onValueChange.
+            on_value_change_finished: Native onValueChangeFinished; None uses its
+                default.
+            steps: Native steps; None uses its default.
+            value: Required native value.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_value_change"] = on_value_change
+        if on_value_change_finished is not None:
+            props["on_value_change_finished"] = on_value_change_finished
+        if steps is not None:
+            props["steps"] = steps
+        props["value"] = value
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
 class SurfaceChecked(Surface):
     """Native Surface; props and defaults follow the component manifest."""
 
@@ -7211,4 +7384,5 @@ ElevatedCard.overloads = (ElevatedCardWithoutOnClick,)
 Image.overloads = (ImageImageVector,)
 LinearProgressIndicator.overloads = (LinearProgressIndicatorWithoutProgress,)
 OutlinedCard.overloads = (OutlinedCardWithoutOnClick,)
+Slider.overloads = (SliderValue,)
 Surface.overloads = (SurfaceChecked, SurfaceOnClick, SurfaceSelected)

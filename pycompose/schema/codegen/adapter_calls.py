@@ -184,8 +184,13 @@ def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:
         The argument, or None when the callback shape is one this cannot render.
     """
     payload = spec.get("payload")
+    # An optional callback's action id is nullable: a call the app did not bind
+    # reaches nobody, and the native default behaviour stays in charge.
+    action = f"model.props.{prop_name}" if spec.get("required") else "it"
+    bound = "" if spec.get("required") else f"model.props.{prop_name}?.let {{ "
+    close = "" if spec.get("required") else " }"
     if not payload:
-        return f"{prop_name} = {{ context.actions.dispatch(model.props.{prop_name}) }}"
+        return f"{prop_name} = {{ {bound}context.actions.dispatch({action}){close} }}"
     if len(payload) != 1:
         return None
     field_name, kind = payload[0]["name"], payload[0]["type"]
@@ -193,7 +198,7 @@ def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:
         return None
     return (
         f"{prop_name} = {{ {field_name} -> "
-        f"context.event(model.props.{prop_name}, JsonPrimitive({field_name})) }}"
+        f"{bound}context.event({action}, JsonPrimitive({field_name})){close} }}"
     )
 
 

@@ -306,3 +306,47 @@ def test_codegen_reads_held_props_from_the_families() -> None:
     assert set(STATE_CONSTRUCTOR_PROPS) == {
         kind for kind, family in STATE_FAMILIES.items() if family.held
     }
+
+
+def _overload(receiver: str | None = None, **parameters: tuple[bool, bool]) -> dict:
+    """A plan whose parameters are (forwarded, has_default), all of one type."""
+    return {
+        "receiver": {"classifier": receiver} if receiver else None,
+        "parameters": {
+            name: {
+                "policy": "scalar" if forwarded else "omit",
+                "required": not has_default,
+                "hasDefault": has_default,
+                "type": {
+                    "classifier": "kotlin/Int",
+                    "nullable": False,
+                    "annotations": [],
+                    "arguments": [],
+                },
+            }
+            for name, (forwarded, has_default) in parameters.items()
+        },
+    }
+
+
+def test_the_overload_leaving_fewer_defaults_wins_a_tie() -> None:
+    """Kotlin spec 11.6: equally specific, fewer unspecified defaults is chosen."""
+    from tools.schema.components import _competing
+
+    current = _overload(items=(True, True), spacing=(False, True))
+    deprecated = _overload(
+        items=(True, True), spacing=(False, True), overflow=(False, True)
+    )
+    assert not _competing(current, deprecated)
+    assert _competing(deprecated, current)
+
+
+def test_an_extension_on_a_scope_never_competes_with_a_top_level_overload() -> None:
+    from tools.schema.components import _competing
+
+    top = _overload(visible=(True, False))
+    scoped = _overload(
+        "androidx/compose/foundation/layout/RowScope", visible=(True, False)
+    )
+    assert not _competing(top, scoped)
+    assert not _competing(scoped, top)

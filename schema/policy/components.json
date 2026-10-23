@@ -39,30 +39,13 @@
     }
   },
   "AnimatedVisibility": {
-    "manual": "no call plan in the pinned inventory: no wire policy for androidx/compose/animation/core/MutableTransitionState, no wire policy for kotlin/Function1, receiver/generic declaration needs a native protocol, slot scope needs a native protocol: androidx/compose/animation/AnimatedVisibilityScope",
-    "entry": {
-      "package": "androidx.compose.animation",
+    "decision": {
       "category": "animation",
       "stability": "stable",
-      "since": "1.23.0",
-      "source": {
-        "artifact": "androidx.compose.animation:animation-android:1.12.1",
-        "descriptor": "(ZLandroidx/compose/ui/Modifier;Landroidx/compose/animation/EnterTransition;Landroidx/compose/animation/ExitTransition;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "AnimatedVisibility",
-        "name": "AnimatedVisibility",
-        "owner": "androidx.compose.animation.AnimatedVisibilityKt"
-      },
-      "props": {
-        "visible": {
-          "type": "boolean",
-          "required": true
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
+      "identity": "androidx.compose.animation:animation-android:1.12.1 androidx.compose.animation.AnimatedVisibilityKt.AnimatedVisibility(ZLandroidx/compose/ui/Modifier;Landroidx/compose/animation/EnterTransition;Landroidx/compose/animation/ExitTransition;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+    },
+    "patch": {
       "children": {
-        "allowed": true,
         "min": 0
       }
     }
@@ -92,28 +75,21 @@
     }
   },
   "BottomAppBar": {
-    "manual": "no call plan in the pinned inventory: overload identity is not addressable by named arguments",
-    "entry": {
-      "package": "androidx.compose.material3",
+    "decision": {
       "category": "navigation",
       "stability": "stable",
-      "since": "1.23.0",
-      "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
-        "descriptor": "(Landroidx/compose/ui/Modifier;JJFLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "BottomAppBar-1oL4kX8",
-        "name": "BottomAppBar",
-        "owner": "androidx.compose.material3.AppBarKt"
-      },
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.AppBarKt.BottomAppBar-1oL4kX8(Landroidx/compose/ui/Modifier;JJFLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+    },
+    "patch": {
       "props": {
-        "modifier": {
-          "type": "modifier"
-        }
+        "containerColor": null,
+        "contentPadding": null,
+        "tonalElevation": null,
+        "windowInsets": null
       },
       "children": {
-        "allowed": true,
-        "min": 0,
-        "provides": "RowScope"
+        "kind": null,
+        "min": 0
       }
     }
   },
@@ -474,32 +450,18 @@
     }
   },
   "FlowColumn": {
-    "manual": "no call plan in the pinned inventory: slot scope needs a native protocol: androidx/compose/foundation/layout/FlowColumnScope",
-    "entry": {
-      "package": "androidx.compose.foundation.layout",
+    "decision": {
       "category": "layout",
-      "stability": "experimental",
-      "since": "1.23.0",
-      "optIn": [
-        "androidx.compose.foundation.layout.ExperimentalLayoutApi"
-      ],
-      "source": {
-        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Horizontal;IILandroidx/compose/foundation/layout/FlowColumnOverflow;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "FlowColumn",
-        "name": "FlowColumn",
-        "owner": "androidx.compose.foundation.layout.FlowLayoutKt"
-      },
+      "stability": "experimental"
+    },
+    "patch": {
       "props": {
         "itemHorizontalAlignment": {
-          "type": "enum",
           "values": [
             "start",
             "center",
             "end"
-          ],
-          "decode": "horizontal",
-          "default": "start"
+          ]
         },
         "maxItemsInEachColumn": {
           "type": "integer",
@@ -507,44 +469,26 @@
           "maximum": 2147483647,
           "default": 2147483647,
           "nativeType": "Int"
-        },
-        "modifier": {
-          "type": "modifier"
         }
       },
       "children": {
-        "allowed": true,
         "min": 0
       }
     }
   },
   "FlowRow": {
-    "manual": "no call plan in the pinned inventory: slot scope needs a native protocol: androidx/compose/foundation/layout/FlowRowScope",
-    "entry": {
-      "package": "androidx.compose.foundation.layout",
+    "decision": {
       "category": "layout",
-      "stability": "experimental",
-      "since": "1.23.0",
-      "optIn": [
-        "androidx.compose.foundation.layout.ExperimentalLayoutApi"
-      ],
-      "source": {
-        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Alignment$Vertical;IILandroidx/compose/foundation/layout/FlowRowOverflow;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "FlowRow",
-        "name": "FlowRow",
-        "owner": "androidx.compose.foundation.layout.FlowLayoutKt"
-      },
+      "stability": "experimental"
+    },
+    "patch": {
       "props": {
         "itemVerticalAlignment": {
-          "type": "enum",
           "values": [
             "top",
             "center",
             "bottom"
-          ],
-          "decode": "vertical",
-          "default": "top"
+          ]
         },
         "maxItemsInEachRow": {
           "type": "integer",
@@ -552,13 +496,9 @@
           "maximum": 2147483647,
           "default": 2147483647,
           "nativeType": "Int"
-        },
-        "modifier": {
-          "type": "modifier"
         }
       },
       "children": {
-        "allowed": true,
         "min": 0
       }
     }
@@ -1364,7 +1304,8 @@
   "Slider": {
     "decision": {
       "category": "input",
-      "stability": "experimental"
+      "stability": "experimental",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SliderKt.Slider(Landroidx/compose/material3/SliderState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SliderColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "Snackbar": {

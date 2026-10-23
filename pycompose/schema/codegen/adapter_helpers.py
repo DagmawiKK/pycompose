@@ -435,7 +435,7 @@ def _dp_renderable(spec: dict[str, Any]) -> bool:
 
 
 def scalar_wire(prop_name: str, spec: dict[str, Any]) -> str:
-    """Read one scalar from the model, narrowing an Int-native wire value.
+    """Read one scalar from the model, narrowing an Int- or Float-native value.
 
     Args:
         prop_name: The camelCase Kotlin property name.
@@ -445,6 +445,7 @@ def scalar_wire(prop_name: str, spec: dict[str, Any]) -> str:
         Kotlin source for the value Compose receives.
     """
     wire = f"model.props.{prop_name}"
-    if spec.get("nativeType") == "Int":
-        wire += "?.toInt()" if spec.get("nullable") else ".toInt()"
+    narrow = {"Int": "toInt()", "Float": "toFloat()"}.get(spec.get("nativeType", ""))
+    if narrow:
+        wire += f"?.{narrow}" if spec.get("nullable") else f".{narrow}"
     return wire

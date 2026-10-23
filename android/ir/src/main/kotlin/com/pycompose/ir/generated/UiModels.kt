@@ -187,6 +187,27 @@ data class BottomAppBar(
 }
 
 @Serializable
+data class BottomAppBarActionsProps(
+    val `containerColor`: JsonElement? = null,
+    val `contentPadding`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `tonalElevation`: Double? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("BottomAppBarActions")
+data class BottomAppBarActions(
+    override val id: String,
+    override val props: BottomAppBarActionsProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "BottomAppBarActions"
+}
+
+@Serializable
 data class BoxProps(
     val `contentAlignment`: String = "topStart",
     override val `modifier`: JsonObject? = null,
@@ -2075,6 +2096,29 @@ data class Slider(
     override val children: List<UiNode> get() = emptyList()
     override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "Slider"
+}
+
+@Serializable
+data class SliderValueProps(
+    val `colors`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onValueChange`: String,
+    val `onValueChangeFinished`: String? = null,
+    val `steps`: Long = 0L,
+    val `value`: Double,
+) : UiProps
+
+@Serializable
+@SerialName("SliderValue")
+data class SliderValue(
+    override val id: String,
+    override val props: SliderValueProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "SliderValue"
 }
 
 @Serializable
