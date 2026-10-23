@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -23,13 +24,17 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 
 internal fun DeclarationDescriptor.symbol(): String = DescriptorUtils.getFqNameSafe(this).asString()
 
 internal fun KotlinType.classifier(): String {
     val descriptor = checkNotNull(constructor.declarationDescriptor)
-    return descriptor.symbol().replace('.', '/')
+    // Metadata's spelling, which the inventory records: '/' between package
+    // segments and '.' between nested classes (Arrangement.Horizontal).
+    return (descriptor as? ClassifierDescriptorWithTypeParameters)?.classId?.asString()
+        ?: descriptor.symbol().replace('.', '/')
 }
 
 internal fun KotlinType.matches(type: JsonObject): Boolean {

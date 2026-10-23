@@ -235,14 +235,11 @@
       "since": null,
       "props": {
         "horizontalAlignment": {
-          "type": "enum",
           "values": [
             "start",
             "center",
             "end"
-          ],
-          "decode": "horizontal",
-          "default": "start"
+          ]
         },
         "offset": {
           "type": "number"
@@ -673,36 +670,16 @@
     }
   },
   "LazyColumn": {
-    "manual": "no call plan in the pinned inventory: no wire policy for kotlin/Function1",
-    "entry": {
-      "package": "androidx.compose.foundation.lazy",
+    "decision": {
       "category": "lists",
-      "stability": "stable",
-      "source": {
-        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Alignment$Horizontal;Landroidx/compose/foundation/gestures/FlingBehavior;ZLandroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "LazyColumn",
-        "name": "LazyColumn",
-        "owner": "androidx.compose.foundation.lazy.LazyDslKt"
-      },
+      "stability": "stable"
+    },
+    "patch": {
+      "since": null,
       "props": {
-        "firstVisibleIndex": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 2147483647
-        },
-        "modifier": {
-          "type": "modifier"
-        },
-        "onScrollIdle": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "firstVisibleIndex",
-              "type": "integer"
-            }
-          ]
-        },
+        "horizontalAlignment": null,
+        "reverseLayout": null,
+        "userScrollEnabled": null,
         "verticalArrangement": {
           "type": "enum",
           "values": [
@@ -716,69 +693,19 @@
           "decode": "arrangement",
           "default": "top"
         }
-      },
-      "children": {
-        "allowed": true,
-        "kind": "items"
-      },
-      "reshaped": [
-        "firstVisibleIndex",
-        "onScrollIdle"
-      ],
-      "state": {
-        "native": "state",
-        "kind": "lazyList",
-        "value": "firstVisibleIndex",
-        "report": "onScrollIdle"
       }
     }
   },
   "LazyRow": {
-    "manual": "no call plan in the pinned inventory: no wire policy for kotlin/Function1",
-    "entry": {
-      "package": "androidx.compose.foundation.lazy",
+    "decision": {
       "category": "lists",
-      "stability": "stable",
-      "since": "1.23.0",
-      "source": {
-        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Vertical;Landroidx/compose/foundation/gestures/FlingBehavior;ZLandroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "LazyRow",
-        "name": "LazyRow",
-        "owner": "androidx.compose.foundation.lazy.LazyDslKt"
-      },
+      "stability": "stable"
+    },
+    "patch": {
       "props": {
-        "firstVisibleIndex": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 2147483647
-        },
-        "modifier": {
-          "type": "modifier"
-        },
-        "onScrollIdle": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "firstVisibleIndex",
-              "type": "integer"
-            }
-          ]
-        }
-      },
-      "children": {
-        "allowed": true,
-        "kind": "items"
-      },
-      "reshaped": [
-        "firstVisibleIndex",
-        "onScrollIdle"
-      ],
-      "state": {
-        "native": "state",
-        "kind": "lazyList",
-        "value": "firstVisibleIndex",
-        "report": "onScrollIdle"
+        "reverseLayout": null,
+        "userScrollEnabled": null,
+        "verticalAlignment": null
       }
     }
   },
@@ -902,6 +829,16 @@
     "decision": {
       "category": "navigation",
       "stability": "stable"
+    },
+    "patch": {
+      "slots": null,
+      "props": {
+        "collapsedShape": null,
+        "expandedHeaderTopPadding": null,
+        "expandedShape": null,
+        "hideOnCollapse": null,
+        "windowInsets": null
+      }
     }
   },
   "MultiChoiceSegmentedButton": {
@@ -965,6 +902,12 @@
     "decision": {
       "category": "navigation",
       "stability": "stable"
+    },
+    "patch": {
+      "props": {
+        "containerColor": null,
+        "contentColor": null
+      }
     }
   },
   "OutlinedButton": {
@@ -1146,14 +1089,11 @@
       "since": null,
       "props": {
         "verticalAlignment": {
-          "type": "enum",
           "values": [
             "top",
             "center",
             "bottom"
-          ],
-          "decode": "vertical",
-          "default": "top"
+          ]
         }
       },
       "children": {
@@ -1163,33 +1103,21 @@
     }
   },
   "Scaffold": {
-    "manual": "no call plan in the pinned inventory: slot-supplied arguments need typed context references",
-    "entry": {
-      "package": "androidx.compose.material3",
+    "decision": {
       "category": "layout",
-      "stability": "stable",
-      "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;IJJLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "Scaffold-TvnljyQ",
-        "name": "Scaffold",
-        "owner": "androidx.compose.material3.ScaffoldKt"
-      },
+      "stability": "stable"
+    },
+    "patch": {
+      "since": null,
       "props": {
+        "contentWindowInsets": null,
+        "floatingActionButtonPosition": null,
         "containerColor": {
-          "type": "color",
-          "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.MaterialTheme.colorScheme.background"
-        },
-        "modifier": {
-          "type": "modifier"
         }
       },
       "children": {
-        "allowed": true,
-        "kind": "content",
-        "consume": "paddingValues"
+        "kind": "content"
       },
       "slots": {
         "bottomBar": {
@@ -1979,6 +1907,13 @@
     "decision": {
       "category": "navigation",
       "stability": "stable"
+    },
+    "patch": {
+      "slots": null,
+      "props": {
+        "shape": null,
+        "windowInsets": null
+      }
     }
   },
   "WideNavigationRailItem": {

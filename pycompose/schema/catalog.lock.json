@@ -835,9 +835,6 @@
         "owner": "androidx.compose.foundation.layout.ColumnKt"
       },
       "props": {
-        "modifier": {
-          "type": "modifier"
-        },
         "horizontalAlignment": {
           "type": "enum",
           "values": [
@@ -847,6 +844,9 @@
           ],
           "decode": "horizontal",
           "default": "start"
+        },
+        "modifier": {
+          "type": "modifier"
         },
         "offset": {
           "type": "number"
@@ -2641,13 +2641,13 @@
         "owner": "androidx.compose.foundation.lazy.LazyDslKt"
       },
       "props": {
+        "modifier": {
+          "type": "modifier"
+        },
         "firstVisibleIndex": {
           "type": "integer",
           "minimum": 0,
           "maximum": 2147483647
-        },
-        "modifier": {
-          "type": "modifier"
         },
         "onScrollIdle": {
           "type": "actionId",
@@ -2676,16 +2676,16 @@
         "allowed": true,
         "kind": "items"
       },
-      "reshaped": [
-        "firstVisibleIndex",
-        "onScrollIdle"
-      ],
       "state": {
         "native": "state",
         "kind": "lazyList",
         "value": "firstVisibleIndex",
         "report": "onScrollIdle"
-      }
+      },
+      "reshaped": [
+        "firstVisibleIndex",
+        "onScrollIdle"
+      ]
     },
     "LazyRow": {
       "package": "androidx.compose.foundation.lazy",
@@ -2700,13 +2700,13 @@
         "owner": "androidx.compose.foundation.lazy.LazyDslKt"
       },
       "props": {
+        "modifier": {
+          "type": "modifier"
+        },
         "firstVisibleIndex": {
           "type": "integer",
           "minimum": 0,
           "maximum": 2147483647
-        },
-        "modifier": {
-          "type": "modifier"
         },
         "onScrollIdle": {
           "type": "actionId",
@@ -2722,16 +2722,16 @@
         "allowed": true,
         "kind": "items"
       },
-      "reshaped": [
-        "firstVisibleIndex",
-        "onScrollIdle"
-      ],
       "state": {
         "native": "state",
         "kind": "lazyList",
         "value": "firstVisibleIndex",
         "report": "onScrollIdle"
-      }
+      },
+      "reshaped": [
+        "firstVisibleIndex",
+        "onScrollIdle"
+      ]
     },
     "LeadingIconTab": {
       "package": "androidx.compose.material3",
@@ -4366,9 +4366,6 @@
         "owner": "androidx.compose.foundation.layout.RowKt"
       },
       "props": {
-        "modifier": {
-          "type": "modifier"
-        },
         "verticalAlignment": {
           "type": "enum",
           "values": [
@@ -4378,6 +4375,9 @@
           ],
           "decode": "vertical",
           "default": "top"
+        },
+        "modifier": {
+          "type": "modifier"
         }
       },
       "children": {
@@ -4410,8 +4410,8 @@
       },
       "children": {
         "allowed": true,
-        "kind": "content",
-        "consume": "paddingValues"
+        "consume": "paddingValues",
+        "kind": "content"
       },
       "slots": {
         "bottomBar": {

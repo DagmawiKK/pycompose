@@ -460,6 +460,9 @@ def place_slot(
         return
     if parameter == "content":
         children["allowed"] = True
+        for key in ("kind", "consume"):
+            if key in spec:
+                children[key] = spec[key]
         review.append(f"{parameter}: app content children")
         return
     slot: dict[str, Any] = {"native": parameter}

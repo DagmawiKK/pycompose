@@ -59,9 +59,25 @@ def _type(document: dict[str, Any]) -> str:
 
 
 def _slot_type(spec: dict[str, Any]) -> str:
-    receiver = _qualified(spec["receiver"]) + "." if spec["receiver"] else ""
-    return f"(@Composable {receiver}() -> Unit)" + (
-        "?" if spec["type"]["nullable"] else ""
+    """The slot's exact native function type: receiver, arguments, composability.
+
+    A slot whose receiver the renderer does not provide, a slot whose content
+    receives an argument it consumes, and a lazy list's builder all keep the
+    pinned type, so the facade proves the call the adapter makes.
+    """
+    document = spec["type"]
+    *parameters, result = (argument["type"] for argument in document["arguments"])
+    receiver = ""
+    if "kotlin/ExtensionFunctionType" in document["annotations"]:
+        receiver = _type(parameters.pop(0)) + "."
+    composable = (
+        "@Composable "
+        if "androidx/compose/runtime/Composable" in document["annotations"]
+        else ""
+    )
+    values = ", ".join(_type(parameter) for parameter in parameters)
+    return f"({composable}{receiver}({values}) -> {_type(result)})" + (
+        "?" if document["nullable"] else ""
     )
 
 

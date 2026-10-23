@@ -113,6 +113,7 @@ GAP_CLASSES: tuple[tuple[str, str], ...] = (
     ("event payload needs a structured value codec", "payload-codec"),
     ("receiver/generic declaration needs a native protocol", "runtime-protocol"),
     ("slot scope needs a native protocol", "scope-protocol"),
+    ("builder scope needs a native protocol", "scope-protocol"),
     ("slot-supplied arguments need typed context references", "scope-protocol"),
     ("optional slot needs an explicit null policy", "slot-policy"),
     (

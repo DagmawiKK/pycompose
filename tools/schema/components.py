@@ -67,24 +67,51 @@ def _function(value) -> list[Any]:
     return arguments[:-1]
 
 
+CONSUMED = {"androidx/compose/foundation/layout/PaddingValues": "paddingValues"}
+"""Slot arguments the adapter applies on the subtree's behalf (``CONSUMERS``)."""
+
+LAZY_LIST = "androidx/compose/foundation/lazy/LazyListScope"
+
+
 def _slot(value) -> dict[str, Any]:
-    """Classify a composable lambda as a scoped or unscoped slot."""
+    """Classify a composable lambda as a scoped, unscoped or consuming slot.
+
+    A receiver outside the closed scope vocabulary is not handed to the
+    children -- they compose as they would anywhere -- so the slot is unscoped;
+    only a scope the renderer provides reaches them (ADR-0016 decision 1).
+    """
     arguments = _function(value)
     receiver = None
     if "kotlin/ExtensionFunctionType" in value.annotations:
         if not arguments:
             raise ValueError("missing slot receiver")
         native_receiver = arguments.pop(0)
-        receiver = native_receiver.classifier
-        if (
-            receiver not in SLASH_SCOPES
-            or native_receiver.nullable
-            or native_receiver.arguments
-        ):
-            raise ValueError(f"slot scope needs a native protocol: {receiver}")
-    if arguments:
+        if native_receiver.nullable or native_receiver.arguments:
+            raise ValueError(
+                f"slot scope needs a native protocol: {native_receiver.classifier}"
+            )
+        if native_receiver.classifier in SLASH_SCOPES:
+            receiver = native_receiver.classifier
+    rule: dict[str, Any] = {"policy": "slot", "receiver": receiver}
+    if (
+        len(arguments) == 1
+        and not arguments[0].nullable
+        and arguments[0].classifier in CONSUMED
+    ):
+        rule["consume"] = CONSUMED[arguments[0].classifier]
+    elif arguments:
         raise ValueError("slot-supplied arguments need typed context references")
-    return {"policy": "slot", "receiver": receiver}
+    return rule
+
+
+def _builder(value) -> dict[str, Any]:
+    """A lazy list's builder lambda: the children are the items it lists."""
+    receiver = value.arguments[0][1]
+    if receiver.classifier != LAZY_LIST or receiver.nullable:
+        raise ValueError(
+            f"builder scope needs a native protocol: {receiver.classifier}"
+        )
+    return {"policy": "slot", "receiver": None, "kind": "items"}
 
 
 def _binding_rule(
@@ -103,6 +130,8 @@ def _binding_rule(
         return {"policy": "modifier"}
     if parameter.kind == Kind.SLOT:
         rule = _slot(value)
+    elif parameter.kind == Kind.BUILDER:
+        rule = _builder(value)
     elif parameter.kind == Kind.CALLBACK:
         arguments = _function(value)
         if any(t.classifier not in SCALARS for t in arguments):
