@@ -7,6 +7,7 @@ from pycompose.core.ids import Handles
 from pycompose.core.node import Node
 from pycompose.core.reuse import Reuse
 from pycompose.ir import emit_ir
+from pycompose.ir.patch import PatchOp, ReplaceSubtree, diff_nodes
 from pycompose.state import State
 
 
@@ -90,3 +91,86 @@ def test_readable_names_are_full_paths() -> None:
     emitted = emit_ir(column("a"), "1.0.0", Reuse()).root
 
     assert names(emitted) == {"a": "root.a"}
+
+
+def _rows(labels: list[str], *, title: str = "Rows") -> State:
+    return State(
+        root=Column(
+            id="screen",
+            children=[
+                Text(id="title", text=title),
+                *(
+                    Column(id=f"r_{label}", children=[Text(text=label)])
+                    for label in labels
+                ),
+            ],
+        )
+    )
+
+
+SEQUENCE = [
+    _rows(["a", "b", "c"]),
+    _rows(["a", "b", "c"], title="Renamed"),
+    _rows(["c", "a", "b"], title="Renamed"),
+    _rows(["c", "a", "d", "b"]),
+    _rows(["b"]),
+    *(_rows([f"n{n}"]) for n in range(8)),
+    _rows(["a", "b"]),
+]
+
+
+def _pairs(readable: Node, compact: Node) -> list[tuple[str, str]]:
+    assert (readable.type, readable.props, len(readable.children)) == (
+        compact.type,
+        compact.props,
+        len(compact.children),
+    )
+    pairs = [(readable.id, compact.id)]
+    for left, right in zip(readable.children, compact.children, strict=True):
+        pairs += _pairs(left, right)
+    return pairs
+
+
+def test_a_compact_session_names_the_same_identities_as_a_readable_one() -> None:
+    readable, compact = Reuse(), session()
+    owners: dict[str, str] = {}
+    previous: dict[str, str] = {}
+    for state in SEQUENCE:
+        current = dict(
+            _pairs(
+                emit_ir(state, "1.0.0", readable).root,
+                emit_ir(state, "1.0.0", compact).root,
+            )
+        )
+        for path, name in current.items():
+            # A name is never given to a second identity, and an identity that
+            # lives on from one snapshot to the next keeps its name.
+            assert owners.setdefault(name, path) == path
+            assert previous.get(path, name) == name
+        previous = current
+
+
+def test_compact_patches_rebuild_each_snapshot_from_the_last() -> None:
+    reuse = session()
+    previous = emit_ir(SEQUENCE[0], "1.0.0", reuse).root
+    for state in SEQUENCE[1:]:
+        latest = emit_ir(state, "1.0.0", reuse).root
+        rebuilt = previous
+        for op in diff_nodes(previous, latest):
+            rebuilt = _apply(rebuilt, op, op.at)
+        assert rebuilt == latest
+        previous = latest
+
+
+def _apply(node: Node, op: PatchOp, at: tuple[int, ...]) -> Node:
+    if not at:
+        assert node.id == op.id
+        if isinstance(op, ReplaceSubtree):
+            return op.payload
+        props = {**node.props.values, op.prop: op.value}
+        return Node(id=node.id, type=node.type, props=props, children=node.children)
+    children = list(node.children)
+    children[at[0]] = _apply(children[at[0]], op, at[1:])
+    return Node(
+        id=node.id, type=node.type, props=node.props, children=children, slot=node.slot
+    )
