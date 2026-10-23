@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Container, Mapping
+from collections.abc import Callable, Container, Mapping
 from dataclasses import dataclass
 from typing import cast
 
@@ -106,7 +106,7 @@ def _prepare_payload(
 def decode_action(
     action_json: str,
     *,
-    bindings: Mapping[str, BindingSpec] | None = None,
+    bindings: Callable[[int | None], Mapping[str, BindingSpec] | None] | None = None,
     handlers: Container[str] | None = None,
 ) -> Action:
     """Decode a host action and fill declared optional defaults.
@@ -118,9 +118,11 @@ def decode_action(
     neither can name anything the app did not declare.
 
     Args:
-        action_json: JSON envelope with actionId, an optional payload object and
-            an optional report sequence number.
-        bindings: App bindings from the active validated snapshot.
+        action_json: JSON envelope with actionId, an optional payload object, an
+            optional report sequence number and the optional serial of the
+            snapshot it was dispatched against.
+        bindings: The app bindings of the snapshot a serial names, or of the
+            latest snapshot for None; None when that snapshot is gone.
         handlers: Action ids the app registered, for events with no control.
 
     Returns:
@@ -135,23 +137,31 @@ def decode_action(
         raw: object = json.loads(action_json, object_pairs_hook=_unique_object)
     except (TypeError, ValueError, RecursionError) as exc:
         raise BridgeError("malformed action JSON") from exc
-    if not isinstance(raw, dict) or set(raw) - {"actionId", "payload", "seq"}:
+    if not isinstance(raw, dict) or set(raw) - {"actionId", "payload", "seq", "serial"}:
         raise BridgeError("invalid action envelope")
     seq = raw.get("seq")
     if seq is not None and (type(seq) is not int or seq < 1):
         raise BridgeError("seq must be a positive integer")
+    serial = raw.get("serial")
+    if serial is not None and (type(serial) is not int or serial < 1):
+        raise BridgeError("serial must be a positive integer")
+    active = bindings(serial) if bindings is not None else {}
+    if active is None:
+        # The snapshot the user acted on is no longer held, so what its controls
+        # meant cannot be known; acting on today's meaning would be a guess.
+        raise BridgeError("stale action: its snapshot is no longer held", serial=serial)
     action_id = raw.get("actionId")
     if not isinstance(action_id, str) or (
         action_id not in REGISTRY.actions
         and action_id not in REGISTRY.lifecycle
-        and action_id not in (bindings or {})
+        and action_id not in active
         and action_id not in (handlers or ())
     ):
         raise BridgeError("unknown action", action_id=action_id)
     payload = raw.get("payload", {})
     if not isinstance(payload, dict):
         raise BridgeError("payload must be an object", action_id=action_id)
-    binding = (bindings or {}).get(action_id)
+    binding = active.get(action_id)
     # An app handler only takes over for an id nothing else declares. An app may
     # register a handler whose alias happens to match a lifecycle event, and the
     # registry contract for that event must still be the one that is enforced.

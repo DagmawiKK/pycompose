@@ -29,11 +29,13 @@ import kotlinx.serialization.json.JsonPrimitive
  * @param ir Validated wire data to render.
  * @param epoch Host-local generation, retained on rotation and advanced on Python restart.
  * @param trace The span of the command that produced it, closed by the frame that shows it.
+ * @param serial The serial the app published it under; actions taken on it name it.
  */
 data class SessionSnapshot(
     val ir: ValidatedIr,
     val epoch: Long,
     val trace: Int = 0,
+    val serial: Long = SnapshotStream.NONE,
 )
 
 /** Host owns only latest IR and minimal navigation state, never the Python Store. */
@@ -156,7 +158,9 @@ class PyComposeViewModel(
     }
 
     fun dispatch(action: Action) {
-        enqueue(Command.Dispatch(action))
+        // Stamped with what was on screen when the user acted, not when it is processed.
+        val shown = mutableSnapshot.value?.serial?.takeIf { it != SnapshotStream.NONE }
+        enqueue(Command.Dispatch(action.copy(serial = shown)))
     }
 
     fun reload() {
@@ -221,7 +225,8 @@ class PyComposeViewModel(
                     val previous = mutableSnapshot.value
                     val changed = candidate.snapshot != previous?.ir?.snapshot
                     if (changed || previous?.epoch != epoch) {
-                        mutableSnapshot.value = SessionSnapshot(candidate, epoch, cookie)
+                        mutableSnapshot.value =
+                            SessionSnapshot(candidate, epoch, cookie, stream.serial)
                         shown = true
                     }
                     mutableError.value = bridge.fetchLatestError()

@@ -76,10 +76,14 @@ object AppBindings {
         runCatching {
             val raw =
                 Json.parseToJsonElement(source) as? JsonObject ?: error("Invalid action envelope")
-            require(raw.keys.all { it in setOf("actionId", "payload", "seq") })
-            raw["seq"]?.let { seq ->
-                require(seq is JsonPrimitive && !seq.isString && (seq.longOrNull ?: 0) > 0) {
-                    "seq must be a positive integer"
+            require(raw.keys.all { it in setOf("actionId", "payload", "seq", "serial") })
+            for (counter in listOf("seq", "serial")) {
+                raw[counter]?.let { value ->
+                    require(
+                        value is JsonPrimitive && !value.isString && (value.longOrNull ?: 0) > 0,
+                    ) {
+                        "$counter must be a positive integer"
+                    }
                 }
             }
             val id = WireValidator.string(raw["actionId"], "actionId")

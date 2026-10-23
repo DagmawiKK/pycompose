@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import itertools
 import logging
+from collections.abc import Mapping
 from threading import current_thread
 
 from pycompose.bridge.types import decode_action
@@ -77,7 +78,8 @@ class BridgeSurface:
         self._worker = current_thread()
         self._processing = False
         self._latest: str | None = None
-        self._published: list[tuple[int, IRRoot]] = []
+        # Each snapshot a host may still hold, with the bindings it carried.
+        self._published: list[tuple[int, IRRoot, dict[str, BindingSpec]]] = []
         self._latest_error = ""
         self._bindings: dict[str, BindingSpec] = {}
         # The latest report sequence number answered, per action (plan 31 §17).
@@ -93,7 +95,7 @@ class BridgeSurface:
             published = self._snapshot(store.value)
             if published is not None:
                 self._bindings = published[2]
-                self._publish(published[0], published[1])
+                self._publish(published[0], published[1], published[2])
         except SchemaError:
             raise
         except Exception as exc:
@@ -132,11 +134,31 @@ class BridgeSurface:
         self._actions.validate_bindings(bindings)
         return result.snapshot, to_json(result.snapshot, self._reuse), bindings
 
-    def _publish(self, root: IRRoot, text: str) -> None:
+    def _publish(
+        self, root: IRRoot, text: str, bindings: dict[str, BindingSpec]
+    ) -> None:
         if text == self._latest:
             return
         self._latest = text
-        self._published = [*self._published[1 - WINDOW :], (next(_SERIALS), root)]
+        entry = (next(_SERIALS), root, bindings)
+        self._published = [*self._published[1 - WINDOW :], entry]
+
+    def _bindings_at(self, serial: int | None) -> Mapping[str, BindingSpec] | None:
+        """Return the bindings of the snapshot the host acted on.
+
+        A tap resolves against what the user saw: a binding whose id survives
+        into a later snapshot may carry different bound values there.
+
+        Args:
+            serial: The snapshot the action was dispatched against; None for
+                actions that name none.
+
+        Returns:
+            Its bindings, or None when that snapshot is no longer held.
+        """
+        if serial is None:
+            return self._bindings
+        return next((b for s, _, b in self._published if s == serial), None)
 
     def accept_action(self, action_json: str) -> None:
         """Process one action synchronously; errors never escape to the host.
@@ -161,7 +183,7 @@ class BridgeSurface:
                 return
             action = decode_action(
                 admitted,
-                bindings=self._bindings,
+                bindings=self._bindings_at,
                 handlers=self._actions,
             )
             if action.seq is not None:
@@ -215,7 +237,7 @@ class BridgeSurface:
             return False
         self._store.mutate(lambda _state: state)
         self._bindings = published[2]
-        self._publish(published[0], published[1])
+        self._publish(published[0], published[1], published[2])
         return True
 
     def _republish(self, state: State) -> None:
@@ -267,8 +289,8 @@ class BridgeSurface:
             return ""
         if not self._published:
             return ""
-        serial, latest = self._published[-1]
-        base = next((root for s, root in self._published if s == base_serial), None)
+        serial, latest, _ = self._published[-1]
+        base = next((root for s, root, _ in self._published if s == base_serial), None)
         if base is not None:
             ops = diff_nodes(base.root, latest.root)
             whole = any(

@@ -141,6 +141,22 @@ class PyComposeViewModelTest {
             model.close()
         }
 
+    @Test fun `an action names the snapshot that was on screen when the user acted`() =
+        runTest {
+            val bridge = FakeBridge().apply { serial = 7 }
+            val model =
+                PyComposeViewModel(
+                    bridge,
+                    SavedStateHandle(),
+                    StandardTestDispatcher(testScheduler),
+                )
+            advanceUntilIdle()
+            model.dispatch(Action("increment"))
+            advanceUntilIdle()
+            assertTrue(bridge.sent.single().contains("\"serial\":7"))
+            model.close()
+        }
+
     @Test fun `an action outside the published contract never reaches the worker`() =
         runTest {
             val bridge = FakeBridge()
@@ -411,6 +427,9 @@ class PyComposeViewModelTest {
         /** App data the worker publishes, or null for an app that holds none. */
         var pendingData: String? = null
 
+        /** The serial every pulled snapshot is published under, or null for bare snapshots. */
+        var serial: Long? = null
+
         override fun start(
             route: String,
             restore: String,
@@ -442,6 +461,12 @@ class PyComposeViewModelTest {
             return golden
                 .replace("\"schemaVersion\":\"1.0.0\"", "\"schemaVersion\":\"1.4.0\"")
                 .replace("{\"root\"", "{\"metadata\":$metadata,\"root\"")
+        }
+
+        override fun fetchLatest(baseSerial: Long): String {
+            val snapshot = fetchLatestSnapshot()
+            val published = serial ?: return snapshot
+            return snapshot.replaceFirst("{", "{\"kind\":\"full\",\"serial\":$published,")
         }
 
         override fun fetchLatestError(): String = ""

@@ -99,3 +99,65 @@ def test_literal_payloads_survive_the_round_trip_through_frozen_metadata() -> No
     assert store.value.version == len("done")
     with pytest.raises(IrValidationError):
         choose_filter.bind(id="bad", value="archived")
+
+
+class PickPayload(TypedDict):
+    task_id: int
+
+
+class Nothing(TypedDict):
+    pass
+
+
+@action
+def pick(state: State, payload: PickPayload) -> State:
+    return replace(state, version=payload["task_id"])
+
+
+@action
+def advance(state: State, payload: Nothing) -> State:  # noqa: ARG001
+    task = state.version + 1
+    return replace(state, root=_primary(task), version=task)
+
+
+def _primary(task: int) -> Button:
+    return Button(
+        id="primary",
+        text=f"Task {task}",
+        on_click=pick.bind(id="primary", task_id=task),
+    )
+
+
+def _serial(bridge: BridgeSurface) -> int:
+    return int(json.loads(bridge.expose_envelope(-1))["serial"])
+
+
+def test_a_tap_resolves_against_the_snapshot_the_user_saw() -> None:
+    store = Store(State(root=_primary(10), version=10))
+    bridge = BridgeSurface(store, Actions(pick, advance))
+    binding = str(pick.bind(id="primary", task_id=10))
+    seen = _serial(bridge)
+    bridge.accept_action(json.dumps({"actionId": advance.name, "payload": {}}))
+
+    bridge.accept_action(
+        json.dumps({"actionId": binding, "payload": {}, "serial": seen})
+    )
+
+    assert store.value.version == 10
+
+
+def test_a_tap_from_a_snapshot_no_longer_held_is_refused() -> None:
+    store = Store(State(root=_primary(10), version=10))
+    bridge = BridgeSurface(store, Actions(pick, advance))
+    binding = str(pick.bind(id="primary", task_id=10))
+    seen = _serial(bridge)
+    for _ in range(9):
+        bridge.accept_action(json.dumps({"actionId": advance.name, "payload": {}}))
+    version = store.value.version
+
+    bridge.accept_action(
+        json.dumps({"actionId": binding, "payload": {}, "serial": seen})
+    )
+
+    assert store.value.version == version
+    assert "stale action" in bridge.expose_latest_error()

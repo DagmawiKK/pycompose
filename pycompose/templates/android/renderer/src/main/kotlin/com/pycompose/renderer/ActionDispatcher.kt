@@ -9,17 +9,21 @@ import kotlinx.serialization.json.put
  *
  * @param seq The report sequence number of a settled value a holder reported, which the
  *   app's next snapshot echoes; null for actions that report nothing.
+ * @param serial The snapshot the user acted on, so the app resolves the action against what
+ *   was on screen; null resolves it against the latest snapshot.
  */
 data class Action(
     val actionId: String,
     val payload: JsonObject = JsonObject(emptyMap()),
     val seq: Long? = null,
+    val serial: Long? = null,
 ) {
     fun toJson(): String =
         buildJsonObject {
             put("actionId", actionId)
             put("payload", payload)
             seq?.let { put("seq", it) }
+            serial?.let { put("serial", it) }
         }.toString()
 }
 
