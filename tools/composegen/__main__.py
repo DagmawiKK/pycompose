@@ -1,7 +1,7 @@
 """Run the component compiler.
 
-    python -m tools.composegen generate          # write the lock and the report
-    python -m tools.composegen generate --check  # fail if the lock is stale
+    python -m tools.composegen generate          # write lock, signatures, report
+    python -m tools.composegen generate --check  # fail if either is stale
 
 Run ``./gradlew dumpComposeApi dumpComposeDefaults`` in android/ first: the
 compiler reads the pinned evidence they extract. Then run
@@ -18,11 +18,13 @@ from pathlib import Path
 if __package__ in {None, ""}:  # pragma: no cover - only when run as a script
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from tools.composegen.lock import LOCK, Report, dumps, generate
+from tools.composegen import signatures
+from tools.composegen.lock import LOCK, ROOT, Report, dumps, generate
 from tools.composegen.policy import load
-from tools.schema.classpath_dump import DUMP_DIR
+from tools.schema.classpath_dump import DUMP_DIR, inventory
 
 REPORT = DUMP_DIR / "composegen-report.md"
+SIGNATURES = ROOT / "schema/signatures"
 
 
 def render(report: Report) -> str:
@@ -67,6 +69,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         lock, report = generate(load())
+        found = inventory(DUMP_DIR)
     except (OSError, ValueError) as exc:
         print(f"composegen: {exc}", file=sys.stderr)
         return 2
@@ -74,13 +77,22 @@ def main(argv: list[str] | None = None) -> int:
         print(f"composegen: {error}", file=sys.stderr)
     if report.errors:
         return 1
-    text = dumps(lock)
+    outputs = {
+        LOCK: dumps(lock),
+        SIGNATURES / f"{found.bom}.txt": signatures.render(found),
+    }
     if args.check:
-        if not LOCK.is_file() or LOCK.read_text(encoding="utf-8") != text:
-            print(f"composegen: {LOCK} is stale; run generate", file=sys.stderr)
-            return 1
-        return 0
-    LOCK.write_text(text, encoding="utf-8")
+        stale = [
+            path
+            for path, text in outputs.items()
+            if not path.is_file() or path.read_text(encoding="utf-8") != text
+        ]
+        for path in stale:
+            print(f"composegen: {path} is stale; run generate", file=sys.stderr)
+        return 1 if stale else 0
+    for path, text in outputs.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.write_text(render(report), encoding="utf-8")
     print(
