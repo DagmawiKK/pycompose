@@ -300,6 +300,7 @@ object GeneratedAdapters {
                 }
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.AssistChipDefaults.shape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 AssistChip(
                     modifier = modifier,
                     colors = colorsValue,
@@ -307,6 +308,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     label = { context.slot(model.children, "label")?.invoke() },
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     trailingIcon = context.slot(model.children, "trailingIcon"),
@@ -390,7 +392,7 @@ object GeneratedAdapters {
                     com.pycompose.ir.OptionalValue.Null -> null
                     is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.buttonElevation(elevationWire.value).getOrThrow()
                 }
-                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 Button(
                     modifier = modifier,
                     colors = colorsValue,
@@ -416,7 +418,7 @@ object GeneratedAdapters {
                 val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.cardElevation(elevationWire).getOrThrow() else androidx.compose.material3.CardDefaults.cardElevation()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.CardDefaults.shape
-                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 Card(
                     modifier = modifier,
                     border = borderValue,
@@ -472,7 +474,7 @@ object GeneratedAdapters {
             }
             .register("Checkbox") { node, modifier, context ->
                 val model = node as CheckboxNode
-                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 Checkbox(
                     modifier = modifier,
                     checked = model.props.checked,
@@ -633,12 +635,14 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.menuItemColors(colorsWire).getOrThrow() else androidx.compose.material3.MenuDefaults.itemColors()
                 val contentPaddingWire = model.props.contentPadding
                 val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.MenuDefaults.DropdownMenuItemContentPadding
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 DropdownMenuItem(
                     modifier = modifier,
                     colors = colorsValue,
                     contentPadding = contentPaddingValue,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
+                    interactionSource = interactionSourceValue,
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     text = { context.slot(model.children, "text")?.invoke() },
                     trailingIcon = context.slot(model.children, "trailingIcon"),
@@ -662,6 +666,7 @@ object GeneratedAdapters {
                 }
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.AssistChipDefaults.shape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 ElevatedAssistChip(
                     modifier = modifier,
                     border = borderValue,
@@ -670,6 +675,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     label = { context.slot(model.children, "label")?.invoke() },
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     trailingIcon = context.slot(model.children, "trailingIcon"),
@@ -695,6 +701,7 @@ object GeneratedAdapters {
                 }
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.elevatedShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 ElevatedButton(
                     modifier = modifier,
                     border = borderValue,
@@ -704,6 +711,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.childrenInRowScope(this, model.children) },
                 )
             }
@@ -715,6 +723,7 @@ object GeneratedAdapters {
                 val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.cardElevation(elevationWire).getOrThrow() else androidx.compose.material3.CardDefaults.elevatedCardElevation()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.CardDefaults.elevatedShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 ElevatedCard(
                     modifier = modifier,
                     colors = colorsValue,
@@ -722,6 +731,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.childrenInColumnScope(this, model.children) },
                 )
             }
@@ -759,6 +769,7 @@ object GeneratedAdapters {
                 }
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.FilterChipDefaults.shape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 ElevatedFilterChip(
                     modifier = modifier,
                     border = borderValue,
@@ -768,6 +779,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     label = { context.slot(model.children, "label")?.invoke() },
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     trailingIcon = context.slot(model.children, "trailingIcon"),
@@ -791,6 +803,7 @@ object GeneratedAdapters {
                 }
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SuggestionChipDefaults.shape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 ElevatedSuggestionChip(
                     modifier = modifier,
                     border = borderValue,
@@ -799,6 +812,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     icon = context.slot(model.children, "icon"),
                     label = { context.slot(model.children, "label")?.invoke() },
                 )
@@ -814,12 +828,14 @@ object GeneratedAdapters {
                 val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.floatingActionButtonElevation(elevationWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.elevation()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.extendedFabShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 ExtendedFloatingActionButton(
                     modifier = modifier,
                     containerColor = containerColorValue,
                     elevation = elevationValue,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.childrenInRowScope(this, model.children) },
                 )
             }
@@ -834,6 +850,7 @@ object GeneratedAdapters {
                 val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.floatingActionButtonElevation(elevationWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.elevation()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.extendedFabShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 ExtendedFloatingActionButton(
                     modifier = modifier,
                     containerColor = containerColorValue,
@@ -841,6 +858,7 @@ object GeneratedAdapters {
                     expanded = model.props.expanded,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     icon = { context.slot(model.children, "icon")?.invoke() },
                     text = { context.slot(model.children, "text")?.invoke() },
                 )
@@ -851,12 +869,14 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledIconButtonColors()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 FilledIconButton(
                     modifier = modifier,
                     colors = colorsValue,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
@@ -866,6 +886,7 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconToggleButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledIconToggleButtonColors()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 FilledIconToggleButton(
                     modifier = modifier,
                     checked = model.props.checked,
@@ -873,6 +894,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
@@ -896,6 +918,7 @@ object GeneratedAdapters {
                 }
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.filledTonalShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 FilledTonalButton(
                     modifier = modifier,
                     border = borderValue,
@@ -905,6 +928,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.childrenInRowScope(this, model.children) },
                 )
             }
@@ -914,12 +938,14 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledTonalIconButtonColors()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 FilledTonalIconButton(
                     modifier = modifier,
                     colors = colorsValue,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
@@ -929,6 +955,7 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconToggleButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledTonalIconToggleButtonColors()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.filledShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 FilledTonalIconToggleButton(
                     modifier = modifier,
                     checked = model.props.checked,
@@ -936,12 +963,13 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
             .register("FilterChip") { node, modifier, context ->
                 val model = node as FilterChipNode
-                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 FilterChip(
                     modifier = modifier,
                     enabled = model.props.enabled,
@@ -964,7 +992,7 @@ object GeneratedAdapters {
                 val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.floatingActionButtonElevation(elevationWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.elevation()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.shape
-                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 FloatingActionButton(
                     modifier = modifier,
                     containerColor = containerColorValue,
@@ -1029,7 +1057,7 @@ object GeneratedAdapters {
                 val model = node as IconButtonNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.iconButtonColors()
-                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 IconButton(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1045,6 +1073,7 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconToggleButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.iconToggleButtonColors()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.standardShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 IconToggleButton(
                     modifier = modifier,
                     checked = model.props.checked,
@@ -1052,6 +1081,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
@@ -1078,6 +1108,7 @@ object GeneratedAdapters {
                 }
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.InputChipDefaults.shape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 InputChip(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1086,6 +1117,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     avatar = context.slot(model.children, "avatar"),
                     label = { context.slot(model.children, "label")?.invoke() },
                     leadingIcon = context.slot(model.children, "leadingIcon"),
@@ -1103,12 +1135,14 @@ object GeneratedAdapters {
                 val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.floatingActionButtonElevation(elevationWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.elevation()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.FloatingActionButtonDefaults.largeShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 LargeFloatingActionButton(
                     modifier = modifier,
                     containerColor = containerColorValue,
                     elevation = elevationValue,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
@@ -1162,12 +1196,14 @@ object GeneratedAdapters {
                     is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.LocalContentColor).current)
                     else -> (androidx.compose.material3.LocalContentColor).current
                 }
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 LeadingIconTab(
                     modifier = modifier,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
                     selectedContentColor = selectedContentColorValue,
+                    interactionSource = interactionSourceValue,
                     icon = { context.slot(model.children, "icon")?.invoke() },
                     text = { context.slot(model.children, "text")?.invoke() },
                 )
@@ -1314,6 +1350,7 @@ object GeneratedAdapters {
                 val contentPaddingWire = model.props.contentPadding
                 val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.SegmentedButtonDefaults.ContentPadding
                 val shapeValue = com.pycompose.renderer.generated.ValueResolver.shape(model.props.shape).getOrThrow()
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 SegmentedButton(
                     modifier = modifier,
                     checked = model.props.checked,
@@ -1322,6 +1359,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     label = { context.slot(model.children, "label")?.invoke() },
                 )
             }
@@ -1358,7 +1396,7 @@ object GeneratedAdapters {
                 val model = node as NavigationBarItemNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.navigationBarItemColors(colorsWire).getOrThrow() else androidx.compose.material3.NavigationBarItemDefaults.colors()
-                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 NavigationBarItem(
                     modifier = modifier,
                     alwaysShowLabel = model.props.alwaysShowLabel,
@@ -1373,10 +1411,12 @@ object GeneratedAdapters {
             }
             .register("NavigationDrawerItem") { node, modifier, context ->
                 val model = node as NavigationDrawerItemNode
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 NavigationDrawerItem(
                     modifier = modifier,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
+                    interactionSource = interactionSourceValue,
                     badge = context.slot(model.children, "badge"),
                     icon = context.slot(model.children, "icon"),
                     label = { context.slot(model.children, "label")?.invoke() },
@@ -1401,23 +1441,27 @@ object GeneratedAdapters {
             }
             .register("NavigationRailItem") { node, modifier, context ->
                 val model = node as NavigationRailItemNode
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 NavigationRailItem(
                     modifier = modifier,
                     alwaysShowLabel = model.props.alwaysShowLabel,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
+                    interactionSource = interactionSourceValue,
                     icon = { context.slot(model.children, "icon")?.invoke() },
                     label = context.slot(model.children, "label"),
                 )
             }
             .register("NavigationSuiteItem") { node, modifier, context ->
                 val model = node as NavigationSuiteItemNode
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 NavigationSuiteItem(
                     modifier = modifier,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
+                    interactionSource = interactionSourceValue,
                     badge = context.slot(model.children, "badge"),
                     icon = { context.slot(model.children, "icon")?.invoke() },
                     label = context.slot(model.children, "label"),
@@ -1445,6 +1489,7 @@ object GeneratedAdapters {
                 }
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.ButtonDefaults.outlinedShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 OutlinedButton(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1453,6 +1498,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.childrenInRowScope(this, model.children) },
                 )
             }
@@ -1464,6 +1510,7 @@ object GeneratedAdapters {
                 val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.cardElevation(elevationWire).getOrThrow() else androidx.compose.material3.CardDefaults.outlinedCardElevation()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.CardDefaults.outlinedShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 OutlinedCard(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1471,6 +1518,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.childrenInColumnScope(this, model.children) },
                 )
             }
@@ -1499,12 +1547,14 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.outlinedIconButtonColors()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.outlinedShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 OutlinedIconButton(
                     modifier = modifier,
                     colors = colorsValue,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
@@ -1514,6 +1564,7 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.iconToggleButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.outlinedIconToggleButtonColors()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.IconButtonDefaults.outlinedShape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 OutlinedIconToggleButton(
                     modifier = modifier,
                     checked = model.props.checked,
@@ -1521,6 +1572,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onCheckedChange = { value -> context.event(model.props.onCheckedChange, JsonPrimitive(value)) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
@@ -1532,6 +1584,7 @@ object GeneratedAdapters {
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.OutlinedTextFieldDefaults.shape
                 val textStyleWire = model.props.textStyle
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 OutlinedTextField(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1544,6 +1597,7 @@ object GeneratedAdapters {
                     singleLine = model.props.singleLine,
                     textStyle = textStyleValue,
                     value = model.props.value,
+                    interactionSource = interactionSourceValue,
                     label = context.slot(model.children, "label"),
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     placeholder = context.slot(model.children, "placeholder"),
@@ -1650,7 +1704,7 @@ object GeneratedAdapters {
                 val model = node as RadioButtonNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.radioButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.RadioButtonDefaults.colors()
-                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 RadioButton(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1767,6 +1821,7 @@ object GeneratedAdapters {
                 val contentPaddingWire = model.props.contentPadding
                 val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.SegmentedButtonDefaults.ContentPadding
                 val shapeValue = com.pycompose.renderer.generated.ValueResolver.shape(model.props.shape).getOrThrow()
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 SegmentedButton(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1775,6 +1830,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     label = { context.slot(model.children, "label")?.invoke() },
                 )
             }
@@ -1802,11 +1858,13 @@ object GeneratedAdapters {
             }
             .register("ShortNavigationBarItem") { node, modifier, context ->
                 val model = node as ShortNavigationBarItemNode
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 ShortNavigationBarItem(
                     modifier = modifier,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
+                    interactionSource = interactionSourceValue,
                     icon = { context.slot(model.children, "icon")?.invoke() },
                     label = context.slot(model.children, "label"),
                 )
@@ -1826,11 +1884,13 @@ object GeneratedAdapters {
                 val valueRangeValue = com.pycompose.renderer.generated.ValueResolver.range(model.props.valueRange).getOrThrow()
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.sliderColors(colorsWire).getOrThrow() else androidx.compose.material3.SliderDefaults.colors()
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 val stateValue = context.sliderState(model.props.value, model.props.onValueChangeFinished, valueRangeValue, model.props.steps)
                 Slider(
                     modifier = modifier,
                     colors = colorsValue,
                     enabled = model.props.enabled,
+                    interactionSource = interactionSourceValue,
                     state = stateValue,
                 )
             }
@@ -1838,6 +1898,7 @@ object GeneratedAdapters {
                 val model = node as SliderValueNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.sliderColors(colorsWire).getOrThrow() else androidx.compose.material3.SliderDefaults.colors()
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 Slider(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1846,6 +1907,7 @@ object GeneratedAdapters {
                     onValueChangeFinished = { model.props.onValueChangeFinished?.let { context.actions.dispatch(it) } },
                     steps = model.props.steps.toInt(),
                     value = model.props.value.toFloat(),
+                    interactionSource = interactionSourceValue,
                 )
             }
             .register("Snackbar") { node, modifier, context ->
@@ -1911,6 +1973,7 @@ object GeneratedAdapters {
                 }
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SuggestionChipDefaults.shape
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 SuggestionChip(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1918,6 +1981,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
+                    interactionSource = interactionSourceValue,
                     icon = context.slot(model.children, "icon"),
                     label = { context.slot(model.children, "label")?.invoke() },
                 )
@@ -1970,6 +2034,7 @@ object GeneratedAdapters {
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.ui.graphics.RectangleShape
                 val tonalElevationWire = model.props.tonalElevation
                 val tonalElevationValue = if (tonalElevationWire != null) tonalElevationWire.dp else (0).dp
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 Surface(
                     modifier = modifier,
                     border = borderValue,
@@ -1980,6 +2045,7 @@ object GeneratedAdapters {
                     shadowElevation = shadowElevationValue,
                     shape = shapeValue,
                     tonalElevation = tonalElevationValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
@@ -2002,6 +2068,7 @@ object GeneratedAdapters {
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.ui.graphics.RectangleShape
                 val tonalElevationWire = model.props.tonalElevation
                 val tonalElevationValue = if (tonalElevationWire != null) tonalElevationWire.dp else (0).dp
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 Surface(
                     modifier = modifier,
                     border = borderValue,
@@ -2011,6 +2078,7 @@ object GeneratedAdapters {
                     shadowElevation = shadowElevationValue,
                     shape = shapeValue,
                     tonalElevation = tonalElevationValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
@@ -2033,6 +2101,7 @@ object GeneratedAdapters {
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.ui.graphics.RectangleShape
                 val tonalElevationWire = model.props.tonalElevation
                 val tonalElevationValue = if (tonalElevationWire != null) tonalElevationWire.dp else (0).dp
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 Surface(
                     modifier = modifier,
                     border = borderValue,
@@ -2043,6 +2112,7 @@ object GeneratedAdapters {
                     shadowElevation = shadowElevationValue,
                     shape = shapeValue,
                     tonalElevation = tonalElevationValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
             }
@@ -2063,7 +2133,7 @@ object GeneratedAdapters {
                 val model = node as SwitchNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.switchColors(colorsWire).getOrThrow() else androidx.compose.material3.SwitchDefaults.colors()
-                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 Switch(
                     modifier = modifier,
                     checked = model.props.checked,
@@ -2081,12 +2151,14 @@ object GeneratedAdapters {
                     is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.LocalContentColor).current)
                     else -> (androidx.compose.material3.LocalContentColor).current
                 }
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 Tab(
                     modifier = modifier,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
                     selectedContentColor = selectedContentColorValue,
+                    interactionSource = interactionSourceValue,
                     icon = context.slot(model.children, "icon"),
                     text = context.slot(model.children, "text"),
                 )
@@ -2098,12 +2170,14 @@ object GeneratedAdapters {
                     is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.LocalContentColor).current)
                     else -> (androidx.compose.material3.LocalContentColor).current
                 }
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 Tab(
                     modifier = modifier,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
                     selectedContentColor = selectedContentColorValue,
+                    interactionSource = interactionSourceValue,
                     content = { context.childrenInColumnScope(this, model.children) },
                 )
             }
@@ -2175,7 +2249,7 @@ object GeneratedAdapters {
             }
             .register("TextButton") { node, modifier, context ->
                 val model = node as TextButtonNode
-                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress))
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 TextButton(
                     modifier = modifier,
                     enabled = model.props.enabled,
@@ -2208,12 +2282,14 @@ object GeneratedAdapters {
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.checkboxColors(colorsWire).getOrThrow() else androidx.compose.material3.CheckboxDefaults.colors()
                 val stateValue = com.pycompose.renderer.generated.ValueResolver.toggleableState(model.props.state).getOrThrow()
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 TriStateCheckbox(
                     modifier = modifier,
                     colors = colorsValue,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     state = stateValue,
+                    interactionSource = interactionSourceValue,
                 )
             }
             .register("VerticalDivider") { node, modifier, context ->
@@ -2233,8 +2309,10 @@ object GeneratedAdapters {
             }
             .register("VerticalDragHandle") { node, modifier, context ->
                 val model = node as VerticalDragHandleNode
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 VerticalDragHandle(
                     modifier = modifier,
+                    interactionSource = interactionSourceValue,
                 )
             }
             .register("WideNavigationRail") { node, modifier, context ->
@@ -2246,12 +2324,14 @@ object GeneratedAdapters {
             }
             .register("WideNavigationRailItem") { node, modifier, context ->
                 val model = node as WideNavigationRailItemNode
+                val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 WideNavigationRailItem(
                     modifier = modifier,
                     enabled = model.props.enabled,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     railExpanded = model.props.railExpanded,
                     selected = model.props.selected,
+                    interactionSource = interactionSourceValue,
                     icon = { context.slot(model.children, "icon")?.invoke() },
                     label = context.slot(model.children, "label"),
                 )

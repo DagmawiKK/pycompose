@@ -421,6 +421,9 @@ class AssistChip(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         label: Content | None = None,
         leading_icon: Content | None = None,
@@ -435,6 +438,9 @@ class AssistChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             label: Nodes for the native label slot.
             leading_icon: Nodes for the native leadingIcon slot.
@@ -448,6 +454,12 @@ class AssistChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         slotted: tuple[Node, ...] = ()
@@ -1450,6 +1462,9 @@ class DropdownMenuItem(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         leading_icon: Content | None = None,
         text: Content | None = None,
         trailing_icon: Content | None = None,
@@ -1463,6 +1478,9 @@ class DropdownMenuItem(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             leading_icon: Nodes for the native leadingIcon slot.
             text: Nodes for the native text slot.
             trailing_icon: Nodes for the native trailingIcon slot.
@@ -1475,6 +1493,12 @@ class DropdownMenuItem(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         slotted: tuple[Node, ...] = ()
         if leading_icon is not None:
             slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
@@ -1505,6 +1529,9 @@ class ElevatedAssistChip(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         label: Content | None = None,
         leading_icon: Content | None = None,
@@ -1520,6 +1547,9 @@ class ElevatedAssistChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             label: Nodes for the native label slot.
             leading_icon: Nodes for the native leadingIcon slot.
@@ -1535,6 +1565,12 @@ class ElevatedAssistChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         slotted: tuple[Node, ...] = ()
@@ -1568,6 +1604,9 @@ class ElevatedButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1584,6 +1623,9 @@ class ElevatedButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -1603,6 +1645,12 @@ class ElevatedButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -1636,6 +1684,9 @@ class _ElevatedCard(Component):
             "elevation",
             "enabled",
             "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
             "shape",
         }
     )
@@ -1649,6 +1700,9 @@ class _ElevatedCard(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1663,6 +1717,9 @@ class _ElevatedCard(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -1678,6 +1735,12 @@ class _ElevatedCard(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -1709,6 +1772,9 @@ class ElevatedCard(_ElevatedCard):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1754,6 +1820,9 @@ class ElevatedFilterChip(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         shape: JsonValue | None = None,
         label: Content | None = None,
@@ -1770,6 +1839,9 @@ class ElevatedFilterChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             shape: Native shape; None uses its default.
             label: Nodes for the native label slot.
@@ -1786,6 +1858,12 @@ class ElevatedFilterChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         if shape is not None:
             props["shape"] = shape
@@ -1820,6 +1898,9 @@ class ElevatedSuggestionChip(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         icon: Content | None = None,
         label: Content | None = None,
@@ -1834,6 +1915,9 @@ class ElevatedSuggestionChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
@@ -1848,6 +1932,12 @@ class ElevatedSuggestionChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         slotted: tuple[Node, ...] = ()
@@ -1995,6 +2085,9 @@ class ExtendedFloatingActionButton(Component):
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -2008,6 +2101,9 @@ class ExtendedFloatingActionButton(Component):
             elevation: Native elevation; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -2021,6 +2117,12 @@ class ExtendedFloatingActionButton(Component):
         if elevation is not None:
             props["elevation"] = elevation
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -2053,6 +2155,9 @@ class ExtendedFloatingActionButtonText(Component):
         expanded: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         icon: Content | None = None,
         text: Content | None = None,
@@ -2066,6 +2171,9 @@ class ExtendedFloatingActionButtonText(Component):
             expanded: Native expanded; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             icon: Nodes for the native icon slot.
             text: Nodes for the native text slot.
@@ -2078,6 +2186,12 @@ class ExtendedFloatingActionButtonText(Component):
         if expanded is not None:
             props["expanded"] = expanded
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         slotted: tuple[Node, ...] = ()
@@ -2102,6 +2216,9 @@ class FilledIconButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -2114,6 +2231,9 @@ class FilledIconButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -2126,6 +2246,12 @@ class FilledIconButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if contents and children:
@@ -2152,6 +2278,9 @@ class FilledIconToggleButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -2165,6 +2294,9 @@ class FilledIconToggleButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -2178,6 +2310,12 @@ class FilledIconToggleButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if contents and children:
@@ -2205,6 +2343,9 @@ class FilledTonalButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -2221,6 +2362,9 @@ class FilledTonalButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -2240,6 +2384,12 @@ class FilledTonalButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -2271,6 +2421,9 @@ class FilledTonalIconButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -2283,6 +2436,9 @@ class FilledTonalIconButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -2295,6 +2451,12 @@ class FilledTonalIconButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if contents and children:
@@ -2321,6 +2483,9 @@ class FilledTonalIconToggleButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -2334,6 +2499,9 @@ class FilledTonalIconToggleButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -2347,6 +2515,12 @@ class FilledTonalIconToggleButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if contents and children:
@@ -2711,6 +2885,9 @@ class IconToggleButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -2724,6 +2901,9 @@ class IconToggleButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -2737,6 +2917,12 @@ class IconToggleButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if contents and children:
@@ -2839,6 +3025,9 @@ class InputChip(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         shape: JsonValue | None = None,
         avatar: Content | None = None,
@@ -2855,6 +3044,9 @@ class InputChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             shape: Native shape; None uses its default.
             avatar: Nodes for the native avatar slot.
@@ -2870,6 +3062,12 @@ class InputChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         if shape is not None:
             props["shape"] = shape
@@ -2904,6 +3102,9 @@ class LargeFloatingActionButton(Component):
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -2916,6 +3117,9 @@ class LargeFloatingActionButton(Component):
             elevation: Native elevation; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -2928,6 +3132,12 @@ class LargeFloatingActionButton(Component):
         if elevation is not None:
             props["elevation"] = elevation
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if contents and children:
@@ -3122,6 +3332,9 @@ class LeadingIconTab(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         selected_content_color: JsonValue | None = None,
         icon: Content | None = None,
@@ -3134,6 +3347,9 @@ class LeadingIconTab(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             selected_content_color: Native selectedContentColor; None uses its
                 default.
@@ -3144,6 +3360,12 @@ class LeadingIconTab(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         if selected_content_color is not None:
             props["selected_content_color"] = selected_content_color
@@ -3605,6 +3827,9 @@ class MultiChoiceSegmentedButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue,
         label: Content | None = None,
     ) -> None:
@@ -3618,6 +3843,9 @@ class MultiChoiceSegmentedButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Required native shape.
             label: Nodes for the native label slot.
         """
@@ -3630,6 +3858,12 @@ class MultiChoiceSegmentedButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["shape"] = shape
         slotted: tuple[Node, ...] = ()
         if label is not None:
@@ -3809,6 +4043,9 @@ class NavigationDrawerItem(Component):
         id: str | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         badge: Content | None = None,
         icon: Content | None = None,
@@ -3820,6 +4057,9 @@ class NavigationDrawerItem(Component):
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             badge: Nodes for the native badge slot.
             icon: Nodes for the native icon slot.
@@ -3827,6 +4067,12 @@ class NavigationDrawerItem(Component):
         """
         props: dict[str, PropValue] = {}
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
         if badge is not None:
@@ -3908,6 +4154,9 @@ class NavigationRailItem(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         icon: Content | None = None,
         label: Content | None = None,
@@ -3920,6 +4169,9 @@ class NavigationRailItem(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
@@ -3930,6 +4182,12 @@ class NavigationRailItem(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
         if icon is not None:
@@ -3952,6 +4210,9 @@ class NavigationSuiteItem(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         badge: Content | None = None,
         icon: Content | None = None,
@@ -3964,6 +4225,9 @@ class NavigationSuiteItem(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             badge: Nodes for the native badge slot.
             icon: Nodes for the native icon slot.
@@ -3973,6 +4237,12 @@ class NavigationSuiteItem(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
         if badge is not None:
@@ -4045,6 +4315,9 @@ class OutlinedButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -4060,6 +4333,9 @@ class OutlinedButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -4077,6 +4353,12 @@ class OutlinedButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -4110,6 +4392,9 @@ class _OutlinedCard(Component):
             "elevation",
             "enabled",
             "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
             "shape",
         }
     )
@@ -4123,6 +4408,9 @@ class _OutlinedCard(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -4137,6 +4425,9 @@ class _OutlinedCard(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -4152,6 +4443,12 @@ class _OutlinedCard(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -4183,6 +4480,9 @@ class OutlinedCard(_OutlinedCard):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -4227,6 +4527,9 @@ class OutlinedIconButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -4239,6 +4542,9 @@ class OutlinedIconButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -4251,6 +4557,12 @@ class OutlinedIconButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if contents and children:
@@ -4277,6 +4589,9 @@ class OutlinedIconToggleButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -4290,6 +4605,9 @@ class OutlinedIconToggleButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -4303,6 +4621,12 @@ class OutlinedIconToggleButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if contents and children:
@@ -4328,6 +4652,9 @@ class OutlinedTextField(Component):
         is_error: bool | None = None,
         min_lines: int | None = None,
         modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         on_value_change: ActionTarget,
         read_only: bool | None = None,
         shape: JsonValue | None = None,
@@ -4351,6 +4678,9 @@ class OutlinedTextField(Component):
             is_error: Native isError; None uses its default.
             min_lines: Native minLines; None uses its default.
             modifier: Native modifier; None uses its default.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             on_value_change: Required native onValueChange.
             read_only: Native readOnly; None uses its default.
             shape: Native shape; None uses its default.
@@ -4374,6 +4704,12 @@ class OutlinedTextField(Component):
             props["is_error"] = is_error
         if min_lines is not None:
             props["min_lines"] = min_lines
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["on_value_change"] = on_value_change
         if read_only is not None:
             props["read_only"] = read_only
@@ -5238,6 +5574,9 @@ class SegmentedButton(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         shape: JsonValue,
         label: Content | None = None,
@@ -5251,6 +5590,9 @@ class SegmentedButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             shape: Required native shape.
             label: Nodes for the native label slot.
@@ -5263,6 +5605,12 @@ class SegmentedButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         props["shape"] = shape
         slotted: tuple[Node, ...] = ()
@@ -5330,6 +5678,9 @@ class ShortNavigationBarItem(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         icon: Content | None = None,
         label: Content | None = None,
@@ -5341,6 +5692,9 @@ class ShortNavigationBarItem(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
@@ -5349,6 +5703,12 @@ class ShortNavigationBarItem(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
         if icon is not None:
@@ -5418,6 +5778,9 @@ class _Slider(Component):
         {
             "colors",
             "enabled",
+            "on_focus",
+            "on_hover",
+            "on_press",
             "on_value_change_finished",
             "steps",
             "value",
@@ -5432,6 +5795,9 @@ class _Slider(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         on_value_change_finished: ActionTarget | None = None,
         steps: int | None = None,
         value: int | float | None = None,
@@ -5444,6 +5810,9 @@ class _Slider(Component):
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             on_value_change_finished: Native onValueChangeFinished; None uses its
                 default.
             steps: Native steps; None uses its default.
@@ -5455,6 +5824,12 @@ class _Slider(Component):
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if on_value_change_finished is not None:
             props["on_value_change_finished"] = on_value_change_finished
         if steps is not None:
@@ -5478,6 +5853,9 @@ class Slider(_Slider):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         on_value_change_finished: ActionTarget | None = None,
         steps: int | None = None,
         value: int | float | None = None,
@@ -5491,6 +5869,9 @@ class Slider(_Slider):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         on_value_change: ActionTarget,
         on_value_change_finished: ActionTarget | None = None,
         steps: int | None = None,
@@ -5812,6 +6193,9 @@ class SuggestionChip(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         icon: Content | None = None,
         label: Content | None = None,
@@ -5825,6 +6209,9 @@ class SuggestionChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
@@ -5837,6 +6224,12 @@ class SuggestionChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         slotted: tuple[Node, ...] = ()
@@ -5940,6 +6333,9 @@ class Surface(_Surface):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | None = None,
@@ -5955,6 +6351,9 @@ class Surface(_Surface):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | None = None,
@@ -5970,6 +6369,9 @@ class Surface(_Surface):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
@@ -6133,6 +6535,9 @@ class Tab(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         selected_content_color: JsonValue | None = None,
         icon: Content | None = None,
@@ -6145,6 +6550,9 @@ class Tab(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             selected_content_color: Native selectedContentColor; None uses its
                 default.
@@ -6155,6 +6563,12 @@ class Tab(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         if selected_content_color is not None:
             props["selected_content_color"] = selected_content_color
@@ -6179,6 +6593,9 @@ class TabContent(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         selected_content_color: JsonValue | None = None,
         children: Content = (),
@@ -6192,6 +6609,9 @@ class TabContent(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             selected_content_color: Native selectedContentColor; None uses its
                 default.
@@ -6205,6 +6625,12 @@ class TabContent(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         if selected_content_color is not None:
             props["selected_content_color"] = selected_content_color
@@ -6574,6 +7000,9 @@ class TriStateCheckbox(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         state: JsonValue,
     ) -> None:
         """Construct a registered TriStateCheckbox.
@@ -6584,6 +7013,9 @@ class TriStateCheckbox(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             state: Required native state.
         """
         props: dict[str, PropValue] = {}
@@ -6592,6 +7024,12 @@ class TriStateCheckbox(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["state"] = state
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
@@ -6637,14 +7075,26 @@ class VerticalDragHandle(Component):
         *,
         id: str | None = None,
         modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
     ) -> None:
         """Construct a registered VerticalDragHandle.
 
         Args:
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
         """
         props: dict[str, PropValue] = {}
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -6695,6 +7145,9 @@ class WideNavigationRailItem(Component):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         rail_expanded: bool,
         selected: bool,
         icon: Content | None = None,
@@ -6707,6 +7160,9 @@ class WideNavigationRailItem(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             rail_expanded: Required native railExpanded.
             selected: Required native selected.
             icon: Nodes for the native icon slot.
@@ -6716,6 +7172,12 @@ class WideNavigationRailItem(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["rail_expanded"] = rail_expanded
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
@@ -7091,6 +7553,9 @@ class SliderValue(Slider):
         {
             "colors",
             "enabled",
+            "on_focus",
+            "on_hover",
+            "on_press",
             "on_value_change",
             "on_value_change_finished",
             "steps",
@@ -7105,6 +7570,9 @@ class SliderValue(Slider):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         on_value_change: ActionTarget,
         on_value_change_finished: ActionTarget | None = None,
         steps: int | None = None,
@@ -7117,6 +7585,9 @@ class SliderValue(Slider):
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             on_value_change: Required native onValueChange.
             on_value_change_finished: Native onValueChangeFinished; None uses its
                 default.
@@ -7128,6 +7599,12 @@ class SliderValue(Slider):
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["on_value_change"] = on_value_change
         if on_value_change_finished is not None:
             props["on_value_change_finished"] = on_value_change_finished
@@ -7156,6 +7633,9 @@ class SurfaceChecked(Surface):
             "content",
             "enabled",
             "on_checked_change",
+            "on_focus",
+            "on_hover",
+            "on_press",
             "shadow_elevation",
             "shape",
             "tonal_elevation",
@@ -7172,6 +7652,9 @@ class SurfaceChecked(Surface):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | None = None,
@@ -7188,6 +7671,9 @@ class SurfaceChecked(Surface):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shadow_elevation: Native shadowElevation; None uses its default.
             shape: Native shape; None uses its default.
             tonal_elevation: Native tonalElevation; None uses its default.
@@ -7205,6 +7691,12 @@ class SurfaceChecked(Surface):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shadow_elevation is not None:
             props["shadow_elevation"] = shadow_elevation
         if shape is not None:
@@ -7236,6 +7728,9 @@ class SurfaceOnClick(Surface):
             "content",
             "enabled",
             "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
             "shadow_elevation",
             "shape",
             "tonal_elevation",
@@ -7251,6 +7746,9 @@ class SurfaceOnClick(Surface):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | None = None,
@@ -7266,6 +7764,9 @@ class SurfaceOnClick(Surface):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shadow_elevation: Native shadowElevation; None uses its default.
             shape: Native shape; None uses its default.
             tonal_elevation: Native tonalElevation; None uses its default.
@@ -7282,6 +7783,12 @@ class SurfaceOnClick(Surface):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shadow_elevation is not None:
             props["shadow_elevation"] = shadow_elevation
         if shape is not None:
@@ -7314,6 +7821,9 @@ class SurfaceSelected(Surface):
             "content",
             "enabled",
             "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
             "selected",
             "shadow_elevation",
             "shape",
@@ -7330,6 +7840,9 @@ class SurfaceSelected(Surface):
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
@@ -7346,6 +7859,9 @@ class SurfaceSelected(Surface):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             shadow_elevation: Native shadowElevation; None uses its default.
             shape: Native shape; None uses its default.
@@ -7363,6 +7879,12 @@ class SurfaceSelected(Surface):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         if shadow_elevation is not None:
             props["shadow_elevation"] = shadow_elevation

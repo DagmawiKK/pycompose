@@ -101,6 +101,9 @@ data class AssistChipProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -517,6 +520,9 @@ data class DropdownMenuItemProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
 ) : UiProps
 
 @Serializable
@@ -539,6 +545,9 @@ data class ElevatedAssistChipProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -563,6 +572,9 @@ data class ElevatedButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -585,6 +597,9 @@ data class ElevatedCardProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -628,6 +643,9 @@ data class ElevatedFilterChipProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
     val `shape`: JsonElement? = null,
 ) : UiProps
@@ -652,6 +670,9 @@ data class ElevatedSuggestionChipProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -713,6 +734,9 @@ data class ExtendedFloatingActionButtonProps(
     val `elevation`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -735,6 +759,9 @@ data class ExtendedFloatingActionButtonTextProps(
     val `expanded`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -756,6 +783,9 @@ data class FilledIconButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -778,6 +808,9 @@ data class FilledIconToggleButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onCheckedChange`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -802,6 +835,9 @@ data class FilledTonalButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -823,6 +859,9 @@ data class FilledTonalIconButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -845,6 +884,9 @@ data class FilledTonalIconToggleButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onCheckedChange`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -1015,6 +1057,9 @@ data class IconToggleButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onCheckedChange`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -1076,6 +1121,9 @@ data class InputChipProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
     val `shape`: JsonElement? = null,
 ) : UiProps
@@ -1098,6 +1146,9 @@ data class LargeFloatingActionButtonProps(
     val `elevation`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -1184,6 +1235,9 @@ data class LeadingIconTabProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
     val `selectedContentColor`: JsonElement? = null,
 ) : UiProps
@@ -1369,6 +1423,9 @@ data class MultiChoiceSegmentedButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onCheckedChange`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement,
 ) : UiProps
 
@@ -1451,6 +1508,9 @@ data class NavigationBarItem(
 data class NavigationDrawerItemProps(
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
 ) : UiProps
 
@@ -1491,6 +1551,9 @@ data class NavigationRailItemProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
 ) : UiProps
 
@@ -1511,6 +1574,9 @@ data class NavigationSuiteItemProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
 ) : UiProps
 
@@ -1551,6 +1617,9 @@ data class OutlinedButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -1573,6 +1642,9 @@ data class OutlinedCardProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -1615,6 +1687,9 @@ data class OutlinedIconButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -1637,6 +1712,9 @@ data class OutlinedIconToggleButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onCheckedChange`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -1659,6 +1737,9 @@ data class OutlinedTextFieldProps(
     val `isError`: Boolean = false,
     val `minLines`: Long = 1L,
     override val `modifier`: JsonObject? = null,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `onValueChange`: String,
     val `readOnly`: Boolean = false,
     val `shape`: JsonElement? = null,
@@ -2001,6 +2082,9 @@ data class SegmentedButtonProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
     val `shape`: JsonElement,
 ) : UiProps
@@ -2042,6 +2126,9 @@ data class ShortNavigationBarItemProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
 ) : UiProps
 
@@ -2080,6 +2167,9 @@ data class SliderProps(
     val `colors`: JsonElement? = null,
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `onValueChangeFinished`: String? = null,
     val `steps`: Long = 0L,
     val `value`: Double? = null,
@@ -2103,6 +2193,9 @@ data class SliderValueProps(
     val `colors`: JsonElement? = null,
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `onValueChange`: String,
     val `onValueChangeFinished`: String? = null,
     val `steps`: Long = 0L,
@@ -2246,6 +2339,9 @@ data class SuggestionChipProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shape`: JsonElement? = null,
 ) : UiProps
 
@@ -2291,6 +2387,9 @@ data class SurfaceCheckedProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onCheckedChange`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shadowElevation`: Double? = null,
     val `shape`: JsonElement? = null,
     val `tonalElevation`: Double? = null,
@@ -2315,6 +2414,9 @@ data class SurfaceOnClickProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `shadowElevation`: Double? = null,
     val `shape`: JsonElement? = null,
     val `tonalElevation`: Double? = null,
@@ -2339,6 +2441,9 @@ data class SurfaceSelectedProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
     val `shadowElevation`: Double? = null,
     val `shape`: JsonElement? = null,
@@ -2408,6 +2513,9 @@ data class TabProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
     val `selectedContentColor`: JsonElement? = null,
 ) : UiProps
@@ -2429,6 +2537,9 @@ data class TabContentProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `selected`: Boolean,
     val `selectedContentColor`: JsonElement? = null,
 ) : UiProps
@@ -2595,6 +2706,9 @@ data class TriStateCheckboxProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `state`: JsonElement,
 ) : UiProps
 
@@ -2632,6 +2746,9 @@ data class VerticalDivider(
 @Serializable
 data class VerticalDragHandleProps(
     override val `modifier`: JsonObject? = null,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
 ) : UiProps
 
 @Serializable
@@ -2668,6 +2785,9 @@ data class WideNavigationRailItemProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
     val `railExpanded`: Boolean,
     val `selected`: Boolean,
 ) : UiProps

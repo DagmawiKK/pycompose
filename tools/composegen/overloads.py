@@ -21,7 +21,6 @@ from typing import Any
 
 from pycompose.schema.codegen.adapter_helpers import is_mechanical
 from pycompose.schema.codegen.overloads import ambiguous, keywords
-from tools.composegen.rules import INTERACTION_SOURCE
 from tools.schema.candidate_props import CandidateError
 from tools.schema.entry_candidates import spell
 
@@ -143,10 +142,8 @@ def _derive(
         "nativeName": name,
         "identity": spell(plan["source"]),
     }
-    if decision.get("observe") and any(
-        spec["type"]["classifier"] == INTERACTION_SOURCE for spec in parameters.values()
-    ):
-        own["observe"] = True
+    if decision.get("observe") is False:
+        own["observe"] = False
     flatten = [slot for slot in decision.get("flatten", ()) if slot in parameters]
     if flatten:
         own["flatten"] = flatten

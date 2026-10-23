@@ -396,3 +396,13 @@ def test_an_overload_with_several_holders_binds_the_one_named() -> None:
         "Field", {"props": {}, "holders": list(holders)}, {"holder": False}, _plan()
     )
     assert "state" not in declined
+
+
+def test_an_interaction_source_is_observed_unless_policy_declines() -> None:
+    from tools.composegen.rules import INTERACTION_SOURCE, reshape
+
+    plan = _plan(source={"policy": "omit", "type": {"classifier": INTERACTION_SOURCE}})
+    assert "interaction" in reshape("Chip", {"props": {}}, {}, plan)
+    declined = reshape("Field", {"props": {}}, {"observe": False}, plan)
+    assert "interaction" not in declined
+    assert "onPress" not in declined["props"]

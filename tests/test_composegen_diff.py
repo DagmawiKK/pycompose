@@ -107,3 +107,14 @@ def test_behaviour_needs_an_approval_and_approvals_must_be_current() -> None:
     assert missing == [changes[0]]
     assert stale == ["components.Gone:removed"]
     assert unapproved(changes, {changes[0].id: "drawer became a sheet"}) == ([], [])
+
+
+def test_observation_added_to_a_component_is_additive() -> None:
+    def edit(chip: dict[str, Any]) -> None:
+        chip["interaction"] = {"native": "source", "observations": {"press": "onPress"}}
+        chip["props"]["onPress"] = {"type": "actionId", "payload": []}
+
+    assert _kinds(_after(edit)) == {
+        "components.Chip.interaction:added": "additive",
+        "components.Chip.props.onPress:added": "additive",
+    }

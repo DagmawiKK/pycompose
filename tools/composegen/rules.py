@@ -1,10 +1,11 @@
 """Reshape rules: the pin decides how, once policy names the shape it wants.
 
 Two shapes recur across the catalog. ``flatten`` turns a content slot whose
-idiomatic use is one ``Text`` into a string prop; ``observe`` reports the
-press, focus and hover the native interaction source emits. Which components
-take them is a review decision, kept in policy as one word each; which
-parameter, which props and which payloads follow from the pin.
+idiomatic use is one ``Text`` into a string prop, and which components take it
+is a review decision, one word in policy. Every component with an interaction
+source reports its press, focus and hover unless policy says ``observe:
+false`` (a hand-written adapter that does not attach them). Which parameter,
+which props and which payloads follow from the pin.
 
 A holder the pin binds always takes its family's projection (state_families).
 ``holder: false`` declines one the component keeps to itself or its owner
@@ -44,7 +45,8 @@ def reshape(
     invented: list[str] = []
     for native in decision.get("flatten", ()):
         invented.extend(_flatten(name, entry, native, plan))
-    if decision.get("observe"):
+    # A component with an interaction source reports it unless policy declines.
+    if decision.get("observe", len(_sources(plan)) == 1):
         invented.extend(_observe(name, entry, plan))
     _choose_holder(name, entry, decision.get("holder"))
     if "state" in entry:
@@ -126,13 +128,17 @@ def _project(entry: dict[str, Any]) -> list[str]:
     return list(projected)
 
 
-def _observe(name: str, entry: dict[str, Any], plan: dict[str, Any]) -> list[str]:
-    """Report the interaction source's press, focus and hover as actions."""
-    sources = [
+def _sources(plan: dict[str, Any]) -> list[str]:
+    return [
         parameter
         for parameter, spec in plan["parameters"].items()
         if spec["type"]["classifier"] == INTERACTION_SOURCE
     ]
+
+
+def _observe(name: str, entry: dict[str, Any], plan: dict[str, Any]) -> list[str]:
+    """Report the interaction source's press, focus and hover as actions."""
+    sources = _sources(plan)
     if len(sources) != 1:
         raise CandidateError(f"{name}: observe needs one interaction source")
     observations = {kind: "on" + kind.capitalize() for kind in INTERACTION_KINDS}

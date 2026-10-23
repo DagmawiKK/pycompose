@@ -221,9 +221,12 @@ def _interaction(interaction: dict[str, Any]) -> str:
         f'"{kind}" to model.props.{_camel(observations[kind])}'
         for kind in sorted(observations)
     )
+    # Nothing observing yields no source; a component whose parameter is
+    # non-null then gets the one it would have remembered itself.
     return (
         "val interactionSourceValue = context.interactionSource("
-        f"model.id, mapOf({entries}))"
+        f"model.id, mapOf({entries})) ?: androidx.compose.runtime.remember "
+        "{ androidx.compose.foundation.interaction.MutableInteractionSource() }"
     )
 
 

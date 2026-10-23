@@ -202,6 +202,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -219,7 +246,20 @@
           "native": "trailingIcon",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "Badge": {
       "package": "androidx.compose.material3",
@@ -1205,6 +1245,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -1222,7 +1289,20 @@
           "native": "trailingIcon",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "ElevatedAssistChip": {
       "package": "androidx.compose.material3",
@@ -1269,6 +1349,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -1286,7 +1393,20 @@
           "native": "trailingIcon",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "ElevatedButton": {
       "package": "androidx.compose.material3",
@@ -1338,13 +1458,53 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true,
         "kind": "content",
         "provides": "RowScope"
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "ElevatedCard": {
       "package": "androidx.compose.material3",
@@ -1384,13 +1544,53 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true,
         "kind": "content",
         "provides": "ColumnScope"
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "ElevatedCardWithoutOnClick": {
       "package": "androidx.compose.material3",
@@ -1480,6 +1680,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -1497,7 +1724,20 @@
           "native": "trailingIcon",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "ElevatedSuggestionChip": {
       "package": "androidx.compose.material3",
@@ -1544,6 +1784,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -1557,7 +1824,20 @@
         "label": {
           "native": "label"
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "ExpandedDockedSearchBar": {
       "package": "androidx.compose.material3",
@@ -1684,13 +1964,53 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true,
         "kind": "content",
         "provides": "RowScope"
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "ExtendedFloatingActionButtonText": {
       "package": "androidx.compose.material3",
@@ -1731,6 +2051,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -1743,7 +2090,20 @@
         "text": {
           "native": "text"
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "FilledIconButton": {
       "package": "androidx.compose.material3",
@@ -1778,11 +2138,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "FilledIconToggleButton": {
       "package": "androidx.compose.material3",
@@ -1827,11 +2227,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "FilledTonalButton": {
       "package": "androidx.compose.material3",
@@ -1883,13 +2323,53 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true,
         "kind": "content",
         "provides": "RowScope"
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "FilledTonalIconButton": {
       "package": "androidx.compose.material3",
@@ -1924,11 +2404,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "FilledTonalIconToggleButton": {
       "package": "androidx.compose.material3",
@@ -1973,11 +2493,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "FilterChip": {
       "package": "androidx.compose.material3",
@@ -2416,11 +2976,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "Image": {
       "package": "androidx.compose.foundation",
@@ -2556,6 +3156,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -2577,7 +3204,20 @@
           "native": "trailingIcon",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "LargeFloatingActionButton": {
       "package": "androidx.compose.material3",
@@ -2614,11 +3254,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "LargeTopAppBar": {
       "package": "androidx.compose.material3",
@@ -2811,6 +3491,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -2823,7 +3530,20 @@
         "text": {
           "native": "text"
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "LinearProgressIndicator": {
       "package": "androidx.compose.material3",
@@ -3270,6 +3990,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -3280,7 +4027,20 @@
           "native": "label"
         }
       },
-      "scope": "MultiChoiceSegmentedButtonRowScope"
+      "scope": "MultiChoiceSegmentedButtonRowScope",
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "MultiChoiceSegmentedButtonRow": {
       "package": "androidx.compose.material3",
@@ -3462,6 +4222,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -3479,7 +4266,20 @@
         "label": {
           "native": "label"
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "NavigationRail": {
       "package": "androidx.compose.material3",
@@ -3553,6 +4353,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -3566,7 +4393,20 @@
           "native": "label",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "NavigationSuiteItem": {
       "package": "androidx.compose.material3.adaptive.navigationsuite",
@@ -3595,6 +4435,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -3612,7 +4479,20 @@
           "native": "label",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "NavigationSuiteScaffold": {
       "package": "androidx.compose.material3.adaptive.navigationsuite",
@@ -3684,13 +4564,53 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true,
         "kind": "content",
         "provides": "RowScope"
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "OutlinedCard": {
       "package": "androidx.compose.material3",
@@ -3730,13 +4650,53 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true,
         "kind": "content",
         "provides": "ColumnScope"
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "OutlinedCardWithoutOnClick": {
       "package": "androidx.compose.material3",
@@ -3815,11 +4775,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "OutlinedIconToggleButton": {
       "package": "androidx.compose.material3",
@@ -3864,11 +4864,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "OutlinedTextField": {
       "package": "androidx.compose.material3",
@@ -3937,6 +4977,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -3971,7 +5038,20 @@
           "native": "trailingIcon",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "PermanentDrawerSheet": {
       "package": "androidx.compose.material3",
@@ -4839,6 +5919,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -4849,7 +5956,20 @@
           "native": "label"
         }
       },
-      "scope": "SingleChoiceSegmentedButtonRowScope"
+      "scope": "SingleChoiceSegmentedButtonRowScope",
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "ShortNavigationBar": {
       "package": "androidx.compose.material3",
@@ -4916,6 +6036,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -4929,7 +6076,20 @@
           "native": "label",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "SingleChoiceSegmentedButtonRow": {
       "package": "androidx.compose.material3",
@@ -4986,6 +6146,33 @@
         "modifier": {
           "type": "modifier"
         },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        },
         "value": {
           "type": "number"
         },
@@ -5013,6 +6200,14 @@
       "children": {
         "allowed": false
       },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
       "state": {
         "native": "state",
         "kind": "slider",
@@ -5020,6 +6215,9 @@
         "report": "onValueChangeFinished"
       },
       "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover",
         "value",
         "onValueChangeFinished",
         "valueRange",
@@ -5075,11 +6273,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": false
       },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
       "overloadOf": "Slider"
     },
     "Snackbar": {
@@ -5530,6 +6768,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -5543,7 +6808,20 @@
         "label": {
           "native": "label"
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "Surface": {
       "package": "androidx.compose.material3",
@@ -5649,11 +6927,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
       },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
       "overloadOf": "Surface"
     },
     "SurfaceOnClick": {
@@ -5704,11 +7022,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
       },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
       "overloadOf": "Surface"
     },
     "SurfaceSelected": {
@@ -5763,11 +7121,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true
       },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
       "overloadOf": "Surface"
     },
     "SwipeToDismissBox": {
@@ -5961,6 +7359,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -5975,7 +7400,20 @@
           "native": "text",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "TabContent": {
       "package": "androidx.compose.material3",
@@ -6010,13 +7448,53 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": true,
         "kind": "content",
         "provides": "ColumnScope"
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "Text": {
       "package": "androidx.compose.material3",
@@ -6489,11 +7967,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": false
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "VerticalDivider": {
       "package": "androidx.compose.material3",
@@ -6541,11 +8059,51 @@
       "props": {
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
         "allowed": false
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     },
     "WideNavigationRail": {
       "package": "androidx.compose.material3",
@@ -6599,6 +8157,33 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
         }
       },
       "children": {
@@ -6612,7 +8197,20 @@
           "native": "label",
           "nullable": true
         }
-      }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
     }
   },
   "modifiers": {

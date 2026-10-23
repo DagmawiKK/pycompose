@@ -107,6 +107,9 @@ def _component(where: str, old: dict[str, Any], new: dict[str, Any]) -> list[Cha
             changes.append(Change(f"{path}:changed", _source(before, after)))
         elif key == "children":
             changes.append(Change(f"{path}:changed", _children(before, after)))
+        elif key == "interaction" and before is None:
+            # Observation added: optional report props, nothing an app must pass.
+            changes.append(Change(f"{path}:added", "additive"))
         else:
             changes += _changed(path, before, after)
     return changes

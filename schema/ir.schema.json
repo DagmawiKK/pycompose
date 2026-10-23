@@ -628,6 +628,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -1829,6 +1841,18 @@
             "onClick": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
             }
           },
           "required": [
@@ -1906,6 +1930,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -1975,6 +2011,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -2021,6 +2069,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -2141,6 +2201,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             },
@@ -2220,6 +2292,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -2443,6 +2527,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -2511,6 +2607,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -2554,6 +2662,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -2603,6 +2723,18 @@
               "type": "object"
             },
             "onCheckedChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -2676,6 +2808,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -2719,6 +2863,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -2768,6 +2924,18 @@
               "type": "object"
             },
             "onCheckedChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -3209,6 +3377,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -3379,6 +3559,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             },
@@ -3432,6 +3624,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -3692,6 +3896,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -4275,6 +4491,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -4519,6 +4747,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             }
@@ -4629,6 +4869,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             }
@@ -4683,6 +4935,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -4783,6 +5047,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -4829,6 +5105,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -4919,6 +5207,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -4965,6 +5265,18 @@
               "type": "object"
             },
             "onCheckedChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -5037,6 +5349,18 @@
                 }
               },
               "type": "object"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
             },
             "onValueChange": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
@@ -6200,6 +6524,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             },
@@ -6312,6 +6648,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             }
@@ -6403,6 +6751,18 @@
               },
               "type": "object"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "onValueChangeFinished": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
@@ -6454,6 +6814,18 @@
                 }
               },
               "type": "object"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
             },
             "onValueChange": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
@@ -6920,6 +7292,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -7082,6 +7466,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shadowElevation": {
               "allOf": [
                 {
@@ -7190,6 +7586,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shadowElevation": {
               "allOf": [
                 {
@@ -7294,6 +7702,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -7530,6 +7950,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             },
@@ -7581,6 +8013,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -8072,6 +8516,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "state": {
               "$ref": "#/definitions/Family_ToggleableState"
             }
@@ -8162,6 +8618,18 @@
                 }
               },
               "type": "object"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
             }
           },
           "type": "object"
@@ -8238,6 +8706,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -25544,6 +26024,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -26745,6 +27237,18 @@
             "onClick": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
             }
           },
           "required": [
@@ -26822,6 +27326,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -26891,6 +27407,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -26937,6 +27465,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -27057,6 +27597,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             },
@@ -27136,6 +27688,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -27359,6 +27923,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -27427,6 +28003,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -27470,6 +28058,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -27519,6 +28119,18 @@
               "type": "object"
             },
             "onCheckedChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -27592,6 +28204,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -27635,6 +28259,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -27684,6 +28320,18 @@
               "type": "object"
             },
             "onCheckedChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -28125,6 +28773,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -28295,6 +28955,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             },
@@ -28348,6 +29020,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -28608,6 +29292,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -29443,6 +30139,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -29687,6 +30395,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             }
@@ -29797,6 +30517,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             }
@@ -29851,6 +30583,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -30359,6 +31103,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -30405,6 +31161,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -30495,6 +31263,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -30541,6 +31321,18 @@
               "type": "object"
             },
             "onCheckedChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -30613,6 +31405,18 @@
                 }
               },
               "type": "object"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
             },
             "onValueChange": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
@@ -31776,6 +32580,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             },
@@ -31888,6 +32704,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             }
@@ -31979,6 +32807,18 @@
               },
               "type": "object"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "onValueChangeFinished": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
@@ -32030,6 +32870,18 @@
                 }
               },
               "type": "object"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
             },
             "onValueChange": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
@@ -32496,6 +33348,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             }
@@ -32658,6 +33522,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shadowElevation": {
               "allOf": [
                 {
@@ -32766,6 +33642,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "shadowElevation": {
               "allOf": [
                 {
@@ -32870,6 +33758,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -33106,6 +34006,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "selected": {
               "type": "boolean"
             },
@@ -33157,6 +34069,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
@@ -33648,6 +34572,18 @@
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
             "state": {
               "$ref": "#/definitions/Family_ToggleableState"
             }
@@ -33738,6 +34674,18 @@
                 }
               },
               "type": "object"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
             }
           },
           "type": "object"
@@ -33814,6 +34762,18 @@
               "type": "object"
             },
             "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
               "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
               "type": "string"
             },

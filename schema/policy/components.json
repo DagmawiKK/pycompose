@@ -127,7 +127,6 @@
     "decision": {
       "category": "buttons",
       "stability": "stable",
-      "observe": true,
       "flatten": [
         "content"
       ]
@@ -151,7 +150,6 @@
     "decision": {
       "category": "layout",
       "stability": "stable",
-      "observe": true,
       "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.CardKt.Card(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
@@ -178,8 +176,7 @@
   "Checkbox": {
     "decision": {
       "category": "input",
-      "stability": "stable",
-      "observe": true
+      "stability": "stable"
     },
     "patch": {
       "since": "1.3.0",
@@ -422,7 +419,6 @@
     "decision": {
       "category": "input",
       "stability": "stable",
-      "observe": true,
       "flatten": [
         "label"
       ]
@@ -439,8 +435,7 @@
   "FloatingActionButton": {
     "decision": {
       "category": "buttons",
-      "stability": "stable",
-      "observe": true
+      "stability": "stable"
     },
     "patch": {
       "since": "1.22.0",
@@ -530,8 +525,7 @@
   "IconButton": {
     "decision": {
       "category": "buttons",
-      "stability": "stable",
-      "observe": true
+      "stability": "stable"
     },
     "patch": {
       "since": "1.22.0",
@@ -807,8 +801,7 @@
   "NavigationBarItem": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
-      "observe": true
+      "stability": "stable"
     },
     "patch": {
       "since": "1.22.0"
@@ -955,8 +948,7 @@
   "RadioButton": {
     "decision": {
       "category": "input",
-      "stability": "stable",
-      "observe": true
+      "stability": "stable"
     },
     "patch": {
       "since": "1.22.0"
@@ -1088,7 +1080,8 @@
       "stability": "experimental",
       "nativeName": "InputField",
       "hook": true,
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarDefaults.InputField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V"
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarDefaults.InputField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+      "observe": false
     },
     "patch": {
       "props": {
@@ -1120,7 +1113,8 @@
       "nativeName": "InputField",
       "hook": true,
       "holder": false,
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarDefaults.InputField(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V"
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarDefaults.InputField(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+      "observe": false
     },
     "patch": {
       "props": {
@@ -1242,7 +1236,8 @@
       "nativeName": "InputField",
       "hook": true,
       "holder": "state",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarDefaults.InputField(Landroidx/compose/foundation/text/input/TextFieldState;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V"
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarDefaults.InputField(Landroidx/compose/foundation/text/input/TextFieldState;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+      "observe": false
     },
     "patch": {
       "props": {
@@ -1258,14 +1253,14 @@
           "nativeDefault": "androidx.compose.material3.LocalTextStyle.current"
         }
       },
-      "adapter": "manual",
       "reshaped": [
         "text",
         "selectionStart",
         "selectionEnd",
         "revision",
         "onEdit"
-      ]
+      ],
+      "adapter": "manual"
     }
   },
   "SuggestionChip": {
@@ -1290,8 +1285,7 @@
   "Switch": {
     "decision": {
       "category": "input",
-      "stability": "stable",
-      "observe": true
+      "stability": "stable"
     },
     "patch": {
       "since": "1.22.0"
@@ -1376,7 +1370,6 @@
     "decision": {
       "category": "buttons",
       "stability": "stable",
-      "observe": true,
       "flatten": [
         "content"
       ]
@@ -1399,7 +1392,8 @@
       "flatten": [
         "label"
       ],
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.TextFieldKt.TextField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/text/input/VisualTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/runtime/Composer;IIII)V"
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.TextFieldKt.TextField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/text/input/VisualTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/runtime/Composer;IIII)V",
+      "observe": false
     },
     "patch": {
       "since": null,

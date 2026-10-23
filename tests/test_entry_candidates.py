@@ -531,6 +531,7 @@ def test_a_held_out_compatible_binding_derives_and_verifies() -> None:
 def test_the_approved_pilot_entries_equal_their_derivation() -> None:
     if os.environ.get("PYCOMPOSE_NATIVE_API_TESTS") != "1":
         pytest.skip("native CI runs the pinned artifact extraction")
+    from tools.composegen.rules import reshape
     from tools.schema.classpath_dump import source_defaults
     from tools.schema.components import propose_components
 
@@ -540,7 +541,13 @@ def test_the_approved_pilot_entries_equal_their_derivation() -> None:
     review_input = {"category": "test", "stability": "stable"}
     for name in ("AssistChip", "ElevatedAssistChip", "Badge"):
         plan_record, pin = select(plans, found, name)
-        entry = derive(plan_record, pin, approved, review_input).entry
+        # The compiler's rules run after derivation (interaction reports here).
+        entry = reshape(
+            name,
+            derive(plan_record, pin, approved, review_input).entry,
+            {},
+            plan_record,
+        )
         derived = {
             key: value
             for key, value in entry.items()
