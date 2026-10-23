@@ -188,7 +188,7 @@ private fun DriveSheet(
     stated: String?,
     answered: Boolean,
 ) {
-    OnDesired(projection, stated, answered) { desired ->
+    OnDesired(projection, stated, answered, keepsStatements = false) { desired ->
         val changed = desired != projection.lastDesired
         val restored = projection.reattach
         if (changed || restored != null) {

@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 
 /**
  * The host's half of report sequencing.
@@ -46,9 +48,15 @@ internal fun answered(report: String?): Boolean = report == null || LocalAnswere
  * reason on its own to move the holder, and a drive in flight is never cancelled by a
  * report it causes: only a newly stated value restarts [apply].
  *
+ * The last stated value survives saved-state restoration with the holder itself, so after
+ * a rotation or process death the restored native state stands unless the app now states
+ * something different: one owner, the app's statements, across every lifetime.
+ *
  * @param state The node's native holder; both effects are keyed to it.
- * @param desired The app's desired value.
+ * @param desired The app's desired value; saveable, as every holder's value is.
  * @param answered Whether the app has answered every report the holder sent.
+ * @param keepsStatements False for a holder that saves its own last request and must see
+ *   every restoration, as the sheet does to show its window again.
  * @param apply Moves the holder towards a desired value it does not already rest at.
  */
 @Composable
@@ -56,18 +64,28 @@ internal fun <V> OnDesired(
     state: Any,
     desired: V,
     answered: Boolean,
+    keepsStatements: Boolean = true,
     apply: suspend (V) -> Unit,
 ) {
     val current = rememberUpdatedState(desired)
     val waiting = remember(state) { Settled(false) }
+    val stated = rememberSaveable { mutableStateOf<V?>(null) }
+    val seen = rememberSaveable { mutableStateOf(false) }
+
+    suspend fun state(value: V) {
+        waiting.value = false
+        seen.value = true
+        stated.value = value
+        apply(value)
+    }
     LaunchedEffect(state, desired) {
-        waiting.value = !answered
-        if (answered) apply(desired)
+        when {
+            keepsStatements && seen.value && desired == stated.value -> waiting.value = false
+            answered -> state(desired)
+            else -> waiting.value = true
+        }
     }
     LaunchedEffect(state, answered) {
-        if (answered && waiting.value) {
-            waiting.value = false
-            apply(current.value)
-        }
+        if (answered && waiting.value) state(current.value)
     }
 }

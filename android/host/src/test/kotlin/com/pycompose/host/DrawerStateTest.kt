@@ -1,9 +1,11 @@
 package com.pycompose.host
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performSemanticsAction
@@ -88,13 +90,67 @@ class DrawerStateTest {
         assertEquals(0.dp, panelLeft())
     }
 
+    @Test
+    fun aRotationKeepsTheDrawerTheUserMovedWhileTheAppStillStatesTheOldValue() {
+        // The app ignores the user's dismissal and keeps stating "open". Across a
+        // rotation that is not a new statement, so the user's gesture stands.
+        val actions = mutableListOf<Action>()
+        val ir = mutableStateOf(parse(drawer(open = "true")))
+        val restoration = restored(ir, actions)
+        compose.waitUntil(5000) { actions.size == 1 }
+        compose
+            .onNode(SemanticsMatcher.keyIsDefined(SemanticsActions.Dismiss))
+            .performSemanticsAction(SemanticsActions.Dismiss)
+        compose.waitUntil(5000) { actions.size == 2 }
+        compose.runOnIdle { ir.value = parse(drawer(open = "true"), actions) }
+
+        restoration.emulateSavedInstanceStateRestore()
+        compose.waitForIdle()
+
+        assertTrue(panelLeft() < 0.dp)
+        assertEquals(2, actions.size)
+    }
+
+    @Test
+    fun aRestoredAppStatingADifferentValueDrivesTheDrawerToIt() {
+        // After process death the app restores its own data; a value different
+        // from its last statement is a new statement, and it wins.
+        val actions = mutableListOf<Action>()
+        val ir = mutableStateOf(parse(drawer(open = "true")))
+        val restoration = restored(ir, actions)
+        compose.waitUntil(5000) { actions.size == 1 }
+        compose.runOnIdle { ir.value = parse(drawer(open = "false"), actions) }
+
+        restoration.emulateSavedInstanceStateRestore()
+        compose.waitUntil(5000) { actions.size == 2 }
+
+        assertEquals("""{"open":false}""", actions[1].payload.toString())
+        assertTrue(panelLeft() < 0.dp)
+    }
+
+    /** Content whose renderer is recreated on restore, as MainActivity remembers it. */
+    private fun restored(
+        ir: androidx.compose.runtime.State<ValidatedIr>,
+        actions: MutableList<Action>,
+    ): StateRestorationTester {
+        val restoration = StateRestorationTester(compose)
+        restoration.setContent {
+            val renderer = remember { renderer(actions) }
+            PyComposeTheme { renderer.Render(ir.value) }
+        }
+        return restoration
+    }
+
     /** The left edge of the drawer panel: 0 when open, off-screen when closed. */
     private fun panelLeft(): Dp = compose.onNodeWithText("Home").getBoundsInRoot().left
 
     private fun renderer(actions: MutableList<Action>): Renderer =
         Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
 
-    private fun parse(source: String): ValidatedIr = IrParser().parse(source).getOrThrow()
+    private fun parse(
+        source: String,
+        actions: List<Action> = emptyList(),
+    ): ValidatedIr = IrParser().parse(echoing(source, actions)).getOrThrow()
 
     private fun drawer(
         open: String?,
