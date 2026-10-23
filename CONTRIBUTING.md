@@ -99,6 +99,12 @@ its base. Check its report if you touch the IR, diffing, or bridge.
   surface one declaration per line. Change the policy or the generators,
   regenerate, run `make codegen`, and commit the lock with the regenerated
   Python, Kotlin, validators, and schema together.
+- **Lock changes are classified.** `python -m tools.composegen diff --base main`
+  lists every lock change as additive, fidelity, metadata, behaviour or
+  breaking. CI fails on a behaviour or breaking change until
+  `schema/policy/approvals.json` approves its id with a reason
+  (`{"approved": {"<id>": "<reason>"}}`); clear approvals once the change
+  merges, because an approval naming no current change also fails.
 - **Native template stays in sync.** `android/` and
   `pycompose/templates/android/` are checked by `tools/template/sync.py --check`.
 - **No large files or secrets.** Files over 500 KB and private keys are

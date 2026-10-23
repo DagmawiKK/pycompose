@@ -25,7 +25,7 @@ from tools.schema.classpath_dump import (
     source_drives,
 )
 from tools.schema.components import propose_components
-from tools.schema.entry_candidates import derive, select
+from tools.schema.entry_candidates import derive, select, spell
 from tools.schema.holders import derive as derive_holders
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -56,14 +56,12 @@ class Report:
     Attributes:
         derived: Components derived from the pin, with their patch size.
         manual: Components held whole by policy, with the reason.
-        errors: Refusals that stop the run.
-        redundant: Policy entries the derivation already produces.
+        errors: Refusals that stop the run, stale policy among them.
     """
 
     derived: dict[str, int] = field(default_factory=dict)
     manual: dict[str, str] = field(default_factory=dict)
     errors: list[str] = field(default_factory=list)
-    redundant: list[str] = field(default_factory=list)
 
 
 def planned(
@@ -124,6 +122,10 @@ def generate(
         if "manual" in rule:
             components[name] = rule["entry"]
             report.manual[name] = rule["manual"]
+            if _derives(name, rule["entry"], plans, found, sections):
+                report.errors.append(
+                    f"{name}: held whole, but the pin derives it; give it a decision"
+                )
             continue
         try:
             derived = planned(name, rule["decision"], plans, found, sections)
@@ -131,7 +133,10 @@ def generate(
             report.errors.append(f"{name}: policy says derivable, but {exc}")
             continue
         patch = rule.get("patch", {})
-        report.redundant.extend(f"{name}.{path}" for path in redundant(derived, patch))
+        report.errors.extend(
+            f"{name}.{path}: policy the pin already implies"
+            for path in redundant(derived, patch)
+        )
         components[name] = merge(derived, patch)
         report.derived[name] = len(json.dumps(patch))
     lock = {**sections, "components": components}
@@ -139,6 +144,32 @@ def generate(
     report.errors.extend(refused)
     lock["holders"] = holders
     return {key: lock[key] for key in ORDER if key in lock}, report
+
+
+def _derives(
+    name: str,
+    entry: dict[str, Any],
+    plans: dict[str, Any],
+    found: Inventory,
+    sections: dict[str, Any],
+) -> bool:
+    """Whether a held entry's own overload now derives, making the hold stale.
+
+    A derivation from a different overload does not count: holding a component
+    for the overload it binds is a decision, not staleness.
+    """
+    source = entry.get("source")
+    if source is None:
+        return False
+    decision = {key: entry[key] for key in ("category", "stability")}
+    if source["name"] != name:
+        decision["nativeName"] = source["name"]
+    for attempt in (decision, {**decision, "identity": spell(source)}):
+        try:
+            return planned(name, attempt, plans, found, sections)["source"] == source
+        except CandidateError:
+            continue
+    return False
 
 
 def dumps(lock: dict[str, Any]) -> str:

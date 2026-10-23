@@ -55,8 +55,8 @@ def test_the_lock_is_what_the_compiler_produces_from_the_pin() -> None:
     if os.environ.get("PYCOMPOSE_NATIVE_API_TESTS") != "1":
         pytest.skip("native CI runs the pinned artifact extraction")
     lock, report = generate(load())
+    # Policy liveness: no redundant patch entry and no stale hold.
     assert report.errors == []
-    assert report.redundant == []
     assert LOCK.read_text(encoding="utf-8") == dumps(lock)
     # Determinism: a second clean run is byte-identical.
     assert dumps(generate(load())[0]) == dumps(lock)
@@ -235,3 +235,23 @@ def _no_declarations() -> object:
         declarations = ()
 
     return Empty()
+
+
+def test_a_hold_is_stale_only_when_its_own_overload_derives(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from tools.composegen import lock
+
+    source = {
+        "artifact": "a",
+        "owner": "o",
+        "name": "Slider",
+        "jvmName": "S",
+        "descriptor": "()V",
+    }
+    entry = {"category": "input", "stability": "stable", "source": source}
+    monkeypatch.setattr(lock, "planned", lambda *_: {"source": source})
+    assert lock._derives("Slider", entry, {}, None, {})
+    other = {**source, "jvmName": "Other"}
+    monkeypatch.setattr(lock, "planned", lambda *_: {"source": other})
+    assert not lock._derives("Slider", entry, {}, None, {})
