@@ -419,6 +419,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -429,6 +432,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -457,6 +463,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -467,6 +476,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -671,6 +683,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -824,6 +839,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -1239,6 +1257,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -1285,6 +1306,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -1310,6 +1334,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -1381,6 +1408,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -1494,6 +1524,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -1714,6 +1747,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -2506,6 +2542,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -2582,6 +2621,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -3043,6 +3085,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -3190,6 +3235,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -3272,6 +3320,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -3606,6 +3657,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -3921,6 +3975,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -3950,6 +4007,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -3974,6 +4034,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -4002,6 +4065,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -4048,6 +4114,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -4315,6 +4384,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -4404,6 +4476,19 @@
             },
             "open": {
               "type": "boolean"
+            },
+            "scrimColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
             }
           },
           "type": "object"
@@ -4587,6 +4672,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -4799,6 +4887,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5412,6 +5503,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5516,6 +5610,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5526,6 +5623,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5602,6 +5702,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5612,6 +5715,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5714,6 +5820,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5724,6 +5833,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5896,6 +6008,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5906,6 +6021,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5916,6 +6034,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -5963,6 +6084,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -6039,6 +6163,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -6326,6 +6453,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -6336,6 +6466,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -6438,6 +6571,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -6448,6 +6584,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -6572,6 +6711,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -6582,6 +6724,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -6882,6 +7027,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -6896,6 +7044,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -6906,6 +7057,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -6916,6 +7070,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -7345,6 +7502,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -7444,6 +7604,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -7564,6 +7727,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -7683,6 +7849,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -7972,6 +8141,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -8038,6 +8210,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -8067,6 +8242,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -8139,6 +8317,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -8557,6 +8738,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -8739,6 +8923,22 @@
           "const": "WideNavigationRailItem"
         }
       },
+      "type": "object"
+    },
+    "Expression": {
+      "additionalProperties": false,
+      "properties": {
+        "node": {
+          "type": "object"
+        },
+        "type": {
+          "const": "expression"
+        }
+      },
+      "required": [
+        "type",
+        "node"
+      ],
       "type": "object"
     },
     "Family_Alignment": {
@@ -12146,6 +12346,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -12208,6 +12411,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -13141,6 +13347,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -13203,6 +13412,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -14136,6 +14348,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -14198,6 +14413,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -15131,6 +15349,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -15193,6 +15414,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -16126,6 +16350,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -16188,6 +16415,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -17121,6 +17351,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -17183,6 +17416,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -18116,6 +18352,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -18178,6 +18417,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -18806,6 +19048,19 @@
             },
             "open": {
               "type": "boolean"
+            },
+            "scrimColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
             }
           },
           "type": "object"
@@ -19213,6 +19468,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -19275,6 +19533,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -19947,6 +20208,19 @@
             },
             "open": {
               "type": "boolean"
+            },
+            "scrimColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
             }
           },
           "type": "object"
@@ -20357,6 +20631,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -20419,6 +20696,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -21703,6 +21983,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -21727,6 +22010,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -21824,6 +22110,19 @@
             },
             "open": {
               "type": "boolean"
+            },
+            "scrimColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
             }
           },
           "type": "object"
@@ -22237,6 +22536,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -22299,6 +22601,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -22828,6 +23133,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -22955,6 +23263,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -22979,6 +23290,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -23076,6 +23390,19 @@
             },
             "open": {
               "type": "boolean"
+            },
+            "scrimColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
             }
           },
           "type": "object"
@@ -23492,6 +23819,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -23554,6 +23884,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -23963,6 +24296,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -24009,6 +24345,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -24084,6 +24423,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -24271,6 +24613,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -24332,6 +24677,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -24414,6 +24762,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -24596,6 +24947,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -24620,6 +24974,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -24695,6 +25052,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -24784,6 +25144,19 @@
             },
             "open": {
               "type": "boolean"
+            },
+            "scrimColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
             }
           },
           "type": "object"
@@ -25062,6 +25435,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -25431,6 +25807,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -25563,6 +25942,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -25739,6 +26121,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -25815,6 +26200,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -25825,6 +26213,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -25853,6 +26244,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -25863,6 +26257,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -26067,6 +26464,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -26220,6 +26620,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -26635,6 +27038,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -26681,6 +27087,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -26706,6 +27115,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -26777,6 +27189,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -26890,6 +27305,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -27110,6 +27528,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -27902,6 +28323,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -27978,6 +28402,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -28439,6 +28866,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -28586,6 +29016,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -28668,6 +29101,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -29002,6 +29438,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -29317,6 +29756,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -29346,6 +29788,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -29370,6 +29815,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -29398,6 +29846,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -29444,6 +29895,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -29711,6 +30165,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -29800,6 +30257,19 @@
             },
             "open": {
               "type": "boolean"
+            },
+            "scrimColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
             }
           },
           "type": "object"
@@ -30235,6 +30705,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -30447,6 +30920,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -31468,6 +31944,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -31572,6 +32051,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -31582,6 +32064,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -31658,6 +32143,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -31668,6 +32156,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -31770,6 +32261,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -31780,6 +32274,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -31952,6 +32449,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -31962,6 +32462,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -31972,6 +32475,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32019,6 +32525,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -32095,6 +32604,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32382,6 +32894,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32392,6 +32907,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32494,6 +33012,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32504,6 +33025,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32628,6 +33152,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32638,6 +33165,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32938,6 +33468,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32952,6 +33485,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32962,6 +33498,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -32972,6 +33511,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -33401,6 +33943,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -33500,6 +34045,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -33620,6 +34168,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -33739,6 +34290,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -34028,6 +34582,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -34094,6 +34651,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             }
@@ -34123,6 +34683,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -34195,6 +34758,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },
@@ -34613,6 +35179,9 @@
                 },
                 {
                   "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
                 }
               ]
             },

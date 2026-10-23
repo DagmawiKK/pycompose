@@ -25,6 +25,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any
 
+from pycompose.core.registry_vocabulary import STATE_STREAMS
 from pycompose.schema.codegen.adapter_calls import (
     _callback,
     _decoded,
@@ -87,6 +88,8 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
     qualified = _prop_imports(entry.get("props", {}).values())
     if (state := entry.get("state")) is not None:
         qualified.add(f"com.pycompose.renderer.{state_call(state['kind'])}")
+        if state["kind"] in STATE_STREAMS:
+            qualified.add("com.pycompose.renderer.publish")
         if state["kind"] in STATE_ATTACH_GATES:
             # The holder rides the component's modifier, so the extension making
             # that ride callable must be imported where the call is written.
@@ -135,6 +138,7 @@ def _prop_imports(specs: Iterable[dict[str, Any]]) -> set[str]:
     for spec in specs:
         if spec.get("type") == "color" and "valueType" in spec:
             qualified.add("kotlinx.serialization.json.JsonObject")
+            qualified.add("com.pycompose.renderer.expressionColor")
         if spec.get("type") == "dp":
             # Kotlin's own conversion is an extension property, so the import
             # is what makes ``model.props.x.dp`` resolve.
@@ -318,6 +322,9 @@ def _host_locals(entry: dict[str, Any], out: _Fragments) -> str | None:
         local, arguments, gate = _state(state, entry.get("props", {}))
         out.locals.append(local)
         out.arguments.extend(arguments)
+        if state["kind"] in STATE_STREAMS:
+            # Expressions anywhere in the snapshot may read this holder's streams.
+            out.locals.append(f"context.publish(model.id, {state['native']}Value)")
         if (
             state["kind"] == "lazyList"
             and entry.get("children", {}).get("kind") == "items"

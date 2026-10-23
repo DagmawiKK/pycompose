@@ -30,6 +30,7 @@ from pycompose.ir.generated_validators import (
     SCHEMA_VERSION,
 )
 from pycompose.ir.model import IRRoot
+from pycompose.ir.streams import stream_problems
 from pycompose.ir.validator_walk import _Validation
 from pycompose.schema.version import require_version
 from pycompose.utils.json_canonical import check_json
@@ -321,6 +322,10 @@ def validate_ir(
         return ValidationResult(None, tuple(validation.issues))
     validation.action_ids = frozenset(bindings)
     root = validation.node(snapshot.root)
+    if root is not None:
+        # An expression may read a holder anywhere in the snapshot.
+        for node, prop, message in stream_problems(root):
+            validation.report(message, node, prop)
     safe: IRRoot | None = snapshot
     if root is None:
         safe = None

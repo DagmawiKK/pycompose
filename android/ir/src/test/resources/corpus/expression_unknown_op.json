@@ -1,0 +1,128 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.__main__.edit": {
+    "bound": {},
+    "handlerId": "__main__.edit",
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "string"
+     }
+    }
+   },
+   "app.__main__.flip": {
+    "bound": {},
+    "handlerId": "__main__.flip",
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   },
+   "app.__main__.flip.8c5aaab6e1ef": {
+    "bound": {
+     "value": true
+    },
+    "handlerId": "__main__.flip",
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   }
+  },
+  "data": {
+   "count": 2,
+   "draft": "draft"
+  },
+  "effects": [
+   {
+    "kind": "toast",
+    "payload": {
+     "message": "saved"
+    }
+   }
+  ]
+ },
+ "root": {
+  "children": [
+   {
+    "children": [
+     {
+      "id": "root.base:64:284.base:67:140",
+      "props": {
+       "text": "Body"
+      },
+      "type": "Text"
+     },
+     {
+      "id": "root.base:64:284.base:68:176",
+      "props": {
+       "label": "Name",
+       "onValueChange": "app.__main__.edit",
+       "selection": 2,
+       "value": "draft"
+      },
+      "type": "TextField"
+     },
+     {
+      "id": "root.base:64:284.base:71:208",
+      "props": {
+       "checked": true,
+       "onCheckedChange": "app.__main__.flip"
+      },
+      "type": "Switch"
+     },
+     {
+      "id": "root.base:64:284.base:72:272",
+      "props": {
+       "onClick": "app.__main__.flip.8c5aaab6e1ef",
+       "text": "Go"
+      },
+      "type": "Button"
+     }
+    ],
+    "id": "root.base:64:284",
+    "props": {
+     "modifier": {
+      "operations": [
+       {
+        "type": "padding",
+        "value": 8
+       },
+       {
+        "fraction": 0.5,
+        "type": "fillMaxWidth"
+       }
+      ]
+     }
+    },
+    "type": "Column"
+   },
+   {
+    "id": "root.base:63:38",
+    "props": {
+     "color": {
+      "node": {
+       "args": [],
+       "op": "pow"
+      },
+      "type": "expression"
+     },
+     "style": "titleLarge",
+     "text": "Corpus"
+    },
+    "slot": "topBar",
+    "type": "Text"
+   }
+  ],
+  "id": "root",
+  "props": {},
+  "type": "Scaffold"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

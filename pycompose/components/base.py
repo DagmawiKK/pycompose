@@ -9,6 +9,7 @@ from typing import Any, ClassVar, NoReturn, cast
 
 from pycompose.components.modifiers import Modifier
 from pycompose.core import Node, Props
+from pycompose.core.expressions import Expression
 from pycompose.core.ids import call_location, call_site
 from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
 from pycompose.core.values import _Unset
@@ -22,7 +23,7 @@ ActionTarget = str | AppAction[Any]
 """What an action prop takes: an app action, a binding of one, or a registry id."""
 
 
-PropValue = JsonValue | AppAction[Any]
+PropValue = JsonValue | AppAction[Any] | Expression
 """What a component prop takes before construction makes it wire data."""
 
 
@@ -149,8 +150,13 @@ class Component(Node):
                     "prop name is not snake_case", node_id=id or "", prop=name
                 )
         # A control may take an app action itself; it binds nothing of its own.
+        # An expression is wire data from here on; emission resolves its keys.
         values = {
-            name: value.binding() if isinstance(value, AppAction) else value
+            name: value.binding()
+            if isinstance(value, AppAction)
+            else value.to_wire()
+            if isinstance(value, Expression)
+            else value
             for name, value in props.items()
         }
         wire = cast(

@@ -7,6 +7,7 @@ from collections.abc import Mapping
 from itertools import pairwise
 from typing import cast
 
+from pycompose.core.expressions import validate_expression
 from pycompose.errors import IrValidationError
 from pycompose.utils.json_canonical import JsonValue, check_json, freeze_json, thaw_json
 
@@ -60,6 +61,11 @@ def validate_value(
 
     """
     check_json(value)
+    if isinstance(value, Mapping) and value.get("type") == "expression":
+        # The host evaluates it each frame; it gives a colour (plan 31 §6).
+        _require(family == "Color", f"an expression gives a Color, not a {family}")
+        validate_expression(value, "color")
+        return
     _value(value, family, definitions, 0)
 
 

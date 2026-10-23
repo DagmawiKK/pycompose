@@ -1384,6 +1384,7 @@ data class ModalNavigationDrawerProps(
     override val `modifier`: JsonObject? = null,
     val `onOpenChange`: String? = null,
     val `open`: Boolean? = null,
+    val `scrimColor`: JsonElement? = null,
 ) : UiProps
 
 @Serializable

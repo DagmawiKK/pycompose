@@ -745,9 +745,6 @@
     },
     "patch": {
       "since": "1.18.0",
-      "props": {
-        "scrimColor": null
-      },
       "children": {
         "kind": "content"
       },

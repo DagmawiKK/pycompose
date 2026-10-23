@@ -151,6 +151,15 @@ def _unknown_node_field(document: dict[str, Any]) -> None:
 
 _DELETE = object()
 
+
+def _expression(argument: dict[str, Any]) -> dict[str, Any]:
+    """A colour expression: black at the alpha the argument gives."""
+    return {
+        "type": "expression",
+        "node": {"op": "alpha", "color": "#000000", "args": [argument]},
+    }
+
+
 MUTATIONS: dict[str, Mutation] = {
     "text_number": _set("Text", "text", 3),
     "text_null": _set("Text", "text", None),
@@ -181,6 +190,14 @@ MUTATIONS: dict[str, Mutation] = {
     "bindings_array": _metadata("actionBindings", []),
     "echo_negative": _metadata("echoes", {"increment": -1}),
     "echo_string": _metadata("echoes", {"increment": "1"}),
+    "expression_literal": _set("Text", "color", _expression({"number": 0.5})),
+    "expression_unknown_op": _set(
+        "Text", "color", {"type": "expression", "node": {"op": "pow", "args": []}}
+    ),
+    "expression_stream_missing": _set(
+        "Text", "color", _expression({"stream": "nowhere", "name": "progress"})
+    ),
+    "expression_number_prop": _set("Text", "text", _expression({"number": 1})),
 }
 
 

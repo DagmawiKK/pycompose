@@ -194,6 +194,49 @@ def render_kotlin_models(registry: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def _kt_streams(registry: dict[str, Any]) -> list[str]:
+    """Render the expression vocabulary and which components expose which streams.
+
+    Args:
+        registry: The parsed schema.
+
+    Returns:
+        Kotlin source lines.
+    """
+    from pycompose.core.registry_vocabulary import (
+        EXPRESSION_LIMITS,
+        EXPRESSION_OPS,
+        STATE_STREAMS,
+    )
+
+    exposing = {
+        name: STATE_STREAMS[spec["state"]["kind"]]
+        for name, spec in sorted(registry["components"].items())
+        if spec.get("state", {}).get("kind") in STATE_STREAMS
+    }
+    return [
+        "    val streams: Map<String, Set<String>> = mapOf(",
+        *(
+            f"        {kotlin_string(name)} to setOf("
+            + ", ".join(kotlin_string(stream) for stream in streams)
+            + "),"
+            for name, streams in exposing.items()
+        ),
+        "    )",
+        "    val streamNames: Set<String> = setOf("
+        + ", ".join(
+            kotlin_string(name)
+            for name in sorted({n for names in STATE_STREAMS.values() for n in names})
+        )
+        + ")",
+        "    val expressionOps: Set<String> = setOf("
+        + ", ".join(kotlin_string(op) for op in EXPRESSION_OPS)
+        + ")",
+        f"    const val EXPRESSION_DEPTH = {EXPRESSION_LIMITS['depth']}",
+        f"    const val EXPRESSION_NODES = {EXPRESSION_LIMITS['nodes']}",
+    ]
+
+
 def _kt_rules(props: dict[str, Any]) -> list[str]:
     lines = []
     for name, prop in sorted(props.items()):
@@ -281,11 +324,10 @@ def render_kotlin_registry(registry: dict[str, Any]) -> str:
                 "        ),",
             ]
         )
-    lines.extend(
-        [
-            "    )",
-            "    val actionPayloads: Map<String, Map<String, PropertyRule>> = mapOf(",
-        ]
+    lines.append("    )")
+    lines.extend(_kt_streams(registry))
+    lines.append(
+        "    val actionPayloads: Map<String, Map<String, PropertyRule>> = mapOf("
     )
     for name, spec in sorted(registry["actions"].items()):
         lines.extend(

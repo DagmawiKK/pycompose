@@ -27,6 +27,7 @@ from pycompose.ir.generated_validators import (
     SCHEMA_VERSION,
 )
 from pycompose.ir.model import IRRoot
+from pycompose.ir.streams import is_expression, resolve_streams
 from pycompose.schema.version import require_version
 from pycompose.state.state import State
 
@@ -69,11 +70,13 @@ def emit_ir(
         reuse.emitted.start()
     handles = reuse.handles if reuse else Handles(compact=False)
     ids = IdRegistry()
+    emission = _Emission(ids, handles, reuse.emitted if reuse else None)
     root, contracts = _emit_node(
-        expand_nodes(state.root, reuse.expansion if reuse else None),
-        _Emission(ids, handles, reuse.emitted if reuse else None),
+        expand_nodes(state.root, reuse.expansion if reuse else None), emission
     )
     handles.retain(ids)
+    if emission.streams:
+        root = resolve_streams(root, emission.keyed)
     bindings = (
         cast("Mapping[str, JsonValue]", {"actionBindings": contracts})
         if contracts
@@ -95,11 +98,18 @@ def emit_ir(
 
 @dataclass(frozen=True, slots=True)
 class _Emitted:
-    """One emitted subtree: its node, every (id, type) in it, and its bindings."""
+    """One emitted subtree: its node, every (id, type) in it, and its bindings.
+
+    ``keyed`` pairs each key an app gave a node with the wire id it received,
+    and ``streams`` says whether an expression in the subtree reads a holder:
+    both are replayed with a reused subtree, as its ids and contracts are.
+    """
 
     node: Node
     ids: tuple[tuple[str, str], ...]
     contracts: tuple[tuple[str, object], ...]
+    keyed: tuple[tuple[str, str], ...] = ()
+    streams: bool = False
 
 
 @dataclass(slots=True)
@@ -111,6 +121,8 @@ class _Frame:
     children: list[Node] = field(default_factory=list)
     ids: list[tuple[str, str]] = field(default_factory=list)
     contracts: list[tuple[str, object]] = field(default_factory=list)
+    keyed: list[tuple[str, str]] = field(default_factory=list)
+    streams: bool = False
 
 
 class _Emission:
@@ -129,6 +141,8 @@ class _Emission:
         self.handles = handles
         self.memo = memo
         self.contracts: dict[str, object] = {}
+        self.keyed: dict[str, list[str]] = {}
+        self.streams = False
         self.frames: list[_Frame] = []
         self.candidate: _Emitted | None = None
 
@@ -185,11 +199,18 @@ class _Emission:
             emitted = self.build(source, frame)
             if self.memo is not None and self.frames:
                 self.memo.put(source, emitted, frame.context)
-        if self.frames:
+        if not self.frames:
+            # The root's entries are every keyed node in the snapshot, once.
+            for key, node_id in emitted.keyed:
+                self.keyed.setdefault(key, []).append(node_id)
+            self.streams = emitted.streams
+        else:
             parent = self.frames[-1]
             parent.children.append(emitted.node)
             parent.ids.extend(emitted.ids)
             parent.contracts.extend(emitted.contracts)
+            parent.keyed.extend(emitted.keyed)
+            parent.streams |= emitted.streams
         return emitted.node
 
     def build(self, source: Node, frame: _Frame) -> _Emitted:
@@ -217,8 +238,14 @@ class _Emission:
                 slot=source.slot,
             )
         )
+        own = ((source.id, frame.qualified),) if source.id else ()
         return _Emitted(
-            node, ((frame.qualified, source.type), *frame.ids), tuple(frame.contracts)
+            node,
+            ((frame.qualified, source.type), *frame.ids),
+            tuple(frame.contracts),
+            keyed=own + tuple(frame.keyed),
+            streams=frame.streams
+            or any(is_expression(value) for value in props.values.values()),
         )
 
 

@@ -146,6 +146,22 @@ DECODERS = (
 )
 """The host resolvers a prop may name."""
 
+STATE_STREAMS = {"drawer": ("progress",), "scroll": ("offset", "progress")}
+"""Streams each state family's holder exposes to expressions (plan 31 §6).
+
+A stream is a number the host reads from the holder every frame -- a drawer's
+open fraction, a scroll's offset and fraction -- so a prop bound to an
+expression over it follows a gesture without Python running per frame.
+"""
+
+EXPRESSION_OPS = ("times", "plus", "minus", "clamp", "alpha", "mix")
+"""The closed expression vocabulary: arithmetic and clamp over numbers, and the
+two ways a number becomes a colour (a colour's alpha, a mix of two colours).
+No loops, recursion or user functions: evaluation is linear in the size."""
+
+EXPRESSION_LIMITS = {"depth": 8, "nodes": 32}
+"""The largest expression a snapshot may carry, checked by both validators."""
+
 TRANSIENT_HOLDERS = {"snackbar": "androidx.compose.material3.SnackbarHostState"}
 """The native holder each transient family remembers and fulfils requests on."""
 

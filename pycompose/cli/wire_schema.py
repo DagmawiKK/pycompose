@@ -150,6 +150,12 @@ class WireSchema:
             return rule
         if set(rule) - KEYWORDS:
             raise ProjectError("unsupported generated schema keyword", path=path)
+        tag = rule.get("properties", {}).get("type", {}).get("const")
+        if tag is not None and (
+            not isinstance(value, dict) or value.get("type") != tag
+        ):
+            # A tagged object is told apart from its siblings by its tag alone.
+            return False
         try:
             _scalars(value, rule, path)
             if "anyOf" in rule or "oneOf" in rule:

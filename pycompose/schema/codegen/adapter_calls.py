@@ -148,7 +148,10 @@ def _decoded(
         tagged = resolver_call(spec["valueType"], "wire")
         return (
             f"val {value}: {returns} = when (val wire = {wire}) {{\n"
-            f"                    is JsonObject -> {tagged}.getOrDefault({fallback})\n"
+            # An expression over holder streams is evaluated here, each frame
+            # its streams move; any other tagged object is a colour value.
+            "                    is JsonObject -> context.expressionColor(wire) "
+            f"?: {tagged}.getOrDefault({fallback})\n"
             "                    is JsonPrimitive -> "
             f"{resolver}.color(wire.content).getOrDefault({fallback})\n"
             f"                    else -> {fallback}\n"

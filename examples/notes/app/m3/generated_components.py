@@ -10,6 +10,7 @@ from typing import Any, Literal, cast, overload
 from pycompose.components.base import ActionTarget, Component, PropValue
 from pycompose.components.modifiers import Modifier
 from pycompose.composition import Content, content_nodes, slot_nodes
+from pycompose.core.expressions import Expression
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
 from pycompose.core.values import UNSET, _Unset
@@ -515,7 +516,7 @@ class FloatingActionButton(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
@@ -583,7 +584,7 @@ class HorizontalDivider(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         thickness: int | float | None = None,
     ) -> None:
@@ -616,7 +617,7 @@ class Icon(Component):
         content_description: str | None,
         image_vector: JsonValue,
         modifier: Modifier | None = None,
-        tint: JsonValue | None = None,
+        tint: JsonValue | Expression | None = None,
     ) -> None:
         """Construct a registered Icon.
 
@@ -859,10 +860,10 @@ class _LinearProgressIndicator(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         progress: int | float,
-        track_color: JsonValue | None = None,
+        track_color: JsonValue | Expression | None = None,
     ) -> None:
         """Construct a registered LinearProgressIndicator.
 
@@ -892,21 +893,21 @@ class LinearProgressIndicator(_LinearProgressIndicator):
         cls,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         progress: int | float,
-        track_color: JsonValue | None = None,
+        track_color: JsonValue | Expression | None = None,
     ) -> LinearProgressIndicator: ...
     @overload
     def __new__(
         cls,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         gap_size: int | float | None = None,
         modifier: Modifier | None = None,
         stroke_cap: JsonValue | None = None,
-        track_color: JsonValue | None = None,
+        track_color: JsonValue | Expression | None = None,
     ) -> LinearProgressIndicatorWithoutProgress: ...
     def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
         """Construct the overload the keywords select.
@@ -1000,7 +1001,7 @@ class NavigationBar(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         tonal_elevation: int | float | None = None,
         window_insets: JsonValue | None = None,
@@ -1114,8 +1115,8 @@ class PlainTooltip(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
-        content_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
         max_width: int | float | None = None,
         modifier: Modifier | None = None,
         show_caret: bool | None = None,
@@ -1171,13 +1172,13 @@ class RichTooltip(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        action_content_color: JsonValue | None = None,
-        container_color: JsonValue | None = None,
-        content_color: JsonValue | None = None,
+        action_content_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
         max_width: int | float | None = None,
         modifier: Modifier | None = None,
         show_caret: bool | None = None,
-        title_content_color: JsonValue | None = None,
+        title_content_color: JsonValue | Expression | None = None,
         children: Content = (),
         content: Content | None = None,
         action: Content | None = None,
@@ -1284,7 +1285,7 @@ class Scaffold(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1720,7 +1721,7 @@ class Text(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         font_resource: str | None = None,
         locale: str | None = None,
         modifier: Modifier | None = None,
@@ -1929,7 +1930,7 @@ class VerticalDivider(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         thickness: int | float | None = None,
     ) -> None:
@@ -2081,11 +2082,11 @@ class LinearProgressIndicatorWithoutProgress(LinearProgressIndicator):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         gap_size: int | float | None = None,
         modifier: Modifier | None = None,
         stroke_cap: JsonValue | None = None,
-        track_color: JsonValue | None = None,
+        track_color: JsonValue | Expression | None = None,
     ) -> None:
         """Construct a registered LinearProgressIndicatorWithoutProgress.
 

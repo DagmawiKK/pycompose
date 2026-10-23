@@ -877,6 +877,7 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "onOpenChange" to PropertyRule("actionId", required = false),
                 "open" to PropertyRule("boolean", required = false),
+                "scrimColor" to PropertyRule("color", required = false, valueType = "Color"),
             ),
         ),
         "ModalWideNavigationRail" to ComponentRule(
@@ -1815,6 +1816,15 @@ object IrContract {
                 "insets" to PropertyRule("value", required = true, since = "1.11.0", valueType = "WindowInsets"),
         ),
     )
+    val streams: Map<String, Set<String>> = mapOf(
+        "Column" to setOf("offset", "progress"),
+        "DismissibleNavigationDrawer" to setOf("progress"),
+        "ModalNavigationDrawer" to setOf("progress"),
+    )
+    val streamNames: Set<String> = setOf("offset", "progress")
+    val expressionOps: Set<String> = setOf("times", "plus", "minus", "clamp", "alpha", "mix")
+    const val EXPRESSION_DEPTH = 8
+    const val EXPRESSION_NODES = 32
     val actionPayloads: Map<String, Map<String, PropertyRule>> = mapOf(
         "increment" to mapOf(
                 "by" to PropertyRule("integer", required = false),

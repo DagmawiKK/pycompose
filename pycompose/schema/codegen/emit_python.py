@@ -157,6 +157,7 @@ def render_python_components(
         "from pycompose.components.base import ActionTarget, Component, PropValue",
         "from pycompose.components.modifiers import Modifier",
         "from pycompose.composition import Content, content_nodes, slot_nodes",
+        "from pycompose.core.expressions import Expression",
         "from pycompose.core.node import Node",
         "from pycompose.core.props import JsonValue",
         "from pycompose.errors import IrValidationError",
@@ -211,6 +212,9 @@ def _python_prop(name: str) -> str:
 def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
     if prop["type"] == "enum":
         return f"_{component}{name[:1].upper() + name[1:]}"
+    if prop["type"] == "color":
+        # A colour may follow a holder's stream, evaluated by the host.
+        return f"{'JsonValue' if 'valueType' in prop else 'str'} | Expression"
     if "valueType" in prop:
         return "JsonValue"
     return {

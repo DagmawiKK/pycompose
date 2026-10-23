@@ -59,6 +59,7 @@ internal object WireValidator {
                 ?: error("root must be an object")
         require("slot" !in rootNode) { "The root cannot fill a slot" }
         NodeWalk(schema, actionIds, cache?.memoFor(schema, actionIds)).run(rootNode)
+        Expressions.targets(rootNode)
     }
 
     /**

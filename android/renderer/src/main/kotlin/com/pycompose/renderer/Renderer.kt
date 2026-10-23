@@ -13,6 +13,7 @@ import androidx.compose.material3.TooltipScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.pycompose.ir.AppBinding
@@ -352,6 +353,9 @@ class Renderer(
 
     /** Report numbers for the session, kept across snapshots. */
     internal val reports = Reports()
+
+    /** Streams each composed holder publishes, by node id, for expressions to read. */
+    internal val streams = mutableStateMapOf<String, Map<String, Stream>>()
 
     @Composable fun Render(ir: ValidatedIr) {
         val context =

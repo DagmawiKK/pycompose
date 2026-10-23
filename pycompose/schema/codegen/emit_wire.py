@@ -43,6 +43,17 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
         "definitions": {
             "Node": _node_schema(sorted(component_defs)),
             "ModifierOperation": _modifier_schema(registry, action_ids),
+            # Its shape only; the closed vocabulary, types and limits are the
+            # validators' (pycompose/core/expressions.py, Expressions.kt).
+            "Expression": {
+                "type": "object",
+                "required": ["type", "node"],
+                "properties": {
+                    "type": {"const": "expression"},
+                    "node": {"type": "object"},
+                },
+                "additionalProperties": False,
+            },
             **component_defs,
             **json_definitions(registry),
         },
@@ -191,6 +202,20 @@ def _component_schema(
     return {"type": "object", "properties": node_properties}
 
 
+def _tagged(prop: dict[str, Any], value: dict[str, Any]) -> dict[str, Any]:
+    """A value-typed prop's schema: its family's tagged object, or either form."""
+    from pycompose.schema.codegen.values import parameter_schema
+
+    tagged = parameter_schema({**prop, "type": "value", "nullable": False})
+    if prop["type"] == "value":
+        return tagged
+    forms = [value, tagged]
+    if prop["type"] == "color":
+        # A colour may be an expression over holder streams (plan 31 §6).
+        forms.append({"$ref": "#/definitions/Expression"})
+    return {"anyOf": forms}
+
+
 def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
     from pycompose.schema.codegen.values import parameter_schema
 
@@ -249,6 +274,5 @@ def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
         if bound in prop:
             value[bound] = prop[bound]
     if "valueType" in prop:
-        tagged = parameter_schema({**prop, "type": "value", "nullable": False})
-        value = tagged if ptype == "value" else {"anyOf": [value, tagged]}
+        value = _tagged(prop, value)
     return {"anyOf": [value, {"type": "null"}]} if prop.get("nullable") else value

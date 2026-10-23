@@ -3885,6 +3885,12 @@
           "type": "boolean",
           "default": true
         },
+        "scrimColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.DrawerDefaults.scrimColor"
+        },
         "modifier": {
           "type": "modifier"
         },
