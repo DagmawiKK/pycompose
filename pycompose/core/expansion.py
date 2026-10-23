@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
+from pycompose.core.ids import sibling_keys
 from pycompose.core.node import Node
 from pycompose.errors import IrValidationError
 
@@ -146,7 +147,15 @@ class _Expansion:
                 memo._store(_memo_key(frame), node, produced)
             return
         identity = f"{frame.prefix}.{node.id}" if frame.prefix and node.id else node.id
-        unchanged = identity == node.id and len(frame.children) == len(node.children)
+        # A root a composable produced without an id is keyed by the instance
+        # that produced it, so sibling instances never share a site.
+        site = (
+            f"{frame.prefix.replace('.', '/')}>{node.site}"
+            if frame.prefix and not node.id
+            else node.site
+        )
+        unchanged = identity == node.id and site == node.site
+        unchanged = unchanged and len(frame.children) == len(node.children)
         unchanged = unchanged and all(
             left is right
             for left, right in zip(frame.children, node.children, strict=True)
@@ -160,6 +169,7 @@ class _Expansion:
                 props=node.props,
                 children=frame.children,
                 slot=node.slot,
+                site=site,
             )
         )
         frame.output.append(result)
@@ -168,7 +178,27 @@ class _Expansion:
 def _memo_key(frame: _Frame) -> object:
     node = frame.node
     assert isinstance(node, DeferredNode)
-    return (frame.prefix, node.id, node.slot, node.recursion_key)
+    return (frame.prefix, node.id or node.site, node.slot, node.recursion_key)
+
+
+def _require_keyed_instances(children: tuple[Node, ...]) -> None:
+    """Refuse a composable declared repeatedly among its siblings without an id.
+
+    Its instances would be told apart only by their order, so a reorder would
+    hand one instance's identity, and its native state, to another.
+
+    Args:
+        children: One parent's children in order.
+
+    Raises:
+        IrValidationError: If a composable call site repeats without ids.
+    """
+    for child, (_, repeated) in zip(children, sibling_keys(children), strict=True):
+        if repeated and isinstance(child, DeferredNode):
+            raise IrValidationError(
+                "a composable declared repeatedly among its siblings needs an id",
+                source=child.source,
+            )
 
 
 def expand_nodes(root: Node, memo: ExpansionMemo | None = None) -> Node:
@@ -209,9 +239,9 @@ def expand_nodes(root: Node, memo: ExpansionMemo | None = None) -> Node:
         pending.append((frame, False))
         prefix = ""
         if isinstance(frame.node, DeferredNode):
-            prefix = (
-                f"{frame.prefix}.{frame.node.id}" if frame.prefix else frame.node.id
-            )
+            own = frame.node.id or frame.node.site
+            prefix = f"{frame.prefix}.{own}" if frame.prefix else own
+        _require_keyed_instances(children)
         pending.extend(
             (_Frame(child, prefix, frame.children), True)
             for child in reversed(children)

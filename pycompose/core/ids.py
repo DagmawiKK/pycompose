@@ -1,18 +1,33 @@
 """Deterministic, parent-path-based node ids with collision detection.
 
-Ids derive from a node's position in the tree (never random), so the same tree
-always yields byte-identical ids across rebuilds. :class:`IdRegistry` collects
-the ids claimed in one snapshot and rejects duplicates with node context.
+A node's id is its parent's id plus its key among its siblings: its explicit
+id, else the call site that declared it (never random, never its position), so
+the same tree always yields byte-identical ids across rebuilds and a node keeps
+its identity when a conditional before it appears or disappears.
+:class:`IdRegistry` collects the ids claimed in one snapshot and rejects
+duplicates with node context.
 """
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+import sys
+from collections import Counter
+from collections.abc import Collection, Sequence
+from types import CodeType
 from typing import Final
 
+from pycompose.core.node import Node
 from pycompose.errors import IrError
 
-__all__ = ["ROOT_ID", "IdRegistry", "child_id", "id_path", "make_path_id"]
+__all__ = [
+    "ROOT_ID",
+    "IdRegistry",
+    "call_site",
+    "child_id",
+    "id_path",
+    "make_path_id",
+    "sibling_keys",
+]
 
 #: The id of the snapshot's root node.
 ROOT_ID: Final[str] = "root"
@@ -48,6 +63,59 @@ def child_id(parent_id: str, key: str | int) -> str:
         The deterministic child id.
     """
     return f"{parent_id}{_SEPARATOR}{key}"
+
+
+def call_site(depth: int, skip: Collection[CodeType] = ()) -> str:
+    """Name the line of code that is declaring a node.
+
+    The name is the declaring function, its line and its bytecode offset, so
+    two declarations on one line differ and the same declaration names the
+    same site on every run of the same code.
+
+    Args:
+        depth: Frames between the caller of this function and the declaration.
+        skip: Constructor code objects to step over, so a subclass chain names
+            the app's line rather than its own ``__init__``.
+
+    Returns:
+        A sibling key free of the id separator.
+    """
+    frame = sys._getframe(depth + 1)
+    while frame.f_code in skip and frame.f_back is not None:
+        frame = frame.f_back
+    code = frame.f_code
+    name = code.co_qualname.replace(_SEPARATOR, "/")
+    return f"{name}:{frame.f_lineno}:{frame.f_lasti}"
+
+
+def sibling_keys(children: Sequence[Node]) -> tuple[tuple[str | int, bool], ...]:
+    """Key each child among its siblings.
+
+    An explicit id is its own key. A node with no id is keyed by its call site;
+    a site that declares several siblings (a loop) numbers them in order, as
+    Compose does for a call site without a key, and reports that it repeats.
+    A node with neither falls back to its position.
+
+    Args:
+        children: One parent's children in order.
+
+    Returns:
+        Per child, its key and whether that key came from a repeated site.
+    """
+    counts = Counter(child.site for child in children if not child.id and child.site)
+    seen: Counter[str] = Counter()
+    keys: list[tuple[str | int, bool]] = []
+    for index, child in enumerate(children):
+        if child.id:
+            keys.append((child.id, False))
+        elif child.site and counts[child.site] == 1:
+            keys.append((child.site, False))
+        elif child.site:
+            keys.append((f"{child.site}#{seen[child.site]}", True))
+            seen[child.site] += 1
+        else:
+            keys.append((index, False))
+    return tuple(keys)
 
 
 def id_path(node_id: str) -> tuple[str, ...]:

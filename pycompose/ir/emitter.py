@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import cast
 
 from pycompose.core.expansion import expand_nodes
-from pycompose.core.ids import ROOT_ID, IdRegistry, child_id
+from pycompose.core.ids import ROOT_ID, IdRegistry, child_id, sibling_keys
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
 from pycompose.core.reuse import Reuse, SubtreeMemo
@@ -96,6 +96,7 @@ class _Frame:
     qualified: str
     reused: _Emitted | None
     context: object
+    keys: tuple[tuple[str | int, bool], ...] = ()
     children: list[Node] = field(default_factory=list)
     ids: list[tuple[str, str]] = field(default_factory=list)
     contracts: list[tuple[str, object]] = field(default_factory=list)
@@ -105,9 +106,9 @@ class _Emission:
     """Qualify ids and lower bindings in one walk, reusing unchanged subtrees.
 
     A subtree's emission depends on the subtree and on where it hangs: its
-    parent's qualified id, and its position when it has no id of its own. Both
-    form the memo context, so a reused subtree is exactly what a fresh walk
-    would produce, and its ids and binding contracts are replayed, not redone.
+    parent's qualified id and its key among its siblings. Both form the memo
+    context, so a reused subtree is exactly what a fresh walk would produce,
+    and its ids and binding contracts are replayed, not redone.
     """
 
     def __init__(self, ids: IdRegistry, memo: SubtreeMemo[_Emitted] | None) -> None:
@@ -117,13 +118,16 @@ class _Emission:
         self.frames: list[_Frame] = []
         self.candidate: _Emitted | None = None
 
-    def context(self, source: Node) -> object:
+    def key(self) -> tuple[str | int, bool]:
         parent = self.frames[-1]
-        return (parent.qualified, None if source.id else len(parent.children))
+        return parent.keys[len(parent.children)]
+
+    def context(self) -> object:
+        return (self.frames[-1].qualified, self.key()[0])
 
     def prune(self, source: Node) -> bool:
         self.candidate = (
-            self.memo.get(source, self.context(source))
+            self.memo.get(source, self.context())
             if self.memo is not None and self.frames
             else None
         )
@@ -131,33 +135,32 @@ class _Emission:
 
     def enter(self, source: Node) -> None:
         reused, self.candidate = self.candidate, None
-        context = self.context(source) if self.frames else None
+        context = self.context() if self.frames else None
         if reused is not None:
             self.frames.append(_Frame(reused.node.id, reused, context))
             return
         qualified = self.qualify(source)
         self.ids.claim(qualified, node_type=source.type)
-        self.frames.append(_Frame(qualified, None, context))
+        keys = sibling_keys(source.children)
+        self.frames.append(_Frame(qualified, None, context, keys))
 
     def qualify(self, source: Node) -> str:
         if not self.frames:
             return ROOT_ID
         parent = self.frames[-1].qualified
-        if source.id:
-            # Full-path ids stay stable; local ids become sibling keys.
-            return (
-                source.id
-                if source.id.startswith(f"{parent}.")
-                else child_id(parent, source.id)
-            )
-        # An auto node: nothing can name it, so its position among its
-        # siblings is its identity.
-        if _addressable(source):
+        if source.id.startswith(f"{parent}."):
+            # Full-path ids stay stable; every other key qualifies under its parent.
+            return source.id
+        key, repeated = self.key()
+        if not source.id and (repeated or not source.site) and _addressable(source):
+            # Order is all that tells these apart, and a reorder would hand
+            # one element's native state and bindings to another.
             raise IrValidationError(
-                "a component with bindings needs an explicit id",
+                "a component with bindings declared in a loop needs an explicit id",
                 node_type=source.type,
+                site=source.site,
             )
-        return child_id(parent, len(self.frames[-1].children))
+        return child_id(parent, key)
 
     def exit(self, source: Node) -> Node:
         frame = self.frames.pop()
