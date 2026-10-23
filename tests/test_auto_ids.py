@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import TypedDict
-
 import pytest
 
 from pycompose import action, composable
@@ -15,17 +13,12 @@ from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.state import State
 
 
-class Nothing(TypedDict):
-    pass
-
-
 @action
-def bump(state: State, payload: Nothing) -> State:
+def bump(state: State) -> State:
     """Return the snapshot unchanged.
 
     Args:
         state: Snapshot before the tap.
-        payload: Empty; this command takes no event fields.
 
     Returns:
         The same snapshot.
@@ -99,7 +92,7 @@ def test_a_node_carrying_a_binding_needs_no_id_outside_a_loop() -> None:
     state = State(
         root=Column(
             id="screen",
-            children=[Button(text="Add", on_click=bump.bind(id="tap"))],
+            children=[Button(text="Add", on_click=bump)],
         )
     )
 
@@ -110,9 +103,7 @@ def test_a_node_carrying_a_binding_in_a_loop_is_refused() -> None:
     state = State(
         root=Column(
             id="screen",
-            children=[
-                Button(text=label, on_click=bump.bind(id="tap")) for label in "ab"
-            ],
+            children=[Button(text=label, on_click=bump) for label in "ab"],
         )
     )
 
@@ -124,10 +115,7 @@ def test_a_node_whose_modifier_carries_an_action_in_a_loop_is_refused() -> None:
     state = State(
         root=Column(
             id="screen",
-            children=[
-                Text(text=t, modifier=Modifier().clickable(bump.bind(id="tap")))
-                for t in "ab"
-            ],
+            children=[Text(text=t, modifier=Modifier().clickable(bump)) for t in "ab"],
         )
     )
 

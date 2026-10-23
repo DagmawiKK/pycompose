@@ -19,7 +19,7 @@ Policy = Literal["independent", "latest", "single_flight"]
 
 def _validate(
     operation: Callable[..., Any],
-    targets: tuple[AppAction[Any, Any] | None, ...],
+    targets: tuple[AppAction[Any] | None, ...],
     key: str | None,
     policy: Policy,
 ) -> None:
@@ -143,8 +143,8 @@ class Resource(Generic[T]):
         self,
         operation: Callable[[T], R],
         *,
-        success: AppAction[Any, Any] | None = None,
-        failure: AppAction[Any, Any] | None = None,
+        success: AppAction[Any] | None = None,
+        failure: AppAction[Any] | None = None,
         encode: Callable[[R], Mapping[str, object]] | None = None,
         error: Callable[[Exception], Mapping[str, object]] | None = None,
         key: str | None = None,

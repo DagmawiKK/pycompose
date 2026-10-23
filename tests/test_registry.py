@@ -49,7 +49,7 @@ def test_a_registry_collects_the_actions_it_defines() -> None:
     actions = Registry()
 
     @actions
-    def first(state: State, payload: Nothing) -> State:
+    def first(state: State) -> State:
         return state
 
     assert actions.names() == ("first",)
@@ -67,7 +67,7 @@ def test_a_seeded_registry_starts_populated() -> None:
     actions = Registry()
 
     @actions
-    def only(state: State, payload: Nothing) -> State:
+    def only(state: State) -> State:
         return state
 
     again = Registry(only)
@@ -78,25 +78,25 @@ def test_an_action_is_reachable_by_its_bare_and_qualified_name() -> None:
     actions = Registry()
 
     @actions
-    def new_note(state: State, payload: Nothing) -> State:
+    def new_note(state: State) -> State:
         return state
 
     assert new_note.name in actions
     assert "newNote" in actions
-    assert actions.new_note.bind(id="n1").startswith("app.")
+    assert actions.new_note.binding().startswith("app.")
 
 
 def test_defining_the_same_action_twice_is_refused() -> None:
     actions = Registry()
 
     @actions
-    def twin(state: State, payload: Nothing) -> State:
+    def twin(state: State) -> State:
         return state
 
     with pytest.raises(StateError, match="duplicate"):
 
         @actions
-        def twin(state: State, payload: Nothing) -> State:
+        def twin(state: State) -> State:
             return state
 
 
@@ -105,7 +105,7 @@ def test_asking_for_an_action_that_was_never_defined_says_what_is() -> None:
     actions = Registry()
 
     @actions
-    def delete_note(state: State, payload: Nothing) -> State:
+    def delete_note(state: State) -> State:
         return state
 
     with pytest.raises(AttributeError, match="holds delete_note"):
@@ -135,7 +135,7 @@ class Shell(AppState):
 actions = Registry()
 
 @actions
-def ping(state: State, payload: Nothing) -> State:
+def ping(state: State) -> State:
     return State(root=Text(id="text", text="pong"))
 
 def view(shell: Shell) -> Text:
@@ -217,7 +217,7 @@ def test_a_registry_built_somewhere_else_is_refused(generated: Any) -> None:
         "built_elsewhere = Registry()\n"
         "\n"
         "@built_elsewhere\n"
-        "def ping(state: State, payload: Nothing) -> State:\n"
+        "def ping(state: State) -> State:\n"
         "    return State(root=Text(id='text', text='pong'))\n"
         "\n"
         "# The misspelling: the actions are here, the registry is not.\n"
@@ -296,7 +296,7 @@ def test_an_action_may_not_take_a_name_the_registry_uses(name: str) -> None:
     from the cause."""
     actions = Registry()
 
-    def shadow(state: State, payload: Nothing) -> State:
+    def shadow(state: State) -> State:
         return state
 
     shadow.__name__ = name
@@ -314,7 +314,7 @@ def test_an_ordinary_action_name_is_still_fine() -> None:
     actions = Registry()
 
     @actions
-    def delete_note(state: State, payload: Nothing) -> State:
+    def delete_note(state: State) -> State:
         return state
 
     assert actions.delete_note is delete_note
@@ -325,7 +325,7 @@ def test_looking_an_action_up_is_a_direct_hit() -> None:
     actions = Registry()
 
     @actions
-    def only(state: State, payload: Nothing) -> State:
+    def only(state: State) -> State:
         return state
 
     assert actions.__dict__["_by_name"]["only"] is only

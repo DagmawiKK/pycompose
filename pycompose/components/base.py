@@ -12,7 +12,16 @@ from pycompose.core.ids import call_site
 from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
 from pycompose.errors import IrValidationError
 from pycompose.ir.validator import validate_component
+from pycompose.state.app_action import AppAction
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
+
+ActionTarget = str | AppAction[Any]
+"""What an action prop takes: an app action, a binding of one, or a registry id."""
+
+
+PropValue = JsonValue | AppAction[Any]
+"""What a component prop takes before construction makes it wire data."""
+
 
 _CONSTRUCTORS: set[CodeType] = set()
 """Every component ``__init__``, stepped over to find the app's declaring line."""
@@ -46,7 +55,7 @@ class Component(Node):
         id: str | None = None,
         children: Sequence[Node] = (),
         modifier: Modifier | Mapping[str, JsonValue | FrozenJsonValue] | None = None,
-        **props: JsonValue,
+        **props: PropValue,
     ) -> None:
         """Construct immutable IR and validate this component, not its subtree.
 
@@ -67,8 +76,13 @@ class Component(Node):
                 raise IrValidationError(
                     "prop name is not snake_case", node_id=id or "", prop=name
                 )
+        # A control may take an app action itself; it binds nothing of its own.
+        values = {
+            name: value.binding() if isinstance(value, AppAction) else value
+            for name, value in props.items()
+        }
         wire = cast(
-            "dict[str, JsonValue | FrozenJsonValue]", props_from_kwargs(**props)
+            "dict[str, JsonValue | FrozenJsonValue]", props_from_kwargs(**values)
         )
         if modifier is not None:
             wire["modifier"] = freeze_json(

@@ -184,7 +184,7 @@ def _report(message: str) -> None:
 
 def run(
     work: Callable[[], Any],
-    action: AppAction[Any, Any],
+    action: AppAction[Any],
     *,
     payload: Mapping[str, Any] | None = None,
 ) -> None:
@@ -279,7 +279,7 @@ def _settle() -> None:
 
 def _complete(
     work: Callable[[], Any],
-    action: AppAction[Any, Any],
+    action: AppAction[Any],
     bound: Mapping[str, Any],
 ) -> None:
     """Run the work and hand the result to the host.
@@ -301,7 +301,7 @@ def _complete(
 
 def _deliver(
     result: object,
-    action: AppAction[Any, Any],
+    action: AppAction[Any],
     bound: Mapping[str, Any],
 ) -> None:
     """Hand one finished result to the host.

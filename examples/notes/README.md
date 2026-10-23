@@ -43,26 +43,26 @@ python examples/notes/tests/smoke.py
 ```
 notes/
 ├── app/                       # python.source_dir — this is the whole app
-│   ├── main.py                # build() — the only thing the host calls
+│   ├── main.py                # app — the entry object the session runs
 │   └── notes_app/
-│       ├── model.py           # Note, Repository. Frozen data, no UI.
+│       ├── domain/            # What a note is and what you can do with notes.
+│       ├── data/              # How notes are kept, behind the domain's Protocol.
+│       ├── container.py       # The app's long-lived objects, built once.
+│       ├── state.py           # Session, the shell that survives process death.
 │       ├── theme.py           # Light and dark palettes.
-│       ├── storage.py         # JSON in and out, degrading rather than raising.
-│       ├── handlers.py        # The action references screens bind to.
+│       ├── actions.py         # The transitions a user can trigger.
 │       ├── views/
 │       │   ├── list_screen.py # Composable: the list of notes.
 │       │   └── editor_screen.py
-│       ├── view_model.py      # App state → one immutable snapshot.
-│       └── actions.py         # The transitions a user can trigger.
+│       └── view_model.py      # Shell plus repository → one screen.
 └── tests/
     ├── harness.py             # Stands in for the Android host.
     └── smoke.py               # End-to-end walk through the whole app.
 ```
 
-Dependencies only ever point downwards. `views` and `view_model` know about the
-model; only `actions` knows about the view-model. `handlers.py` exists so that a
-screen can bind an action without importing the module that defines it, which
-would otherwise make those three modules circular.
+Dependencies only ever point downwards. `actions` knows the domain and the
+session shell; `views` import the handlers they bind; `view_model` composes the
+views. Nothing points back up, so no screen needs a registry threaded into it.
 
 ## How the data flows
 
@@ -75,7 +75,7 @@ host action → Python action → new State → canonical IR snapshot → host r
 Each screen row binds its note's id when it is declared:
 
 ```python
-.clickable(handlers.open_note.bind(id=f"n{note.id}", note_id=note.id))
+Card(on_click=open_note.with_args(note_id=note.id), ...)
 ```
 
 so one `open_note` handler serves every row on screen. The host holds an id and a

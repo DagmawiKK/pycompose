@@ -117,16 +117,30 @@ class Screen:
         return bool(self._nodes("Button")[0]["enabled"])
 
 
-def send(bridge: BridgeSurface, handler: Any, instance: str, **payload: Any) -> None:
+def send(
+    bridge: BridgeSurface,
+    handler: Any,
+    bound: dict[str, Any] | None = None,
+    **payload: Any,
+) -> None:
     """Deliver one host action envelope the way the Android renderer does.
 
     Args:
         bridge: Surface owning the demo session.
-        handler: App action whose bound values name this control's instance.
-        instance: Stable instance key passed to the action's bind method.
+        handler: App action the control is bound to.
+        bound: The values the control binds, which name its binding; None for
+            the only control bound to this handler on screen.
         **payload: Event fields; bindings supply their own fixed values.
     """
-    action_id = f"app.{handler.name}.{instance}"
+    if bound is not None:
+        action_id = str(handler.with_args(**bound))
+    else:
+        snapshot = json.loads(bridge.expose_latest_snapshot() or "{}")
+        (action_id,) = (
+            key
+            for key, contract in snapshot["metadata"]["actionBindings"].items()
+            if contract["handlerId"] == handler.name
+        )
     bridge.accept_action(json.dumps({"actionId": action_id, "payload": payload}))
 
 
@@ -137,10 +151,10 @@ def test_demo_builds_a_valid_snapshot_of_instance_scoped_bindings(
     bridge = BridgeSurface(Store(state), demo.actions)
     snapshot = json.loads(bridge.expose_latest_snapshot() or "{}")
     bindings = snapshot["metadata"]["actionBindings"]
-    add = f"app.{demo.add_task.name}.add"
-    draft = f"app.{demo.set_draft.name}.draft"
-    toggle = f"app.{demo.toggle_task.name}.task_1"
-    done = f"app.{demo.set_filter.name}.done"
+    add = str(demo.add_task.with_args(title=""))
+    draft = str(demo.set_draft.binding())
+    toggle = str(demo.toggle_task.with_args(task_id=1))
+    done = str(demo.set_filter.with_args(value="done"))
     assert snapshot["schemaVersion"] == SCHEMA_VERSION
     assert bindings[add]["bound"] == {"title": ""}
     assert bindings[draft]["bound"] == {}
@@ -164,12 +178,12 @@ def test_demo_effects_ride_the_add_snapshot_only(demo: ModuleType) -> None:
         return snapshot.get("metadata", {}).get("effects", [])
 
     assert effects() == []
-    send(bridge, demo.set_draft, "draft", value="Buy milk")
+    send(bridge, demo.set_draft, value="Buy milk")
     assert effects() == []
-    send(bridge, demo.add_task, "add")
+    send(bridge, demo.add_task)
     assert effects() == [{"kind": "toast", "payload": {"message": 'Added "Buy milk"'}}]
     # The next transition publishes its own snapshot, so nothing replays.
-    send(bridge, demo.set_filter, "active")
+    send(bridge, demo.set_filter, {"value": "active"})
     assert effects() == []
 
 
@@ -180,10 +194,10 @@ def test_demo_adds_completes_filters_and_deletes_tasks(demo: ModuleType) -> None
     assert screen.titles() == ["Read the PyCompose plan", "Try the todo demo"]
     assert screen.filters() == [("All", True), ("Active", False), ("Done", False)]
 
-    send(bridge, demo.set_draft, "draft", value="  Buy milk  ")
+    send(bridge, demo.set_draft, value="  Buy milk  ")
     assert screen.draft() == "  Buy milk  "
     assert screen.add_enabled()
-    send(bridge, demo.add_task, "add")
+    send(bridge, demo.add_task)
     assert screen.titles() == [
         "Read the PyCompose plan",
         "Try the todo demo",
@@ -193,18 +207,18 @@ def test_demo_adds_completes_filters_and_deletes_tasks(demo: ModuleType) -> None
     assert not screen.add_enabled()
     assert screen.heading() == ["Tasks", "2 active, 1 done"]
 
-    send(bridge, demo.toggle_task, "task_2", done=True)
+    send(bridge, demo.toggle_task, {"task_id": 2}, done=True)
     assert screen.checked() == [True, True, False]
-    send(bridge, demo.toggle_task, "task_2", done=False)
+    send(bridge, demo.toggle_task, {"task_id": 2}, done=False)
     assert screen.checked() == [True, False, False]
 
-    send(bridge, demo.set_filter, "active")
+    send(bridge, demo.set_filter, {"value": "active"})
     assert screen.filters() == [("All", False), ("Active", True), ("Done", False)]
     assert screen.titles() == ["Try the todo demo", "Buy milk"]
-    send(bridge, demo.set_filter, "done")
+    send(bridge, demo.set_filter, {"value": "done"})
     assert screen.titles() == ["Read the PyCompose plan"]
-    send(bridge, demo.set_filter, "active")
-    send(bridge, demo.remove_task, "task_3")
+    send(bridge, demo.set_filter, {"value": "active"})
+    send(bridge, demo.remove_task, {"task_id": 3})
     assert screen.titles() == ["Try the todo demo"]
     assert bridge.expose_latest_error() == ""
 
@@ -212,9 +226,9 @@ def test_demo_adds_completes_filters_and_deletes_tasks(demo: ModuleType) -> None
 def test_demo_reports_empty_filters_without_crashing(demo: ModuleType) -> None:
     bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
     screen = Screen(bridge)
-    send(bridge, demo.set_filter, "done")
+    send(bridge, demo.set_filter, {"value": "done"})
     assert screen.titles() == ["Read the PyCompose plan"]
-    send(bridge, demo.remove_task, "task_1")
+    send(bridge, demo.remove_task, {"task_id": 1})
     assert screen.titles() == ["Nothing finished yet."]
 
 
@@ -261,13 +275,13 @@ def test_demo_rejects_events_that_break_the_declared_contract(
     screen = Screen(bridge)
     before = bridge.expose_latest_snapshot()
 
-    send(bridge, demo.set_draft, "draft", value=7)
+    send(bridge, demo.set_draft, value=7)
     assert bridge.expose_latest_snapshot() == before
 
-    send(bridge, demo.add_task, "add", title="Sneaky")
+    send(bridge, demo.add_task, title="Sneaky")
     assert bridge.expose_latest_snapshot() == before
 
-    send(bridge, demo.remove_task, "task_99")
+    send(bridge, demo.remove_task, {"task_id": 99})
     assert bridge.expose_latest_snapshot() == before
     assert screen.titles() == ["Read the PyCompose plan", "Try the todo demo"]
     assert bridge.expose_latest_error()
@@ -278,9 +292,9 @@ def test_demo_survives_process_death_by_rehydrating_saved_data(
 ) -> None:
     first = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
     screen = Screen(first)
-    send(first, demo.set_draft, "draft", value="Survive rotation")
-    send(first, demo.add_task, "add")
-    send(first, demo.toggle_task, "task_3", done=True)
+    send(first, demo.set_draft, value="Survive rotation")
+    send(first, demo.add_task)
+    send(first, demo.toggle_task, {"task_id": 3}, done=True)
     assert screen.titles() == [
         "Read the PyCompose plan",
         "Try the todo demo",

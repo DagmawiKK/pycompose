@@ -43,8 +43,8 @@ def test_an_emptied_store_stays_empty_rather_than_reseeding(
     """Deleting everything is a decision, not a state the app recovers from."""
     disk = a_store()
     host = Host(app, repo=disk)
-    host.tap("delete_note", "n1")
-    host.tap("delete_note", "n2")
+    host.tap("delete_note", {"note_id": 1})
+    host.tap("delete_note", {"note_id": 2})
     assert host.titles == []
 
     saved = json.dumps(data(host.snapshot()))
@@ -175,9 +175,9 @@ def test_the_shell_is_restorable_on_its_own(app: ModuleType) -> None:
 
 def test_every_snapshot_is_a_valid_canonical_ir(app: ModuleType) -> None:
     host = Host(app)
-    host.tap("new_note", "new")
-    host.tap("set_title", "title", value="Check")
-    host.tap("go_back", "back")
+    host.tap("new_note")
+    host.tap("set_title", value="Check")
+    host.tap("go_back")
     snapshot = host.snapshot()
     assert snapshot["schemaVersion"] == SCHEMA_VERSION
     assert "metadata" in snapshot
@@ -186,7 +186,7 @@ def test_every_snapshot_is_a_valid_canonical_ir(app: ModuleType) -> None:
 
 def test_an_action_cannot_reach_a_note_it_was_not_bound_to(app: ModuleType) -> None:
     host = Host(app)
-    host.tap("open_note", "n1")
+    host.tap("open_note", {"note_id": 1})
     before = host.snapshot()
 
     # note_id is a bound value, so an event may not supply one: the editor's own
@@ -194,7 +194,7 @@ def test_an_action_cannot_reach_a_note_it_was_not_bound_to(app: ModuleType) -> N
     host._bridge.accept_action(
         json.dumps(
             {
-                "actionId": host._id_for("set_title", "title"),
+                "actionId": host._id_for("set_title", None),
                 "payload": {"note_id": 2, "value": "hijack"},
             }
         )
@@ -241,7 +241,7 @@ def test_the_runtime_starts_this_app_and_its_actions_work() -> None:
                 "actionId": next(
                     key
                     for key in snapshot["metadata"]["actionBindings"]
-                    if key.endswith(".new_note.new")
+                    if key.endswith(".new_note")
                 ),
                 "payload": {},
             }
@@ -297,7 +297,7 @@ def test_the_app_survives_a_hot_reload_of_a_module_inside_its_package() -> None:
                         for key in json.loads(session.snapshot())["metadata"][
                             "actionBindings"
                         ]
-                        if key.endswith(".new_note.new")
+                        if key.endswith(".new_note")
                     ),
                     "payload": {},
                 }

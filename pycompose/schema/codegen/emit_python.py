@@ -150,7 +150,7 @@ def render_python_components(
         "",
         "from typing import Literal",
         "",
-        "from pycompose.components.base import Component",
+        "from pycompose.components.base import ActionTarget, Component, PropValue",
         "from pycompose.components.modifiers import Modifier",
         "from pycompose.composition import Content, content_nodes, slot_nodes",
         "from pycompose.core.node import Node",
@@ -203,7 +203,7 @@ def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
         "string": "str",
         "color": "str",
         "resource": "str",
-        "actionId": "str",
+        "actionId": "ActionTarget",
         "boolean": "bool",
         "integer": "int",
         "durationMs": "int",
@@ -279,7 +279,7 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
                 "            IrValidationError: If slot and children are both set.",
             ]
         )
-    lines.extend(['        """', "        props: dict[str, JsonValue] = {}"])
+    lines.extend(['        """', "        props: dict[str, PropValue] = {}"])
     for field, prop in sorted(props.items()):
         python_name = _python_prop(field)
         if field == "modifier":

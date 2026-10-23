@@ -168,10 +168,6 @@ from pycompose.components import Button
 from pycompose.state import App, AppState
 
 
-class Nothing(TypedDict):
-    pass
-
-
 class Shell(AppState):
     """The preview shell."""
 
@@ -182,7 +178,7 @@ actions = Registry()
 
 
 @actions
-def tap(session: Shell, payload: Nothing) -> Shell:
+def tap(session: Shell) -> Shell:
     """Count one tap.
 
     Args:
@@ -209,7 +205,7 @@ def screen(session: Shell, actions: Registry | None = None) -> Button:
     return Button(
         id="tap_button",
         text=f"tapped:{session.taps}",
-        on_click=actions.tap.bind(id="tap"),
+        on_click=actions.tap.binding(),
     )
 
 

@@ -12,20 +12,21 @@
 root_package = "notes_app"
 include_external_packages = true
 
-# The feature stack, top to bottom: an action produces a snapshot, the
-# view-model turns state into screens, and a screen describes UI. Nothing may
-# skip a layer below it.
+# The feature stack, top to bottom: the view-model turns state into screens, a
+# screen describes UI and binds the handlers it shows, and an action produces
+# the next shell. Nothing points back up, so no screen needs a registry
+# threaded into it and no action knows what a screen looks like.
 #
 # `domain` is not in this list and that is deliberate. Every layer may import
 # the domain -- that is the point of it -- so putting it at the bottom would make
 # every direct import of a use case an illegal skip. It gets its own contract
 # below, restricting what it may reach rather than who may reach it.
 [[tool.importlinter.contracts]]
-name = "Example: actions -> view_model -> views"
+name = "Example: view_model -> views -> actions"
 type = "layers"
-layers = ["actions", "view_model", "views"]
+layers = ["view_model", "views", "actions"]
 containers = ["notes_app"]
-explanation = "An action produces a snapshot, the view-model turns state into screens, a screen describes UI. No layer may skip one below it."
+explanation = "The view-model composes screens, a screen binds the handlers it shows, an action produces the next shell. No layer may reach one above it."
 
 # The point of the layering: an action reaches storage through a use case, never
 # around one.

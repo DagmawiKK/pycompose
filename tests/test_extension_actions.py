@@ -7,7 +7,6 @@ import threading
 import time
 import weakref
 from collections.abc import Callable
-from typing import TypedDict
 
 import pytest
 
@@ -19,26 +18,14 @@ from pycompose.m3 import Text
 from pycompose.state import Actions, State, Store
 
 
-class Value(TypedDict):
-    value: str
-
-
-class Failure(TypedDict):
-    error: str
+@action
+def arrived(state: State, value: str) -> State:
+    return State(root=Text(id="result", text=value), version=state.version + 1)
 
 
 @action
-def arrived(state: State, payload: Value) -> State:
-    return State(
-        root=Text(id="result", text=payload["value"]), version=state.version + 1
-    )
-
-
-@action
-def failed(state: State, payload: Failure) -> State:
-    return State(
-        root=Text(id="result", text=payload["error"]), version=state.version + 1
-    )
+def failed(state: State, error: str) -> State:
+    return State(root=Text(id="result", text=error), version=state.version + 1)
 
 
 def envelope(action_id: str, payload: dict[str, str]) -> str:
@@ -55,10 +42,10 @@ def application(
     tasks: list[Task[str]] = []
 
     @action
-    def launch(state: State, payload: Value) -> State:
+    def launch(state: State, value: str) -> State:
         tasks.append(
             resource.submit(
-                lambda _: operation(payload["value"]),
+                lambda _: operation(value),
                 success=arrived,
                 failure=failed,
                 encode=lambda value: {"value": value},
@@ -261,9 +248,9 @@ def test_explicitly_disposed_resources_are_not_retained_by_a_live_session() -> N
     references = []
 
     @action
-    def temporary(state: State, payload: Value) -> State:
+    def temporary(state: State, value: str) -> State:
         resource = Resource(lambda: None, close=lambda _: None)
-        resource.submit(lambda _: payload["value"])
+        resource.submit(lambda _: value)
         disposed.append(resource.close())
         references.append(weakref.ref(resource))
         return state

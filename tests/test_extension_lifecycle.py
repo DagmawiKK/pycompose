@@ -13,14 +13,11 @@ from pycompose.errors import StateError
 
 SOURCE = """from types import SimpleNamespace
 from threading import Event
-from typing import TypedDict
 from pycompose import action
 from pycompose.extensions import Resource
 from pycompose.m3 import Text
 from pycompose.state import Actions, App, State
 created = []
-class Value(TypedDict):
-    value: str
 def factory():
     closed = Event()
     resource = Resource(lambda: None, close=lambda _: closed.set())
@@ -28,11 +25,11 @@ def factory():
     created.append(made)
     return made
 @action
-def arrived(state: State, payload: Value) -> State:
-    return State(root=Text(id="text", text=payload["value"]), version=state.version + 1)
+def arrived(state: State, value: str) -> State:
+    return State(root=Text(id="text", text=value), version=state.version + 1)
 @action
-def launch(state: State, payload: Value, *, container) -> State:
-    container.resource.submit(lambda _: payload, success=arrived)
+def launch(state: State, value: str, *, container) -> State:
+    container.resource.submit(lambda _: {"value": value}, success=arrived)
     return state
 actions = Actions(arrived, launch)
 app = App(view=lambda _: State(root=Text(id="text", text="idle")), container=factory)

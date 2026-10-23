@@ -8,20 +8,13 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Literal
 
 from todo_model import (
     EMPTY_MESSAGES,
     FILTERS,
     INITIAL,
-    AddPayload,
-    ConfigPayload,
-    DraftPayload,
-    FilterPayload,
-    RemovePayload,
-    ResumePayload,
-    RoutePayload,
-    TogglePayload,
+    Filter,
     model,
     summary_for,
     visible_tasks,
@@ -67,9 +60,7 @@ def task_row(*, task_id: int, title: str, done: bool) -> Node:
             Checkbox(
                 id="done",
                 checked=done,
-                on_checked_change=toggle_task.bind(
-                    id=f"task_{task_id}", task_id=task_id
-                ),
+                on_checked_change=toggle_task.with_args(task_id=task_id),
             ),
             Text(
                 text=title,
@@ -79,7 +70,7 @@ def task_row(*, task_id: int, title: str, done: bool) -> Node:
             TextButton(
                 id="remove",
                 text="Delete",
-                on_click=remove_task.bind(id=f"task_{task_id}", task_id=task_id),
+                on_click=remove_task.with_args(task_id=task_id),
             ),
         ],
     )
@@ -125,7 +116,7 @@ def todo_app(*, tasks: list[Any], draft: str, selected: str, summary: str) -> No
                 id=value,
                 label=label,
                 selected=selected == value,
-                on_click=set_filter.bind(id=value, value=value),
+                on_click=set_filter.with_args(value=value),
             )
         )
     return Scaffold(
@@ -148,7 +139,7 @@ def todo_app(*, tasks: list[Any], draft: str, selected: str, summary: str) -> No
                             id="draft",
                             value=draft,
                             label="New task",
-                            on_value_change=set_draft.bind(id="draft"),
+                            on_value_change=set_draft,
                             modifier=Modifier().fill_max_width(0.7),
                         ),
                         Spacer(modifier=Modifier().size(8)),
@@ -156,7 +147,7 @@ def todo_app(*, tasks: list[Any], draft: str, selected: str, summary: str) -> No
                             id="add",
                             text="Add",
                             enabled=bool(draft.strip()),
-                            on_click=add_task.bind(id="add", title=draft.strip()),
+                            on_click=add_task.with_args(title=draft.strip()),
                         ),
                     ],
                 ),
@@ -203,33 +194,33 @@ def screen(
 
 
 @action
-def set_draft(state: State, payload: DraftPayload) -> State:
+def set_draft(state: State, value: str) -> State:
     """Record the input field's current text.
 
     Args:
         state: Snapshot before the keystroke.
-        payload: Event-supplied field text.
+        value: Event-supplied field text.
 
     Returns:
         The next snapshot with the draft updated.
     """
     next_model = model(state)
-    next_model["draft"] = payload["value"]
+    next_model["draft"] = value
     return screen(next_model, state.version + 1)
 
 
 @action
-def add_task(state: State, payload: AddPayload) -> State:
+def add_task(state: State, title: str) -> State:
     """Append a task from the bound title and clear the input field.
 
     Args:
         state: Snapshot before the tap.
-        payload: Title bound by the add button.
+        title: Title bound by the add button.
 
     Returns:
         The next snapshot, or the same one for an empty title.
     """
-    title = payload["title"].strip()
+    title = title.strip()
     if not title:
         return state
     next_model = model(state)
@@ -247,55 +238,56 @@ def add_task(state: State, payload: AddPayload) -> State:
 
 
 @action
-def toggle_task(state: State, payload: TogglePayload) -> State:
+def toggle_task(state: State, task_id: int, done: bool) -> State:
     """Mark one task complete or reopened from its checkbox event.
 
     Args:
         state: Snapshot before the toggle.
-        payload: Bound task id plus the checkbox's new value.
+        task_id: Task bound by the checkbox.
+        done: The checkbox's new value.
 
     Returns:
         The next snapshot with that task's completion set to the event value.
     """
     next_model = model(state)
     next_model["tasks"] = [
-        {**task, "done": payload["done"]} if task["id"] == payload["task_id"] else task
+        {**task, "done": done} if task["id"] == task_id else task
         for task in next_model["tasks"]
     ]
     return screen(next_model, state.version + 1)
 
 
 @action
-def remove_task(state: State, payload: RemovePayload) -> State:
+def remove_task(state: State, task_id: int) -> State:
     """Delete one task by its bound id.
 
     Args:
         state: Snapshot before the tap.
-        payload: Task id bound by that row's delete control.
+        task_id: Task bound by that row's delete control.
 
     Returns:
         The next snapshot without the task.
     """
     next_model = model(state)
     next_model["tasks"] = [
-        task for task in next_model["tasks"] if task["id"] != payload["task_id"]
+        task for task in next_model["tasks"] if task["id"] != task_id
     ]
     return screen(next_model, state.version + 1)
 
 
 @action
-def set_filter(state: State, payload: FilterPayload) -> State:
+def set_filter(state: State, value: Filter) -> State:
     """Switch the list filter.
 
     Args:
         state: Snapshot before the chip tap.
-        payload: Filter name bound by the chip.
+        value: Filter name bound by the chip.
 
     Returns:
         The next snapshot showing the selected filter.
     """
     next_model = model(state)
-    next_model["filter"] = payload["value"]
+    next_model["filter"] = value
     return screen(next_model, state.version + 1)
 
 
@@ -383,7 +375,7 @@ def _usable_tasks(tasks: object) -> list[dict[str, Any]]:
 
 
 @action
-def on_route_changed(state: State, payload: RoutePayload) -> State:  # noqa: ARG001
+def on_route_changed(state: State, route: str) -> State:  # noqa: ARG001
     """Accept a route change from the host.
 
     The host echoes every route change back as an ordinary action rather than
@@ -393,7 +385,7 @@ def on_route_changed(state: State, payload: RoutePayload) -> State:  # noqa: ARG
 
     Args:
         state: Snapshot before the route change.
-        payload: The destination the host is now showing.
+        route: The destination the host is now showing.
 
     Returns:
         The same screen, redrawn for the new route.
@@ -402,12 +394,11 @@ def on_route_changed(state: State, payload: RoutePayload) -> State:  # noqa: ARG
 
 
 @action
-def on_resume(state: State, payload: ResumePayload) -> State:  # noqa: ARG001
+def on_resume(state: State) -> State:
     """Show the device's own configuration on return, proving it arrived.
 
     Args:
         state: Snapshot before the app came back to the foreground.
-        payload: Empty payload; the host sends nothing extra.
 
     Returns:
         The next snapshot with the configuration line filled in.
@@ -416,20 +407,29 @@ def on_resume(state: State, payload: ResumePayload) -> State:  # noqa: ARG001
 
 
 @action
-def on_config_changed(state: State, payload: ConfigPayload) -> State:
+def on_config_changed(
+    state: State,
+    orientation: Literal["portrait", "landscape"],
+    dark_mode: bool,
+    locale: str,
+    density: float,
+) -> State:
     """React to configuration facts only Python cannot observe itself.
 
     Args:
         state: Snapshot before the configuration changed.
-        payload: Orientation, dark mode, locale and density from the host.
+        orientation: The device's orientation.
+        dark_mode: Whether the device is in dark mode.
+        locale: The device's locale.
+        density: The display density.
 
     Returns:
         The next snapshot describing the current configuration.
     """
     return replace_root(
         state,
-        f"{payload['orientation']}, {'dark' if payload['dark_mode'] else 'light'}, "
-        f"{payload['locale']} @ {payload['density']:g}x",
+        f"{orientation}, {'dark' if dark_mode else 'light'}, "
+        f"{locale} @ {density:g}x",
     )
 
 

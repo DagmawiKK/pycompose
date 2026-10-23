@@ -209,7 +209,7 @@ class BridgeSurface:
                     else self._actions.dispatch(
                         action.action_id,
                         current,
-                        action.payload,
+                        self._host_fields(action.action_id, action.payload),
                     )
                 )
             if _unchanged(next_state, current) and not echoed:
@@ -255,6 +255,23 @@ class BridgeSurface:
             self._publish_state(state)
         except Exception as exc:
             self._report("Echo unavailable", exc)
+
+    def _host_fields(
+        self, action_id: str, payload: Mapping[str, object]
+    ) -> Mapping[str, object]:
+        """Pass a host event's handler only the fields it declares.
+
+        Args:
+            action_id: The event's id.
+            payload: Its fields, already checked against the host contract.
+
+        Returns:
+            The fields the handler reads, for a host-declared event; the
+            payload unchanged for an app handler addressed by name.
+        """
+        if action_id in REGISTRY.lifecycle or action_id in REGISTRY.actions:
+            return self._actions.declared(action_id, payload)
+        return payload
 
     def expose_latest_snapshot(self) -> str | None:
         """Return the latest canonical snapshot without consuming it.

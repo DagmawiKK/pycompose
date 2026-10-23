@@ -82,8 +82,6 @@ An app is one `App` in the entry module. Here is a counter, in full:
 ```python
 """A counter: state, one action, one view."""
 
-from typing import TypedDict
-
 from m3 import Button, Column, Modifier, Text
 from pycompose import Registry
 from pycompose.core import Node
@@ -96,15 +94,11 @@ class Session(AppState):
     count: int = 0
 
 
-class Tapped(TypedDict):
-    """The tap carries no event fields; the command is the whole message."""
-
-
 actions = Registry()
 
 
 @actions
-def increment(session: Session, payload: Tapped) -> Session:
+def increment(session: Session) -> Session:
     """Add one to the count."""
     return session.evolve(count=session.count + 1)
 
@@ -112,15 +106,10 @@ def increment(session: Session, payload: Tapped) -> Session:
 def view(session: Session) -> Node:
     """Draw the count and the button that moves it."""
     return Column(
-        id="root",
         modifier=Modifier().padding(24),
         children=[
-            Text(id="count", text=f"Tapped {session.count} times"),
-            Button(
-                id="tap",
-                text="Tap me",
-                on_click=actions.increment.bind(id="tap"),
-            ),
+            Text(text=f"Tapped {session.count} times"),
+            Button(text="Tap me", on_click=increment),
         ],
     )
 
@@ -145,29 +134,28 @@ appearance. Subclasses are frozen dataclasses; their codec is derived from the
 annotations, and unreadable or foreign saved bytes fall back to the seed, so a
 corrupt save starts clean instead of crashing.
 
-**Actions** — a `Registry` turns a decorated function into both the definition
-and the thing a screen binds to. The first parameter is the shell, the second a
-`TypedDict` payload whose fields become the wire contract:
+**Actions** — a handler is a plain function, and its signature is its whole
+contract. The first parameter is the shell; each further parameter is a field a
+control binds or an event supplies, typed by its annotation and optional when
+it has a default. A control takes the handler itself, or binds some fields now
+with `with_args`:
 
 ```python
-class NoteId(TypedDict):
-    note_id: int
-
-
 @actions
-def open_note(session: Session, payload: NoteId) -> Session:
+def open_note(session: Session, note_id: int) -> Session:
     ...
 
 
-Button(
-    id="open",
-    text="Open",
-    on_click=actions.open_note.bind(id="open", note_id=7),
-)
+Button(text="Open", on_click=open_note.with_args(note_id=7))
 ```
 
-Extra keyword-only parameters are resolved from the app's container by name. The
+Keyword-only parameters are resolved from the app's container by name. The
 runtime discovers the registry by the module-level name `actions` (lowercase).
+
+**Identity** — a node needs no `id`. One declared without one is keyed by the
+line of code that declares it, so a conditional before it never shifts its
+identity. Only things declared in a loop that carry an action, and composables
+called in a loop, need an `id` to survive a reorder.
 
 **Effects** — a handler returns the next shell, or `respond(shell, *effects)` to
 ask the host for something one-shot: `navigate`, `finish`, `haptic`, `toast`,

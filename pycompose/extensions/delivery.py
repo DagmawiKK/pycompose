@@ -36,7 +36,7 @@ def _unique(pairs: list[tuple[str, object]]) -> dict[str, object]:
     return result
 
 
-def _payload(values: object, target: AppAction[Any, Any]) -> dict[str, object]:
+def _payload(values: object, target: AppAction[Any]) -> dict[str, object]:
     if not isinstance(values, Mapping):
         raise StateError("extension action result must be a mapping")
     payload = {to_camel_case(key): value for key, value in values.items()}
@@ -62,8 +62,8 @@ class Ticket:
         self,
         dispatcher: Dispatcher,
         settle: Callable[[], None],
-        success: AppAction[Any, Any] | None,
-        failure: AppAction[Any, Any] | None,
+        success: AppAction[Any] | None,
+        failure: AppAction[Any] | None,
         encode: Callable[[Any], Mapping[str, object]] | None,
         error: Callable[[Exception], Mapping[str, object]] | None,
     ) -> None:

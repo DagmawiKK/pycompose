@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any
 
 import pytest
 
@@ -20,10 +20,6 @@ from pycompose.errors import IrValidationError
 from pycompose.m3 import Text
 
 APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"
-
-
-class Nothing(TypedDict):
-    pass
 
 
 @pytest.fixture(autouse=True)
@@ -131,30 +127,19 @@ def test_a_composable_needs_no_context_when_none_is_installed() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_the_notes_screens_no_longer_take_a_registry_argument() -> None:
-    """Callers omit it; the context supplies it."""
-    sys.path.insert(0, str(APP))
-    try:
-        from notes_app.views import list_screen
-    finally:
-        sys.path.remove(str(APP))
-
-    import inspect
-
-    assert "actions" in inspect.signature(list_screen).parameters
-
-
-def test_the_notes_screen_takes_no_registry() -> None:
-    """It used to exist only to thread one down."""
+def test_the_notes_screens_take_no_registry() -> None:
+    """Controls bind the handlers themselves, so nothing threads a registry."""
     sys.path.insert(0, str(APP))
     try:
         from notes_app.view_model import screen
+        from notes_app.views import editor_screen, list_screen
     finally:
         sys.path.remove(str(APP))
 
     import inspect
 
-    assert "actions" not in inspect.signature(screen).parameters
+    for function in (screen, list_screen, editor_screen):
+        assert "actions" not in inspect.signature(function).parameters
 
 
 def test_only_actions_that_reach_storage_still_declare_a_dependency() -> None:

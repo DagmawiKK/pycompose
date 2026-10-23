@@ -59,17 +59,14 @@ select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "ARG", "RUF", "PIE", 
 ignore = ["PLR0913", "PLR2004"]
 
 [tool.ruff.lint.per-file-ignores]
-# Every action takes a payload TypedDict, even one whose command carries no event
-# fields at all. Those leave `payload` unread, which the contract makes
-# unavoidable rather than accidental.
-"examples/**/actions.py" = ["ARG001"]
-"examples/extensions/app/main.py" = ["ARG001"]
 # Handlers here exist to be introspected, not run. An unused parameter is the
 # point: it is what proves the signature is parsed and nothing else is.
 "tests/test_auto_ids.py" = ["ARG001"]
 "tests/test_container_injection.py" = ["ARG001"]
 # Same reason: these actions exist to be counted and named, not dispatched.
 "tests/test_registry.py" = ["ARG001"]
+# Optional fields exist to prove their contracts; the handler reads only one.
+"tests/test_action_payload_validation.py" = ["ARG001"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["pycompose"]

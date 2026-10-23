@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pycompose.components.base import Component
+from pycompose.components.base import ActionTarget, Component, PropValue
 from pycompose.components.modifiers import Modifier
 from pycompose.composition import Content, content_nodes, slot_nodes
 from pycompose.core.node import Node
@@ -236,7 +236,7 @@ class AlertDialog(Component):
         container_color: JsonValue | None = None,
         icon_content_color: JsonValue | None = None,
         modifier: Modifier | None = None,
-        on_dismiss_request: str,
+        on_dismiss_request: ActionTarget,
         shape: JsonValue | None = None,
         text_content_color: JsonValue | None = None,
         title_content_color: JsonValue | None = None,
@@ -265,7 +265,7 @@ class AlertDialog(Component):
             text: Nodes for the native text slot.
             title: Nodes for the native title slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if icon_content_color is not None:
@@ -323,7 +323,7 @@ class AnimatedContent(Component):
             target: Required native target.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["target"] = target
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
@@ -351,7 +351,7 @@ class AnimatedVisibility(Component):
             visible: Required native visible.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["visible"] = visible
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
@@ -371,7 +371,7 @@ class AssistChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         label: Content | None = None,
         leading_icon: Content | None = None,
@@ -391,7 +391,7 @@ class AssistChip(Component):
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if not isinstance(elevation, _Unset):
@@ -442,7 +442,7 @@ class Badge(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content is not None:
@@ -482,7 +482,7 @@ class BadgedBox(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -509,7 +509,7 @@ class BasicAlertDialog(Component):
         *,
         id: str | None = None,
         modifier: Modifier | None = None,
-        on_dismiss_request: str,
+        on_dismiss_request: ActionTarget,
         children: Content = (),
     ) -> None:
         """Construct a registered BasicAlertDialog.
@@ -520,7 +520,7 @@ class BasicAlertDialog(Component):
             on_dismiss_request: Required native onDismissRequest.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["on_dismiss_request"] = on_dismiss_request
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
@@ -546,7 +546,7 @@ class BottomAppBar(Component):
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
@@ -573,7 +573,7 @@ class Box(Component):
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if content_alignment is not None:
             props["content_alignment"] = content_alignment
         normalized = content_nodes(children, key="children")
@@ -594,10 +594,10 @@ class Button(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         text: str,
     ) -> None:
         """Construct a registered Button.
@@ -614,7 +614,7 @@ class Button(Component):
             on_press: Native onPress; None uses its default.
             text: Required native text.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if not isinstance(elevation, _Unset):
@@ -647,10 +647,10 @@ class Card(Component):
         elevation: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -675,7 +675,7 @@ class Card(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -734,7 +734,7 @@ class CenterAlignedTopAppBar(Component):
             navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if expanded_height is not None:
@@ -768,10 +768,10 @@ class Checkbox(Component):
         checked: bool,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
     ) -> None:
         """Construct a registered Checkbox.
 
@@ -785,7 +785,7 @@ class Checkbox(Component):
             on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if enabled is not None:
             props["enabled"] = enabled
@@ -826,7 +826,7 @@ class CircularProgressIndicator(Component):
             stroke_width: Native strokeWidth; None uses its default.
             track_color: Native trackColor; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
         if stroke_cap is not None:
@@ -851,7 +851,7 @@ class Column(Component):
         horizontal_alignment: _ColumnHorizontalAlignment | None = None,
         modifier: Modifier | None = None,
         offset: int | float | None = None,
-        on_scroll_idle: str | None = None,
+        on_scroll_idle: ActionTarget | None = None,
         scrollable: bool | None = None,
         children: Content = (),
     ) -> None:
@@ -866,7 +866,7 @@ class Column(Component):
             scrollable: Native scrollable; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if horizontal_alignment is not None:
             props["horizontal_alignment"] = horizontal_alignment
         if offset is not None:
@@ -901,7 +901,7 @@ class Crossfade(Component):
             target: Required native target.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["target"] = target
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
@@ -943,7 +943,7 @@ class DismissibleDrawerSheet(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
             props["drawer_container_color"] = drawer_container_color
         if drawer_shape is not None:
@@ -975,7 +975,7 @@ class DismissibleNavigationDrawer(Component):
         id: str | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_open_change: str | None = None,
+        on_open_change: ActionTarget | None = None,
         open: bool | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -996,7 +996,7 @@ class DismissibleNavigationDrawer(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if gestures_enabled is not None:
             props["gestures_enabled"] = gestures_enabled
         if on_open_change is not None:
@@ -1030,7 +1030,7 @@ class DockedSearchBar(Component):
         id: str | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
-        on_expanded_change: str,
+        on_expanded_change: ActionTarget,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | None = None,
@@ -1055,7 +1055,7 @@ class DockedSearchBar(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["expanded"] = expanded
         props["on_expanded_change"] = on_expanded_change
         if shadow_elevation is not None:
@@ -1093,7 +1093,7 @@ class DropdownMenu(Component):
         container_color: JsonValue | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
-        on_dismiss_request: str,
+        on_dismiss_request: ActionTarget,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | None = None,
@@ -1118,7 +1118,7 @@ class DropdownMenu(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if container_color is not None:
@@ -1155,7 +1155,7 @@ class DropdownMenuItem(Component):
         content_padding: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         leading_icon: Content | None = None,
         text: Content | None = None,
         trailing_icon: Content | None = None,
@@ -1173,7 +1173,7 @@ class DropdownMenuItem(Component):
             text: Nodes for the native text slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if content_padding is not None:
@@ -1210,7 +1210,7 @@ class ElevatedAssistChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         label: Content | None = None,
         leading_icon: Content | None = None,
@@ -1231,7 +1231,7 @@ class ElevatedAssistChip(Component):
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -1273,7 +1273,7 @@ class ElevatedButton(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1296,7 +1296,7 @@ class ElevatedButton(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -1334,7 +1334,7 @@ class ElevatedCard(Component):
         elevation: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1355,7 +1355,7 @@ class ElevatedCard(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if elevation is not None:
@@ -1390,7 +1390,7 @@ class ElevatedFilterChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         selected: bool,
         shape: JsonValue | None = None,
         label: Content | None = None,
@@ -1413,7 +1413,7 @@ class ElevatedFilterChip(Component):
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -1456,7 +1456,7 @@ class ElevatedSuggestionChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         icon: Content | None = None,
         label: Content | None = None,
@@ -1475,7 +1475,7 @@ class ElevatedSuggestionChip(Component):
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -1529,7 +1529,7 @@ class ExpandedDockedSearchBar(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if shadow_elevation is not None:
             props["shadow_elevation"] = shadow_elevation
         if shape is not None:
@@ -1585,7 +1585,7 @@ class ExpandedFullScreenSearchBar(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if collapsed_shape is not None:
             props["collapsed_shape"] = collapsed_shape
         if shadow_elevation is not None:
@@ -1621,7 +1621,7 @@ class ExtendedFloatingActionButton(Component):
         container_color: JsonValue | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1641,7 +1641,7 @@ class ExtendedFloatingActionButton(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if elevation is not None:
@@ -1672,7 +1672,7 @@ class FilledIconButton(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -1687,7 +1687,7 @@ class FilledIconButton(Component):
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -1714,7 +1714,7 @@ class FilledIconToggleButton(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
+        on_checked_change: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -1730,7 +1730,7 @@ class FilledIconToggleButton(Component):
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
@@ -1759,7 +1759,7 @@ class FilledTonalButton(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1782,7 +1782,7 @@ class FilledTonalButton(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -1820,7 +1820,7 @@ class FilledTonalIconButton(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -1835,7 +1835,7 @@ class FilledTonalIconButton(Component):
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -1862,7 +1862,7 @@ class FilledTonalIconToggleButton(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
+        on_checked_change: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -1878,7 +1878,7 @@ class FilledTonalIconToggleButton(Component):
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
@@ -1904,10 +1904,10 @@ class FilterChip(Component):
         enabled: bool | None = None,
         label: str,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         leading_icon: Content | None = None,
         trailing_icon: Content | None = None,
@@ -1927,7 +1927,7 @@ class FilterChip(Component):
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["label"] = label
@@ -1964,10 +1964,10 @@ class FloatingActionButton(Component):
         container_color: JsonValue | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1990,7 +1990,7 @@ class FloatingActionButton(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if elevation is not None:
@@ -2040,7 +2040,7 @@ class FlowColumn(Component):
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if item_horizontal_alignment is not None:
             props["item_horizontal_alignment"] = item_horizontal_alignment
         if max_items_in_each_column is not None:
@@ -2074,7 +2074,7 @@ class FlowRow(Component):
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if item_vertical_alignment is not None:
             props["item_vertical_alignment"] = item_vertical_alignment
         if max_items_in_each_row is not None:
@@ -2105,7 +2105,7 @@ class HorizontalDivider(Component):
             modifier: Native modifier; None uses its default.
             thickness: Native thickness; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
         if thickness is not None:
@@ -2137,7 +2137,7 @@ class Icon(Component):
             modifier: Native modifier; None uses its default.
             tint: Native tint; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["content_description"] = content_description
         props["image_vector"] = image_vector
         if tint is not None:
@@ -2158,10 +2158,10 @@ class IconButton(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -2182,7 +2182,7 @@ class IconButton(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -2218,7 +2218,7 @@ class IconToggleButton(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
+        on_checked_change: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -2234,7 +2234,7 @@ class IconToggleButton(Component):
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
@@ -2269,7 +2269,7 @@ class Image(Component):
             modifier: Native modifier; None uses its default.
             resource: Required native resource.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if content_description is not None:
             props["content_description"] = content_description
         props["resource"] = resource
@@ -2290,7 +2290,7 @@ class InputChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         selected: bool,
         shape: JsonValue | None = None,
         avatar: Content | None = None,
@@ -2314,7 +2314,7 @@ class InputChip(Component):
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if not isinstance(elevation, _Unset):
@@ -2355,7 +2355,7 @@ class LargeFloatingActionButton(Component):
         container_color: JsonValue | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -2370,7 +2370,7 @@ class LargeFloatingActionButton(Component):
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if elevation is not None:
@@ -2414,7 +2414,7 @@ class LargeTopAppBar(Component):
             navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if collapsed_height is not None:
             props["collapsed_height"] = collapsed_height
         if colors is not None:
@@ -2449,7 +2449,7 @@ class LazyColumn(Component):
         id: str | None = None,
         first_visible_index: int | None = None,
         modifier: Modifier | None = None,
-        on_scroll_idle: str | None = None,
+        on_scroll_idle: ActionTarget | None = None,
         vertical_arrangement: _LazyColumnVerticalArrangement | None = None,
         children: Content = (),
         items: Content | None = None,
@@ -2468,7 +2468,7 @@ class LazyColumn(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if first_visible_index is not None:
             props["first_visible_index"] = first_visible_index
         if on_scroll_idle is not None:
@@ -2497,7 +2497,7 @@ class LazyRow(Component):
         id: str | None = None,
         first_visible_index: int | None = None,
         modifier: Modifier | None = None,
-        on_scroll_idle: str | None = None,
+        on_scroll_idle: ActionTarget | None = None,
         children: Content = (),
         items: Content | None = None,
     ) -> None:
@@ -2514,7 +2514,7 @@ class LazyRow(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if first_visible_index is not None:
             props["first_visible_index"] = first_visible_index
         if on_scroll_idle is not None:
@@ -2541,7 +2541,7 @@ class LeadingIconTab(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         selected: bool,
         selected_content_color: JsonValue | None = None,
         icon: Content | None = None,
@@ -2560,7 +2560,7 @@ class LeadingIconTab(Component):
             icon: Nodes for the native icon slot.
             text: Nodes for the native text slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
@@ -2600,7 +2600,7 @@ class LinearProgressIndicator(Component):
             progress: Required native progress.
             track_color: Native trackColor; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
         props["progress"] = progress
@@ -2641,7 +2641,7 @@ class ListItem(Component):
             supporting_content: Nodes for the native supportingContent slot.
             trailing_content: Nodes for the native trailingContent slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if shadow_elevation is not None:
             props["shadow_elevation"] = shadow_elevation
         if tonal_elevation is not None:
@@ -2712,7 +2712,7 @@ class MediumTopAppBar(Component):
             navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if collapsed_height is not None:
             props["collapsed_height"] = collapsed_height
         if colors is not None:
@@ -2746,8 +2746,8 @@ class ModalBottomSheet(Component):
         *,
         id: str | None = None,
         modifier: Modifier | None = None,
-        on_open_change: str | None = None,
-        on_value_change: str | None = None,
+        on_open_change: ActionTarget | None = None,
+        on_value_change: ActionTarget | None = None,
         open: bool | None = None,
         skip_partially_expanded: bool | None = None,
         value: _ModalBottomSheetValue | None = None,
@@ -2773,7 +2773,7 @@ class ModalBottomSheet(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if on_open_change is not None:
             props["on_open_change"] = on_open_change
         if on_value_change is not None:
@@ -2834,7 +2834,7 @@ class ModalDrawerSheet(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
             props["drawer_container_color"] = drawer_container_color
         if drawer_shape is not None:
@@ -2866,7 +2866,7 @@ class ModalNavigationDrawer(Component):
         id: str | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_open_change: str | None = None,
+        on_open_change: ActionTarget | None = None,
         open: bool | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -2887,7 +2887,7 @@ class ModalNavigationDrawer(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if gestures_enabled is not None:
             props["gestures_enabled"] = gestures_enabled
         if on_open_change is not None:
@@ -2930,7 +2930,7 @@ class ModalWideNavigationRail(Component):
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
@@ -2950,7 +2950,7 @@ class MultiChoiceSegmentedButton(Component):
         content_padding: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
+        on_checked_change: ActionTarget,
         shape: JsonValue,
         label: Content | None = None,
     ) -> None:
@@ -2967,7 +2967,7 @@ class MultiChoiceSegmentedButton(Component):
             shape: Required native shape.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
@@ -3011,7 +3011,7 @@ class MultiChoiceSegmentedButtonRow(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if space is not None:
             props["space"] = space
         if content is not None:
@@ -3055,7 +3055,7 @@ class NavigationBar(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if tonal_elevation is not None:
@@ -3086,10 +3086,10 @@ class NavigationBarItem(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         icon: Content | None = None,
         label: Content | None = None,
@@ -3110,7 +3110,7 @@ class NavigationBarItem(Component):
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if always_show_label is not None:
             props["always_show_label"] = always_show_label
         if colors is not None:
@@ -3144,7 +3144,7 @@ class NavigationDrawerItem(Component):
         *,
         id: str | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         selected: bool,
         badge: Content | None = None,
         icon: Content | None = None,
@@ -3161,7 +3161,7 @@ class NavigationDrawerItem(Component):
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["on_click"] = on_click
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
@@ -3205,7 +3205,7 @@ class NavigationRail(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if window_insets is not None:
@@ -3238,7 +3238,7 @@ class NavigationRailItem(Component):
         always_show_label: bool | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         selected: bool,
         icon: Content | None = None,
         label: Content | None = None,
@@ -3255,7 +3255,7 @@ class NavigationRailItem(Component):
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if always_show_label is not None:
             props["always_show_label"] = always_show_label
         if enabled is not None:
@@ -3282,7 +3282,7 @@ class NavigationSuiteItem(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         selected: bool,
         badge: Content | None = None,
         icon: Content | None = None,
@@ -3300,7 +3300,7 @@ class NavigationSuiteItem(Component):
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
@@ -3338,7 +3338,7 @@ class NavigationSuiteScaffold(Component):
             children: Ordered child nodes with stable keys.
             navigation_items: Nodes for the native navigationItems slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         normalized = content_nodes(children, key="children")
         slotted: tuple[Node, ...] = ()
         if navigation_items is not None:
@@ -3367,7 +3367,7 @@ class OutlinedButton(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -3389,7 +3389,7 @@ class OutlinedButton(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if content_padding is not None:
@@ -3425,7 +3425,7 @@ class OutlinedCard(Component):
         elevation: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -3446,7 +3446,7 @@ class OutlinedCard(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if elevation is not None:
@@ -3479,7 +3479,7 @@ class OutlinedIconButton(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -3494,7 +3494,7 @@ class OutlinedIconButton(Component):
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -3521,7 +3521,7 @@ class OutlinedIconToggleButton(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
+        on_checked_change: ActionTarget,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -3537,7 +3537,7 @@ class OutlinedIconToggleButton(Component):
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
@@ -3565,7 +3565,7 @@ class OutlinedTextField(Component):
         is_error: bool | None = None,
         min_lines: int | None = None,
         modifier: Modifier | None = None,
-        on_value_change: str,
+        on_value_change: ActionTarget,
         read_only: bool | None = None,
         shape: JsonValue | None = None,
         single_line: bool | None = None,
@@ -3602,7 +3602,7 @@ class OutlinedTextField(Component):
             supporting_text: Nodes for the native supportingText slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -3682,7 +3682,7 @@ class PermanentDrawerSheet(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
             props["drawer_container_color"] = drawer_container_color
         if drawer_shape is not None:
@@ -3724,7 +3724,7 @@ class PermanentNavigationDrawer(Component):
             children: Ordered child nodes with stable keys.
             drawer_content: Nodes for the native drawerContent slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         normalized = content_nodes(children, key="children")
         slotted: tuple[Node, ...] = ()
         if drawer_content is not None:
@@ -3771,7 +3771,7 @@ class PlainTooltip(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -3821,7 +3821,7 @@ class PrimaryScrollableTabRow(Component):
             selected_tab_index: Required native selectedTabIndex.
             tabs: Nodes for the native tabs slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -3863,7 +3863,7 @@ class PrimaryTabRow(Component):
             selected_tab_index: Required native selectedTabIndex.
             tabs: Nodes for the native tabs slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -3888,7 +3888,7 @@ class PullToRefreshBox(Component):
         content_alignment: _PullToRefreshBoxContentAlignment | None = None,
         is_refreshing: bool,
         modifier: Modifier | None = None,
-        on_refresh: str,
+        on_refresh: ActionTarget,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -3906,7 +3906,7 @@ class PullToRefreshBox(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if content_alignment is not None:
             props["content_alignment"] = content_alignment
         props["is_refreshing"] = is_refreshing
@@ -3934,10 +3934,10 @@ class RadioButton(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
     ) -> None:
         """Construct a registered RadioButton.
@@ -3953,7 +3953,7 @@ class RadioButton(Component):
             on_press: Native onPress; None uses its default.
             selected: Required native selected.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -4010,7 +4010,7 @@ class RichTooltip(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if action_content_color is not None:
             props["action_content_color"] = action_content_color
         if container_color is not None:
@@ -4062,7 +4062,7 @@ class Row(Component):
             vertical_alignment: Native verticalAlignment; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if vertical_alignment is not None:
             props["vertical_alignment"] = vertical_alignment
         normalized = content_nodes(children, key="children")
@@ -4104,7 +4104,7 @@ class Scaffold(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content is not None:
@@ -4148,7 +4148,7 @@ class SearchBar(Component):
         id: str | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
-        on_expanded_change: str,
+        on_expanded_change: ActionTarget,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | None = None,
@@ -4175,7 +4175,7 @@ class SearchBar(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["expanded"] = expanded
         props["on_expanded_change"] = on_expanded_change
         if shadow_elevation is not None:
@@ -4214,9 +4214,9 @@ class SearchBarInputField(Component):
         enabled: bool | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
-        on_expanded_change: str,
-        on_query_change: str,
-        on_search: str,
+        on_expanded_change: ActionTarget,
+        on_query_change: ActionTarget,
+        on_search: ActionTarget,
         query: str,
         leading_icon: Content | None = None,
         placeholder: Content | None = None,
@@ -4237,7 +4237,7 @@ class SearchBarInputField(Component):
             placeholder: Nodes for the native placeholder slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["expanded"] = expanded
@@ -4272,7 +4272,7 @@ class SearchBarStateInputField(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_search: str,
+        on_search: ActionTarget,
         read_only: bool | None = None,
         shape: JsonValue | None = None,
         text_style: JsonValue | None = None,
@@ -4299,7 +4299,7 @@ class SearchBarStateInputField(Component):
             suffix: Nodes for the native suffix slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -4360,7 +4360,7 @@ class SecondaryScrollableTabRow(Component):
             selected_tab_index: Required native selectedTabIndex.
             tabs: Nodes for the native tabs slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -4402,7 +4402,7 @@ class SecondaryTabRow(Component):
             selected_tab_index: Required native selectedTabIndex.
             tabs: Nodes for the native tabs slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -4428,7 +4428,7 @@ class SegmentedButton(Component):
         content_padding: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         selected: bool,
         shape: JsonValue,
         label: Content | None = None,
@@ -4446,7 +4446,7 @@ class SegmentedButton(Component):
             shape: Required native shape.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if content_padding is not None:
@@ -4488,7 +4488,7 @@ class ShortNavigationBar(Component):
             window_insets: Native windowInsets; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -4512,7 +4512,7 @@ class ShortNavigationBarItem(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         selected: bool,
         icon: Content | None = None,
         label: Content | None = None,
@@ -4528,7 +4528,7 @@ class ShortNavigationBarItem(Component):
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
@@ -4569,7 +4569,7 @@ class SingleChoiceSegmentedButtonRow(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if space is not None:
             props["space"] = space
         if content is not None:
@@ -4595,7 +4595,7 @@ class Slider(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_value_change_finished: str | None = None,
+        on_value_change_finished: ActionTarget | None = None,
         steps: int | None = None,
         value: int | float | None = None,
         value_range: JsonValue,
@@ -4613,7 +4613,7 @@ class Slider(Component):
             value: Native value; None uses its default.
             value_range: Required native valueRange.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -4665,7 +4665,7 @@ class Snackbar(Component):
             action: Nodes for the native action slot.
             dismiss_action: Nodes for the native dismissAction slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if action_content_color is not None:
             props["action_content_color"] = action_content_color
         if action_on_new_line is not None:
@@ -4706,7 +4706,7 @@ class SnackbarHost(Component):
         action_label: str | None = None,
         message: str,
         modifier: Modifier | None = None,
-        on_dismiss: str | None = None,
+        on_dismiss: ActionTarget | None = None,
         serial: int,
     ) -> None:
         """Construct a registered SnackbarHost.
@@ -4719,7 +4719,7 @@ class SnackbarHost(Component):
             on_dismiss: Native onDismiss; None uses its default.
             serial: Required native serial.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if action_label is not None:
             props["action_label"] = action_label
         props["message"] = message
@@ -4747,7 +4747,7 @@ class Spacer(Component):
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -4763,8 +4763,8 @@ class StatefulSearchBar(Component):
         id: str | None = None,
         expanded: bool | None = None,
         modifier: Modifier | None = None,
-        on_edit: str,
-        on_expanded_change: str | None = None,
+        on_edit: ActionTarget,
+        on_expanded_change: ActionTarget | None = None,
         revision: int,
         selection_end: int,
         selection_start: int,
@@ -4793,7 +4793,7 @@ class StatefulSearchBar(Component):
             expanded_bar: Nodes the host composes for the expandedBar slot.
             input_field: Nodes for the native inputField slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if expanded is not None:
             props["expanded"] = expanded
         props["on_edit"] = on_edit
@@ -4831,9 +4831,9 @@ class StatefulSearchBarInputField(Component):
         enabled: bool | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
-        on_edit: str,
-        on_expanded_change: str,
-        on_search: str,
+        on_edit: ActionTarget,
+        on_expanded_change: ActionTarget,
+        on_search: ActionTarget,
         read_only: bool | None = None,
         revision: int,
         selection_end: int,
@@ -4871,7 +4871,7 @@ class StatefulSearchBarInputField(Component):
             suffix: Nodes for the native suffix slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -4922,7 +4922,7 @@ class SuggestionChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         shape: JsonValue | None = None,
         icon: Content | None = None,
         label: Content | None = None,
@@ -4940,7 +4940,7 @@ class SuggestionChip(Component):
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if not isinstance(elevation, _Unset):
@@ -4988,7 +4988,7 @@ class Surface(Component):
             tonal_elevation: Native tonalElevation; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if color is not None:
@@ -5017,7 +5017,7 @@ class SwipeToDismissBox(Component):
         enable_dismiss_from_start_to_end: bool | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_value_change: str | None = None,
+        on_value_change: ActionTarget | None = None,
         value: _SwipeToDismissBoxValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -5042,7 +5042,7 @@ class SwipeToDismissBox(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enable_dismiss_from_end_to_start is not None:
             props["enable_dismiss_from_end_to_start"] = enable_dismiss_from_end_to_start
         if enable_dismiss_from_start_to_end is not None:
@@ -5086,10 +5086,10 @@ class Switch(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         thumb_content: Content | None = None,
     ) -> None:
         """Construct a registered Switch.
@@ -5106,7 +5106,7 @@ class Switch(Component):
             on_press: Native onPress; None uses its default.
             thumb_content: Nodes for the native thumbContent slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
@@ -5141,7 +5141,7 @@ class Tab(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         selected: bool,
         selected_content_color: JsonValue | None = None,
         icon: Content | None = None,
@@ -5160,7 +5160,7 @@ class Tab(Component):
             icon: Nodes for the native icon slot.
             text: Nodes for the native text slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
@@ -5205,7 +5205,7 @@ class Text(Component):
             style: Native style; None uses its default.
             text: Required native text.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
         if font_resource is not None:
@@ -5232,10 +5232,10 @@ class TextButton(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         text: str,
     ) -> None:
         """Construct a registered TextButton.
@@ -5250,7 +5250,7 @@ class TextButton(Component):
             on_press: Native onPress; None uses its default.
             text: Required native text.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
@@ -5277,8 +5277,8 @@ class TextField(Component):
         enabled: bool | None = None,
         label: str | None = None,
         modifier: Modifier | None = None,
-        on_selection_change: str | None = None,
-        on_value_change: str,
+        on_selection_change: ActionTarget | None = None,
+        on_value_change: ActionTarget,
         selection: int | None = None,
         value: str,
     ) -> None:
@@ -5294,7 +5294,7 @@ class TextField(Component):
             selection: Native selection; None uses its default.
             value: Required native value.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         if label is not None:
@@ -5323,7 +5323,7 @@ class TooltipBox(Component):
         has_action: bool | None = None,
         is_persistent: bool | None = None,
         modifier: Modifier | None = None,
-        on_visibility_change: str | None = None,
+        on_visibility_change: ActionTarget | None = None,
         position: _TooltipBoxPosition | None = None,
         visible: bool | None = None,
         children: Content = (),
@@ -5349,7 +5349,7 @@ class TooltipBox(Component):
         Raises:
             IrValidationError: If slot and children are both set.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enable_user_input is not None:
             props["enable_user_input"] = enable_user_input
         if focusable is not None:
@@ -5409,7 +5409,7 @@ class TopAppBar(Component):
             navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if expanded_height is not None:
@@ -5443,7 +5443,7 @@ class TriStateCheckbox(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         state: JsonValue,
     ) -> None:
         """Construct a registered TriStateCheckbox.
@@ -5456,7 +5456,7 @@ class TriStateCheckbox(Component):
             on_click: Required native onClick.
             state: Required native state.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -5488,7 +5488,7 @@ class VerticalDivider(Component):
             modifier: Native modifier; None uses its default.
             thickness: Native thickness; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
         if thickness is not None:
@@ -5514,7 +5514,7 @@ class VerticalDragHandle(Component):
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -5538,7 +5538,7 @@ class WideNavigationRail(Component):
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         normalized = content_nodes(children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
@@ -5556,7 +5556,7 @@ class WideNavigationRailItem(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
         rail_expanded: bool,
         selected: bool,
         icon: Content | None = None,
@@ -5574,7 +5574,7 @@ class WideNavigationRailItem(Component):
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click

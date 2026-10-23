@@ -4,11 +4,12 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import cast
+from typing import Any, cast
 
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.ir.validator import validate_modifier
+from pycompose.state.app_action import AppAction
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
 from pycompose.values import Dp, PaddingValues
 
@@ -172,17 +173,20 @@ class Modifier:
         """
         return self._append("windowInsetsPadding", insets=insets)
 
-    def clickable(self, on_click: str, *, enabled: bool = True) -> Modifier:
-        """Append a registered action reference, never a Python callback.
+    def clickable(
+        self, on_click: str | AppAction[Any], *, enabled: bool = True
+    ) -> Modifier:
+        """Append an action reference, never a Python callback.
 
         Args:
-            on_click: Registered action id.
+            on_click: An app action, a binding of one, or a registered action id.
             enabled: Whether clicks are enabled.
 
         Returns:
             A new modifier.
         """
-        return self._append("clickable", onClick=on_click, enabled=enabled)
+        target = on_click.binding() if isinstance(on_click, AppAction) else on_click
+        return self._append("clickable", onClick=target, enabled=enabled)
 
     def to_wire(self) -> dict[str, JsonValue]:
         """Return a detached modifier wire object.

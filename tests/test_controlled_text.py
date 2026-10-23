@@ -149,7 +149,7 @@ def test_a_field_without_the_caret_declares_no_selection(notes: Any) -> None:
     unbound = TextField(
         id="f",
         value="hi",
-        on_value_change=notes.actions.set_body.bind(id="b", note_id=1),
+        on_value_change=notes.actions.set_body.with_args(note_id=1),
     )
     assert unbound.props.get("selection") is None
     assert unbound.props.get("onSelectionChange") is None
@@ -160,8 +160,8 @@ def test_declaring_both_halves_puts_them_in_the_props(notes: Any) -> None:
         id="f",
         value="hi",
         selection=2,
-        on_value_change=notes.actions.set_body.bind(id="b", note_id=1),
-        on_selection_change=notes.actions.set_body_caret.bind(id="b", note_id=1),
+        on_value_change=notes.actions.set_body.with_args(note_id=1),
+        on_selection_change=notes.actions.set_body_caret,
     )
     assert bound.props["selection"] == 2
     assert bound.props["onSelectionChange"]
