@@ -1,0 +1,49 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onExpandedChange": {
+    "bound": {},
+    "handlerId": "preview.onExpandedChange",
+    "payload": {
+     "expanded": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   },
+   "app.preview.onQueryChange": {
+    "bound": {},
+    "handlerId": "preview.onQueryChange",
+    "payload": {
+     "query": {
+      "required": true,
+      "type": "string"
+     }
+    }
+   },
+   "app.preview.onSearch": {
+    "bound": {},
+    "handlerId": "preview.onSearch",
+    "payload": {
+     "query": {
+      "required": true,
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "root": {
+  "id": "preview",
+  "props": {
+   "expanded": true,
+   "onExpandedChange": "app.preview.onExpandedChange",
+   "onQueryChange": "app.preview.onQueryChange",
+   "onSearch": "app.preview.onSearch",
+   "query": "Preview"
+  },
+  "type": "SearchBarInputField"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

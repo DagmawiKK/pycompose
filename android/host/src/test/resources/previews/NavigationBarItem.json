@@ -1,0 +1,38 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onClick": {
+    "bound": {},
+    "handlerId": "preview.onClick",
+    "payload": {}
+   }
+  }
+ },
+ "root": {
+  "children": [
+   {
+    "children": [
+     {
+      "id": "preview.icon",
+      "props": {
+       "text": "icon"
+      },
+      "slot": "icon",
+      "type": "Text"
+     }
+    ],
+    "id": "preview",
+    "props": {
+     "onClick": "app.preview.onClick",
+     "selected": true
+    },
+    "type": "NavigationBarItem"
+   }
+  ],
+  "id": "provider",
+  "props": {},
+  "type": "Badge"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

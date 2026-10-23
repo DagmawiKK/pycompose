@@ -1,0 +1,29 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.drawer",
+    "props": {
+     "text": "drawer"
+    },
+    "slot": "drawer",
+    "type": "Text"
+   },
+   {
+    "id": "preview.child",
+    "props": {
+     "text": "ModalNavigationDrawer"
+    },
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {},
+  "type": "ModalNavigationDrawer"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

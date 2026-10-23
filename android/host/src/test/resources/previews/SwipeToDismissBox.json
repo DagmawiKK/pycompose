@@ -1,0 +1,29 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.backgroundContent",
+    "props": {
+     "text": "backgroundContent"
+    },
+    "slot": "backgroundContent",
+    "type": "Text"
+   },
+   {
+    "id": "preview.child",
+    "props": {
+     "text": "SwipeToDismissBox"
+    },
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {},
+  "type": "SwipeToDismissBox"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

@@ -1,0 +1,61 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onEdit": {
+    "bound": {},
+    "handlerId": "preview.onEdit",
+    "payload": {
+     "revision": {
+      "required": true,
+      "type": "integer"
+     },
+     "selectionEnd": {
+      "required": true,
+      "type": "integer"
+     },
+     "selectionStart": {
+      "required": true,
+      "type": "integer"
+     },
+     "text": {
+      "required": true,
+      "type": "string"
+     }
+    }
+   },
+   "app.preview.onSearch": {
+    "bound": {},
+    "handlerId": "preview.onSearch",
+    "payload": {
+     "query": {
+      "required": true,
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview",
+    "props": {
+     "onSearch": "app.preview.onSearch"
+    },
+    "slot": "inputField",
+    "type": "SearchBarStateInputField"
+   }
+  ],
+  "id": "provider",
+  "props": {
+   "onEdit": "app.preview.onEdit",
+   "revision": 0,
+   "selectionEnd": 0,
+   "selectionStart": 0,
+   "text": "Preview"
+  },
+  "type": "StatefulSearchBar"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

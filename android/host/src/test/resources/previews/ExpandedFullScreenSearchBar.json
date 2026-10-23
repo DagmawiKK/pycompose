@@ -1,0 +1,74 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onEdit": {
+    "bound": {},
+    "handlerId": "preview.onEdit",
+    "payload": {
+     "revision": {
+      "required": true,
+      "type": "integer"
+     },
+     "selectionEnd": {
+      "required": true,
+      "type": "integer"
+     },
+     "selectionStart": {
+      "required": true,
+      "type": "integer"
+     },
+     "text": {
+      "required": true,
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "root": {
+  "children": [
+   {
+    "id": "provider.inputField",
+    "props": {
+     "text": "inputField"
+    },
+    "slot": "inputField",
+    "type": "Text"
+   },
+   {
+    "children": [
+     {
+      "id": "preview.inputField",
+      "props": {
+       "text": "inputField"
+      },
+      "slot": "inputField",
+      "type": "Text"
+     },
+     {
+      "id": "preview.child",
+      "props": {
+       "text": "ExpandedFullScreenSearchBar"
+      },
+      "type": "Text"
+     }
+    ],
+    "id": "preview",
+    "props": {},
+    "slot": "expandedBar",
+    "type": "ExpandedFullScreenSearchBar"
+   }
+  ],
+  "id": "provider",
+  "props": {
+   "onEdit": "app.preview.onEdit",
+   "revision": 0,
+   "selectionEnd": 0,
+   "selectionStart": 0,
+   "text": "Preview"
+  },
+  "type": "StatefulSearchBar"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

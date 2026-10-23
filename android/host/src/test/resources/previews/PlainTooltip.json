@@ -1,0 +1,36 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "children": [
+   {
+    "id": "provider.child",
+    "props": {
+     "text": "TooltipBox"
+    },
+    "type": "Text"
+   },
+   {
+    "children": [
+     {
+      "id": "preview.child",
+      "props": {
+       "text": "PlainTooltip"
+      },
+      "type": "Text"
+     }
+    ],
+    "id": "preview",
+    "props": {},
+    "slot": "tooltip",
+    "type": "PlainTooltip"
+   }
+  ],
+  "id": "provider",
+  "props": {},
+  "type": "TooltipBox"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

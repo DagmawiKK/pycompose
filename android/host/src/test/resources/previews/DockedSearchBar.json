@@ -1,0 +1,43 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onExpandedChange": {
+    "bound": {},
+    "handlerId": "preview.onExpandedChange",
+    "payload": {
+     "expanded": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   }
+  }
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.inputField",
+    "props": {
+     "text": "inputField"
+    },
+    "slot": "inputField",
+    "type": "Text"
+   },
+   {
+    "id": "preview.child",
+    "props": {
+     "text": "DockedSearchBar"
+    },
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {
+   "expanded": true,
+   "onExpandedChange": "app.preview.onExpandedChange"
+  },
+  "type": "DockedSearchBar"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

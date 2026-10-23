@@ -1,0 +1,38 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.actions",
+    "props": {
+     "text": "actions"
+    },
+    "slot": "actions",
+    "type": "Text"
+   },
+   {
+    "id": "preview.navigationIcon",
+    "props": {
+     "text": "navigationIcon"
+    },
+    "slot": "navigationIcon",
+    "type": "Text"
+   },
+   {
+    "id": "preview.title",
+    "props": {
+     "text": "title"
+    },
+    "slot": "title",
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {},
+  "type": "MediumTopAppBar"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

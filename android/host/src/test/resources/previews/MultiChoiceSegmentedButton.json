@@ -1,0 +1,50 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onCheckedChange": {
+    "bound": {},
+    "handlerId": "preview.onCheckedChange",
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   }
+  }
+ },
+ "root": {
+  "children": [
+   {
+    "children": [
+     {
+      "id": "preview.label",
+      "props": {
+       "text": "label"
+      },
+      "slot": "label",
+      "type": "Text"
+     }
+    ],
+    "id": "preview",
+    "props": {
+     "checked": true,
+     "onCheckedChange": "app.preview.onCheckedChange",
+     "shape": {
+      "size": {
+       "type": "Dp",
+       "value": 8
+      },
+      "type": "RoundedCornerShape"
+     }
+    },
+    "type": "MultiChoiceSegmentedButton"
+   }
+  ],
+  "id": "provider",
+  "props": {},
+  "type": "MultiChoiceSegmentedButtonRow"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

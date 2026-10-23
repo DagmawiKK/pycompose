@@ -1,0 +1,30 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onRefresh": {
+    "bound": {},
+    "handlerId": "preview.onRefresh",
+    "payload": {}
+   }
+  }
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.child",
+    "props": {
+     "text": "PullToRefreshBox"
+    },
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {
+   "isRefreshing": true,
+   "onRefresh": "app.preview.onRefresh"
+  },
+  "type": "PullToRefreshBox"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

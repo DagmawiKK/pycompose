@@ -1,0 +1,29 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.badge",
+    "props": {
+     "text": "badge"
+    },
+    "slot": "badge",
+    "type": "Text"
+   },
+   {
+    "id": "preview.child",
+    "props": {
+     "text": "BadgedBox"
+    },
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {},
+  "type": "BadgedBox"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

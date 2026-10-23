@@ -1,0 +1,26 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onCheckedChange": {
+    "bound": {},
+    "handlerId": "preview.onCheckedChange",
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   }
+  }
+ },
+ "root": {
+  "id": "preview",
+  "props": {
+   "checked": true,
+   "onCheckedChange": "app.preview.onCheckedChange"
+  },
+  "type": "Switch"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

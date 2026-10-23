@@ -1,0 +1,14 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "id": "preview",
+  "props": {
+   "text": "Preview"
+  },
+  "type": "Text"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

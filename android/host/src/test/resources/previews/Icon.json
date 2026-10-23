@@ -1,0 +1,18 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "id": "preview",
+  "props": {
+   "contentDescription": "Preview",
+   "imageVector": {
+    "name": "Filled.Add",
+    "type": "materialIcon"
+   }
+  },
+  "type": "Icon"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

@@ -1,0 +1,35 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onCheckedChange": {
+    "bound": {},
+    "handlerId": "preview.onCheckedChange",
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   }
+  }
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.child",
+    "props": {
+     "text": "IconToggleButton"
+    },
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {
+   "checked": true,
+   "onCheckedChange": "app.preview.onCheckedChange"
+  },
+  "type": "IconToggleButton"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

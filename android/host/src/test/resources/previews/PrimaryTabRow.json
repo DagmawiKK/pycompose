@@ -1,0 +1,24 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.tabs",
+    "props": {
+     "text": "tabs"
+    },
+    "slot": "tabs",
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {
+   "selectedTabIndex": 0
+  },
+  "type": "PrimaryTabRow"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

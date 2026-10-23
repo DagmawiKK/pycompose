@@ -1,0 +1,21 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onClick": {
+    "bound": {},
+    "handlerId": "preview.onClick",
+    "payload": {}
+   }
+  }
+ },
+ "root": {
+  "id": "preview",
+  "props": {
+   "onClick": "app.preview.onClick",
+   "selected": true
+  },
+  "type": "Tab"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

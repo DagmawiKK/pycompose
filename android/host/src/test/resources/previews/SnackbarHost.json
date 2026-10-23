@@ -1,0 +1,15 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "id": "preview",
+  "props": {
+   "message": "Preview",
+   "serial": 0
+  },
+  "type": "SnackbarHost"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

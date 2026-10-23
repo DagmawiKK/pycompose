@@ -1,0 +1,18 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "id": "preview",
+  "props": {
+   "valueRange": {
+    "end": 1.0,
+    "start": 0.0,
+    "type": "Range"
+   }
+  },
+  "type": "Slider"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}
