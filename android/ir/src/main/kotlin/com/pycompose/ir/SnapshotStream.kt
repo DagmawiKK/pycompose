@@ -13,9 +13,12 @@ import kotlinx.serialization.json.longOrNull
  * subtree stays the same object, so it is neither validated nor decoded again,
  * and the renderer sees the same node it already composed. Any failure forgets
  * the held snapshot, so the next pull asks for the whole one.
+ *
+ * @param surface The surface this stream renders; an envelope naming another is refused.
  */
 class SnapshotStream(
     private val parser: IrParser = IrParser(),
+    val surface: String = MAIN_SURFACE,
 ) {
     /** The serial of the held snapshot, or [NONE] when the next pull must be whole. */
     var serial: Long = NONE
@@ -33,10 +36,15 @@ class SnapshotStream(
     fun accept(envelope: String): Result<ValidatedIr> =
         runCatching {
             val raw = parser.read(envelope)
+            raw["surface"]?.let {
+                require(
+                    WireValidator.string(it, "surface") == surface,
+                ) { "Envelope for another surface" }
+            }
             val snapshot =
                 when (raw["kind"]?.let { WireValidator.string(it, "kind") }) {
                     null -> raw
-                    "full" -> JsonObject(raw - "kind" - "serial")
+                    "full" -> JsonObject(raw - "kind" - "serial" - "surface")
                     "patch" -> patched(raw)
                     else -> error("Unknown envelope kind")
                 }
@@ -147,5 +155,8 @@ class SnapshotStream(
     companion object {
         /** No snapshot held: the next pull must be whole. */
         const val NONE = -1L
+
+        /** The one surface a session hosts until it hosts several. */
+        const val MAIN_SURFACE = "main"
     }
 }

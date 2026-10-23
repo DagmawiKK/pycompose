@@ -74,6 +74,19 @@ class SnapshotStreamTest {
     }
 
     @Test
+    fun `an envelope for another surface is refused`() {
+        val stream = SnapshotStream()
+        val dialog =
+            full(
+                "0",
+                serial = 1,
+            ).replace("\"serial\":1", "\"serial\":1,\"surface\":\"dialog\"")
+
+        assertTrue(stream.accept(dialog).isFailure)
+        assertTrue(stream.accept(dialog.replace("dialog", "main")).isSuccess)
+    }
+
+    @Test
     fun `a bare snapshot is whole and holds no serial`() {
         val stream = SnapshotStream()
         assertTrue(stream.accept(bare("0")).isSuccess)

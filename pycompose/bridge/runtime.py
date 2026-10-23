@@ -143,17 +143,18 @@ class RuntimeSession:
         self._require_worker()
         return self._surface.expose_latest_snapshot() or ""
 
-    def envelope(self, base_serial: int) -> str:
+    def envelope(self, surface: str, base_serial: int) -> str:
         """Return the latest snapshot as a patch against the host's base, or whole.
 
         Args:
+            surface: The surface being pulled.
             base_serial: The serial of the snapshot the host holds; -1 for none.
 
         Returns:
             The envelope JSON, or empty before any valid snapshot.
         """
         self._require_worker()
-        return self._surface.expose_envelope(base_serial)
+        return self._surface.expose_envelope(base_serial, surface)
 
     def error(self) -> str:
         """Return a debug diagnostic without leaking Python exceptions or objects.
@@ -322,16 +323,17 @@ def fetch_latest_snapshot() -> str:
     return _session.snapshot() if _session is not None else ""
 
 
-def fetch_latest(base_serial: int) -> str:
+def fetch_latest(surface: str, base_serial: int) -> str:
     """Pull the latest snapshot as a patch against the host's base, or whole.
 
     Args:
+        surface: The surface being pulled.
         base_serial: The serial of the snapshot the host holds; -1 for none.
 
     Returns:
         The envelope JSON, or an empty string before initialization.
     """
-    return _session.envelope(base_serial) if _session is not None else ""
+    return _session.envelope(surface, base_serial) if _session is not None else ""
 
 
 def fetch_latest_error() -> str:

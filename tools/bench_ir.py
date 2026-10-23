@@ -92,7 +92,7 @@ def patch_pipeline(state: State, base: IRRoot) -> bytes:
     result = validate_ir(emit_ir(state, "1.0.0"), debug=False)
     assert result.snapshot is not None
     ops = diff_nodes(base.root, result.snapshot.root)
-    return patch_bytes(result.snapshot, ops, base_serial=1, serial=2)
+    return patch_bytes(result.snapshot, ops, base_serial=1, serial=2, surface="main")
 
 
 def reuse_pipeline(states: tuple[State, State], reuse: Reuse, turn: list[int]) -> bytes:
@@ -176,7 +176,9 @@ def operations(size: int, shape: str) -> dict[str, Callable[[], object]]:
         "validate": lambda: validate_ir(candidate, debug=False),
         "bytes": lambda: to_json_bytes(safe),
         "diff": lambda: diff_nodes(safe.root, edited.snapshot.root),
-        "patch": lambda: patch_bytes(edited.snapshot, ops, base_serial=1, serial=2),
+        "patch": lambda: patch_bytes(
+            edited.snapshot, ops, base_serial=1, serial=2, surface="main"
+        ),
         "patch_pipeline": lambda: patch_pipeline(edited_state, safe),
         "reuse_pipeline": lambda: reuse_pipeline((state, edited_state), reuse, turn),
     }

@@ -463,7 +463,10 @@ class PyComposeViewModelTest {
                 .replace("{\"root\"", "{\"metadata\":$metadata,\"root\"")
         }
 
-        override fun fetchLatest(baseSerial: Long): String {
+        override fun fetchLatest(
+            surface: String,
+            baseSerial: Long,
+        ): String {
             val snapshot = fetchLatestSnapshot()
             val published = serial ?: return snapshot
             return snapshot.replaceFirst("{", "{\"kind\":\"full\",\"serial\":$published,")

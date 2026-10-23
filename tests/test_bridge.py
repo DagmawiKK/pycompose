@@ -424,3 +424,23 @@ def test_a_malformed_sequence_number_is_refused(seq: str) -> None:
     bridge.accept_action(f'{{"actionId":"increment","payload":{{"by":2}},"seq":{seq}}}')
 
     assert "seq" in bridge.expose_latest_error()
+
+
+def test_every_envelope_names_its_surface() -> None:
+    bridge = _counter_bridge()
+    first = json.loads(bridge.expose_envelope(-1))
+    bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
+    patch = json.loads(bridge.expose_envelope(first["serial"]))
+
+    assert (first["surface"], patch["surface"]) == ("main", "main")
+
+
+def test_a_pull_or_an_action_for_another_surface_is_refused() -> None:
+    bridge = _counter_bridge()
+
+    assert bridge.expose_envelope(-1, "dialog") == ""
+    bridge.accept_action(
+        '{"actionId":"increment","payload":{"by":2},"surface":"dialog"}'
+    )
+
+    assert "unknown surface" in bridge.expose_latest_error()

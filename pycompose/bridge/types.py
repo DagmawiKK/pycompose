@@ -15,7 +15,16 @@ from pycompose.ir.generated_validators import REGISTRY
 from pycompose.ir.validator import validate_prop
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
 
-__all__ = ["Action", "IncrementPayload", "SubmitPayload", "decode_action"]
+__all__ = [
+    "MAIN_SURFACE",
+    "Action",
+    "IncrementPayload",
+    "SubmitPayload",
+    "decode_action",
+]
+
+MAIN_SURFACE = "main"
+"""The one surface a session hosts until it hosts several (plan 31 §16.5)."""
 
 
 def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -119,8 +128,8 @@ def decode_action(
 
     Args:
         action_json: JSON envelope with actionId, an optional payload object, an
-            optional report sequence number and the optional serial of the
-            snapshot it was dispatched against.
+            optional report sequence number, the optional serial of the
+            snapshot it was dispatched against, and the surface it names.
         bindings: The app bindings of the snapshot a serial names, or of the
             latest snapshot for None; None when that snapshot is gone.
         handlers: Action ids the app registered, for events with no control.
@@ -137,8 +146,16 @@ def decode_action(
         raw: object = json.loads(action_json, object_pairs_hook=_unique_object)
     except (TypeError, ValueError, RecursionError) as exc:
         raise BridgeError("malformed action JSON") from exc
-    if not isinstance(raw, dict) or set(raw) - {"actionId", "payload", "seq", "serial"}:
+    if not isinstance(raw, dict) or set(raw) - {
+        "actionId",
+        "payload",
+        "seq",
+        "serial",
+        "surface",
+    }:
         raise BridgeError("invalid action envelope")
+    if raw.get("surface", MAIN_SURFACE) != MAIN_SURFACE:
+        raise BridgeError("unknown surface", surface=raw.get("surface"))
     seq = raw.get("seq")
     if seq is not None and (type(seq) is not int or seq < 1):
         raise BridgeError("seq must be a positive integer")

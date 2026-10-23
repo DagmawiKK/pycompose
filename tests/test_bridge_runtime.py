@@ -262,14 +262,14 @@ actions.register("increment",
     monkeypatch.syspath_prepend(str(tmp_path))
     try:
         session = RuntimeSession("pull_app:app", "home", debug=True)
-        first = json.loads(session.envelope(-1))
+        first = json.loads(session.envelope("main", -1))
         assert first["kind"] == "full"
         session.accept_action('{"actionId":"increment","payload":{}}')
-        patch = json.loads(session.envelope(first["serial"]))
+        patch = json.loads(session.envelope("main", first["serial"]))
         assert (patch["kind"], patch["baseSerial"]) == ("patch", first["serial"])
 
         module.write_text(source % "reloaded")
         assert session.reload("home") is True
-        assert json.loads(session.envelope(patch["serial"]))["kind"] == "full"
+        assert json.loads(session.envelope("main", patch["serial"]))["kind"] == "full"
     finally:
         sys.modules.pop("pull_app", None)

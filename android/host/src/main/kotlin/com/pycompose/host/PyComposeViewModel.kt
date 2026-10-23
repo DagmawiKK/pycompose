@@ -216,7 +216,10 @@ class PyComposeViewModel(
         var shown = false
         try {
             ActionTrace.stage("pycompose.python", operation)
-            val envelope = ActionTrace.stage("pycompose.pull") { bridge.fetchLatest(stream.serial) }
+            val envelope =
+                ActionTrace.stage("pycompose.pull") {
+                    bridge.fetchLatest(stream.surface, stream.serial)
+                }
             val result = ActionTrace.stage("pycompose.apply") { stream.accept(envelope) }
             result
                 .onSuccess { candidate ->

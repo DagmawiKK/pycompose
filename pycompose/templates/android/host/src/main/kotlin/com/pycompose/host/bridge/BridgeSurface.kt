@@ -12,12 +12,15 @@ interface BridgeSurface {
     fun fetchLatestSnapshot(): String
 
     /**
-     * The latest snapshot as a patch against [baseSerial], or whole (ADR-0018).
+     * The latest snapshot of [surface] as a patch against [baseSerial], or whole (ADR-0018).
      *
      * A bridge without a serial window answers with the bare snapshot, which the
      * host accepts as a whole one.
      */
-    fun fetchLatest(baseSerial: Long): String = fetchLatestSnapshot()
+    fun fetchLatest(
+        surface: String,
+        baseSerial: Long,
+    ): String = fetchLatestSnapshot()
 
     fun fetchLatestError(): String
 

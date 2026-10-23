@@ -7,7 +7,7 @@ import logging
 from collections.abc import Mapping
 from threading import current_thread
 
-from pycompose.bridge.types import decode_action
+from pycompose.bridge.types import MAIN_SURFACE, decode_action
 from pycompose.core.action_binding import BindingSpec
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.core.ids import Handles
@@ -269,7 +269,7 @@ class BridgeSurface:
             return None
         return self._latest
 
-    def expose_envelope(self, base_serial: int) -> str:
+    def expose_envelope(self, base_serial: int, surface: str = MAIN_SURFACE) -> str:
         """Return the latest snapshot as a patch against the host's base, or whole.
 
         A base still in the window gets the ops that turn it into the latest
@@ -278,6 +278,7 @@ class BridgeSurface:
 
         Args:
             base_serial: The serial of the snapshot the host holds; -1 for none.
+            surface: The surface being pulled; a session hosts only the main one.
 
         Returns:
             The envelope as canonical JSON, or empty before any valid snapshot.
@@ -286,6 +287,10 @@ class BridgeSurface:
             self._require_worker()
         except BridgeError as exc:
             self._report("Snapshot unavailable: worker contract violation", exc)
+            return ""
+        if surface != MAIN_SURFACE:
+            unknown = BridgeError("unknown surface", surface=surface)
+            self._report("Snapshot unavailable", unknown)
             return ""
         if not self._published:
             return ""
@@ -298,10 +303,16 @@ class BridgeSurface:
             )
             if len(ops) <= MAX_PATCH_OPS and not whole:
                 envelope = patch_bytes(
-                    latest, ops, base_serial=base_serial, serial=serial, base=base
+                    latest,
+                    ops,
+                    base_serial=base_serial,
+                    serial=serial,
+                    surface=surface,
+                    base=base,
                 )
                 return envelope.decode("utf-8")
-        return full_bytes(latest, serial=serial, reuse=self._reuse).decode("utf-8")
+        full = full_bytes(latest, serial=serial, surface=surface, reuse=self._reuse)
+        return full.decode("utf-8")
 
     def expose_latest_error(self) -> str:
         """Return the latest worker diagnostic as plain data.

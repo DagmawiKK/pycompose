@@ -147,7 +147,9 @@ def _compatible(old: Node, new: Node) -> bool:
     )
 
 
-def full_bytes(root: IRRoot, *, serial: int, reuse: Reuse | None = None) -> bytes:
+def full_bytes(
+    root: IRRoot, *, serial: int, surface: str, reuse: Reuse | None = None
+) -> bytes:
     """Serialize the pull result carrying the whole snapshot.
 
     The result is the snapshot's own envelope plus ``kind`` and ``serial``, so
@@ -156,6 +158,7 @@ def full_bytes(root: IRRoot, *, serial: int, reuse: Reuse | None = None) -> byte
     Args:
         root: The snapshot being published.
         serial: The serial this content is published under.
+        surface: The surface the snapshot renders on.
         reuse: The session's subtree bytes, copied in where a subtree recurs.
 
     Returns:
@@ -173,6 +176,8 @@ def full_bytes(root: IRRoot, *, serial: int, reuse: Reuse | None = None) -> byte
     output.extend(canonical_json_bytes(root.schema_version))
     output.extend(b',"serial":')
     output.extend(str(serial).encode())
+    output.extend(b',"surface":')
+    output.extend(canonical_json_bytes(surface))
     output.extend(b',"version":')
     output.extend(canonical_json_bytes(root.version))
     output.extend(b"}")
@@ -185,6 +190,7 @@ def patch_bytes(
     *,
     base_serial: int,
     serial: int,
+    surface: str,
     base: IRRoot | None = None,
 ) -> bytes:
     """Serialize the pull result carrying ops against the host's base.
@@ -200,6 +206,7 @@ def patch_bytes(
         ops: Ops from :func:`diff_nodes`, in their deterministic order.
         base_serial: The serial the host declared it still holds.
         serial: The serial this content is published under.
+        surface: The surface the snapshot renders on.
         base: The snapshot the host holds, for a bindings delta; None sends
             the metadata whole.
 
@@ -240,6 +247,8 @@ def patch_bytes(
     output.extend(canonical_json_bytes(root.schema_version))
     output.extend(b',"serial":')
     output.extend(str(serial).encode())
+    output.extend(b',"surface":')
+    output.extend(canonical_json_bytes(surface))
     output.extend(b',"version":')
     output.extend(canonical_json_bytes(root.version))
     output.extend(b"}")

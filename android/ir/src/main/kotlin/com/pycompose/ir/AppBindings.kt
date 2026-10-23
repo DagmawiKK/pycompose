@@ -76,7 +76,8 @@ object AppBindings {
         runCatching {
             val raw =
                 Json.parseToJsonElement(source) as? JsonObject ?: error("Invalid action envelope")
-            require(raw.keys.all { it in setOf("actionId", "payload", "seq", "serial") })
+            require(raw.keys.all { it in setOf("actionId", "payload", "seq", "serial", "surface") })
+            raw["surface"]?.let { WireValidator.string(it, "surface") }
             for (counter in listOf("seq", "serial")) {
                 raw[counter]?.let { value ->
                     require(
