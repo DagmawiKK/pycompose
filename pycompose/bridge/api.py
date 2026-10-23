@@ -128,6 +128,9 @@ class BridgeSurface:
     ) -> tuple[IRRoot, str, dict[str, BindingSpec]] | None:
         echoes = self._echoes if at_least(self._schema_version, ECHOES_SCHEMA) else None
         emitted = emit_ir(state, self._schema_version, self._reuse, echoes=echoes)
+        if self._debug:
+            for reason in self._reuse.expansion.reasons:
+                LOGGER.debug("Rebuilt %s", reason)
         result = validate_ir(emitted, debug=self._debug, reuse=self._reuse)
         for issue in result.issues:
             LOGGER.warning("IR validation: %s", issue)

@@ -3,16 +3,17 @@
 from __future__ import annotations
 
 import inspect
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import Any, Generic, ParamSpec
+from typing import Any, Generic, ParamSpec, cast
 
 from pycompose.core.context import context, has_context
 from pycompose.core.expansion import DeferredNode, expand_nodes
 from pycompose.core.ids import call_site
 from pycompose.core.node import Node
 from pycompose.errors import IrError, IrValidationError
+from pycompose.state.app_state import AppState
 
 __all__ = [
     "Composable",
@@ -145,9 +146,18 @@ class _Call(DeferredNode):
             id=id, type="@composable", site="" if id else call_site(2)
         )
         object.__setattr__(self, "definition", definition)
-        detached = _detach(arguments)
+        detached = cast("Mapping[str, Any]", _detach(arguments))
         object.__setattr__(self, "arguments", detached)
-        object.__setattr__(self, "key", (definition, _argument_key(detached)))
+        # The app's state is keyed by its type: whether a build still holds is
+        # decided by the fields it read, not by which session object it got.
+        arguments_key = tuple(
+            (
+                name,
+                (type(value),) if isinstance(value, AppState) else _argument_key(value),
+            )
+            for name, value in detached.items()
+        )
+        object.__setattr__(self, "key", (definition, arguments_key))
 
     @property
     def recursion_key(self) -> object:
@@ -156,6 +166,23 @@ class _Call(DeferredNode):
     @property
     def source(self) -> str:
         return self.definition.source
+
+    def tracked(self) -> Mapping[str, object]:
+        return {
+            name: value
+            for name, value in self.arguments.items()
+            if isinstance(value, AppState)
+        }
+
+    def inputs(self) -> Iterator[object]:
+        pending: list[object] = list(self.arguments.values())
+        while pending:
+            value = pending.pop()
+            yield value
+            if isinstance(value, tuple | frozenset):
+                pending.extend(value)
+            elif isinstance(value, Mapping):
+                pending.extend(value.values())
 
     def build(self) -> tuple[Node, ...]:
         node = self.definition.function(**self.arguments)
