@@ -51,6 +51,7 @@ internal object WireValidator {
         val metadata = root["metadata"] as? JsonObject
         Effects.read(metadata, schema)
         AppData.read(metadata, schema)
+        Echoes.read(metadata)
         val bindings = AppBindings.read(metadata, schema)
         val actionIds = IrContract.actionIds + bindings.keys
         val rootNode =

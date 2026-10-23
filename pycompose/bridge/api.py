@@ -17,6 +17,7 @@ from pycompose.ir import emit_ir, to_json, validate_ir
 from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
 from pycompose.ir.model import IRRoot
 from pycompose.ir.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
+from pycompose.schema.version import at_least
 from pycompose.state import Actions, State, Store
 
 LOGGER = logging.getLogger(__name__)
@@ -32,6 +33,9 @@ MAX_PATCH_OPS = 64
 
 _SERIALS = itertools.count(1)
 """Process-wide, so a serial never names another session's snapshot."""
+
+ECHOES_SCHEMA = "1.23.0"
+"""First schema whose snapshots echo the host's report sequence numbers."""
 
 
 def _unchanged(candidate: State, current: State) -> bool:
@@ -76,6 +80,8 @@ class BridgeSurface:
         self._published: list[tuple[int, IRRoot]] = []
         self._latest_error = ""
         self._bindings: dict[str, BindingSpec] = {}
+        # The latest report sequence number answered, per action (plan 31 §17).
+        self._echoes: dict[str, int] = {}
         self._deliveries = Dispatcher()
         # Debug re-expands a sample of reused composables to catch impure ones,
         # and names nodes by readable paths; release names them compactly.
@@ -115,11 +121,9 @@ class BridgeSurface:
     def _snapshot(
         self, state: State
     ) -> tuple[IRRoot, str, dict[str, BindingSpec]] | None:
-        result = validate_ir(
-            emit_ir(state, self._schema_version, self._reuse),
-            debug=self._debug,
-            reuse=self._reuse,
-        )
+        echoes = self._echoes if at_least(self._schema_version, ECHOES_SCHEMA) else None
+        emitted = emit_ir(state, self._schema_version, self._reuse, echoes=echoes)
+        result = validate_ir(emitted, debug=self._debug, reuse=self._reuse)
         for issue in result.issues:
             LOGGER.warning("IR validation: %s", issue)
         if result.snapshot is None:
@@ -147,6 +151,8 @@ class BridgeSurface:
             return
         self._processing = True
         self._latest_error = ""
+        current = self._store.value
+        echoed = False
         try:
             if self._deliveries.closed:
                 return
@@ -158,6 +164,11 @@ class BridgeSurface:
                 bindings=self._bindings,
                 handlers=self._actions,
             )
+            if action.seq is not None:
+                # Answered even when the handler changes nothing or fails: the
+                # host waits for this echo before it drives the holder again.
+                self._echoes[action.action_id] = action.seq
+                echoed = True
             if (
                 action.action_id in REGISTRY.lifecycle
                 and action.action_id not in self._actions
@@ -167,7 +178,6 @@ class BridgeSurface:
                 # nobody opted into is idle, not a fault worth a diagnostic.
                 LOGGER.debug("lifecycle event has no handler: %s", action.action_id)
                 return
-            current = self._store.value
             with self._deliveries.active():
                 next_state = (
                     self._actions.dispatch_binding(
@@ -180,17 +190,49 @@ class BridgeSurface:
                         action.payload,
                     )
                 )
-            if _unchanged(next_state, current):
+            if _unchanged(next_state, current) and not echoed:
                 return
-            published = self._snapshot(next_state)
-            if published is not None:
-                self._store.mutate(lambda _state: next_state)
-                self._bindings = published[2]
-                self._publish(published[0], published[1])
+            if self._publish_state(next_state):
+                echoed = False
         except Exception as exc:
             self._report("Action ignored", exc)
         finally:
+            if echoed:
+                self._republish(current)
             self._processing = False
+
+    def _publish_state(self, state: State) -> bool:
+        """Publish ``state`` and make it the store's; False when it is invalid.
+
+        Args:
+            state: The state to render.
+
+        Returns:
+            Whether a snapshot was published.
+        """
+        published = self._snapshot(state)
+        if published is None:
+            return False
+        self._store.mutate(lambda _state: state)
+        self._bindings = published[2]
+        self._publish(published[0], published[1])
+        return True
+
+    def _republish(self, state: State) -> None:
+        """Publish the unchanged ``state`` again so it carries the latest echoes.
+
+        Args:
+            state: The state the store already holds.
+        """
+        self._echoes = {
+            key: seq
+            for key, seq in self._echoes.items()
+            if key in self._bindings or key in REGISTRY.actions
+        }
+        try:
+            self._publish_state(state)
+        except Exception as exc:
+            self._report("Echo unavailable", exc)
 
     def expose_latest_snapshot(self) -> str | None:
         """Return the latest canonical snapshot without consuming it.

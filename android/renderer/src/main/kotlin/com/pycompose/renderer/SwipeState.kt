@@ -42,6 +42,7 @@ internal fun rememberHostSwipeState(
             report?.let { id ->
                 { anchor -> observation("value", id, JsonPrimitive(anchor)) }
             },
+        answered = answered(report),
     ) { it.anchor<SwipeToDismissBoxValue>()?.let { anchor -> state.driveTo(anchor) } }
     return state
 }

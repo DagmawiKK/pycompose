@@ -74,6 +74,7 @@ internal fun rememberHostSearchBarState(
             report?.let { id ->
                 { value -> observation("expanded", id, JsonPrimitive(value)) }
             },
+        answered = answered(report),
     ) { if (it) state.animateToExpanded() else state.animateToCollapsed() }
     return state
 }

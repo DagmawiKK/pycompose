@@ -33,7 +33,13 @@ from pycompose.state.state import State
 __all__ = ["emit_ir"]
 
 
-def emit_ir(state: State, schema_version: str, reuse: Reuse | None = None) -> IRRoot:
+def emit_ir(
+    state: State,
+    schema_version: str,
+    reuse: Reuse | None = None,
+    *,
+    echoes: Mapping[str, int] | None = None,
+) -> IRRoot:
     """Emit a full candidate snapshot without I/O, clock or environment reads.
 
     Unsupported schemas propagate SchemaError; stable-key collisions propagate
@@ -46,6 +52,8 @@ def emit_ir(state: State, schema_version: str, reuse: Reuse | None = None) -> IR
         schema_version: Requested wire contract version.
         reuse: The session's results from the previous publish, reused where
             a subtree is unchanged; None emits everything afresh.
+        echoes: The latest report number the app answered, per action, for the
+            host to tell a stale answer from a current one; None echoes none.
 
     Returns:
         A versioned IR snapshot.
@@ -78,6 +86,7 @@ def emit_ir(state: State, schema_version: str, reuse: Reuse | None = None) -> IR
         bindings,
         lower_effects(state.effects),
         lower_data(state.data),
+        cast("Mapping[str, JsonValue]", {"echoes": dict(echoes)}) if echoes else None,
     ):
         if member is not None:
             metadata = {**(metadata or {}), **member}

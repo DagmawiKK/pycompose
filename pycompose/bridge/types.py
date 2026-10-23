@@ -39,12 +39,16 @@ class Action:
             than a registry action or a control's binding. Such a payload has no
             wire contract to check here; the handler's own declared fields are
             the contract, and they are checked when it is dispatched.
+        seq: The host's sequence number for a settled value it reported, which
+            the snapshot echoes so the host can tell a stale answer from a
+            current one; None for actions that report nothing.
     """
 
     action_id: str
     payload: Mapping[str, FrozenJsonValue]
     binding: BindingSpec | None = None
     app_handler: bool = False
+    seq: int | None = None
 
     def __post_init__(self) -> None:
         if self.binding is not None:
@@ -114,7 +118,8 @@ def decode_action(
     neither can name anything the app did not declare.
 
     Args:
-        action_json: JSON envelope with actionId and optional payload object.
+        action_json: JSON envelope with actionId, an optional payload object and
+            an optional report sequence number.
         bindings: App bindings from the active validated snapshot.
         handlers: Action ids the app registered, for events with no control.
 
@@ -130,8 +135,11 @@ def decode_action(
         raw: object = json.loads(action_json, object_pairs_hook=_unique_object)
     except (TypeError, ValueError, RecursionError) as exc:
         raise BridgeError("malformed action JSON") from exc
-    if not isinstance(raw, dict) or set(raw) - {"actionId", "payload"}:
+    if not isinstance(raw, dict) or set(raw) - {"actionId", "payload", "seq"}:
         raise BridgeError("invalid action envelope")
+    seq = raw.get("seq")
+    if seq is not None and (type(seq) is not int or seq < 1):
+        raise BridgeError("seq must be a positive integer")
     action_id = raw.get("actionId")
     if not isinstance(action_id, str) or (
         action_id not in REGISTRY.actions
@@ -156,6 +164,7 @@ def decode_action(
             app_handler=binding is None
             and not declared
             and action_id in (handlers or ()),
+            seq=seq,
         )
     except IrValidationError as exc:
         raise BridgeError("invalid app action payload", action_id=action_id) from exc

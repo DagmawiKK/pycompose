@@ -51,6 +51,8 @@ import kotlinx.serialization.json.JsonPrimitive
  * @param lastDesired The last value driven or settled.
  * @param settled Reads the holder's settled value in wire terms.
  * @param report Dispatches one settled value to the app; null reports none.
+ * @param answered Whether the app has answered every report; until it has, the desired
+ *   value answers an older one and is not driven.
  * @param drive Moves the holder towards a desired value.
  */
 @Suppress("LongParameterList")
@@ -61,14 +63,15 @@ internal fun <V : Any> Reconcile(
     lastDesired: MutableState<V?>,
     settled: () -> V,
     report: ((V) -> Unit)?,
+    answered: Boolean,
     drive: suspend (V) -> Unit,
 ) {
     val baseline = remember(state) { Settled(settled()) }
     val channel = rememberUpdatedState(report)
-    LaunchedEffect(state, desired) {
-        if (desired != lastDesired.value) {
-            lastDesired.value = desired
-            desired?.let { drive(it) }
+    OnDesired(state, desired, answered) { wanted ->
+        if (wanted != lastDesired.value) {
+            lastDesired.value = wanted
+            wanted?.let { drive(it) }
         }
     }
     LaunchedEffect(state) {
@@ -102,6 +105,7 @@ internal fun rememberHostDrawerState(
         remember(state) { mutableStateOf<Boolean?>(null) },
         settled = { state.currentValue == DrawerValue.Open },
         report = report?.let { id -> { value -> observation("open", id, JsonPrimitive(value)) } },
+        answered = answered(report),
     ) { state.driveTo(if (it) DrawerValue.Open else DrawerValue.Closed) }
     return state
 }
@@ -181,14 +185,14 @@ internal fun rememberHostSliderState(
         }
     }
     LaunchedEffect(state) { state.onValueChangeFinished = reportSettled }
-    LaunchedEffect(state, value) {
-        if (value != lastDesired.value) {
-            val desired = value?.toFloat()
+    OnDesired(state, value, answered(report)) { wanted ->
+        if (wanted != lastDesired.value) {
+            val desired = wanted?.toFloat()
             if (desired != null && desired != state.value) {
                 state.value = desired
                 reportSettled()
             }
-            lastDesired.value = value
+            lastDesired.value = wanted
         }
     }
     return state
@@ -225,6 +229,7 @@ internal fun rememberHostTooltipState(
             report?.let { id ->
                 { value -> observation("visible", id, JsonPrimitive(value)) }
             },
+        answered = answered(report),
     ) {
         if (it) {
             // Let the anchor's initial unfocused notification run first:
@@ -261,13 +266,13 @@ internal fun rememberHostScrollState(
     // there, and the drive's own settle is what reports the arrival.
     val state = rememberScrollState(initial = 0)
     val lastDesired = rememberSaveable { mutableStateOf<Double?>(null) }
-    LaunchedEffect(state, offset) {
-        if (offset != lastDesired.value) {
-            val desired = offset?.toInt()
+    OnDesired(state, offset, answered(report)) { wanted ->
+        if (wanted != lastDesired.value) {
+            val desired = wanted?.toInt()
             if (desired != null && desired != state.value) {
                 state.scrollTo(desired)
             }
-            lastDesired.value = offset
+            lastDesired.value = wanted
         }
     }
     ObserveIdlePosition(state, { state.value }, "offset", report, observation)
@@ -309,16 +314,16 @@ internal fun rememberHostLazyListState(
 ): LazyListState {
     val state = rememberLazyListState()
     val lastDesired = rememberSaveable { mutableStateOf<Long?>(null) }
-    LaunchedEffect(state, index) {
-        if (index != lastDesired.value) {
-            val desired = index?.toInt()
+    OnDesired(state, index, answered(report)) { wanted ->
+        if (wanted != lastDesired.value) {
+            val desired = wanted?.toInt()
             if (
                 desired != null &&
                 (desired != state.firstVisibleItemIndex || state.firstVisibleItemScrollOffset != 0)
             ) {
                 state.scrollToItem(desired)
             }
-            lastDesired.value = index
+            lastDesired.value = wanted
         }
     }
     ObserveIdlePosition(state, {

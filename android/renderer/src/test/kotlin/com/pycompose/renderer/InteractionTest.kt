@@ -103,6 +103,32 @@ class InteractionTest {
     }
 
     @Test
+    fun eachReportToAnActionTakesTheNextSequenceNumber() {
+        val actions = mutableListOf<Action>()
+        val binding =
+            AppBinding(
+                payload = mapOf("open" to PropertyRule("boolean", required = true)),
+                bound = JsonObject(emptyMap()),
+            )
+        val reports = Reports()
+        val sink =
+            ObservationSink(
+                mapOf("app.demo.a.1" to binding, "app.demo.b.1" to binding),
+                ActionDispatcher { actions.add(it) },
+                {},
+                reports,
+            )
+
+        sink.observe("open", "app.demo.a.1", JsonPrimitive(true))
+        sink.observe("open", "app.demo.a.1", JsonPrimitive(false))
+        sink.observe("open", "app.demo.b.1", JsonPrimitive(true))
+
+        assertEquals(listOf(1L, 2L, 1L), actions.map { it.seq })
+        assertTrue(reports.answered("app.demo.a.1", mapOf("app.demo.a.1" to 2L)))
+        assertTrue(!reports.answered("app.demo.a.1", mapOf("app.demo.a.1" to 1L)))
+    }
+
+    @Test
     fun anAmbiguousNumericPayloadIsReportedRatherThanGuessed() {
         // A number and an integer are two candidates for one integer, and a pick
         // would be a guess: the sink reports and dispatches nothing.

@@ -378,3 +378,49 @@ def test_an_unknown_base_or_another_session_gets_the_whole_snapshot() -> None:
 
     other = json.loads(_counter_bridge().expose_envelope(-1))
     assert other["serial"] != first["serial"]
+
+
+def test_a_report_is_echoed_with_its_sequence_number() -> None:
+    bridge = _counter_bridge()
+
+    bridge.accept_action('{"actionId":"increment","payload":{"by":2},"seq":3}')
+
+    latest = json.loads(bridge.expose_latest_snapshot() or "")
+    assert latest["metadata"]["echoes"] == {"increment": 3}
+
+
+def test_a_report_that_changes_nothing_is_still_echoed() -> None:
+    bridge = _counter_bridge()
+    bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
+
+    bridge.accept_action('{"actionId":"increment","payload":{"by":2},"seq":4}')
+
+    latest = json.loads(bridge.expose_latest_snapshot() or "")
+    assert latest["metadata"]["echoes"] == {"increment": 4}
+
+
+def test_a_report_whose_handler_fails_is_still_echoed() -> None:
+    actions = Actions()
+
+    def fail(_state: State, _payload: object) -> State:
+        raise RuntimeError("refused")
+
+    actions.register("increment", fail)
+    bridge = BridgeSurface(
+        Store(State(root=Node(id="screen", type="Column", props=Props({})))), actions
+    )
+
+    bridge.accept_action('{"actionId":"increment","payload":{"by":1},"seq":1}')
+
+    latest = json.loads(bridge.expose_latest_snapshot() or "")
+    assert latest["metadata"]["echoes"] == {"increment": 1}
+    assert "refused" in bridge.expose_latest_error()
+
+
+@pytest.mark.parametrize("seq", ["0", "-1", "1.5", "true", '"1"'])
+def test_a_malformed_sequence_number_is_refused(seq: str) -> None:
+    bridge = _counter_bridge()
+
+    bridge.accept_action(f'{{"actionId":"increment","payload":{{"by":2}},"seq":{seq}}}')
+
+    assert "seq" in bridge.expose_latest_error()

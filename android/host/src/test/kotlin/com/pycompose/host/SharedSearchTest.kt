@@ -189,60 +189,66 @@ class SharedSearchTest {
         val expansion = if (controlled) "\"expanded\":$expanded," else ""
         return IrParser()
             .parse(
-                """
-                {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
-                  "app.demo.edit":{"handlerId":"demo.edit","payload":{
-                    "text":{"type":"string","required":true},
-                    "selectionStart":{"type":"integer","required":true},
-                    "selectionEnd":{"type":"integer","required":true},
-                    "revision":{"type":"integer","required":true}},"bound":{}},
-                  "app.demo.search":{"handlerId":"demo.search","payload":{
-                    "query":{"type":"string","required":true}},"bound":{}},
-                  "app.demo.expand":{"handlerId":"demo.expand","payload":{
-                    "expanded":{"type":"boolean","required":true}},"bound":{}}}},
-                 "root":{"id":"search","type":"StatefulSearchBar","props":{
-                   "text":"${edit.text}","selectionStart":${edit.start},
-                   "selectionEnd":${edit.end},"revision":${edit.revision},
-                   "onEdit":"app.demo.edit",$expansion
-                   "onExpandedChange":"app.demo.expand"},"children":[
-                   {"id":"collapsed","type":"SearchBarStateInputField","slot":"inputField","props":{
-                     "onSearch":"app.demo.search"},"children":[
-                     {"id":"collapsed.icon","type":"Text","slot":"leadingIcon","props":{"text":"C"}}]},
-                   {"id":"expanded","type":"$kind","slot":"expandedBar","props":{},"children":[
-                     {"id":"expanded.input","type":"SearchBarStateInputField","slot":"inputField","props":{
-                       "onSearch":"app.demo.search"},"children":[
-                       {"id":"expanded.icon","type":"Text","slot":"leadingIcon","props":{"text":"E"}}]},
-                     {"id":"result","type":"Text","props":{"text":"A result"}}]}]}}
-                """.trimIndent(),
+                echoing(
+                    """
+                    {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
+                      "app.demo.edit":{"handlerId":"demo.edit","payload":{
+                        "text":{"type":"string","required":true},
+                        "selectionStart":{"type":"integer","required":true},
+                        "selectionEnd":{"type":"integer","required":true},
+                        "revision":{"type":"integer","required":true}},"bound":{}},
+                      "app.demo.search":{"handlerId":"demo.search","payload":{
+                        "query":{"type":"string","required":true}},"bound":{}},
+                      "app.demo.expand":{"handlerId":"demo.expand","payload":{
+                        "expanded":{"type":"boolean","required":true}},"bound":{}}}},
+                     "root":{"id":"search","type":"StatefulSearchBar","props":{
+                       "text":"${edit.text}","selectionStart":${edit.start},
+                       "selectionEnd":${edit.end},"revision":${edit.revision},
+                       "onEdit":"app.demo.edit",$expansion
+                       "onExpandedChange":"app.demo.expand"},"children":[
+                       {"id":"collapsed","type":"SearchBarStateInputField","slot":"inputField","props":{
+                         "onSearch":"app.demo.search"},"children":[
+                         {"id":"collapsed.icon","type":"Text","slot":"leadingIcon","props":{"text":"C"}}]},
+                       {"id":"expanded","type":"$kind","slot":"expandedBar","props":{},"children":[
+                         {"id":"expanded.input","type":"SearchBarStateInputField","slot":"inputField","props":{
+                           "onSearch":"app.demo.search"},"children":[
+                           {"id":"expanded.icon","type":"Text","slot":"leadingIcon","props":{"text":"E"}}]},
+                         {"id":"result","type":"Text","props":{"text":"A result"}}]}]}}
+                    """.trimIndent(),
+                    actions,
+                ),
             ).getOrThrow()
     }
 
     private fun siblings(): ValidatedIr =
         IrParser()
             .parse(
-                """
-                {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
-                  "app.demo.edit":{"handlerId":"demo.edit","payload":{
-                    "text":{"type":"string","required":true},
-                    "selectionStart":{"type":"integer","required":true},
-                    "selectionEnd":{"type":"integer","required":true},
-                    "revision":{"type":"integer","required":true}},"bound":{}},
-                  "app.demo.expand":{"handlerId":"demo.expand","payload":{
-                    "expanded":{"type":"boolean","required":true}},"bound":{}}}},
-                 "root":{"id":"column","type":"Column","props":{},"children":[
-                   {"id":"alpha","type":"StatefulSearchBar","props":{
-                     "text":"alpha","selectionStart":5,"selectionEnd":5,"revision":0,
-                     "onEdit":"app.demo.edit","expanded":false,
-                     "onExpandedChange":"app.demo.expand"},"children":[
-                     {"id":"alpha.input","type":"SearchBarStateInputField","slot":"inputField","props":{
-                       "onSearch":"app.demo.expand"}}]},
-                   {"id":"beta","type":"StatefulSearchBar","props":{
-                     "text":"beta","selectionStart":4,"selectionEnd":4,"revision":0,
-                     "onEdit":"app.demo.edit","expanded":false,
-                     "onExpandedChange":"app.demo.expand"},"children":[
-                     {"id":"beta.input","type":"SearchBarStateInputField","slot":"inputField","props":{
-                       "onSearch":"app.demo.expand"}}]}]}}
-                """.trimIndent(),
+                echoing(
+                    """
+                    {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
+                      "app.demo.edit":{"handlerId":"demo.edit","payload":{
+                        "text":{"type":"string","required":true},
+                        "selectionStart":{"type":"integer","required":true},
+                        "selectionEnd":{"type":"integer","required":true},
+                        "revision":{"type":"integer","required":true}},"bound":{}},
+                      "app.demo.expand":{"handlerId":"demo.expand","payload":{
+                        "expanded":{"type":"boolean","required":true}},"bound":{}}}},
+                     "root":{"id":"column","type":"Column","props":{},"children":[
+                       {"id":"alpha","type":"StatefulSearchBar","props":{
+                         "text":"alpha","selectionStart":5,"selectionEnd":5,"revision":0,
+                         "onEdit":"app.demo.edit","expanded":false,
+                         "onExpandedChange":"app.demo.expand"},"children":[
+                         {"id":"alpha.input","type":"SearchBarStateInputField","slot":"inputField","props":{
+                           "onSearch":"app.demo.expand"}}]},
+                       {"id":"beta","type":"StatefulSearchBar","props":{
+                         "text":"beta","selectionStart":4,"selectionEnd":4,"revision":0,
+                         "onEdit":"app.demo.edit","expanded":false,
+                         "onExpandedChange":"app.demo.expand"},"children":[
+                         {"id":"beta.input","type":"SearchBarStateInputField","slot":"inputField","props":{
+                           "onSearch":"app.demo.expand"}}]}]}}
+                    """.trimIndent(),
+                    actions,
+                ),
             ).getOrThrow()
 
     private fun orphan(): ValidatedIr =

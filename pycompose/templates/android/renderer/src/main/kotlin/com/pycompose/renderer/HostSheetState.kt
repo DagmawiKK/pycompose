@@ -64,7 +64,7 @@ internal fun rememberHostSheetState(
         remember(state, memory, driveMemory, open) {
             SheetProjection(state, memory, driveMemory, open)
         }
-    DriveSheet(projection, desired)
+    DriveSheet(projection, desired, answered(contract.report) && answered(contract.valueReport))
     ObserveSheet(projection, contract.report, contract.valueReport, observations)
     ObserveDismissal(projection)
     return HostSheetState(state, open.value)
@@ -185,9 +185,10 @@ private class SheetProjection(
 @Composable
 private fun DriveSheet(
     projection: SheetProjection,
-    desired: String?,
+    stated: String?,
+    answered: Boolean,
 ) {
-    LaunchedEffect(projection, desired) {
+    OnDesired(projection, stated, answered) { desired ->
         val changed = desired != projection.lastDesired
         val restored = projection.reattach
         if (changed || restored != null) {

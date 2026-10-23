@@ -86,11 +86,13 @@ private fun kindAndState(interaction: Interaction): Pair<String, Boolean>? =
  * @param bindings Session bindings by action id.
  * @param actions Dispatcher that receives the action.
  * @param report Sink for a message the host cannot turn into an action.
+ * @param reports Numbers each report, so the app's echo can be told from a stale one.
  */
 internal class ObservationSink(
     private val bindings: Map<String, AppBinding>,
     private val actions: ActionDispatcher,
     private val report: (String) -> Unit,
+    private val reports: Reports = Reports(),
 ) {
     /**
      * Report one observed primitive as a one-field record, under the single field its type fits.
@@ -139,7 +141,7 @@ internal class ObservationSink(
             return
         }
         com.pycompose.ir.AppBindings.validatePayload(actionId, value, bindings).fold(
-            onSuccess = { actions.dispatch(actionId, value) },
+            onSuccess = { actions.dispatch(actionId, value, reports.next(actionId)) },
             onFailure = { report("Cannot observe $kind for $actionId: ${it.message}") },
         )
     }

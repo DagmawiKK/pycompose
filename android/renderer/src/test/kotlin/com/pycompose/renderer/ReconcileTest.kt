@@ -28,6 +28,7 @@ class ReconcileTest {
     private var desired by mutableStateOf<String?>(null)
     private var reporting by mutableStateOf(true)
     private var tick by mutableStateOf(0)
+    private var answered by mutableStateOf(true)
     private val reports = mutableListOf<String>()
 
     private fun start() {
@@ -39,6 +40,7 @@ class ReconcileTest {
                 remember(holder) { mutableStateOf<String?>(null) },
                 settled = { holder.value },
                 report = if (reporting) ({ reports += it }) else null,
+                answered = answered,
             ) {
                 holder.drives += it
                 holder.value = it
@@ -85,6 +87,40 @@ class ReconcileTest {
         act { tick++ }
         assertEquals(listOf("open"), holder.drives)
         assertEquals(listOf("open", "closed"), reports)
+    }
+
+    @Test
+    fun aStaleEchoIsNotDrivenUntilTheAppAnswersTheLatestReport() {
+        start()
+        act { desired = "open" }
+        // The user closes it; the app has not answered that report yet, so an
+        // in-flight snapshot still says "open" and must not reopen it.
+        act {
+            answered = false
+            holder.value = "closed"
+        }
+        act { desired = "open" }
+        assertEquals(listOf("open"), holder.drives)
+        // The app's answer to the close arrives: it agrees, so nothing moves.
+        act {
+            desired = "closed"
+            answered = true
+        }
+        assertEquals(listOf("open"), holder.drives)
+    }
+
+    @Test
+    fun anAnswerThatOverrulesAGestureIsDriven() {
+        start()
+        act {
+            answered = false
+            holder.value = "open"
+        }
+        act {
+            desired = "closed"
+            answered = true
+        }
+        assertEquals(listOf("closed"), holder.drives)
     }
 
     @Test

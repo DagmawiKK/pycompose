@@ -4,8 +4,10 @@ import com.pycompose.ir.generated.IrContract
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 
 /** Pure binding data. Kotlin never resolves or holds a Python handler. */
 data class AppBinding(
@@ -74,7 +76,12 @@ object AppBindings {
         runCatching {
             val raw =
                 Json.parseToJsonElement(source) as? JsonObject ?: error("Invalid action envelope")
-            require(raw.keys.all { it in setOf("actionId", "payload") })
+            require(raw.keys.all { it in setOf("actionId", "payload", "seq") })
+            raw["seq"]?.let { seq ->
+                require(seq is JsonPrimitive && !seq.isString && (seq.longOrNull ?: 0) > 0) {
+                    "seq must be a positive integer"
+                }
+            }
             val id = WireValidator.string(raw["actionId"], "actionId")
             val payload = raw["payload"] as? JsonObject ?: error("Invalid action payload")
             val bindings = read(ir.snapshot.metadata, ir.snapshot.schemaVersion)

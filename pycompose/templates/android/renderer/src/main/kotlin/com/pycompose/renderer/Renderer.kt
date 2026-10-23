@@ -11,11 +11,13 @@ import androidx.compose.material3.MultiChoiceSegmentedButtonRowScope
 import androidx.compose.material3.SingleChoiceSegmentedButtonRowScope
 import androidx.compose.material3.TooltipScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.pycompose.ir.AppBinding
 import com.pycompose.ir.AppBindings
+import com.pycompose.ir.Echoes
 import com.pycompose.ir.ValidatedIr
 import com.pycompose.ir.generated.IrContract
 import com.pycompose.ir.generated.UiNode
@@ -63,7 +65,8 @@ class RenderContext internal constructor(
      * The sink fixes the three collaborators an observation needs, so every
      * caller hands the same three-argument function to the state helpers.
      */
-    internal val observations = ObservationSink(bindings, actions, renderer.report)
+    internal val observations =
+        ObservationSink(bindings, actions, renderer.report, renderer.reports)
 
     /**
      * Report one diagnostic for a node the host cannot compose as declared.
@@ -315,6 +318,9 @@ class Renderer(
 ) {
     private val modifiers = ModifierBuilder(actions)
 
+    /** Report numbers for the session, kept across snapshots. */
+    internal val reports = Reports()
+
     @Composable fun Render(ir: ValidatedIr) {
         val context =
             remember(ir) {
@@ -324,7 +330,15 @@ class Renderer(
                     AppBindings.read(ir.snapshot.metadata, ir.snapshot.schemaVersion),
                 )
             }
-        key(ir.snapshot.root.id) { Node(ir.snapshot.root, context) }
+        val answered =
+            remember(ir) {
+                val echoes = Echoes.read(ir.snapshot.metadata)
+                val check: (String) -> Boolean = { reports.answered(it, echoes) }
+                check
+            }
+        CompositionLocalProvider(LocalAnswered provides answered) {
+            key(ir.snapshot.root.id) { Node(ir.snapshot.root, context) }
+        }
     }
 
     @Composable internal fun Node(

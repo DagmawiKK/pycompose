@@ -1,6 +1,7 @@
 package com.pycompose.host
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -37,14 +38,14 @@ class SheetDetentTest {
         assertTrue(actions.isEmpty())
         assertTrue(!bodyIsComposed())
 
-        compose.runOnIdle { ir.value = parse(sheet("expanded")) }
+        compose.runOnIdle { ir.value = parse(sheet("expanded"), actions) }
         compose.waitForIdle()
         compose.waitUntil(5000) { actions.isNotEmpty() }
         assertEquals(listOf("app.demo.anchor.1"), actions.map { it.actionId })
         assertEquals(listOf("""{"value":"expanded"}"""), actions.map { it.payload.toString() })
         assertTrue(bodyIsComposed())
 
-        compose.runOnIdle { ir.value = parse(sheet("hidden")) }
+        compose.runOnIdle { ir.value = parse(sheet("hidden"), actions) }
         compose.waitForIdle()
         compose.waitUntil(5000) { actions.size == 2 }
         assertEquals("""{"value":"hidden"}""", actions.last().payload.toString())
@@ -69,7 +70,7 @@ class SheetDetentTest {
         assertEquals("app.demo.anchor.1", actions.last().actionId)
 
         // The old desired partial value must not force a native expansion back.
-        compose.runOnIdle { ir.value = parse(source) }
+        compose.runOnIdle { ir.value = parse(source, actions) }
         compose.waitForIdle()
         assertEquals(2, actions.size)
         compose
@@ -96,7 +97,7 @@ class SheetDetentTest {
         compose.waitUntil(5000) { actions.size == 1 }
         assertEquals("""{"value":"expanded"}""", actions.last().payload.toString())
 
-        compose.runOnIdle { ir.value = parse(sheet("partiallyExpanded", extra = extra)) }
+        compose.runOnIdle { ir.value = parse(sheet("partiallyExpanded", extra = extra), actions) }
         compose.waitUntil(5000) { actions.size == 2 }
         compose.waitForIdle()
         assertEquals(2, actions.size)
@@ -118,7 +119,7 @@ class SheetDetentTest {
 
         compose.runOnIdle {
             ir.value =
-                parse(sheet("expanded", extra = ",\"skipPartiallyExpanded\":true"))
+                parse(sheet("expanded", extra = ",\"skipPartiallyExpanded\":true"), actions)
         }
         compose.waitForIdle()
         assertTrue(!bodyIsComposed())
@@ -137,6 +138,7 @@ class SheetDetentTest {
             ir.value =
                 parse(
                     sheet("partiallyExpanded", extra = ",\"skipPartiallyExpanded\":true"),
+                    actions,
                 )
         }
         compose.waitUntil(5000) { actions.size == 2 }
@@ -242,7 +244,7 @@ class SheetDetentTest {
         compose.waitUntil(5000) { actions.size == 1 }
 
         compose.mainClock.autoAdvance = false
-        compose.runOnIdle { ir.value = parse(sheet("hidden")) }
+        compose.runOnIdle { ir.value = parse(sheet("hidden"), actions) }
         assertTrue(bodyIsComposed())
         restoration.emulateSavedInstanceStateRestore()
         compose.mainClock.advanceTimeBy(3000)
@@ -260,10 +262,19 @@ class SheetDetentTest {
     @Test
     fun restorationKeepsTheNativeAnchorWithoutReplayingAReport() {
         val actions = mutableListOf<Action>()
-        val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
         val restoration = StateRestorationTester(compose)
         val source = parse(sheet("partiallyExpanded"))
-        restoration.setContent { PyComposeTheme { renderer.Render(source) } }
+        // The renderer is recreated with the activity, as MainActivity remembers it.
+        restoration.setContent {
+            val renderer =
+                remember {
+                    Renderer(
+                        BuiltinComponents.registry(),
+                        ActionDispatcher { actions.add(it) },
+                    )
+                }
+            PyComposeTheme { renderer.Render(source) }
+        }
         compose.waitUntil(5000) { actions.size == 1 }
         compose
             .onNode(SemanticsMatcher.keyIsDefined(SemanticsActions.Expand))
@@ -335,7 +346,7 @@ class SheetDetentTest {
         compose.setContent { PyComposeTheme { renderer.Render(ir.value) } }
         compose.waitForIdle()
         assertTrue(bodyIsComposed())
-        compose.runOnIdle { ir.value = parse(sheet("expanded", report = false)) }
+        compose.runOnIdle { ir.value = parse(sheet("expanded", report = false), actions) }
         compose.waitForIdle()
         assertTrue(actions.isEmpty())
         assertEquals(
@@ -358,13 +369,13 @@ class SheetDetentTest {
         assertEquals("""{"open":true}""", actions.last().payload.toString())
         assertEquals("app.demo.open.1", actions.last().actionId)
 
-        compose.runOnIdle { ir.value = parse(sheet("expanded", extra = extra)) }
+        compose.runOnIdle { ir.value = parse(sheet("expanded", extra = extra), actions) }
         compose.waitForIdle()
         compose.waitUntil(5000) { actions.size == 3 }
         assertEquals("""{"value":"expanded"}""", actions.last().payload.toString())
         assertEquals("app.demo.anchor.1", actions.last().actionId)
 
-        compose.runOnIdle { ir.value = parse(sheet("hidden", extra = extra)) }
+        compose.runOnIdle { ir.value = parse(sheet("hidden", extra = extra), actions) }
         compose.waitForIdle()
         compose.waitUntil(5000) { actions.size == 5 }
         assertEquals("""{"open":false}""", actions.last().payload.toString())
@@ -386,7 +397,10 @@ class SheetDetentTest {
     private fun bodyIsComposed(): Boolean =
         compose.onAllNodesWithText("Sheet body").fetchSemanticsNodes().isNotEmpty()
 
-    private fun parse(source: String) = IrParser().parse(source).getOrThrow()
+    private fun parse(
+        source: String,
+        actions: List<Action> = emptyList(),
+    ) = IrParser().parse(echoing(source, actions)).getOrThrow()
 
     private fun sheet(
         value: String,
