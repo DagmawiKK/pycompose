@@ -92,6 +92,24 @@ must not be asked to drive a state object whose transitions it does not
 understand.
 """
 
+STATE_HOLDERS = {
+    "drawer": "androidx.compose.material3.DrawerState",
+    "sheet": "androidx.compose.material3.SheetState",
+    "slider": "androidx.compose.material3.SliderState",
+    "scroll": "androidx.compose.foundation.ScrollState",
+    "lazyList": "androidx.compose.foundation.lazy.LazyListState",
+    "tooltip": "androidx.compose.material3.TooltipState",
+    "textInput": "androidx.compose.foundation.text.input.TextFieldState",
+    "search": "androidx.compose.material3.SearchBarState",
+    "swipe": "androidx.compose.material3.SwipeToDismissBoxState",
+}
+"""The native holder each state family creates and drives.
+
+A component parameter of one of these types is filled by the host's family
+implementation, never by the wire, so the pin alone says which family a
+component binds.
+"""
+
 ADAPTERS = ("generated", "manual")
 """Whether the Kotlin adapter is derived from the schema or written by hand."""
 
@@ -124,6 +142,18 @@ DECODERS = (
     "vertical",
 )
 """The host resolvers a prop may name."""
+
+RESOURCE_TYPES = {
+    "androidx.compose.ui.graphics.painter.Painter": (
+        "resourceImage",
+        ("drawable", "asset"),
+    ),
+}
+"""Native types the wire fills with a resource reference: decoder and kinds.
+
+The host loads the referenced resource and hands the native call the result,
+so a parameter of such a type is a ``resource`` prop, not a value family.
+"""
 
 WRAPPERS = ("ResourceText", "ResourceImage")
 """Composables an adapter may delegate to whole.

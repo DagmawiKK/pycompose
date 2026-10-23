@@ -157,6 +157,11 @@ class _Call:
             value = "modifier"
         elif policy == "slot":
             value = _slot_parameter(name, spec, self.parameters)
+        elif policy in {"holder", "provider", "resource"}:
+            # The host fills these -- a state holder it drives, a late read, a
+            # loaded resource -- so the facade takes them typed, like a slot.
+            value = _name("host_" + name)
+            self.parameters.append(f"    {value}: {_host_type(spec)},")
         elif policy in {"scalar", "value", "event"}:
             self.accepted.append(json.dumps(name))
             self.locals.append(_local(name, spec, self.imports))
@@ -164,6 +169,13 @@ class _Call:
         else:
             raise ValueError(f"blocked parameter policy: {policy}")
         self.arguments.append(f"        {_name(name)} = {value},")
+
+
+def _host_type(spec: dict[str, Any]) -> str:
+    if spec["policy"] != "provider":
+        return _type(spec["type"])
+    returns = spec["type"]["arguments"][-1]["type"]
+    return f"(() -> {_type(returns)})"
 
 
 def _slot_parameter(name: str, spec: dict[str, Any], parameters: list[str]) -> str:

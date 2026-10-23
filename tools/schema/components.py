@@ -20,6 +20,7 @@ if __package__ in (None, ""):  # pragma: no cover - only when run as a script
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pycompose.core.registry_types import SCOPE_PATHS
+from pycompose.core.registry_vocabulary import RESOURCE_TYPES, STATE_HOLDERS
 from pycompose.schema.codegen.defaults import render_default
 from tools.schema.classpath_dump import (
     DUMP_DIR,
@@ -38,6 +39,7 @@ from tools.schema.propose import SCALARS, identity, source_name, value_families
 # closed scope vocabulary instead of transcribing it a second time.
 SLASH_SCOPES = frozenset(path.replace(".", "/") for path in SCOPE_PATHS.values())
 MODIFIER = "androidx/compose/ui/Modifier"
+HOLDER_KINDS = {holder: kind for kind, holder in STATE_HOLDERS.items()}
 
 
 class DeclaredType(NamedTuple):
@@ -116,6 +118,8 @@ def _binding_rule(
                 for i, t in enumerate(arguments)
             ],
         }
+    elif (typed := _host_filled(parameter)) is not None:
+        rule = typed
     elif value.classifier in SCALARS and not value.arguments:
         rule = {"policy": "scalar", "wireType": SCALARS[value.classifier]}
     elif source_name(value.classifier) in families and not value.arguments:
@@ -125,12 +129,30 @@ def _binding_rule(
     return rule
 
 
+def _host_filled(parameter: Parameter) -> dict[str, Any] | None:
+    """Rule for a type the host fills: a late read, a state holder or a resource."""
+    value = parameter.type
+    name = source_name(value.classifier)
+    if parameter.kind == Kind.PROVIDER:
+        returns = value.arguments[-1][1]
+        if returns is None or returns.nullable or returns.classifier not in SCALARS:
+            raise ValueError("synchronous result needs a provider/predicate protocol")
+        return {"policy": "provider", "wireType": SCALARS[returns.classifier]}
+    if name in HOLDER_KINDS and not value.nullable:
+        return {"policy": "holder", "kind": HOLDER_KINDS[name]}
+    if name in RESOURCE_TYPES and not value.arguments:
+        decoder, kinds = RESOURCE_TYPES[name]
+        return {"policy": "resource", "decode": decoder, "values": list(kinds)}
+    return None
+
+
 def _parameter(
     parameter: Parameter, families: dict[str, str], defaults: dict[str, Any]
 ) -> dict[str, Any]:
     """Attach the compiler-resolved default an optional parameter binds to."""
     rule = _binding_rule(parameter, families, defaults)
-    if rule["policy"] == "modifier":
+    if rule["policy"] in {"modifier", "holder"}:
+        # The host supplies both: the wire never carries their defaults.
         return rule
     if parameter.has_default:
         if parameter.name not in defaults:

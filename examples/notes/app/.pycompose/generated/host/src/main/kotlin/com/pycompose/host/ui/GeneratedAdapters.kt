@@ -174,12 +174,12 @@ object GeneratedAdapters {
             }
             .register("LinearProgressIndicator") { node, modifier, context ->
                 val model = node as LinearProgressIndicatorNode
-                val progressValue = model.props.progress
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearColor)
                     is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.linearColor
                 }
+                val progressValue = model.props.progress
                 val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
                     is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
                     is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
@@ -187,8 +187,8 @@ object GeneratedAdapters {
                 }
                 LinearProgressIndicator(
                     modifier = modifier,
-                    progress = { progressValue.toFloat() },
                     color = colorValue,
+                    progress = { progressValue.toFloat() },
                     trackColor = trackColorValue,
                 )
             }

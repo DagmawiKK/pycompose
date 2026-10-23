@@ -103,7 +103,8 @@ def wire_shape(
     review: list[str] = []
     for parameter, spec in plan["parameters"].items():
         policy = spec["policy"]
-        if policy == "modifier":
+        if policy in {"modifier", "holder"}:
+            # A holder is the component's state, not a prop; derive() binds it.
             continue
         if policy == "omit":
             reason = gap_reason(plan, parameter) or "no wire policy"
@@ -112,24 +113,39 @@ def wire_shape(
         if policy == "slot":
             place_slot(name, parameter, spec, children, slots, review)
             continue
-        if policy == "scalar":
-            prop = _scalar_prop(name, parameter, spec, review)
-        elif policy == "event":
-            prop = _event_prop(name, parameter, spec, review)
-        elif policy == "value":
-            family = families.get(spec["family"])
-            if family is None:
-                raise CandidateError(
-                    f"{name}.{parameter}: family {spec['family']!r} is not approved"
-                )
-            prop = _value_prop(name, parameter, spec, family, review)
-        else:
-            raise CandidateError(f"{name}.{parameter}: unknown policy {policy!r}")
+        prop = _prop(name, parameter, spec, families, review)
         if prop is not None:
             props[parameter] = prop
     props = dict(sorted(props.items()))
     props["modifier"] = {"type": "modifier"}
     return props, children, dict(sorted(slots.items())), review
+
+
+def _prop(
+    name: str,
+    parameter: str,
+    spec: dict[str, Any],
+    families: dict[str, dict[str, Any]],
+    review: list[str],
+) -> dict[str, Any] | None:
+    """Derive the wire prop one value-carrying policy becomes."""
+    policy = spec["policy"]
+    if policy == "scalar":
+        return _scalar_prop(name, parameter, spec, review)
+    if policy == "provider":
+        return _provider_prop(name, parameter, spec, review)
+    if policy == "resource":
+        return _resource_prop(parameter, spec, review)
+    if policy == "event":
+        return _event_prop(name, parameter, spec, review)
+    if policy == "value":
+        family = families.get(spec["family"])
+        if family is None:
+            raise CandidateError(
+                f"{name}.{parameter}: family {spec['family']!r} is not approved"
+            )
+        return _value_prop(name, parameter, spec, family, review)
+    raise CandidateError(f"{name}.{parameter}: unknown policy {policy!r}")
 
 
 def gap_reason(plan: dict[str, Any], parameter: str) -> str | None:
@@ -192,6 +208,34 @@ def _scalar_prop(
         review.append(f"{parameter}: omitted; the default is not a literal")
         return None
     prop["default"] = value
+    return prop
+
+
+def _provider_prop(
+    name: str, parameter: str, spec: dict[str, Any], review: list[str]
+) -> dict[str, Any] | None:
+    """Derive a late-read scalar: the host reads the wire value when called."""
+    prop = _scalar_prop(name, parameter, spec, review)
+    if prop is not None:
+        returns = spec["type"]["arguments"][-1]["type"]["classifier"]
+        prop["provider"] = {"native": parameter, "returns": returns.split("/")[-1]}
+    return prop
+
+
+def _resource_prop(
+    parameter: str, spec: dict[str, Any], review: list[str]
+) -> dict[str, Any] | None:
+    """Derive a resource reference the host loads into the native type."""
+    prop: dict[str, Any] = {
+        "type": "resource",
+        "values": spec["values"],
+        "decode": spec["decode"],
+    }
+    if spec["required"]:
+        prop["required"] = True
+    elif _literal_default(spec) != (True, None):
+        review.append(f"{parameter}: omitted; only an absent default is renderable")
+        return None
     return prop
 
 

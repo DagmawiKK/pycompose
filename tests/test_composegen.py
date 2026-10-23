@@ -93,3 +93,43 @@ def test_the_signature_file_is_what_the_pin_says() -> None:
     found = inventory(DUMP_DIR)
     path = ROOT / "schema/signatures" / f"{found.bom}.txt"
     assert path.read_text(encoding="utf-8") == render(found)
+
+
+@pytest.mark.parametrize(
+    ("declared", "rule"),
+    [
+        (
+            _type("kotlin/Function0", _type("kotlin/Float")),
+            {"policy": "provider", "wireType": "float"},
+        ),
+        (
+            _type("androidx/compose/material3/SearchBarState"),
+            {"policy": "holder", "kind": "search"},
+        ),
+        (
+            _type("androidx/compose/ui/graphics/painter/Painter"),
+            {
+                "policy": "resource",
+                "decode": "resourceImage",
+                "values": ["drawable", "asset"],
+            },
+        ),
+    ],
+)
+def test_the_host_fills_late_reads_holders_and_resources(
+    declared: KotlinType, rule: dict[str, object]
+) -> None:
+    """The type alone decides: no component names its own exception."""
+    from tools.schema.classpath_types import Parameter
+    from tools.schema.components import _binding_rule
+
+    assert _binding_rule(Parameter("p", declared, False, None), {}, {}) == rule
+
+
+def test_a_nullable_late_read_is_refused() -> None:
+    from tools.schema.classpath_types import Parameter
+    from tools.schema.components import _binding_rule
+
+    provider = _type("kotlin/Function0", _type("kotlin/Float", nullable=True))
+    with pytest.raises(ValueError, match="provider/predicate protocol"):
+        _binding_rule(Parameter("p", provider, False, None), {}, {})

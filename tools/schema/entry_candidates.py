@@ -286,6 +286,9 @@ def derive(
     entry["children"] = children
     if slots:
         entry["slots"] = slots
+    state = _state(name, plan)
+    if state is not None:
+        entry["state"] = state
     if declaration.receiver is not None:
         classifier = declaration.receiver.classifier
         planned = plan.get("receiver")
@@ -299,6 +302,18 @@ def derive(
         entry["scope"] = scope
         review.append(f"receiver: composes only inside {scope}")
     return Derived(name, entry, tuple(review))
+
+
+def _state(name: str, plan: dict[str, Any]) -> dict[str, Any] | None:
+    """The state family the plan's holder parameter binds, if it has one."""
+    holders = [
+        {"native": parameter, "kind": spec["kind"]}
+        for parameter, spec in plan["parameters"].items()
+        if spec["policy"] == "holder"
+    ]
+    if len(holders) > 1:
+        raise CandidateError(f"{name}: one state family per component; got {holders}")
+    return holders[0] if holders else None
 
 
 def stage(registry: dict[str, Any], derived: list[Derived]) -> dict[str, Any]:

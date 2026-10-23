@@ -894,16 +894,16 @@
           "native": "drawerContent"
         }
       },
-      "reshaped": [
-        "open",
-        "onOpenChange"
-      ],
       "state": {
         "native": "drawerState",
         "kind": "drawer",
         "value": "open",
         "report": "onOpenChange"
-      }
+      },
+      "reshaped": [
+        "open",
+        "onOpenChange"
+      ]
     },
     "DockedSearchBar": {
       "package": "androidx.compose.material3",
@@ -1374,15 +1374,19 @@
       "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.material3:material3-android:1.4.0",
-        "owner": "androidx.compose.material3.SearchBarKt",
-        "name": "ExpandedDockedSearchBar",
+        "descriptor": "(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/ui/window/PopupProperties;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
         "jvmName": "ExpandedDockedSearchBar-qKj4JfE",
-        "descriptor": "(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/ui/window/PopupProperties;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+        "name": "ExpandedDockedSearchBar",
+        "owner": "androidx.compose.material3.SearchBarKt"
       },
       "optIn": [
         "androidx.compose.material3.ExperimentalMaterial3Api"
       ],
       "props": {
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+        },
         "shape": {
           "type": "value",
           "valueType": "Shape",
@@ -1391,10 +1395,6 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
-        },
-        "shadowElevation": {
-          "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
         },
         "modifier": {
           "type": "modifier"
@@ -1419,10 +1419,10 @@
       "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.material3:material3-android:1.4.0",
-        "owner": "androidx.compose.material3.SearchBarKt",
-        "name": "ExpandedFullScreenSearchBar",
+        "descriptor": "(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLkotlin/jvm/functions/Function2;Landroidx/compose/ui/window/DialogProperties;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
         "jvmName": "ExpandedFullScreenSearchBar-_UtchM0",
-        "descriptor": "(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLkotlin/jvm/functions/Function2;Landroidx/compose/ui/window/DialogProperties;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+        "name": "ExpandedFullScreenSearchBar",
+        "owner": "androidx.compose.material3.SearchBarKt"
       },
       "optIn": [
         "androidx.compose.material3.ExperimentalMaterial3Api"
@@ -1433,13 +1433,13 @@
           "valueType": "Shape",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldShape"
         },
-        "tonalElevation": {
-          "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
-        },
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
         },
         "modifier": {
           "type": "modifier"
@@ -2190,12 +2190,18 @@
       "since": "1.1.0",
       "source": {
         "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
-        "owner": "androidx.compose.foundation.ImageKt",
-        "name": "Image",
+        "descriptor": "(Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;Landroidx/compose/runtime/Composer;II)V",
         "jvmName": "Image",
-        "descriptor": "(Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;Landroidx/compose/runtime/Composer;II)V"
+        "name": "Image",
+        "owner": "androidx.compose.foundation.ImageKt"
       },
       "props": {
+        "contentDescription": {
+          "type": "string"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
         "resource": {
           "type": "resource",
           "values": [
@@ -2204,12 +2210,6 @@
           ],
           "decode": "resourceImage",
           "required": true
-        },
-        "contentDescription": {
-          "type": "string"
-        },
-        "modifier": {
-          "type": "modifier"
         }
       },
       "children": {
@@ -2537,17 +2537,23 @@
       "category": "status",
       "stability": "experimental",
       "since": "1.20.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;JJIFLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "LinearProgressIndicator-GJbTh5U",
+        "name": "LinearProgressIndicator",
+        "owner": "androidx.compose.material3.ProgressIndicatorKt"
+      },
       "optIn": [
         "androidx.compose.material3.ExperimentalMaterial3Api"
       ],
-      "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
-        "owner": "androidx.compose.material3.ProgressIndicatorKt",
-        "name": "LinearProgressIndicator",
-        "jvmName": "LinearProgressIndicator-GJbTh5U",
-        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;JJIFLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V"
-      },
       "props": {
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor"
+        },
         "progress": {
           "type": "number",
           "required": true,
@@ -2556,12 +2562,6 @@
             "returns": "Float"
           },
           "since": "1.20.0"
-        },
-        "color": {
-          "type": "color",
-          "valueType": "Color",
-          "decode": "color",
-          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor"
         },
         "trackColor": {
           "type": "color",
@@ -2745,6 +2745,13 @@
         "kind": "content",
         "provides": "ColumnScope"
       },
+      "state": {
+        "native": "sheetState",
+        "kind": "sheet",
+        "value": "open",
+        "report": "onOpenChange",
+        "dismiss": "onDismissRequest"
+      },
       "slots": {
         "dragHandle": {
           "native": "dragHandle",
@@ -2757,14 +2764,7 @@
         "value",
         "onValueChange",
         "skipPartiallyExpanded"
-      ],
-      "state": {
-        "native": "sheetState",
-        "kind": "sheet",
-        "value": "open",
-        "report": "onOpenChange",
-        "dismiss": "onDismissRequest"
-      }
+      ]
     },
     "ModalDrawerSheet": {
       "package": "androidx.compose.material3",
@@ -2851,16 +2851,16 @@
           "native": "drawerContent"
         }
       },
-      "reshaped": [
-        "open",
-        "onOpenChange"
-      ],
       "state": {
         "native": "drawerState",
         "kind": "drawer",
         "value": "open",
         "report": "onOpenChange"
-      }
+      },
+      "reshaped": [
+        "open",
+        "onOpenChange"
+      ]
     },
     "ModalWideNavigationRail": {
       "package": "androidx.compose.material3",
@@ -4576,9 +4576,6 @@
       "category": "input",
       "stability": "experimental",
       "since": "1.23.0",
-      "optIn": [
-        "androidx.compose.material3.ExperimentalMaterial3Api"
-      ],
       "source": {
         "artifact": "androidx.compose.material3:material3-android:1.4.0",
         "descriptor": "(Landroidx/compose/material3/SliderState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SliderColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
@@ -4586,6 +4583,9 @@
         "name": "Slider",
         "owner": "androidx.compose.material3.SliderKt"
       },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
       "props": {
         "colors": {
           "type": "value",
@@ -4626,18 +4626,18 @@
       "children": {
         "allowed": false
       },
-      "reshaped": [
-        "value",
-        "onValueChangeFinished",
-        "valueRange",
-        "steps"
-      ],
       "state": {
         "native": "state",
         "kind": "slider",
         "value": "value",
         "report": "onValueChangeFinished"
-      }
+      },
+      "reshaped": [
+        "value",
+        "onValueChangeFinished",
+        "valueRange",
+        "steps"
+      ]
     },
     "Snackbar": {
       "package": "androidx.compose.material3",
@@ -4783,15 +4783,31 @@
       "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.material3:material3-android:1.4.0",
-        "owner": "androidx.compose.material3.SearchBarKt",
-        "name": "SearchBar",
+        "descriptor": "(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/runtime/Composer;II)V",
         "jvmName": "SearchBar-nbWgWpA",
-        "descriptor": "(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/runtime/Composer;II)V"
+        "name": "SearchBar",
+        "owner": "androidx.compose.material3.SearchBarKt"
       },
       "optIn": [
         "androidx.compose.material3.ExperimentalMaterial3Api"
       ],
       "props": {
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
         "text": {
           "type": "string",
           "required": true
@@ -4849,22 +4865,6 @@
               "type": "boolean"
             }
           ]
-        },
-        "shape": {
-          "type": "value",
-          "valueType": "Shape",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldShape"
-        },
-        "tonalElevation": {
-          "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
-        },
-        "shadowElevation": {
-          "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
-        },
-        "modifier": {
-          "type": "modifier"
         }
       },
       "children": {
@@ -5161,6 +5161,21 @@
         "owner": "androidx.compose.material3.SwipeToDismissBoxKt"
       },
       "props": {
+        "enableDismissFromEndToStart": {
+          "type": "boolean",
+          "default": true
+        },
+        "enableDismissFromStartToEnd": {
+          "type": "boolean",
+          "default": true
+        },
+        "gesturesEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
         "value": {
           "type": "enum",
           "values": [
@@ -5177,21 +5192,6 @@
               "type": "string"
             }
           ]
-        },
-        "enableDismissFromStartToEnd": {
-          "type": "boolean",
-          "default": true
-        },
-        "enableDismissFromEndToStart": {
-          "type": "boolean",
-          "default": true
-        },
-        "gesturesEnabled": {
-          "type": "boolean",
-          "default": true
-        },
-        "modifier": {
-          "type": "modifier"
         }
       },
       "children": {
@@ -5205,16 +5205,16 @@
           "provides": "RowScope"
         }
       },
-      "reshaped": [
-        "value",
-        "onValueChange"
-      ],
       "state": {
         "native": "state",
         "kind": "swipe",
         "value": "value",
         "report": "onValueChange"
-      }
+      },
+      "reshaped": [
+        "value",
+        "onValueChange"
+      ]
     },
     "Switch": {
       "package": "androidx.compose.material3",
