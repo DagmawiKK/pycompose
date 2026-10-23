@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pytest
 
+from tools.schema.classpath_dump import SOURCE_PATTERNS
+
 DUMP = Path("android/build/compose-api")
 ARTIFACT = "androidx.compose.material3:material3-android:1.4.0"
 ROOT = Path(__file__).resolve().parents[1]
@@ -79,12 +81,7 @@ def write_inventory(directory: Path, records: list[dict], **changes):
                 path.relative_to("android").as_posix(): hashlib.sha256(
                     path.read_bytes()
                 ).hexdigest()
-                for pattern in (
-                    "*.gradle.kts",
-                    "*/build.gradle.kts",
-                    "gradle/libs.versions.toml",
-                    "gradle.properties",
-                )
+                for pattern in SOURCE_PATTERNS
                 for path in Path("android").glob(pattern)
             },
         },
@@ -358,7 +355,8 @@ def test_inventory_refuses_untrusted_or_incomplete_input(
     elif defect == "classes":
         document["classes"] = []
     elif defect == "stale":
-        document["provenance"]["sourceHashes"]["dump-compose-api.gradle.kts"] = "0" * 64
+        hashes = document["provenance"]["sourceHashes"]
+        hashes["compose-extract/src/main/kotlin/Inventory.kt"] = "0" * 64
     else:
         coordinate = ARTIFACT.replace("1.4.0", "1.5.0")
         document["artifacts"][0]["coordinate"] = coordinate

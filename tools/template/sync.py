@@ -25,8 +25,7 @@ EXCLUDED = frozenset(
         # :renderer's classpath and the closure file pins what they may scan.
         # They exist only for the repo's own tooling -- a scaffolded app is
         # handed generated code, and never regenerates the catalog.
-        "dump-compose-api.gradle.kts",
-        "dump-compose-defaults.gradle.kts",
+        "compose-extract",
         "compose-closure.json",
         "tools",
         # The sample host names itself; a scaffolded app gets its launcher

@@ -13,17 +13,6 @@ plugins {
     alias(libs.plugins.detekt)
 }
 
-// Not a module: tasks that read :renderer's resolved classpath and its pinned
-// sources, and write the Compose API evidence for the schema tooling. Applied,
-// not included, because they are build-time utilities nothing should depend on
-// -- and they must live here rather than in settings.gradle.kts because they
-// need a project receiver. A scaffolded app is handed generated code and ships
-// neither script, so they are applied only where they exist.
-listOf("dump-compose-api.gradle.kts", "dump-compose-defaults.gradle.kts")
-    .map(::file)
-    .filter(File::exists)
-    .forEach { apply(from = it) }
-
 subprojects {
     apply(plugin = "com.diffplug.spotless")
     apply(plugin = "io.gitlab.arturbosch.detekt")
@@ -37,7 +26,12 @@ subprojects {
             // Both patterns in one call: a second targetExclude replaces the
             // first rather than adding to it, silently un-excluding `generated/`.
             targetExclude("**/generated/**", "**/Generated*.kt")
-            ktlint("1.3.1")
+            val format = ktlint("1.3.1")
+            if (path == ":compose-extract") {
+                // Detekt enforces 100 columns; ktlint 1.3.1 fails to converge on
+                // this compiler AST code.
+                format.editorConfigOverride(mapOf("ktlint_standard_max-line-length" to "disabled"))
+            }
         }
         kotlinGradle {
             target("*.gradle.kts")
@@ -62,8 +56,8 @@ subprojects {
 
 spotless {
     kotlin {
-        target("architecture/src/**/*.kt", "tools/*.kt")
-        // Detekt enforces 100 columns; ktlint 1.3.1 fails to converge on this compiler AST code.
+        target("architecture/src/**/*.kt")
+        // Detekt enforces 100 columns; ktlint 1.3.1 fails to converge on long test lines.
         ktlint("1.3.1").editorConfigOverride(mapOf("ktlint_standard_max-line-length" to "disabled"))
     }
     kotlinGradle {
@@ -75,7 +69,7 @@ spotless {
 detekt {
     buildUponDefaultConfig = true
     config.setFrom(files("config/detekt.yml"))
-    source.setFrom(files("architecture/src/test/kotlin", "tools"))
+    source.setFrom(files("architecture/src/test/kotlin"))
 }
 
 tasks.register("testDebugUnitTest") {

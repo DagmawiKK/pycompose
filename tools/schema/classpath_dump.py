@@ -47,6 +47,7 @@ __all__ = [
     "KotlinType",
     "OptInIndex",
     "Parameter",
+    "SOURCE_PATTERNS",
     "opt_in_index",
     "opt_in_markers",
     "required_opt_ins",
@@ -54,6 +55,20 @@ __all__ = [
     "summarise",
     "inventory",
 ]
+
+
+SOURCE_PATTERNS = (
+    "*.gradle.kts",
+    "*/build.gradle.kts",
+    "compose-extract/src/main/kotlin/*.kt",
+    "gradle/libs.versions.toml",
+    "gradle.properties",
+)
+"""Files under android/ whose bytes the inventory was extracted with.
+
+``dumpComposeApi`` hashes the same set (compose-extract/build.gradle.kts); a
+change to any of them makes the evidence stale.
+"""
 
 
 def inventory(directory: Path = DUMP_DIR) -> Inventory:
@@ -247,7 +262,8 @@ UNRESOLVED = {"kind": "unsupported", "reason": "source could not be pinned"}
 def _tool_digest() -> str:
     """Digest every tool source in file-name order: both halves own the contract."""
     digest = hashlib.sha256()
-    tools = Path(__file__).resolve().parents[2] / "android/tools"
+    android = Path(__file__).resolve().parents[2] / "android"
+    tools = android / "compose-extract/src/main/kotlin"
     for tool in sorted(tools.glob("*.kt")):
         digest.update(tool.read_bytes())
     return digest.hexdigest()
@@ -324,12 +340,7 @@ def _validate_inventory(data: dict[str, Any]) -> None:
     android = Path(__file__).resolve().parents[2] / "android"
     sources = {
         p.relative_to(android).as_posix(): p
-        for pattern in (
-            "*.gradle.kts",
-            "*/build.gradle.kts",
-            "gradle/libs.versions.toml",
-            "gradle.properties",
-        )
+        for pattern in SOURCE_PATTERNS
         for p in android.glob(pattern)
     }
     _require(

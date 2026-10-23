@@ -338,7 +338,7 @@ def test_unsafe_token_initializers_are_refused(
     assert native_document["provenance"]["compiler"] == "2.4.21"
     request_path = ROOT / DUMP / "source-request.json"
     request = json.loads(request_path.read_text())
-    tool = ROOT / "android/tools"
+    tool = ROOT / "android/compose-extract/src/main/kotlin"
     digest = hashlib.sha256()
     for half in sorted(tool.glob("*.kt")):
         digest.update(half.read_bytes())
@@ -384,12 +384,7 @@ def test_unsafe_token_initializers_are_refused(
         [
             request["javaExecutable"],
             "-cp",
-            os.pathsep.join(
-                [
-                    *request["compilerClasspath"],
-                    str(request_path.parent / "source-tool"),
-                ]
-            ),
+            os.pathsep.join(request["compilerClasspath"]),
             "SourceDefaultsKt",
             str(probe_request),
             str(probe_result),

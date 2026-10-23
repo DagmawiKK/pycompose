@@ -18,7 +18,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 CLOSURE_PATH = ROOT / "android" / "compose-closure.json"
 INVENTORY_PATH = ROOT / "android" / "build" / "compose-api" / "inventory.json"
-GRADLE_SCRIPT = ROOT / "android" / "dump-compose-api.gradle.kts"
+EXTRACTOR = ROOT / "android" / "compose-extract"
+"""The extraction module: its build script resolves, its tool verifies."""
 
 # group -> (status, category, domain, design)
 GROUPS: dict[str, tuple[str, str, str, str | None]] = {
@@ -130,7 +131,9 @@ def test_pending_groups_are_empty_and_extracted_groups_are_not(
 
 
 def test_the_gradle_task_consumes_the_closure_file() -> None:
-    script = GRADLE_SCRIPT.read_text(encoding="utf-8")
+    script = (EXTRACTOR / "build.gradle.kts").read_text(encoding="utf-8") + (
+        EXTRACTOR / "src/main/kotlin/Inventory.kt"
+    ).read_text(encoding="utf-8")
     assert "compose-closure.json" in script
     assert "composeToolingClasspath" in script
     assert "closure.support" in script
