@@ -109,7 +109,7 @@ class PyComposeViewModelTest {
             assertEquals(emptyList<String>(), bridge.calls)
         }
 
-    @Test fun `actions are FIFO and rejected snapshots keep the previous IR`() =
+    @Test fun `a burst of actions runs in order before one pull`() =
         runTest {
             val bridge = FakeBridge()
             val model =
@@ -131,13 +131,33 @@ class PyComposeViewModelTest {
                     "start:home",
                     "pull",
                     "action:1",
-                    "pull",
                     "action:2",
                     "pull",
                 )
             assertEquals(expected, bridge.calls)
             assertSame(initial, model.snapshot.value)
             assertTrue(model.error.value.isNotEmpty())
+            model.close()
+        }
+
+    @Test fun `a newer report replaces an older one to the same action still queued`() =
+        runTest {
+            val bridge = FakeBridge()
+            val model =
+                PyComposeViewModel(
+                    bridge,
+                    SavedStateHandle(),
+                    StandardTestDispatcher(testScheduler),
+                )
+            advanceUntilIdle()
+            model.dispatch(Action("increment", seq = 1))
+            // A tap is not a report: it carries no settled value and always stands.
+            model.dispatch(Action("increment"))
+            model.dispatch(Action("increment", seq = 2))
+            advanceUntilIdle()
+            assertEquals(2, bridge.sent.size)
+            assertTrue("seq" !in bridge.sent[0])
+            assertTrue(bridge.sent[1].contains("\"seq\":2"))
             model.close()
         }
 

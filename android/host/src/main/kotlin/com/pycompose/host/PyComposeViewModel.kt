@@ -21,24 +21,31 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * An accepted snapshot paired atomically with its native session lifetime.
  *
  * @param ir Validated wire data to render.
  * @param epoch Host-local generation, retained on rotation and advanced on Python restart.
- * @param trace The span of the command that produced it, closed by the frame that shows it.
+ * @param traces The spans of the commands that produced it, closed by the frame that shows it.
  * @param serial The serial the app published it under; actions taken on it name it.
  */
 data class SessionSnapshot(
     val ir: ValidatedIr,
     val epoch: Long,
-    val trace: Int = 0,
+    val traces: List<Int> = emptyList(),
     val serial: Long = SnapshotStream.NONE,
 )
 
-/** Host owns only latest IR and minimal navigation state, never the Python Store. */
+/**
+ * Host owns only latest IR and minimal navigation state, never the Python Store.
+ *
+ * It is the one object between the activity and the Python worker: its public calls
+ * queue commands, and its private ones run them on the worker. Splitting the two halves
+ * would put the worker's queue and its consumer in different types, so it sits just
+ * over detekt's default function count.
+ */
+@Suppress("TooManyFunctions")
 class PyComposeViewModel(
     private val bridge: BridgeSurface,
     private val savedState: SavedStateHandle,
@@ -88,7 +95,7 @@ class PyComposeViewModel(
         val saved = restore
         scope.launch {
             try {
-                perform(ActionTrace.begin()) {
+                perform(listOf(ActionTrace.begin())) {
                     bridge.start(restored, saved)
                     // Facts Python cannot observe itself (appearance, size, locale) must
                     // reach it before the first pull: the pull is the frame the user
@@ -97,47 +104,16 @@ class PyComposeViewModel(
                     initialConfig?.let { config ->
                         bridge.acceptAction(Action("onConfigChanged", config).toJson())
                     }
+                    true
                 }
-                for ((command, cookie) in commands) {
-                    perform(cookie) {
-                        when (command) {
-                            is Command.Dispatch -> {
-                                val source = command.action.toJson()
-                                val current =
-                                    checkNotNull(mutableSnapshot.value) { "No active snapshot" }
-                                AppBindings.validateAction(source, current.ir).getOrThrow()
-                                bridge.acceptAction(source)
-                            }
-                            is Command.Lifecycle -> {
-                                // Platform events validate against the lifecycle
-                                // contract alone: no snapshot has to exist yet.
-                                Lifecycle.check(command.event, command.payload)
-                                bridge.acceptAction(command.action.toJson())
-                            }
-                            is Command.Reload -> {
-                                if (bridge.reload(command.route, restore)) {
-                                    // A new Python session knows no serial the host holds.
-                                    stream.reset()
-                                    epoch += 1
-                                    savedState[EPOCH] = epoch
-                                }
-                            }
-                            is Command.Navigate -> {
-                                // A route change is an ordinary inbound action, not a
-                                // reason to rebuild Python. Restarting here would
-                                // discard the app's session on every navigation, which
-                                // is what makes a ViewModel impossible to retain.
-                                Lifecycle.check("onRouteChanged", command.action.payload)
-                                bridge.acceptAction(command.action.toJson())
-                            }
-                            is Command.Push -> {
-                                // A background result, delivered exactly as a tap would
-                                // be: the payload is the app's, and its handler's
-                                // declared contract is what checks it.
-                                bridge.acceptAction(command.action.toJson())
-                            }
-                        }
-                    }
+                for (first in commands) {
+                    // Everything queued behind the first command runs before one
+                    // pull: a burst costs one snapshot, not one per command.
+                    val batch =
+                        coalesce(
+                            listOf(first) + generateSequence { commands.tryReceive().getOrNull() },
+                        )
+                    perform(batch.map { it.cookie }) { batch.map { run(it.command) }.any { it } }
                 }
             } finally {
                 // Cancellation runs this synchronous teardown on the owning worker.
@@ -145,6 +121,58 @@ class PyComposeViewModel(
                 runCatching { bridge.close() }
                     .onFailure { mutableError.value = "Python cleanup failed" }
             }
+        }
+    }
+
+    /**
+     * Deliver one command; its failure is reported and the rest of the batch still runs.
+     *
+     * @return Whether it reached Python, so there may be a new snapshot to pull.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    private fun run(command: Command): Boolean {
+        try {
+            when (command) {
+                is Command.Dispatch -> {
+                    val source = command.action.toJson()
+                    val current =
+                        checkNotNull(mutableSnapshot.value) { "No active snapshot" }
+                    AppBindings.validateAction(source, current.ir).getOrThrow()
+                    bridge.acceptAction(source)
+                }
+                is Command.Lifecycle -> {
+                    // Platform events validate against the lifecycle
+                    // contract alone: no snapshot has to exist yet.
+                    Lifecycle.check(command.event, command.payload)
+                    bridge.acceptAction(command.action.toJson())
+                }
+                is Command.Reload -> {
+                    if (bridge.reload(command.route, restore)) {
+                        // A new Python session knows no serial the host holds.
+                        stream.reset()
+                        epoch += 1
+                        savedState[EPOCH] = epoch
+                    }
+                }
+                is Command.Navigate -> {
+                    // A route change is an ordinary inbound action, not a
+                    // reason to rebuild Python. Restarting here would
+                    // discard the app's session on every navigation, which
+                    // is what makes a ViewModel impossible to retain.
+                    Lifecycle.check("onRouteChanged", command.action.payload)
+                    bridge.acceptAction(command.action.toJson())
+                }
+                is Command.Push -> {
+                    // A background result, delivered exactly as a tap would
+                    // be: the payload is the app's, and its handler's
+                    // declared contract is what checks it.
+                    bridge.acceptAction(command.action.toJson())
+                }
+            }
+            return true
+        } catch (failure: Exception) {
+            mutableError.value = failure.message ?: "Python worker failure"
+            return false
         }
     }
 
@@ -210,12 +238,13 @@ class PyComposeViewModel(
     // Boundary failures become diagnostics, never UI crashes.
     @Suppress("TooGenericExceptionCaught")
     private fun perform(
-        cookie: Int,
-        operation: () -> Unit,
+        cookies: List<Int>,
+        operation: () -> Boolean,
     ) {
         var shown = false
         try {
-            ActionTrace.stage("pycompose.python", operation)
+            // A batch none of which reached Python has nothing new to pull.
+            if (!ActionTrace.stage("pycompose.python", operation)) return
             val envelope =
                 ActionTrace.stage("pycompose.pull") {
                     bridge.fetchLatest(stream.surface, stream.serial)
@@ -229,7 +258,7 @@ class PyComposeViewModel(
                     val changed = candidate.snapshot != previous?.ir?.snapshot
                     if (changed || previous?.epoch != epoch) {
                         mutableSnapshot.value =
-                            SessionSnapshot(candidate, epoch, cookie, stream.serial)
+                            SessionSnapshot(candidate, epoch, cookies, stream.serial)
                         shown = true
                     }
                     mutableError.value = bridge.fetchLatestError()
@@ -242,7 +271,7 @@ class PyComposeViewModel(
             mutableError.value = failure.message ?: "Python worker failure"
         } finally {
             // A command that changed nothing on screen has no frame to close its span.
-            if (!shown) ActionTrace.end(cookie)
+            if (!shown) cookies.forEach(ActionTrace::end)
         }
     }
 
@@ -287,45 +316,6 @@ class PyComposeViewModel(
 
     override fun onCleared() {
         close()
-    }
-
-    /** A command and the trace span opened when it was queued. */
-    private data class Queued(
-        val command: Command,
-        val cookie: Int,
-    )
-
-    private sealed interface Command {
-        data class Dispatch(
-            val action: Action,
-        ) : Command
-
-        data class Lifecycle(
-            val event: String,
-            val payload: JsonObject,
-        ) : Command {
-            val action: Action = Action(event, payload)
-        }
-
-        data class Reload(
-            val route: String,
-        ) : Command
-
-        /** A background result, queued from whatever thread produced it. */
-        data class Push(
-            val action: Action,
-        ) : Command
-
-        data class Navigate(
-            val route: String,
-        ) : Command {
-            /** The route change, delivered to Python as an ordinary action. */
-            val action: Action =
-                Action(
-                    "onRouteChanged",
-                    JsonObject(mapOf("route" to JsonPrimitive(route))),
-                )
-        }
     }
 
     companion object {

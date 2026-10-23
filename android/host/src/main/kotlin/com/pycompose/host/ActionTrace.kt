@@ -42,7 +42,7 @@ internal object ActionTrace {
             try {
                 withFrameNanos { }
             } finally {
-                end(session.trace)
+                session.traces.forEach(::end)
             }
         }
     }
