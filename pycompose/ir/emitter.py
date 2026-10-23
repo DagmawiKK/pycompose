@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import cast
 
 from pycompose.core.expansion import expand_nodes
-from pycompose.core.ids import ROOT_ID, IdRegistry, child_id, sibling_keys
+from pycompose.core.ids import Handles, IdRegistry, sibling_keys
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
 from pycompose.core.reuse import Reuse, SubtreeMemo
@@ -59,11 +59,13 @@ def emit_ir(state: State, schema_version: str, reuse: Reuse | None = None) -> IR
     )
     if reuse is not None:
         reuse.emitted.start()
+    handles = reuse.handles if reuse else Handles(compact=False)
+    ids = IdRegistry()
     root, contracts = _emit_node(
         expand_nodes(state.root, reuse.expansion if reuse else None),
-        IdRegistry(),
-        reuse.emitted if reuse else None,
+        _Emission(ids, handles, reuse.emitted if reuse else None),
     )
+    handles.retain(ids)
     bindings = (
         cast("Mapping[str, JsonValue]", {"actionBindings": contracts})
         if contracts
@@ -111,8 +113,11 @@ class _Emission:
     and its ids and binding contracts are replayed, not redone.
     """
 
-    def __init__(self, ids: IdRegistry, memo: SubtreeMemo[_Emitted] | None) -> None:
+    def __init__(
+        self, ids: IdRegistry, handles: Handles, memo: SubtreeMemo[_Emitted] | None
+    ) -> None:
         self.ids = ids
+        self.handles = handles
         self.memo = memo
         self.contracts: dict[str, object] = {}
         self.frames: list[_Frame] = []
@@ -146,11 +151,8 @@ class _Emission:
 
     def qualify(self, source: Node) -> str:
         if not self.frames:
-            return ROOT_ID
+            return self.handles.root
         parent = self.frames[-1].qualified
-        if source.id.startswith(f"{parent}."):
-            # Full-path ids stay stable; every other key qualifies under its parent.
-            return source.id
         key, repeated = self.key()
         if not source.id and (repeated or not source.site) and _addressable(source):
             # Order is all that tells these apart, and a reorder would hand
@@ -160,7 +162,7 @@ class _Emission:
                 node_type=source.type,
                 site=source.site,
             )
-        return child_id(parent, key)
+        return self.handles.child(parent, key)
 
     def exit(self, source: Node) -> Node:
         frame = self.frames.pop()
@@ -211,10 +213,7 @@ class _Emission:
         )
 
 
-def _emit_node(
-    root: Node, ids: IdRegistry, memo: SubtreeMemo[_Emitted] | None
-) -> tuple[Node, dict[str, object]]:
-    emission = _Emission(ids, memo)
+def _emit_node(root: Node, emission: _Emission) -> tuple[Node, dict[str, object]]:
     result = root
     for source, entering in walk_nodes(root, emission.prune):
         if entering:

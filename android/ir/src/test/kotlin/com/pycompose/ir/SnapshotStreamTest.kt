@@ -23,7 +23,7 @@ class SnapshotStreamTest {
 
     private val patch =
         """{"baseSerial":1,"kind":"patch","ops":[
-            {"id":"root.count","op":"setProp","prop":"text","value":"2"}],
+            {"at":[1],"id":"root.count","op":"setProp","prop":"text","value":"2"}],
             "schemaVersion":"1.0.0","serial":2,"version":"0.1.0"}"""
 
     @Test
@@ -45,6 +45,32 @@ class SnapshotStreamTest {
 
         assertTrue(stream.accept(patch).isFailure)
         assertEquals(SnapshotStream.NONE, stream.serial)
+    }
+
+    @Test
+    fun `an op whose indices reach a different node fails and asks for a whole one next`() {
+        val stream = SnapshotStream()
+        stream.accept(full("0", serial = 1)).getOrThrow()
+
+        assertTrue(stream.accept(patch.replace("\"at\":[1]", "\"at\":[0]")).isFailure)
+        assertEquals(SnapshotStream.NONE, stream.serial)
+    }
+
+    @Test
+    fun `ids that name no path still patch, since indices locate the node`() {
+        fun compact(count: String) =
+            """{"root":{"id":"0","type":"Column","props":{},"children":[
+                {"id":"1","type":"Text","props":{"text":"Counter"}},
+                {"id":"2","type":"Text","props":{"text":"$count"}}]},
+                "schemaVersion":"1.0.0","version":"0.1.0"}"""
+        val stream = SnapshotStream()
+        stream
+            .accept(
+                compact("0").replace("{\"root\"", "{\"kind\":\"full\",\"serial\":1,\"root\""),
+            ).getOrThrow()
+
+        val patched = stream.accept(patch.replace("\"root.count\"", "\"2\"")).getOrThrow()
+        assertEquals(IrParser().parse(compact("2")).getOrThrow().snapshot, patched.snapshot)
     }
 
     @Test

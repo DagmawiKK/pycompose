@@ -101,7 +101,7 @@ class SnapshotStream(
         root: JsonObject,
         op: JsonObject,
     ): JsonObject =
-        rewrite(root, WireValidator.string(op["id"], "op.id")) { node ->
+        rewrite(root, op) { node ->
             when (WireValidator.string(op["op"], "op.op")) {
                 "setProp" -> {
                     val props = node["props"] as? JsonObject ?: error("Missing object props")
@@ -114,25 +114,26 @@ class SnapshotStream(
             }
         }
 
-    /** [root] with the node [target] changed, its ancestors rebuilt and all else shared. */
+    /**
+     * [root] with the node [op] locates changed, its ancestors rebuilt and all else shared.
+     * The op's child indices find the node; its id only confirms it, since ids carry no path.
+     */
     private fun rewrite(
         root: JsonObject,
-        target: String,
+        op: JsonObject,
         change: (JsonObject) -> JsonObject,
     ): JsonObject {
+        val target = WireValidator.string(op["id"], "op.id")
+        val indices =
+            (op["at"] as? JsonArray ?: error("op.at must be an array")).map {
+                (it as? JsonPrimitive)?.content?.toIntOrNull() ?: error("op.at must hold indices")
+            }
         val path = mutableListOf(root)
-        val indices = mutableListOf<Int>()
-        while (WireValidator.string(path.last()["id"], "node.id") != target) {
+        for (index in indices) {
             val children = path.last()["children"] as? JsonArray ?: error("No node $target")
-            val index =
-                children.indexOfFirst { child ->
-                    val id = ((child as? JsonObject)?.get("id") as? JsonPrimitive)?.content
-                    id != null && (target == id || target.startsWith("$id."))
-                }
-            require(index >= 0) { "No node $target" }
-            indices += index
-            path += children[index] as JsonObject
+            path += children.getOrNull(index) as? JsonObject ?: error("No node $target")
         }
+        require(WireValidator.string(path.last()["id"], "node.id") == target) { "No node $target" }
         var replaced = change(path.last())
         for (level in indices.indices.reversed()) {
             val parent = path[level]

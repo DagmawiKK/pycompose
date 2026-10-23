@@ -9,6 +9,7 @@ from threading import current_thread
 from pycompose.bridge.types import decode_action
 from pycompose.core.action_binding import BindingSpec
 from pycompose.core.expansion import ExpansionMemo
+from pycompose.core.ids import Handles
 from pycompose.core.reuse import Reuse
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.extensions.delivery import Dispatcher
@@ -76,8 +77,12 @@ class BridgeSurface:
         self._latest_error = ""
         self._bindings: dict[str, BindingSpec] = {}
         self._deliveries = Dispatcher()
-        # Debug re-expands a sample of reused composables to catch impure ones.
-        self._reuse = Reuse(ExpansionMemo(verify_every=VERIFY_EVERY if debug else 0))
+        # Debug re-expands a sample of reused composables to catch impure ones,
+        # and names nodes by readable paths; release names them compactly.
+        self._reuse = Reuse(
+            ExpansionMemo(verify_every=VERIFY_EVERY if debug else 0),
+            handles=Handles(compact=not debug),
+        )
         try:
             published = self._snapshot(store.value)
             if published is not None:

@@ -21,6 +21,7 @@ from pycompose.errors import IrError
 
 __all__ = [
     "ROOT_ID",
+    "Handles",
     "IdRegistry",
     "call_site",
     "child_id",
@@ -128,6 +129,79 @@ def id_path(node_id: str) -> tuple[str, ...]:
         The path segments.
     """
     return tuple(node_id.split(_SEPARATOR))
+
+
+class Handles:
+    """Name each node identity, (parent, key), for one publishing session.
+
+    Readable mode names a node by its full path, as diagnostics want. Compact
+    mode names it by a short counter assigned on first sight and kept while the
+    identity lives, so an id costs a few bytes at any depth (ADR-0043); a
+    number is never given to a second identity, so a host can never confuse
+    a new node with one it held before.
+    """
+
+    __slots__ = ("_compact", "_names", "_next")
+
+    def __init__(self, *, compact: bool) -> None:
+        """Start with no identities named.
+
+        Args:
+            compact: Short counter names instead of readable paths.
+        """
+        self._compact = compact
+        self._names: dict[tuple[str, str | int], str] = {}
+        self._next = 1
+
+    @property
+    def root(self) -> str:
+        """Return the root node's name."""
+        return "0" if self._compact else ROOT_ID
+
+    def child(self, parent: str, key: str | int) -> str:
+        """Return the name of the child keyed ``key`` under ``parent``.
+
+        Args:
+            parent: The parent's name.
+            key: The child's key among its siblings.
+
+        Returns:
+            Its path, or its compact name, assigned now if it is new.
+        """
+        if not self._compact:
+            # A key that is already this child's full path stays as it is.
+            if isinstance(key, str) and key.startswith(f"{parent}{_SEPARATOR}"):
+                return key
+            return child_id(parent, key)
+        name = self._names.get((parent, key))
+        if name is None:
+            name = _base36(self._next)
+            self._next += 1
+            self._names[(parent, key)] = name
+        return name
+
+    def retain(self, live: IdRegistry) -> None:
+        """Forget identities absent from the latest snapshot.
+
+        Runs only once forgotten names outnumber live ones, so its cost stays
+        proportional to the snapshots that grew the table.
+
+        Args:
+            live: Every name the latest snapshot claimed.
+        """
+        if len(self._names) > 2 * len(live):
+            self._names = {
+                identity: name for identity, name in self._names.items() if name in live
+            }
+
+
+def _base36(number: int) -> str:
+    digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    text = ""
+    while number:
+        number, digit = divmod(number, 36)
+        text = digits[digit] + text
+    return text
 
 
 class IdRegistry:

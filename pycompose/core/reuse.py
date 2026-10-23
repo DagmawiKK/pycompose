@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any, Generic, TypeVar
 
 from pycompose.core.expansion import ExpansionMemo
+from pycompose.core.ids import Handles
 
 V = TypeVar("V")
 
@@ -68,6 +69,7 @@ class Reuse:
         validated: Subtrees that passed validation, with every id they claim.
         serialized: Canonical bytes of emitted subtrees.
         bindings: Parsed binding specs, by frozen contract and binding id.
+        handles: The names given to node identities, kept for the session.
     """
 
     expansion: ExpansionMemo = field(default_factory=ExpansionMemo)
@@ -75,3 +77,4 @@ class Reuse:
     validated: SubtreeMemo[Any] = field(default_factory=SubtreeMemo)
     serialized: SubtreeMemo[bytes] = field(default_factory=SubtreeMemo)
     bindings: SubtreeMemo[Any] = field(default_factory=SubtreeMemo)
+    handles: Handles = field(default_factory=lambda: Handles(compact=False))

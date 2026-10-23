@@ -304,28 +304,27 @@ def test_invalid_initial_snapshot_is_unavailable_and_logged(
 def _apply_ops(
     node: dict[str, object], ops: list[dict[str, object]]
 ) -> dict[str, object]:
-    """Apply envelope ops to a plain JSON tree, the way the host does."""
+    """Apply envelope ops to a plain JSON tree, the way the host does: by index."""
 
-    def rebuild(current: dict[str, object], op: dict[str, object]) -> dict[str, object]:
-        if current["id"] == op["id"]:
+    def rebuild(
+        current: dict[str, object], op: dict[str, object], at: list[int]
+    ) -> dict[str, object]:
+        if not at:
+            assert current["id"] == op["id"]
             if op["op"] == "replaceSubtree":
                 return op["payload"]  # type: ignore[return-value]
             props = {**current["props"], op["prop"]: op["value"]}  # type: ignore[dict-item]
             return {**current, "props": props}
-        children = list(current.get("children", []))  # type: ignore[call-overload]
-        target = str(op["id"])
-        for index, child in enumerate(children):
-            if target == child["id"] or target.startswith(child["id"] + "."):
-                children[index] = rebuild(child, op)
-                return {**current, "children": children}
-        raise AssertionError(f"no node {target!r}")
+        children = list(current["children"])  # type: ignore[call-overload]
+        children[at[0]] = rebuild(children[at[0]], op, at[1:])
+        return {**current, "children": children}
 
     for op in ops:
-        node = rebuild(node, op)
+        node = rebuild(node, op, list(op["at"]))  # type: ignore[call-overload]
     return node
 
 
-def _counter_bridge() -> BridgeSurface:
+def _counter_bridge(*, debug: bool = True) -> BridgeSurface:
     def row(text: str) -> Node:
         return Node(id="count", type="Text", props=Props({"text": text}))
 
@@ -340,7 +339,7 @@ def _counter_bridge() -> BridgeSurface:
         "increment",
         lambda state, payload: replace(state, root=screen(str(payload["by"]))),
     )
-    return BridgeSurface(Store(State(root=screen("0"))), actions)
+    return BridgeSurface(Store(State(root=screen("0"))), actions, debug=debug)
 
 
 def test_a_pull_from_a_known_base_is_a_patch_that_rebuilds_the_latest() -> None:
@@ -356,6 +355,18 @@ def test_a_pull_from_a_known_base_is_a_patch_that_rebuilds_the_latest() -> None:
     latest = json.loads(bridge.expose_latest_snapshot() or "")
     assert _apply_ops(first["root"], patch["ops"]) == latest["root"]
     assert patch.get("metadata") == latest.get("metadata")
+
+
+def test_a_release_session_names_nodes_compactly_and_its_patches_apply() -> None:
+    bridge = _counter_bridge(debug=False)
+    first = json.loads(bridge.expose_envelope(-1))
+
+    bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
+    patch = json.loads(bridge.expose_envelope(first["serial"]))
+
+    assert [len(child["id"]) for child in first["root"]["children"]] == [1, 1]
+    latest = json.loads(bridge.expose_latest_snapshot() or "")
+    assert _apply_ops(first["root"], patch["ops"]) == latest["root"]
 
 
 def test_an_unknown_base_or_another_session_gets_the_whole_snapshot() -> None:

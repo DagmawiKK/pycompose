@@ -44,11 +44,13 @@ class SetProp:
 
     Attributes:
         id: Node id carrying the change.
+        at: Child indices from the root to that node.
         prop: The node's ``camelCase`` prop name.
         value: The node's new prop value, as emitted.
     """
 
     id: str
+    at: tuple[int, ...]
     prop: str
     value: JsonValue | FrozenJsonValue
 
@@ -59,10 +61,12 @@ class ReplaceSubtree:
 
     Attributes:
         id: Node id of the topmost changed subtree.
+        at: Child indices from the root to that node.
         payload: That subtree exactly as emitted, never a partial patch of it.
     """
 
     id: str
+    at: tuple[int, ...]
     payload: Node
 
 
@@ -74,7 +78,9 @@ def diff_nodes(base: Node, new: Node) -> tuple[PatchOp, ...]:
 
     Ops are deterministic: depth-first in the new tree, a node's ops before
     its children's, siblings left to right, prop names sorted. Nothing below a
-    replaced subtree is diffed.
+    replaced subtree is diffed. Each op locates its node by child indices, which
+    are the same in both trees along any path the diff descends, so the host
+    finds it without reading meaning into ids.
 
     Args:
         base: The root the host declared it still holds.
@@ -84,28 +90,31 @@ def diff_nodes(base: Node, new: Node) -> tuple[PatchOp, ...]:
         The ops that turn ``base`` into ``new``.
     """
     ops: list[PatchOp] = []
-    pending: list[tuple[Node, Node]] = [(base, new)]
+    pending: list[tuple[Node, Node, tuple[int, ...]]] = [(base, new, ())]
     while pending:
-        old, candidate = pending.pop()
+        old, candidate, at = pending.pop()
         if old is candidate:
             continue
         if not _compatible(old, candidate):
-            ops.append(ReplaceSubtree(id=candidate.id, payload=candidate))
+            ops.append(ReplaceSubtree(id=candidate.id, at=at, payload=candidate))
             continue
         previous = old.props.values
         current = candidate.props.values
         if previous != current:
             if previous.keys() - current.keys():
                 # A prop vanished; no op can remove one, so the node ships whole.
-                ops.append(ReplaceSubtree(id=candidate.id, payload=candidate))
+                ops.append(ReplaceSubtree(id=candidate.id, at=at, payload=candidate))
                 continue
             for name in sorted(current):
                 value = current[name]
                 if name not in previous or previous[name] != value:
-                    ops.append(SetProp(id=candidate.id, prop=name, value=value))
+                    ops.append(SetProp(id=candidate.id, at=at, prop=name, value=value))
         # Queued reversed so pop() walks siblings left to right.
         pending.extend(
-            zip(reversed(old.children), reversed(candidate.children), strict=False)
+            (left, right, (*at, index))
+            for index, (left, right) in reversed(
+                list(enumerate(zip(old.children, candidate.children, strict=True)))
+            )
         )
     return tuple(ops)
 
@@ -214,7 +223,9 @@ def patch_bytes(
     for index, op in enumerate(ops):
         if index:
             output.extend(b",")
-        output.extend(b'{"id":')
+        output.extend(b'{"at":')
+        output.extend(canonical_json_bytes(list(op.at)))
+        output.extend(b',"id":')
         output.extend(canonical_json_bytes(op.id))
         if isinstance(op, SetProp):
             output.extend(b',"op":"setProp","prop":')
