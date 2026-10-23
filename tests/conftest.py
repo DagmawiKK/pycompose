@@ -42,3 +42,19 @@ def native_document():
     )
     assert result.returncode == 0, result.stdout + result.stderr
     return json.loads(Path("android/build/compose-api/inventory.json").read_text())
+
+
+@pytest.fixture(autouse=True)
+def verify_every_reuse(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Re-expand and compare every reused composable in every test session.
+
+    Debug builds sample one reuse in eight to stay fast; a test has no such
+    budget, so a composable reading something outside its arguments fails here
+    on its first reuse rather than by chance.
+
+    Args:
+        monkeypatch: Restores the sampling rate after each test.
+    """
+    from pycompose.bridge import api
+
+    monkeypatch.setattr(api, "VERIFY_EVERY", 1)
