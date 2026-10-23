@@ -142,6 +142,9 @@ def _validate_registry(registry: dict[str, Any]) -> None:
         die("'components' must be a non-empty object")
     for name, comp in sorted(components.items()):
         _validate_component(name, comp)
+    from pycompose.schema.codegen.overloads import validate as validate_overloads
+
+    validate_overloads(components, die)
     _validate_versions(registry)
 
     actions = registry["actions"]

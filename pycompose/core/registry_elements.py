@@ -129,7 +129,7 @@ class ProviderDef:
         return cls(native=native, returns=returns)
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the the catalog lock provider shape.
+        """Render back to the catalog lock provider shape.
 
         Returns:
             A JSON-ready dict.
@@ -207,7 +207,7 @@ class ChildrenRule:
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the the catalog lock children shape.
+        """Render back to the catalog lock children shape.
 
         Returns:
             A JSON-ready dict.
@@ -300,7 +300,7 @@ class SlotRule:
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the the catalog lock slot shape.
+        """Render back to the catalog lock slot shape.
 
         Returns:
             A JSON-ready dict.

@@ -126,7 +126,7 @@ class ActionDef:
         return cls(action_id=action_id, payload=payload)
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the the catalog lock action shape.
+        """Render back to the catalog lock action shape.
 
         Returns:
             A JSON-ready dict.
@@ -339,7 +339,7 @@ class Registry(AbstractComponentRegistry):
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the the catalog lock shape.
+        """Render back to the catalog lock shape.
 
         Returns:
             A JSON-ready dict matching the registry file.

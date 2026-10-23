@@ -79,6 +79,27 @@ data class Card(
 }
 
 @Serializable
+data class CardWithoutOnClickProps(
+    val `border`: OptionalValue = OptionalValue.Absent,
+    val `colors`: JsonElement? = null,
+    val `elevation`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `shape`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("CardWithoutOnClick")
+data class CardWithoutOnClick(
+    override val id: String,
+    override val props: CardWithoutOnClickProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "CardWithoutOnClick"
+}
+
+@Serializable
 data class ColumnProps(
     val `horizontalAlignment`: String = "start",
     override val `modifier`: JsonObject? = null,
@@ -263,6 +284,26 @@ data class Image(
 }
 
 @Serializable
+data class ImageImageVectorProps(
+    val `alignment`: String = "center",
+    val `contentDescription`: String?,
+    val `imageVector`: JsonElement,
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ImageImageVector")
+data class ImageImageVector(
+    override val id: String,
+    override val props: ImageImageVectorProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "ImageImageVector"
+}
+
+@Serializable
 data class LazyColumnProps(
     val `firstVisibleIndex`: Long? = null,
     val `itemCount`: Long? = null,
@@ -303,6 +344,27 @@ data class LinearProgressIndicator(
     override val children: List<UiNode> get() = emptyList()
     override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "LinearProgressIndicator"
+}
+
+@Serializable
+data class LinearProgressIndicatorWithoutProgressProps(
+    val `color`: JsonElement? = null,
+    val `gapSize`: Double? = null,
+    override val `modifier`: JsonObject? = null,
+    val `strokeCap`: JsonElement? = null,
+    val `trackColor`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("LinearProgressIndicatorWithoutProgress")
+data class LinearProgressIndicatorWithoutProgress(
+    override val id: String,
+    override val props: LinearProgressIndicatorWithoutProgressProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "LinearProgressIndicatorWithoutProgress"
 }
 
 @Serializable

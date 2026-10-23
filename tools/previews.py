@@ -31,6 +31,7 @@ LOCK = ROOT / "schema/catalog.lock.json"
 PREVIEWS = ROOT / "android/host/src/test/resources/previews"
 
 VALUES: dict[str, Any] = {
+    "AnnotatedString": {"type": "AnnotatedString", "text": "Preview"},
     "ImageVector": {"type": "materialIcon", "name": "Filled.Add"},
     "Range": {"type": "Range", "start": 0.0, "end": 1.0},
     "Shape": {"type": "RoundedCornerShape", "size": {"type": "Dp", "value": 8}},
@@ -38,7 +39,7 @@ VALUES: dict[str, Any] = {
 }
 """A sample for each value family a required prop takes; the validator checks them."""
 
-OWNERS: dict[str, tuple[str, str]] = {
+SEARCH_OWNERS: dict[str, tuple[str, str]] = {
     "ExpandedDockedSearchBar": ("StatefulSearchBar", "expandedBar"),
     "ExpandedFullScreenSearchBar": ("StatefulSearchBar", "expandedBar"),
     "SearchBarStateInputField": ("StatefulSearchBar", "inputField"),
@@ -128,8 +129,8 @@ class _Sample:
     def scoped(self, name: str) -> dict[str, Any]:
         """The component, inside the parent its scope or its owner requires."""
         scope = self.components[name].get("scope")
-        if name in OWNERS:
-            parent, slot = OWNERS[name]
+        if name in SEARCH_OWNERS:
+            parent, slot = SEARCH_OWNERS[name]
         elif scope is not None:
             parent, slot = self._provider(scope)
         else:

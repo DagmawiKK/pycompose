@@ -97,8 +97,10 @@ its base. Check its report if you touch the IR, diffing, or bridge.
   dumpComposeDefaults` in `android/`) and the policy overlay in
   `schema/policy/`, together with `schema/signatures/<bom>.txt`, the pinned API
   surface one declaration per line. Change the policy or the generators,
-  regenerate, run `make codegen`, and commit the lock with the regenerated
-  Python, Kotlin, validators, and schema together.
+  regenerate, run `make codegen` and `python tools/previews.py`, and commit
+  the lock with the regenerated Python, Kotlin, validators, schema and render
+  samples together. Every component renders on the JVM in
+  `PreviewRenderTest` before an app can reach it.
 - **Lock changes are classified.** `python -m tools.composegen diff --base main`
   lists every lock change as additive, fidelity, metadata, behaviour or
   breaking. CI fails on a behaviour or breaking change until

@@ -39,6 +39,19 @@ object IrContract {
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
+        "CardWithoutOnClick" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "border" to PropertyRule("value", required = false, valueType = "BorderStroke", nullable = true),
+                "colors" to PropertyRule("value", required = false, valueType = "CardColors"),
+                "elevation" to PropertyRule("value", required = false, valueType = "CardElevation"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+            ),
+        ),
         "Column" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -151,6 +164,18 @@ object IrContract {
                 "resource" to PropertyRule("resource", required = true, values = setOf("drawable", "asset")),
             ),
         ),
+        "ImageImageVector" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "alignment" to PropertyRule("enum", required = false, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
+                "contentDescription" to PropertyRule("string", required = true, nullable = true),
+                "imageVector" to PropertyRule("value", required = true, valueType = "ImageVector"),
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
         "LazyColumn" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -175,6 +200,19 @@ object IrContract {
                 "color" to PropertyRule("color", required = false, valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "progress" to PropertyRule("number", required = true, since = "1.20.0"),
+                "trackColor" to PropertyRule("color", required = false, valueType = "Color"),
+            ),
+        ),
+        "LinearProgressIndicatorWithoutProgress" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "color" to PropertyRule("color", required = false, valueType = "Color"),
+                "gapSize" to PropertyRule("dp", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "strokeCap" to PropertyRule("value", required = false, valueType = "StrokeCap"),
                 "trackColor" to PropertyRule("color", required = false, valueType = "Color"),
             ),
         ),

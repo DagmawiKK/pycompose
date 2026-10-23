@@ -254,6 +254,8 @@ class ComponentSpec:
         scope: The composition scope the pinned declaration extends, if any.
             Codegen-only: the adapter registers through the matching scoped
             method, and only a parent that provides the scope can compose it.
+        overload_of: The primary component whose Python name reaches this
+            overload; the keywords a call passes choose between them.
         source: The exact pinned overload the generated call binds, as the
             binding compiler resolves it: artifact, owner, name, JVM name and
             JVM descriptor. Absent when the adapter is hand-written and
@@ -276,6 +278,7 @@ class ComponentSpec:
     opt_in: tuple[str, ...] = ()
     package: str | None = None
     scope: str | None = None
+    overload_of: str | None = None
     source: Mapping[str, str] | None = None
 
     def __post_init__(self) -> None:
@@ -293,6 +296,10 @@ class ComponentSpec:
             raise ComponentRegistryError("package must be a non-empty dotted name")
         if self.scope is not None and self.scope not in SCOPES:
             raise ComponentRegistryError(f"scope must be one of {', '.join(SCOPES)}")
+        if self.overload_of is not None and (
+            not isinstance(self.overload_of, str) or not self.overload_of
+        ):
+            raise ComponentRegistryError("overloadOf must name a component")
 
     @classmethod
     def from_mapping(cls, name: str, data: Mapping[str, object]) -> ComponentSpec:
@@ -391,11 +398,12 @@ class ComponentSpec:
             opt_in=_opt_in(name, data.get("optIn")),
             package=package,
             scope=cast("str | None", data.get("scope")),
+            overload_of=cast("str | None", data.get("overloadOf")),
             source=_source(name, data.get("source")),
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the the catalog lock component shape.
+        """Render back to the catalog lock component shape.
 
         Returns:
             A JSON-ready dict.
@@ -426,10 +434,12 @@ class ComponentSpec:
             result["adapter"] = self.adapter
         if self.opt_in:
             result["optIn"] = list(self.opt_in)
-        if self.wrapper is not None:
-            result["wrapper"] = self.wrapper
-        if self.scope is not None:
-            result["scope"] = self.scope
+        optional = {
+            "wrapper": self.wrapper,
+            "scope": self.scope,
+            "overloadOf": self.overload_of,
+        }
+        result.update({key: value for key, value in optional.items() if value})
         if self.source is not None:
             result["source"] = dict(self.source)
         return result

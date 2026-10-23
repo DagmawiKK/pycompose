@@ -263,6 +263,10 @@ def _mechanical_prop(spec: dict[str, Any]) -> bool:
     # with some default to fall back to can be rendered at all.
     if spec.get("type") == "dp" and _dp_renderable(spec):
         return True
+    if spec.get("type") == "resource":
+        # A resource loads off the Compose thread with its own diagnostics, so
+        # only a wrapper (Text's, Image's) renders one; see WRAPPERS.
+        return False
     # Decodable types need a named resolver; without one they cannot be
     # rendered at all rather than rendered wrongly.
     return spec.get("type") in DECODED and bool(spec.get("decode"))

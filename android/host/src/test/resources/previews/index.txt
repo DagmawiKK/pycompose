@@ -9,9 +9,11 @@ BottomAppBar
 Box
 Button
 Card
+CardWithoutOnClick
 CenterAlignedTopAppBar
 Checkbox
 CircularProgressIndicator
+CircularProgressIndicatorProgress
 Column
 Crossfade
 DismissibleDrawerSheet
@@ -22,11 +24,13 @@ DropdownMenuItem
 ElevatedAssistChip
 ElevatedButton
 ElevatedCard
+ElevatedCardWithoutOnClick
 ElevatedFilterChip
 ElevatedSuggestionChip
 ExpandedDockedSearchBar
 ExpandedFullScreenSearchBar
 ExtendedFloatingActionButton
+ExtendedFloatingActionButtonText
 FilledIconButton
 FilledIconToggleButton
 FilledTonalButton
@@ -41,6 +45,7 @@ Icon
 IconButton
 IconToggleButton
 Image
+ImageImageVector
 InputChip
 LargeFloatingActionButton
 LargeTopAppBar
@@ -48,6 +53,7 @@ LazyColumn
 LazyRow
 LeadingIconTab
 LinearProgressIndicator
+LinearProgressIndicatorWithoutProgress
 ListItem
 MediumTopAppBar
 ModalBottomSheet
@@ -65,6 +71,7 @@ NavigationSuiteItem
 NavigationSuiteScaffold
 OutlinedButton
 OutlinedCard
+OutlinedCardWithoutOnClick
 OutlinedIconButton
 OutlinedIconToggleButton
 OutlinedTextField
@@ -95,10 +102,15 @@ StatefulSearchBar
 StatefulSearchBarInputField
 SuggestionChip
 Surface
+SurfaceChecked
+SurfaceOnClick
+SurfaceSelected
 SwipeToDismissBox
 Switch
 Tab
+TabContent
 Text
+TextAnnotatedString
 TextButton
 TextField
 TooltipBox

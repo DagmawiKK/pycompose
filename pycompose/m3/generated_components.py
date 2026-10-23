@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from typing import Any, Literal, cast
+from typing import Any, Literal, cast, overload
 
 from pycompose.components.base import ActionTarget, Component, PropValue
 from pycompose.components.modifiers import Modifier
@@ -27,9 +27,11 @@ __all__ = [
     "Box",
     "Button",
     "Card",
+    "CardWithoutOnClick",
     "CenterAlignedTopAppBar",
     "Checkbox",
     "CircularProgressIndicator",
+    "CircularProgressIndicatorProgress",
     "Column",
     "Crossfade",
     "DismissibleDrawerSheet",
@@ -40,11 +42,13 @@ __all__ = [
     "ElevatedAssistChip",
     "ElevatedButton",
     "ElevatedCard",
+    "ElevatedCardWithoutOnClick",
     "ElevatedFilterChip",
     "ElevatedSuggestionChip",
     "ExpandedDockedSearchBar",
     "ExpandedFullScreenSearchBar",
     "ExtendedFloatingActionButton",
+    "ExtendedFloatingActionButtonText",
     "FilledIconButton",
     "FilledIconToggleButton",
     "FilledTonalButton",
@@ -59,6 +63,7 @@ __all__ = [
     "IconButton",
     "IconToggleButton",
     "Image",
+    "ImageImageVector",
     "InputChip",
     "LargeFloatingActionButton",
     "LargeTopAppBar",
@@ -66,6 +71,7 @@ __all__ = [
     "LazyRow",
     "LeadingIconTab",
     "LinearProgressIndicator",
+    "LinearProgressIndicatorWithoutProgress",
     "ListItem",
     "MediumTopAppBar",
     "ModalBottomSheet",
@@ -83,6 +89,7 @@ __all__ = [
     "NavigationSuiteScaffold",
     "OutlinedButton",
     "OutlinedCard",
+    "OutlinedCardWithoutOnClick",
     "OutlinedIconButton",
     "OutlinedIconToggleButton",
     "OutlinedTextField",
@@ -113,10 +120,15 @@ __all__ = [
     "StatefulSearchBarInputField",
     "SuggestionChip",
     "Surface",
+    "SurfaceChecked",
+    "SurfaceOnClick",
+    "SurfaceSelected",
     "SwipeToDismissBox",
     "Switch",
     "Tab",
+    "TabContent",
     "Text",
+    "TextAnnotatedString",
     "TextButton",
     "TextField",
     "TooltipBox",
@@ -157,6 +169,24 @@ _FlowRowItemVerticalAlignment = Literal[
     "top",
     "center",
     "bottom",
+]
+
+_ImageImageVectorAlignment = Literal[
+    "bottomCenter",
+    "bottomEnd",
+    "bottomLeft",
+    "bottomRight",
+    "bottomStart",
+    "center",
+    "centerEnd",
+    "centerLeft",
+    "centerRight",
+    "centerStart",
+    "topCenter",
+    "topEnd",
+    "topLeft",
+    "topRight",
+    "topStart",
 ]
 
 _LazyColumnVerticalArrangement = Literal[
@@ -683,11 +713,30 @@ class Button(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
-class Card(Component):
+class _Card(Component):
     """Native Card; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Card"
+    required_keywords = frozenset(
+        {
+            "on_click",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "colors",
+            "content",
+            "elevation",
+            "enabled",
+            "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
+            "shape",
+        }
+    )
 
     def __init__(
         self,
@@ -757,6 +806,55 @@ class Card(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Card(_Card):
+    """Native Card; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> Card: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> CardWithoutOnClick: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class CenterAlignedTopAppBar(Component):
@@ -855,12 +953,21 @@ class Checkbox(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
-class CircularProgressIndicator(Component):
+class _CircularProgressIndicator(Component):
     """Native CircularProgressIndicator;
     props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "CircularProgressIndicator"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "color",
+            "stroke_cap",
+            "stroke_width",
+            "track_color",
+        }
+    )
 
     def __init__(
         self,
@@ -892,6 +999,48 @@ class CircularProgressIndicator(Component):
         if track_color is not None:
             props["track_color"] = track_color
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class CircularProgressIndicator(_CircularProgressIndicator):
+    """Native CircularProgressIndicator; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        stroke_cap: JsonValue | None = None,
+        stroke_width: int | float | None = None,
+        track_color: JsonValue | None = None,
+    ) -> CircularProgressIndicator: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        color: JsonValue | None = None,
+        gap_size: int | float | None = None,
+        modifier: Modifier | None = None,
+        progress: int | float,
+        stroke_cap: JsonValue | None = None,
+        stroke_width: int | float | None = None,
+        track_color: JsonValue | None = None,
+    ) -> CircularProgressIndicatorProgress: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class Column(Component):
@@ -1417,11 +1566,26 @@ class ElevatedButton(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class ElevatedCard(Component):
+class _ElevatedCard(Component):
     """Native ElevatedCard; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "ElevatedCard"
+    required_keywords = frozenset(
+        {
+            "on_click",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "colors",
+            "content",
+            "elevation",
+            "enabled",
+            "on_click",
+            "shape",
+        }
+    )
 
     def __init__(
         self,
@@ -1475,6 +1639,50 @@ class ElevatedCard(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ElevatedCard(_ElevatedCard):
+    """Native ElevatedCard; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> ElevatedCard: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> ElevatedCardWithoutOnClick: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class ElevatedFilterChip(Component):
@@ -1774,6 +1982,57 @@ class ExtendedFloatingActionButton(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ExtendedFloatingActionButtonText(Component):
+    """Native ExtendedFloatingActionButton;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ExtendedFloatingActionButtonText"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        container_color: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        expanded: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        shape: JsonValue | None = None,
+        icon: Content | None = None,
+        text: Content | None = None,
+    ) -> None:
+        """Construct a registered ExtendedFloatingActionButtonText.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            elevation: Native elevation; None uses its default.
+            expanded: Native expanded; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            shape: Native shape; None uses its default.
+            icon: Nodes for the native icon slot.
+            text: Nodes for the native text slot.
+        """
+        props: dict[str, PropValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if elevation is not None:
+            props["elevation"] = elevation
+        if expanded is not None:
+            props["expanded"] = expanded
+        props["on_click"] = on_click
+        if shape is not None:
+            props["shape"] = shape
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if text is not None:
+            slotted += slot_nodes(text, key="text", slot="text")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class FilledIconButton(Component):
@@ -2435,11 +2694,22 @@ class IconToggleButton(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class Image(Component):
+class _Image(Component):
     """Native Image; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Image"
+    required_keywords = frozenset(
+        {
+            "resource",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "content_description",
+            "resource",
+        }
+    )
 
     def __init__(
         self,
@@ -2462,6 +2732,43 @@ class Image(Component):
             props["content_description"] = content_description
         props["resource"] = resource
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class Image(_Image):
+    """Native Image; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        content_description: str | None = None,
+        modifier: Modifier | None = None,
+        resource: str,
+    ) -> Image: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        alignment: _ImageImageVectorAlignment | None = None,
+        content_description: str | None,
+        image_vector: JsonValue,
+        modifier: Modifier | None = None,
+    ) -> ImageImageVector: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class InputChip(Component):
@@ -2795,12 +3102,24 @@ class LeadingIconTab(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
-class LinearProgressIndicator(Component):
+class _LinearProgressIndicator(Component):
     """Native LinearProgressIndicator;
     props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "LinearProgressIndicator"
+    required_keywords = frozenset(
+        {
+            "progress",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "color",
+            "progress",
+            "track_color",
+        }
+    )
 
     def __init__(
         self,
@@ -2827,6 +3146,45 @@ class LinearProgressIndicator(Component):
         if track_color is not None:
             props["track_color"] = track_color
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class LinearProgressIndicator(_LinearProgressIndicator):
+    """Native LinearProgressIndicator; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        progress: int | float,
+        track_color: JsonValue | None = None,
+    ) -> LinearProgressIndicator: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        color: JsonValue | None = None,
+        gap_size: int | float | None = None,
+        modifier: Modifier | None = None,
+        stroke_cap: JsonValue | None = None,
+        track_color: JsonValue | None = None,
+    ) -> LinearProgressIndicatorWithoutProgress: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class ListItem(Component):
@@ -3682,11 +4040,26 @@ class OutlinedButton(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class OutlinedCard(Component):
+class _OutlinedCard(Component):
     """Native OutlinedCard; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "OutlinedCard"
+    required_keywords = frozenset(
+        {
+            "on_click",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "colors",
+            "content",
+            "elevation",
+            "enabled",
+            "on_click",
+            "shape",
+        }
+    )
 
     def __init__(
         self,
@@ -3740,6 +4113,51 @@ class OutlinedCard(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class OutlinedCard(_OutlinedCard):
+    """Native OutlinedCard; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> OutlinedCard: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> OutlinedCardWithoutOnClick: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class OutlinedIconButton(Component):
@@ -5317,11 +5735,22 @@ class SuggestionChip(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
-class Surface(Component):
+class _Surface(Component):
     """Native Surface; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Surface"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "color",
+            "content",
+            "shadow_elevation",
+            "shape",
+            "tonal_elevation",
+        }
+    )
 
     def __init__(
         self,
@@ -5368,6 +5797,84 @@ class Surface(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Surface(_Surface):
+    """Native Surface; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> Surface: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        checked: bool,
+        color: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_checked_change: ActionTarget,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> SurfaceChecked: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> SurfaceOnClick: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        selected: bool,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> SurfaceSelected: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class SwipeToDismissBox(Component):
@@ -5547,6 +6054,62 @@ class Tab(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class TabContent(Component):
+    """Native Tab; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TabContent"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        selected: bool,
+        selected_content_color: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered TabContent.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            selected_content_color: Native selectedContentColor; None uses its
+                default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["selected"] = selected
+        if selected_content_color is not None:
+            props["selected_content_color"] = selected_content_color
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class Text(Component):
     """Native Text; props and defaults follow the component manifest."""
 
@@ -5589,6 +6152,84 @@ class Text(Component):
         if style is not None:
             props["style"] = style
         props["text"] = text
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class TextAnnotatedString(Component):
+    """Native Text; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TextAnnotatedString"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        color: JsonValue | None = None,
+        font_family: JsonValue | None | _Unset = UNSET,
+        font_size: JsonValue | None = None,
+        font_style: JsonValue | None | _Unset = UNSET,
+        font_weight: JsonValue | None | _Unset = UNSET,
+        letter_spacing: JsonValue | None = None,
+        line_height: JsonValue | None = None,
+        min_lines: int | None = None,
+        modifier: Modifier | None = None,
+        overflow: JsonValue | None = None,
+        soft_wrap: bool | None = None,
+        style: JsonValue | None = None,
+        text: JsonValue,
+        text_align: JsonValue | None | _Unset = UNSET,
+        text_decoration: JsonValue | None | _Unset = UNSET,
+    ) -> None:
+        """Construct a registered TextAnnotatedString.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            color: Native color; None uses its default.
+            font_family: Native fontFamily; omitted uses its default; None is null.
+            font_size: Native fontSize; None uses its default.
+            font_style: Native fontStyle; omitted uses its default; None is null.
+            font_weight: Native fontWeight; omitted uses its default; None is null.
+            letter_spacing: Native letterSpacing; None uses its default.
+            line_height: Native lineHeight; None uses its default.
+            min_lines: Native minLines; None uses its default.
+            modifier: Native modifier; None uses its default.
+            overflow: Native overflow; None uses its default.
+            soft_wrap: Native softWrap; None uses its default.
+            style: Native style; None uses its default.
+            text: Required native text.
+            text_align: Native textAlign; omitted uses its default; None is null.
+            text_decoration: Native textDecoration; omitted uses its default; None
+                is null.
+        """
+        props: dict[str, PropValue] = {}
+        if color is not None:
+            props["color"] = color
+        if not isinstance(font_family, _Unset):
+            props["font_family"] = font_family
+        if font_size is not None:
+            props["font_size"] = font_size
+        if not isinstance(font_style, _Unset):
+            props["font_style"] = font_style
+        if not isinstance(font_weight, _Unset):
+            props["font_weight"] = font_weight
+        if letter_spacing is not None:
+            props["letter_spacing"] = letter_spacing
+        if line_height is not None:
+            props["line_height"] = line_height
+        if min_lines is not None:
+            props["min_lines"] = min_lines
+        if overflow is not None:
+            props["overflow"] = overflow
+        if soft_wrap is not None:
+            props["soft_wrap"] = soft_wrap
+        if style is not None:
+            props["style"] = style
+        props["text"] = text
+        if not isinstance(text_align, _Unset):
+            props["text_align"] = text_align
+        if not isinstance(text_decoration, _Unset):
+            props["text_decoration"] = text_decoration
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -5971,3 +6612,603 @@ class WideNavigationRailItem(Component):
         if label is not None:
             slotted += slot_nodes(label, key="label", slot="label")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class CardWithoutOnClick(Card):
+    """Native Card; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "CardWithoutOnClick"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "colors",
+            "content",
+            "elevation",
+            "shape",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered CardWithoutOnClick.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; None uses its default.
+            modifier: Native modifier; None uses its default.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if colors is not None:
+            props["colors"] = colors
+        if elevation is not None:
+            props["elevation"] = elevation
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class CircularProgressIndicatorProgress(CircularProgressIndicator):
+    """Native CircularProgressIndicator;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "CircularProgressIndicatorProgress"
+    required_keywords = frozenset(
+        {
+            "progress",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "color",
+            "gap_size",
+            "progress",
+            "stroke_cap",
+            "stroke_width",
+            "track_color",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        color: JsonValue | None = None,
+        gap_size: int | float | None = None,
+        modifier: Modifier | None = None,
+        progress: int | float,
+        stroke_cap: JsonValue | None = None,
+        stroke_width: int | float | None = None,
+        track_color: JsonValue | None = None,
+    ) -> None:
+        """Construct a registered CircularProgressIndicatorProgress.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            color: Native color; None uses its default.
+            gap_size: Native gapSize; None uses its default.
+            modifier: Native modifier; None uses its default.
+            progress: Required native progress.
+            stroke_cap: Native strokeCap; None uses its default.
+            stroke_width: Native strokeWidth; None uses its default.
+            track_color: Native trackColor; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if color is not None:
+            props["color"] = color
+        if gap_size is not None:
+            props["gap_size"] = gap_size
+        props["progress"] = progress
+        if stroke_cap is not None:
+            props["stroke_cap"] = stroke_cap
+        if stroke_width is not None:
+            props["stroke_width"] = stroke_width
+        if track_color is not None:
+            props["track_color"] = track_color
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
+class ElevatedCardWithoutOnClick(ElevatedCard):
+    """Native ElevatedCard; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ElevatedCardWithoutOnClick"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "colors",
+            "content",
+            "elevation",
+            "shape",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered ElevatedCardWithoutOnClick.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; None uses its default.
+            modifier: Native modifier; None uses its default.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if elevation is not None:
+            props["elevation"] = elevation
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class ImageImageVector(Image):
+    """Native Image; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ImageImageVector"
+    required_keywords = frozenset(
+        {
+            "content_description",
+            "image_vector",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "alignment",
+            "content_description",
+            "image_vector",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        alignment: _ImageImageVectorAlignment | None = None,
+        content_description: str | None,
+        image_vector: JsonValue,
+        modifier: Modifier | None = None,
+    ) -> None:
+        """Construct a registered ImageImageVector.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            alignment: Native alignment; None uses its default.
+            content_description: Required native contentDescription.
+            image_vector: Required native imageVector.
+            modifier: Native modifier; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if alignment is not None:
+            props["alignment"] = alignment
+        props["content_description"] = content_description
+        props["image_vector"] = image_vector
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
+class LinearProgressIndicatorWithoutProgress(LinearProgressIndicator):
+    """Native LinearProgressIndicator;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LinearProgressIndicatorWithoutProgress"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "color",
+            "gap_size",
+            "stroke_cap",
+            "track_color",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        color: JsonValue | None = None,
+        gap_size: int | float | None = None,
+        modifier: Modifier | None = None,
+        stroke_cap: JsonValue | None = None,
+        track_color: JsonValue | None = None,
+    ) -> None:
+        """Construct a registered LinearProgressIndicatorWithoutProgress.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            color: Native color; None uses its default.
+            gap_size: Native gapSize; None uses its default.
+            modifier: Native modifier; None uses its default.
+            stroke_cap: Native strokeCap; None uses its default.
+            track_color: Native trackColor; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if color is not None:
+            props["color"] = color
+        if gap_size is not None:
+            props["gap_size"] = gap_size
+        if stroke_cap is not None:
+            props["stroke_cap"] = stroke_cap
+        if track_color is not None:
+            props["track_color"] = track_color
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
+class OutlinedCardWithoutOnClick(OutlinedCard):
+    """Native OutlinedCard; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "OutlinedCardWithoutOnClick"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "colors",
+            "content",
+            "elevation",
+            "shape",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered OutlinedCardWithoutOnClick.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; None uses its default.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; None uses its default.
+            modifier: Native modifier; None uses its default.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if border is not None:
+            props["border"] = border
+        if colors is not None:
+            props["colors"] = colors
+        if elevation is not None:
+            props["elevation"] = elevation
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class SurfaceChecked(Surface):
+    """Native Surface; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SurfaceChecked"
+    required_keywords = frozenset(
+        {
+            "checked",
+            "on_checked_change",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "checked",
+            "color",
+            "content",
+            "enabled",
+            "on_checked_change",
+            "shadow_elevation",
+            "shape",
+            "tonal_elevation",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        checked: bool,
+        color: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_checked_change: ActionTarget,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered SurfaceChecked.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            checked: Required native checked.
+            color: Native color; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_checked_change: Required native onCheckedChange.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        props["checked"] = checked
+        if color is not None:
+            props["color"] = color
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_checked_change"] = on_checked_change
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class SurfaceOnClick(Surface):
+    """Native Surface; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SurfaceOnClick"
+    required_keywords = frozenset(
+        {
+            "on_click",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "color",
+            "content",
+            "enabled",
+            "on_click",
+            "shadow_elevation",
+            "shape",
+            "tonal_elevation",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered SurfaceOnClick.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            color: Native color; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if color is not None:
+            props["color"] = color
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class SurfaceSelected(Surface):
+    """Native Surface; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SurfaceSelected"
+    required_keywords = frozenset(
+        {
+            "on_click",
+            "selected",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "color",
+            "content",
+            "enabled",
+            "on_click",
+            "selected",
+            "shadow_elevation",
+            "shape",
+            "tonal_elevation",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        selected: bool,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered SurfaceSelected.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            color: Native color; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            selected: Required native selected.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if color is not None:
+            props["color"] = color
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        props["selected"] = selected
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+Card.overloads = (CardWithoutOnClick,)
+CircularProgressIndicator.overloads = (CircularProgressIndicatorProgress,)
+ElevatedCard.overloads = (ElevatedCardWithoutOnClick,)
+Image.overloads = (ImageImageVector,)
+LinearProgressIndicator.overloads = (LinearProgressIndicatorWithoutProgress,)
+OutlinedCard.overloads = (OutlinedCardWithoutOnClick,)
+Surface.overloads = (SurfaceChecked, SurfaceOnClick, SurfaceSelected)

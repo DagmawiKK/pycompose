@@ -5,6 +5,7 @@ package com.pycompose.host.ui
 
 import com.pycompose.renderer.ComponentRegistry
 import kotlinx.serialization.json.JsonPrimitive
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,13 +28,16 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pycompose.ir.generated.Card as CardNode
+import com.pycompose.ir.generated.CardWithoutOnClick as CardWithoutOnClickNode
 import com.pycompose.ir.generated.Column as ColumnNode
 import com.pycompose.ir.generated.FloatingActionButton as FloatingActionButtonNode
 import com.pycompose.ir.generated.HorizontalDivider as HorizontalDividerNode
 import com.pycompose.ir.generated.Icon as IconNode
 import com.pycompose.ir.generated.IconButton as IconButtonNode
+import com.pycompose.ir.generated.ImageImageVector as ImageImageVectorNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
 import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
+import com.pycompose.ir.generated.LinearProgressIndicatorWithoutProgress as LinearProgressIndicatorWithoutProgressNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
 import com.pycompose.ir.generated.NavigationBar as NavigationBarNode
 import com.pycompose.ir.generated.NavigationBarItem as NavigationBarItemNode
@@ -81,6 +85,29 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
                     interactionSource = interactionSourceValue,
+                    content = { context.childrenInColumnScope(this, model.children) },
+                )
+            }
+            .register("CardWithoutOnClick") { node, modifier, context ->
+                val model = node as CardWithoutOnClickNode
+                val borderWire = model.props.border
+                val borderValue = when (borderWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.borderStroke(borderWire.value).getOrThrow()
+                }
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.cardColors(colorsWire).getOrThrow() else androidx.compose.material3.CardDefaults.cardColors()
+                val elevationWire = model.props.elevation
+                val elevationValue = if (elevationWire != null) com.pycompose.renderer.generated.ValueResolver.cardElevation(elevationWire).getOrThrow() else androidx.compose.material3.CardDefaults.cardElevation()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.CardDefaults.shape
+                Card(
+                    modifier = modifier,
+                    border = borderValue,
+                    colors = colorsValue,
+                    elevation = elevationValue,
+                    shape = shapeValue,
                     content = { context.childrenInColumnScope(this, model.children) },
                 )
             }
@@ -160,6 +187,17 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
+            .register("ImageImageVector") { node, modifier, context ->
+                val model = node as ImageImageVectorNode
+                val alignmentValue: androidx.compose.ui.Alignment = com.pycompose.renderer.PropResolver.alignment(model.props.alignment).getOrDefault(androidx.compose.ui.Alignment.TopStart)
+                val imageVectorValue = com.pycompose.renderer.generated.ValueResolver.imageVector(model.props.imageVector).getOrThrow()
+                Image(
+                    modifier = modifier,
+                    alignment = alignmentValue,
+                    contentDescription = model.props.contentDescription,
+                    imageVector = imageVectorValue,
+                )
+            }
             .register("LazyColumn") { node, modifier, context ->
                 val model = node as LazyColumnNode
                 val verticalArrangementValue: androidx.compose.foundation.layout.Arrangement.Vertical = com.pycompose.renderer.PropResolver.arrangement(model.props.verticalArrangement).getOrDefault(androidx.compose.foundation.layout.Arrangement.Top)
@@ -189,6 +227,30 @@ object GeneratedAdapters {
                     modifier = modifier,
                     color = colorValue,
                     progress = { progressValue.toFloat() },
+                    trackColor = trackColorValue,
+                )
+            }
+            .register("LinearProgressIndicatorWithoutProgress") { node, modifier, context ->
+                val model = node as LinearProgressIndicatorWithoutProgressNode
+                val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearColor)
+                    else -> androidx.compose.material3.ProgressIndicatorDefaults.linearColor
+                }
+                val gapSizeWire = model.props.gapSize
+                val gapSizeValue = if (gapSizeWire != null) gapSizeWire.dp else androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize
+                val strokeCapWire = model.props.strokeCap
+                val strokeCapValue = if (strokeCapWire != null) com.pycompose.renderer.generated.ValueResolver.strokeCap(strokeCapWire).getOrThrow() else androidx.compose.material3.ProgressIndicatorDefaults.LinearStrokeCap
+                val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
+                    is JsonObject -> com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
+                    else -> androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor
+                }
+                LinearProgressIndicator(
+                    modifier = modifier,
+                    color = colorValue,
+                    gapSize = gapSizeValue,
+                    strokeCap = strokeCapValue,
                     trackColor = trackColorValue,
                 )
             }

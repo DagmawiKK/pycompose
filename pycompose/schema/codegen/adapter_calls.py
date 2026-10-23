@@ -141,20 +141,6 @@ def _decoded(
 
     resolver = qualify(RESOLVER_OWNER.get(decoder, "PropResolver"))
 
-    if decoder.startswith("resource"):
-        # A resource reference is a single wire string naming a kind and a name
-        # ("@drawable/ic_note"), so it goes through the resolver method that
-        # takes the whole reference rather than one taking a bare name. An
-        # absent resolver means the app declared no resources at all.
-        # decoder "resourceImage" -> ResourceResolver.image(reference). The
-        # name is lowerCamel on both sides; lowercasing the whole thing would
-        # have produced `resources?.Image(...)` and a compiler error.
-        method = decoder[len("resource") :][0].lower() + decoder[len("resource") + 1 :]
-        # Every resource accessor returns a Result, and a bad reference must not
-        # escape into Compose -- ADR-0005's degrade-don't-throw rule.
-        call = f"resources?.{method}({wire}).getOrNull()"
-        return f"val {value}: {returns} = {call}", f"{prop_name} = {value}"
-
     if decoder == "color" and "valueType" in spec:
         # The wire carries either a tagged value (the app built a Color) or a
         # legacy string, exactly as the hand-written helper read it. Tagged

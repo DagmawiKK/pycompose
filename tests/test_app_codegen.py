@@ -86,7 +86,11 @@ def test_the_committed_slice_is_current() -> None:
 def test_the_slice_holds_exactly_the_components_the_app_references(
     slice_names: set[str],
 ) -> None:
-    """Discovery is by AST name, so the slice follows the source."""
+    """Discovery is by AST name, so the slice follows the source.
+
+    A used name brings its overloads: the keywords of a call, not its name,
+    choose which of them reaches the wire.
+    """
     from pycompose.schema.codegen.app_slice import (
         FLOOR_COMPONENTS,
         discover,
@@ -94,7 +98,13 @@ def test_the_slice_holds_exactly_the_components_the_app_references(
     )
 
     referenced = discover(NOTES_APP, load_catalog(ROOT / "schema/catalog.lock.json"))
-    assert slice_names == referenced | FLOOR_COMPONENTS
+    used = referenced | FLOOR_COMPONENTS
+    overloads = {
+        name
+        for name, entry in CATALOG["components"].items()
+        if entry.get("overloadOf") in used
+    }
+    assert slice_names == used | overloads
     assert len(slice_names) < len(
         CATALOG["components"]
     ), "the example no longer demonstrates anything if it uses everything"
@@ -119,7 +129,9 @@ def test_the_two_slices_agree(slice_names: set[str]) -> None:
     into different languages from the same input. The test is the guarantee.
     """
     python_slice = (NOTES_APP / "m3/generated_components.py").read_text()
-    python_names = set(re.findall(r"^class (\w+)\(", python_slice, re.MULTILINE))
+    # A primary with overloads builds through a private base; its public class
+    # is the name the slice holds.
+    python_names = set(re.findall(r"^class ([A-Z]\w*)\(", python_slice, re.MULTILINE))
     assert python_names == slice_names
 
 

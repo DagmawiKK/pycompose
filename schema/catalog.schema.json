@@ -187,6 +187,7 @@
         "interaction": { "$ref": "#/$defs/interactionBlock" },
         "wrapper": { "type": "string" },
         "scope": { "type": "string" },
+        "overloadOf": { "type": "string", "minLength": 1 },
         "adapter": { "type": "string" },
         "reshaped": {
           "type": "array",

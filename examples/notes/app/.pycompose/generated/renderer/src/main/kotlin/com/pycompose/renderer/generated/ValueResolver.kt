@@ -31,6 +31,7 @@ import com.pycompose.ir.generated.NavigationBarItemColorsValue
 import com.pycompose.ir.generated.OffsetValue
 import com.pycompose.ir.generated.PaddingValuesValue
 import com.pycompose.ir.generated.ShapeValue
+import com.pycompose.ir.generated.StrokeCapValue
 import com.pycompose.ir.generated.SwitchColorsValue
 import com.pycompose.ir.generated.TextFieldColorsValue
 import com.pycompose.ir.generated.TextStyleValue
@@ -49,6 +50,7 @@ import com.pycompose.ir.generated.WirePaddingValues
 import com.pycompose.ir.generated.WireRoundedCornerShape
 import com.pycompose.ir.generated.WireSolidColor
 import com.pycompose.ir.generated.WireSp
+import com.pycompose.ir.generated.WireStrokeCap
 import com.pycompose.ir.generated.WireTextStyle
 import com.pycompose.ir.generated.WireThemeColor
 import com.pycompose.ir.generated.WireThemeShape
@@ -740,6 +742,25 @@ object ValueResolver {
                     "large" -> androidx.compose.material3.MaterialTheme.shapes.large
                     "medium" -> androidx.compose.material3.MaterialTheme.shapes.medium
                     "small" -> androidx.compose.material3.MaterialTheme.shapes.small
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun strokeCap(value: JsonElement): Result<androidx.compose.ui.graphics.StrokeCap> {
+        val parsed = runCatching { ValueContract.readStrokeCap(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(strokeCap(parsed))
+    }
+
+    @Composable
+    fun strokeCap(value: StrokeCapValue): androidx.compose.ui.graphics.StrokeCap =
+        when (value) {
+            is WireStrokeCap -> {
+                when (value.name) {
+                    "Butt" -> androidx.compose.ui.graphics.StrokeCap.Butt
+                    "Round" -> androidx.compose.ui.graphics.StrokeCap.Round
+                    "Square" -> androidx.compose.ui.graphics.StrokeCap.Square
                     else -> error("Unknown native constant")
                 }
             }

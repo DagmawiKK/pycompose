@@ -46,10 +46,19 @@ def render(report: Report) -> str:
         "",
         f"- Derived from the pin: {len(report.derived)}",
         f"- Held whole by policy: {len(report.manual)}",
+        f"- Extra overloads exposed by rule: {len(report.overloads)}",
         "",
         "## Held whole, by reason",
         "",
         *(f"- {name}: {reason}" for name, reason in sorted(report.manual.items())),
+        "",
+        "## Extra overloads",
+        "",
+        *(f"- {name}" for name in report.overloads),
+        "",
+        "## Overloads not exposed, by reason",
+        "",
+        *(f"- {name}: {reason}" for name, reason in sorted(report.skipped.items())),
     ]
     return "\n".join(lines) + "\n"
 

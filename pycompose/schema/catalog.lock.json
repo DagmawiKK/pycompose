@@ -549,6 +549,51 @@
         "onHover"
       ]
     },
+    "CardWithoutOnClick": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Card",
+        "name": "Card",
+        "owner": "androidx.compose.material3.CardKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "CardColors",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.cardColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "CardElevation",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.cardElevation()"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.shape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "overloadOf": "Card"
+    },
     "CenterAlignedTopAppBar": {
       "package": "androidx.compose.material3",
       "category": "app-bars",
@@ -719,6 +764,64 @@
       "children": {
         "allowed": false
       }
+    },
+    "CircularProgressIndicatorProgress": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;JFJIFLandroidx/compose/runtime/Composer;II)V",
+        "jvmName": "CircularProgressIndicator-IyT6zlY",
+        "name": "CircularProgressIndicator",
+        "owner": "androidx.compose.material3.ProgressIndicatorKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularColor"
+        },
+        "gapSize": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize"
+        },
+        "progress": {
+          "type": "number",
+          "required": true,
+          "provider": {
+            "native": "progress",
+            "returns": "Float"
+          }
+        },
+        "strokeCap": {
+          "type": "value",
+          "valueType": "StrokeCap",
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularDeterminateStrokeCap"
+        },
+        "strokeWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth"
+        },
+        "trackColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularDeterminateTrackColor"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "overloadOf": "CircularProgressIndicator"
     },
     "Column": {
       "package": "androidx.compose.foundation.layout",
@@ -1238,6 +1341,45 @@
         "provides": "ColumnScope"
       }
     },
+    "ElevatedCardWithoutOnClick": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ElevatedCard",
+        "name": "ElevatedCard",
+        "owner": "androidx.compose.material3.CardKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "CardColors",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.elevatedCardColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "CardElevation",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.elevatedCardElevation()"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.elevatedShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "overloadOf": "ElevatedCard"
+    },
     "ElevatedFilterChip": {
       "package": "androidx.compose.material3",
       "category": "input",
@@ -1497,6 +1639,59 @@
         "allowed": true,
         "kind": "content",
         "provides": "RowScope"
+      }
+    },
+    "ExtendedFloatingActionButtonText": {
+      "package": "androidx.compose.material3",
+      "category": "buttons",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;JJLandroidx/compose/material3/FloatingActionButtonElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ExtendedFloatingActionButton-ElI5-7k",
+        "name": "ExtendedFloatingActionButton",
+        "owner": "androidx.compose.material3.FloatingActionButtonKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "FloatingActionButtonElevation",
+          "nativeDefault": "androidx.compose.material3.FloatingActionButtonDefaults.elevation()"
+        },
+        "expanded": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.FloatingActionButtonDefaults.extendedFabShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "icon": {
+          "native": "icon"
+        },
+        "text": {
+          "native": "text"
+        }
       }
     },
     "FilledIconButton": {
@@ -2219,6 +2414,60 @@
         "resource"
       ]
     },
+    "ImageImageVector": {
+      "package": "androidx.compose.foundation",
+      "category": "media",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/graphics/vector/ImageVector;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Image",
+        "name": "Image",
+        "owner": "androidx.compose.foundation.ImageKt"
+      },
+      "props": {
+        "alignment": {
+          "type": "enum",
+          "values": [
+            "bottomCenter",
+            "bottomEnd",
+            "bottomLeft",
+            "bottomRight",
+            "bottomStart",
+            "center",
+            "centerEnd",
+            "centerLeft",
+            "centerRight",
+            "centerStart",
+            "topCenter",
+            "topEnd",
+            "topLeft",
+            "topRight",
+            "topStart"
+          ],
+          "decode": "alignment",
+          "default": "center"
+        },
+        "contentDescription": {
+          "type": "string",
+          "required": true,
+          "nullable": true
+        },
+        "imageVector": {
+          "type": "value",
+          "valueType": "ImageVector",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "overloadOf": "Image"
+    },
     "InputChip": {
       "package": "androidx.compose.material3",
       "category": "input",
@@ -2578,6 +2827,52 @@
       "reshaped": [
         "progress"
       ]
+    },
+    "LinearProgressIndicatorWithoutProgress": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;JJIFLandroidx/compose/runtime/Composer;II)V",
+        "jvmName": "LinearProgressIndicator-rIrjwxo",
+        "name": "LinearProgressIndicator",
+        "owner": "androidx.compose.material3.ProgressIndicatorKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor"
+        },
+        "gapSize": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize"
+        },
+        "strokeCap": {
+          "type": "value",
+          "valueType": "StrokeCap",
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearStrokeCap"
+        },
+        "trackColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "overloadOf": "LinearProgressIndicator"
     },
     "ListItem": {
       "package": "androidx.compose.material3",
@@ -3397,6 +3692,50 @@
         "kind": "content",
         "provides": "ColumnScope"
       }
+    },
+    "OutlinedCardWithoutOnClick": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "OutlinedCard",
+        "name": "OutlinedCard",
+        "owner": "androidx.compose.material3.CardKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.outlinedCardBorder()"
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "CardColors",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.outlinedCardColors()"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "CardElevation",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.outlinedCardElevation()"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.CardDefaults.outlinedShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "overloadOf": "OutlinedCard"
     },
     "OutlinedIconButton": {
       "package": "androidx.compose.material3",
@@ -5147,6 +5486,185 @@
         "allowed": true
       }
     },
+    "SurfaceChecked": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;JJFFLandroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "Surface-d85dljk",
+        "name": "Surface",
+        "owner": "androidx.compose.material3.SurfaceKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "value",
+              "type": "boolean"
+            }
+          ]
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.ui.graphics.RectangleShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "overloadOf": "Surface"
+    },
+    "SurfaceOnClick": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;JJFFLandroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "Surface-o_FOJdg",
+        "name": "Surface",
+        "owner": "androidx.compose.material3.SurfaceKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.ui.graphics.RectangleShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "overloadOf": "Surface"
+    },
+    "SurfaceSelected": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;JJFFLandroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "Surface-d85dljk",
+        "name": "Surface",
+        "owner": "androidx.compose.material3.SurfaceKt"
+      },
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.ui.graphics.RectangleShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "overloadOf": "Surface"
+    },
     "SwipeToDismissBox": {
       "package": "androidx.compose.material3",
       "category": "layout",
@@ -5354,6 +5872,47 @@
         }
       }
     },
+    "TabContent": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZJJLandroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Tab-bogVsAg",
+        "name": "Tab",
+        "owner": "androidx.compose.material3.TabKt"
+      },
+      "props": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "required": true
+        },
+        "selectedContentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "(androidx.compose.material3.LocalContentColor).current"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      }
+    },
     "Text": {
       "package": "androidx.compose.material3",
       "category": "typography",
@@ -5424,6 +5983,104 @@
         "fontResource",
         "locale"
       ]
+    },
+    "TextAnnotatedString": {
+      "package": "androidx.compose.material3",
+      "category": "typography",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/text/AnnotatedString;Landroidx/compose/ui/Modifier;JLandroidx/compose/foundation/text/TextAutoSize;JLandroidx/compose/ui/text/font/FontStyle;Landroidx/compose/ui/text/font/FontWeight;Landroidx/compose/ui/text/font/FontFamily;JLandroidx/compose/ui/text/style/TextDecoration;Landroidx/compose/ui/text/style/TextAlign;JIZIILjava/util/Map;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "Text-Z58ophY",
+        "name": "Text",
+        "owner": "androidx.compose.material3.TextKt"
+      },
+      "props": {
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.ui.graphics.Color.Companion.Unspecified"
+        },
+        "fontFamily": {
+          "type": "value",
+          "valueType": "FontFamily",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "fontSize": {
+          "type": "value",
+          "valueType": "TextUnit",
+          "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified"
+        },
+        "fontStyle": {
+          "type": "value",
+          "valueType": "FontStyle",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "fontWeight": {
+          "type": "value",
+          "valueType": "FontWeight",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "letterSpacing": {
+          "type": "value",
+          "valueType": "TextUnit",
+          "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified"
+        },
+        "lineHeight": {
+          "type": "value",
+          "valueType": "TextUnit",
+          "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified"
+        },
+        "minLines": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "default": 1
+        },
+        "overflow": {
+          "type": "value",
+          "valueType": "TextOverflow",
+          "nativeDefault": "androidx.compose.ui.text.style.TextOverflow.Companion.Clip"
+        },
+        "softWrap": {
+          "type": "boolean",
+          "default": true
+        },
+        "style": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "nativeDefault": "(androidx.compose.material3.LocalTextStyle).current"
+        },
+        "text": {
+          "type": "value",
+          "valueType": "AnnotatedString",
+          "required": true
+        },
+        "textAlign": {
+          "type": "value",
+          "valueType": "TextAlign",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "textDecoration": {
+          "type": "value",
+          "valueType": "TextDecoration",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
     },
     "TextButton": {
       "package": "androidx.compose.material3",

@@ -74,7 +74,7 @@ class TransientRule:
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the the catalog lock transient shape.
+        """Render back to the catalog lock transient shape.
 
         Returns:
             A JSON-ready dict.

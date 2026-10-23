@@ -14,6 +14,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from tools.composegen.overloads import extras
 from tools.composegen.policy import Policy, merge, redundant
 from tools.composegen.rules import SHAPES, reshape
 from tools.schema.candidate_props import CandidateError
@@ -57,11 +58,15 @@ class Report:
         derived: Components derived from the pin, with their patch size.
         manual: Components held whole by policy, with the reason.
         errors: Refusals that stop the run, stale policy among them.
+        overloads: Extra overloads exposed by rule, by name.
+        skipped: Extra overloads not exposed, with the reason.
     """
 
     derived: dict[str, int] = field(default_factory=dict)
     manual: dict[str, str] = field(default_factory=dict)
     errors: list[str] = field(default_factory=list)
+    overloads: list[str] = field(default_factory=list)
+    skipped: dict[str, str] = field(default_factory=dict)
 
 
 def planned(
@@ -139,7 +144,20 @@ def generate(
         )
         components[name] = merge(derived, patch)
         report.derived[name] = len(json.dumps(patch))
-    lock = {**sections, "components": components}
+    decisions = {
+        name: rule["decision"]
+        for name, rule in policy.components.items()
+        if "decision" in rule and name in components
+    }
+    added, report.skipped = extras(
+        components,
+        decisions,
+        plans,
+        lambda name, decision: planned(name, decision, plans, found, sections),
+    )
+    components.update(added)
+    report.overloads = sorted(added)
+    lock = {**sections, "components": dict(sorted(components.items()))}
     holders, refused = derive_holders(found, source_drives(directory), lock)
     report.errors.extend(refused)
     lock["holders"] = holders

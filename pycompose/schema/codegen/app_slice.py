@@ -199,9 +199,15 @@ def slice_registry(
     Returns:
         A registry carrying only those components.
     """
+    components = registry["components"]
+    # A primary's overloads come with it: the keywords of a call, not its
+    # name, decide which of them reaches the wire.
+    reached = used | {
+        name for name, entry in components.items() if entry.get("overloadOf") in used
+    }
     narrowed = {key: value for key, value in registry.items() if key != "components"}
     narrowed["components"] = {
-        name: entry for name, entry in registry["components"].items() if name in used
+        name: entry for name, entry in components.items() if name in reached
     }
     from pycompose.schema.codegen.values import dependency_closure
 

@@ -964,6 +964,54 @@
       },
       "type": "object"
     },
+    "C_CardWithoutOnClick": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_CardColors"
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_CardElevation"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "CardWithoutOnClick"
+        }
+      },
+      "type": "object"
+    },
     "C_CenterAlignedTopAppBar": {
       "properties": {
         "children": {
@@ -1154,6 +1202,105 @@
         },
         "type": {
           "const": "CircularProgressIndicator"
+        }
+      },
+      "type": "object"
+    },
+    "C_CircularProgressIndicatorProgress": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "gapSize": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "progress": {
+              "type": "number"
+            },
+            "strokeCap": {
+              "$ref": "#/definitions/Family_StrokeCap"
+            },
+            "strokeWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "trackColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            }
+          },
+          "required": [
+            "progress"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "CircularProgressIndicatorProgress"
         }
       },
       "type": "object"
@@ -1813,6 +1960,44 @@
       },
       "type": "object"
     },
+    "C_ElevatedCardWithoutOnClick": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_CardColors"
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_CardElevation"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ElevatedCardWithoutOnClick"
+        }
+      },
+      "type": "object"
+    },
     "C_ElevatedFilterChip": {
       "properties": {
         "children": {
@@ -2190,6 +2375,74 @@
         },
         "type": {
           "const": "ExtendedFloatingActionButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_ExtendedFloatingActionButtonText": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "text"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_FloatingActionButtonElevation"
+            },
+            "expanded": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ExtendedFloatingActionButtonText"
         }
       },
       "type": "object"
@@ -2929,6 +3182,69 @@
       },
       "type": "object"
     },
+    "C_ImageImageVector": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "alignment": {
+              "default": "center",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomLeft",
+                "bottomRight",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerLeft",
+                "centerRight",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topLeft",
+                "topRight",
+                "topStart"
+              ]
+            },
+            "contentDescription": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "imageVector": {
+              "$ref": "#/definitions/Family_ImageVector"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "contentDescription",
+            "imageVector"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ImageImageVector"
+        }
+      },
+      "type": "object"
+    },
     "C_InputChip": {
       "properties": {
         "children": {
@@ -3374,6 +3690,77 @@
         },
         "type": {
           "const": "LinearProgressIndicator"
+        }
+      },
+      "type": "object"
+    },
+    "C_LinearProgressIndicatorWithoutProgress": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "gapSize": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "strokeCap": {
+              "$ref": "#/definitions/Family_StrokeCap"
+            },
+            "trackColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LinearProgressIndicatorWithoutProgress"
         }
       },
       "type": "object"
@@ -4377,6 +4764,47 @@
         },
         "type": {
           "const": "OutlinedCard"
+        }
+      },
+      "type": "object"
+    },
+    "C_OutlinedCardWithoutOnClick": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "$ref": "#/definitions/Family_BorderStroke"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_CardColors"
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_CardElevation"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedCardWithoutOnClick"
         }
       },
       "type": "object"
@@ -6470,6 +6898,335 @@
       },
       "type": "object"
     },
+    "C_SurfaceChecked": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "checked": {
+              "type": "boolean"
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SurfaceChecked"
+        }
+      },
+      "type": "object"
+    },
+    "C_SurfaceOnClick": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SurfaceOnClick"
+        }
+      },
+      "type": "object"
+    },
+    "C_SurfaceSelected": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SurfaceSelected"
+        }
+      },
+      "type": "object"
+    },
     "C_SwipeToDismissBox": {
       "properties": {
         "children": {
@@ -6666,6 +7423,60 @@
       },
       "type": "object"
     },
+    "C_TabContent": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "selectedContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TabContent"
+        }
+      },
+      "type": "object"
+    },
     "C_Text": {
       "properties": {
         "children": false,
@@ -6734,6 +7545,123 @@
         },
         "type": {
           "const": "Text"
+        }
+      },
+      "type": "object"
+    },
+    "C_TextAnnotatedString": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "fontFamily": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_FontFamily"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "fontSize": {
+              "$ref": "#/definitions/Family_TextUnit"
+            },
+            "fontStyle": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_FontStyle"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "fontWeight": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_FontWeight"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "letterSpacing": {
+              "$ref": "#/definitions/Family_TextUnit"
+            },
+            "lineHeight": {
+              "$ref": "#/definitions/Family_TextUnit"
+            },
+            "minLines": {
+              "default": 1,
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "overflow": {
+              "$ref": "#/definitions/Family_TextOverflow"
+            },
+            "softWrap": {
+              "default": true,
+              "type": "boolean"
+            },
+            "style": {
+              "$ref": "#/definitions/Family_TextStyle"
+            },
+            "text": {
+              "$ref": "#/definitions/Family_AnnotatedString"
+            },
+            "textAlign": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_TextAlign"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "textDecoration": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_TextDecoration"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextAnnotatedString"
         }
       },
       "type": "object"
@@ -7966,6 +8894,9 @@
               "$ref": "#/definitions/C_Card"
             },
             {
+              "$ref": "#/definitions/C_CardWithoutOnClick"
+            },
+            {
               "$ref": "#/definitions/C_CenterAlignedTopAppBar"
             },
             {
@@ -7973,6 +8904,9 @@
             },
             {
               "$ref": "#/definitions/C_CircularProgressIndicator"
+            },
+            {
+              "$ref": "#/definitions/C_CircularProgressIndicatorProgress"
             },
             {
               "$ref": "#/definitions/C_Column"
@@ -8005,6 +8939,9 @@
               "$ref": "#/definitions/C_ElevatedCard"
             },
             {
+              "$ref": "#/definitions/C_ElevatedCardWithoutOnClick"
+            },
+            {
               "$ref": "#/definitions/C_ElevatedFilterChip"
             },
             {
@@ -8018,6 +8955,9 @@
             },
             {
               "$ref": "#/definitions/C_ExtendedFloatingActionButton"
+            },
+            {
+              "$ref": "#/definitions/C_ExtendedFloatingActionButtonText"
             },
             {
               "$ref": "#/definitions/C_FilledIconButton"
@@ -8062,6 +9002,9 @@
               "$ref": "#/definitions/C_Image"
             },
             {
+              "$ref": "#/definitions/C_ImageImageVector"
+            },
+            {
               "$ref": "#/definitions/C_InputChip"
             },
             {
@@ -8081,6 +9024,9 @@
             },
             {
               "$ref": "#/definitions/C_LinearProgressIndicator"
+            },
+            {
+              "$ref": "#/definitions/C_LinearProgressIndicatorWithoutProgress"
             },
             {
               "$ref": "#/definitions/C_ListItem"
@@ -8132,6 +9078,9 @@
             },
             {
               "$ref": "#/definitions/C_OutlinedCard"
+            },
+            {
+              "$ref": "#/definitions/C_OutlinedCardWithoutOnClick"
             },
             {
               "$ref": "#/definitions/C_OutlinedIconButton"
@@ -8224,6 +9173,15 @@
               "$ref": "#/definitions/C_Surface"
             },
             {
+              "$ref": "#/definitions/C_SurfaceChecked"
+            },
+            {
+              "$ref": "#/definitions/C_SurfaceOnClick"
+            },
+            {
+              "$ref": "#/definitions/C_SurfaceSelected"
+            },
+            {
               "$ref": "#/definitions/C_SwipeToDismissBox"
             },
             {
@@ -8233,7 +9191,13 @@
               "$ref": "#/definitions/C_Tab"
             },
             {
+              "$ref": "#/definitions/C_TabContent"
+            },
+            {
               "$ref": "#/definitions/C_Text"
+            },
+            {
+              "$ref": "#/definitions/C_TextAnnotatedString"
             },
             {
               "$ref": "#/definitions/C_TextButton"
@@ -24777,6 +25741,54 @@
       },
       "type": "object"
     },
+    "V_1_23_0_CardWithoutOnClick": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_CardColors"
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_CardElevation"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "CardWithoutOnClick"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_CenterAlignedTopAppBar": {
       "properties": {
         "children": {
@@ -24967,6 +25979,105 @@
         },
         "type": {
           "const": "CircularProgressIndicator"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_CircularProgressIndicatorProgress": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "gapSize": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "progress": {
+              "type": "number"
+            },
+            "strokeCap": {
+              "$ref": "#/definitions/Family_StrokeCap"
+            },
+            "strokeWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "trackColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            }
+          },
+          "required": [
+            "progress"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "CircularProgressIndicatorProgress"
         }
       },
       "type": "object"
@@ -25626,6 +26737,44 @@
       },
       "type": "object"
     },
+    "V_1_23_0_ElevatedCardWithoutOnClick": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_CardColors"
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_CardElevation"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "ElevatedCardWithoutOnClick"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_ElevatedFilterChip": {
       "properties": {
         "children": {
@@ -26003,6 +27152,74 @@
         },
         "type": {
           "const": "ExtendedFloatingActionButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_ExtendedFloatingActionButtonText": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon",
+                  "text"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_FloatingActionButtonElevation"
+            },
+            "expanded": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ExtendedFloatingActionButtonText"
         }
       },
       "type": "object"
@@ -26742,6 +27959,69 @@
       },
       "type": "object"
     },
+    "V_1_23_0_ImageImageVector": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "alignment": {
+              "default": "center",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomLeft",
+                "bottomRight",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerLeft",
+                "centerRight",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topLeft",
+                "topRight",
+                "topStart"
+              ]
+            },
+            "contentDescription": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "imageVector": {
+              "$ref": "#/definitions/Family_ImageVector"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "contentDescription",
+            "imageVector"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ImageImageVector"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_InputChip": {
       "properties": {
         "children": {
@@ -27187,6 +28467,77 @@
         },
         "type": {
           "const": "LinearProgressIndicator"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_LinearProgressIndicatorWithoutProgress": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "gapSize": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "strokeCap": {
+              "$ref": "#/definitions/Family_StrokeCap"
+            },
+            "trackColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LinearProgressIndicatorWithoutProgress"
         }
       },
       "type": "object"
@@ -28376,6 +29727,9 @@
               "$ref": "#/definitions/V_1_23_0_Card"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_CardWithoutOnClick"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_CenterAlignedTopAppBar"
             },
             {
@@ -28383,6 +29737,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_CircularProgressIndicator"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_CircularProgressIndicatorProgress"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Column"
@@ -28415,6 +29772,9 @@
               "$ref": "#/definitions/V_1_23_0_ElevatedCard"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_ElevatedCardWithoutOnClick"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_ElevatedFilterChip"
             },
             {
@@ -28428,6 +29788,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_ExtendedFloatingActionButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ExtendedFloatingActionButtonText"
             },
             {
               "$ref": "#/definitions/V_1_23_0_FilledIconButton"
@@ -28472,6 +29835,9 @@
               "$ref": "#/definitions/V_1_23_0_Image"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_ImageImageVector"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_InputChip"
             },
             {
@@ -28491,6 +29857,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_LinearProgressIndicator"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_LinearProgressIndicatorWithoutProgress"
             },
             {
               "$ref": "#/definitions/V_1_23_0_ListItem"
@@ -28542,6 +29911,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_OutlinedCard"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_OutlinedCardWithoutOnClick"
             },
             {
               "$ref": "#/definitions/V_1_23_0_OutlinedIconButton"
@@ -28634,6 +30006,15 @@
               "$ref": "#/definitions/V_1_23_0_Surface"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_SurfaceChecked"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SurfaceOnClick"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SurfaceSelected"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_SwipeToDismissBox"
             },
             {
@@ -28643,7 +30024,13 @@
               "$ref": "#/definitions/V_1_23_0_Tab"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_TabContent"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_Text"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_TextAnnotatedString"
             },
             {
               "$ref": "#/definitions/V_1_23_0_TextButton"
@@ -28808,6 +30195,47 @@
         },
         "type": {
           "const": "OutlinedCard"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_OutlinedCardWithoutOnClick": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "$ref": "#/definitions/Family_BorderStroke"
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_CardColors"
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_CardElevation"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedCardWithoutOnClick"
         }
       },
       "type": "object"
@@ -30901,6 +32329,335 @@
       },
       "type": "object"
     },
+    "V_1_23_0_SurfaceChecked": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "checked": {
+              "type": "boolean"
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onCheckedChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "checked",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SurfaceChecked"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SurfaceOnClick": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SurfaceOnClick"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SurfaceSelected": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SurfaceSelected"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_SwipeToDismissBox": {
       "properties": {
         "children": {
@@ -31097,6 +32854,60 @@
       },
       "type": "object"
     },
+    "V_1_23_0_TabContent": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "selected": {
+              "type": "boolean"
+            },
+            "selectedContentColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            }
+          },
+          "required": [
+            "onClick",
+            "selected"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TabContent"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Text": {
       "properties": {
         "children": false,
@@ -31165,6 +32976,123 @@
         },
         "type": {
           "const": "Text"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_TextAnnotatedString": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                }
+              ]
+            },
+            "fontFamily": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_FontFamily"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "fontSize": {
+              "$ref": "#/definitions/Family_TextUnit"
+            },
+            "fontStyle": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_FontStyle"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "fontWeight": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_FontWeight"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "letterSpacing": {
+              "$ref": "#/definitions/Family_TextUnit"
+            },
+            "lineHeight": {
+              "$ref": "#/definitions/Family_TextUnit"
+            },
+            "minLines": {
+              "default": 1,
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "overflow": {
+              "$ref": "#/definitions/Family_TextOverflow"
+            },
+            "softWrap": {
+              "default": true,
+              "type": "boolean"
+            },
+            "style": {
+              "$ref": "#/definitions/Family_TextStyle"
+            },
+            "text": {
+              "$ref": "#/definitions/Family_AnnotatedString"
+            },
+            "textAlign": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_TextAlign"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "textDecoration": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_TextDecoration"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TextAnnotatedString"
         }
       },
       "type": "object"

@@ -203,7 +203,7 @@ class PropDef:
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the the catalog lock prop shape.
+        """Render back to the catalog lock prop shape.
 
         Returns:
             A JSON-ready dict.
@@ -396,7 +396,7 @@ class InteractionRule:
         return cls(native=native, observations=observations)
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the the catalog lock interaction shape.
+        """Render back to the catalog lock interaction shape.
 
         Returns:
             A JSON-ready dict.
@@ -472,7 +472,7 @@ class StateRule:
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the the catalog lock state shape.
+        """Render back to the catalog lock state shape.
 
         Returns:
             A JSON-ready dict.

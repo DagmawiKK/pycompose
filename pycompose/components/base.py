@@ -11,6 +11,7 @@ from pycompose.components.modifiers import Modifier
 from pycompose.core import Node, Props
 from pycompose.core.ids import call_location, call_site
 from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
+from pycompose.core.values import _Unset
 from pycompose.errors import IrValidationError
 from pycompose.ir.generated_validators import REGISTRY
 from pycompose.ir.validator import validate_component
@@ -29,6 +30,34 @@ _CONSTRUCTORS: set[CodeType] = set()
 """Every component ``__init__``, stepped over to find the app's declaring line."""
 
 
+_COMMON = frozenset({"id", "modifier", "children", "content"})
+"""Keywords every component takes, so none of them tells overloads apart."""
+
+
+def _overload(
+    cls: type[Component], positional: bool, kwargs: Mapping[str, Any]
+) -> type[Component]:
+    """The one overload of ``cls`` whose keywords a call fits, else ``cls``.
+
+    An argument left at its absent value is not passed; children, given
+    positionally or by name, are the ``content`` keyword. When nothing fits,
+    ``cls`` is returned so its own constructor reports what is missing.
+    """
+    given = {
+        key
+        for key, value in kwargs.items()
+        if value is not None and not isinstance(value, _Unset)
+    } - _COMMON
+    if positional or kwargs.get("children") or kwargs.get("content") is not None:
+        given.add("content")
+    fits = [
+        overload
+        for overload in (cls, *cls.overloads)
+        if overload.required_keywords <= given <= overload.accepted_keywords
+    ]
+    return fits[0] if len(fits) == 1 else cls
+
+
 class Component(Node):
     """A Node with a registered component type and Pythonic prop names.
 
@@ -39,29 +68,40 @@ class Component(Node):
 
     __slots__ = ()
     component_type: ClassVar[str]
+    required_keywords: ClassVar[frozenset[str]] = frozenset()
+    accepted_keywords: ClassVar[frozenset[str]] = frozenset()
+    overloads: ClassVar[tuple[type[Component], ...]] = ()
+    """The other overloads this name reaches; keywords choose among them."""
 
     def __new__(cls, *_children: Any, **kwargs: Any) -> Any:
-        """Build a windowed declaration when a lazy container is given ``item``.
+        """Choose the overload a call means, or build a windowed declaration.
 
+        ``Card(on_click=open, ...)`` and ``Card(...)`` are two native overloads
+        behind one name: the keywords a call passes select exactly one, which
+        codegen proves per name. The chosen class's ``__init__`` then runs.
         ``LazyColumn(items=notes, key=..., item=...)`` lists data rather than
-        nodes; the host then asks for the window it shows. Everything else
-        constructs the component itself.
+        nodes; the host then asks for the window it shows.
 
         Args:
             *_children: Positional children, read by ``__init__``.
             **kwargs: The component's keyword arguments.
 
         Returns:
-            A :class:`Windowed` declaration, or a new instance of ``cls``.
+            A :class:`Windowed` declaration, or a new instance of the overload.
         """
+        chosen = (
+            _overload(cls, bool(_children), kwargs)
+            if "overloads" in cls.__dict__
+            else cls
+        )
         item = kwargs.pop("item", None)
         if item is None:
-            return super().__new__(cls)
+            return super().__new__(chosen)
         from pycompose.components.windowed import Windowed
 
         site = call_site(0, _CONSTRUCTORS | {Component.__new__.__code__})
         return Windowed(
-            cls,
+            chosen,
             site=site,
             id=kwargs.pop("id", None),
             items=kwargs.pop("items", ()),

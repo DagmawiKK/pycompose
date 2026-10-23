@@ -1,0 +1,14 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "id": "preview",
+  "props": {
+   "progress": 0.5
+  },
+  "type": "CircularProgressIndicatorProgress"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

@@ -1,0 +1,21 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.child",
+    "props": {
+     "text": "OutlinedCardWithoutOnClick"
+    },
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {},
+  "type": "OutlinedCardWithoutOnClick"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

@@ -14,6 +14,7 @@ from pycompose.schema.codegen.literals import (
     GENERATED_NOTICE,
     python_adjacent_statements,
 )
+from pycompose.schema.codegen.overloads import groups, keywords, python_name
 from pycompose.schema.codegen.rules import die, supported, version_key
 
 
@@ -140,7 +141,9 @@ def render_python_components(
     Returns:
         The generated module.
     """
-    names = sorted(registry["components"])
+    components = registry["components"]
+    names = sorted(components)
+    overloaded = groups(components)
     lines = [
         f"# {GENERATED_NOTICE}",
         "# ruff: noqa: PLR0912 -- one branch per slot; the schema sets the count.",
@@ -149,7 +152,7 @@ def render_python_components(
         "from __future__ import annotations",
         "",
         "from collections.abc import Callable, Sequence",
-        "from typing import Any, Literal, cast",
+        "from typing import Any, Literal, cast" + (", overload" if overloaded else ""),
         "",
         "from pycompose.components.base import ActionTarget, Component, PropValue",
         "from pycompose.components.modifiers import Modifier",
@@ -186,13 +189,23 @@ def render_python_components(
                     ]
                 )
     lines.append("")
-    for name, spec in sorted(registry["components"].items()):
-        lines.extend(_python_constructor(name, spec))
+    # An overload subclasses its primary's public name, so primaries come first.
+    for name, spec in sorted(components.items(), key=lambda i: "overloadOf" in i[1]):
+        primary = spec.get("overloadOf")
+        if name in overloaded:
+            lines.extend(_python_constructor(name, spec, class_name=f"_{name}"))
+            members = {extra: components[extra] for extra in overloaded[name]}
+            lines.extend(_python_dispatcher(name, spec, members))
+        else:
+            lines.extend(_python_constructor(name, spec, base=primary or "Component"))
+    for name, overloads in sorted(overloaded.items()):
+        listed = ", ".join(overloads) + ("," if len(overloads) == 1 else "")
+        lines.append(f"{name}.overloads = ({listed})")
     return "\n".join(lines).rstrip() + "\n"
 
 
 def _python_prop(name: str) -> str:
-    return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
+    return python_name(name)
 
 
 def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
@@ -242,15 +255,22 @@ def _python_class_docstring(native: str) -> list[str]:
     ]
 
 
-def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
+def _python_constructor(
+    name: str,
+    spec: dict[str, Any],
+    *,
+    class_name: str | None = None,
+    base: str = "Component",
+) -> list[str]:
     props = spec["props"]
     alias = spec["children"].get("kind")
     lines = [
-        f"class {name}(Component):",
+        f"class {class_name or name}({base}):",
         *_python_class_docstring(_native_name(name, spec)),
         "",
         "    __slots__ = ()",
         f'    component_type = "{name}"',
+        *(_keyword_sets(spec) if class_name or base != "Component" else []),
         "",
         "    def __init__(",
         "        self,",
@@ -344,13 +364,91 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
     lines.extend(slot_lines)
     modifier = ", modifier=modifier" if "modifier" in props else ""
     invocation = f"id=id, children={children}{modifier}, **props"
-    if len(invocation) + len("        super().__init__()") > 88:
-        lines.extend(
-            ["        super().__init__(", f"            {invocation}", "        )"]
-        )
+    # An overload subclasses its primary for its type, not its construction.
+    call = "super().__init__" if base == "Component" else "Component.__init__"
+    if base != "Component":
+        invocation = f"self, {invocation}"
+    if len(f"        {call}({invocation})") > 88:
+        lines.extend([f"        {call}(", f"            {invocation}", "        )"])
     else:
-        lines.append(f"        super().__init__({invocation})")
+        lines.append(f"        {call}({invocation})")
     return [*lines, "", ""]
+
+
+def _keyword_sets(spec: dict[str, Any]) -> list[str]:
+    """Render the keywords an overload requires and accepts, for dispatch."""
+    lines = []
+    for attribute, values in zip(
+        ("required_keywords", "accepted_keywords"), keywords(spec), strict=True
+    ):
+        if not values:
+            lines.append(f"    {attribute} = frozenset()")
+            continue
+        lines.extend(
+            [
+                f"    {attribute} = frozenset(",
+                "        {",
+                *(f'            "{value}",' for value in sorted(values)),
+                "        }",
+                "    )",
+            ]
+        )
+    return lines
+
+
+def _python_dispatcher(
+    name: str, spec: dict[str, Any], extras: dict[str, dict[str, Any]]
+) -> list[str]:
+    """Render a primary's public class: one typed ``__new__`` per overload.
+
+    Args:
+        name: The primary's component name.
+        spec: The primary's entry.
+        extras: Its overloads' entries, by name.
+
+    Returns:
+        The class's source lines.
+    """
+    lines = [
+        f"class {name}(_{name}):",
+        f'    """Native {_native_name(name, spec)}; keywords choose the overload."""',
+        "",
+        "    __slots__ = ()",
+        "",
+    ]
+    for target, entry in {name: spec, **extras}.items():
+        signature, _ = _python_signature(target, entry)
+        lines.extend(
+            [
+                "    @overload",
+                "    def __new__(",
+                "        cls,",
+                "        *contents: Node,"
+                if entry["children"]["allowed"]
+                else "        *,",
+                "        id: str | None = None,",
+                *signature,
+                f"    ) -> {target}: ...",
+            ]
+        )
+    lines.extend(
+        [
+            "    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:",
+            '        """Construct the overload the keywords select.',
+            "",
+            "        Args:",
+            "            *contents: Children given in order.",
+            "            **kwargs: The chosen overload's keyword arguments.",
+            "",
+            "        Returns:",
+            "            An instance of that overload.",
+            '        """',
+            "        return super().__new__(cls, *contents, **kwargs)",
+            "",
+            "",
+        ]
+    )
+    return lines
 
 
 def _python_signature(

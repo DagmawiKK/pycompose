@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from typing import Any, Literal, cast
+from typing import Any, Literal, cast, overload
 
 from pycompose.components.base import ActionTarget, Component, PropValue
 from pycompose.components.modifiers import Modifier
@@ -18,6 +18,7 @@ from pycompose.errors import IrValidationError
 __all__ = [
     "AnimatedContent",
     "Card",
+    "CardWithoutOnClick",
     "Column",
     "Crossfade",
     "ExpandedDockedSearchBar",
@@ -27,8 +28,10 @@ __all__ = [
     "Icon",
     "IconButton",
     "Image",
+    "ImageImageVector",
     "LazyColumn",
     "LinearProgressIndicator",
+    "LinearProgressIndicatorWithoutProgress",
     "ModalBottomSheet",
     "NavigationBar",
     "NavigationBarItem",
@@ -54,6 +57,24 @@ _ColumnHorizontalAlignment = Literal[
     "start",
     "center",
     "end",
+]
+
+_ImageImageVectorAlignment = Literal[
+    "bottomCenter",
+    "bottomEnd",
+    "bottomLeft",
+    "bottomRight",
+    "bottomStart",
+    "center",
+    "centerEnd",
+    "centerLeft",
+    "centerRight",
+    "centerStart",
+    "topCenter",
+    "topEnd",
+    "topLeft",
+    "topRight",
+    "topStart",
 ]
 
 _LazyColumnVerticalArrangement = Literal[
@@ -133,11 +154,30 @@ class AnimatedContent(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class Card(Component):
+class _Card(Component):
     """Native Card; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Card"
+    required_keywords = frozenset(
+        {
+            "on_click",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "colors",
+            "content",
+            "elevation",
+            "enabled",
+            "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
+            "shape",
+        }
+    )
 
     def __init__(
         self,
@@ -207,6 +247,55 @@ class Card(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Card(_Card):
+    """Native Card; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> Card: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> CardWithoutOnClick: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class Column(Component):
@@ -610,11 +699,22 @@ class IconButton(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class Image(Component):
+class _Image(Component):
     """Native Image; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Image"
+    required_keywords = frozenset(
+        {
+            "resource",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "content_description",
+            "resource",
+        }
+    )
 
     def __init__(
         self,
@@ -637,6 +737,43 @@ class Image(Component):
             props["content_description"] = content_description
         props["resource"] = resource
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class Image(_Image):
+    """Native Image; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        content_description: str | None = None,
+        modifier: Modifier | None = None,
+        resource: str,
+    ) -> Image: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        alignment: _ImageImageVectorAlignment | None = None,
+        content_description: str | None,
+        image_vector: JsonValue,
+        modifier: Modifier | None = None,
+    ) -> ImageImageVector: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class LazyColumn(Component):
@@ -699,12 +836,24 @@ class LazyColumn(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class LinearProgressIndicator(Component):
+class _LinearProgressIndicator(Component):
     """Native LinearProgressIndicator;
     props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "LinearProgressIndicator"
+    required_keywords = frozenset(
+        {
+            "progress",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "color",
+            "progress",
+            "track_color",
+        }
+    )
 
     def __init__(
         self,
@@ -731,6 +880,45 @@ class LinearProgressIndicator(Component):
         if track_color is not None:
             props["track_color"] = track_color
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class LinearProgressIndicator(_LinearProgressIndicator):
+    """Native LinearProgressIndicator; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        color: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        progress: int | float,
+        track_color: JsonValue | None = None,
+    ) -> LinearProgressIndicator: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        color: JsonValue | None = None,
+        gap_size: int | float | None = None,
+        modifier: Modifier | None = None,
+        stroke_cap: JsonValue | None = None,
+        track_color: JsonValue | None = None,
+    ) -> LinearProgressIndicatorWithoutProgress: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class ModalBottomSheet(Component):
@@ -1759,3 +1947,168 @@ class VerticalDivider(Component):
         if thickness is not None:
             props["thickness"] = thickness
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class CardWithoutOnClick(Card):
+    """Native Card; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "CardWithoutOnClick"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "colors",
+            "content",
+            "elevation",
+            "shape",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered CardWithoutOnClick.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; None uses its default.
+            modifier: Native modifier; None uses its default.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if colors is not None:
+            props["colors"] = colors
+        if elevation is not None:
+            props["elevation"] = elevation
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class ImageImageVector(Image):
+    """Native Image; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ImageImageVector"
+    required_keywords = frozenset(
+        {
+            "content_description",
+            "image_vector",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "alignment",
+            "content_description",
+            "image_vector",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        alignment: _ImageImageVectorAlignment | None = None,
+        content_description: str | None,
+        image_vector: JsonValue,
+        modifier: Modifier | None = None,
+    ) -> None:
+        """Construct a registered ImageImageVector.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            alignment: Native alignment; None uses its default.
+            content_description: Required native contentDescription.
+            image_vector: Required native imageVector.
+            modifier: Native modifier; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if alignment is not None:
+            props["alignment"] = alignment
+        props["content_description"] = content_description
+        props["image_vector"] = image_vector
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
+class LinearProgressIndicatorWithoutProgress(LinearProgressIndicator):
+    """Native LinearProgressIndicator;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LinearProgressIndicatorWithoutProgress"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "color",
+            "gap_size",
+            "stroke_cap",
+            "track_color",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        color: JsonValue | None = None,
+        gap_size: int | float | None = None,
+        modifier: Modifier | None = None,
+        stroke_cap: JsonValue | None = None,
+        track_color: JsonValue | None = None,
+    ) -> None:
+        """Construct a registered LinearProgressIndicatorWithoutProgress.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            color: Native color; None uses its default.
+            gap_size: Native gapSize; None uses its default.
+            modifier: Native modifier; None uses its default.
+            stroke_cap: Native strokeCap; None uses its default.
+            track_color: Native trackColor; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if color is not None:
+            props["color"] = color
+        if gap_size is not None:
+            props["gap_size"] = gap_size
+        if stroke_cap is not None:
+            props["stroke_cap"] = stroke_cap
+        if track_color is not None:
+            props["track_color"] = track_color
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
+Card.overloads = (CardWithoutOnClick,)
+Image.overloads = (ImageImageVector,)
+LinearProgressIndicator.overloads = (LinearProgressIndicatorWithoutProgress,)
