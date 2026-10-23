@@ -253,10 +253,15 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
         "",
         "    def __init__(",
         "        self,",
-        "        *,",
+        "        *contents: Node," if spec["children"]["allowed"] else "        *,",
         "        id: str | None = None,",
     ]
     signature, arguments = _python_signature(name, spec)
+    if spec["children"]["allowed"]:
+        arguments = {
+            "*contents": "Children given in order, as Compose's content lambda.",
+            **arguments,
+        }
     lines.extend(signature)
     lines.extend(
         [
@@ -271,12 +276,12 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
             ),
         ]
     )
-    if spec["children"]["allowed"] and alias in {"content", "items"}:
+    if spec["children"]["allowed"]:
         lines.extend(
             [
                 "",
                 "        Raises:",
-                "            IrValidationError: If slot and children are both set.",
+                "            IrValidationError: If children are given twice.",
             ]
         )
     lines.extend(['        """', "        props: dict[str, PropValue] = {}"])
@@ -313,7 +318,16 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
         )
     children = "()"
     if spec["children"]["allowed"]:
-        lines.append('        normalized = content_nodes(children, key="children")')
+        lines.extend(
+            [
+                "        if contents and children:",
+                "            raise IrValidationError(",
+                '                "children given positionally and by name", node_id=id',
+                "            )",
+                "        normalized = content_nodes(contents or children, "
+                'key="children")',
+            ]
+        )
         children = "normalized"
     slot_lines, children = _python_slot_body(spec, children)
     lines.extend(slot_lines)

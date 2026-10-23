@@ -309,7 +309,7 @@ class AnimatedContent(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         target: str,
@@ -318,14 +318,22 @@ class AnimatedContent(Component):
         """Construct a registered AnimatedContent.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             target: Required native target.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["target"] = target
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -337,7 +345,7 @@ class AnimatedVisibility(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         visible: bool,
@@ -346,14 +354,22 @@ class AnimatedVisibility(Component):
         """Construct a registered AnimatedVisibility.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             visible: Required native visible.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["visible"] = visible
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -423,7 +439,7 @@ class Badge(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         container_color: JsonValue | None = None,
         modifier: Modifier | None = None,
@@ -433,6 +449,7 @@ class Badge(Component):
         """Construct a registered Badge.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -440,7 +457,7 @@ class Badge(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
@@ -451,7 +468,11 @@ class Badge(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -463,7 +484,7 @@ class BadgedBox(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -473,6 +494,7 @@ class BadgedBox(Component):
         """Construct a registered BadgedBox.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -480,7 +502,7 @@ class BadgedBox(Component):
             badge: Nodes for the native badge slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if content is not None:
@@ -489,7 +511,11 @@ class BadgedBox(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if badge is not None:
             slotted += slot_nodes(badge, key="badge", slot="badge")
@@ -506,7 +532,7 @@ class BasicAlertDialog(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         on_dismiss_request: ActionTarget,
@@ -515,14 +541,22 @@ class BasicAlertDialog(Component):
         """Construct a registered BasicAlertDialog.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             on_dismiss_request: Required native onDismissRequest.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["on_dismiss_request"] = on_dismiss_request
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -534,7 +568,7 @@ class BottomAppBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -542,12 +576,20 @@ class BottomAppBar(Component):
         """Construct a registered BottomAppBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -559,7 +601,7 @@ class Box(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         content_alignment: _BoxContentAlignment | None = None,
         modifier: Modifier | None = None,
@@ -568,15 +610,23 @@ class Box(Component):
         """Construct a registered Box.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             content_alignment: Native contentAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if content_alignment is not None:
             props["content_alignment"] = content_alignment
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -640,7 +690,7 @@ class Card(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         colors: JsonValue | None = None,
@@ -658,6 +708,7 @@ class Card(Component):
         """Construct a registered Card.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             colors: Native colors; None uses its default.
@@ -673,7 +724,7 @@ class Card(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
@@ -699,7 +750,11 @@ class Card(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -846,7 +901,7 @@ class Column(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         horizontal_alignment: _ColumnHorizontalAlignment | None = None,
         modifier: Modifier | None = None,
@@ -858,6 +913,7 @@ class Column(Component):
         """Construct a registered Column.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             horizontal_alignment: Native horizontalAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -865,6 +921,9 @@ class Column(Component):
             on_scroll_idle: Native onScrollIdle; None uses its default.
             scrollable: Native scrollable; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if horizontal_alignment is not None:
@@ -875,7 +934,11 @@ class Column(Component):
             props["on_scroll_idle"] = on_scroll_idle
         if scrollable is not None:
             props["scrollable"] = scrollable
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -887,7 +950,7 @@ class Crossfade(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         target: str,
@@ -896,14 +959,22 @@ class Crossfade(Component):
         """Construct a registered Crossfade.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             target: Required native target.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["target"] = target
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -916,7 +987,7 @@ class DismissibleDrawerSheet(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         drawer_container_color: JsonValue | None = None,
         drawer_shape: JsonValue | None = None,
@@ -929,6 +1000,7 @@ class DismissibleDrawerSheet(Component):
         """Construct a registered DismissibleDrawerSheet.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             drawer_container_color: Native drawerContainerColor; None uses its
                 default.
@@ -941,7 +1013,7 @@ class DismissibleDrawerSheet(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
@@ -958,7 +1030,11 @@ class DismissibleDrawerSheet(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -971,7 +1047,7 @@ class DismissibleNavigationDrawer(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
@@ -984,6 +1060,7 @@ class DismissibleNavigationDrawer(Component):
         """Construct a registered DismissibleNavigationDrawer.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             gestures_enabled: Native gesturesEnabled; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -994,7 +1071,7 @@ class DismissibleNavigationDrawer(Component):
             drawer: Nodes for the native drawerContent slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if gestures_enabled is not None:
@@ -1009,7 +1086,11 @@ class DismissibleNavigationDrawer(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if drawer is not None:
             slotted += slot_nodes(drawer, key="drawer", slot="drawer")
@@ -1026,7 +1107,7 @@ class DockedSearchBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
@@ -1041,6 +1122,7 @@ class DockedSearchBar(Component):
         """Construct a registered DockedSearchBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             expanded: Required native expanded.
             modifier: Native modifier; None uses its default.
@@ -1053,7 +1135,7 @@ class DockedSearchBar(Component):
             input_field: Nodes for the native inputField slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["expanded"] = expanded
@@ -1070,7 +1152,11 @@ class DockedSearchBar(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if input_field is not None:
             slotted += slot_nodes(input_field, key="inputField", slot="inputField")
@@ -1087,7 +1173,7 @@ class DropdownMenu(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         container_color: JsonValue | None = None,
@@ -1103,6 +1189,7 @@ class DropdownMenu(Component):
         """Construct a registered DropdownMenu.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             container_color: Native containerColor; None uses its default.
@@ -1116,7 +1203,7 @@ class DropdownMenu(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
@@ -1137,7 +1224,11 @@ class DropdownMenu(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1265,7 +1356,7 @@ class ElevatedButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         colors: JsonValue | None = None,
@@ -1281,6 +1372,7 @@ class ElevatedButton(Component):
         """Construct a registered ElevatedButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             colors: Native colors; None uses its default.
@@ -1294,7 +1386,7 @@ class ElevatedButton(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
@@ -1316,7 +1408,11 @@ class ElevatedButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1328,7 +1424,7 @@ class ElevatedCard(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         elevation: JsonValue | None = None,
@@ -1342,6 +1438,7 @@ class ElevatedCard(Component):
         """Construct a registered ElevatedCard.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             elevation: Native elevation; None uses its default.
@@ -1353,7 +1450,7 @@ class ElevatedCard(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if colors is not None:
@@ -1371,7 +1468,11 @@ class ElevatedCard(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1504,7 +1605,7 @@ class ExpandedDockedSearchBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         shadow_elevation: int | float | None = None,
@@ -1517,6 +1618,7 @@ class ExpandedDockedSearchBar(Component):
         """Construct a registered ExpandedDockedSearchBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             shadow_elevation: Native shadowElevation; None uses its default.
@@ -1527,7 +1629,7 @@ class ExpandedDockedSearchBar(Component):
             input_field: Nodes for the native inputField slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if shadow_elevation is not None:
@@ -1542,7 +1644,11 @@ class ExpandedDockedSearchBar(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if input_field is not None:
             slotted += slot_nodes(input_field, key="inputField", slot="inputField")
@@ -1560,7 +1666,7 @@ class ExpandedFullScreenSearchBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         collapsed_shape: JsonValue | None = None,
         modifier: Modifier | None = None,
@@ -1573,6 +1679,7 @@ class ExpandedFullScreenSearchBar(Component):
         """Construct a registered ExpandedFullScreenSearchBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             collapsed_shape: Native collapsedShape; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -1583,7 +1690,7 @@ class ExpandedFullScreenSearchBar(Component):
             input_field: Nodes for the native inputField slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if collapsed_shape is not None:
@@ -1598,7 +1705,11 @@ class ExpandedFullScreenSearchBar(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if input_field is not None:
             slotted += slot_nodes(input_field, key="inputField", slot="inputField")
@@ -1616,7 +1727,7 @@ class ExtendedFloatingActionButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         container_color: JsonValue | None = None,
         elevation: JsonValue | None = None,
@@ -1629,6 +1740,7 @@ class ExtendedFloatingActionButton(Component):
         """Construct a registered ExtendedFloatingActionButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             elevation: Native elevation; None uses its default.
@@ -1639,7 +1751,7 @@ class ExtendedFloatingActionButton(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
@@ -1655,7 +1767,11 @@ class ExtendedFloatingActionButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1667,7 +1783,7 @@ class FilledIconButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
@@ -1679,6 +1795,7 @@ class FilledIconButton(Component):
         """Construct a registered FilledIconButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
@@ -1686,6 +1803,9 @@ class FilledIconButton(Component):
             on_click: Required native onClick.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if colors is not None:
@@ -1695,7 +1815,11 @@ class FilledIconButton(Component):
         props["on_click"] = on_click
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1708,7 +1832,7 @@ class FilledIconToggleButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         checked: bool,
         colors: JsonValue | None = None,
@@ -1721,6 +1845,7 @@ class FilledIconToggleButton(Component):
         """Construct a registered FilledIconToggleButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             checked: Required native checked.
             colors: Native colors; None uses its default.
@@ -1729,6 +1854,9 @@ class FilledIconToggleButton(Component):
             on_checked_change: Required native onCheckedChange.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["checked"] = checked
@@ -1739,7 +1867,11 @@ class FilledIconToggleButton(Component):
         props["on_checked_change"] = on_checked_change
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1751,7 +1883,7 @@ class FilledTonalButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         colors: JsonValue | None = None,
@@ -1767,6 +1899,7 @@ class FilledTonalButton(Component):
         """Construct a registered FilledTonalButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             colors: Native colors; None uses its default.
@@ -1780,7 +1913,7 @@ class FilledTonalButton(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
@@ -1802,7 +1935,11 @@ class FilledTonalButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1815,7 +1952,7 @@ class FilledTonalIconButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
@@ -1827,6 +1964,7 @@ class FilledTonalIconButton(Component):
         """Construct a registered FilledTonalIconButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
@@ -1834,6 +1972,9 @@ class FilledTonalIconButton(Component):
             on_click: Required native onClick.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if colors is not None:
@@ -1843,7 +1984,11 @@ class FilledTonalIconButton(Component):
         props["on_click"] = on_click
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1856,7 +2001,7 @@ class FilledTonalIconToggleButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         checked: bool,
         colors: JsonValue | None = None,
@@ -1869,6 +2014,7 @@ class FilledTonalIconToggleButton(Component):
         """Construct a registered FilledTonalIconToggleButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             checked: Required native checked.
             colors: Native colors; None uses its default.
@@ -1877,6 +2023,9 @@ class FilledTonalIconToggleButton(Component):
             on_checked_change: Required native onCheckedChange.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["checked"] = checked
@@ -1887,7 +2036,11 @@ class FilledTonalIconToggleButton(Component):
         props["on_checked_change"] = on_checked_change
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1959,7 +2112,7 @@ class FloatingActionButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         container_color: JsonValue | None = None,
         elevation: JsonValue | None = None,
@@ -1975,6 +2128,7 @@ class FloatingActionButton(Component):
         """Construct a registered FloatingActionButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             elevation: Native elevation; None uses its default.
@@ -1988,7 +2142,7 @@ class FloatingActionButton(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
@@ -2010,7 +2164,11 @@ class FloatingActionButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2022,7 +2180,7 @@ class FlowColumn(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         item_horizontal_alignment: _FlowColumnItemHorizontalAlignment | None = None,
         max_items_in_each_column: int | None = None,
@@ -2032,6 +2190,7 @@ class FlowColumn(Component):
         """Construct a registered FlowColumn.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             item_horizontal_alignment: Native itemHorizontalAlignment; None uses its
                 default.
@@ -2039,13 +2198,20 @@ class FlowColumn(Component):
                 default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if item_horizontal_alignment is not None:
             props["item_horizontal_alignment"] = item_horizontal_alignment
         if max_items_in_each_column is not None:
             props["max_items_in_each_column"] = max_items_in_each_column
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2057,7 +2223,7 @@ class FlowRow(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         item_vertical_alignment: _FlowRowItemVerticalAlignment | None = None,
         max_items_in_each_row: int | None = None,
@@ -2067,19 +2233,27 @@ class FlowRow(Component):
         """Construct a registered FlowRow.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             item_vertical_alignment: Native itemVerticalAlignment; None uses its
                 default.
             max_items_in_each_row: Native maxItemsInEachRow; None uses its default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if item_vertical_alignment is not None:
             props["item_vertical_alignment"] = item_vertical_alignment
         if max_items_in_each_row is not None:
             props["max_items_in_each_row"] = max_items_in_each_row
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2153,7 +2327,7 @@ class IconButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
@@ -2168,6 +2342,7 @@ class IconButton(Component):
         """Construct a registered IconButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
@@ -2180,7 +2355,7 @@ class IconButton(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if colors is not None:
@@ -2200,7 +2375,11 @@ class IconButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2212,7 +2391,7 @@ class IconToggleButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         checked: bool,
         colors: JsonValue | None = None,
@@ -2225,6 +2404,7 @@ class IconToggleButton(Component):
         """Construct a registered IconToggleButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             checked: Required native checked.
             colors: Native colors; None uses its default.
@@ -2233,6 +2413,9 @@ class IconToggleButton(Component):
             on_checked_change: Required native onCheckedChange.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["checked"] = checked
@@ -2243,7 +2426,11 @@ class IconToggleButton(Component):
         props["on_checked_change"] = on_checked_change
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2350,7 +2537,7 @@ class LargeFloatingActionButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         container_color: JsonValue | None = None,
         elevation: JsonValue | None = None,
@@ -2362,6 +2549,7 @@ class LargeFloatingActionButton(Component):
         """Construct a registered LargeFloatingActionButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             elevation: Native elevation; None uses its default.
@@ -2369,6 +2557,9 @@ class LargeFloatingActionButton(Component):
             on_click: Required native onClick.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
@@ -2378,7 +2569,11 @@ class LargeFloatingActionButton(Component):
         props["on_click"] = on_click
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2445,7 +2640,7 @@ class LazyColumn(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         first_visible_index: int | None = None,
         modifier: Modifier | None = None,
@@ -2457,6 +2652,7 @@ class LazyColumn(Component):
         """Construct a registered LazyColumn.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             first_visible_index: Native firstVisibleIndex; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -2466,7 +2662,7 @@ class LazyColumn(Component):
             items: Alternative spelling for items children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if first_visible_index is not None:
@@ -2481,7 +2677,11 @@ class LazyColumn(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(items, key="items")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2493,7 +2693,7 @@ class LazyRow(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         first_visible_index: int | None = None,
         modifier: Modifier | None = None,
@@ -2504,6 +2704,7 @@ class LazyRow(Component):
         """Construct a registered LazyRow.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             first_visible_index: Native firstVisibleIndex; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -2512,7 +2713,7 @@ class LazyRow(Component):
             items: Alternative spelling for items children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if first_visible_index is not None:
@@ -2525,7 +2726,11 @@ class LazyRow(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(items, key="items")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2743,7 +2948,7 @@ class ModalBottomSheet(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         on_open_change: ActionTarget | None = None,
@@ -2758,6 +2963,7 @@ class ModalBottomSheet(Component):
         """Construct a registered ModalBottomSheet.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             on_open_change: Native onOpenChange; None uses its default.
@@ -2771,7 +2977,7 @@ class ModalBottomSheet(Component):
             drag_handle: Nodes for the native dragHandle slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if on_open_change is not None:
@@ -2790,7 +2996,11 @@ class ModalBottomSheet(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if drag_handle is not None:
             slotted += slot_nodes(drag_handle, key="dragHandle", slot="dragHandle")
@@ -2807,7 +3017,7 @@ class ModalDrawerSheet(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         drawer_container_color: JsonValue | None = None,
         drawer_shape: JsonValue | None = None,
@@ -2820,6 +3030,7 @@ class ModalDrawerSheet(Component):
         """Construct a registered ModalDrawerSheet.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             drawer_container_color: Native drawerContainerColor; None uses its
                 default.
@@ -2832,7 +3043,7 @@ class ModalDrawerSheet(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
@@ -2849,7 +3060,11 @@ class ModalDrawerSheet(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2862,7 +3077,7 @@ class ModalNavigationDrawer(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
@@ -2875,6 +3090,7 @@ class ModalNavigationDrawer(Component):
         """Construct a registered ModalNavigationDrawer.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             gestures_enabled: Native gesturesEnabled; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -2885,7 +3101,7 @@ class ModalNavigationDrawer(Component):
             drawer: Nodes for the native drawerContent slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if gestures_enabled is not None:
@@ -2900,7 +3116,11 @@ class ModalNavigationDrawer(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if drawer is not None:
             slotted += slot_nodes(drawer, key="drawer", slot="drawer")
@@ -2918,7 +3138,7 @@ class ModalWideNavigationRail(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -2926,12 +3146,20 @@ class ModalWideNavigationRail(Component):
         """Construct a registered ModalWideNavigationRail.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2992,7 +3220,7 @@ class MultiChoiceSegmentedButtonRow(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         space: int | float | None = None,
@@ -3002,6 +3230,7 @@ class MultiChoiceSegmentedButtonRow(Component):
         """Construct a registered MultiChoiceSegmentedButtonRow.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             space: Native space; None uses its default.
@@ -3009,7 +3238,7 @@ class MultiChoiceSegmentedButtonRow(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if space is not None:
@@ -3020,7 +3249,11 @@ class MultiChoiceSegmentedButtonRow(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3032,7 +3265,7 @@ class NavigationBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         container_color: JsonValue | None = None,
         modifier: Modifier | None = None,
@@ -3044,6 +3277,7 @@ class NavigationBar(Component):
         """Construct a registered NavigationBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -3053,7 +3287,7 @@ class NavigationBar(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
@@ -3068,7 +3302,11 @@ class NavigationBar(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3182,7 +3420,7 @@ class NavigationRail(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         container_color: JsonValue | None = None,
         modifier: Modifier | None = None,
@@ -3194,6 +3432,7 @@ class NavigationRail(Component):
         """Construct a registered NavigationRail.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -3203,7 +3442,7 @@ class NavigationRail(Component):
             header: Nodes for the native header slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
@@ -3216,7 +3455,11 @@ class NavigationRail(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if header is not None:
             slotted += slot_nodes(header, key="header", slot="header")
@@ -3324,7 +3567,7 @@ class NavigationSuiteScaffold(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -3333,13 +3576,21 @@ class NavigationSuiteScaffold(Component):
         """Construct a registered NavigationSuiteScaffold.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
             navigation_items: Nodes for the native navigationItems slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if navigation_items is not None:
             slotted += slot_nodes(
@@ -3360,7 +3611,7 @@ class OutlinedButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         content_padding: JsonValue | None = None,
@@ -3375,6 +3626,7 @@ class OutlinedButton(Component):
         """Construct a registered OutlinedButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             content_padding: Native contentPadding; None uses its default.
@@ -3387,7 +3639,7 @@ class OutlinedButton(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if colors is not None:
@@ -3407,7 +3659,11 @@ class OutlinedButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3419,7 +3675,7 @@ class OutlinedCard(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         elevation: JsonValue | None = None,
@@ -3433,6 +3689,7 @@ class OutlinedCard(Component):
         """Construct a registered OutlinedCard.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             elevation: Native elevation; None uses its default.
@@ -3444,7 +3701,7 @@ class OutlinedCard(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if colors is not None:
@@ -3462,7 +3719,11 @@ class OutlinedCard(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3474,7 +3735,7 @@ class OutlinedIconButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
@@ -3486,6 +3747,7 @@ class OutlinedIconButton(Component):
         """Construct a registered OutlinedIconButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
@@ -3493,6 +3755,9 @@ class OutlinedIconButton(Component):
             on_click: Required native onClick.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if colors is not None:
@@ -3502,7 +3767,11 @@ class OutlinedIconButton(Component):
         props["on_click"] = on_click
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3515,7 +3784,7 @@ class OutlinedIconToggleButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         checked: bool,
         colors: JsonValue | None = None,
@@ -3528,6 +3797,7 @@ class OutlinedIconToggleButton(Component):
         """Construct a registered OutlinedIconToggleButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             checked: Required native checked.
             colors: Native colors; None uses its default.
@@ -3536,6 +3806,9 @@ class OutlinedIconToggleButton(Component):
             on_checked_change: Required native onCheckedChange.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["checked"] = checked
@@ -3546,7 +3819,11 @@ class OutlinedIconToggleButton(Component):
         props["on_checked_change"] = on_checked_change
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3655,7 +3932,7 @@ class PermanentDrawerSheet(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         drawer_container_color: JsonValue | None = None,
         drawer_shape: JsonValue | None = None,
@@ -3668,6 +3945,7 @@ class PermanentDrawerSheet(Component):
         """Construct a registered PermanentDrawerSheet.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             drawer_container_color: Native drawerContainerColor; None uses its
                 default.
@@ -3680,7 +3958,7 @@ class PermanentDrawerSheet(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
@@ -3697,7 +3975,11 @@ class PermanentDrawerSheet(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3710,7 +3992,7 @@ class PermanentNavigationDrawer(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -3719,13 +4001,21 @@ class PermanentNavigationDrawer(Component):
         """Construct a registered PermanentNavigationDrawer.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
             drawer_content: Nodes for the native drawerContent slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if drawer_content is not None:
             slotted += slot_nodes(
@@ -3746,7 +4036,7 @@ class PlainTooltip(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         container_color: JsonValue | None = None,
         content_color: JsonValue | None = None,
@@ -3759,6 +4049,7 @@ class PlainTooltip(Component):
         """Construct a registered PlainTooltip.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             content_color: Native contentColor; None uses its default.
@@ -3769,7 +4060,7 @@ class PlainTooltip(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
@@ -3786,7 +4077,11 @@ class PlainTooltip(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3883,7 +4178,7 @@ class PullToRefreshBox(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         content_alignment: _PullToRefreshBoxContentAlignment | None = None,
         is_refreshing: bool,
@@ -3895,6 +4190,7 @@ class PullToRefreshBox(Component):
         """Construct a registered PullToRefreshBox.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             content_alignment: Native contentAlignment; None uses its default.
             is_refreshing: Required native isRefreshing.
@@ -3904,7 +4200,7 @@ class PullToRefreshBox(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if content_alignment is not None:
@@ -3917,7 +4213,11 @@ class PullToRefreshBox(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3977,7 +4277,7 @@ class RichTooltip(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         action_content_color: JsonValue | None = None,
         container_color: JsonValue | None = None,
@@ -3994,6 +4294,7 @@ class RichTooltip(Component):
         """Construct a registered RichTooltip.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             action_content_color: Native actionContentColor; None uses its default.
             container_color: Native containerColor; None uses its default.
@@ -4008,7 +4309,7 @@ class RichTooltip(Component):
             title: Nodes for the native title slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if action_content_color is not None:
@@ -4029,7 +4330,11 @@ class RichTooltip(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if action is not None:
             slotted += slot_nodes(action, key="action", slot="action")
@@ -4048,7 +4353,7 @@ class Row(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         vertical_alignment: _RowVerticalAlignment | None = None,
@@ -4057,15 +4362,23 @@ class Row(Component):
         """Construct a registered Row.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             vertical_alignment: Native verticalAlignment; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if vertical_alignment is not None:
             props["vertical_alignment"] = vertical_alignment
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -4077,7 +4390,7 @@ class Scaffold(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         container_color: JsonValue | None = None,
         modifier: Modifier | None = None,
@@ -4091,6 +4404,7 @@ class Scaffold(Component):
         """Construct a registered Scaffold.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -4102,7 +4416,7 @@ class Scaffold(Component):
             top_bar: Nodes for the native topBar slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
@@ -4113,7 +4427,11 @@ class Scaffold(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if bottom_bar is not None:
             slotted += slot_nodes(bottom_bar, key="bottomBar", slot="bottomBar")
@@ -4144,7 +4462,7 @@ class SearchBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
@@ -4160,6 +4478,7 @@ class SearchBar(Component):
         """Construct a registered SearchBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             expanded: Required native expanded.
             modifier: Native modifier; None uses its default.
@@ -4173,7 +4492,7 @@ class SearchBar(Component):
             input_field: Nodes for the native inputField slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["expanded"] = expanded
@@ -4192,7 +4511,11 @@ class SearchBar(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if input_field is not None:
             slotted += slot_nodes(input_field, key="inputField", slot="inputField")
@@ -4470,7 +4793,7 @@ class ShortNavigationBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         container_color: JsonValue | None = None,
         content_color: JsonValue | None = None,
@@ -4481,12 +4804,16 @@ class ShortNavigationBar(Component):
         """Construct a registered ShortNavigationBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             content_color: Native contentColor; None uses its default.
             modifier: Native modifier; None uses its default.
             window_insets: Native windowInsets; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
@@ -4495,7 +4822,11 @@ class ShortNavigationBar(Component):
             props["content_color"] = content_color
         if window_insets is not None:
             props["window_insets"] = window_insets
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -4550,7 +4881,7 @@ class SingleChoiceSegmentedButtonRow(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         space: int | float | None = None,
@@ -4560,6 +4891,7 @@ class SingleChoiceSegmentedButtonRow(Component):
         """Construct a registered SingleChoiceSegmentedButtonRow.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             space: Native space; None uses its default.
@@ -4567,7 +4899,7 @@ class SingleChoiceSegmentedButtonRow(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if space is not None:
@@ -4578,7 +4910,11 @@ class SingleChoiceSegmentedButtonRow(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -4636,7 +4972,7 @@ class Snackbar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         action_content_color: JsonValue | None = None,
         action_on_new_line: bool | None = None,
@@ -4652,6 +4988,7 @@ class Snackbar(Component):
         """Construct a registered Snackbar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             action_content_color: Native actionContentColor; None uses its default.
             action_on_new_line: Native actionOnNewLine; None uses its default.
@@ -4664,6 +5001,9 @@ class Snackbar(Component):
             children: Ordered child nodes with stable keys.
             action: Nodes for the native action slot.
             dismiss_action: Nodes for the native dismissAction slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if action_content_color is not None:
@@ -4678,7 +5018,11 @@ class Snackbar(Component):
             props["dismiss_action_content_color"] = dismiss_action_content_color
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if action is not None:
             slotted += slot_nodes(action, key="action", slot="action")
@@ -4966,7 +5310,7 @@ class Surface(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         color: JsonValue | None = None,
@@ -4979,6 +5323,7 @@ class Surface(Component):
         """Construct a registered Surface.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             color: Native color; None uses its default.
@@ -4987,6 +5332,9 @@ class Surface(Component):
             shape: Native shape; None uses its default.
             tonal_elevation: Native tonalElevation; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
@@ -4999,7 +5347,11 @@ class Surface(Component):
             props["shape"] = shape
         if tonal_elevation is not None:
             props["tonal_elevation"] = tonal_elevation
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -5011,7 +5363,7 @@ class SwipeToDismissBox(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         enable_dismiss_from_end_to_start: bool | None = None,
         enable_dismiss_from_start_to_end: bool | None = None,
@@ -5026,6 +5378,7 @@ class SwipeToDismissBox(Component):
         """Construct a registered SwipeToDismissBox.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             enable_dismiss_from_end_to_start: Native enableDismissFromEndToStart;
                 None uses its default.
@@ -5040,7 +5393,7 @@ class SwipeToDismissBox(Component):
             background_content: Nodes for the native backgroundContent slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if enable_dismiss_from_end_to_start is not None:
@@ -5059,7 +5412,11 @@ class SwipeToDismissBox(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if background_content is not None:
             slotted += slot_nodes(
@@ -5316,7 +5673,7 @@ class TooltipBox(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         enable_user_input: bool | None = None,
         focusable: bool | None = None,
@@ -5333,6 +5690,7 @@ class TooltipBox(Component):
         """Construct a registered TooltipBox.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             enable_user_input: Native enableUserInput; None uses its default.
             focusable: Native focusable; None uses its default.
@@ -5347,7 +5705,7 @@ class TooltipBox(Component):
             tooltip: Nodes for the native tooltip slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         if enable_user_input is not None:
@@ -5370,7 +5728,11 @@ class TooltipBox(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if tooltip is not None:
             slotted += slot_nodes(tooltip, key="tooltip", slot="tooltip")
@@ -5526,7 +5888,7 @@ class WideNavigationRail(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -5534,12 +5896,20 @@ class WideNavigationRail(Component):
         """Construct a registered WideNavigationRail.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
