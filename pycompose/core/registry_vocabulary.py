@@ -146,6 +146,26 @@ DECODERS = (
 )
 """The host resolvers a prop may name."""
 
+TRANSIENT_HOLDERS = {"snackbar": "androidx.compose.material3.SnackbarHostState"}
+"""The native holder each transient family remembers and fulfils requests on."""
+
+HOST_VALUES = {
+    "androidx.compose.ui.window.PopupPositionProvider": (
+        "position",
+        {
+            "type": "enum",
+            "decode": "tooltipPosition",
+            "values": ["above", "below", "left", "right", "start", "end"],
+            "default": "above",
+        },
+    ),
+}
+"""Native types the host builds from a wire prop it names: the prop and its spec.
+
+A popup position provider measures the anchor and the screen, which the app
+cannot; the app states where the popup goes and the host builds the provider.
+"""
+
 RESOURCE_TYPES = {
     "androidx.compose.ui.graphics.painter.Painter": (
         "resourceImage",

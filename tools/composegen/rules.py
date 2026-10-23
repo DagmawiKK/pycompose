@@ -6,8 +6,9 @@ press, focus and hover the native interaction source emits. Which components
 take them is a review decision, kept in policy as one word each; which
 parameter, which props and which payloads follow from the pin.
 
-A holder the pin binds always takes its family's projection (state_families);
-``holder: false`` declines a defaulted one the component keeps to itself.
+A holder the pin binds always takes its family's projection (state_families).
+``holder: false`` declines one the component keeps to itself or its owner
+fills; ``holder: "<parameter>"`` picks one when an overload takes several.
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ import copy
 from typing import Any
 
 from pycompose.core.registry_vocabulary import INTERACTION_KINDS, INTERACTION_REPORTS
-from pycompose.schema.codegen.state_families import STATE_FAMILIES
+from pycompose.schema.codegen.state_families import STATE_FAMILIES, TRANSIENT_FAMILIES
 from tools.schema.candidate_props import CandidateError
 
 INTERACTION_SOURCE = "androidx/compose/foundation/interaction/MutableInteractionSource"
@@ -45,11 +46,21 @@ def reshape(
         invented.extend(_flatten(name, entry, native, plan))
     if decision.get("observe"):
         invented.extend(_observe(name, entry, plan))
-    if decision.get("holder") is False:
-        # A defaulted holder the component keeps to itself: nothing to bind.
-        entry.pop("state", None)
-    elif "state" in entry:
+    _choose_holder(name, entry, decision.get("holder"))
+    if "state" in entry:
         invented.extend(_project(entry))
+    if "transient" in entry:
+        family = TRANSIENT_FAMILIES[entry["transient"]["kind"]]
+        entry["props"].update(copy.deepcopy(family["props"]))
+        entry["transient"].update(
+            serial=family["serial"], occurrence=family["occurrence"]
+        )
+        invented.extend(family["props"])
+    invented.extend(
+        spec["prop"]
+        for spec in plan["parameters"].values()
+        if spec["policy"] == "hostValue"
+    )
     if invented:
         # Props Compose's signature has no counterpart for, so the drift
         # checker reads them as deliberate.
@@ -81,6 +92,29 @@ def _flatten(
         "content": content,
     }
     return [prop] if prop != native else []
+
+
+def _choose_holder(name: str, entry: dict[str, Any], choice: object) -> None:
+    """Bind the holder a decision names; ``False`` binds none.
+
+    A holder the component does not bind is one it keeps to itself (a
+    defaulted scroll state) or one its owner fills (a search field's shared
+    SearchBarState); either way it is not this component's state.
+    """
+    holders = entry.pop("holders", None) or (
+        [entry["state"]] if "state" in entry else []
+    )
+    entry.pop("state", None)
+    if choice is False or not holders:
+        return
+    if choice is None and len(holders) == 1:
+        entry["state"] = holders[0]
+        return
+    chosen = [holder for holder in holders if holder["native"] == choice]
+    if len(chosen) != 1:
+        natives = ", ".join(holder["native"] for holder in holders)
+        raise CandidateError(f"{name}: name the holder it binds ({natives}) or false")
+    entry["state"] = chosen[0]
 
 
 def _project(entry: dict[str, Any]) -> list[str]:

@@ -1,8 +1,0 @@
-{
-  "approved": {
-    "components.FlowColumn.optIn:changed": "The generated call never passes overflow, so Kotlin already binds the current overload (fewest unspecified defaults); the lock now records it, without the deprecated overload's experimental opt-in.",
-    "components.FlowColumn.source:changed": "The generated call never passes overflow, so Kotlin already binds the current overload (fewest unspecified defaults); the lock now records it, without the deprecated overload's experimental opt-in.",
-    "components.FlowRow.optIn:changed": "The generated call never passes overflow, so Kotlin already binds the current overload (fewest unspecified defaults); the lock now records it, without the deprecated overload's experimental opt-in.",
-    "components.FlowRow.source:changed": "The generated call never passes overflow, so Kotlin already binds the current overload (fewest unspecified defaults); the lock now records it, without the deprecated overload's experimental opt-in."
-  }
-}

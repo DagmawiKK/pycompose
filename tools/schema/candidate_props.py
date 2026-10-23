@@ -103,8 +103,13 @@ def wire_shape(
     review: list[str] = []
     for parameter, spec in plan["parameters"].items():
         policy = spec["policy"]
-        if policy in {"modifier", "holder"}:
-            # A holder is the component's state, not a prop; derive() binds it.
+        if policy in {"modifier", "holder", "transient"}:
+            # A holder is the component's state or transient, not a prop;
+            # derive() binds it.
+            continue
+        if policy == "hostValue":
+            # The host builds the native value from a prop it names.
+            props[spec["prop"]] = dict(spec["spec"])
             continue
         if policy == "omit":
             reason = gap_reason(plan, parameter) or "no wire policy"

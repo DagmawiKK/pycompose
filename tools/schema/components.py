@@ -20,7 +20,12 @@ if __package__ in (None, ""):  # pragma: no cover - only when run as a script
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pycompose.core.registry_types import SCOPE_PATHS
-from pycompose.core.registry_vocabulary import RESOURCE_TYPES, STATE_HOLDERS
+from pycompose.core.registry_vocabulary import (
+    HOST_VALUES,
+    RESOURCE_TYPES,
+    STATE_HOLDERS,
+    TRANSIENT_HOLDERS,
+)
 from pycompose.schema.codegen.defaults import render_default
 from tools.schema.classpath_dump import (
     DUMP_DIR,
@@ -40,6 +45,7 @@ from tools.schema.propose import SCALARS, identity, source_name, value_families
 SLASH_SCOPES = frozenset(path.replace(".", "/") for path in SCOPE_PATHS.values())
 MODIFIER = "androidx/compose/ui/Modifier"
 HOLDER_KINDS = {holder: kind for kind, holder in STATE_HOLDERS.items()}
+TRANSIENT_BY_HOLDER = {holder: kind for kind, holder in TRANSIENT_HOLDERS.items()}
 
 
 class DeclaredType(NamedTuple):
@@ -159,7 +165,7 @@ def _binding_rule(
 
 
 def _host_filled(parameter: Parameter) -> dict[str, Any] | None:
-    """Rule for a type the host fills: a late read, a state holder or a resource."""
+    """Rule for a type the host fills: a late read, a holder, a resource or a value."""
     value = parameter.type
     name = source_name(value.classifier)
     if parameter.kind == Kind.PROVIDER:
@@ -169,6 +175,11 @@ def _host_filled(parameter: Parameter) -> dict[str, Any] | None:
         return {"policy": "provider", "wireType": SCALARS[returns.classifier]}
     if name in HOLDER_KINDS and not value.nullable:
         return {"policy": "holder", "kind": HOLDER_KINDS[name]}
+    if name in TRANSIENT_BY_HOLDER and not value.nullable:
+        return {"policy": "transient", "kind": TRANSIENT_BY_HOLDER[name]}
+    if name in HOST_VALUES and not value.nullable:
+        prop, spec = HOST_VALUES[name]
+        return {"policy": "hostValue", "prop": prop, "spec": spec}
     if name in RESOURCE_TYPES and not value.arguments:
         decoder, kinds = RESOURCE_TYPES[name]
         return {"policy": "resource", "decode": decoder, "values": list(kinds)}
@@ -180,7 +191,7 @@ def _parameter(
 ) -> dict[str, Any]:
     """Attach the compiler-resolved default an optional parameter binds to."""
     rule = _binding_rule(parameter, families, defaults)
-    if rule["policy"] in {"modifier", "holder"}:
+    if rule["policy"] in {"modifier", "holder", "transient", "hostValue"}:
         # The host supplies both: the wire never carries their defaults.
         return rule
     if parameter.has_default:
@@ -259,13 +270,20 @@ def _plan(
     default_markers: dict[str, set[str]],
     scope_providers: set[str],
     index: OptInIndex,
+    objects: frozenset[str] = frozenset(),
 ) -> dict[str, Any]:
-    """Plan one exact overload, recording every capability it would need."""
+    """Plan one exact overload, recording every capability it would need.
+
+    A member of an ``object`` (``SearchBarDefaults.InputField``) is called
+    through the object, so its dispatch receiver needs no protocol.
+    """
     parameters: dict[str, Any] = {}
     gaps = []
+    holder = source.dispatch_receiver
+    static = holder is not None and holder.classifier.replace("/", ".") in objects
     if (
         (source.receiver and source.receiver.classifier not in SLASH_SCOPES)
-        or source.dispatch_receiver
+        or (holder and not static)
         or source.context_receivers
         or source.document.get("typeParameters")
     ):
@@ -314,7 +332,9 @@ def _plan(
         "name": source.name,
         "surface": _surface(source, scope_providers),
         "source": identity(source),
-        "call": source.package + "." + source.name,
+        "call": (source.owner.replace("$", ".") if static else source.package)
+        + "."
+        + source.name,
         "annotations": source.annotations,
         "parameters": parameters,
         "receiver": source.receiver.document if source.receiver else None,
@@ -542,6 +562,7 @@ def propose_components(
     # carries are what Kotlin resolves on; overloads those arguments cannot tell
     # apart are refused rather than silently bound to a sibling.
     scope_providers = _scope_providers(found.declarations)
+    objects = frozenset(c.classifier for c in found.classes if c.class_kind == "OBJECT")
     candidates = [
         _plan(
             source,
@@ -550,6 +571,7 @@ def propose_components(
             default_markers,
             scope_providers,
             index,
+            objects,
         )
         for source in sorted(
             found.ui,

@@ -142,3 +142,20 @@ STATE_FAMILIES: dict[str, Family] = {
     ),
 }
 """Every state family's projection, keyed like ``STATE_KINDS``."""
+
+TRANSIENT_FAMILIES: dict[str, dict[str, Any]] = {
+    "snackbar": {
+        "props": {
+            "message": {"type": "string", "required": True},
+            "actionLabel": {"type": "string"},
+            "serial": {"type": "integer", "required": True},
+            "onDismiss": {
+                "type": "actionId",
+                "payload": [{"name": "serial", "type": "integer"}],
+            },
+        },
+        "serial": "serial",
+        "occurrence": "onDismiss",
+    },
+}
+"""Each transient family's projection: its props, the serial and the occurrence."""

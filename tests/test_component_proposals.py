@@ -115,8 +115,13 @@ def test_pinned_denominator_separates_components_from_styling_hooks(native_docum
         component_coverage["callPlan"] + component_coverage["blocked"]
         == component_coverage["overloads"]
     )
-    assert hook_coverage["callPlan"] == 0
-    assert hook_coverage["blocked"] == hook_coverage["overloads"]
+    # A member of an object (SearchBarDefaults.InputField) is called through
+    # the object, so a styling hook can be a call plan; the split stays a
+    # decomposition like the components'.
+    assert (
+        hook_coverage["callPlan"] + hook_coverage["blocked"]
+        == hook_coverage["overloads"]
+    )
     hooks = {c["name"] for c in report["candidates"] if c["surface"] == "hook"}
     assert {"Thumb", "Container", "Indicator", "InputField"} <= hooks
     # The approved value families closed their own gaps, and nothing else.

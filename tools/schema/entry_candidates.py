@@ -93,6 +93,7 @@ def select(
     name: str,
     *,
     identity: str | None = None,
+    surface: str = "component",
 ) -> tuple[dict[str, Any], Declaration]:
     """Select the one call plan and declaration behind a component name.
 
@@ -102,6 +103,8 @@ def select(
         name: The component's schema name.
         identity: The reviewed choice among competing call plans, spelled
             exactly as the refusal lists it.
+        surface: ``hook`` to select a styling hook the catalog composes as a
+            component; which hooks it does is a review decision.
 
     Returns:
         The selected call plan and the pinned declaration it records.
@@ -112,7 +115,7 @@ def select(
     matches = [
         candidate
         for candidate in plans["candidates"]
-        if candidate["name"] == name and candidate["surface"] == "component"
+        if candidate["name"] == name and candidate["surface"] == surface
     ]
     usable = [candidate for candidate in matches if candidate["status"] == "call-plan"]
     if not matches:
@@ -121,7 +124,7 @@ def select(
         )
         if surfaces:
             raise CandidateError(
-                f"{name}: planned as {', '.join(surfaces)}, not a component"
+                f"{name}: planned as {', '.join(surfaces)}, not {surface}"
             )
     if not usable:
         reasons: set[str] = set()
@@ -292,9 +295,14 @@ def derive(
     entry["children"] = children
     if slots:
         entry["slots"] = slots
-    state = _state(name, plan)
-    if state is not None:
-        entry["state"] = state
+    entry.update(_holders(plan))
+    transients = [
+        {"kind": spec["kind"], "native": parameter}
+        for parameter, spec in plan["parameters"].items()
+        if spec["policy"] == "transient"
+    ]
+    if transients:
+        entry["transient"] = transients[0]
     if declaration.receiver is not None:
         classifier = declaration.receiver.classifier
         planned = plan.get("receiver")
@@ -310,16 +318,20 @@ def derive(
     return Derived(name, entry, tuple(review))
 
 
-def _state(name: str, plan: dict[str, Any]) -> dict[str, Any] | None:
-    """The state family the plan's holder parameter binds, if it has one."""
+def _holders(plan: dict[str, Any]) -> dict[str, Any]:
+    """The plan's state holder, or its several holders for a decision to choose.
+
+    Which holder a component binds when it takes several -- the others its
+    owner fills -- is a decision the reshape rules read (``holder``).
+    """
     holders = [
         {"native": parameter, "kind": spec["kind"]}
         for parameter, spec in plan["parameters"].items()
         if spec["policy"] == "holder"
     ]
-    if len(holders) > 1:
-        raise CandidateError(f"{name}: one state family per component; got {holders}")
-    return holders[0] if holders else None
+    if len(holders) == 1:
+        return {"state": holders[0]}
+    return {"holders": holders} if holders else {}
 
 
 def stage(registry: dict[str, Any], derived: list[Derived]) -> dict[str, Any]:

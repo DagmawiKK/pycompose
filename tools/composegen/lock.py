@@ -91,11 +91,17 @@ def planned(
     Raises:
         CandidateError: The decision names a key no review or rule reads.
     """
-    unknown = sorted(set(decision) - REVIEW - SHAPES)
+    unknown = sorted(set(decision) - REVIEW - SHAPES - {"hook"})
     if unknown:
         raise CandidateError(f"{name}: unknown decision keys {unknown}")
     native = decision.get("nativeName", name)
-    plan, declaration = select(plans, found, native, identity=decision.get("identity"))
+    plan, declaration = select(
+        plans,
+        found,
+        native,
+        identity=decision.get("identity"),
+        surface="hook" if decision.get("hook") else "component",
+    )
     derived = derive(
         plan,
         declaration,

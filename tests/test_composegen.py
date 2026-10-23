@@ -350,3 +350,49 @@ def test_an_extension_on_a_scope_never_competes_with_a_top_level_overload() -> N
     )
     assert not _competing(top, scoped)
     assert not _competing(scoped, top)
+
+
+def test_a_transient_holder_takes_its_family_projection() -> None:
+    from tools.composegen.rules import reshape
+
+    entry = {"props": {}, "transient": {"kind": "snackbar", "native": "hostState"}}
+    shaped = reshape("SnackbarHost", entry, {}, _plan())
+    assert shaped["transient"] == {
+        "kind": "snackbar",
+        "native": "hostState",
+        "serial": "serial",
+        "occurrence": "onDismiss",
+    }
+    assert shaped["reshaped"] == ["message", "actionLabel", "serial", "onDismiss"]
+
+
+def test_the_host_builds_a_value_from_a_prop_it_names() -> None:
+    from tools.schema.classpath_types import Parameter
+    from tools.schema.components import _binding_rule
+
+    provider = _type("androidx/compose/ui/window/PopupPositionProvider")
+    rule = _binding_rule(Parameter("positionProvider", provider, False, None), {}, {})
+    assert rule["policy"] == "hostValue"
+    assert rule["prop"] == "position"
+    assert rule["spec"]["decode"] == "tooltipPosition"
+
+
+def test_an_overload_with_several_holders_binds_the_one_named() -> None:
+    from tools.composegen.rules import reshape
+    from tools.schema.candidate_props import CandidateError
+
+    holders = [
+        {"native": "state", "kind": "textInput"},
+        {"native": "scrollState", "kind": "scroll"},
+    ]
+    with pytest.raises(CandidateError, match="name the holder it binds"):
+        reshape("Field", {"props": {}, "holders": list(holders)}, {}, _plan())
+    chosen = reshape(
+        "Field", {"props": {}, "holders": list(holders)}, {"holder": "state"}, _plan()
+    )
+    assert chosen["state"]["kind"] == "textInput"
+    assert "holders" not in chosen
+    declined = reshape(
+        "Field", {"props": {}, "holders": list(holders)}, {"holder": False}, _plan()
+    )
+    assert "state" not in declined

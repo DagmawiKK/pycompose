@@ -173,9 +173,9 @@ class _Call:
             value = "modifier"
         elif policy == "slot":
             value = _slot_parameter(name, spec, self.parameters)
-        elif policy in {"holder", "provider", "resource"}:
-            # The host fills these -- a state holder it drives, a late read, a
-            # loaded resource -- so the facade takes them typed, like a slot.
+        elif policy in {"holder", "provider", "resource", "transient", "hostValue"}:
+            # The host fills these -- a holder it drives, a late read, a loaded
+            # resource, a value it builds -- so the facade takes them typed.
             value = _name("host_" + name)
             self.parameters.append(f"    {value}: {_host_type(spec)},")
         elif policy in {"scalar", "value", "event"}:
