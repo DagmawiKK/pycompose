@@ -4085,7 +4085,8 @@
           "nativeType": "Int",
           "minimum": -2147483648,
           "maximum": 2147483647,
-          "required": true
+          "required": true,
+          "indexOf": "tabs"
         },
         "modifier": {
           "type": "modifier"
@@ -4130,7 +4131,8 @@
           "nativeType": "Int",
           "minimum": -2147483648,
           "maximum": 2147483647,
-          "required": true
+          "required": true,
+          "indexOf": "tabs"
         },
         "modifier": {
           "type": "modifier"
@@ -4688,7 +4690,8 @@
           "nativeType": "Int",
           "minimum": -2147483648,
           "maximum": 2147483647,
-          "required": true
+          "required": true,
+          "indexOf": "tabs"
         },
         "modifier": {
           "type": "modifier"
@@ -4733,7 +4736,8 @@
           "nativeType": "Int",
           "minimum": -2147483648,
           "maximum": 2147483647,
-          "required": true
+          "required": true,
+          "indexOf": "tabs"
         },
         "modifier": {
           "type": "modifier"

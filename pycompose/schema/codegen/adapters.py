@@ -22,6 +22,7 @@ screen once already.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from typing import Any
 
 from pycompose.schema.codegen.adapter_calls import (
@@ -83,14 +84,7 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
     Returns:
         Import statements' targets, sorted by the caller.
     """
-    qualified: set[str] = set()
-    for spec in entry.get("props", {}).values():
-        if spec.get("type") == "color" and "valueType" in spec:
-            qualified.add("kotlinx.serialization.json.JsonObject")
-        if spec.get("type") == "dp":
-            # Kotlin's own conversion is an extension property, so the import
-            # is what makes ``model.props.x.dp`` resolve.
-            qualified.add("androidx.compose.ui.unit.dp")
+    qualified = _prop_imports(entry.get("props", {}).values())
     if (state := entry.get("state")) is not None:
         qualified.add(f"com.pycompose.renderer.{state_call(state['kind'])}")
         if state["kind"] in STATE_ATTACH_GATES:
@@ -121,6 +115,10 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
                 "com.pycompose.renderer.unslotted",
             }
         )
+    if any("indexOf" in spec for spec in entry.get("props", {}).values()):
+        qualified.update(
+            {"com.pycompose.renderer.index", "com.pycompose.renderer.inSlot"}
+        )
     if any(slot.get("kind") == "items" for slot in entry.get("slots", {}).values()):
         qualified.update(
             {
@@ -128,6 +126,23 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
                 "com.pycompose.renderer.inSlot",
             }
         )
+    return qualified
+
+
+def _prop_imports(specs: Iterable[dict[str, Any]]) -> set[str]:
+    """The imports a component's props need, beyond the resolvers they name."""
+    qualified: set[str] = set()
+    for spec in specs:
+        if spec.get("type") == "color" and "valueType" in spec:
+            qualified.add("kotlinx.serialization.json.JsonObject")
+        if spec.get("type") == "dp":
+            # Kotlin's own conversion is an extension property, so the import
+            # is what makes ``model.props.x.dp`` resolve.
+            qualified.add("androidx.compose.ui.unit.dp")
+        if "indexOf" in spec:
+            qualified.update(
+                {"com.pycompose.renderer.index", "com.pycompose.renderer.inSlot"}
+            )
     return qualified
 
 
@@ -234,7 +249,18 @@ def _render_scalar(prop_name: str, spec: dict[str, Any], out: _Fragments) -> boo
         # An enum, color or resource with no decode. Refused rather than
         # guessed: the value set does not say which resolver family it is.
         return False
-    if spec.get("required") or "default" in spec:
+    if "indexOf" in spec:
+        # Compose reads its items at this index while measuring and throws
+        # outside them; the host clamps and reports, and with no items composes
+        # nothing (ADR-0005).
+        slot = spec["indexOf"]
+        out.locals.append(
+            f"val {prop_name}Value = context.index(model.props.{prop_name}, "
+            f'model.children.inSlot("{slot}"), node.id)'
+        )
+        out.arguments.append(f"{prop_name} = {prop_name}Value")
+        out.gates.append(f"{prop_name}Value != null")
+    elif spec.get("required") or "default" in spec:
         # A nullable property would not compile where Compose wants a value.
         out.arguments.append(f"{prop_name} = {scalar_wire(prop_name, spec)}")
     return True
@@ -374,7 +400,7 @@ def render(name: str, entry: dict[str, Any]) -> str:
             continue
         if not _render_prop(prop, spec, out):
             return ""
-    gate = _host_locals(entry, out)
+    gate = " && ".join(filter(None, [_host_locals(entry, out), *out.gates])) or None
     for slot_name, slot in sorted(entry.get("slots", {}).items()):
         out.arguments.append(_named_slot(slot_name, slot))
 

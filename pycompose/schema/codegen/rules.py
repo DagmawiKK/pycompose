@@ -302,6 +302,12 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
         die(f"component {name!r} needs a 'children' object")
     _validate_children(name, children)
     _validate_slots(name, props, children, comp.get("slots", {}))
+    for prop_name, prop in sorted(props.items()):
+        slot = prop.get("indexOf")
+        if slot is not None and (
+            prop.get("type") != "integer" or slot not in comp.get("slots", {})
+        ):
+            die(f"prop {name}.{prop_name} 'indexOf' must be an integer naming a slot")
     _validate_interaction(
         name, props, children, comp.get("slots", {}), comp.get("interaction")
     )

@@ -1,0 +1,8 @@
+{
+  "approved": {
+    "components.PrimaryScrollableTabRow.props.selectedTabIndex.indexOf:changed": "An out-of-range selectedTabIndex crashed the host; it now selects the nearest tab and reports (ADR-0005).",
+    "components.PrimaryTabRow.props.selectedTabIndex.indexOf:changed": "An out-of-range selectedTabIndex crashed the host; it now selects the nearest tab and reports (ADR-0005).",
+    "components.SecondaryScrollableTabRow.props.selectedTabIndex.indexOf:changed": "An out-of-range selectedTabIndex crashed the host; it now selects the nearest tab and reports (ADR-0005).",
+    "components.SecondaryTabRow.props.selectedTabIndex.indexOf:changed": "An out-of-range selectedTabIndex crashed the host; it now selects the nearest tab and reports (ADR-0005)."
+  }
+}

@@ -361,8 +361,14 @@ def test_a_required_nullable_scalar_is_passed_through() -> None:
 
 def test_an_int_scalar_is_narrowed_for_compose() -> None:
     """The wire carries an integer as ``Long``; this parameter is Kotlin ``Int``."""
-    block = render("PrimaryTabRow", components()["PrimaryTabRow"])
-    assert "selectedTabIndex = model.props.selectedTabIndex.toInt()" in block
+    entry = {
+        "children": {"allowed": False},
+        "props": {
+            "maxLines": {"type": "integer", "nativeType": "Int", "required": True}
+        },
+    }
+    block = render("Text", entry)
+    assert "maxLines = model.props.maxLines.toInt()" in block
 
 
 def test_a_dp_default_is_the_extension_property_it_names() -> None:

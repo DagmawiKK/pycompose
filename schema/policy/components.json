@@ -1122,13 +1122,25 @@
       "stability": "stable"
     },
     "patch": {
-      "state": null
+      "state": null,
+      "props": {
+        "selectedTabIndex": {
+          "indexOf": "tabs"
+        }
+      }
     }
   },
   "PrimaryTabRow": {
     "decision": {
       "category": "layout",
       "stability": "stable"
+    },
+    "patch": {
+      "props": {
+        "selectedTabIndex": {
+          "indexOf": "tabs"
+        }
+      }
     }
   },
   "PullToRefreshBox": {
@@ -1455,13 +1467,25 @@
       "stability": "stable"
     },
     "patch": {
-      "state": null
+      "state": null,
+      "props": {
+        "selectedTabIndex": {
+          "indexOf": "tabs"
+        }
+      }
     }
   },
   "SecondaryTabRow": {
     "decision": {
       "category": "layout",
       "stability": "stable"
+    },
+    "patch": {
+      "props": {
+        "selectedTabIndex": {
+          "indexOf": "tabs"
+        }
+      }
     }
   },
   "SegmentedButton": {

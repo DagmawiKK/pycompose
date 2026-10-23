@@ -353,6 +353,7 @@ class _Fragments:
         self.arguments: list[str] = []
         self.trailing: list[str] = []
         self.trailing_parameter: str | None = None
+        self.gates: list[str] = []
 
     def add(self, fragment: tuple[str, str] | None) -> bool:
         """Append one prop's rendering.

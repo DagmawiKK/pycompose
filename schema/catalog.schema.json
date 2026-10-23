@@ -91,6 +91,7 @@
           "minItems": 1,
           "items": { "type": "string" }
         },
+        "indexOf": { "type": "string", "minLength": 1 },
         "decode": { "type": "string" },
         "default": {},
         "valueType": { "type": "string" },

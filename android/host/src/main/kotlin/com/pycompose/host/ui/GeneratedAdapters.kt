@@ -215,6 +215,8 @@ import com.pycompose.ir.generated.WideNavigationRail as WideNavigationRailNode
 import com.pycompose.ir.generated.WideNavigationRailItem as WideNavigationRailItemNode
 import com.pycompose.renderer.attachTo
 import com.pycompose.renderer.drawerState
+import com.pycompose.renderer.inSlot
+import com.pycompose.renderer.index
 import com.pycompose.renderer.lazyListState
 import com.pycompose.renderer.scrollState
 import com.pycompose.renderer.sheetState
@@ -1572,15 +1574,18 @@ object GeneratedAdapters {
                 val edgePaddingValue = if (edgePaddingWire != null) edgePaddingWire.dp else androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding
                 val minTabWidthWire = model.props.minTabWidth
                 val minTabWidthValue = if (minTabWidthWire != null) minTabWidthWire.dp else androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth
-                PrimaryScrollableTabRow(
-                    modifier = modifier,
-                    containerColor = containerColorValue,
-                    contentColor = contentColorValue,
-                    edgePadding = edgePaddingValue,
-                    minTabWidth = minTabWidthValue,
-                    selectedTabIndex = model.props.selectedTabIndex.toInt(),
-                    tabs = { context.slot(model.children, "tabs")?.invoke() },
-                )
+                val selectedTabIndexValue = context.index(model.props.selectedTabIndex, model.children.inSlot("tabs"), node.id)
+                if (selectedTabIndexValue != null) {
+                    PrimaryScrollableTabRow(
+                        modifier = modifier,
+                        containerColor = containerColorValue,
+                        contentColor = contentColorValue,
+                        edgePadding = edgePaddingValue,
+                        minTabWidth = minTabWidthValue,
+                        selectedTabIndex = selectedTabIndexValue,
+                        tabs = { context.slot(model.children, "tabs")?.invoke() },
+                    )
+                }
             }
             .register("PrimaryTabRow") { node, modifier, context ->
                 val model = node as PrimaryTabRowNode
@@ -1594,13 +1599,16 @@ object GeneratedAdapters {
                     is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContentColor)
                     else -> androidx.compose.material3.TabRowDefaults.primaryContentColor
                 }
-                PrimaryTabRow(
-                    modifier = modifier,
-                    containerColor = containerColorValue,
-                    contentColor = contentColorValue,
-                    selectedTabIndex = model.props.selectedTabIndex.toInt(),
-                    tabs = { context.slot(model.children, "tabs")?.invoke() },
-                )
+                val selectedTabIndexValue = context.index(model.props.selectedTabIndex, model.children.inSlot("tabs"), node.id)
+                if (selectedTabIndexValue != null) {
+                    PrimaryTabRow(
+                        modifier = modifier,
+                        containerColor = containerColorValue,
+                        contentColor = contentColorValue,
+                        selectedTabIndex = selectedTabIndexValue,
+                        tabs = { context.slot(model.children, "tabs")?.invoke() },
+                    )
+                }
             }
             .register("PullToRefreshBox") { node, modifier, context ->
                 val model = node as PullToRefreshBoxNode
@@ -1691,15 +1699,18 @@ object GeneratedAdapters {
                 val edgePaddingValue = if (edgePaddingWire != null) edgePaddingWire.dp else androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding
                 val minTabWidthWire = model.props.minTabWidth
                 val minTabWidthValue = if (minTabWidthWire != null) minTabWidthWire.dp else androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth
-                SecondaryScrollableTabRow(
-                    modifier = modifier,
-                    containerColor = containerColorValue,
-                    contentColor = contentColorValue,
-                    edgePadding = edgePaddingValue,
-                    minTabWidth = minTabWidthValue,
-                    selectedTabIndex = model.props.selectedTabIndex.toInt(),
-                    tabs = { context.slot(model.children, "tabs")?.invoke() },
-                )
+                val selectedTabIndexValue = context.index(model.props.selectedTabIndex, model.children.inSlot("tabs"), node.id)
+                if (selectedTabIndexValue != null) {
+                    SecondaryScrollableTabRow(
+                        modifier = modifier,
+                        containerColor = containerColorValue,
+                        contentColor = contentColorValue,
+                        edgePadding = edgePaddingValue,
+                        minTabWidth = minTabWidthValue,
+                        selectedTabIndex = selectedTabIndexValue,
+                        tabs = { context.slot(model.children, "tabs")?.invoke() },
+                    )
+                }
             }
             .register("SecondaryTabRow") { node, modifier, context ->
                 val model = node as SecondaryTabRowNode
@@ -1713,13 +1724,16 @@ object GeneratedAdapters {
                     is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContentColor)
                     else -> androidx.compose.material3.TabRowDefaults.secondaryContentColor
                 }
-                SecondaryTabRow(
-                    modifier = modifier,
-                    containerColor = containerColorValue,
-                    contentColor = contentColorValue,
-                    selectedTabIndex = model.props.selectedTabIndex.toInt(),
-                    tabs = { context.slot(model.children, "tabs")?.invoke() },
-                )
+                val selectedTabIndexValue = context.index(model.props.selectedTabIndex, model.children.inSlot("tabs"), node.id)
+                if (selectedTabIndexValue != null) {
+                    SecondaryTabRow(
+                        modifier = modifier,
+                        containerColor = containerColorValue,
+                        contentColor = contentColorValue,
+                        selectedTabIndex = selectedTabIndexValue,
+                        tabs = { context.slot(model.children, "tabs")?.invoke() },
+                    )
+                }
             }
             .registerSingleChoiceSegmentedButtonRowScoped("SegmentedButton") { node, modifier, context ->
                 val model = node as SegmentedButtonNode
