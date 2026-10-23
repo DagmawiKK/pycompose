@@ -30,7 +30,7 @@ from pycompose.schema.codegen.state_anchors import SWIPE_VALUES
 from pycompose.schema.codegen.state_rules import STATE_VALUE_TYPES
 from pycompose.state import State
 
-SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
+SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 
 CATALOG = json.loads(SCHEMA_PATH.read_text())
 """The parsed catalog, so the wire tests state the version they are tested at."""
@@ -76,7 +76,7 @@ def components() -> dict[str, Any]:
     """Return the schema's component entries, keyed by name.
 
     Returns:
-        Every component entry in ``components.json``.
+        Every component entry in the catalog lock.
     """
     return CATALOG["components"]
 

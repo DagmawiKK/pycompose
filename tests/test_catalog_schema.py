@@ -18,7 +18,7 @@ import pytest
 from pycompose.schema.codegen import rules
 
 ROOT = Path(__file__).resolve().parents[1]
-CATALOG = ROOT / "schema" / "components.json"
+CATALOG = ROOT / "schema" / "catalog.lock.json"
 SCHEMA = ROOT / "schema" / "catalog.schema.json"
 
 

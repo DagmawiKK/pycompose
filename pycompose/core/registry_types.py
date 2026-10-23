@@ -1,4 +1,4 @@
-"""Runtime registry types mirroring ``schema/components.json`` (plan 04).
+"""Runtime registry types mirroring ``schema/catalog.lock.json`` (plan 04).
 
 The registry is the single source of truth for which components and
 actions exist and what shape their props/payloads take. These frozen,
@@ -126,7 +126,7 @@ class ActionDef:
         return cls(action_id=action_id, payload=payload)
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the ``components.json`` action shape.
+        """Render back to the the catalog lock action shape.
 
         Returns:
             A JSON-ready dict.
@@ -275,7 +275,7 @@ class Registry(AbstractComponentRegistry):
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object]) -> Registry:
-        """Parse a :class:`Registry` from raw ``components.json`` data.
+        """Parse a :class:`Registry` from raw the catalog lock data.
 
         Args:
             data: The parsed registry JSON.
@@ -339,7 +339,7 @@ class Registry(AbstractComponentRegistry):
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the ``components.json`` shape.
+        """Render back to the the catalog lock shape.
 
         Returns:
             A JSON-ready dict matching the registry file.

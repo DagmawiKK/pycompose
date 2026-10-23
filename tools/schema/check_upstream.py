@@ -312,7 +312,7 @@ def compare_holders(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--directory", type=Path, default=DUMP_DIR)
-    parser.add_argument("--schema", type=Path, default=Path("schema/components.json"))
+    parser.add_argument("--schema", type=Path, default=Path("schema/catalog.lock.json"))
     args = parser.parse_args(argv)
     try:
         registry = json.loads(args.schema.read_text())

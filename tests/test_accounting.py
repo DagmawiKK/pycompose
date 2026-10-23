@@ -446,7 +446,14 @@ def test_the_cli_refuses_to_write_over_the_approved_schema() -> None:
     from tools.schema.accounting import main
 
     with pytest.raises(SystemExit) as exit_info:
-        main(["--schema", "schema/components.json", "--out", "schema/components.json"])
+        main(
+            [
+                "--schema",
+                "schema/catalog.lock.json",
+                "--out",
+                "schema/catalog.lock.json",
+            ]
+        )
     assert exit_info.value.code == 2
 
 
@@ -456,7 +463,7 @@ def test_the_account_is_strict_and_byte_stable_at_the_pin(native_document, tmp_p
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
     found = inventory(DUMP)
-    registry = json.loads(Path("schema/components.json").read_text())
+    registry = json.loads(Path("schema/catalog.lock.json").read_text())
     report = account(found, source_defaults(DUMP), registry)
 
     out = tmp_path / "accounting.json"

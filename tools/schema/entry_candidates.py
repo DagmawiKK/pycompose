@@ -441,7 +441,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--decisions", type=Path, required=True)
     parser.add_argument("--directory", type=Path, default=DUMP_DIR)
-    parser.add_argument("--schema", type=Path, default=Path("schema/components.json"))
+    parser.add_argument("--schema", type=Path, default=Path("schema/catalog.lock.json"))
     parser.add_argument("--out", type=Path)
     parser.add_argument("--review", type=Path)
     parser.add_argument("--summary", action="store_true")

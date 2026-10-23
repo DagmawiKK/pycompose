@@ -24,7 +24,7 @@ def test_release_drift_is_reported_instead_of_silently_accepted(
 
     assert native_document["artifacts"]
     found = inventory(DUMP)
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     # A release that changes a default must show up as a proposal diff for a
     # person to review, never be silently adopted.
     registry["valueTypes"]["buttonColors"]["parameters"]["containerColor"]["default"][
@@ -41,7 +41,7 @@ def test_named_member_and_omission_drift_require_review(native_document) -> None
     from tools.schema.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["valueTypes"]["ThemeColor"]["parameters"]["name"]["values"].remove(
         "primary"
     )
@@ -68,7 +68,7 @@ def test_icon_vocabulary_drift_requires_review(native_document) -> None:
     from tools.schema.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     icon = registry["valueTypes"]["materialIcon"]
     # A label the pin no longer carries and a package that declares nothing the
     # vocabulary names are both facts of the pin, so an approved copy of either

@@ -1,4 +1,4 @@
-"""core.registry_types: registry types round-trip schema/components.json."""
+"""core.registry_types: registry types round-trip schema/catalog.lock.json."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from pycompose.core.registry_types import ComponentDef, Registry
 from pycompose.errors import ComponentRegistryError
 
 ROOT = Path(__file__).resolve().parents[1]
-COMPONENTS_PATH = ROOT / "schema" / "components.json"
+COMPONENTS_PATH = ROOT / "schema" / "catalog.lock.json"
 
 
 def _raw() -> dict:

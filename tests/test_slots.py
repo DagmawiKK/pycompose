@@ -253,7 +253,7 @@ def _load_with(
     from pycompose.schema.codegen import main, rules
 
     registry = json.loads(
-        (Path(__file__).resolve().parents[1] / "schema/components.json").read_text()
+        (Path(__file__).resolve().parents[1] / "schema/catalog.lock.json").read_text()
     )
     mutate(registry)
     path = tmp_path / "components.json"

@@ -1,0 +1,2871 @@
+{
+  "AlertDialog": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.AndroidAlertDialog_androidKt.AlertDialog-Oix01E0(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;JJJJFLandroidx/compose/ui/window/DialogProperties;Landroidx/compose/runtime/Composer;III)V"
+    }
+  },
+  "AnimatedContent": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.animation",
+      "category": "animation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.animation:animation-android:1.12.1",
+        "descriptor": "(Ljava/lang/Object;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Alignment;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "AnimatedContent",
+        "name": "AnimatedContent",
+        "owner": "androidx.compose.animation.AnimatedContentKt"
+      },
+      "props": {
+        "target": {
+          "type": "string",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "target"
+      ]
+    }
+  },
+  "AnimatedVisibility": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.animation",
+      "category": "animation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.animation:animation-android:1.12.1",
+        "descriptor": "(ZLandroidx/compose/ui/Modifier;Landroidx/compose/animation/EnterTransition;Landroidx/compose/animation/ExitTransition;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "AnimatedVisibility",
+        "name": "AnimatedVisibility",
+        "owner": "androidx.compose.animation.AnimatedVisibilityKt"
+      },
+      "props": {
+        "visible": {
+          "type": "boolean",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
+    }
+  },
+  "AssistChip": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    }
+  },
+  "Badge": {
+    "decision": {
+      "category": "status",
+      "stability": "stable"
+    }
+  },
+  "BadgedBox": {
+    "decision": {
+      "category": "status",
+      "stability": "stable"
+    }
+  },
+  "BasicAlertDialog": {
+    "decision": {
+      "category": "overlays",
+      "stability": "experimental"
+    }
+  },
+  "BottomAppBar": {
+    "manual": "no call plan in the pinned inventory: overload identity is not addressable by named arguments",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;JJFLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "BottomAppBar-1oL4kX8",
+        "name": "BottomAppBar",
+        "owner": "androidx.compose.material3.AppBarKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0,
+        "provides": "RowScope"
+      }
+    }
+  },
+  "Box": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "layout",
+      "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Box",
+        "name": "Box",
+        "owner": "androidx.compose.foundation.layout.BoxKt"
+      },
+      "props": {
+        "contentAlignment": {
+          "type": "enum",
+          "values": [
+            "topStart",
+            "topCenter",
+            "topEnd",
+            "centerStart",
+            "center",
+            "centerEnd",
+            "bottomStart",
+            "bottomCenter",
+            "bottomEnd"
+          ],
+          "decode": "alignment",
+          "default": "topStart"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0,
+        "provides": "BoxScope"
+      }
+    }
+  },
+  "Button": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": null,
+      "props": {
+        "border": null,
+        "contentPadding": null,
+        "shape": null,
+        "colors": {
+          "since": "1.11.0"
+        },
+        "elevation": {
+          "since": "1.11.0"
+        },
+        "text": {
+          "type": "string",
+          "required": true,
+          "content": {
+            "composable": "Text"
+          }
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "kind": null,
+        "provides": null,
+        "allowed": false
+      },
+      "reshaped": [
+        "text",
+        "onClick",
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    }
+  },
+  "Card": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.CardKt.Card(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+    },
+    "patch": {
+      "since": "1.22.0",
+      "props": {
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    }
+  },
+  "CenterAlignedTopAppBar": {
+    "decision": {
+      "category": "app-bars",
+      "stability": "experimental"
+    },
+    "patch": {
+      "slots": {
+        "navigationIcon": {
+          "native": "navigationIcon"
+        },
+        "actions": {
+          "native": "actions",
+          "provides": "RowScope"
+        }
+      }
+    }
+  },
+  "Checkbox": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.3.0",
+      "props": {
+        "colors": null,
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    }
+  },
+  "CircularProgressIndicator": {
+    "decision": {
+      "category": "status",
+      "stability": "stable",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.ProgressIndicatorKt.CircularProgressIndicator-4lLiAd8(Landroidx/compose/ui/Modifier;JFJIFLandroidx/compose/runtime/Composer;II)V"
+    },
+    "patch": {
+      "optIn": null,
+      "since": "1.22.0",
+      "props": {
+        "gapSize": null
+      }
+    }
+  },
+  "Column": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "layout",
+      "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Alignment$Horizontal;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Column",
+        "name": "Column",
+        "owner": "androidx.compose.foundation.layout.ColumnKt"
+      },
+      "props": {
+        "horizontalAlignment": {
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end"
+          ],
+          "decode": "horizontal",
+          "default": "start"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "onScrollIdle": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "offset",
+              "type": "number"
+            }
+          ]
+        },
+        "scrollable": {
+          "type": "boolean"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0,
+        "provides": "ColumnScope"
+      },
+      "reshaped": [
+        "offset",
+        "onScrollIdle",
+        "scrollable"
+      ],
+      "state": {
+        "native": "scrollState",
+        "kind": "scroll",
+        "value": "offset",
+        "report": "onScrollIdle"
+      }
+    }
+  },
+  "Crossfade": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.animation",
+      "category": "animation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.animation:animation-android:1.12.1",
+        "descriptor": "(Ljava/lang/Object;Landroidx/compose/ui/Modifier;Landroidx/compose/animation/core/FiniteAnimationSpec;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Crossfade",
+        "name": "Crossfade",
+        "owner": "androidx.compose.animation.CrossfadeKt"
+      },
+      "props": {
+        "target": {
+          "type": "string",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "target"
+      ]
+    }
+  },
+  "DismissibleDrawerSheet": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.22.0"
+    }
+  },
+  "DismissibleNavigationDrawer": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.18.0",
+      "props": {
+        "open": {
+          "type": "boolean"
+        },
+        "onOpenChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "open",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "kind": "content"
+      },
+      "slots": {
+        "drawerContent": null,
+        "drawer": {
+          "native": "drawerContent"
+        }
+      },
+      "reshaped": [
+        "open",
+        "onOpenChange"
+      ],
+      "state": {
+        "native": "drawerState",
+        "kind": "drawer",
+        "value": "open",
+        "report": "onOpenChange"
+      }
+    }
+  },
+  "DockedSearchBar": {
+    "decision": {
+      "category": "input",
+      "stability": "experimental",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarKt.DockedSearchBar-EQC0FA8(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+    }
+  },
+  "DropdownMenu": {
+    "decision": {
+      "category": "status",
+      "stability": "stable"
+    }
+  },
+  "DropdownMenuItem": {
+    "decision": {
+      "category": "status",
+      "stability": "stable"
+    }
+  },
+  "ElevatedAssistChip": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    }
+  },
+  "ElevatedButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "ElevatedCard": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.CardKt.ElevatedCard(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+    }
+  },
+  "ElevatedFilterChip": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    }
+  },
+  "ElevatedSuggestionChip": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    }
+  },
+  "ExpandedDockedSearchBar": {
+    "manual": "no call plan in the pinned inventory: no wire policy for androidx/compose/material3/SearchBarState",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.SearchBarKt",
+        "name": "ExpandedDockedSearchBar",
+        "jvmName": "ExpandedDockedSearchBar-qKj4JfE",
+        "descriptor": "(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/ui/window/PopupProperties;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.dockedShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "slots": {
+        "inputField": {
+          "native": "inputField"
+        }
+      },
+      "adapter": "manual"
+    }
+  },
+  "ExpandedFullScreenSearchBar": {
+    "manual": "no call plan in the pinned inventory: no wire policy for androidx/compose/material3/SearchBarState",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.SearchBarKt",
+        "name": "ExpandedFullScreenSearchBar",
+        "jvmName": "ExpandedFullScreenSearchBar-_UtchM0",
+        "descriptor": "(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLkotlin/jvm/functions/Function2;Landroidx/compose/ui/window/DialogProperties;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "collapsedShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "slots": {
+        "inputField": {
+          "native": "inputField"
+        }
+      },
+      "adapter": "manual"
+    }
+  },
+  "ExtendedFloatingActionButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.FloatingActionButtonKt.ExtendedFloatingActionButton-X-z6DiA(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJLandroidx/compose/material3/FloatingActionButtonElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+    }
+  },
+  "FilledIconButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "FilledIconToggleButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "FilledTonalButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "FilledTonalIconButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "FilledTonalIconToggleButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "FilterChip": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.3.0",
+      "props": {
+        "colors": null,
+        "elevation": null,
+        "shape": null,
+        "label": {
+          "type": "string",
+          "required": true,
+          "content": {
+            "composable": "Text",
+            "parameter": "label"
+          }
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "slots": {
+        "label": null
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    }
+  },
+  "FloatingActionButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.22.0",
+      "props": {
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "kind": "content"
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    }
+  },
+  "FlowColumn": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "layout",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalLayoutApi"
+      ],
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Horizontal;IILandroidx/compose/foundation/layout/FlowColumnOverflow;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FlowColumn",
+        "name": "FlowColumn",
+        "owner": "androidx.compose.foundation.layout.FlowLayoutKt"
+      },
+      "props": {
+        "itemHorizontalAlignment": {
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end"
+          ],
+          "decode": "horizontal",
+          "default": "start"
+        },
+        "maxItemsInEachColumn": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647,
+          "default": 2147483647,
+          "nativeType": "Int"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
+    }
+  },
+  "FlowRow": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "layout",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalLayoutApi"
+      ],
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Alignment$Vertical;IILandroidx/compose/foundation/layout/FlowRowOverflow;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FlowRow",
+        "name": "FlowRow",
+        "owner": "androidx.compose.foundation.layout.FlowLayoutKt"
+      },
+      "props": {
+        "itemVerticalAlignment": {
+          "type": "enum",
+          "values": [
+            "top",
+            "center",
+            "bottom"
+          ],
+          "decode": "vertical",
+          "default": "top"
+        },
+        "maxItemsInEachRow": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647,
+          "default": 2147483647,
+          "nativeType": "Int"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0
+      }
+    }
+  },
+  "HorizontalDivider": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.22.0"
+    }
+  },
+  "Icon": {
+    "decision": {
+      "category": "media",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.21.0",
+      "props": {
+        "tint": {
+          "fallback": "androidx.compose.material3.LocalContentColor.current"
+        }
+      }
+    }
+  },
+  "IconButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.22.0",
+      "props": {
+        "shape": null,
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "kind": "content"
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    }
+  },
+  "IconToggleButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "Image": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.foundation",
+      "category": "media",
+      "stability": "stable",
+      "since": "1.1.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "owner": "androidx.compose.foundation.ImageKt",
+        "name": "Image",
+        "jvmName": "Image",
+        "descriptor": "(Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;Landroidx/compose/runtime/Composer;II)V"
+      },
+      "props": {
+        "resource": {
+          "type": "resource",
+          "values": [
+            "drawable",
+            "asset"
+          ],
+          "decode": "resourceImage",
+          "required": true
+        },
+        "contentDescription": {
+          "type": "string"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "wrapper": "ResourceImage",
+      "reshaped": [
+        "resource"
+      ]
+    }
+  },
+  "InputChip": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    }
+  },
+  "LargeFloatingActionButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "LargeTopAppBar": {
+    "decision": {
+      "category": "app-bars",
+      "stability": "experimental"
+    },
+    "patch": {
+      "slots": {
+        "navigationIcon": {
+          "native": "navigationIcon"
+        },
+        "actions": {
+          "native": "actions",
+          "provides": "RowScope"
+        }
+      }
+    }
+  },
+  "LazyColumn": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.foundation.lazy",
+      "category": "lists",
+      "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/ui/Alignment$Horizontal;Landroidx/compose/foundation/gestures/FlingBehavior;ZLandroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "LazyColumn",
+        "name": "LazyColumn",
+        "owner": "androidx.compose.foundation.lazy.LazyDslKt"
+      },
+      "props": {
+        "firstVisibleIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onScrollIdle": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "firstVisibleIndex",
+              "type": "integer"
+            }
+          ]
+        },
+        "verticalArrangement": {
+          "type": "enum",
+          "values": [
+            "top",
+            "center",
+            "bottom",
+            "spaceEvenly",
+            "spaceBetween",
+            "spaceAround"
+          ],
+          "decode": "arrangement",
+          "default": "top"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "items"
+      },
+      "reshaped": [
+        "firstVisibleIndex",
+        "onScrollIdle"
+      ],
+      "state": {
+        "native": "state",
+        "kind": "lazyList",
+        "value": "firstVisibleIndex",
+        "report": "onScrollIdle"
+      }
+    }
+  },
+  "LazyRow": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.foundation.lazy",
+      "category": "lists",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Vertical;Landroidx/compose/foundation/gestures/FlingBehavior;ZLandroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "LazyRow",
+        "name": "LazyRow",
+        "owner": "androidx.compose.foundation.lazy.LazyDslKt"
+      },
+      "props": {
+        "firstVisibleIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onScrollIdle": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "firstVisibleIndex",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "items"
+      },
+      "reshaped": [
+        "firstVisibleIndex",
+        "onScrollIdle"
+      ],
+      "state": {
+        "native": "state",
+        "kind": "lazyList",
+        "value": "firstVisibleIndex",
+        "report": "onScrollIdle"
+      }
+    }
+  },
+  "LeadingIconTab": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "LinearProgressIndicator": {
+    "manual": "2 call plans; select one by identity (androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.ProgressIndicatorKt.LinearProgressIndicator-_5eSR-E(FLandroidx/compose/ui/Modifier;JJILandroidx/compose/runtime/Composer;II)V, androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.ProgressIndicatorKt.LinearProgressIndicator-rIrjwxo(Landroidx/compose/ui/Modifier;JJIFLandroidx/compose/runtime/Composer;II)V)",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "experimental",
+      "since": "1.20.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.ProgressIndicatorKt",
+        "name": "LinearProgressIndicator",
+        "jvmName": "LinearProgressIndicator-GJbTh5U",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;JJIFLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V"
+      },
+      "props": {
+        "progress": {
+          "type": "number",
+          "required": true,
+          "provider": {
+            "native": "progress",
+            "returns": "Float"
+          },
+          "since": "1.20.0"
+        },
+        "color": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor"
+        },
+        "trackColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "progress"
+      ]
+    }
+  },
+  "ListItem": {
+    "decision": {
+      "category": "lists",
+      "stability": "stable"
+    }
+  },
+  "MediumTopAppBar": {
+    "decision": {
+      "category": "app-bars",
+      "stability": "experimental"
+    },
+    "patch": {
+      "slots": {
+        "navigationIcon": {
+          "native": "navigationIcon"
+        },
+        "actions": {
+          "native": "actions",
+          "provides": "RowScope"
+        }
+      }
+    }
+  },
+  "ModalBottomSheet": {
+    "decision": {
+      "category": "layout",
+      "stability": "experimental"
+    },
+    "patch": {
+      "since": "1.19.0",
+      "props": {
+        "containerColor": null,
+        "onDismissRequest": null,
+        "scrimColor": null,
+        "shape": null,
+        "sheetGesturesEnabled": null,
+        "sheetMaxWidth": null,
+        "tonalElevation": null,
+        "value": {
+          "type": "enum",
+          "values": [
+            "hidden",
+            "partiallyExpanded",
+            "expanded"
+          ],
+          "since": "1.23.0"
+        },
+        "onValueChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "since": "1.23.0"
+        },
+        "skipPartiallyExpanded": {
+          "type": "boolean",
+          "default": false,
+          "since": "1.23.0"
+        },
+        "open": {
+          "type": "boolean"
+        },
+        "onOpenChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "open",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "slots": {
+        "dragHandle": {
+          "native": "dragHandle",
+          "nullable": true
+        }
+      },
+      "reshaped": [
+        "open",
+        "onOpenChange",
+        "value",
+        "onValueChange",
+        "skipPartiallyExpanded"
+      ],
+      "state": {
+        "native": "sheetState",
+        "kind": "sheet",
+        "value": "open",
+        "report": "onOpenChange",
+        "dismiss": "onDismissRequest"
+      }
+    }
+  },
+  "ModalDrawerSheet": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.22.0"
+    }
+  },
+  "ModalNavigationDrawer": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.18.0",
+      "props": {
+        "scrimColor": null,
+        "open": {
+          "type": "boolean"
+        },
+        "onOpenChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "open",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "kind": "content"
+      },
+      "slots": {
+        "drawerContent": null,
+        "drawer": {
+          "native": "drawerContent"
+        }
+      },
+      "reshaped": [
+        "open",
+        "onOpenChange"
+      ],
+      "state": {
+        "native": "drawerState",
+        "kind": "drawer",
+        "value": "open",
+        "report": "onOpenChange"
+      }
+    }
+  },
+  "ModalWideNavigationRail": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "MultiChoiceSegmentedButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable",
+      "nativeName": "SegmentedButton",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SegmentedButtonKt.SegmentedButton(Landroidx/compose/material3/MultiChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V"
+    }
+  },
+  "MultiChoiceSegmentedButtonRow": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "NavigationBar": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.22.0"
+    }
+  },
+  "NavigationBarItem": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.22.0",
+      "props": {
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    }
+  },
+  "NavigationDrawerItem": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    }
+  },
+  "NavigationRail": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "NavigationRailItem": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "NavigationSuiteItem": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "NavigationSuiteScaffold": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "OutlinedButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "OutlinedCard": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.CardKt.OutlinedCard(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+    }
+  },
+  "OutlinedIconButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "OutlinedIconToggleButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "OutlinedTextField": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    }
+  },
+  "PermanentDrawerSheet": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "PermanentNavigationDrawer": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "PlainTooltip": {
+    "decision": {
+      "category": "overlays",
+      "stability": "experimental"
+    },
+    "patch": {
+      "props": {
+        "caretShape": null,
+        "shadowElevation": null,
+        "shape": null,
+        "tonalElevation": null,
+        "showCaret": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "children": {
+        "kind": "content"
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "showCaret"
+      ]
+    }
+  },
+  "PrimaryScrollableTabRow": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    }
+  },
+  "PrimaryTabRow": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    }
+  },
+  "PullToRefreshBox": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    }
+  },
+  "RadioButton": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.22.0",
+      "props": {
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    }
+  },
+  "RichTooltip": {
+    "decision": {
+      "category": "overlays",
+      "stability": "experimental"
+    },
+    "patch": {
+      "props": {
+        "caretShape": null,
+        "colors": null,
+        "shadowElevation": null,
+        "shape": null,
+        "tonalElevation": null,
+        "showCaret": {
+          "type": "boolean",
+          "default": false
+        },
+        "containerColor": {
+          "type": "color",
+          "decode": "color",
+          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
+          "valueType": "Color"
+        },
+        "contentColor": {
+          "type": "color",
+          "decode": "color",
+          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
+          "valueType": "Color"
+        },
+        "titleContentColor": {
+          "type": "color",
+          "decode": "color",
+          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
+          "valueType": "Color"
+        },
+        "actionContentColor": {
+          "type": "color",
+          "decode": "color",
+          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
+          "valueType": "Color"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      },
+      "slots": {
+        "text": null
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "showCaret",
+        "containerColor",
+        "contentColor",
+        "titleContentColor",
+        "actionContentColor"
+      ]
+    }
+  },
+  "Row": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "layout",
+      "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/ui/Alignment$Vertical;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Row",
+        "name": "Row",
+        "owner": "androidx.compose.foundation.layout.RowKt"
+      },
+      "props": {
+        "verticalAlignment": {
+          "type": "enum",
+          "values": [
+            "top",
+            "center",
+            "bottom"
+          ],
+          "decode": "vertical",
+          "default": "top"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "min": 0,
+        "provides": "RowScope"
+      }
+    }
+  },
+  "Scaffold": {
+    "manual": "no call plan in the pinned inventory: slot-supplied arguments need typed context references",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;IJJLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Scaffold-TvnljyQ",
+        "name": "Scaffold",
+        "owner": "androidx.compose.material3.ScaffoldKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.MaterialTheme.colorScheme.background"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "consume": "paddingValues"
+      },
+      "slots": {
+        "bottomBar": {
+          "native": "bottomBar"
+        },
+        "floatingActionButton": {
+          "native": "floatingActionButton"
+        },
+        "snackbarHost": {
+          "native": "snackbarHost"
+        },
+        "topBar": {
+          "native": "topBar"
+        }
+      }
+    }
+  },
+  "SearchBar": {
+    "decision": {
+      "category": "input",
+      "stability": "experimental",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarKt.SearchBar-Y92LkZI(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+    }
+  },
+  "SearchBarInputField": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.SearchBarDefaults",
+        "name": "InputField",
+        "jvmName": "InputField",
+        "descriptor": "(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V"
+      },
+      "props": {
+        "query": {
+          "type": "string",
+          "required": true
+        },
+        "onQueryChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "query",
+              "type": "string"
+            }
+          ],
+          "required": true
+        },
+        "onSearch": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "query",
+              "type": "string"
+            }
+          ],
+          "required": true
+        },
+        "expanded": {
+          "type": "boolean",
+          "required": true
+        },
+        "onExpandedChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "expanded",
+              "type": "boolean"
+            }
+          ],
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "placeholder": {
+          "native": "placeholder",
+          "nullable": true
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      },
+      "adapter": "manual"
+    }
+  },
+  "SearchBarStateInputField": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.SearchBarDefaults",
+        "name": "InputField",
+        "jvmName": "InputField",
+        "descriptor": "(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "onSearch": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "query",
+              "type": "string"
+            }
+          ]
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "readOnly": {
+          "type": "boolean",
+          "default": false
+        },
+        "textStyle": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "nativeDefault": "androidx.compose.material3.LocalTextStyle.current"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldShape"
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "TextFieldColors",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldColors()"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "placeholder": {
+          "native": "placeholder",
+          "nullable": true
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        },
+        "prefix": {
+          "native": "prefix",
+          "nullable": true
+        },
+        "suffix": {
+          "native": "suffix",
+          "nullable": true
+        }
+      },
+      "adapter": "manual"
+    }
+  },
+  "SecondaryScrollableTabRow": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    }
+  },
+  "SecondaryTabRow": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    }
+  },
+  "SegmentedButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SegmentedButtonKt.SegmentedButton(Landroidx/compose/material3/SingleChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V"
+    }
+  },
+  "ShortNavigationBar": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "ShortNavigationBarItem": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "SingleChoiceSegmentedButtonRow": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    }
+  },
+  "Slider": {
+    "manual": "no call plan in the pinned inventory: no wire policy for androidx/compose/material3/SliderState, overload identity is not addressable by named arguments",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/SliderState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SliderColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Slider",
+        "name": "Slider",
+        "owner": "androidx.compose.material3.SliderKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "SliderColors",
+          "nativeDefault": "androidx.compose.material3.SliderDefaults.colors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onValueChangeFinished": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "number"
+            }
+          ]
+        },
+        "steps": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 2147483645
+        },
+        "value": {
+          "type": "number"
+        },
+        "valueRange": {
+          "type": "value",
+          "valueType": "Range",
+          "required": true
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "value",
+        "onValueChangeFinished",
+        "valueRange",
+        "steps"
+      ],
+      "state": {
+        "native": "state",
+        "kind": "slider",
+        "value": "value",
+        "report": "onValueChangeFinished"
+      }
+    }
+  },
+  "Snackbar": {
+    "decision": {
+      "category": "status",
+      "stability": "stable"
+    }
+  },
+  "SnackbarHost": {
+    "manual": "no call plan in the pinned inventory: no wire policy for androidx/compose/material3/SnackbarHostState",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "status",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/SnackbarHostState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SnackbarHost",
+        "name": "SnackbarHost",
+        "owner": "androidx.compose.material3.SnackbarHostKt"
+      },
+      "props": {
+        "message": {
+          "type": "string",
+          "required": true
+        },
+        "actionLabel": {
+          "type": "string"
+        },
+        "serial": {
+          "type": "integer",
+          "required": true
+        },
+        "onDismiss": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "serial",
+              "type": "integer"
+            }
+          ]
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "reshaped": [
+        "message",
+        "actionLabel",
+        "serial",
+        "onDismiss"
+      ],
+      "transient": {
+        "kind": "snackbar",
+        "native": "hostState",
+        "serial": "serial",
+        "occurrence": "onDismiss"
+      }
+    }
+  },
+  "Spacer": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "layout",
+      "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V",
+        "jvmName": "Spacer",
+        "name": "Spacer",
+        "owner": "androidx.compose.foundation.layout.SpacerKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    }
+  },
+  "StatefulSearchBar": {
+    "manual": "2 call plans; select one by identity (androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarKt.SearchBar-WuY5d9Q(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/foundation/layout/WindowInsets;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V, androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarKt.SearchBar-Y92LkZI(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V)",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.SearchBarKt",
+        "name": "SearchBar",
+        "jvmName": "SearchBar-nbWgWpA",
+        "descriptor": "(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/runtime/Composer;II)V"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "text": {
+          "type": "string",
+          "required": true
+        },
+        "selectionStart": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeType": "Int"
+        },
+        "selectionEnd": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeType": "Int"
+        },
+        "revision": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "onEdit": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "text",
+              "type": "string"
+            },
+            {
+              "name": "selectionStart",
+              "type": "integer"
+            },
+            {
+              "name": "selectionEnd",
+              "type": "integer"
+            },
+            {
+              "name": "revision",
+              "type": "integer"
+            }
+          ]
+        },
+        "expanded": {
+          "type": "boolean"
+        },
+        "onExpandedChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "expanded",
+              "type": "boolean"
+            }
+          ]
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "inputField": {
+          "native": "inputField"
+        },
+        "expandedBar": {
+          "host": true
+        }
+      },
+      "state": {
+        "native": "state",
+        "kind": "search",
+        "value": "expanded",
+        "report": "onExpandedChange"
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "expanded",
+        "onExpandedChange",
+        "text",
+        "selectionStart",
+        "selectionEnd",
+        "revision",
+        "onEdit"
+      ]
+    }
+  },
+  "StatefulSearchBarInputField": {
+    "manual": "no call plan in the pinned inventory",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.SearchBarDefaults",
+        "name": "InputField",
+        "jvmName": "InputField",
+        "descriptor": "(Landroidx/compose/foundation/text/input/TextFieldState;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V"
+      },
+      "props": {
+        "text": {
+          "type": "string",
+          "required": true
+        },
+        "selectionStart": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeType": "Int"
+        },
+        "selectionEnd": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeType": "Int"
+        },
+        "revision": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "onEdit": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "text",
+              "type": "string"
+            },
+            {
+              "name": "selectionStart",
+              "type": "integer"
+            },
+            {
+              "name": "selectionEnd",
+              "type": "integer"
+            },
+            {
+              "name": "revision",
+              "type": "integer"
+            }
+          ]
+        },
+        "onSearch": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "query",
+              "type": "string"
+            }
+          ]
+        },
+        "expanded": {
+          "type": "boolean",
+          "required": true
+        },
+        "onExpandedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "expanded",
+              "type": "boolean"
+            }
+          ]
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "readOnly": {
+          "type": "boolean",
+          "default": false
+        },
+        "textStyle": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "nativeDefault": "androidx.compose.material3.LocalTextStyle.current"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldShape"
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "TextFieldColors",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldColors()"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "placeholder": {
+          "native": "placeholder",
+          "nullable": true
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        },
+        "prefix": {
+          "native": "prefix",
+          "nullable": true
+        },
+        "suffix": {
+          "native": "suffix",
+          "nullable": true
+        }
+      },
+      "state": {
+        "native": "state",
+        "kind": "textInput",
+        "value": "text",
+        "report": "onEdit"
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "text",
+        "selectionStart",
+        "selectionEnd",
+        "revision",
+        "onEdit"
+      ]
+    }
+  },
+  "SuggestionChip": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    }
+  },
+  "Surface": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SurfaceKt.Surface-T9BRK9s(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFFLandroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V"
+    }
+  },
+  "SwipeToDismissBox": {
+    "manual": "no call plan in the pinned inventory: no wire policy for androidx/compose/material3/SwipeToDismissBoxState",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/SwipeToDismissBoxState;Lkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;ZZZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SwipeToDismissBox",
+        "name": "SwipeToDismissBox",
+        "owner": "androidx.compose.material3.SwipeToDismissBoxKt"
+      },
+      "props": {
+        "value": {
+          "type": "enum",
+          "values": [
+            "settled",
+            "startToEnd",
+            "endToStart"
+          ]
+        },
+        "onValueChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ]
+        },
+        "enableDismissFromStartToEnd": {
+          "type": "boolean",
+          "default": true
+        },
+        "enableDismissFromEndToStart": {
+          "type": "boolean",
+          "default": true
+        },
+        "gesturesEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "RowScope"
+      },
+      "slots": {
+        "backgroundContent": {
+          "native": "backgroundContent",
+          "provides": "RowScope"
+        }
+      },
+      "reshaped": [
+        "value",
+        "onValueChange"
+      ],
+      "state": {
+        "native": "state",
+        "kind": "swipe",
+        "value": "value",
+        "report": "onValueChange"
+      }
+    }
+  },
+  "Switch": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.22.0",
+      "props": {
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    }
+  },
+  "Tab": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.TabKt.Tab-wqdebIU(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;JJLandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V"
+    }
+  },
+  "Text": {
+    "decision": {
+      "category": "typography",
+      "stability": "stable",
+      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.TextKt.Text-Nvy7gAk(Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/foundation/text/TextAutoSize;JLandroidx/compose/ui/text/font/FontStyle;Landroidx/compose/ui/text/font/FontWeight;Landroidx/compose/ui/text/font/FontFamily;JLandroidx/compose/ui/text/style/TextDecoration;Landroidx/compose/ui/text/style/TextAlign;JIZIILkotlin/jvm/functions/Function1;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;III)V"
+    },
+    "patch": {
+      "since": null,
+      "props": {
+        "fontFamily": null,
+        "fontSize": null,
+        "fontStyle": null,
+        "fontWeight": null,
+        "letterSpacing": null,
+        "lineHeight": null,
+        "minLines": null,
+        "overflow": null,
+        "softWrap": null,
+        "textAlign": null,
+        "textDecoration": null,
+        "resource": {
+          "type": "resource",
+          "values": [
+            "string",
+            "asset"
+          ],
+          "decode": "resourceText",
+          "since": "1.1.0"
+        },
+        "fontResource": {
+          "type": "resource",
+          "values": [
+            "font"
+          ],
+          "decode": "resourceFont",
+          "since": "1.1.0"
+        },
+        "locale": {
+          "type": "string",
+          "since": "1.1.0"
+        },
+        "style": {
+          "nativeDefault": null,
+          "type": "enum",
+          "values": [
+            "bodyLarge",
+            "bodyMedium",
+            "bodySmall",
+            "titleLarge",
+            "titleMedium",
+            "titleSmall",
+            "headlineMedium"
+          ],
+          "decode": "textStyle",
+          "default": "bodyMedium"
+        },
+        "color": {
+          "fallback": null
+        }
+      },
+      "wrapper": "ResourceText",
+      "reshaped": [
+        "resource",
+        "fontResource",
+        "locale"
+      ]
+    }
+  },
+  "TextButton": {
+    "decision": {
+      "category": "buttons",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.3.0",
+      "props": {
+        "border": null,
+        "colors": null,
+        "contentPadding": null,
+        "elevation": null,
+        "shape": null,
+        "text": {
+          "type": "string",
+          "required": true,
+          "content": {
+            "composable": "Text"
+          }
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "kind": null,
+        "provides": null,
+        "allowed": false
+      },
+      "reshaped": [
+        "text",
+        "onClick",
+        "onPress",
+        "onFocus",
+        "onHover"
+      ],
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      }
+    }
+  },
+  "TextField": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": null,
+      "source": null,
+      "slots": null,
+      "props": {
+        "colors": null,
+        "isError": null,
+        "minLines": null,
+        "readOnly": null,
+        "shape": null,
+        "singleLine": null,
+        "textStyle": null,
+        "selection": {
+          "type": "integer"
+        },
+        "onSelectionChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "integer"
+            }
+          ]
+        },
+        "label": {
+          "type": "string",
+          "content": {
+            "composable": "Text",
+            "parameter": "label"
+          }
+        }
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "value",
+        "onValueChange",
+        "selection",
+        "onSelectionChange"
+      ]
+    }
+  },
+  "TooltipBox": {
+    "manual": "no call plan in the pinned inventory: no wire policy for androidx/compose/material3/TooltipState, no wire policy for androidx/compose/ui/window/PopupPositionProvider",
+    "entry": {
+      "package": "androidx.compose.material3",
+      "category": "overlays",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/window/PopupPositionProvider;Lkotlin/jvm/functions/Function3;Landroidx/compose/material3/TooltipState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;ZZZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "TooltipBox",
+        "name": "TooltipBox",
+        "owner": "androidx.compose.material3.TooltipKt"
+      },
+      "props": {
+        "visible": {
+          "type": "boolean"
+        },
+        "onVisibilityChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "visible",
+              "type": "boolean"
+            }
+          ]
+        },
+        "isPersistent": {
+          "type": "boolean",
+          "default": false
+        },
+        "position": {
+          "type": "enum",
+          "decode": "tooltipPosition",
+          "values": [
+            "above",
+            "below",
+            "left",
+            "right",
+            "start",
+            "end"
+          ],
+          "default": "above"
+        },
+        "focusable": {
+          "type": "boolean",
+          "default": false
+        },
+        "enableUserInput": {
+          "type": "boolean",
+          "default": true
+        },
+        "hasAction": {
+          "type": "boolean",
+          "default": false
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content"
+      },
+      "slots": {
+        "tooltip": {
+          "native": "tooltip",
+          "provides": "TooltipScope"
+        }
+      },
+      "state": {
+        "native": "state",
+        "kind": "tooltip",
+        "value": "visible",
+        "report": "onVisibilityChange"
+      },
+      "adapter": "manual",
+      "reshaped": [
+        "visible",
+        "onVisibilityChange",
+        "isPersistent",
+        "position"
+      ]
+    }
+  },
+  "TopAppBar": {
+    "decision": {
+      "category": "app-bars",
+      "stability": "experimental"
+    },
+    "patch": {
+      "slots": {
+        "navigationIcon": {
+          "native": "navigationIcon"
+        },
+        "actions": {
+          "native": "actions",
+          "provides": "RowScope"
+        }
+      }
+    }
+  },
+  "TriStateCheckbox": {
+    "decision": {
+      "category": "input",
+      "stability": "stable"
+    }
+  },
+  "VerticalDivider": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    },
+    "patch": {
+      "since": "1.22.0"
+    }
+  },
+  "VerticalDragHandle": {
+    "decision": {
+      "category": "layout",
+      "stability": "stable"
+    }
+  },
+  "WideNavigationRail": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  },
+  "WideNavigationRailItem": {
+    "decision": {
+      "category": "navigation",
+      "stability": "stable"
+    }
+  }
+}

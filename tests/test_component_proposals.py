@@ -70,7 +70,7 @@ def test_pinned_unconstructible_types_and_enum_vocabularies(native_document) -> 
     assert native_document["provenance"]["bom"] == "2026.09.00"
     found = inventory(DUMP)
     evidence = source_defaults(DUMP)
-    schema = json.loads(Path("schema/components.json").read_text())
+    schema = json.loads(Path("schema/catalog.lock.json").read_text())
     empty = {"schemaVersion": "1.12.0", "valueTypes": {}}
     # Painter is an abstract class: its bytecode constructor proves nothing an
     # app can call, so it can never become a value family.
@@ -89,7 +89,7 @@ def test_pinned_denominator_separates_components_from_styling_hooks(native_docum
     report = propose_components(
         inventory(DUMP),
         source_defaults(DUMP),
-        json.loads(Path("schema/components.json").read_text()),
+        json.loads(Path("schema/catalog.lock.json").read_text()),
     )
     component_coverage = report["coverage"]["components"]
     hook_coverage = report["coverage"]["hooks"]
@@ -136,7 +136,7 @@ def test_the_shipped_catalog_carries_no_unexplained_prop(native_document) -> Non
     from tools.schema.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
-    registry = json.loads(Path("schema/components.json").read_text())
+    registry = json.loads(Path("schema/catalog.lock.json").read_text())
     assert compare(registry, inventory(DUMP)) == []
 
 
@@ -155,7 +155,7 @@ def test_the_drift_check_re_derives_a_package_and_a_provider(native_document) ->
     found = inventory(DUMP)
 
     def edited(**changes) -> dict:
-        registry = json.loads(Path("schema/components.json").read_text())
+        registry = json.loads(Path("schema/catalog.lock.json").read_text())
         entry = registry["components"]["LinearProgressIndicator"]
         for key, value in changes.items():
             provider = entry["props"]["progress"]["provider"]
@@ -197,7 +197,7 @@ def test_the_drift_check_re_derives_receivers_and_provided_scopes(
     found = inventory(DUMP)
 
     def edited(name: str, **changes) -> dict:
-        registry = json.loads(Path("schema/components.json").read_text())
+        registry = json.loads(Path("schema/catalog.lock.json").read_text())
         entry = registry["components"][name]
         for key, value in changes.items():
             if key == "provides":

@@ -519,7 +519,7 @@ def test_a_held_out_compatible_binding_derives_and_verifies() -> None:
     from tools.schema.classpath_dump import source_defaults
     from tools.schema.components import propose_components
 
-    approved = json.loads((ROOT / "schema/components.json").read_text())
+    approved = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     found = inventory(DUMP)
     plans = propose_components(found, source_defaults(DUMP), approved)
     plan_record, pin = select(plans, found, "SmallFloatingActionButton")
@@ -538,7 +538,7 @@ def test_the_approved_pilot_entries_equal_their_derivation() -> None:
     from tools.schema.classpath_dump import source_defaults
     from tools.schema.components import propose_components
 
-    approved = json.loads((ROOT / "schema/components.json").read_text())
+    approved = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     found = inventory(DUMP)
     plans = propose_components(found, source_defaults(DUMP), approved)
     review_input = {"category": "test", "stability": "stable"}

@@ -25,7 +25,7 @@ from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.m3 import TextField
 
 APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"
-SCHEMA = json.loads(Path("schema/components.json").read_text())
+SCHEMA = json.loads(Path("schema/catalog.lock.json").read_text())
 ADAPTER = Path(
     "android/host/src/main/kotlin/com/pycompose/host/ui/BuiltinComponents.kt"
 )

@@ -395,7 +395,7 @@ class ComponentSpec:
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the ``components.json`` component shape.
+        """Render back to the the catalog lock component shape.
 
         Returns:
             A JSON-ready dict.

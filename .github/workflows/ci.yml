@@ -165,6 +165,7 @@ jobs:
         run: |
           pytest -q tests/test_classpath_dump.py tests/test_component_proposals.py
           python tools/schema/classpath_dump.py --report android/build/compose-api/capabilities.json
+          python -m tools.composegen generate --check
           python tools/schema/check_upstream.py
       - name: Upload reports
         if: failure()

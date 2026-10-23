@@ -516,15 +516,15 @@ def main() -> None:
     """Write a reviewable report, never a registry or generated component file."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inventory", type=Path, default=DUMP_DIR)
-    parser.add_argument("--schema", type=Path, default=Path("schema/components.json"))
+    parser.add_argument("--schema", type=Path, default=Path("schema/catalog.lock.json"))
     parser.add_argument("--out", type=Path)
     parser.add_argument("--fail-on-blocked", action="store_true")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[2]
     protected = {
         args.schema.resolve(),
-        (root / "schema/components.json").resolve(),
-        (root / "pycompose/schema/components.json").resolve(),
+        (root / "schema/catalog.lock.json").resolve(),
+        (root / "pycompose/schema/catalog.lock.json").resolve(),
     }
     if args.out and args.out.resolve() in protected:
         parser.error("a proposal cannot overwrite an approved schema")

@@ -25,7 +25,8 @@ codegen:
 
 codegen-check:
 	python tools/schema/gen.py --check
-	cd android && ./gradlew dumpComposeDefaults
+	cd android && ./gradlew dumpComposeApi dumpComposeDefaults
+	python -m tools.composegen generate --check
 	python tools/schema/check_upstream.py
 
 test:

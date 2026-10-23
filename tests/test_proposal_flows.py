@@ -23,7 +23,7 @@ def test_generated_native_calls_render_defaults_slots_and_events(
     from tools.schema.components import propose_components
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
-    schema = Path("schema/components.json")
+    schema = Path("schema/catalog.lock.json")
     original = schema.read_bytes()
     report = propose_components(
         inventory(DUMP), source_defaults(DUMP), json.loads(original)
@@ -134,7 +134,7 @@ def test_generated_native_calls_render_defaults_slots_and_events(
 def test_cli_refuses_to_overwrite_the_approved_schema(tmp_path):
     import sys
 
-    schema = Path("schema/components.json")
+    schema = Path("schema/catalog.lock.json")
     original = schema.read_bytes()
     linked = tmp_path / "linked.json"
     linked.symlink_to(schema.resolve())

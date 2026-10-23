@@ -24,7 +24,7 @@ import pytest
 
 from pycompose.schema.codegen.adapters import render
 
-SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
+SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 
 STATEFUL = "ModalNavigationDrawer"
 

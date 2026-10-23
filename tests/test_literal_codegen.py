@@ -1,7 +1,7 @@
 """Token annotations generated from the manifest's committed enums (plan 18.5).
 
 The property is IDE-level: an enum-constrained prop autocompletes its token
-scale because the annotation is generated from the same ``components.json``
+scale because the annotation is generated from the same the catalog lock
 enum the validator enforces -- one source, not a stub beside it.
 """
 

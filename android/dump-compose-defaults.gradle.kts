@@ -58,7 +58,7 @@ tasks.register("dumpComposeDefaults") {
     group = "build"
     description = "Resolve pinned source defaults as typed, non-executable evidence."
     dependsOn("dumpComposeApi")
-    val schema = rootProject.file("../schema/components.json")
+    val schema = rootProject.file("../schema/catalog.lock.json")
     val tools =
         rootProject
             .file("tools")

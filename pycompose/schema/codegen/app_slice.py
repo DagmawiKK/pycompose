@@ -103,7 +103,7 @@ def discover(app: Path, catalog: dict[str, Any]) -> set[str]:
 
     Args:
         app: The app's root directory.
-        catalog: Every component entry from ``components.json``.
+        catalog: Every component entry from the catalog lock.
 
     Returns:
         The referenced component names.
@@ -210,7 +210,7 @@ def slice_registry(
 
 
 def load_catalog(path: Path) -> dict[str, Any]:
-    """Read ``components.json``.
+    """Read the catalog lock.
 
     Args:
         path: The schema file.

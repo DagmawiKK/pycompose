@@ -12,10 +12,10 @@ from typing import Any, NoReturn
 
 ROOT = Path(__file__).resolve().parents[3]
 
-PACKAGED_CATALOG = ROOT / "pycompose" / "schema" / "components.json"
+PACKAGED_CATALOG = ROOT / "pycompose" / "schema" / "catalog.lock.json"
 """The catalog as shipped in the wheel, for an app with no repo checkout."""
 
-SCHEMA_PATH = ROOT / "schema/components.json"
+SCHEMA_PATH = ROOT / "schema/catalog.lock.json"
 if not SCHEMA_PATH.is_file():
     # An installed wheel has no repository above it.
     SCHEMA_PATH = PACKAGED_CATALOG
@@ -80,7 +80,7 @@ def die(message: str) -> NoReturn:
 
 
 def load_registry() -> dict[str, Any]:
-    """Read and structurally validate ``schema/components.json``."""
+    """Read and structurally validate ``schema/catalog.lock.json``."""
     try:
         raw = SCHEMA_PATH.read_text(encoding="utf-8")
     except OSError as exc:
@@ -128,7 +128,7 @@ def with_rules(registry: dict[str, Any]) -> dict[str, Any]:
 def _validate_registry(registry: dict[str, Any]) -> None:
     for key in REGISTRY_KEYS:
         if key not in registry:
-            die(f"missing top-level key {key!r} in components.json")
+            die(f"missing top-level key {key!r} in the catalog lock")
     if not isinstance(registry["schemaVersion"], str):
         die("schemaVersion must be a string")
     require_semver(registry["schemaVersion"], "schemaVersion")

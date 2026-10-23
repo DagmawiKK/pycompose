@@ -1,4 +1,4 @@
-"""Per-app and library codegen from ``schema/components.json``.
+"""Per-app and library codegen from ``schema/catalog.lock.json``.
 
     python -m pycompose.schema.codegen            # the library's artifacts
     python -m pycompose.schema.codegen --app DIR  # only what DIR uses

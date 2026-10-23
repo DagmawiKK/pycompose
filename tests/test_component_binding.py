@@ -359,7 +359,7 @@ def test_every_approved_component_resolves_to_one_pinned_overload(
     from tools.schema.component_binding import resolutions
 
     assert native_document["artifacts"]
-    catalog = json.loads((ROOT / "schema/components.json").read_text())
+    catalog = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     results = resolutions(catalog, inventory(DUMP))
     assert Counter(result.mode for result in results) == {
         "derived": 30,
@@ -382,7 +382,7 @@ def test_the_resolved_face_is_the_generated_call(native_document) -> None:
     from tools.schema.component_binding import resolutions
 
     assert native_document["artifacts"]
-    catalog = json.loads((ROOT / "schema/components.json").read_text())
+    catalog = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     checked = 0
     for result in resolutions(catalog, inventory(DUMP)):
         entry = catalog["components"][result.name]
@@ -402,5 +402,5 @@ def test_the_checker_is_green_on_the_approved_catalog(native_document) -> None:
     from tools.schema.classpath_dump import inventory
 
     assert native_document["artifacts"]
-    catalog = json.loads((ROOT / "schema/components.json").read_text())
+    catalog = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     assert compare(catalog, inventory(DUMP)) == []

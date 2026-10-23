@@ -58,7 +58,7 @@ repos:
         name: Registry codegen --check
         language: system
         entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/schema/gen.py --check; fi; exec python tools/schema/gen.py --check'
-        files: ^(schema/components\.json|tools/schema/|pycompose/m3/|pycompose/ir/generated_|pycompose/bridge/generated_|android/ir/src/main/kotlin/com/pycompose/ir/generated/|pycompose/templates/android/ir/src/main/kotlin/com/pycompose/ir/generated/)
+        files: ^(schema/catalog\.lock\.json|tools/schema/|pycompose/m3/|pycompose/ir/generated_|pycompose/bridge/generated_|android/ir/src/main/kotlin/com/pycompose/ir/generated/|pycompose/templates/android/ir/src/main/kotlin/com/pycompose/ir/generated/)
         pass_filenames: false
       - id: template-check
         name: Native template drift check

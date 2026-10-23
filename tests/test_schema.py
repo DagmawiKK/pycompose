@@ -11,7 +11,7 @@ import jsonschema
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-COMPONENTS_PATH = ROOT / "schema" / "components.json"
+COMPONENTS_PATH = ROOT / "schema" / "catalog.lock.json"
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
 VALIDATORS_PATH = ROOT / "pycompose" / "ir" / "generated_validators.py"
 PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"

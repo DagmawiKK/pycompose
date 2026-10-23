@@ -40,7 +40,7 @@ include = ["pycompose*"]
 exclude = ["pycompose.templates*"]
 
 [tool.setuptools.package-data]
-pycompose = ["py.typed", "schema/components.json", "schema/ir.schema.json", "integrations/definitions/*.toml", "testing/fixtures/*.json", "templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep"]
+pycompose = ["py.typed", "schema/catalog.lock.json", "schema/ir.schema.json", "integrations/definitions/*.toml", "testing/fixtures/*.json", "templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pycompose.version.__version__" }

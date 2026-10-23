@@ -15,7 +15,7 @@ def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     evidence = source_defaults(DUMP)
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     results = refresh(found, evidence, registry)
     derived = [item for item in results if "proposal" in item]
     # Every approved binding carrying an artifact source is re-derived, not
@@ -342,7 +342,7 @@ def test_a_language_level_family_is_reviewed_not_re_derived(native_document) -> 
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     evidence = source_defaults(DUMP)
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["valueTypes"]["Range"] = json.loads(json.dumps(RANGE_FAMILY))
     results = refresh(found, evidence, registry)
     assert "Range" not in {item["name"] for item in results}

@@ -25,7 +25,7 @@ from pycompose.schema.codegen.adapters import (
     render_file,
 )
 
-SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
+SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 GENERATED = (
     Path(__file__).resolve().parent.parent
     / "android/host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
@@ -49,7 +49,7 @@ def components() -> dict[str, Any]:
     """Return the schema's component entries, keyed by name.
 
     Returns:
-        Every component entry in ``components.json``.
+        Every component entry in the catalog lock.
     """
     return json.loads(SCHEMA_PATH.read_text())["components"]
 

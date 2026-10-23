@@ -287,7 +287,7 @@ def main(argv: list[str] | None = None) -> int:
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--directory", type=Path, default=DUMP_DIR)
-    parser.add_argument("--schema", type=Path, default=Path("schema/components.json"))
+    parser.add_argument("--schema", type=Path, default=Path("schema/catalog.lock.json"))
     parser.add_argument(
         "--summary", action="store_true", help="print one line per component"
     )

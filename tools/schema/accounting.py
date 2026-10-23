@@ -378,7 +378,7 @@ def main(argv: list[str] | None = None) -> int:
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inventory", type=Path, default=DUMP_DIR)
-    parser.add_argument("--schema", type=Path, default=Path("schema/components.json"))
+    parser.add_argument("--schema", type=Path, default=Path("schema/catalog.lock.json"))
     parser.add_argument("--out", type=Path)
     parser.add_argument("--strict", action="store_true")
     parser.add_argument("--summary", action="store_true")
@@ -386,8 +386,8 @@ def main(argv: list[str] | None = None) -> int:
     root = Path(__file__).resolve().parents[2]
     protected = {
         args.schema.resolve(),
-        (root / "schema/components.json").resolve(),
-        (root / "pycompose/schema/components.json").resolve(),
+        (root / "schema/catalog.lock.json").resolve(),
+        (root / "pycompose/schema/catalog.lock.json").resolve(),
     }
     if args.out and args.out.resolve() in protected:
         parser.error("an account cannot overwrite an approved schema")
