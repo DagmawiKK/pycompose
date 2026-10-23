@@ -58,6 +58,8 @@ def test_the_lock_is_what_the_compiler_produces_from_the_pin() -> None:
     assert report.errors == []
     assert report.redundant == []
     assert LOCK.read_text(encoding="utf-8") == dumps(lock)
+    # Determinism: a second clean run is byte-identical.
+    assert dumps(generate(load())[0]) == dumps(lock)
 
 
 def _type(classifier: str, *arguments: KotlinType, **flags: object) -> KotlinType:
