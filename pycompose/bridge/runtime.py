@@ -15,6 +15,7 @@ from uuid import uuid4
 
 from pycompose import async_task
 from pycompose.bridge.api import BridgeSurface
+from pycompose.bridge.handshake import answer
 from pycompose.core.context import AppContext, carried, context
 from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
@@ -238,6 +239,18 @@ def _user_modules(directory: Path) -> dict[str, ModuleType]:
 
 
 _session: RuntimeSession | None = None
+
+
+def handshake(offer: str) -> str:
+    """Answer the host's handshake before any session starts.
+
+    Args:
+        offer: The host's protocol and offered capabilities, as JSON.
+
+    Returns:
+        This side's protocol and offered capabilities, as JSON.
+    """
+    return answer(offer)
 
 
 def start(

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Looper
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import com.pycompose.ir.Handshake
 
 /** No PyObject is retained by Kotlin. Module calls and results stay on the worker. */
 class ChaquopyBridge(
@@ -28,6 +29,14 @@ class ChaquopyBridge(
         synchronized(startLock) {
             if (!Python.isStarted()) Python.start(AndroidPlatform(application))
         }
+        // Each side checks the other speaks its protocol before any session exists.
+        Handshake.accept(
+            Python
+                .getInstance()
+                .getModule(MODULE)
+                .callAttr("handshake", Handshake.offer())
+                .toString(),
+        )
         sessionId =
             Python
                 .getInstance()
