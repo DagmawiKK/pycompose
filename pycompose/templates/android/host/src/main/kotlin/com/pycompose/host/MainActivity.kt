@@ -75,9 +75,9 @@ class MainActivity : ComponentActivity() {
                         BuiltinComponents.registry(resources),
                         ActionDispatcher(model::dispatch),
                         BuildConfig.DEBUG,
-                    ) {
-                        Log.w("PyCompose", it)
-                    }
+                        report = { Log.w("PyCompose", it) },
+                        windows = model::requestWindow,
+                    )
                 }
             DisposableEffect(model, LocalConfiguration.current) {
                 reportConfiguration()

@@ -162,6 +162,8 @@ class PyComposeViewModel(
                     Lifecycle.check("onRouteChanged", command.action.payload)
                     bridge.acceptAction(command.action.toJson())
                 }
+                is Command.Window ->
+                    bridge.requestWindow(stream.surface, command.key, command.first, command.last)
                 is Command.Push -> {
                     // A background result, delivered exactly as a tap would
                     // be: the payload is the app's, and its handler's
@@ -189,6 +191,15 @@ class PyComposeViewModel(
         // Stamped with what was on screen when the user acted, not when it is processed.
         val shown = mutableSnapshot.value?.serial?.takeIf { it != SnapshotStream.NONE }
         enqueue(Command.Dispatch(action.copy(serial = shown)))
+    }
+
+    /** Ask Python for items [first] to [last] of the lazy list keyed [key]. */
+    fun requestWindow(
+        key: String,
+        first: Int,
+        last: Int,
+    ) {
+        enqueue(Command.Window(key, first, last))
     }
 
     fun reload() {

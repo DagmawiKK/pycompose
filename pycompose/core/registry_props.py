@@ -75,6 +75,9 @@ class PropDef:
         provider: Set when the prop reaches a native zero-arg lambda parameter.
             The app states a value; the host supplies the function, so the
             parameter stays something the app cannot name (ADR-0016).
+        protocol: The protocol mechanism a prop belongs to, such as
+            ``window``, for a prop no native parameter receives and no app
+            states directly.
     """
 
     type: str
@@ -95,6 +98,7 @@ class PropDef:
     fallback: str | None = None
     nullable: bool = False
     provider: ProviderDef | None = None
+    protocol: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "values", tuple(self.values))
@@ -195,6 +199,7 @@ class PropDef:
                 if isinstance(raw_provider, Mapping)
                 else None
             ),
+            protocol=cast("str | None", data.get("protocol")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -213,6 +218,7 @@ class PropDef:
                     "nativeType": self.native_type,
                     "fallback": self.fallback,
                     "nullable": True if self.nullable else None,
+                    "protocol": self.protocol,
                 }.items()
                 if value is not None
             }

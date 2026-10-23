@@ -85,6 +85,19 @@ class ChaquopyBridge(
             .toString()
     }
 
+    override fun requestWindow(
+        surface: String,
+        key: String,
+        first: Int,
+        last: Int,
+    ) {
+        requireWorker()
+        Python
+            .getInstance()
+            .getModule(MODULE)
+            .callAttr("request_window", surface, key, first, last)
+    }
+
     override fun fetchLatestError(): String {
         requireWorker()
         return Python

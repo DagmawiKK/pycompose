@@ -110,14 +110,18 @@ def test_a_consumed_scope_is_applied_by_the_adapter() -> None:
     assert "androidx.compose.ui.Modifier" in extra_imports(entry)
 
 
-def test_a_lazy_slot_lists_children_as_keyed_items() -> None:
-    """LazyColumn's content is a lazy scope; keys keep state across recomposition."""
+def test_a_lazy_slot_lists_children_as_a_keyed_window() -> None:
+    """LazyColumn's content is a window of keyed items the host asks for."""
     from pycompose.schema.codegen.adapters import extra_imports
 
     entry = components()["LazyColumn"]
     block = render("LazyColumn", entry)
-    assert "content = { items(model.children.unslotted(), key = { it.id })" in block
-    assert "androidx.compose.foundation.lazy.items" in extra_imports(entry)
+    assert (
+        "content = { windowedItems(context, model.children.unslotted(), "
+        "model.props.itemCount, model.props.itemOffset) }"
+    ) in block
+    assert "context.RequestWindows(stateValue, model.props.window" in block
+    assert "com.pycompose.renderer.windowedItems" in extra_imports(entry)
     # An extension resolves only where it is imported.
     assert "com.pycompose.renderer.unslotted" in extra_imports(entry)
 

@@ -14,6 +14,7 @@ from pycompose.core.action_binding import BindingSpec
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.core.ids import Handles
 from pycompose.core.reuse import Reuse
+from pycompose.core.windows import windows
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
@@ -87,6 +88,8 @@ class BridgeSurface:
         self._bindings: dict[str, BindingSpec] = {}
         # The latest report sequence number answered, per action (plan 31 §17).
         self._echoes: dict[str, int] = {}
+        # The window the host last asked for, per lazy container key.
+        self._windows: dict[str, tuple[int, int]] = {}
         self._deliveries = Dispatcher()
         # Debug re-expands a sample of reused composables to catch impure ones,
         # and names nodes by readable paths; release names them compactly.
@@ -127,7 +130,8 @@ class BridgeSurface:
         self, state: State
     ) -> tuple[IRRoot, str, dict[str, BindingSpec]] | None:
         echoes = self._echoes if at_least(self._schema_version, ECHOES_SCHEMA) else None
-        emitted = emit_ir(state, self._schema_version, self._reuse, echoes=echoes)
+        with windows(self._windows):
+            emitted = emit_ir(state, self._schema_version, self._reuse, echoes=echoes)
         if self._debug:
             for reason in self._reuse.expansion.reasons:
                 LOGGER.debug("Rebuilt %s", reason)
@@ -287,6 +291,33 @@ class BridgeSurface:
         if action_id in REGISTRY.lifecycle or action_id in REGISTRY.actions:
             return self._actions.declared(action_id, payload)
         return payload
+
+    def request_window(
+        self, key: str, first: int, last: int, surface: str = MAIN_SURFACE
+    ) -> None:
+        """Compose the window of a lazy container the host now shows.
+
+        Args:
+            key: The container's window key, as its snapshot stated it.
+            first: The first item index wanted.
+            last: The last item index wanted.
+            surface: The surface showing the container.
+        """
+        try:
+            self._require_idle_worker()
+        except BridgeError as exc:
+            self._report("Window ignored: worker contract violation", exc)
+            return
+        if surface != MAIN_SURFACE or first < 0 or last < first:
+            self._report("Window ignored", BridgeError("invalid window", key=key))
+            return
+        if self._windows.get(key) == (first, last):
+            return
+        self._windows[key] = (first, last)
+        try:
+            self._publish_state(self._store.value)
+        except Exception as exc:
+            self._report("Window unavailable", exc)
 
     def expose_latest_snapshot(self) -> str | None:
         """Return the latest canonical snapshot without consuming it.

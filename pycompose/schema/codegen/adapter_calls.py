@@ -426,8 +426,14 @@ def _slot_body(
     Returns:
         The lambda body, then its parameter name when the slot consumes a scope.
     """
-    if kind == "items":
-        listed = f"{nodes}.unslotted()" if name is None else f'{nodes}.inSlot("{name}")'
+    if kind == "items" and name is None:
+        # The primary children may be a window of a longer list (ADR-0043).
+        read = (
+            f"windowedItems(context, {nodes}.unslotted(), "
+            "model.props.itemCount, model.props.itemOffset)"
+        )
+    elif kind == "items":
+        listed = f'{nodes}.inSlot("{name}")'
         read = f"items({listed}, key = {{ it.id }}) {{ context.node(it) }}"
     elif name is None:
         read = (

@@ -26,6 +26,13 @@ internal sealed interface Command {
         val route: String,
     ) : Command
 
+    /** The window of a lazy list the host now shows; a newer one supersedes it. */
+    data class Window(
+        val key: String,
+        val first: Int,
+        val last: Int,
+    ) : Command
+
     /** A background result, queued from whatever thread produced it. */
     data class Push(
         val action: Action,
@@ -44,31 +51,30 @@ internal sealed interface Command {
 }
 
 /**
- * Drop each settled report a newer report to the same action supersedes.
+ * Drop each queued command a newer one of the same kind supersedes.
  *
- * A report carries the holder's whole settled value, so the newest says everything an
- * older one still queued would have, and the app's echo of its number answers both.
+ * A settled report carries the holder's whole value, so the newest to an action says
+ * everything an older one would have, and the app's echo of its number answers both. A
+ * window request names everything the list wants, so the newest per list stands alone.
  */
 internal fun coalesce(batch: List<Queued>): List<Queued> {
-    val reports =
-        batch.map {
-            (it.command as? Command.Dispatch)?.action?.takeIf { action ->
-                action.seq !=
-                    null
-            }
-        }
-    val latest =
-        reports
-            .withIndex()
-            .mapNotNull { (index, action) ->
-                action?.let {
-                    it.actionId to
-                        index
-                }
-            }.toMap()
+    val kinds = batch.map { supersedes(it.command) }
+    val latest = kinds.withIndex().mapNotNull { (index, kind) -> kind?.let { it to index } }.toMap()
     return batch.filterIndexed { index, queued ->
-        val superseded = reports[index]?.let { latest[it.actionId] != index } ?: false
+        val superseded = kinds[index]?.let { latest[it] != index } ?: false
         if (superseded) ActionTrace.end(queued.cookie)
         !superseded
     }
 }
+
+/** What a newer command must share with [command] to supersede it, or null for none. */
+private fun supersedes(command: Command): String? =
+    when (command) {
+        is Command.Dispatch ->
+            command.action
+                .takeIf {
+                    it.seq != null
+                }?.let { "report:${it.actionId}" }
+        is Command.Window -> "window:${command.key}"
+        else -> null
+    }

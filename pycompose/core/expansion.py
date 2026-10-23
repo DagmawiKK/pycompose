@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Collection, Iterator, Mapping
+from contextvars import ContextVar
 from dataclasses import dataclass, field
-from typing import NamedTuple
+from typing import ClassVar, NamedTuple
 
 from pycompose.core.ids import sibling_keys
 from pycompose.core.node import Node
@@ -16,10 +17,25 @@ Reads = tuple[tuple[str, str, object], ...]
 """Fields a build read: (argument, field, value), all of them tracked arguments."""
 
 
+_building: ContextVar[str] = ContextVar("building", default="")
+"""The path of the composable instance whose declaration is being built."""
+
+
+def building_path() -> str:
+    """Return the instance path a declaration is being built under.
+
+    Returns:
+        The enclosing composable instances' keys, dotted; empty at the root.
+    """
+    return _building.get()
+
+
 class DeferredNode(Node, ABC):
     """Python-only declaration; never valid IR or a native registry entry."""
 
     __slots__ = ()
+    memoized: ClassVar[bool] = True
+    """False for a declaration whose output depends on more than its inputs."""
 
     @property
     @abstractmethod
@@ -253,8 +269,12 @@ class _Expansion:
         self.definitions.add(node.recursion_key)
         self.context.append(f"{node.id}: {node.source}")
         try:
-            with recording() as reads:
-                built = node.build()
+            token = _building.set(frame.prefix)
+            try:
+                with recording() as reads:
+                    built = node.build()
+            finally:
+                _building.reset(token)
             frame.reads = _reads_of(node, reads, built)
             return built
         except Exception as exc:
@@ -278,7 +298,7 @@ class _Expansion:
                 for child in frame.children
             )
             frame.output.extend(produced)
-            if memo is not None:
+            if memo is not None and node.memoized:
                 memo._store(_memo_key(frame), node, produced, frame.reads)
             return
         identity = f"{frame.prefix}.{node.id}" if frame.prefix and node.id else node.id
@@ -365,7 +385,11 @@ def expand_nodes(root: Node, memo: ExpansionMemo | None = None) -> Node:
         if not entering:
             expansion.finish(frame, memo)
             continue
-        if memo is not None and isinstance(frame.node, DeferredNode):
+        if (
+            memo is not None
+            and isinstance(frame.node, DeferredNode)
+            and frame.node.memoized
+        ):
             reused = memo._lookup(_memo_key(frame), frame.node)
             if reused is not None:
                 frame.output.extend(reused)

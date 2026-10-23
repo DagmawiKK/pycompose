@@ -33,7 +33,9 @@ PROP_TYPE_VOCABULARY = {
 
 
 def _registry() -> dict:
-    return json.loads(COMPONENTS_PATH.read_text(encoding="utf-8"))
+    from pycompose.schema.codegen.rules import with_rules
+
+    return with_rules(json.loads(COMPONENTS_PATH.read_text(encoding="utf-8")))
 
 
 def _gen() -> object:

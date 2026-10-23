@@ -117,7 +117,7 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
         # callable only where it is imported.
         qualified.update(
             {
-                "androidx.compose.foundation.lazy.items",
+                "com.pycompose.renderer.windowedItems",
                 "com.pycompose.renderer.unslotted",
             }
         )
@@ -292,6 +292,15 @@ def _host_locals(entry: dict[str, Any], out: _Fragments) -> str | None:
         local, arguments, gate = _state(state, entry.get("props", {}))
         out.locals.append(local)
         out.arguments.extend(arguments)
+        if (
+            state["kind"] == "lazyList"
+            and entry.get("children", {}).get("kind") == "items"
+        ):
+            # The list asks for the window it shows as the user scrolls.
+            out.locals.append(
+                f"context.RequestWindows({state['native']}Value, model.props.window, "
+                "model.props.itemOffset, model.children.unslotted().size)"
+            )
         attach = STATE_ATTACH_GATES.get(state["kind"])
         if attach is not None:
             # The holder rides the modifier: the component's first argument is
@@ -358,10 +367,10 @@ def render(name: str, entry: dict[str, Any]) -> str:
     if not _resolve_constructor(state, entry.get("props", {}), out):
         return ""
     for prop, spec in entry.get("props", {}).items():
-        if prop in observed or prop in held:
+        if "protocol" in spec or prop in observed or prop in held:
             # The host fills the source or the state holder; an observed prop
-            # reports state and a held prop carries the app's desired state,
-            # but neither names a native parameter of its own.
+            # reports state, a held prop carries the app's desired state, and a
+            # protocol prop steers the host itself: none names a native parameter.
             continue
         if not _render_prop(prop, spec, out):
             return ""

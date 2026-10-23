@@ -52,18 +52,24 @@ def list_screen(*, notes: list[Note], session: Session) -> Node:
     """
     theme = Theme.of(session)
     listed = carrying_text(notes) if session.listing == TEXT_FILTER else notes
-    rows: list[Node] = [
-        note_row(id=f"row_{note.id}", note=note, previews=session.previews, theme=theme)
-        for note in listed
-    ]
-    if not rows:
-        rows = [
-            Text(
-                text="No notes yet." if not notes else "No notes with text yet.",
-                style="bodyMedium",
-                color=theme.muted,
-            )
-        ]
+    # The list is data: the host asks for the window it shows, so a thousand
+    # notes cost what is on screen.
+    body: Node = (
+        LazyColumn(
+            items=listed,
+            key=lambda note: f"row_{note.id}",
+            item=lambda note: note_row(
+                note=note, previews=session.previews, theme=theme
+            ),
+            modifier=Modifier().fill_max_width(),
+        )
+        if listed
+        else Text(
+            text="No notes yet." if not notes else "No notes with text yet.",
+            style="bodyMedium",
+            color=theme.muted,
+        )
+    )
     return Scaffold(
         container_color=theme.background,
         floating_action_button=[new_note_button(theme=theme)],
@@ -82,7 +88,7 @@ def list_screen(*, notes: list[Note], session: Session) -> Node:
                 Spacer(modifier=Modifier().size(8)),
                 HorizontalDivider(thickness=1, color=theme.muted),
                 Spacer(modifier=Modifier().size(12)),
-                LazyColumn(items=rows, modifier=Modifier().fill_max_width()),
+                body,
                 about_sheet(session=session, theme=theme, notes=notes),
             ],
         ),

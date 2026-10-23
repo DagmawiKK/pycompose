@@ -28,6 +28,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from pycompose.schema.codegen.rules import with_rules
+
 APP_PACKAGE = "m3"
 """The app-side generated package, mirroring ``pycompose.m3``."""
 
@@ -220,6 +222,6 @@ def load_catalog(path: Path) -> dict[str, Any]:
         AppCodegenError: If the file is not valid JSON.
     """
     try:
-        return json.loads(path.read_text(encoding="utf-8"))  # type: ignore[no-any-return]
+        return with_rules(json.loads(path.read_text(encoding="utf-8")))
     except json.JSONDecodeError as exc:
         raise AppCodegenError(f"invalid JSON in {path}: {exc}") from exc

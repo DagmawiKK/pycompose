@@ -4,7 +4,8 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from collections.abc import Callable, Sequence
+from typing import Any, Literal, cast
 
 from pycompose.components.base import ActionTarget, Component, PropValue
 from pycompose.components.modifiers import Modifier
@@ -653,7 +654,9 @@ class LazyColumn(Component):
         on_scroll_idle: ActionTarget | None = None,
         vertical_arrangement: _LazyColumnVerticalArrangement | None = None,
         children: Content = (),
-        items: Content | None = None,
+        items: Content | Sequence[Any] | None = None,
+        key: Callable[[Any], str | int] | None = None,
+        item: Callable[[Any], Node] | None = None,
     ) -> None:
         """Construct a registered LazyColumn.
 
@@ -665,7 +668,10 @@ class LazyColumn(Component):
             on_scroll_idle: Native onScrollIdle; None uses its default.
             vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
-            items: Alternative spelling for items children.
+            items: The children, or with item the data whose window the host
+                composes.
+            key: Each item's stable key, required with item.
+            item: Builds one item's node; the host asks for which.
 
         Raises:
             IrValidationError: If children are given twice.
@@ -677,12 +683,14 @@ class LazyColumn(Component):
             props["on_scroll_idle"] = on_scroll_idle
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
+        if key is not None or item is not None:
+            raise IrValidationError("key= needs item=", node_id=id)
         if items is not None:
             if children:
                 raise IrValidationError(
                     "cannot supply both slot and children", node_id=id
                 )
-            children = content_nodes(items, key="items")
+            children = content_nodes(cast(Content, items), key="items")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id

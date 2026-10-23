@@ -219,3 +219,20 @@ class Node:
             object.__setattr__(marked, name, getattr(self, name))
         object.__setattr__(marked, "slot", slot)
         return marked
+
+    def with_id(self, node_id: str) -> Node:
+        """Return this node keyed by ``node_id``, keeping its concrete class.
+
+        Args:
+            node_id: The sibling key it takes.
+
+        Returns:
+            A node equal to this one apart from its id.
+        """
+        if node_id == self.id:
+            return self
+        keyed = object.__new__(type(self))
+        for name in _slot_names(type(self)):
+            object.__setattr__(keyed, name, getattr(self, name))
+        object.__setattr__(keyed, "id", node_id)
+        return keyed

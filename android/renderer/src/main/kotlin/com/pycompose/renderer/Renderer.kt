@@ -81,6 +81,37 @@ class RenderContext internal constructor(
         renderer.report(message)
     }
 
+    /**
+     * Ask the app to compose items [first] to [last] of the lazy list keyed [window].
+     *
+     * @param window The list's window key, as its snapshot stated it.
+     * @param first The first item index wanted.
+     * @param last The last item index wanted.
+     */
+    fun requestWindow(
+        window: String,
+        first: Int,
+        last: Int,
+    ) {
+        renderer.windows(window, first, last)
+    }
+
+    /**
+     * Ask the app for the window of a lazy list as the user scrolls it (ADR-0043).
+     *
+     * @param state The list's native state, which knows what is visible.
+     * @param window The list's window key, or null for a list stated whole.
+     * @param offset The index of the first item the app composed.
+     * @param size How many items the app composed.
+     */
+    @Composable
+    fun RequestWindows(
+        state: androidx.compose.foundation.lazy.LazyListState,
+        window: String?,
+        offset: Long?,
+        size: Int,
+    ) = requestWindows(state, window, offset, size)
+
     fun event(
         actionId: String,
         value: JsonPrimitive,
@@ -314,6 +345,7 @@ class Renderer(
     private val registry: ComponentRegistry,
     private val actions: ActionDispatcher,
     private val debug: Boolean = false,
+    internal val windows: (String, Int, Int) -> Unit = { _, _, _ -> },
     internal val report: (String) -> Unit = {},
 ) {
     private val modifiers = ModifierBuilder(actions)

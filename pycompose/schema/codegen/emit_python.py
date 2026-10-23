@@ -148,7 +148,8 @@ def render_python_components(
         "",
         "from __future__ import annotations",
         "",
-        "from typing import Literal",
+        "from collections.abc import Callable, Sequence",
+        "from typing import Any, Literal, cast",
         "",
         "from pycompose.components.base import ActionTarget, Component, PropValue",
         "from pycompose.components.modifiers import Modifier",
@@ -287,7 +288,7 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
     lines.extend(['        """', "        props: dict[str, PropValue] = {}"])
     for field, prop in sorted(props.items()):
         python_name = _python_prop(field)
-        if field == "modifier":
+        if field == "modifier" or "protocol" in prop:
             continue
         if not prop.get("required", False):
             absent = "UNSET" if prop.get("nullable") else "None"
@@ -304,7 +305,17 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
             )
         else:
             lines.append(f'        props["{python_name}"] = {python_name}')
+    if spec["children"]["allowed"] and alias == "items":
+        # With item, construction becomes a windowed declaration before this
+        # runs (Component.__new__), so a key here is one given without it.
+        lines.extend(
+            [
+                "        if key is not None or item is not None:",
+                '            raise IrValidationError("key= needs item=", node_id=id)',
+            ]
+        )
     if spec["children"]["allowed"] and alias in {"content", "items"}:
+        source = "cast(Content, items)" if alias == "items" else alias
         lines.extend(
             [
                 f"        if {alias} is not None:",
@@ -313,7 +324,7 @@ def _python_constructor(name: str, spec: dict[str, Any]) -> list[str]:
                 '                    "cannot supply both slot and children", '
                 "node_id=id",
                 "                )",
-                f'            children = content_nodes({alias}, key="{alias}")',
+                f'            children = content_nodes({source}, key="{alias}")',
             ]
         )
     children = "()"
@@ -357,6 +368,8 @@ def _python_signature(
     lines: list[str] = []
     arguments = {"id": "Stable instance key; None derives the node's path id."}
     for field, prop in sorted(spec["props"].items()):
+        if "protocol" in prop:
+            continue
         python_name = _python_prop(field)
         annotation, description = _python_argument(name, field, prop)
         lines.append(f"        {python_name}: {annotation},")
@@ -365,9 +378,22 @@ def _python_signature(
     if spec["children"]["allowed"]:
         lines.append("        children: Content = (),")
         arguments["children"] = "Ordered child nodes with stable keys."
-        if alias in {"content", "items"}:
+        if alias == "content":
             lines.append(f"        {alias}: Content | None = None,")
             arguments[alias] = f"Alternative spelling for {alias} children."
+        if alias == "items":
+            lines.extend(
+                [
+                    "        items: Content | Sequence[Any] | None = None,",
+                    "        key: Callable[[Any], str | int] | None = None,",
+                    "        item: Callable[[Any], Node] | None = None,",
+                ]
+            )
+            arguments["items"] = (
+                "The children, or with item the data whose window the host composes."
+            )
+            arguments["key"] = "Each item's stable key, required with item."
+            arguments["item"] = "Builds one item's node; the host asks for which."
     for slot_name, slot in sorted(spec.get("slots", {}).items()):
         slot_arg = _python_prop(slot_name)
         lines.append(f"        {slot_arg}: Content | None = None,")

@@ -1010,9 +1010,12 @@ data class LargeTopAppBar(
 @Serializable
 data class LazyColumnProps(
     val `firstVisibleIndex`: Long? = null,
+    val `itemCount`: Long? = null,
+    val `itemOffset`: Long? = null,
     override val `modifier`: JsonObject? = null,
     val `onScrollIdle`: String? = null,
     val `verticalArrangement`: String = "top",
+    val `window`: String? = null,
 ) : UiProps
 
 @Serializable
@@ -1030,8 +1033,11 @@ data class LazyColumn(
 @Serializable
 data class LazyRowProps(
     val `firstVisibleIndex`: Long? = null,
+    val `itemCount`: Long? = null,
+    val `itemOffset`: Long? = null,
     override val `modifier`: JsonObject? = null,
     val `onScrollIdle`: String? = null,
+    val `window`: String? = null,
 ) : UiProps
 
 @Serializable

@@ -157,6 +157,18 @@ class RuntimeSession:
         self._require_worker()
         return self._surface.expose_envelope(base_serial, surface)
 
+    def window(self, surface: str, key: str, first: int, last: int) -> None:
+        """Compose the window of a lazy container the host now shows.
+
+        Args:
+            surface: The surface showing the container.
+            key: The container's window key.
+            first: The first item index wanted.
+            last: The last item index wanted.
+        """
+        self._require_worker()
+        self._surface.request_window(key, first, last, surface)
+
     def error(self) -> str:
         """Return a debug diagnostic without leaking Python exceptions or objects.
 
@@ -347,6 +359,23 @@ def fetch_latest(surface: str, base_serial: int) -> str:
         The envelope JSON, or an empty string before initialization.
     """
     return _session.envelope(surface, base_serial) if _session is not None else ""
+
+
+def request_window(surface: str, key: str, first: int, last: int) -> None:
+    """Ask the session to compose a window of one lazy container.
+
+    Args:
+        surface: The surface showing the container.
+        key: The container's window key.
+        first: The first item index wanted.
+        last: The last item index wanted.
+
+    Raises:
+        BridgeError: If the host has not initialized the app session.
+    """
+    if _session is None:
+        raise BridgeError("app session not started")
+    _session.window(surface, key, first, last)
 
 
 def fetch_latest_error() -> str:

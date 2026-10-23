@@ -40,6 +40,36 @@ class Component(Node):
     __slots__ = ()
     component_type: ClassVar[str]
 
+    def __new__(cls, *_children: Any, **kwargs: Any) -> Any:
+        """Build a windowed declaration when a lazy container is given ``item``.
+
+        ``LazyColumn(items=notes, key=..., item=...)`` lists data rather than
+        nodes; the host then asks for the window it shows. Everything else
+        constructs the component itself.
+
+        Args:
+            *_children: Positional children, read by ``__init__``.
+            **kwargs: The component's keyword arguments.
+
+        Returns:
+            A :class:`Windowed` declaration, or a new instance of ``cls``.
+        """
+        item = kwargs.pop("item", None)
+        if item is None:
+            return super().__new__(cls)
+        from pycompose.components.windowed import Windowed
+
+        site = call_site(0, _CONSTRUCTORS | {Component.__new__.__code__})
+        return Windowed(
+            cls,
+            site=site,
+            id=kwargs.pop("id", None),
+            items=kwargs.pop("items", ()),
+            key=kwargs.pop("key", None),
+            item=item,
+            **kwargs,
+        )
+
     def __init_subclass__(cls, **kwargs: Any) -> None:
         """Record a subclass's constructor so call sites skip past it.
 

@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Badge
@@ -213,6 +212,7 @@ import com.pycompose.renderer.slotInRowScope
 import com.pycompose.renderer.snackbar
 import com.pycompose.renderer.swipeState
 import com.pycompose.renderer.unslotted
+import com.pycompose.renderer.windowedItems
 import kotlinx.serialization.json.JsonObject
 
 /** Adapters derived mechanically from the schema, for every component whose
@@ -996,20 +996,22 @@ object GeneratedAdapters {
                 val model = node as LazyColumnNode
                 val verticalArrangementValue: androidx.compose.foundation.layout.Arrangement.Vertical = com.pycompose.renderer.PropResolver.arrangement(model.props.verticalArrangement).getOrDefault(androidx.compose.foundation.layout.Arrangement.Top)
                 val stateValue = context.lazyListState(model.props.firstVisibleIndex, model.props.onScrollIdle)
+                context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyColumn(
                     modifier = modifier,
                     verticalArrangement = verticalArrangementValue,
                     state = stateValue,
-                    content = { items(model.children.unslotted(), key = { it.id }) { context.node(it) } },
+                    content = { windowedItems(context, model.children.unslotted(), model.props.itemCount, model.props.itemOffset) },
                 )
             }
             .register("LazyRow") { node, modifier, context ->
                 val model = node as LazyRowNode
                 val stateValue = context.lazyListState(model.props.firstVisibleIndex, model.props.onScrollIdle)
+                context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyRow(
                     modifier = modifier,
                     state = stateValue,
-                    content = { items(model.children.unslotted(), key = { it.id }) { context.node(it) } },
+                    content = { windowedItems(context, model.children.unslotted(), model.props.itemCount, model.props.itemOffset) },
                 )
             }
             .register("LeadingIconTab") { node, modifier, context ->
