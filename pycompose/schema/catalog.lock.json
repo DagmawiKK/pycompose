@@ -2997,6 +2997,18 @@
         "modifier": {
           "type": "modifier"
         },
+        "open": {
+          "type": "boolean"
+        },
+        "onOpenChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "open",
+              "type": "boolean"
+            }
+          ]
+        },
         "value": {
           "type": "enum",
           "values": [
@@ -3020,18 +3032,6 @@
           "type": "boolean",
           "default": false,
           "since": "1.23.0"
-        },
-        "open": {
-          "type": "boolean"
-        },
-        "onOpenChange": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "open",
-              "type": "boolean"
-            }
-          ]
         }
       },
       "children": {
@@ -3046,19 +3046,19 @@
         "report": "onOpenChange",
         "dismiss": "onDismissRequest"
       },
-      "slots": {
-        "dragHandle": {
-          "native": "dragHandle",
-          "nullable": true
-        }
-      },
       "reshaped": [
         "open",
         "onOpenChange",
         "value",
         "onValueChange",
         "skipPartiallyExpanded"
-      ]
+      ],
+      "slots": {
+        "dragHandle": {
+          "native": "dragHandle",
+          "nullable": true
+        }
+      }
     },
     "ModalDrawerSheet": {
       "package": "androidx.compose.material3",
@@ -4941,6 +4941,9 @@
         "modifier": {
           "type": "modifier"
         },
+        "value": {
+          "type": "number"
+        },
         "onValueChangeFinished": {
           "type": "actionId",
           "payload": [
@@ -4950,19 +4953,16 @@
             }
           ]
         },
+        "valueRange": {
+          "type": "value",
+          "valueType": "Range",
+          "required": true
+        },
         "steps": {
           "type": "integer",
           "default": 0,
           "minimum": 0,
           "maximum": 2147483645
-        },
-        "value": {
-          "type": "number"
-        },
-        "valueRange": {
-          "type": "value",
-          "valueType": "Range",
-          "required": true
         }
       },
       "children": {
@@ -5150,6 +5150,18 @@
         "modifier": {
           "type": "modifier"
         },
+        "expanded": {
+          "type": "boolean"
+        },
+        "onExpandedChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "expanded",
+              "type": "boolean"
+            }
+          ]
+        },
         "text": {
           "type": "string",
           "required": true
@@ -5195,18 +5207,6 @@
               "type": "integer"
             }
           ]
-        },
-        "expanded": {
-          "type": "boolean"
-        },
-        "onExpandedChange": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "expanded",
-              "type": "boolean"
-            }
-          ]
         }
       },
       "children": {
@@ -5226,7 +5226,6 @@
         "value": "expanded",
         "report": "onExpandedChange"
       },
-      "adapter": "manual",
       "reshaped": [
         "expanded",
         "onExpandedChange",
@@ -5235,7 +5234,8 @@
         "selectionEnd",
         "revision",
         "onEdit"
-      ]
+      ],
+      "adapter": "manual"
     },
     "StatefulSearchBarInputField": {
       "package": "androidx.compose.material3",

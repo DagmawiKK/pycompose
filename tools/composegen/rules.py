@@ -5,6 +5,9 @@ idiomatic use is one ``Text`` into a string prop; ``observe`` reports the
 press, focus and hover the native interaction source emits. Which components
 take them is a review decision, kept in policy as one word each; which
 parameter, which props and which payloads follow from the pin.
+
+A holder the pin binds always takes its family's projection (state_families);
+``holder: false`` declines a defaulted one the component keeps to itself.
 """
 
 from __future__ import annotations
@@ -13,10 +16,11 @@ import copy
 from typing import Any
 
 from pycompose.core.registry_vocabulary import INTERACTION_KINDS, INTERACTION_REPORTS
+from pycompose.schema.codegen.state_families import STATE_FAMILIES
 from tools.schema.candidate_props import CandidateError
 
 INTERACTION_SOURCE = "androidx/compose/foundation/interaction/MutableInteractionSource"
-SHAPES = frozenset({"flatten", "observe"})
+SHAPES = frozenset({"flatten", "observe", "holder"})
 """Decision keys these rules read."""
 
 
@@ -41,6 +45,11 @@ def reshape(
         invented.extend(_flatten(name, entry, native, plan))
     if decision.get("observe"):
         invented.extend(_observe(name, entry, plan))
+    if decision.get("holder") is False:
+        # A defaulted holder the component keeps to itself: nothing to bind.
+        entry.pop("state", None)
+    elif "state" in entry:
+        invented.extend(_project(entry))
     if invented:
         # Props Compose's signature has no counterpart for, so the drift
         # checker reads them as deliberate.
@@ -72,6 +81,15 @@ def _flatten(
         "content": content,
     }
     return [prop] if prop != native else []
+
+
+def _project(entry: dict[str, Any]) -> list[str]:
+    """Give a bound holder its family's props: desired value, report, held."""
+    family = STATE_FAMILIES[entry["state"]["kind"]]
+    projected = family.props()
+    entry["props"].update(copy.deepcopy(projected))
+    entry["state"].update({"value": family.value[0], "report": family.report})
+    return list(projected)
 
 
 def _observe(name: str, entry: dict[str, Any], plan: dict[str, Any]) -> list[str]:

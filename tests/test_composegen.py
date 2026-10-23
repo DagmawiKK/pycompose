@@ -255,3 +255,54 @@ def test_a_hold_is_stale_only_when_its_own_overload_derives(
     other = {**source, "jvmName": "Other"}
     monkeypatch.setattr(lock, "planned", lambda *_: {"source": other})
     assert not lock._derives("Slider", entry, {}, None, {})
+
+
+def test_a_bound_holder_takes_its_family_projection() -> None:
+    from tools.composegen.rules import reshape
+
+    entry = {"props": {}, "state": {"native": "drawerState", "kind": "drawer"}}
+    shaped = reshape("Drawer", entry, {}, _plan())
+    assert shaped["state"] == {
+        "native": "drawerState",
+        "kind": "drawer",
+        "value": "open",
+        "report": "onOpenChange",
+    }
+    assert shaped["props"]["onOpenChange"] == {
+        "type": "actionId",
+        "payload": [{"name": "open", "type": "boolean"}],
+    }
+    assert shaped["reshaped"] == ["open", "onOpenChange"]
+
+
+def test_a_family_with_held_props_projects_them_after_its_report() -> None:
+    from tools.composegen.rules import reshape
+
+    entry = {"props": {}, "state": {"native": "state", "kind": "slider"}}
+    shaped = reshape("Slider", entry, {}, _plan())
+    assert shaped["reshaped"] == [
+        "value",
+        "onValueChangeFinished",
+        "valueRange",
+        "steps",
+    ]
+    assert shaped["props"]["valueRange"]["valueType"] == "Range"
+
+
+def test_a_declined_holder_is_not_bound() -> None:
+    from tools.composegen.rules import reshape
+
+    entry = {"props": {}, "state": {"native": "scrollState", "kind": "scroll"}}
+    shaped = reshape("DropdownMenu", entry, {"holder": False}, _plan())
+    assert "state" not in shaped
+    assert shaped["props"] == {}
+
+
+def test_codegen_reads_held_props_from_the_families() -> None:
+    from pycompose.schema.codegen.adapter_helpers import STATE_CONSTRUCTOR_PROPS
+    from pycompose.schema.codegen.state_families import STATE_FAMILIES
+
+    assert STATE_CONSTRUCTOR_PROPS["slider"] == ("valueRange", "steps")
+    assert set(STATE_CONSTRUCTOR_PROPS) == {
+        kind for kind, family in STATE_FAMILIES.items() if family.held
+    }

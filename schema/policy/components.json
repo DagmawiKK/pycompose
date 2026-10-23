@@ -327,20 +327,6 @@
     },
     "patch": {
       "since": "1.18.0",
-      "props": {
-        "open": {
-          "type": "boolean"
-        },
-        "onOpenChange": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "open",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
       "children": {
         "kind": "content"
       },
@@ -349,15 +335,7 @@
         "drawer": {
           "native": "drawerContent"
         }
-      },
-      "state": {
-        "value": "open",
-        "report": "onOpenChange"
-      },
-      "reshaped": [
-        "open",
-        "onOpenChange"
-      ]
+      }
     }
   },
   "DockedSearchBar": {
@@ -369,10 +347,8 @@
   "DropdownMenu": {
     "decision": {
       "category": "status",
-      "stability": "stable"
-    },
-    "patch": {
-      "state": null
+      "stability": "stable",
+      "holder": false
     }
   },
   "DropdownMenuItem": {
@@ -415,20 +391,20 @@
   "ExpandedDockedSearchBar": {
     "decision": {
       "category": "input",
-      "stability": "experimental"
+      "stability": "experimental",
+      "holder": false
     },
     "patch": {
-      "state": null,
       "adapter": "manual"
     }
   },
   "ExpandedFullScreenSearchBar": {
     "decision": {
       "category": "input",
-      "stability": "experimental"
+      "stability": "experimental",
+      "holder": false
     },
     "patch": {
-      "state": null,
       "adapter": "manual"
     }
   },
@@ -871,45 +847,16 @@
         "sheetMaxWidth": null,
         "tonalElevation": null,
         "value": {
-          "type": "enum",
-          "values": [
-            "hidden",
-            "partiallyExpanded",
-            "expanded"
-          ],
           "since": "1.23.0"
         },
         "onValueChange": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "value",
-              "type": "string"
-            }
-          ],
           "since": "1.23.0"
         },
         "skipPartiallyExpanded": {
-          "type": "boolean",
-          "default": false,
           "since": "1.23.0"
-        },
-        "open": {
-          "type": "boolean"
-        },
-        "onOpenChange": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "open",
-              "type": "boolean"
-            }
-          ]
         }
       },
       "state": {
-        "value": "open",
-        "report": "onOpenChange",
         "dismiss": "onDismissRequest"
       },
       "slots": {
@@ -917,14 +864,7 @@
           "native": "dragHandle",
           "nullable": true
         }
-      },
-      "reshaped": [
-        "open",
-        "onOpenChange",
-        "value",
-        "onValueChange",
-        "skipPartiallyExpanded"
-      ]
+      }
     }
   },
   "ModalDrawerSheet": {
@@ -945,19 +885,7 @@
     "patch": {
       "since": "1.18.0",
       "props": {
-        "scrimColor": null,
-        "open": {
-          "type": "boolean"
-        },
-        "onOpenChange": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "open",
-              "type": "boolean"
-            }
-          ]
-        }
+        "scrimColor": null
       },
       "children": {
         "kind": "content"
@@ -967,15 +895,7 @@
         "drawer": {
           "native": "drawerContent"
         }
-      },
-      "state": {
-        "value": "open",
-        "report": "onOpenChange"
-      },
-      "reshaped": [
-        "open",
-        "onOpenChange"
-      ]
+      }
     }
   },
   "ModalWideNavigationRail": {
@@ -1119,10 +1039,10 @@
   "PrimaryScrollableTabRow": {
     "decision": {
       "category": "layout",
-      "stability": "stable"
+      "stability": "stable",
+      "holder": false
     },
     "patch": {
-      "state": null,
       "props": {
         "selectedTabIndex": {
           "indexOf": "tabs"
@@ -1464,10 +1384,10 @@
   "SecondaryScrollableTabRow": {
     "decision": {
       "category": "layout",
-      "stability": "stable"
+      "stability": "stable",
+      "holder": false
     },
     "patch": {
-      "state": null,
       "props": {
         "selectedTabIndex": {
           "indexOf": "tabs"
@@ -1517,43 +1437,6 @@
     "decision": {
       "category": "input",
       "stability": "experimental"
-    },
-    "patch": {
-      "props": {
-        "onValueChangeFinished": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "value",
-              "type": "number"
-            }
-          ]
-        },
-        "steps": {
-          "type": "integer",
-          "default": 0,
-          "minimum": 0,
-          "maximum": 2147483645
-        },
-        "value": {
-          "type": "number"
-        },
-        "valueRange": {
-          "type": "value",
-          "valueType": "Range",
-          "required": true
-        }
-      },
-      "state": {
-        "value": "value",
-        "report": "onValueChangeFinished"
-      },
-      "reshaped": [
-        "value",
-        "onValueChangeFinished",
-        "valueRange",
-        "steps"
-      ]
     }
   },
   "Snackbar": {
@@ -1635,85 +1518,12 @@
       "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarKt.SearchBar-nbWgWpA(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
-      "props": {
-        "text": {
-          "type": "string",
-          "required": true
-        },
-        "selectionStart": {
-          "type": "integer",
-          "required": true,
-          "minimum": 0,
-          "maximum": 2147483647,
-          "nativeType": "Int"
-        },
-        "selectionEnd": {
-          "type": "integer",
-          "required": true,
-          "minimum": 0,
-          "maximum": 2147483647,
-          "nativeType": "Int"
-        },
-        "revision": {
-          "type": "integer",
-          "required": true,
-          "minimum": 0,
-          "maximum": 9223372036854775807
-        },
-        "onEdit": {
-          "type": "actionId",
-          "required": true,
-          "payload": [
-            {
-              "name": "text",
-              "type": "string"
-            },
-            {
-              "name": "selectionStart",
-              "type": "integer"
-            },
-            {
-              "name": "selectionEnd",
-              "type": "integer"
-            },
-            {
-              "name": "revision",
-              "type": "integer"
-            }
-          ]
-        },
-        "expanded": {
-          "type": "boolean"
-        },
-        "onExpandedChange": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "expanded",
-              "type": "boolean"
-            }
-          ]
-        }
-      },
       "slots": {
         "expandedBar": {
           "host": true
         }
       },
-      "state": {
-        "value": "expanded",
-        "report": "onExpandedChange"
-      },
-      "adapter": "manual",
-      "reshaped": [
-        "expanded",
-        "onExpandedChange",
-        "text",
-        "selectionStart",
-        "selectionEnd",
-        "revision",
-        "onEdit"
-      ]
+      "adapter": "manual"
     }
   },
   "StatefulSearchBarInputField": {
@@ -1889,35 +1699,6 @@
     "decision": {
       "category": "layout",
       "stability": "stable"
-    },
-    "patch": {
-      "props": {
-        "value": {
-          "type": "enum",
-          "values": [
-            "settled",
-            "startToEnd",
-            "endToStart"
-          ]
-        },
-        "onValueChange": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "value",
-              "type": "string"
-            }
-          ]
-        }
-      },
-      "state": {
-        "value": "value",
-        "report": "onValueChange"
-      },
-      "reshaped": [
-        "value",
-        "onValueChange"
-      ]
     }
   },
   "Switch": {

@@ -10,8 +10,9 @@ keywords tell it from its siblings it joins the primary's Python name
 The name is derived: the first required parameter the primary lacks, else the
 type that differs, else ``Without`` the primary's first required parameter it
 drops. An overload is skipped, with the reason reported, when it does not
-derive, needs a hand-written adapter, adds no call the primary lacks, or
-cannot be told from the primary by name at all.
+derive, needs a hand-written adapter, binds a state holder its primary does
+not, adds no call the primary lacks, or cannot be told from the primary by
+name at all.
 """
 
 from __future__ import annotations
@@ -155,6 +156,10 @@ def _derive(
         return str(exc).split(": ", 1)[-1]
     if not is_mechanical(entry):
         return "needs a hand-written adapter"
+    if "state" in entry and "state" not in components[name]:
+        # A drawer sheet's DrawerState is its drawer's, not one of its own:
+        # which holder an overload shares is a decision, not a keyword.
+        return "binds a state holder its primary does not"
     if entry.get("optIn"):
         entry["stability"] = "experimental"
     required, accepted = keywords(entry)

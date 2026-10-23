@@ -13,6 +13,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose.core.registry_types import CONSUMERS, SCOPES, SLOT_KINDS
+from pycompose.schema.codegen.state_families import STATE_FAMILIES
 
 SCALAR_KOTLIN = {
     "string": "String",
@@ -124,11 +125,7 @@ itself.
 """
 
 STATE_CONSTRUCTOR_PROPS = {
-    "sheet": ("value", "onValueChange", "skipPartiallyExpanded"),
-    "slider": ("valueRange", "steps"),
-    "tooltip": ("isPersistent",),
-    "textInput": ("selectionStart", "selectionEnd", "revision"),
-    "search": ("text", "selectionStart", "selectionEnd", "revision", "onEdit"),
+    kind: tuple(family.held) for kind, family in STATE_FAMILIES.items() if family.held
 }
 """Props each family's holder needs at construction, beyond its primary projection.
 
