@@ -13,7 +13,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose.core.registry_types import CONSUMERS, SLOT_KINDS
-from pycompose.schema.codegen.state_families import STATE_FAMILIES
+from pycompose.schema.codegen.state_families import STATE_FAMILIES, property_props
 
 SCALAR_KOTLIN = {
     "string": "String",
@@ -239,6 +239,8 @@ def _held_props(entry: dict[str, Any]) -> set[str]:
     state = entry.get("state")
     if not isinstance(state, dict):
         return set()
+    if state.get("kind") == "properties":
+        return set(property_props(state))
     held = {
         name for key in ("value", "report") if isinstance(name := state.get(key), str)
     }

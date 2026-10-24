@@ -26,6 +26,7 @@ from pycompose.schema.codegen.adapter_helpers import (
     simple,
     state_call,
 )
+from pycompose.schema.codegen.derived_families import properties_locals
 from pycompose.schema.codegen.values import resolver_call
 
 
@@ -236,8 +237,8 @@ def _interaction(interaction: dict[str, Any]) -> str:
 
 def _state(
     state: dict[str, Any], props: dict[str, Any]
-) -> tuple[str, list[str], str | None]:
-    """Render the local that fetches one component's host-owned state holder.
+) -> tuple[list[str], list[str], str | None]:
+    """Render the locals that fetch one component's host-owned state holder.
 
     The holder is the renderer's, remembered per node id; the desired value and
     the report channel are ordinary props, so the app keeps naming its own
@@ -250,11 +251,13 @@ def _state(
         props: The component's declared props, by wire name.
 
     Returns:
-        The Kotlin local declaration, the native arguments consuming it, and the
+        The Kotlin locals, the native arguments consuming the holder, and the
         expression gating the call for a family that must be composed
         conditionally, or None when the component is always composed.
     """
     native = state["native"]
+    if state["kind"] == "properties":
+        return properties_locals(state), [f"{native} = {native}Value"], None
     held = f"{native}Value"
     value = _camel(state["value"])
     report = _camel(state["report"])
@@ -281,8 +284,10 @@ def _state(
         # answered with nothing rather than with a second channel.
         arguments.append(f"{dismiss} = {{}}")
     return (
-        f"val {held} = context.{state_call(state['kind'])}("
-        f"model.props.{value}, model.props.{report}{extras})",
+        [
+            f"val {held} = context.{state_call(state['kind'])}("
+            f"model.props.{value}, model.props.{report}{extras})"
+        ],
         arguments,
         f"{held}.visible" if gated else None,
     )

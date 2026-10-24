@@ -25,6 +25,7 @@ from pycompose.schema.codegen.adapter_helpers import (
     STATE_CONSTRUCTOR_PROPS,
     _camel,
 )
+from pycompose.schema.codegen.state_families import property_props
 
 MODIFIER = "androidx.compose.ui.Modifier"
 INTERACTION_SOURCE = "androidx.compose.foundation.interaction.MutableInteractionSource"
@@ -134,7 +135,9 @@ def _held(entry: dict[str, Any]) -> set[str]:
     """The wire props the host holds rather than passes to the native call."""
     state = entry.get("state")
     held: set[str] = set()
-    if state:
+    if state and state["kind"] == "properties":
+        held |= set(property_props(state))
+    elif state:
         held |= {state["value"], state["report"]}
         held |= set(STATE_CONSTRUCTOR_PROPS.get(state["kind"], ()))
         gate = STATE_ATTACH_GATES.get(state["kind"])

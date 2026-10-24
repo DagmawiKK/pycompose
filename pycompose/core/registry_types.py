@@ -32,7 +32,8 @@ from pycompose.core.registry_elements import (
     ProviderDef,
     SlotRule,
 )
-from pycompose.core.registry_props import InteractionRule, PropDef, StateRule
+from pycompose.core.registry_props import InteractionRule, PropDef
+from pycompose.core.registry_state import StateRule
 from pycompose.core.registry_transient import TransientRule
 from pycompose.core.registry_vocabulary import (
     ADAPTERS,

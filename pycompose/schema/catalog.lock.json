@@ -1251,6 +1251,85 @@
         "kind": "keyed"
       }
     },
+    "DatePicker": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/DatePickerState;Landroidx/compose/ui/Modifier;Landroidx/compose/material3/DatePickerFormatter;Landroidx/compose/material3/DatePickerColors;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/focus/FocusRequester;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "DatePicker",
+        "name": "DatePicker",
+        "owner": "androidx.compose.material3.DatePickerKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "DatePickerColors",
+          "nativeDefault": "androidx.compose.material3.DatePickerDefaults.colors()"
+        },
+        "showModeToggle": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "displayedMonthMillis": {
+          "type": "integer"
+        },
+        "onDisplayedMonthMillisChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "displayedMonthMillis",
+              "type": "integer"
+            }
+          ]
+        },
+        "selectedDateMillis": {
+          "type": "integer",
+          "nullable": true
+        },
+        "onSelectedDateMillisChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "selectedDateMillis",
+              "type": "integer",
+              "nullable": true
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "state": {
+        "native": "state",
+        "kind": "properties",
+        "holder": "androidx.compose.material3.DatePickerState",
+        "factory": "androidx.compose.material3.rememberDatePickerState",
+        "properties": {
+          "displayedMonthMillis": {
+            "type": "integer",
+            "nativeType": "Long"
+          },
+          "selectedDateMillis": {
+            "type": "integer",
+            "nativeType": "Long",
+            "nullable": true
+          }
+        }
+      },
+      "reshaped": [
+        "displayedMonthMillis",
+        "onDisplayedMonthMillisChange",
+        "selectedDateMillis",
+        "onSelectedDateMillisChange"
+      ]
+    },
     "DatePickerDialog": {
       "package": "androidx.compose.material3",
       "category": "material3",
@@ -8858,6 +8937,197 @@
         "onValueChange",
         "selection",
         "onSelectionChange"
+      ]
+    },
+    "TimeInput": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/TimePickerState;Landroidx/compose/ui/Modifier;Landroidx/compose/material3/TimePickerColors;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "TimeInput",
+        "name": "TimeInput",
+        "owner": "androidx.compose.material3.TimePickerKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "TimePickerColors",
+          "nativeDefault": "androidx.compose.material3.TimePickerDefaults.colors()"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "hour": {
+          "type": "integer"
+        },
+        "onHourChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hour",
+              "type": "integer"
+            }
+          ]
+        },
+        "is24hour": {
+          "type": "boolean"
+        },
+        "onIs24hourChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "is24hour",
+              "type": "boolean"
+            }
+          ]
+        },
+        "minute": {
+          "type": "integer"
+        },
+        "onMinuteChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "minute",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "state": {
+        "native": "state",
+        "kind": "properties",
+        "holder": "androidx.compose.material3.TimePickerState",
+        "factory": "androidx.compose.material3.rememberTimePickerState",
+        "properties": {
+          "hour": {
+            "type": "integer",
+            "nativeType": "Int"
+          },
+          "is24hour": {
+            "type": "boolean",
+            "nativeType": "Boolean"
+          },
+          "minute": {
+            "type": "integer",
+            "nativeType": "Int"
+          }
+        }
+      },
+      "reshaped": [
+        "hour",
+        "onHourChange",
+        "is24hour",
+        "onIs24hourChange",
+        "minute",
+        "onMinuteChange"
+      ]
+    },
+    "TimePicker": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/TimePickerState;Landroidx/compose/ui/Modifier;Landroidx/compose/material3/TimePickerColors;ILandroidx/compose/runtime/Composer;II)V",
+        "jvmName": "TimePicker-mT9BvqQ",
+        "name": "TimePicker",
+        "owner": "androidx.compose.material3.TimePickerKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "TimePickerColors",
+          "nativeDefault": "androidx.compose.material3.TimePickerDefaults.colors()"
+        },
+        "layoutType": {
+          "type": "value",
+          "valueType": "TimePickerLayoutType",
+          "nativeDefault": "androidx.compose.material3.TimePickerDefaults.layoutType()"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "hour": {
+          "type": "integer"
+        },
+        "onHourChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hour",
+              "type": "integer"
+            }
+          ]
+        },
+        "is24hour": {
+          "type": "boolean"
+        },
+        "onIs24hourChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "is24hour",
+              "type": "boolean"
+            }
+          ]
+        },
+        "minute": {
+          "type": "integer"
+        },
+        "onMinuteChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "minute",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "state": {
+        "native": "state",
+        "kind": "properties",
+        "holder": "androidx.compose.material3.TimePickerState",
+        "factory": "androidx.compose.material3.rememberTimePickerState",
+        "properties": {
+          "hour": {
+            "type": "integer",
+            "nativeType": "Int"
+          },
+          "is24hour": {
+            "type": "boolean",
+            "nativeType": "Boolean"
+          },
+          "minute": {
+            "type": "integer",
+            "nativeType": "Int"
+          }
+        }
+      },
+      "reshaped": [
+        "hour",
+        "onHourChange",
+        "is24hour",
+        "onIs24hourChange",
+        "minute",
+        "onMinuteChange"
       ]
     },
     "TimePickerDialog": {

@@ -342,7 +342,12 @@ def _holders(plan: dict[str, Any]) -> dict[str, Any]:
     owner fills -- is a decision the reshape rules read (``holder``).
     """
     holders = [
-        {"native": parameter, "kind": spec["kind"]}
+        {
+            "native": parameter,
+            "kind": spec["kind"],
+            # A derived family carries its holder: factory and properties.
+            **{k: spec[k] for k in ("holder", "factory", "properties") if k in spec},
+        }
         for parameter, spec in plan["parameters"].items()
         if spec["policy"] == "holder"
     ]

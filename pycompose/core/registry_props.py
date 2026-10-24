@@ -22,7 +22,6 @@ from pycompose.core.registry_vocabulary import (
     DECODERS,
     INTERACTION_KINDS,
     OWNERS,
-    STATE_KINDS,
 )
 from pycompose.errors import ComponentRegistryError
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
@@ -54,6 +53,8 @@ class PropDef:
             because a component entry cannot otherwise see what its own callback
             is handed, and a generated adapter that omits the argument does not
             compile.
+        nullable_payload: The payload fields that may carry null: a derived
+            family's ``onSelectedDateMillisChange`` reports a cleared selection.
         decode: Which host resolver decodes this prop's value, for the prop
             types whose Kotlin type is not the wire type: ``enum``, ``color``
             and ``resource``. ``PropResolver`` already knows how to turn
@@ -93,6 +94,7 @@ class PropDef:
     since: str | None = None
     content: ContentSlot | None = None
     payload: tuple[tuple[str, str], ...] = ()
+    nullable_payload: frozenset[str] = frozenset()
     decode: str | None = None
     value_type: str | None = None
     native_default: str | None = None
@@ -191,6 +193,11 @@ class PropDef:
             since=cast("str | None", data.get("since")),
             content=_content(data, where),
             payload=_payload(data, where),
+            nullable_payload=frozenset(
+                str(item["name"])
+                for item in cast("list[dict[str, object]]", data.get("payload") or [])
+                if item.get("nullable") is True
+            ),
             decode=_decode(ptype, cast("str | None", data.get("decode"))),
             value_type=cast("str | None", data.get("valueType")),
             native_default=cast("str | None", data.get("nativeDefault")),
@@ -247,7 +254,16 @@ class PropDef:
             out["content"] = self.content.to_mapping()
         if self.payload:
             out["payload"] = [
-                {"name": field_name, "type": kind} for field_name, kind in self.payload
+                {
+                    "name": field_name,
+                    "type": kind,
+                    **(
+                        {"nullable": True}
+                        if field_name in self.nullable_payload
+                        else {}
+                    ),
+                }
+                for field_name, kind in self.payload
             ]
         if self.decode is not None:
             out["decode"] = self.decode
@@ -407,87 +423,3 @@ class InteractionRule:
             A JSON-ready dict.
         """
         return {"native": self.native, "observations": dict(self.observations)}
-
-
-@dataclass(frozen=True, slots=True)
-class StateRule:
-    """The host-owned state holder a component accepts.
-
-    The holder is the host's: it is created per stable node id, so pulling a
-    snapshot re-renders the tree without recreating state a gesture is already
-    moving. Python states the desired value in the snapshot; the host drives
-    the holder towards it and reports settled changes back as actions, rather
-    than both sides writing the same state.
-
-    Attributes:
-        native: Native parameter the remembered holder fills.
-        kind: State family, naming the host's create/drive/report logic.
-        value: Prop carrying the desired state; absent drives nothing.
-        report: ActionId prop reporting settled changes; absent reports nothing.
-        dismiss: Native parameter through which the component announces a
-            dismissal it has already carried out, if it has one.
-    """
-
-    native: str
-    kind: str
-    value: str
-    report: str
-    dismiss: str | None = None
-
-    @classmethod
-    def from_mapping(cls, data: Mapping[str, object], *, where: str) -> StateRule:
-        """Build a :class:`StateRule` from raw JSON.
-
-        Args:
-            data: The raw state object.
-            where: Human-readable location for error messages.
-
-        Returns:
-            The parsed state rule.
-
-        Raises:
-            ComponentRegistryError: If the state object is malformed.
-        """
-        native = data.get("native")
-        if not isinstance(native, str) or not native:
-            raise ComponentRegistryError(f"{where}: 'native' must be a name")
-        kind = data.get("kind")
-        if not isinstance(kind, str) or kind not in STATE_KINDS:
-            raise ComponentRegistryError(
-                f"{where}: unknown state kind {kind!r}; vocabulary: "
-                + ", ".join(STATE_KINDS)
-            )
-        names: dict[str, str] = {}
-        for field_name in ("value", "report"):
-            prop = data.get(field_name)
-            if not isinstance(prop, str) or not prop:
-                raise ComponentRegistryError(
-                    f"{where}: {field_name!r} must name a prop"
-                )
-            names[field_name] = prop
-        dismiss = data.get("dismiss")
-        if dismiss is not None and (not isinstance(dismiss, str) or not dismiss):
-            raise ComponentRegistryError(f"{where}: 'dismiss' must be a name")
-        return cls(
-            native=native,
-            kind=kind,
-            value=names["value"],
-            report=names["report"],
-            dismiss=dismiss if isinstance(dismiss, str) else None,
-        )
-
-    def to_mapping(self) -> dict[str, object]:
-        """Render back to the catalog lock state shape.
-
-        Returns:
-            A JSON-ready dict.
-        """
-        result: dict[str, object] = {
-            "native": self.native,
-            "kind": self.kind,
-            "value": self.value,
-            "report": self.report,
-        }
-        if self.dismiss is not None:
-            result["dismiss"] = self.dismiss
-        return result

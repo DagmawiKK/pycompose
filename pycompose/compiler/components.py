@@ -11,7 +11,7 @@ from __future__ import annotations
 import argparse
 import json
 from collections import Counter, defaultdict
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
@@ -25,10 +25,18 @@ from pycompose.compiler.classpath_dump import (
     source_defaults,
 )
 from pycompose.compiler.classpath_types import KotlinType
-from pycompose.compiler.keyed import KEY, is_keyed, keyed_arguments
+from pycompose.compiler.keyed import KEY, is_keyed
 from pycompose.compiler.opt_ins import OptInIndex, opt_in_index
+from pycompose.compiler.property_holders import property_holders
 from pycompose.compiler.propose import SCALARS, identity, source_name, value_families
 from pycompose.compiler.resolution import MODIFIER, block_unaddressable_overloads
+from pycompose.compiler.slots import (
+    builder_rule,
+    function_arguments,
+    scope_providers,
+    slot_rule,
+    slot_scopes,
+)
 from pycompose.core.registry_vocabulary import (
     HOST_VALUES,
     RESOURCE_TYPES,
@@ -41,69 +49,11 @@ HOLDER_KINDS = {holder: kind for kind, holder in STATE_HOLDERS.items()}
 TRANSIENT_BY_HOLDER = {holder: kind for kind, holder in TRANSIENT_HOLDERS.items()}
 
 
-def _function(value: KotlinType) -> list[KotlinType]:
-    """Return the synchronous arguments a native function type receives."""
-    if (
-        value.suspend
-        or not value.arguments
-        or any(t is None for _, t in value.arguments)
-    ):
-        raise ValueError("unresolved/suspending function needs a native protocol")
-    arguments = [t for _, t in value.arguments if t is not None]
-    if arguments[-1].classifier != "kotlin/Unit" or arguments[-1].nullable:
-        raise ValueError("synchronous result needs a provider/predicate protocol")
-    return arguments[:-1]
-
-
-CONSUMED = {"androidx/compose/foundation/layout/PaddingValues": "paddingValues"}
-"""Slot arguments the adapter applies on the subtree's behalf (``CONSUMERS``)."""
-
-LAZY_LIST = "androidx/compose/foundation/lazy/LazyListScope"
-
-
-def _slot(value: KotlinType) -> dict[str, Any]:
-    """Classify a composable lambda as a scoped, unscoped or consuming slot.
-
-    A receiver the lambda carries is handed to the children, so a child that
-    composes only inside it can (ADR-0016 decision 1); one that needs none
-    composes as it would anywhere.
-    """
-    arguments = _function(value)
-    receiver = None
-    if "kotlin/ExtensionFunctionType" in value.annotations:
-        if not arguments:
-            raise ValueError("missing slot receiver")
-        native_receiver = arguments.pop(0)
-        if native_receiver.nullable or native_receiver.arguments:
-            raise ValueError(
-                f"slot scope needs a native protocol: {native_receiver.classifier}"
-            )
-        receiver = native_receiver.classifier
-    rule: dict[str, Any] = {"policy": "slot", "receiver": receiver}
-    if keyed_arguments(value):
-        rule["keyed"] = True
-    elif (
-        len(arguments) == 1
-        and not arguments[0].nullable
-        and arguments[0].classifier in CONSUMED
-    ):
-        rule["consume"] = CONSUMED[arguments[0].classifier]
-    elif arguments:
-        raise ValueError("slot-supplied arguments need typed context references")
-    return rule
-
-
-def _builder(value: KotlinType) -> dict[str, Any]:
-    """A lazy list's builder lambda: the children are the items it lists."""
-    receiver = value.arguments[0][1]
-    if receiver is None or receiver.classifier != LAZY_LIST or receiver.nullable:
-        named = receiver.classifier if receiver is not None else "unresolved"
-        raise ValueError(f"builder scope needs a native protocol: {named}")
-    return {"policy": "slot", "receiver": None, "kind": "items"}
-
-
 def _binding_rule(
-    parameter: Parameter, families: dict[str, str], defaults: dict[str, Any]
+    parameter: Parameter,
+    families: dict[str, str],
+    defaults: dict[str, Any],
+    holders: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
     """Decide how one native parameter reaches the wire, never by its name."""
     value = parameter.type
@@ -119,11 +69,11 @@ def _binding_rule(
             raise ValueError("modifier default is not the native identity")
         return {"policy": "modifier"}
     if parameter.kind == Kind.SLOT:
-        rule = _slot(value)
+        rule = slot_rule(value)
     elif parameter.kind == Kind.BUILDER:
-        rule = _builder(value)
+        rule = builder_rule(value)
     elif parameter.kind == Kind.CALLBACK:
-        arguments = _function(value)
+        arguments = function_arguments(value)
         if any(t.classifier not in SCALARS for t in arguments):
             raise ValueError("event payload needs a structured value codec")
         rule = {
@@ -137,7 +87,7 @@ def _binding_rule(
                 for i, t in enumerate(arguments)
             ],
         }
-    elif (typed := _host_filled(parameter)) is not None:
+    elif (typed := _host_filled(parameter, holders)) is not None:
         rule = typed
     elif value.classifier in SCALARS and not value.arguments:
         rule = {"policy": "scalar", "wireType": SCALARS[value.classifier]}
@@ -148,7 +98,22 @@ def _binding_rule(
     return rule
 
 
-def _host_filled(parameter: Parameter) -> dict[str, Any] | None:
+def _holder(
+    value: KotlinType, holders: dict[str, dict[str, Any]]
+) -> dict[str, Any] | None:
+    """A holder a family fills: a hand-written one, or one the pin derives."""
+    if value.nullable:
+        return None
+    if (kind := HOLDER_KINDS.get(source_name(value.classifier))) is not None:
+        return {"policy": "holder", "kind": kind}
+    if value.classifier in holders:
+        return {"policy": "holder", "kind": "properties", **holders[value.classifier]}
+    return None
+
+
+def _host_filled(
+    parameter: Parameter, holders: dict[str, dict[str, Any]]
+) -> dict[str, Any] | None:
     """Rule for a type the host fills: a late read, a holder, a resource or a value."""
     value = parameter.type
     name = source_name(value.classifier)
@@ -157,8 +122,8 @@ def _host_filled(parameter: Parameter) -> dict[str, Any] | None:
         if returns is None or returns.nullable or returns.classifier not in SCALARS:
             raise ValueError("synchronous result needs a provider/predicate protocol")
         return {"policy": "provider", "wireType": SCALARS[returns.classifier]}
-    if name in HOLDER_KINDS and not value.nullable:
-        return {"policy": "holder", "kind": HOLDER_KINDS[name]}
+    if (holder := _holder(value, holders)) is not None:
+        return holder
     if name in TRANSIENT_BY_HOLDER and not value.nullable:
         return {"policy": "transient", "kind": TRANSIENT_BY_HOLDER[name]}
     if name in HOST_VALUES and not value.nullable:
@@ -171,10 +136,13 @@ def _host_filled(parameter: Parameter) -> dict[str, Any] | None:
 
 
 def _parameter(
-    parameter: Parameter, families: dict[str, str], defaults: dict[str, Any]
+    parameter: Parameter,
+    families: dict[str, str],
+    defaults: dict[str, Any],
+    holders: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
     """Attach the compiler-resolved default an optional parameter binds to."""
-    rule = _binding_rule(parameter, families, defaults)
+    rule = _binding_rule(parameter, families, defaults, holders)
     if rule["policy"] in {"modifier", "holder", "transient", "hostValue"}:
         # The host supplies both: the wire never carries their defaults.
         return rule
@@ -205,32 +173,6 @@ def _symbols(expression: dict[str, Any]) -> Iterator[str]:
         yield from _symbols(expression["receiver"])
 
 
-def _scope_providers(
-    declarations: Iterable[Declaration], scopes: frozenset[str]
-) -> set[str]:
-    """Receivers an app composes inside: a builder's own, or a slot's (ADR-0016)."""
-    return {d.receiver.classifier for d in declarations if d.receiver} | scopes
-
-
-def slot_scopes(declarations: Iterable[Declaration]) -> frozenset[str]:
-    """Receivers a pinned slot lambda carries: the only ones a host can hand down.
-
-    A declaration on one, or in one, has a parent to compose inside.
-    """
-    return frozenset(
-        receiver.classifier
-        for declaration in declarations
-        if declaration.composable
-        for parameter in declaration.parameters
-        if "androidx/compose/runtime/Composable" in parameter.type.annotations
-        and "kotlin/ExtensionFunctionType" in parameter.type.annotations
-        and parameter.type.arguments
-        and (receiver := parameter.type.arguments[0][1]) is not None
-        and not receiver.nullable
-        and not receiver.arguments
-    )
-
-
 def _surface(source: Declaration, scope_providers: set[str]) -> str:
     """Report whether an app composes a declaration or only passes it in.
 
@@ -255,6 +197,7 @@ def _plan(
     index: OptInIndex,
     objects: frozenset[str] = frozenset(),
     scopes: frozenset[str] = frozenset(),
+    holders: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Plan one exact overload, recording every capability it would need.
 
@@ -283,7 +226,7 @@ def _plan(
         )
     for parameter in source.parameters:
         try:
-            rule = _parameter(parameter, families, defaults)
+            rule = _parameter(parameter, families, defaults, holders or {})
         except ValueError as exc:
             rule = {"policy": "blocked" if parameter.required else "omit"}
             gaps.append(
@@ -417,20 +360,20 @@ def propose_components(
     # carries are what Kotlin resolves on; overloads those arguments cannot tell
     # apart are refused rather than silently bound to a sibling.
     scopes = slot_scopes(found.declarations)
-    scope_providers = _scope_providers(
-        (d for d in found.declarations if d.composable), scopes
-    )
+    providers = scope_providers((d for d in found.declarations if d.composable), scopes)
     objects = frozenset(c.classifier for c in found.classes if c.class_kind == "OBJECT")
+    holders = property_holders(found)
     candidates = [
         _plan(
             source,
             families,
             defaults.get((source.owner, source.jvm_name, source.jvm_descriptor), {}),
             default_markers,
-            scope_providers,
+            providers,
             index,
             objects,
             scopes,
+            holders,
         )
         for source in sorted(
             found.ui,

@@ -125,7 +125,7 @@ def test_the_host_fills_late_reads_holders_and_resources(
     from pycompose.compiler.classpath_types import Parameter
     from pycompose.compiler.components import _binding_rule
 
-    assert _binding_rule(Parameter("p", declared, False, None), {}, {}) == rule
+    assert _binding_rule(Parameter("p", declared, False, None), {}, {}, {}) == rule
 
 
 def test_a_nullable_late_read_is_refused() -> None:
@@ -134,7 +134,7 @@ def test_a_nullable_late_read_is_refused() -> None:
 
     provider = _type("kotlin/Function0", _type("kotlin/Float", nullable=True))
     with pytest.raises(ValueError, match="provider/predicate protocol"):
-        _binding_rule(Parameter("p", provider, False, None), {}, {})
+        _binding_rule(Parameter("p", provider, False, None), {}, {}, {})
 
 
 def _plan(**parameters: dict[str, object]) -> dict[str, object]:
@@ -373,7 +373,9 @@ def test_the_host_builds_a_value_from_a_prop_it_names() -> None:
     from pycompose.compiler.components import _binding_rule
 
     provider = _type("androidx/compose/ui/window/PopupPositionProvider")
-    rule = _binding_rule(Parameter("positionProvider", provider, False, None), {}, {})
+    rule = _binding_rule(
+        Parameter("positionProvider", provider, False, None), {}, {}, {}
+    )
     assert rule["policy"] == "hostValue"
     assert rule["prop"] == "position"
     assert rule["spec"]["decode"] == "tooltipPosition"

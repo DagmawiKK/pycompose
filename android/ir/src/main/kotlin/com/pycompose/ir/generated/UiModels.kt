@@ -505,6 +505,29 @@ data class Crossfade(
 }
 
 @Serializable
+data class DatePickerProps(
+    val `colors`: JsonElement? = null,
+    val `displayedMonthMillis`: Long? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onDisplayedMonthMillisChange`: String? = null,
+    val `onSelectedDateMillisChange`: String? = null,
+    val `selectedDateMillis`: OptionalValue = OptionalValue.Absent,
+    val `showModeToggle`: Boolean = true,
+) : UiProps
+
+@Serializable
+@SerialName("DatePicker")
+data class DatePicker(
+    override val id: String,
+    override val props: DatePickerProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "DatePicker"
+}
+
+@Serializable
 data class DatePickerDialogProps(
     val `colors`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
@@ -2991,6 +3014,55 @@ data class TextField(
     override val children: List<UiNode> get() = emptyList()
     override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "TextField"
+}
+
+@Serializable
+data class TimeInputProps(
+    val `colors`: JsonElement? = null,
+    val `hour`: Long? = null,
+    val `is24hour`: Boolean? = null,
+    val `minute`: Long? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onHourChange`: String? = null,
+    val `onIs24hourChange`: String? = null,
+    val `onMinuteChange`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("TimeInput")
+data class TimeInput(
+    override val id: String,
+    override val props: TimeInputProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "TimeInput"
+}
+
+@Serializable
+data class TimePickerProps(
+    val `colors`: JsonElement? = null,
+    val `hour`: Long? = null,
+    val `is24hour`: Boolean? = null,
+    val `layoutType`: JsonElement? = null,
+    val `minute`: Long? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onHourChange`: String? = null,
+    val `onIs24hourChange`: String? = null,
+    val `onMinuteChange`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("TimePicker")
+data class TimePicker(
+    override val id: String,
+    override val props: TimePickerProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "TimePicker"
 }
 
 @Serializable

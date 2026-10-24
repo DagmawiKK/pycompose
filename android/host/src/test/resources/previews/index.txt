@@ -20,6 +20,7 @@ CircularProgressIndicator
 CircularProgressIndicatorProgress
 Column
 Crossfade
+DatePicker
 DatePickerDialog
 DisableSelection
 DismissibleDrawerSheet
@@ -130,6 +131,8 @@ Text
 TextAnnotatedString
 TextButton
 TextField
+TimeInput
+TimePicker
 TimePickerDialog
 TooltipBox
 TopAppBar

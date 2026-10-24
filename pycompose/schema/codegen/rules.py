@@ -8,7 +8,7 @@ lazily -- the house pattern -- so the module graph stays acyclic).
 import json
 import re
 from pathlib import Path
-from typing import Any, NoReturn
+from typing import Any, NoReturn, cast
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -277,6 +277,7 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
         _validate_scope,
         _validate_slots,
     )
+    from pycompose.schema.codegen.state_families import property_props
     from pycompose.schema.codegen.state_rules import (
         _validate_interaction,
         _validate_state,
@@ -297,8 +298,11 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
     props = comp.get("props")
     if not isinstance(props, dict):
         die(f"component {name!r} needs a 'props' object")
+    state = comp.get("state")
+    derived = isinstance(state, dict) and state.get("kind") == "properties"
+    held = set(property_props(cast("dict[str, Any]", state))) if derived else set()
     for prop_name, prop in sorted(props.items()):
-        _validate_prop(name, prop_name, prop)
+        _validate_prop(name, prop_name, prop, held=prop_name in held)
     children = comp.get("children")
     if not isinstance(children, dict):
         die(f"component {name!r} needs a 'children' object")

@@ -39,6 +39,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DismissibleDrawerSheet
 import androidx.compose.material3.DismissibleNavigationDrawer
@@ -116,6 +117,8 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldLabelScope
+import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.TooltipScope
 import androidx.compose.material3.TopAppBar
@@ -152,6 +155,7 @@ import com.pycompose.ir.generated.CircularProgressIndicator as CircularProgressI
 import com.pycompose.ir.generated.CircularProgressIndicatorProgress as CircularProgressIndicatorProgressNode
 import com.pycompose.ir.generated.Column as ColumnNode
 import com.pycompose.ir.generated.Crossfade as CrossfadeNode
+import com.pycompose.ir.generated.DatePicker as DatePickerNode
 import com.pycompose.ir.generated.DatePickerDialog as DatePickerDialogNode
 import com.pycompose.ir.generated.DisableSelection as DisableSelectionNode
 import com.pycompose.ir.generated.DismissibleDrawerSheet as DismissibleDrawerSheetNode
@@ -251,6 +255,8 @@ import com.pycompose.ir.generated.Tab as TabNode
 import com.pycompose.ir.generated.TabContent as TabContentNode
 import com.pycompose.ir.generated.TextAnnotatedString as TextAnnotatedStringNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
+import com.pycompose.ir.generated.TimeInput as TimeInputNode
+import com.pycompose.ir.generated.TimePicker as TimePickerNode
 import com.pycompose.ir.generated.TimePickerDialog as TimePickerDialogNode
 import com.pycompose.ir.generated.TopAppBar as TopAppBarNode
 import com.pycompose.ir.generated.TriStateCheckbox as TriStateCheckboxNode
@@ -258,6 +264,7 @@ import com.pycompose.ir.generated.VerticalDivider as VerticalDividerNode
 import com.pycompose.ir.generated.VerticalDragHandle as VerticalDragHandleNode
 import com.pycompose.ir.generated.WideNavigationRail as WideNavigationRailNode
 import com.pycompose.ir.generated.WideNavigationRailItem as WideNavigationRailItemNode
+import com.pycompose.renderer.Wanted
 import com.pycompose.renderer.attachTo
 import com.pycompose.renderer.drawerState
 import com.pycompose.renderer.expressionColor
@@ -265,6 +272,7 @@ import com.pycompose.renderer.inSlot
 import com.pycompose.renderer.index
 import com.pycompose.renderer.lazyListState
 import com.pycompose.renderer.publish
+import com.pycompose.renderer.reconcileProperty
 import com.pycompose.renderer.scrollState
 import com.pycompose.renderer.sheetState
 import com.pycompose.renderer.sliderState
@@ -272,8 +280,10 @@ import com.pycompose.renderer.snackbar
 import com.pycompose.renderer.swipeState
 import com.pycompose.renderer.textInputState
 import com.pycompose.renderer.unslotted
+import com.pycompose.renderer.wanted
 import com.pycompose.renderer.windowedItems
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.long
 
 /** Adapters derived mechanically from the schema, for every component whose
  * props carry no decision a generator cannot make. */
@@ -681,6 +691,20 @@ object GeneratedAdapters {
                     label = model.props.label,
                     targetState = model.props.targetState,
                     content = { key -> keyed.Content(null, key) },
+                )
+            }
+            .register("DatePicker") { node, modifier, context ->
+                val model = node as DatePickerNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.datePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.DatePickerDefaults.colors()
+                val stateValue = androidx.compose.material3.rememberDatePickerState()
+                context.reconcileProperty(stateValue, "displayedMonthMillis", model.props.displayedMonthMillis?.let { Wanted(it) }, model.props.onDisplayedMonthMillisChange, { stateValue.displayedMonthMillis }, { stateValue.displayedMonthMillis = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "selectedDateMillis", model.props.selectedDateMillis.wanted { it.long }, model.props.onSelectedDateMillisChange, { stateValue.selectedDateMillis }, { stateValue.selectedDateMillis = it }) { JsonPrimitive(it) }
+                DatePicker(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    showModeToggle = model.props.showModeToggle,
+                    state = stateValue,
                 )
             }
             .register("DatePickerDialog") { node, modifier, context ->
@@ -2597,6 +2621,37 @@ object GeneratedAdapters {
                 ) {
                     Text(model.props.text)
                 }
+            }
+            .register("TimeInput") { node, modifier, context ->
+                val model = node as TimeInputNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.timePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.TimePickerDefaults.colors()
+                val stateValue = androidx.compose.material3.rememberTimePickerState()
+                context.reconcileProperty(stateValue, "hour", model.props.hour?.let { Wanted(it.toInt()) }, model.props.onHourChange, { stateValue.hour }, { stateValue.hour = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "is24hour", model.props.is24hour?.let { Wanted(it) }, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "minute", model.props.minute?.let { Wanted(it.toInt()) }, model.props.onMinuteChange, { stateValue.minute }, { stateValue.minute = it }) { JsonPrimitive(it) }
+                TimeInput(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    state = stateValue,
+                )
+            }
+            .register("TimePicker") { node, modifier, context ->
+                val model = node as TimePickerNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.timePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.TimePickerDefaults.colors()
+                val layoutTypeWire = model.props.layoutType
+                val layoutTypeValue = if (layoutTypeWire != null) com.pycompose.renderer.generated.ValueResolver.timePickerLayoutType(layoutTypeWire).getOrThrow() else androidx.compose.material3.TimePickerDefaults.layoutType()
+                val stateValue = androidx.compose.material3.rememberTimePickerState()
+                context.reconcileProperty(stateValue, "hour", model.props.hour?.let { Wanted(it.toInt()) }, model.props.onHourChange, { stateValue.hour }, { stateValue.hour = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "is24hour", model.props.is24hour?.let { Wanted(it) }, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "minute", model.props.minute?.let { Wanted(it.toInt()) }, model.props.onMinuteChange, { stateValue.minute }, { stateValue.minute = it }) { JsonPrimitive(it) }
+                TimePicker(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    layoutType = layoutTypeValue,
+                    state = stateValue,
+                )
             }
             .register("TimePickerDialog") { node, modifier, context ->
                 val model = node as TimePickerDialogNode

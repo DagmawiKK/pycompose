@@ -117,7 +117,8 @@
       "additionalProperties": false,
       "properties": {
         "name": { "$ref": "#/$defs/identifier" },
-        "type": { "type": "string" }
+        "type": { "type": "string" },
+        "nullable": { "const": true }
       }
     },
     "content": {
@@ -183,7 +184,9 @@
           "additionalProperties": { "$ref": "#/$defs/slot" }
         },
         "source": { "type": "object" },
-        "state": { "$ref": "#/$defs/stateBlock" },
+        "state": {
+          "oneOf": [{ "$ref": "#/$defs/stateBlock" }, { "$ref": "#/$defs/derivedState" }]
+        },
         "transient": { "$ref": "#/$defs/transientBlock" },
         "interaction": { "$ref": "#/$defs/interactionBlock" },
         "wrapper": { "type": "string" },
@@ -227,6 +230,32 @@
         "consume": { "type": "string" },
         "provides": { "type": "string" },
         "host": { "const": true }
+      }
+    },
+    "derivedState": {
+      "type": "object",
+      "description": "ADR-0058: a family the pin implies; each property is its own value and report.",
+      "required": ["native", "kind", "holder", "factory", "properties"],
+      "additionalProperties": false,
+      "properties": {
+        "native": { "type": "string" },
+        "kind": { "const": "properties" },
+        "holder": { "$ref": "#/$defs/dottedName" },
+        "factory": { "$ref": "#/$defs/dottedName" },
+        "properties": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "required": ["type", "nativeType"],
+            "additionalProperties": false,
+            "properties": {
+              "type": { "type": "string" },
+              "nativeType": { "type": "string" },
+              "nullable": { "const": true }
+            }
+          }
+        }
       }
     },
     "stateBlock": {

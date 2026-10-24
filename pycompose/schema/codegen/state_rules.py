@@ -17,6 +17,7 @@ from pycompose.schema.codegen.adapter_helpers import (
     STATE_ATTACH_GATES,
     STATE_CONSTRUCTOR_PROPS,
 )
+from pycompose.schema.codegen.derived_families import validate_properties
 from pycompose.schema.codegen.rules import (
     NATIVE_PARAMETER,
     die,
@@ -220,6 +221,9 @@ def _validate_state(
     where = f"component {name!r} state"
     if not isinstance(state, dict):
         die(f"{where} must be an object")
+    if state.get("kind") == "properties":
+        validate_properties(where, props, state)
+        return
     unknown = sorted(set(state) - STATE_KEYS)
     if unknown:
         die(f"{where} has unknown keys: {', '.join(unknown)}")

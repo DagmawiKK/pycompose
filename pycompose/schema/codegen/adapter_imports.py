@@ -12,6 +12,7 @@ from typing import Any
 
 from pycompose.core.registry_vocabulary import STATE_STREAMS
 from pycompose.schema.codegen.adapter_helpers import attach_gate, state_call
+from pycompose.schema.codegen.derived_families import property_imports
 
 
 def extra_imports(entry: dict[str, Any]) -> set[str]:
@@ -24,7 +25,9 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
         Import statements' targets, sorted by the caller.
     """
     qualified = _prop_imports(entry.get("props", {}).values())
-    if (state := entry.get("state")) is not None:
+    if (state := entry.get("state")) is not None and state["kind"] == "properties":
+        qualified |= property_imports(state)
+    elif state is not None:
         qualified.add(f"com.pycompose.renderer.{state_call(state['kind'])}")
         if state["kind"] in STATE_STREAMS:
             qualified.add("com.pycompose.renderer.publish")

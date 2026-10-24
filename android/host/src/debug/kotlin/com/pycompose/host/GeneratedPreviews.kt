@@ -151,6 +151,12 @@ private fun CrossfadePreview() {
     Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Crossfade"}, "type": "Text"}], "id": "preview", "props": {"targetState": "Preview"}, "type": "Crossfade"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "DatePicker", showBackground = true)
+@Composable
+private fun DatePickerPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "DatePicker", "type": "semantics"}]}}, "type": "DatePicker"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "DatePickerDialog", showBackground = true)
 @Composable
 private fun DatePickerDialogPreview() {
@@ -809,6 +815,18 @@ private fun TextButtonPreview() {
 @Composable
 private fun TextFieldPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onValueChange": {"bound": {}, "handlerId": "preview.onValueChange", "payload": {"value": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onValueChange": "app.preview.onValueChange", "value": "Preview"}, "type": "TextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "TimeInput", showBackground = true)
+@Composable
+private fun TimeInputPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TimeInput", "type": "semantics"}]}}, "type": "TimeInput"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "TimePicker", showBackground = true)
+@Composable
+private fun TimePickerPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TimePicker", "type": "semantics"}]}}, "type": "TimePicker"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TimePickerDialog", showBackground = true)

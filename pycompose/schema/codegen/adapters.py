@@ -58,6 +58,7 @@ from pycompose.schema.codegen.adapter_helpers import (
     simple,
 )
 from pycompose.schema.codegen.adapter_imports import extra_imports
+from pycompose.schema.codegen.state_families import property_props
 
 __all__ = [
     "DECODED",
@@ -213,6 +214,8 @@ def _held(state: dict[str, Any] | None, props: dict[str, Any]) -> set[str]:
     """
     if state is None:
         return set()
+    if state["kind"] == "properties":
+        return set(property_props(state))
     held = {state["value"], state["report"]}
     held.update(STATE_CONSTRUCTOR_PROPS.get(state["kind"], ()))
     gate = attach_gate(state, props)
@@ -247,8 +250,8 @@ def _host_locals(entry: dict[str, Any], out: _Fragments) -> str | None:
         out.arguments.append(f"{interaction['native']} = interactionSourceValue")
     gate: str | None = None
     if state is not None:
-        local, arguments, gate = _state(state, entry.get("props", {}))
-        out.locals.append(local)
+        locals_, arguments, gate = _state(state, entry.get("props", {}))
+        out.locals.extend(locals_)
         out.arguments.extend(arguments)
         if state["kind"] in STATE_STREAMS:
             # Expressions anywhere in the snapshot may read this holder's streams.

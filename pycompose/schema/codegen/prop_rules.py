@@ -204,7 +204,9 @@ def _validate_slot_provides(where: str, slot: dict[str, Any]) -> None:
         die(f"{where}: 'provides' needs the content kind")
 
 
-def _validate_prop(name: str, prop_name: str, prop: dict[str, Any]) -> None:
+def _validate_prop(
+    name: str, prop_name: str, prop: dict[str, Any], *, held: bool = False
+) -> None:
     if not isinstance(prop, dict):
         die(f"prop {name}.{prop_name} must be an object")
     ptype = prop.get("type")
@@ -240,7 +242,7 @@ def _validate_prop(name: str, prop_name: str, prop: dict[str, Any]) -> None:
     _validate_defaults(name, prop_name, prop, ptype)
     if "provider" in prop:
         _validate_provider(name, prop_name, prop)
-    _validate_nullable(name, prop_name, prop)
+    _validate_nullable(name, prop_name, prop, held=held)
 
 
 def _validate_defaults(
@@ -276,7 +278,9 @@ def _validate_defaults(
         )
 
 
-def _validate_nullable(name: str, prop_name: str, prop: dict[str, Any]) -> None:
+def _validate_nullable(
+    name: str, prop_name: str, prop: dict[str, Any], *, held: bool
+) -> None:
     """Check which of the two nullable shapes a prop may have.
 
     They are not the same shape. A *required* nullable prop has no omission: the
@@ -285,13 +289,16 @@ def _validate_nullable(name: str, prop_name: str, prop: dict[str, Any]) -> None:
     undecoded scalar, where ``None`` is a ``null``. An *optional* nullable prop
     is the ``OptionalValue`` form, where absence and an explicit null are two
     facts, and the generated adapter implements that for a value family
-    (``Button.elevation``). Every other combination would either be passed where
-    it does not fit or dropped silently, so it is refused here.
+    (``Button.elevation``). A held scalar never reaches a native parameter: its
+    holder reads the ``OptionalValue`` (``DatePicker.selectedDateMillis``). Every
+    other combination would either be passed where it does not fit or dropped
+    silently, so it is refused here.
 
     Args:
         name: Component name, for error messages.
         prop_name: The prop's schema name.
         prop: Its raw schema entry.
+        held: Whether a state holder consumes it instead of the native call.
     """
     if not prop.get("nullable"):
         return
@@ -303,7 +310,7 @@ def _validate_nullable(name: str, prop_name: str, prop: dict[str, Any]) -> None:
                 f"prop {name}.{prop_name}: a required nullable prop is passed "
                 "through, so it must be an undecoded scalar"
             )
-    elif prop["type"] != "value":
+    elif prop["type"] != "value" and not (held and prop["type"] in SCALAR_KOTLIN):
         die(
             f"prop {name}.{prop_name}: an optional nullable prop needs the "
             "value family's absent/null distinction"

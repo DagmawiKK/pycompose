@@ -1817,6 +1817,60 @@
       },
       "type": "object"
     },
+    "C_DatePicker": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_DatePickerColors"
+            },
+            "displayedMonthMillis": {
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDisplayedMonthMillisChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onSelectedDateMillisChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "selectedDateMillis": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showModeToggle": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "DatePicker"
+        }
+      },
+      "type": "object"
+    },
     "C_DatePickerDialog": {
       "properties": {
         "children": {
@@ -9556,6 +9610,109 @@
       },
       "type": "object"
     },
+    "C_TimeInput": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TimePickerColors"
+            },
+            "hour": {
+              "type": "integer"
+            },
+            "is24hour": {
+              "type": "boolean"
+            },
+            "minute": {
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onHourChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onIs24hourChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onMinuteChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "TimeInput"
+        }
+      },
+      "type": "object"
+    },
+    "C_TimePicker": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TimePickerColors"
+            },
+            "hour": {
+              "type": "integer"
+            },
+            "is24hour": {
+              "type": "boolean"
+            },
+            "layoutType": {
+              "$ref": "#/definitions/Family_TimePickerLayoutType"
+            },
+            "minute": {
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onHourChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onIs24hourChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onMinuteChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "TimePicker"
+        }
+      },
+      "type": "object"
+    },
     "C_TimePickerDialog": {
       "properties": {
         "children": {
@@ -10877,6 +11034,9 @@
               "$ref": "#/definitions/C_Crossfade"
             },
             {
+              "$ref": "#/definitions/C_DatePicker"
+            },
+            {
               "$ref": "#/definitions/C_DatePickerDialog"
             },
             {
@@ -11205,6 +11365,12 @@
             },
             {
               "$ref": "#/definitions/C_TextField"
+            },
+            {
+              "$ref": "#/definitions/C_TimeInput"
+            },
+            {
+              "$ref": "#/definitions/C_TimePicker"
             },
             {
               "$ref": "#/definitions/C_TimePickerDialog"
@@ -29473,6 +29639,60 @@
       },
       "type": "object"
     },
+    "V_1_23_0_DatePicker": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_DatePickerColors"
+            },
+            "displayedMonthMillis": {
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDisplayedMonthMillisChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onSelectedDateMillisChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "selectedDateMillis": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showModeToggle": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "DatePicker"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_DatePickerDialog": {
       "properties": {
         "children": {
@@ -33811,6 +34031,9 @@
               "$ref": "#/definitions/V_1_23_0_Crossfade"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_DatePicker"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_DatePickerDialog"
             },
             {
@@ -34139,6 +34362,12 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_TextField"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_TimeInput"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_TimePicker"
             },
             {
               "$ref": "#/definitions/V_1_23_0_TimePickerDialog"
@@ -37962,6 +38191,109 @@
         },
         "type": {
           "const": "TextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_TimeInput": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TimePickerColors"
+            },
+            "hour": {
+              "type": "integer"
+            },
+            "is24hour": {
+              "type": "boolean"
+            },
+            "minute": {
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onHourChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onIs24hourChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onMinuteChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "TimeInput"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_TimePicker": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TimePickerColors"
+            },
+            "hour": {
+              "type": "integer"
+            },
+            "is24hour": {
+              "type": "boolean"
+            },
+            "layoutType": {
+              "$ref": "#/definitions/Family_TimePickerLayoutType"
+            },
+            "minute": {
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onHourChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onIs24hourChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onMinuteChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "TimePicker"
         }
       },
       "type": "object"

@@ -164,3 +164,39 @@ TRANSIENT_FAMILIES: dict[str, dict[str, Any]] = {
     },
 }
 """Each transient family's projection: its props, the serial and the occurrence."""
+
+
+def property_props(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """A derived family's props: each holder property desired, and its report.
+
+    A ``properties`` state names its holder's settable scalar properties
+    (``pycompose.compiler.property_holders``); each is a prop the app states and
+    an ``on<Property>Change`` action the host reports its settled value to.
+
+    Args:
+        state: A component's ``state`` block of kind ``properties``.
+
+    Returns:
+        Wire props by name.
+    """
+    projected: dict[str, dict[str, Any]] = {}
+    for name, spec in state["properties"].items():
+        nullable = {"nullable": True} if spec.get("nullable") else {}
+        projected[name] = {"type": spec["type"], **nullable}
+        projected[report_name(name)] = {
+            "type": "actionId",
+            "payload": [{"name": name, "type": spec["type"], **nullable}],
+        }
+    return projected
+
+
+def report_name(name: str) -> str:
+    """The action prop a derived family reports one property's settled value to.
+
+    Args:
+        name: The holder property.
+
+    Returns:
+        ``on<Property>Change``.
+    """
+    return f"on{name[0].upper()}{name[1:]}Change"

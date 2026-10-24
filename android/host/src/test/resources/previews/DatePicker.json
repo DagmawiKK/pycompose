@@ -1,0 +1,21 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "id": "preview",
+  "props": {
+   "modifier": {
+    "operations": [
+     {
+      "contentDescription": "DatePicker",
+      "type": "semantics"
+     }
+    ]
+   }
+  },
+  "type": "DatePicker"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

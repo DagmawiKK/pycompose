@@ -39,6 +39,7 @@ __all__ = [
     "CircularProgressIndicatorProgress",
     "Column",
     "Crossfade",
+    "DatePicker",
     "DatePickerDialog",
     "DisableSelection",
     "DismissibleDrawerSheet",
@@ -149,6 +150,8 @@ __all__ = [
     "TextAnnotatedString",
     "TextButton",
     "TextField",
+    "TimeInput",
+    "TimePicker",
     "TimePickerDialog",
     "TooltipBox",
     "TopAppBar",
@@ -1434,6 +1437,56 @@ class Crossfade(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class DatePicker(Component):
+    """Native DatePicker; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "DatePicker"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        displayed_month_millis: int | None = None,
+        modifier: Modifier | None = None,
+        on_displayed_month_millis_change: ActionTarget | None = None,
+        on_selected_date_millis_change: ActionTarget | None = None,
+        selected_date_millis: int | None | _Unset = UNSET,
+        show_mode_toggle: bool | None = None,
+    ) -> None:
+        """Construct a registered DatePicker.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            displayed_month_millis: Native displayedMonthMillis; None uses its
+                default.
+            modifier: Native modifier; None uses its default.
+            on_displayed_month_millis_change: Native onDisplayedMonthMillisChange;
+                None uses its default.
+            on_selected_date_millis_change: Native onSelectedDateMillisChange; None
+                uses its default.
+            selected_date_millis: Native selectedDateMillis; omitted uses its
+                default; None is null.
+            show_mode_toggle: Native showModeToggle; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if displayed_month_millis is not None:
+            props["displayed_month_millis"] = displayed_month_millis
+        if on_displayed_month_millis_change is not None:
+            props["on_displayed_month_millis_change"] = on_displayed_month_millis_change
+        if on_selected_date_millis_change is not None:
+            props["on_selected_date_millis_change"] = on_selected_date_millis_change
+        if not isinstance(selected_date_millis, _Unset):
+            props["selected_date_millis"] = selected_date_millis
+        if show_mode_toggle is not None:
+            props["show_mode_toggle"] = show_mode_toggle
+        super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
 class DatePickerDialog(Component):
@@ -7857,6 +7910,110 @@ class TextField(Component):
         if selection is not None:
             props["selection"] = selection
         props["value"] = value
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class TimeInput(Component):
+    """Native TimeInput; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TimeInput"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        hour: int | None = None,
+        is24hour: bool | None = None,
+        minute: int | None = None,
+        modifier: Modifier | None = None,
+        on_hour_change: ActionTarget | None = None,
+        on_is24hour_change: ActionTarget | None = None,
+        on_minute_change: ActionTarget | None = None,
+    ) -> None:
+        """Construct a registered TimeInput.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            hour: Native hour; None uses its default.
+            is24hour: Native is24hour; None uses its default.
+            minute: Native minute; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_hour_change: Native onHourChange; None uses its default.
+            on_is24hour_change: Native onIs24hourChange; None uses its default.
+            on_minute_change: Native onMinuteChange; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if hour is not None:
+            props["hour"] = hour
+        if is24hour is not None:
+            props["is24hour"] = is24hour
+        if minute is not None:
+            props["minute"] = minute
+        if on_hour_change is not None:
+            props["on_hour_change"] = on_hour_change
+        if on_is24hour_change is not None:
+            props["on_is24hour_change"] = on_is24hour_change
+        if on_minute_change is not None:
+            props["on_minute_change"] = on_minute_change
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class TimePicker(Component):
+    """Native TimePicker; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TimePicker"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        hour: int | None = None,
+        is24hour: bool | None = None,
+        layout_type: JsonValue | None = None,
+        minute: int | None = None,
+        modifier: Modifier | None = None,
+        on_hour_change: ActionTarget | None = None,
+        on_is24hour_change: ActionTarget | None = None,
+        on_minute_change: ActionTarget | None = None,
+    ) -> None:
+        """Construct a registered TimePicker.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            hour: Native hour; None uses its default.
+            is24hour: Native is24hour; None uses its default.
+            layout_type: Native layoutType; None uses its default.
+            minute: Native minute; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_hour_change: Native onHourChange; None uses its default.
+            on_is24hour_change: Native onIs24hourChange; None uses its default.
+            on_minute_change: Native onMinuteChange; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if hour is not None:
+            props["hour"] = hour
+        if is24hour is not None:
+            props["is24hour"] = is24hour
+        if layout_type is not None:
+            props["layout_type"] = layout_type
+        if minute is not None:
+            props["minute"] = minute
+        if on_hour_change is not None:
+            props["on_hour_change"] = on_hour_change
+        if on_is24hour_change is not None:
+            props["on_is24hour_change"] = on_is24hour_change
+        if on_minute_change is not None:
+            props["on_minute_change"] = on_minute_change
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
