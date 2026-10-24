@@ -1,5 +1,10 @@
 package com.pycompose.host
 
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.pycompose.host.ui.BuiltinComponents
 import com.pycompose.host.ui.PyComposeTheme
@@ -20,6 +25,11 @@ import org.robolectric.annotation.Config
  * and accepted by Python's validator. Each renders here with the debug renderer;
  * an exception or any renderer report -- an unsupported type, a value that did
  * not resolve, an observation that could not attach -- fails that component.
+ *
+ * The semantics gate (plan 31 §16.6) runs on the same render: every element a
+ * user can act on announces a label -- its text, its edited text, or a
+ * content description. A control with no text of its own takes one from the
+ * `semantics` modifier, as the sample does.
  */
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @Config(sdk = [34], application = android.app.Application::class)
@@ -43,7 +53,27 @@ class PreviewRenderTest(
         compose.setContent { PyComposeTheme { renderer.Render(ir) } }
         compose.waitForIdle()
         assertEquals(emptyList<String>(), reports)
+        val unlabelled = mutableListOf<String>()
+
+        fun visit(node: SemanticsNode) {
+            if (node.isInteractive() && !node.isLabelled()) unlabelled.add(node.config.toString())
+            node.children.forEach(::visit)
+        }
+        // A dialog or popup composes in a window of its own: one root each.
+        compose.onAllNodes(isRoot()).fetchSemanticsNodes().forEach(::visit)
+        assertEquals("interactive elements without a label", emptyList<String>(), unlabelled)
     }
+
+    private fun SemanticsNode.isInteractive() =
+        SemanticsActions.OnClick in config ||
+            SemanticsActions.SetProgress in config ||
+            SemanticsActions.SetText in config ||
+            SemanticsProperties.ToggleableState in config
+
+    private fun SemanticsNode.isLabelled() =
+        !config.getOrNull(SemanticsProperties.Text).isNullOrEmpty() ||
+            !config.getOrNull(SemanticsProperties.ContentDescription).isNullOrEmpty() ||
+            SemanticsProperties.EditableText in config
 
     companion object {
         @JvmStatic

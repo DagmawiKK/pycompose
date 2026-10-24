@@ -4,7 +4,16 @@
  },
  "root": {
   "id": "preview",
-  "props": {},
+  "props": {
+   "modifier": {
+    "operations": [
+     {
+      "contentDescription": "VerticalDivider",
+      "type": "semantics"
+     }
+    ]
+   }
+  },
   "type": "VerticalDivider"
  },
  "schemaVersion": "1.23.0",

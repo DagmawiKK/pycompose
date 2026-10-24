@@ -40,6 +40,14 @@
    {
     "id": "preview",
     "props": {
+     "modifier": {
+      "operations": [
+       {
+        "contentDescription": "SearchBarStateInputField",
+        "type": "semantics"
+       }
+      ]
+     },
      "onSearch": "app.preview.onSearch"
     },
     "slot": "inputField",

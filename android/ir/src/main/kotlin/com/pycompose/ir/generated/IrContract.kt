@@ -2006,6 +2006,15 @@ object IrContract {
         "padding" to mapOf(
                 "value" to PropertyRule("dp", required = true, valueType = "PaddingValues", minimum = 0.0),
         ),
+        "semantics" to mapOf(
+                "contentDescription" to PropertyRule("string", required = false),
+                "heading" to PropertyRule("boolean", required = false),
+                "liveRegion" to PropertyRule("enum", required = false, values = setOf("polite", "assertive")),
+                "role" to PropertyRule("enum", required = false, values = setOf("button", "checkbox", "switch", "radioButton", "tab", "image", "dropdownList", "valuePicker", "carousel")),
+                "stateDescription" to PropertyRule("string", required = false),
+                "testTag" to PropertyRule("string", required = false),
+                "traversalIndex" to PropertyRule("number", required = false),
+        ),
         "size" to mapOf(
                 "height" to PropertyRule("dp", required = true, valueType = "Dp", minimum = 0.0),
                 "width" to PropertyRule("dp", required = true, valueType = "Dp", minimum = 0.0),

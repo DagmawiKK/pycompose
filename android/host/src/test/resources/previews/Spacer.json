@@ -4,7 +4,16 @@
  },
  "root": {
   "id": "preview",
-  "props": {},
+  "props": {
+   "modifier": {
+    "operations": [
+     {
+      "contentDescription": "Spacer",
+      "type": "semantics"
+     }
+    ]
+   }
+  },
   "type": "Spacer"
  },
  "schemaVersion": "1.23.0",

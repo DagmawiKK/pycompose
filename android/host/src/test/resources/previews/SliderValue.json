@@ -16,6 +16,14 @@
  "root": {
   "id": "preview",
   "props": {
+   "modifier": {
+    "operations": [
+     {
+      "contentDescription": "SliderValue",
+      "type": "semantics"
+     }
+    ]
+   },
    "onValueChange": "app.preview.onValueChange",
    "value": 0.5
   },

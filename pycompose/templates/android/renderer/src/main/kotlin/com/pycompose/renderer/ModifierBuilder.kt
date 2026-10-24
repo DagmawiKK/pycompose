@@ -9,6 +9,16 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.traversalIndex
 import com.pycompose.ir.IrParser
 import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.JsonArray
@@ -60,6 +70,7 @@ class ModifierBuilder(
                 val enabled = checkNotNull(it["enabled"]?.jsonPrimitive?.booleanOrNull)
                 Modifier.clickable(enabled = enabled) { actions.dispatch(actionId) }
             },
+            "semantics" to { semantics(it) },
             "background" to
                 { Modifier.background(ValueResolver.brush(it.getValue("brush")).getOrThrow()) },
             "windowInsetsPadding" to
@@ -99,6 +110,28 @@ class ModifierBuilder(
         )
     }
 
+    /** Accessibility semantics the native component does not carry itself (plan 31 §16.6). */
+    private fun semantics(operation: JsonObject): Modifier {
+        val description = operation.optional("contentDescription")
+        val state = operation.optional("stateDescription")
+        val role = operation.optional("role")?.let { checkNotNull(ROLES[it]) }
+        val live = operation.optional("liveRegion")?.let { checkNotNull(LIVE_REGIONS[it]) }
+        val tag = operation.optional("testTag")
+        val heading = operation["heading"]?.jsonPrimitive?.booleanOrNull == true
+        val index = operation["traversalIndex"]?.jsonPrimitive?.doubleOrNull
+        return Modifier.semantics {
+            description?.let { contentDescription = it }
+            state?.let { stateDescription = it }
+            role?.let { this.role = it }
+            live?.let { liveRegion = it }
+            tag?.let { testTag = it }
+            if (heading) heading()
+            index?.let { traversalIndex = it.toFloat() }
+        }
+    }
+
+    private fun JsonObject.optional(key: String): String? = if (key in this) string(key) else null
+
     private fun JsonObject.number(key: String): Double =
         checkNotNull(this[key]?.jsonPrimitive?.doubleOrNull)
 
@@ -124,3 +157,22 @@ class ModifierBuilder(
         return value.content
     }
 }
+
+private val ROLES =
+    mapOf(
+        "button" to Role.Button,
+        "checkbox" to Role.Checkbox,
+        "switch" to Role.Switch,
+        "radioButton" to Role.RadioButton,
+        "tab" to Role.Tab,
+        "image" to Role.Image,
+        "dropdownList" to Role.DropdownList,
+        "valuePicker" to Role.ValuePicker,
+        "carousel" to Role.Carousel,
+    )
+
+private val LIVE_REGIONS =
+    mapOf(
+        "polite" to LiveRegionMode.Polite,
+        "assertive" to LiveRegionMode.Assertive,
+    )

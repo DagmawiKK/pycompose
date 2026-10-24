@@ -10482,6 +10482,52 @@
         {
           "additionalProperties": false,
           "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "height": {
               "anyOf": [
                 {
@@ -11348,6 +11394,52 @@
         {
           "additionalProperties": false,
           "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "height": {
               "allOf": [
                 {
@@ -12134,6 +12226,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -13056,6 +13194,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -14063,6 +14247,52 @@
         {
           "additionalProperties": false,
           "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "height": {
               "anyOf": [
                 {
@@ -15058,6 +15288,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -16065,6 +16341,52 @@
         {
           "additionalProperties": false,
           "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "height": {
               "anyOf": [
                 {
@@ -17060,6 +17382,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -18067,6 +18435,52 @@
         {
           "additionalProperties": false,
           "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "height": {
               "anyOf": [
                 {
@@ -19062,6 +19476,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -20172,6 +20632,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -21338,6 +21844,52 @@
         {
           "additionalProperties": false,
           "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "height": {
               "anyOf": [
                 {
@@ -22163,6 +22715,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -23234,6 +23832,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -24514,6 +25158,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -26268,6 +26958,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -31935,6 +32671,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -37639,6 +38421,52 @@
         {
           "additionalProperties": false,
           "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "height": {
               "allOf": [
                 {
@@ -38439,6 +39267,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -39313,6 +40187,52 @@
         {
           "additionalProperties": false,
           "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "height": {
               "allOf": [
                 {
@@ -40175,6 +41095,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -41049,6 +42015,52 @@
         {
           "additionalProperties": false,
           "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "height": {
               "allOf": [
                 {
@@ -41911,6 +42923,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },
@@ -42785,6 +43843,52 @@
         {
           "additionalProperties": false,
           "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "height": {
               "allOf": [
                 {
@@ -43647,6 +44751,52 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "boolean"
+            },
+            "liveRegion": {
+              "enum": [
+                "assertive",
+                "polite"
+              ]
+            },
+            "role": {
+              "enum": [
+                "button",
+                "carousel",
+                "checkbox",
+                "dropdownList",
+                "image",
+                "radioButton",
+                "switch",
+                "tab",
+                "valuePicker"
+              ]
+            },
+            "stateDescription": {
+              "type": "string"
+            },
+            "testTag": {
+              "type": "string"
+            },
+            "traversalIndex": {
+              "type": "number"
+            },
+            "type": {
+              "const": "semantics"
+            }
+          },
+          "required": [
+            "type"
           ],
           "type": "object"
         },

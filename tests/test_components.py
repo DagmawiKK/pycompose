@@ -161,6 +161,17 @@ def test_modifier_padding_without_a_value_or_refusing_a_mixed_form_is_refused() 
         Modifier().padding({"start": {"type": "Dp", "value": 4}}, top=1)
 
 
+def test_semantics_carry_only_what_is_given_and_refuse_an_unknown_role() -> None:
+    labelled = Modifier.semantics(content_description="Dark mode", role="switch")
+    assert labelled.to_wire() == {
+        "operations": [
+            {"type": "semantics", "contentDescription": "Dark mode", "role": "switch"}
+        ]
+    }
+    with pytest.raises(IrValidationError):
+        Modifier.semantics(role="slider")
+
+
 def test_the_wire_padding_object_matches_the_bundled_schema() -> None:
     padded = Spacer(
         id="gap",

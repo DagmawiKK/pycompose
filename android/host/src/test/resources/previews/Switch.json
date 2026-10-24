@@ -17,6 +17,14 @@
   "id": "preview",
   "props": {
    "checked": true,
+   "modifier": {
+    "operations": [
+     {
+      "contentDescription": "Switch",
+      "type": "semantics"
+     }
+    ]
+   },
    "onCheckedChange": "app.preview.onCheckedChange"
   },
   "type": "Switch"

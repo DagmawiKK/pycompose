@@ -9278,6 +9278,46 @@
           "required": true
         }
       }
+    },
+    "semantics": {
+      "props": {
+        "contentDescription": {
+          "type": "string"
+        },
+        "stateDescription": {
+          "type": "string"
+        },
+        "role": {
+          "type": "enum",
+          "values": [
+            "button",
+            "checkbox",
+            "switch",
+            "radioButton",
+            "tab",
+            "image",
+            "dropdownList",
+            "valuePicker",
+            "carousel"
+          ]
+        },
+        "heading": {
+          "type": "boolean"
+        },
+        "liveRegion": {
+          "type": "enum",
+          "values": [
+            "polite",
+            "assertive"
+          ]
+        },
+        "testTag": {
+          "type": "string"
+        },
+        "traversalIndex": {
+          "type": "number"
+        }
+      }
     }
   },
   "actions": {

@@ -5,6 +5,14 @@
  "root": {
   "id": "preview",
   "props": {
+   "modifier": {
+    "operations": [
+     {
+      "contentDescription": "Slider",
+      "type": "semantics"
+     }
+    ]
+   },
    "valueRange": {
     "end": 1.0,
     "start": 0.0,

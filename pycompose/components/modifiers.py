@@ -216,6 +216,50 @@ class Modifier:
         target = on_click.binding() if isinstance(on_click, AppAction) else on_click
         return self._append("clickable", onClick=target, enabled=enabled)
 
+    @_Operation
+    def semantics(
+        self,
+        *,
+        content_description: str | None = None,
+        state_description: str | None = None,
+        role: str | None = None,
+        heading: bool | None = None,
+        live_region: str | None = None,
+        test_tag: str | None = None,
+        traversal_index: int | float | None = None,
+    ) -> Modifier:
+        """Describe the element to accessibility services, as Compose's ``semantics``.
+
+        A control with no text of its own (a Checkbox, a Switch, a Slider)
+        takes its label here.
+
+        Args:
+            content_description: What a screen reader announces.
+            state_description: The state announced instead of the default one.
+            role: button, checkbox, switch, radioButton, tab, image,
+                dropdownList, valuePicker or carousel.
+            heading: Whether the element heads a section.
+            live_region: polite or assertive, to announce changes.
+            test_tag: A tag tests find the element by.
+            traversal_index: Order among siblings for accessibility traversal.
+
+        Returns:
+            A new modifier.
+        """
+        given = {
+            "contentDescription": content_description,
+            "stateDescription": state_description,
+            "role": role,
+            "heading": heading,
+            "liveRegion": live_region,
+            "testTag": test_tag,
+            "traversalIndex": traversal_index,
+        }
+        return self._append(
+            "semantics",
+            **{key: value for key, value in given.items() if value is not None},
+        )
+
     def to_wire(self) -> dict[str, JsonValue]:
         """Return a detached modifier wire object.
 

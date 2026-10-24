@@ -4,7 +4,16 @@
  },
  "root": {
   "id": "preview",
-  "props": {},
+  "props": {
+   "modifier": {
+    "operations": [
+     {
+      "contentDescription": "CircularProgressIndicator",
+      "type": "semantics"
+     }
+    ]
+   }
+  },
   "type": "CircularProgressIndicator"
  },
  "schemaVersion": "1.23.0",

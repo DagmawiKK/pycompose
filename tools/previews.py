@@ -115,6 +115,18 @@ class _Sample:
             children.append(
                 {"id": f"{id}.child", "type": "Text", "props": {"text": name}}
             )
+        texts = [
+            prop
+            for prop in props
+            if entry["props"][prop]["type"] in {"string", "resource"}
+            or entry["props"][prop].get("valueType") == "AnnotatedString"
+        ]
+        if not children and not texts:
+            # Nothing in the sample names it (a Checkbox, a Slider): its label
+            # comes from semantics, as an app's must (plan 31 §16.6).
+            props["modifier"] = {
+                "operations": [{"type": "semantics", "contentDescription": name}]
+            }
         node: dict[str, Any] = {"id": id, "type": name, "props": props}
         if children:
             node["children"] = children

@@ -130,19 +130,19 @@ private fun CenterAlignedTopAppBarPreview() {
 @Preview(name = "Checkbox", showBackground = true)
 @Composable
 private fun CheckboxPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "Checkbox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"id": "preview", "props": {"checked": true, "modifier": {"operations": [{"contentDescription": "Checkbox", "type": "semantics"}]}, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "Checkbox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "CircularProgressIndicator", showBackground = true)
 @Composable
 private fun CircularProgressIndicatorPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {}, "type": "CircularProgressIndicator"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "CircularProgressIndicator", "type": "semantics"}]}}, "type": "CircularProgressIndicator"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "CircularProgressIndicatorProgress", showBackground = true)
 @Composable
 private fun CircularProgressIndicatorProgressPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"progress": 0.5}, "type": "CircularProgressIndicatorProgress"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "CircularProgressIndicatorProgress", "type": "semantics"}]}, "progress": 0.5}, "type": "CircularProgressIndicatorProgress"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Column", showBackground = true)
@@ -322,7 +322,7 @@ private fun FlowRowPreview() {
 @Preview(name = "HorizontalDivider", showBackground = true)
 @Composable
 private fun HorizontalDividerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {}, "type": "HorizontalDivider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "HorizontalDivider", "type": "semantics"}]}}, "type": "HorizontalDivider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Icon", showBackground = true)
@@ -400,13 +400,13 @@ private fun LeadingIconTabPreview() {
 @Preview(name = "LinearProgressIndicator", showBackground = true)
 @Composable
 private fun LinearProgressIndicatorPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"progress": 0.5}, "type": "LinearProgressIndicator"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "LinearProgressIndicator", "type": "semantics"}]}, "progress": 0.5}, "type": "LinearProgressIndicator"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "LinearProgressIndicatorWithoutProgress", showBackground = true)
 @Composable
 private fun LinearProgressIndicatorWithoutProgressPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {}, "type": "LinearProgressIndicatorWithoutProgress"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "LinearProgressIndicatorWithoutProgress", "type": "semantics"}]}}, "type": "LinearProgressIndicatorWithoutProgress"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ListItem", showBackground = true)
@@ -580,7 +580,7 @@ private fun PullToRefreshBoxPreview() {
 @Preview(name = "RadioButton", showBackground = true)
 @Composable
 private fun RadioButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "RadioButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "RadioButton", "type": "semantics"}]}, "onClick": "app.preview.onClick", "selected": true}, "type": "RadioButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "RichTooltip", showBackground = true)
@@ -616,7 +616,7 @@ private fun SearchBarInputFieldPreview() {
 @Preview(name = "SearchBarStateInputField", showBackground = true)
 @Composable
 private fun SearchBarStateInputFieldPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}, "app.preview.onSearch": {"bound": {}, "handlerId": "preview.onSearch", "payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "preview", "props": {"onSearch": "app.preview.onSearch"}, "slot": "inputField", "type": "SearchBarStateInputField"}], "id": "provider", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}, "app.preview.onSearch": {"bound": {}, "handlerId": "preview.onSearch", "payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "SearchBarStateInputField", "type": "semantics"}]}, "onSearch": "app.preview.onSearch"}, "slot": "inputField", "type": "SearchBarStateInputField"}], "id": "provider", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SecondaryScrollableTabRow", showBackground = true)
@@ -676,13 +676,13 @@ private fun SingleChoiceSegmentedButtonRowPreview() {
 @Preview(name = "Slider", showBackground = true)
 @Composable
 private fun SliderPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"valueRange": {"end": 1.0, "start": 0.0, "type": "Range"}}, "type": "Slider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Slider", "type": "semantics"}]}, "valueRange": {"end": 1.0, "start": 0.0, "type": "Range"}}, "type": "Slider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SliderValue", showBackground = true)
 @Composable
 private fun SliderValuePreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onValueChange": {"bound": {}, "handlerId": "preview.onValueChange", "payload": {"value": {"required": true, "type": "number"}}}}}, "root": {"id": "preview", "props": {"onValueChange": "app.preview.onValueChange", "value": 0.5}, "type": "SliderValue"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onValueChange": {"bound": {}, "handlerId": "preview.onValueChange", "payload": {"value": {"required": true, "type": "number"}}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "SliderValue", "type": "semantics"}]}, "onValueChange": "app.preview.onValueChange", "value": 0.5}, "type": "SliderValue"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SmallFloatingActionButton", showBackground = true)
@@ -706,7 +706,7 @@ private fun SnackbarHostPreview() {
 @Preview(name = "Spacer", showBackground = true)
 @Composable
 private fun SpacerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {}, "type": "Spacer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Spacer", "type": "semantics"}]}}, "type": "Spacer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "StatefulSearchBar", showBackground = true)
@@ -760,13 +760,13 @@ private fun SwipeToDismissBoxPreview() {
 @Preview(name = "Switch", showBackground = true)
 @Composable
 private fun SwitchPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "Switch"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"id": "preview", "props": {"checked": true, "modifier": {"operations": [{"contentDescription": "Switch", "type": "semantics"}]}, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "Switch"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Tab", showBackground = true)
 @Composable
 private fun TabPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "Tab"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Tab", "type": "semantics"}]}, "onClick": "app.preview.onClick", "selected": true}, "type": "Tab"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TabContent", showBackground = true)
@@ -820,19 +820,19 @@ private fun TopAppBarPreview() {
 @Preview(name = "TriStateCheckbox", showBackground = true)
 @Composable
 private fun TriStateCheckboxPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"onClick": "app.preview.onClick", "state": {"name": "On", "type": "ToggleableState"}}, "type": "TriStateCheckbox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TriStateCheckbox", "type": "semantics"}]}, "onClick": "app.preview.onClick", "state": {"name": "On", "type": "ToggleableState"}}, "type": "TriStateCheckbox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "VerticalDivider", showBackground = true)
 @Composable
 private fun VerticalDividerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {}, "type": "VerticalDivider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "VerticalDivider", "type": "semantics"}]}}, "type": "VerticalDivider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "VerticalDragHandle", showBackground = true)
 @Composable
 private fun VerticalDragHandlePreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {}, "type": "VerticalDragHandle"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "VerticalDragHandle", "type": "semantics"}]}}, "type": "VerticalDragHandle"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "WideNavigationRail", showBackground = true)

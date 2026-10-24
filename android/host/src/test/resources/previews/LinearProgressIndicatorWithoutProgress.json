@@ -4,7 +4,16 @@
  },
  "root": {
   "id": "preview",
-  "props": {},
+  "props": {
+   "modifier": {
+    "operations": [
+     {
+      "contentDescription": "LinearProgressIndicatorWithoutProgress",
+      "type": "semantics"
+     }
+    ]
+   }
+  },
   "type": "LinearProgressIndicatorWithoutProgress"
  },
  "schemaVersion": "1.23.0",
