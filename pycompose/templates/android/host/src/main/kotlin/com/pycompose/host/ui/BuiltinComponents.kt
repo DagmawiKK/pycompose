@@ -1,7 +1,5 @@
 package com.pycompose.host.ui
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.Crossfade
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBarDefaults
@@ -10,7 +8,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,8 +21,6 @@ import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import com.pycompose.ir.generated.AnimatedContent as AnimatedContentNode
-import com.pycompose.ir.generated.Crossfade as CrossfadeNode
 import com.pycompose.ir.generated.Image as ImageNode
 import com.pycompose.ir.generated.SearchBarInputField as SearchBarInputFieldNode
 import com.pycompose.ir.generated.Text as TextNode
@@ -70,7 +65,6 @@ object BuiltinComponents {
             .searchFields()
             .statefulSearchFields()
             .sharedSearchBars()
-            .animations()
             .tooltips()
 
     private fun ComponentRegistry.Builder.textInputs(): ComponentRegistry.Builder =
@@ -143,23 +137,6 @@ object BuiltinComponents {
                 placeholder = context.slot(field.children, "placeholder"),
                 leadingIcon = context.slot(field.children, "leadingIcon"),
                 trailingIcon = context.slot(field.children, "trailingIcon"),
-            )
-        }
-
-    private fun ComponentRegistry.Builder.animations(): ComponentRegistry.Builder =
-        register("AnimatedContent") { node, modifier, context ->
-            val animated = node as AnimatedContentNode
-            AnimatedContent(
-                targetState = animated.props.target,
-                modifier = modifier,
-                content = { target -> key(target) { context.children(animated.children) } },
-            )
-        }.register("Crossfade") { node, modifier, context ->
-            val crossfade = node as CrossfadeNode
-            Crossfade(
-                targetState = crossfade.props.target,
-                modifier = modifier,
-                content = { target -> key(target) { context.children(crossfade.children) } },
             )
         }
 

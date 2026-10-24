@@ -140,6 +140,23 @@ class RenderContext internal constructor(
         }
     }
 
+    /**
+     * Keyed content's subtrees for one node: the children Python sent for each key.
+     *
+     * @param id The node's id, which the subtrees' lifetime follows.
+     * @param current The key the snapshot draws now.
+     * @param nodes The children Python sent for [current].
+     */
+    @Composable fun keyedContent(
+        id: String,
+        current: String,
+        nodes: List<UiNode>,
+    ): KeyedContent {
+        val keyed = remember(id) { KeyedContent(this) }
+        keyed.show(current, nodes)
+        return keyed
+    }
+
     /** Primary children, in declaration order. */
     @Composable fun children(nodes: List<UiNode>) {
         nodes.unslotted().forEach { child -> key(child.id) { node(child) } }

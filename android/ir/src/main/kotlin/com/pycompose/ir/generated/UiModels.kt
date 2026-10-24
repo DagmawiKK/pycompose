@@ -60,8 +60,10 @@ data class AlertDialog(
 
 @Serializable
 data class AnimatedContentProps(
+    val `contentAlignment`: String = "topStart",
+    val `label`: String = "AnimatedContent",
     override val `modifier`: JsonObject? = null,
-    val `target`: String,
+    val `targetState`: String,
 ) : UiProps
 
 @Serializable
@@ -78,6 +80,7 @@ data class AnimatedContent(
 
 @Serializable
 data class AnimatedVisibilityProps(
+    val `label`: String = "AnimatedVisibility",
     override val `modifier`: JsonObject? = null,
     val `visible`: Boolean,
 ) : UiProps
@@ -484,8 +487,9 @@ data class Column(
 
 @Serializable
 data class CrossfadeProps(
+    val `label`: String = "Crossfade",
     override val `modifier`: JsonObject? = null,
-    val `target`: String,
+    val `targetState`: String,
 ) : UiProps
 
 @Serializable

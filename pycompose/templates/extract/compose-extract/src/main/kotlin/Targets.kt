@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -32,7 +33,9 @@ internal fun DeclarationDescriptor.symbol(): String = DescriptorUtils.getFqNameS
 internal fun KotlinType.classifier(): String {
     val descriptor = checkNotNull(constructor.declarationDescriptor)
     // Metadata's spelling, which the inventory records: '/' between package
-    // segments and '.' between nested classes (Arrangement.Horizontal).
+    // segments and '.' between nested classes (Arrangement.Horizontal), and a
+    // type parameter by its index (`#0` for AnimatedContent's S).
+    if (descriptor is TypeParameterDescriptor) return "#${descriptor.index}"
     return (descriptor as? ClassifierDescriptorWithTypeParameters)?.classId?.asString()
         ?: descriptor.symbol().replace('.', '/')
 }

@@ -22,12 +22,15 @@ from pycompose.schema.codegen.rules import (
 PROVIDER_KEYS = frozenset({"native", "returns"})
 
 
-def _validate_children(name: str, children: dict[str, Any]) -> None:
+def _validate_children(
+    name: str, children: dict[str, Any], props: dict[str, Any]
+) -> None:
     """Check a component's children declaration and the scope it provides.
 
     Args:
         name: Component name, for error messages.
         children: The component's raw ``children`` object.
+        props: The component's props, one of which keyed children name.
     """
     if not isinstance(children.get("allowed"), bool):
         die(f"component {name!r} needs children.allowed as a boolean")
@@ -36,6 +39,11 @@ def _validate_children(name: str, children: dict[str, Any]) -> None:
             f"component {name!r} children.kind must be one of "
             + ", ".join(sorted(SLOT_KINDS))
         )
+    key = props.get(children.get("key", ""), {})
+    if (children.get("kind") == "keyed") != ("key" in children) or (
+        "key" in children and (key.get("type"), key.get("required")) != ("string", True)
+    ):
+        die(f"component {name!r} keyed children need a 'key' naming a required string")
     if "min" in children and not isinstance(children["min"], int):
         die(f"component {name!r} children.min must be an integer")
     natively = children.get("native")
@@ -55,7 +63,7 @@ def _validate_children(name: str, children: dict[str, Any]) -> None:
         die(f"component {name!r} children.provides must name a receiver class")
     if children.get("consume") is not None:
         die(f"component {name!r} children cannot consume and provide a scope")
-    if children.get("kind", "content") != "content":
+    if children.get("kind", "content") not in {"content", "keyed"}:
         die(f"component {name!r} children.provides needs the content kind")
 
 
@@ -160,8 +168,8 @@ def _validate_slot(
     natives.add(native)
     if not isinstance(slot.get("nullable", False), bool):
         die(f"{where}: 'nullable' must be a boolean")
-    if slot.get("kind", "content") not in SLOT_KINDS:
-        die(f"{where}: 'kind' must be one of " + ", ".join(sorted(SLOT_KINDS)))
+    if slot.get("kind", "content") not in set(SLOT_KINDS) - {"keyed"}:
+        die(f"{where}: 'kind' must be content or items")
     if slot.get("consume") not in {None, *CONSUMERS}:
         die(f"{where}: 'consume' must be one of " + ", ".join(sorted(CONSUMERS)))
     if slot.get("nullable", False) and slot.get("consume") is not None:

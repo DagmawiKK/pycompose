@@ -13,6 +13,7 @@ from typing import Any
 from pycompose.compiler.candidate_props import scope_for
 from pycompose.compiler.classpath_dump import Inventory
 from pycompose.compiler.component_binding import resolutions, unversioned
+from pycompose.compiler.keyed import keyed_arguments
 from pycompose.compiler.propose import refresh
 
 DERIVED = ("source", "kotlinType", "native", "omitted")
@@ -128,9 +129,11 @@ def _content_scope(declaration: Any, native: str) -> str | None:
         if "kotlin/ExtensionFunctionType" not in parameter.type.annotations:
             continue
         arguments = [type_ for _, type_ in parameter.type.arguments]
-        # Children compose in a receiver-only lambda: one that also passes an
-        # argument (a key, an item) is another protocol's.
-        if len(arguments) != 2 or arguments[0] is None:
+        # Children compose in a receiver-only lambda, or keyed content's: one
+        # passing any other argument (an item) is another protocol's.
+        if arguments[0] is None or not (
+            len(arguments) == 2 or keyed_arguments(parameter.type)
+        ):
             continue
         return scope_for(arguments[0].classifier)
     return None

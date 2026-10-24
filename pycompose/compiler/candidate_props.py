@@ -110,6 +110,11 @@ def wire_shape(
         if policy == "slot":
             place_slot(parameter, spec, children, slots, review)
             continue
+        if policy == "key":
+            # Keyed content: the value a subtree is drawn for, as a string key.
+            props[parameter] = {"type": "string", "required": True}
+            children["key"] = parameter
+            continue
         prop = _prop(name, parameter, spec, families, review)
         if prop is not None:
             props[parameter] = prop
@@ -430,6 +435,15 @@ def place_slot(
     """
     receiver = spec.get("receiver")
     nullable = bool(spec["type"]["nullable"])
+    if spec.get("keyed"):
+        # The children are the subtree Python sends for the current key.
+        children.update({"allowed": True, "kind": "keyed"})
+        if parameter != "content":
+            children["native"] = parameter
+        if receiver is not None:
+            children["provides"] = scope_for(receiver)
+        review.append(f"{parameter}: keyed content, one subtree per key")
+        return
     if receiver is not None:
         scope = scope_for(receiver)
         if parameter == "content":

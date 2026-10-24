@@ -2,11 +2,9 @@
 """Native components backed by the shared manifest."""
 
 from m3.generated_components import (
-    AnimatedContent,
     Card,
     CardWithoutOnClick,
     Column,
-    Crossfade,
     ExpandedDockedSearchBar,
     ExpandedFullScreenSearchBar,
     FloatingActionButton,
@@ -42,11 +40,9 @@ from pycompose.components.modifiers import (
 )
 
 __all__ = [
-    "AnimatedContent",
     "Card",
     "CardWithoutOnClick",
     "Column",
-    "Crossfade",
     "ExpandedDockedSearchBar",
     "ExpandedFullScreenSearchBar",
     "FloatingActionButton",

@@ -120,7 +120,33 @@
         "owner": "androidx.compose.animation.AnimatedContentKt"
       },
       "props": {
-        "target": {
+        "contentAlignment": {
+          "type": "enum",
+          "values": [
+            "bottomCenter",
+            "bottomEnd",
+            "bottomLeft",
+            "bottomRight",
+            "bottomStart",
+            "center",
+            "centerEnd",
+            "centerLeft",
+            "centerRight",
+            "centerStart",
+            "topCenter",
+            "topEnd",
+            "topLeft",
+            "topRight",
+            "topStart"
+          ],
+          "decode": "alignment",
+          "default": "topStart"
+        },
+        "label": {
+          "type": "string",
+          "default": "AnimatedContent"
+        },
+        "targetState": {
           "type": "string",
           "required": true
         },
@@ -130,12 +156,10 @@
       },
       "children": {
         "allowed": true,
-        "min": 0
-      },
-      "adapter": "manual",
-      "reshaped": [
-        "target"
-      ]
+        "key": "targetState",
+        "kind": "keyed",
+        "provides": "androidx.compose.animation.AnimatedContentScope"
+      }
     },
     "AnimatedVisibility": {
       "package": "androidx.compose.animation",
@@ -150,6 +174,10 @@
         "owner": "androidx.compose.animation.AnimatedVisibilityKt"
       },
       "props": {
+        "label": {
+          "type": "string",
+          "default": "AnimatedVisibility"
+        },
         "visible": {
           "type": "boolean",
           "required": true
@@ -1205,7 +1233,11 @@
         "owner": "androidx.compose.animation.CrossfadeKt"
       },
       "props": {
-        "target": {
+        "label": {
+          "type": "string",
+          "default": "Crossfade"
+        },
+        "targetState": {
           "type": "string",
           "required": true
         },
@@ -1215,12 +1247,9 @@
       },
       "children": {
         "allowed": true,
-        "min": 0
-      },
-      "adapter": "manual",
-      "reshaped": [
-        "target"
-      ]
+        "key": "targetState",
+        "kind": "keyed"
+      }
     },
     "DatePickerDialog": {
       "package": "androidx.compose.material3",

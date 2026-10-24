@@ -302,7 +302,7 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
     children = comp.get("children")
     if not isinstance(children, dict):
         die(f"component {name!r} needs a 'children' object")
-    _validate_children(name, children)
+    _validate_children(name, children, props)
     _validate_slots(name, props, children, comp.get("slots", {}))
     for prop_name, prop in sorted(props.items()):
         slot = prop.get("indexOf")

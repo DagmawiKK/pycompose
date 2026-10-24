@@ -5,7 +5,9 @@ package com.pycompose.host.ui
 
 import com.pycompose.renderer.ComponentRegistry
 import kotlinx.serialization.json.JsonPrimitive
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -129,6 +131,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pycompose.ir.generated.AlertDialog as AlertDialogNode
+import com.pycompose.ir.generated.AnimatedContent as AnimatedContentNode
 import com.pycompose.ir.generated.AnimatedVisibility as AnimatedVisibilityNode
 import com.pycompose.ir.generated.AssistChip as AssistChipNode
 import com.pycompose.ir.generated.Badge as BadgeNode
@@ -148,6 +151,7 @@ import com.pycompose.ir.generated.Checkbox as CheckboxNode
 import com.pycompose.ir.generated.CircularProgressIndicator as CircularProgressIndicatorNode
 import com.pycompose.ir.generated.CircularProgressIndicatorProgress as CircularProgressIndicatorProgressNode
 import com.pycompose.ir.generated.Column as ColumnNode
+import com.pycompose.ir.generated.Crossfade as CrossfadeNode
 import com.pycompose.ir.generated.DatePickerDialog as DatePickerDialogNode
 import com.pycompose.ir.generated.DisableSelection as DisableSelectionNode
 import com.pycompose.ir.generated.DismissibleDrawerSheet as DismissibleDrawerSheetNode
@@ -319,10 +323,23 @@ object GeneratedAdapters {
                     title = context.slot(model.children, "title"),
                 )
             }
+            .register("AnimatedContent") { node, modifier, context ->
+                val model = node as AnimatedContentNode
+                val contentAlignmentValue: androidx.compose.ui.Alignment = com.pycompose.renderer.PropResolver.alignment(model.props.contentAlignment).getOrDefault(androidx.compose.ui.Alignment.TopStart)
+                val keyed = context.keyedContent(model.id, model.props.targetState, model.children)
+                AnimatedContent(
+                    modifier = modifier,
+                    contentAlignment = contentAlignmentValue,
+                    label = model.props.label,
+                    targetState = model.props.targetState,
+                    content = { key -> keyed.Content(this, key) },
+                )
+            }
             .register("AnimatedVisibility") { node, modifier, context ->
                 val model = node as AnimatedVisibilityNode
                 AnimatedVisibility(
                     modifier = modifier,
+                    label = model.props.label,
                     visible = model.props.visible,
                     content = { context.childrenIn(this, model.children) },
                 )
@@ -654,6 +671,16 @@ object GeneratedAdapters {
                     modifier = scrollStateValue.attachTo(modifier, model.props.scrollable),
                     horizontalAlignment = horizontalAlignmentValue,
                     content = { context.childrenIn(this, model.children) },
+                )
+            }
+            .register("Crossfade") { node, modifier, context ->
+                val model = node as CrossfadeNode
+                val keyed = context.keyedContent(model.id, model.props.targetState, model.children)
+                Crossfade(
+                    modifier = modifier,
+                    label = model.props.label,
+                    targetState = model.props.targetState,
+                    content = { key -> keyed.Content(null, key) },
                 )
             }
             .register("DatePickerDialog") { node, modifier, context ->

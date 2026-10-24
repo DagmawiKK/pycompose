@@ -25,6 +25,7 @@ from pycompose.compiler.classpath_dump import (
     source_defaults,
 )
 from pycompose.compiler.classpath_types import KotlinType
+from pycompose.compiler.keyed import KEY, is_keyed, keyed_arguments
 from pycompose.compiler.opt_ins import OptInIndex, opt_in_index
 from pycompose.compiler.propose import SCALARS, identity, source_name, value_families
 from pycompose.compiler.resolution import MODIFIER, block_unaddressable_overloads
@@ -79,7 +80,9 @@ def _slot(value: KotlinType) -> dict[str, Any]:
             )
         receiver = native_receiver.classifier
     rule: dict[str, Any] = {"policy": "slot", "receiver": receiver}
-    if (
+    if keyed_arguments(value):
+        rule["keyed"] = True
+    elif (
         len(arguments) == 1
         and not arguments[0].nullable
         and arguments[0].classifier in CONSUMED
@@ -106,6 +109,8 @@ def _binding_rule(
     value = parameter.type
     if parameter.vararg_type:
         raise ValueError("varargs need a collection binding")
+    if value.classifier == KEY:
+        return {"policy": "key"}  # keyed content's value, as its wire key
     if value.classifier == MODIFIER and not value.nullable:
         if parameter.has_default and defaults.get(parameter.name) != {
             "kind": "object",
@@ -203,11 +208,7 @@ def _symbols(expression: dict[str, Any]) -> Iterator[str]:
 def _scope_providers(
     declarations: Iterable[Declaration], scopes: frozenset[str]
 ) -> set[str]:
-    """Classifiers an app composes *inside*, not merely passes as a parameter.
-
-    A builder's own receiver, or a slot lambda's (``scopes``); members of any
-    other type reach an app only as parameters (ADR-0016 decision 1).
-    """
+    """Receivers an app composes inside: a builder's own, or a slot's (ADR-0016)."""
     return {d.receiver.classifier for d in declarations if d.receiver} | scopes
 
 
@@ -258,9 +259,8 @@ def _plan(
     """Plan one exact overload, recording every capability it would need.
 
     A member of an ``object`` (``SearchBarDefaults.InputField``) is called
-    through the object, so its dispatch receiver needs no protocol. A member of
-    a scope (``ExposedDropdownMenu``) composes inside it, as an extension on it
-    does: that receiver is the plan's.
+    through the object; a member of a scope (``ExposedDropdownMenu``) composes
+    inside it, as an extension on it does.
     """
     parameters: dict[str, Any] = {}
     gaps = []
@@ -272,7 +272,7 @@ def _plan(
         (receiver is not None and receiver.classifier not in scopes)
         or (holder and not static and not member)
         or source.context_receivers
-        or source.document.get("typeParameters")
+        or (source.document.get("typeParameters") and not is_keyed(source))
     ):
         gaps.append(
             {

@@ -283,7 +283,7 @@ def _slot(registry: dict[str, Any], component: str, name: str) -> dict[str, Any]
             lambda registry: _slot(registry, "Scaffold", "topBar").update(
                 kind="canvas"
             ),
-            "must be one of content, items",
+            "must be content or items",
         ),
         (
             lambda registry: _slot(registry, "Scaffold", "topBar").update(

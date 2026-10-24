@@ -1,5 +1,9 @@
 package com.pycompose.host
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTextInput
@@ -52,9 +56,9 @@ class RoundNineComponentsTest {
                   {"id":"lazy.row.two","type":"Text","props":{"text":"Lazy two"}}]},
                 {"id":"visible","type":"AnimatedVisibility","props":{"visible":true},"children":[
                   {"id":"visible.text","type":"Text","props":{"text":"Visible one"}}]},
-                {"id":"content","type":"AnimatedContent","props":{"target":"one"},"children":[
+                {"id":"content","type":"AnimatedContent","props":{"targetState":"one"},"children":[
                   {"id":"content.text","type":"Text","props":{"text":"Animated content"}}]},
-                {"id":"crossfade","type":"Crossfade","props":{"target":"one"},"children":[
+                {"id":"crossfade","type":"Crossfade","props":{"targetState":"one"},"children":[
                   {"id":"crossfade.text","type":"Text","props":{"text":"Crossfade content"}}]},
                 {"id":"bottom","type":"BottomAppBar","props":{},"children":[
                   {"id":"bottom.text","type":"Text","props":{"text":"Bottom bar"}}]}]}}
@@ -76,6 +80,35 @@ class RoundNineComponentsTest {
         compose.onNodeWithText("Animated content").assertExists()
         compose.onNodeWithText("Crossfade content").assertExists()
         compose.onNodeWithText("Bottom bar").assertExists()
+    }
+
+    @Test
+    fun anOutgoingKeyKeepsItsOwnSubtreeWhileItAnimatesOut() {
+        fun snapshot(key: String) =
+            parse(
+                """
+                {"version":"0.1.0","schemaVersion":"1.23.0","root":{
+                  "id":"fade","type":"Crossfade","props":{"targetState":"$key"},"children":[
+                    {"id":"fade.$key","type":"Text","props":{"text":"Page $key"}}]}}
+                """.trimIndent(),
+            )
+        var shown by mutableStateOf(snapshot("one"))
+        val renderer = renderer(mutableListOf())
+        compose.setContent { PyComposeTheme { renderer.Render(shown) } }
+        compose.onNodeWithText("Page one").assertExists()
+
+        compose.mainClock.autoAdvance = false
+        shown = snapshot("two")
+        Snapshot.sendApplyNotifications()
+        compose.mainClock.advanceTimeBy(FRAME_MS)
+        // Python sent only page two; page one still fades out as itself.
+        compose.onNodeWithText("Page one").assertExists()
+        compose.onNodeWithText("Page two").assertExists()
+
+        compose.mainClock.autoAdvance = true
+        compose.waitForIdle()
+        compose.onNodeWithText("Page one").assertDoesNotExist()
+        compose.onNodeWithText("Page two").assertExists()
     }
 
     @Test
@@ -120,5 +153,9 @@ class RoundNineComponentsTest {
             actions.lastOrNull { it.actionId == "app.demo.query" }?.payload?.toString() ==
                 """{"query":"Updated query!"}"""
         }
+    }
+
+    private companion object {
+        const val FRAME_MS = 100L
     }
 }

@@ -160,6 +160,24 @@ __all__ = [
 ]
 
 
+_AnimatedContentContentAlignment = Literal[
+    "bottomCenter",
+    "bottomEnd",
+    "bottomLeft",
+    "bottomRight",
+    "bottomStart",
+    "center",
+    "centerEnd",
+    "centerLeft",
+    "centerRight",
+    "centerStart",
+    "topCenter",
+    "topEnd",
+    "topLeft",
+    "topRight",
+    "topStart",
+]
+
 _BoxContentAlignment = Literal[
     "topStart",
     "topCenter",
@@ -361,8 +379,10 @@ class AnimatedContent(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        content_alignment: _AnimatedContentContentAlignment | None = None,
+        label: str | None = None,
         modifier: Modifier | None = None,
-        target: str,
+        target_state: str,
         children: Content = (),
     ) -> None:
         """Construct a registered AnimatedContent.
@@ -370,15 +390,21 @@ class AnimatedContent(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            content_alignment: Native contentAlignment; None uses its default.
+            label: Native label; None uses its default.
             modifier: Native modifier; None uses its default.
-            target: Required native target.
+            target_state: Required native targetState.
             children: Ordered child nodes with stable keys.
 
         Raises:
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        props["target"] = target
+        if content_alignment is not None:
+            props["content_alignment"] = content_alignment
+        if label is not None:
+            props["label"] = label
+        props["target_state"] = target_state
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -397,6 +423,7 @@ class AnimatedVisibility(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        label: str | None = None,
         modifier: Modifier | None = None,
         visible: bool,
         children: Content = (),
@@ -407,6 +434,7 @@ class AnimatedVisibility(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            label: Native label; None uses its default.
             modifier: Native modifier; None uses its default.
             visible: Required native visible.
             children: Ordered child nodes with stable keys.
@@ -416,6 +444,8 @@ class AnimatedVisibility(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if label is not None:
+            props["label"] = label
         props["visible"] = visible
         if content is not None:
             if children:
@@ -1376,8 +1406,9 @@ class Crossfade(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        label: str | None = None,
         modifier: Modifier | None = None,
-        target: str,
+        target_state: str,
         children: Content = (),
     ) -> None:
         """Construct a registered Crossfade.
@@ -1385,15 +1416,18 @@ class Crossfade(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            label: Native label; None uses its default.
             modifier: Native modifier; None uses its default.
-            target: Required native target.
+            target_state: Required native targetState.
             children: Ordered child nodes with stable keys.
 
         Raises:
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        props["target"] = target
+        if label is not None:
+            props["label"] = label
+        props["target_state"] = target_state
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id

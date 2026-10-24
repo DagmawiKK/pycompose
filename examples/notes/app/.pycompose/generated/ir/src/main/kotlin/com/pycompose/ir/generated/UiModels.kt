@@ -35,24 +35,6 @@ data class IRRoot(
 )
 
 @Serializable
-data class AnimatedContentProps(
-    override val `modifier`: JsonObject? = null,
-    val `target`: String,
-) : UiProps
-
-@Serializable
-@SerialName("AnimatedContent")
-data class AnimatedContent(
-    override val id: String,
-    override val props: AnimatedContentProps,
-    override val children: List<UiNode> = emptyList(),
-    override val slot: String? = null,
-) : UiNode {
-    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
-    override val componentType: String get() = "AnimatedContent"
-}
-
-@Serializable
 data class CardProps(
     val `border`: OptionalValue = OptionalValue.Absent,
     val `colors`: JsonElement? = null,
@@ -118,24 +100,6 @@ data class Column(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "Column"
-}
-
-@Serializable
-data class CrossfadeProps(
-    override val `modifier`: JsonObject? = null,
-    val `target`: String,
-) : UiProps
-
-@Serializable
-@SerialName("Crossfade")
-data class Crossfade(
-    override val id: String,
-    override val props: CrossfadeProps,
-    override val children: List<UiNode> = emptyList(),
-    override val slot: String? = null,
-) : UiNode {
-    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
-    override val componentType: String get() = "Crossfade"
 }
 
 @Serializable

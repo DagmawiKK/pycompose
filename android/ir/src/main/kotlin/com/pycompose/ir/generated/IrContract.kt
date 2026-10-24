@@ -33,8 +33,10 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "contentAlignment" to PropertyRule("enum", required = false, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
+                "label" to PropertyRule("string", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
-                "target" to PropertyRule("string", required = true),
+                "targetState" to PropertyRule("string", required = true),
             ),
         ),
         "AnimatedVisibility" to ComponentRule(
@@ -43,6 +45,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "label" to PropertyRule("string", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "visible" to PropertyRule("boolean", required = true),
             ),
@@ -297,8 +300,9 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "label" to PropertyRule("string", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
-                "target" to PropertyRule("string", required = true),
+                "targetState" to PropertyRule("string", required = true),
             ),
         ),
         "DatePickerDialog" to ComponentRule(

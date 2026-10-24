@@ -11,16 +11,6 @@ object IrContract {
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
-        "AnimatedContent" to ComponentRule(
-            slots = setOf(),
-            childrenAllowed = true,
-            minimumChildren = 0,
-            since = "1.23.0",
-            props = mapOf(
-                "modifier" to PropertyRule("modifier", required = false),
-                "target" to PropertyRule("string", required = true),
-            ),
-        ),
         "Card" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -63,16 +53,6 @@ object IrContract {
                 "offset" to PropertyRule("number", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
                 "scrollable" to PropertyRule("boolean", required = false),
-            ),
-        ),
-        "Crossfade" to ComponentRule(
-            slots = setOf(),
-            childrenAllowed = true,
-            minimumChildren = 0,
-            since = "1.23.0",
-            props = mapOf(
-                "modifier" to PropertyRule("modifier", required = false),
-                "target" to PropertyRule("string", required = true),
             ),
         ),
         "ExpandedDockedSearchBar" to ComponentRule(

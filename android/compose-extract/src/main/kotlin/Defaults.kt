@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
@@ -62,12 +63,20 @@ internal class Defaults(private val context: BindingContext) {
             node is KtConstantExpression || node is KtPrefixExpression -> literal(node, type)
             reference != null -> property(node, reference, type)
             call != null -> call(call, node)
-            else -> emptyLambda(node)
+            else -> template(node, type)
         }
     }
 
-    /** `content: @Composable () -> Unit = {}`: a slot that draws nothing; nothing else. */
-    private fun emptyLambda(node: KtExpression): Map<String, Any?> {
+    /**
+     * A constant string (`label: String = "AnimatedContent"`), or an empty lambda
+     * (`content: @Composable () -> Unit = {}`, a slot that draws nothing); nothing else.
+     */
+    private fun template(node: KtExpression, type: KotlinType): Map<String, Any?> {
+        val constant = context[BindingContext.COMPILE_TIME_VALUE, node]
+            ?.takeUnless { it.isError }?.getValue(type)
+        if (node is KtStringTemplateExpression && constant is String) {
+            return mapOf("kind" to "literal", "type" to type.classifier(), "value" to constant)
+        }
         check(node is KtLambdaExpression && node.bodyExpression?.statements.isNullOrEmpty()) {
             "unsupported default syntax: ${node.javaClass.simpleName}"
         }

@@ -6,36 +6,9 @@
     }
   },
   "AnimatedContent": {
-    "manual": "no call plan in the pinned inventory: no wire policy for #0, receiver/generic declaration needs a native protocol, slot scope needs a native protocol: androidx/compose/animation/AnimatedContentScope",
-    "entry": {
-      "package": "androidx.compose.animation",
+    "decision": {
       "category": "animation",
-      "stability": "stable",
-      "since": "1.23.0",
-      "source": {
-        "artifact": "androidx.compose.animation:animation-android",
-        "descriptor": "(Ljava/lang/Object;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Alignment;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "AnimatedContent",
-        "name": "AnimatedContent",
-        "owner": "androidx.compose.animation.AnimatedContentKt"
-      },
-      "props": {
-        "target": {
-          "type": "string",
-          "required": true
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": true,
-        "min": 0
-      },
-      "adapter": "manual",
-      "reshaped": [
-        "target"
-      ]
+      "stability": "stable"
     }
   },
   "AnimatedVisibility": {
@@ -240,36 +213,9 @@
     }
   },
   "Crossfade": {
-    "manual": "no call plan in the pinned inventory: no wire policy for #0, receiver/generic declaration needs a native protocol, slot-supplied arguments need typed context references",
-    "entry": {
-      "package": "androidx.compose.animation",
+    "decision": {
       "category": "animation",
-      "stability": "stable",
-      "since": "1.23.0",
-      "source": {
-        "artifact": "androidx.compose.animation:animation-android",
-        "descriptor": "(Ljava/lang/Object;Landroidx/compose/ui/Modifier;Landroidx/compose/animation/core/FiniteAnimationSpec;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "Crossfade",
-        "name": "Crossfade",
-        "owner": "androidx.compose.animation.CrossfadeKt"
-      },
-      "props": {
-        "target": {
-          "type": "string",
-          "required": true
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": true,
-        "min": 0
-      },
-      "adapter": "manual",
-      "reshaped": [
-        "target"
-      ]
+      "stability": "stable"
     }
   },
   "CustomizedLookaheadAnimationVisualDebugging": {

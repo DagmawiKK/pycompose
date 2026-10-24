@@ -341,18 +341,7 @@ def render(name: str, entry: dict[str, Any]) -> str:
 
     children = entry.get("children", {})
     if children.get("allowed"):
-        # Emitted by name rather than trailing: the schema says which parameter
-        # the primary children reach, and says nothing about where it sits.
-        children_body, parameter = _slot_body(
-            "model.children",
-            None,
-            children.get("kind"),
-            children.get("consume"),
-            children.get("provides"),
-        )
-        prefix = f"{parameter} -> " if parameter is not None else ""
-        native = children.get("native", "content")
-        out.arguments.append(f"{native} = {{ {prefix}{children_body} }}")
+        out.arguments.append(_children(children, out))
 
     indent = "                "
     if gate is not None:
@@ -373,6 +362,32 @@ def render(name: str, entry: dict[str, Any]) -> str:
         + f"{call}\n"
         f"            }}"
     )
+
+
+def _children(children: dict[str, Any], out: _Fragments) -> str:
+    """The argument the primary children reach, by name: never trailing.
+
+    The schema says which parameter the children reach, and nothing about
+    where it sits. Keyed content draws, for each key Compose asks for, the
+    subtree Python sent for it: an outgoing key keeps its own while it animates.
+    """
+    native = children.get("native", "content")
+    if children.get("kind") == "keyed":
+        out.locals.append(
+            "val keyed = context.keyedContent("
+            f"model.id, model.props.{_camel(children['key'])}, model.children)"
+        )
+        scope = "this" if children.get("provides") else "null"
+        return f"{native} = {{ key -> keyed.Content({scope}, key) }}"
+    body, parameter = _slot_body(
+        "model.children",
+        None,
+        children.get("kind"),
+        children.get("consume"),
+        children.get("provides"),
+    )
+    prefix = f"{parameter} -> " if parameter is not None else ""
+    return f"{native} = {{ {prefix}{body} }}"
 
 
 def _call(native: str, out: _Fragments, indent: str, *, boxed: bool) -> str:

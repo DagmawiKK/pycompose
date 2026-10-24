@@ -63,8 +63,6 @@ _ADAPTERS_RELATIVE = (
 
 FLOOR_COMPONENTS = frozenset(
     {
-        "AnimatedContent",
-        "Crossfade",
         "Image",
         "PlainTooltip",
         "RichTooltip",

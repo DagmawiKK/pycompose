@@ -150,6 +150,8 @@ class ChildrenRule:
         provides: Composition scope the children are composed under, when the
             pinned content lambda carries one. Codegen-only: the renderer hands
             the receiver down so a scoped child composes under its provider.
+        key: Keyed content's key prop: the children are the subtree drawn for
+            its current value. Codegen-only.
     """
 
     allowed: bool
@@ -158,6 +160,7 @@ class ChildrenRule:
     native: str | None = None
     consume: str | None = None
     provides: str | None = None
+    key: str | None = None
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> ChildrenRule:
@@ -195,6 +198,9 @@ class ChildrenRule:
         provides = data.get("provides")
         if provides is not None and (not isinstance(provides, str) or not provides):
             raise ComponentRegistryError(f"{where}: 'provides' must name a scope")
+        key = data.get("key")
+        if key is not None and (not isinstance(key, str) or not key):
+            raise ComponentRegistryError(f"{where}: 'key' must name a prop")
         return cls(
             allowed=allowed,
             kind=kind,
@@ -202,6 +208,7 @@ class ChildrenRule:
             native=native,
             consume=cast("str | None", consume),
             provides=provides,
+            key=key,
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -221,6 +228,8 @@ class ChildrenRule:
             out["consume"] = self.consume
         if self.provides is not None:
             out["provides"] = self.provides
+        if self.key is not None:
+            out["key"] = self.key
         return out
 
 

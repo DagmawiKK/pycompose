@@ -28,7 +28,7 @@ private fun AlertDialogPreview() {
 @Preview(name = "AnimatedContent", showBackground = true)
 @Composable
 private fun AnimatedContentPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "AnimatedContent"}, "type": "Text"}], "id": "preview", "props": {"target": "Preview"}, "type": "AnimatedContent"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "AnimatedContent"}, "type": "Text"}], "id": "preview", "props": {"targetState": "Preview"}, "type": "AnimatedContent"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "AnimatedVisibility", showBackground = true)
@@ -148,7 +148,7 @@ private fun ColumnPreview() {
 @Preview(name = "Crossfade", showBackground = true)
 @Composable
 private fun CrossfadePreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Crossfade"}, "type": "Text"}], "id": "preview", "props": {"target": "Preview"}, "type": "Crossfade"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Crossfade"}, "type": "Text"}], "id": "preview", "props": {"targetState": "Preview"}, "type": "Crossfade"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DatePickerDialog", showBackground = true)

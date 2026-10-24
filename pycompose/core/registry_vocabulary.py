@@ -16,8 +16,12 @@ from __future__ import annotations
 OWNERS = ("python", "host")
 """Who may set a prop. Anything else is refused rather than ignored."""
 
-SLOT_KINDS = ("content", "items")
-"""How a slot's subtree is composed: nodes in order, or lazy list items."""
+SLOT_KINDS = ("content", "items", "keyed")
+"""How a subtree is composed: nodes in order, lazy list items, or one per key.
+
+``keyed`` is the primary children's alone: keyed content draws the subtree Python
+sent for the current key, and keeps an outgoing key's while it animates out.
+"""
 
 CONSUMERS = ("paddingValues",)
 """Slot scopes the adapter consumes on the subtree's behalf.

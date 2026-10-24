@@ -525,6 +525,30 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomLeft",
+                "bottomRight",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerLeft",
+                "centerRight",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topLeft",
+                "topRight",
+                "topStart"
+              ]
+            },
+            "label": {
+              "default": "AnimatedContent",
+              "type": "string"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -536,12 +560,12 @@
               },
               "type": "object"
             },
-            "target": {
+            "targetState": {
               "type": "string"
             }
           },
           "required": [
-            "target"
+            "targetState"
           ],
           "type": "object"
         },
@@ -560,6 +584,10 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "label": {
+              "default": "AnimatedVisibility",
+              "type": "string"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -1759,6 +1787,10 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "label": {
+              "default": "Crossfade",
+              "type": "string"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -1770,12 +1802,12 @@
               },
               "type": "object"
             },
-            "target": {
+            "targetState": {
               "type": "string"
             }
           },
           "required": [
-            "target"
+            "targetState"
           ],
           "type": "object"
         },
@@ -28149,6 +28181,30 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomLeft",
+                "bottomRight",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerLeft",
+                "centerRight",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topLeft",
+                "topRight",
+                "topStart"
+              ]
+            },
+            "label": {
+              "default": "AnimatedContent",
+              "type": "string"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -28160,12 +28216,12 @@
               },
               "type": "object"
             },
-            "target": {
+            "targetState": {
               "type": "string"
             }
           },
           "required": [
-            "target"
+            "targetState"
           ],
           "type": "object"
         },
@@ -28184,6 +28240,10 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "label": {
+              "default": "AnimatedVisibility",
+              "type": "string"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -29383,6 +29443,10 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "label": {
+              "default": "Crossfade",
+              "type": "string"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -29394,12 +29458,12 @@
               },
               "type": "object"
             },
-            "target": {
+            "targetState": {
               "type": "string"
             }
           },
           "required": [
-            "target"
+            "targetState"
           ],
           "type": "object"
         },

@@ -17,11 +17,9 @@ from pycompose.core.values import UNSET, _Unset
 from pycompose.errors import IrValidationError
 
 __all__ = [
-    "AnimatedContent",
     "Card",
     "CardWithoutOnClick",
     "Column",
-    "Crossfade",
     "ExpandedDockedSearchBar",
     "ExpandedFullScreenSearchBar",
     "FloatingActionButton",
@@ -117,42 +115,6 @@ _TooltipBoxPosition = Literal[
     "start",
     "end",
 ]
-
-
-class AnimatedContent(Component):
-    """Native AnimatedContent; props and defaults follow the component manifest."""
-
-    __slots__ = ()
-    component_type = "AnimatedContent"
-
-    def __init__(
-        self,
-        *contents: Node,
-        id: str | None = None,
-        modifier: Modifier | None = None,
-        target: str,
-        children: Content = (),
-    ) -> None:
-        """Construct a registered AnimatedContent.
-
-        Args:
-            *contents: Children given in order, as Compose's content lambda.
-            id: Stable instance key; None derives the node's path id.
-            modifier: Native modifier; None uses its default.
-            target: Required native target.
-            children: Ordered child nodes with stable keys.
-
-        Raises:
-            IrValidationError: If children are given twice.
-        """
-        props: dict[str, PropValue] = {}
-        props["target"] = target
-        if contents and children:
-            raise IrValidationError(
-                "children given positionally and by name", node_id=id
-            )
-        normalized = content_nodes(contents or children, key="children")
-        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class _Card(Component):
@@ -340,42 +302,6 @@ class Column(Component):
             props["on_scroll_idle"] = on_scroll_idle
         if scrollable is not None:
             props["scrollable"] = scrollable
-        if contents and children:
-            raise IrValidationError(
-                "children given positionally and by name", node_id=id
-            )
-        normalized = content_nodes(contents or children, key="children")
-        super().__init__(id=id, children=normalized, modifier=modifier, **props)
-
-
-class Crossfade(Component):
-    """Native Crossfade; props and defaults follow the component manifest."""
-
-    __slots__ = ()
-    component_type = "Crossfade"
-
-    def __init__(
-        self,
-        *contents: Node,
-        id: str | None = None,
-        modifier: Modifier | None = None,
-        target: str,
-        children: Content = (),
-    ) -> None:
-        """Construct a registered Crossfade.
-
-        Args:
-            *contents: Children given in order, as Compose's content lambda.
-            id: Stable instance key; None derives the node's path id.
-            modifier: Native modifier; None uses its default.
-            target: Required native target.
-            children: Ordered child nodes with stable keys.
-
-        Raises:
-            IrValidationError: If children are given twice.
-        """
-        props: dict[str, PropValue] = {}
-        props["target"] = target
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
