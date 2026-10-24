@@ -2,23 +2,25 @@
 
 Every component the lock exposes is composed once on the JVM before an app
 can reach it (plan 31 §10). The sample is built from the component's types
-alone: each required prop gets a value of its type, each action a declared
-binding, each required slot a ``Text``, and a scoped component its provider
-as parent. Python's validator accepts every sample before it is written; the
-host's ``PreviewRenderTest`` renders each one and fails on any report.
+alone (``pycompose.compiler.samples``), and Python's validator accepts every
+sample before it is written. The samples are output of the lock, so they are
+written into the build directory, never committed: the host's
+``PreviewRenderTest`` runs this tool itself and renders each one.
 
 The same samples become one ``@Preview`` per component in the host's debug
-source set, so Android Studio shows the whole catalog, and the host's
-``PreviewScreenshotTest`` captures each against a committed reference.
+source set, so Android Studio shows the whole catalog; that source is
+committed, because the debug build compiles it.
 
-    python tools/previews.py            # regenerate
-    python tools/previews.py --check    # fail if the committed samples are stale
+    python tools/previews.py                  # samples and the @Preview catalog
+    python tools/previews.py --out DIR        # only the samples, into DIR
+    python tools/previews.py --check          # fail if the catalog is stale
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -32,7 +34,8 @@ from pycompose.compiler.samples import sample
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = ROOT / "schema/catalog.lock.json"
-PREVIEWS = ROOT / "android/host/src/test/resources/previews"
+PREVIEWS = ROOT / "android/host/build/previews"
+"""Where the samples go by default: the host's build directory, not git."""
 CATALOG = ROOT / "android/host/src/debug/kotlin/com/pycompose/host/GeneratedPreviews.kt"
 """One ``@Preview`` per component: Android Studio's catalog of the samples."""
 
@@ -123,38 +126,33 @@ def catalog(samples: dict[str, dict[str, Any]]) -> str:
 
 
 def main() -> int:
-    """Write or check the samples.
+    """Write the samples and the catalog, or check the catalog.
 
     Returns:
         A process exit status.
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
-    check = parser.parse_args().check
+    parser.add_argument("--out", type=Path)
+    args = parser.parse_args()
     samples = documents()
-    files = render(samples)
     preview = catalog(samples)
-    present = {path.name for path in PREVIEWS.glob("*")} if PREVIEWS.is_dir() else set()
-    stale = sorted(
-        name
-        for name, text in files.items()
-        if name not in present or (PREVIEWS / name).read_text() != text
-    ) + sorted(present - set(files))
-    if not CATALOG.is_file() or CATALOG.read_text() != preview:
-        stale.append(str(CATALOG.relative_to(ROOT)))
-    if check:
-        if stale:
-            print(f"previews.py: stale samples: {', '.join(stale)}", file=sys.stderr)
+    if args.check:
+        if not CATALOG.is_file() or CATALOG.read_text() != preview:
+            print(f"previews.py: stale {CATALOG.relative_to(ROOT)}", file=sys.stderr)
             return 1
         return 0
-    PREVIEWS.mkdir(parents=True, exist_ok=True)
-    for name in present - set(files):
-        (PREVIEWS / name).unlink()
-    for name, text in files.items():
-        (PREVIEWS / name).write_text(text)
-    CATALOG.parent.mkdir(parents=True, exist_ok=True)
-    CATALOG.write_text(preview)
-    print(f"previews.py: wrote {len(files) - 1} samples")
+    out = args.out or PREVIEWS
+    if out.is_dir():
+        shutil.rmtree(out)
+    out.mkdir(parents=True)
+    for name, text in render(samples).items():
+        (out / name).write_text(text)
+    if args.out is None:
+        # A test run asks for samples only; it never rewrites a source file.
+        CATALOG.parent.mkdir(parents=True, exist_ok=True)
+        CATALOG.write_text(preview)
+    print(f"previews.py: wrote {len(samples)} samples to {out}")
     return 0
 
 

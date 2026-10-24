@@ -22,7 +22,7 @@ import org.robolectric.annotation.Config
  * The render gate (plan 31 §10): every catalog component composes on the JVM.
  *
  * `tools/previews.py` writes one sample per component, built from its types
- * and accepted by Python's validator. Each renders here with the debug renderer;
+ * and accepted by Python's validator ([Samples]). Each renders here with the debug renderer;
  * an exception or any renderer report -- an unsupported type, a value that did
  * not resolve, an observation that could not attach -- fails that component.
  *
@@ -40,8 +40,7 @@ class PreviewRenderTest(
 
     @Test
     fun theSampleRendersWithoutAReport() {
-        val source = checkNotNull(javaClass.getResource("/previews/$component.json")).readText()
-        val ir = IrParser().parse(source).getOrThrow()
+        val ir = IrParser().parse(Samples.source(component)).getOrThrow()
         val reports = mutableListOf<String>()
         val renderer =
             Renderer(
@@ -78,11 +77,6 @@ class PreviewRenderTest(
     companion object {
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters(name = "{0}")
-        fun components(): List<Array<Any>> =
-            checkNotNull(PreviewRenderTest::class.java.getResource("/previews/index.txt"))
-                .readText()
-                .lines()
-                .filter { it.isNotBlank() }
-                .map { arrayOf(it) }
+        fun components(): List<Array<Any>> = Samples.names().map { arrayOf(it) }
     }
 }

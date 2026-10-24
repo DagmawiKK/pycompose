@@ -166,12 +166,12 @@ jobs:
           packages: platform-tools
       - name: Install pinned SDK packages
         run: sdkmanager "platforms;android-37.0" "build-tools;34.0.0"
+      - name: Install the package (the render gate writes its samples with it)
+        run: pip install -e ".[dev]"
       - name: Spotless + Detekt + lint + unit tests (incl. ArchUnit)
         if: hashFiles('android/settings.gradle.kts') != ''
         working-directory: android
         run: ./gradlew spotlessCheck detekt lintDebug testDebugUnitTest --continue
-      - name: Install API extraction test dependencies
-        run: pip install -e ".[dev]"
       - name: Verify pinned public Compose inventory
         env:
           PYCOMPOSE_NATIVE_API_TESTS: "1"
@@ -179,12 +179,6 @@ jobs:
           pytest -q tests/test_classpath_dump.py tests/test_component_proposals.py tests/test_composegen.py
           python -m pycompose.compiler.classpath_dump --report android/build/compose-api/capabilities.json
           python -m tools.composegen generate --check
-      - name: Upload screenshot differences (informational)
-        if: always() && hashFiles('android/host/build/reports/screenshots/summary.txt') != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshot-differences
-          path: android/host/build/reports/screenshots/
       - name: Upload reports
         if: failure()
         uses: actions/upload-artifact@v4

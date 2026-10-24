@@ -1,4 +1,4 @@
-"""The committed render-gate samples are what the lock implies today."""
+"""The committed @Preview catalog is what the lock implies today."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_the_committed_samples_are_current() -> None:
+def test_the_committed_preview_catalog_is_current() -> None:
     result = subprocess.run(
         [sys.executable, "tools/previews.py", "--check"],
         cwd=ROOT,

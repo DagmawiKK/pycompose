@@ -98,13 +98,11 @@ its base. Check its report if you touch the IR, diffing, or bridge.
   `schema/policy/`, together with `schema/signatures/<bom>.txt`, the pinned API
   surface one declaration per line. Change the policy or the generators,
   regenerate, run `make codegen` and `python tools/previews.py`, and commit
-  the lock with the regenerated Python, Kotlin, validators, schema and render
-  samples together. Every component renders on the JVM in
-  `PreviewRenderTest` before an app can reach it, Android Studio shows each
-  as a `@Preview` (`host/src/debug/.../GeneratedPreviews.kt`), and
-  `PreviewScreenshotTest` compares each with `host/src/test/screenshots/`
-  (informational; re-record with `./gradlew :host:testDebugUnitTest
-  -Ppycompose.recordScreenshots=true`).
+  the lock with the regenerated Python, Kotlin, validators, schema and
+  `@Preview` catalog together. Every component renders on the JVM in
+  `PreviewRenderTest` before an app can reach it, from samples the test writes
+  into `host/build/previews` (never committed), and Android Studio shows each
+  as a `@Preview` (`host/src/debug/.../GeneratedPreviews.kt`).
 - **Lock changes are classified.** `python -m pycompose.compiler diff --base main`
   lists every lock change as additive, fidelity, metadata, behaviour or
   breaking. CI fails on a behaviour or breaking change until
