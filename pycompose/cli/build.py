@@ -252,7 +252,8 @@ def _codegen(project: Project) -> None:
     Raises:
         ProjectError: If the slice cannot be generated.
     """
-    from pycompose.schema.codegen.app_slice import uses_generated_slice
+    from pycompose.cli.add import sync_libraries
+    from pycompose.schema.codegen.app_slice import APP_LOCK, uses_generated_slice
     from pycompose.schema.codegen.main import build_app
 
     python = project.table("python")
@@ -260,9 +261,12 @@ def _codegen(project: Project) -> None:
     if not isinstance(source, str):
         raise ProjectError("invalid python.source_dir")
     directory = project_path(project.root, source)
+    # The app's own libraries reach the classpath from its lock slice.
+    sync_libraries(project)
     if not uses_generated_slice(directory):
         return
-    if build_app(directory, android_root=project.android_root) != 0:
+    app_lock = project.root / APP_LOCK
+    if build_app(directory, android_root=project.android_root, app_lock=app_lock) != 0:
         raise ProjectError("component slice generation failed", path=directory)
 
 

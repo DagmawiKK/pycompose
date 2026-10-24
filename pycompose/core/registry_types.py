@@ -249,6 +249,12 @@ class Registry(AbstractComponentRegistry):
         default_factory=dict
     )
     holders: Mapping[str, Mapping[str, object]] = dataclass_field(default_factory=dict)
+    _own: dict[str, ComponentSpec] = dataclass_field(
+        default_factory=dict, init=False, repr=False, compare=False
+    )
+    _added: set[str] = dataclass_field(
+        default_factory=set, init=False, repr=False, compare=False
+    )
 
     def __post_init__(self) -> None:
         object.__setattr__(
@@ -258,7 +264,8 @@ class Registry(AbstractComponentRegistry):
         object.__setattr__(
             self, "supported_schema_versions", tuple(self.supported_schema_versions)
         )
-        object.__setattr__(self, "components", MappingProxyType(dict(self.components)))
+        object.__setattr__(self, "_own", dict(self.components))
+        object.__setattr__(self, "components", MappingProxyType(self._own))
         object.__setattr__(self, "actions", MappingProxyType(dict(self.actions)))
         object.__setattr__(self, "effects", MappingProxyType(dict(self.effects)))
         object.__setattr__(self, "lifecycle", MappingProxyType(dict(self.lifecycle)))
@@ -272,6 +279,25 @@ class Registry(AbstractComponentRegistry):
                 }
             ),
         )
+
+    def extend(self, components: Mapping[str, Mapping[str, object]]) -> None:
+        """Add the components an app's own libraries bring (plan 31 §16.3).
+
+        An app's generated package registers its lock slice on import, before
+        anything is composed; a debug reload registers it again, replacing what
+        it added. The catalog's own names never change.
+
+        Args:
+            components: Component entries by name, as the lock carries them.
+
+        Raises:
+            ComponentRegistryError: If a name is one of the catalog's own.
+        """
+        for name, body in components.items():
+            if name in self._own and name not in self._added:
+                raise ComponentRegistryError(f"component {name!r} is the catalog's own")
+            self._own[name] = ComponentSpec.from_mapping(name, body)
+            self._added.add(name)
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object]) -> Registry:

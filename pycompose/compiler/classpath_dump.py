@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from pycompose.compiler.classpath_types import (  # noqa: F401 -- typed view re-exports
+    ANDROID,
     BUILDERS,
     COMPOSABLE,
     DUMP_DIR,
@@ -30,6 +31,7 @@ from pycompose.compiler.classpath_types import (  # noqa: F401 -- typed view re-
 )
 
 __all__ = [
+    "ANDROID",
     "BUILDERS",
     "COMPOSABLE",
     "DUMP_DIR",
@@ -61,14 +63,27 @@ change to any of them makes the evidence stale.
 """
 
 
-def inventory(directory: Path = DUMP_DIR) -> Inventory:
-    """Load the single authoritative structured inventory."""
+def inventory(directory: Path = DUMP_DIR, android: Path = ANDROID) -> Inventory:
+    """Load the single authoritative structured inventory.
+
+    Args:
+        directory: Where the evidence was extracted.
+        android: The Android project it was extracted from: the build files it
+            hashed, the pin and the closure are read there.
+
+    Returns:
+        The validated inventory.
+
+    Raises:
+        FileNotFoundError: If the evidence was never extracted.
+        ValueError: If it is incomplete or stale.
+    """
     source = directory / "inventory.json"
     if not source.is_file():
         raise FileNotFoundError(f"{source} is missing; run ./gradlew dumpComposeApi")
     try:
         data = json.loads(source.read_text(encoding="utf-8"))
-        _validate_inventory(data)
+        _validate_inventory(data, android)
         declarations = tuple(Declaration.read(d) for d in data["declarations"])
         found = Inventory(
             bom=data["provenance"]["bom"],
@@ -95,10 +110,9 @@ UNRESOLVED = {"kind": "unsupported", "reason": "source could not be pinned"}
 """Reported per binding, so one ambiguous declaration never blinds the catalog."""
 
 
-def _tool_digest() -> str:
+def _tool_digest(android: Path) -> str:
     """Digest every tool source in file-name order: both halves own the contract."""
     digest = hashlib.sha256()
-    android = Path(__file__).resolve().parents[2] / "android"
     tools = android / "compose-extract/src/main/kotlin"
     for tool in sorted(tools.glob("*.kt")):
         digest.update(tool.read_bytes())
@@ -106,11 +120,11 @@ def _tool_digest() -> str:
 
 
 def source_defaults(
-    directory: Path = DUMP_DIR,
+    directory: Path = DUMP_DIR, android: Path = ANDROID
 ) -> dict[tuple[str, str, str], dict[str, Any]]:
     """Read compiler-resolved defaults only while artifacts/tool inputs still match."""
     result = {}
-    for key, declaration in _source_evidence(directory).items():
+    for key, declaration in _source_evidence(directory, android).items():
         if not declaration["matched"]:
             # One binding the sources could not pin must not blind the others;
             # the proposal for it simply loses its defaults and shows as drift.
@@ -121,19 +135,21 @@ def source_defaults(
 
 
 def source_drives(
-    directory: Path = DUMP_DIR,
+    directory: Path = DUMP_DIR, android: Path = ANDROID
 ) -> dict[tuple[str, str, str], dict[str, Any]]:
     """Read the anchor each holder suspend member drives to, from the same evidence."""
     return {
         key: declaration["drive"]
-        for key, declaration in _source_evidence(directory).items()
+        for key, declaration in _source_evidence(directory, android).items()
         if "drive" in declaration
     }
 
 
-def _source_evidence(directory: Path) -> dict[tuple[str, str, str], dict[str, Any]]:
+def _source_evidence(
+    directory: Path, android: Path
+) -> dict[tuple[str, str, str], dict[str, Any]]:
     """Validated source evidence keyed by JVM identity."""
-    found = inventory(directory)
+    found = inventory(directory, android)
     data = json.loads((directory / "defaults.json").read_text(encoding="utf-8"))
     _require(data["formatVersion"] == 1, "unsupported source evidence format")
     _require(
@@ -142,7 +158,7 @@ def _source_evidence(directory: Path) -> dict[tuple[str, str, str], dict[str, An
         "stale source evidence; rerun dumpComposeDefaults",
     )
     _require(
-        data["toolHash"] == _tool_digest(),
+        data["toolHash"] == _tool_digest(android),
         "stale source compiler; rerun dumpComposeDefaults",
     )
     artifacts = {item["coordinate"] for item in found.document["artifacts"]}
@@ -165,15 +181,12 @@ def _source_evidence(directory: Path) -> dict[tuple[str, str, str], dict[str, An
     return result
 
 
-def _validate_inventory(data: dict[str, Any]) -> None:
+def _validate_inventory(data: dict[str, Any], android: Path) -> None:
     versions = tomllib.loads(
-        (
-            Path(__file__).resolve().parents[2] / "android/gradle/libs.versions.toml"
-        ).read_text(encoding="utf-8")
+        (android / "gradle/libs.versions.toml").read_text(encoding="utf-8")
     )["versions"]
     _require(data["formatVersion"] == 1, "unsupported Compose inventory format")
     provenance = data["provenance"]
-    android = Path(__file__).resolve().parents[2] / "android"
     sources = {
         p.relative_to(android).as_posix(): p
         for pattern in SOURCE_PATTERNS

@@ -429,6 +429,12 @@ def test_a_component_no_policy_names_is_promoted_with_derived_decisions() -> Non
     from pycompose.compiler.lock import promotable
 
     foundation, material = "androidx.compose.foundation", "androidx.compose.material3"
+    closure = {
+        "groups": {
+            foundation: {"domain": "foundation"},
+            material: {"domain": "material3"},
+        }
+    }
     plans = {
         "candidates": [
             _candidate("Covered", material),
@@ -441,7 +447,7 @@ def test_a_component_no_policy_names_is_promoted_with_derived_decisions() -> Non
             ),
         ]
     }
-    decisions = promotable(plans, {"Covered"})
+    decisions = promotable(plans, {"Covered"}, closure)
     # Already covered, or deprecated in every overload: never promoted.
     assert sorted(decisions) == ["Opted", "Plain", "Two"]
     assert decisions["Plain"] == {"category": "foundation", "stability": "stable"}

@@ -8,6 +8,7 @@ Python entrypoint/resources remain template-owned and are not touched here.
 from __future__ import annotations
 
 import argparse
+from collections.abc import Callable
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -74,28 +75,64 @@ def is_excluded(relative: Path) -> bool:
     )
 
 
+EXTRACTOR = ("compose-extract", "compose-closure.json")
+"""What ``pycompose add`` copies into an app's Android project to extract its
+libraries (plan 31 §16.3): the extraction module and the default closure. They
+ship as their own asset, never in the scaffold, so an app carries them only
+while ``add`` runs."""
+
+
+def _mirror(
+    source: Path, target: Path, skip: Callable[[Path], bool], check: bool
+) -> list[str]:
+    """Copy every file under ``source`` to ``target``, or list what differs.
+
+    Args:
+        source: A file or directory in ``android/``.
+        target: Where its package asset lives.
+        skip: Paths below ``source`` that stay with the library.
+        check: Report differences without writing.
+
+    Returns:
+        The differing paths, relative to ``source``'s parent.
+    """
+    changed = []
+    files = [source] if source.is_file() else sorted(source.rglob("*"))
+    for path in files:
+        relative = path.relative_to(source)
+        if not path.is_file() or skip(relative):
+            continue
+        destination = target / relative if relative.parts else target
+        contents = path.read_bytes()
+        if destination.is_file() and destination.read_bytes() == contents:
+            continue
+        changed.append(path.relative_to(source.parent).as_posix())
+        if not check:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(contents)
+            if path.name == "gradlew":
+                destination.chmod(0o755)
+    return changed
+
+
 def main() -> int:
     """Copy native scaffold bytes or report drift without changing files."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    source = ROOT / "android"
-    target = ROOT / "pycompose/templates/android"
-    changed = []
-    for path in sorted(source.rglob("*")):
-        relative = path.relative_to(source)
-        if not path.is_file() or is_excluded(relative):
-            continue
-        destination = target / relative
-        contents = path.read_bytes()
-        if destination.is_file() and destination.read_bytes() == contents:
-            continue
-        changed.append(relative.as_posix())
-        if not args.check:
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            destination.write_bytes(contents)
-            if path.name == "gradlew":
-                destination.chmod(0o755)
+    android = ROOT / "android"
+    changed = _mirror(
+        android, ROOT / "pycompose/templates/android", is_excluded, args.check
+    )
+    for name in EXTRACTOR:
+        changed += _mirror(
+            android / name,
+            ROOT / "pycompose/templates/extract" / name,
+            lambda relative: bool(
+                {"build", ".gradle", ".kotlin"} & set(relative.parts)
+            ),
+            args.check,
+        )
     if changed:
         print("\n".join(changed))
     return int(args.check and bool(changed))

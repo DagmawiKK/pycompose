@@ -33,6 +33,10 @@ from pycompose.schema.codegen.rules import with_rules
 APP_PACKAGE = "m3"
 """The app-side generated package, mirroring ``pycompose.m3``."""
 
+APP_LOCK = "compose.lock.json"
+"""The app's lock slice beside ``pycompose.toml``: its own libraries' components
+(plan 31 §16.3), compiled by ``pycompose add`` and committed like a lock file."""
+
 GENERATED_RELATIVE = Path(".pycompose/generated")
 """Where a project's generated slice lives, relative to the project root.
 
@@ -213,6 +217,44 @@ def slice_registry(
 
     narrowed["valueTypes"] = dependency_closure(narrowed, values)
     return narrowed
+
+
+def app_components(path: Path | None) -> dict[str, Any]:
+    """The components an app's own libraries bring, from its lock slice.
+
+    Args:
+        path: The app's lock slice, or None when the app declares no libraries.
+
+    Returns:
+        Component entries by name; none without a slice.
+
+    Raises:
+        AppCodegenError: If the slice is not valid JSON.
+    """
+    if path is None or not path.is_file():
+        return {}
+    try:
+        components: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))[
+            "components"
+        ]
+    except (json.JSONDecodeError, KeyError) as exc:
+        raise AppCodegenError(f"invalid lock slice {path}: {exc}") from exc
+    return components
+
+
+def with_app_lock(registry: dict[str, Any], own: dict[str, Any]) -> dict[str, Any]:
+    """The catalog an app builds against: the library's plus its own components.
+
+    Args:
+        registry: The library's catalog.
+        own: The app's own components (:func:`app_components`).
+
+    Returns:
+        The catalog with the app's components merged over the library's.
+    """
+    if not own:
+        return registry
+    return with_rules({**registry, "components": {**registry["components"], **own}})
 
 
 def load_catalog(path: Path) -> dict[str, Any]:

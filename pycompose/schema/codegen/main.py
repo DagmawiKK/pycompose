@@ -69,6 +69,7 @@ def build_app(
     *,
     android_root: Path | None = None,
     check: bool = False,
+    app_lock: Path | None = None,
 ) -> int:
     """Generate an app's component slice, or verify it (ADR-0014).
 
@@ -88,6 +89,8 @@ def build_app(
         python_root: Where the app's Python lives; receives the generated package.
         android_root: Where the Kotlin slice goes; defaults to ``python_root``.
         check: Report drift instead of writing.
+        app_lock: The app's lock slice (``compose.lock.json``), whose components
+            join the library's; None or a missing file adds none.
 
     Returns:
         Process exit code: 0 clean, 1 on drift or an unresolvable app.
@@ -99,10 +102,12 @@ def build_app(
         APP_PACKAGE,
         FLOOR_COMPONENTS,
         AppCodegenError,
+        app_components,
         discover,
         discover_values,
         load_catalog,
         slice_registry,
+        with_app_lock,
     )
     from pycompose.schema.codegen.emit_kotlin import (
         render_generated_adapters,
@@ -124,7 +129,8 @@ def build_app(
             print(f"gen.py: not a directory: {root}", file=sys.stderr)
             return 1
     try:
-        registry = load_catalog(SCHEMA_PATH)
+        own = app_components(app_lock)
+        registry = with_app_lock(load_catalog(SCHEMA_PATH), own)
         used = discover(python_root, registry)
     except AppCodegenError as exc:
         print(f"gen.py: {exc}", file=sys.stderr)
@@ -142,8 +148,14 @@ def build_app(
 
     package = APP_PACKAGE
     artifacts: dict[Path, str] = {
-        python_root / package / "generated_components.py": (
-            render_python_components(sliced, package)
+        python_root / package / "generated_components.py": render_python_components(
+            sliced,
+            package,
+            {
+                name: entry
+                for name, entry in sliced["components"].items()
+                if name in own
+            },
         ),
         python_root / package / "__init__.py": render_python_exports(sliced, package),
         python_root / package / "values.py": render_python(sliced),

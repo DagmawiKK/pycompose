@@ -29,6 +29,7 @@ _MENU = (
     ("build", "Package an app through its Gradle wrapper"),
     ("release", "Package a signed release artifact"),
     ("config", "Show or change the app name, id and version"),
+    ("add", "Wrap a Compose library from Maven into the app's catalog"),
     ("sync", "Sync named resources into the Android host"),
     ("doctor", "Report Android toolchain and schema compatibility"),
     ("extensions", "Plan explicitly selected extension capabilities"),
@@ -100,6 +101,10 @@ def _parser() -> argparse.ArgumentParser:
     )
     config.add_argument("key", nargs="?", help=f"setting to rewrite: {', '.join(KEYS)}")
     config.add_argument("value", nargs="?", help="new value for the setting")
+    add = commands.add_parser(
+        "add", help="Wrap a Compose library from Maven into the app's catalog"
+    )
+    add.add_argument("coordinate", help="group:artifact or group:artifact:version")
     sync = commands.add_parser(
         "sync", help="Sync named resources into the Android host"
     )
@@ -260,6 +265,20 @@ def _doctor(_args: argparse.Namespace) -> int:
     return 0
 
 
+def _add(args: argparse.Namespace) -> int:
+    # The compiler is imported only when a library is added: no other command
+    # pays for it.
+    from pycompose.cli.add import add_library
+
+    report = add_library(load_project(Path.cwd()), args.coordinate)
+    for name in report.promoted + report.overloads:
+        console.ok(f"{name}: exposed")
+    for name, reason in sorted(report.refused.items()):
+        console.warn(f"{name}: refused -- {reason}")
+    console.notice("Import exposed components from m3; pycompose build regenerates it.")
+    return 0
+
+
 def _sync(args: argparse.Namespace) -> int:
     changed = sync_resources(load_project(Path.cwd()), check=args.check)
     if not changed:
@@ -310,6 +329,8 @@ def _chooser() -> list[str]:
     )
     if command == "init":
         return ["init", console.ask("Project directory")]
+    if command == "add":
+        return ["add", console.ask("Maven coordinate (group:artifact[:version])")]
     if command in {"validate", "stubs"}:
         return [command, console.ask("Path")]
     return [command]
@@ -334,6 +355,7 @@ def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(arguments)
     handlers = {
         "init": _init,
+        "add": _add,
         "sync": _sync,
         "validate": _validate,
         "build": _build,

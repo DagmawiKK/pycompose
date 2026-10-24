@@ -14,7 +14,9 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-DUMP_DIR = Path("android/build/compose-api")
+ANDROID = Path("android")
+"""The library's own Android project; an app's is passed in its place."""
+DUMP_DIR = ANDROID / "build/compose-api"
 COMPOSABLE = "androidx/compose/runtime/Composable"
 EXTENSION = "kotlin/ExtensionFunctionType"
 BUILDERS = {

@@ -17,6 +17,7 @@ from typing import Any
 from pycompose.compiler.candidate_props import CandidateError
 from pycompose.compiler.check import compare, compare_values
 from pycompose.compiler.classpath_dump import (
+    ANDROID,
     DUMP_DIR,
     Inventory,
     inventory,
@@ -77,10 +78,9 @@ class Report:
     coverage: dict[str, dict[str, int]] = field(default_factory=dict)
 
 
-CLOSURE = ROOT / "android/compose-closure.json"
-
-
-def promotable(plans: dict[str, Any], named: set[str]) -> dict[str, dict[str, Any]]:
+def promotable(
+    plans: dict[str, Any], named: set[str], closure: dict[str, Any]
+) -> dict[str, dict[str, Any]]:
     """Review decisions for every component the closure has and no policy names.
 
     A component is exposed because it derives, never because someone typed it
@@ -92,16 +92,12 @@ def promotable(plans: dict[str, Any], named: set[str]) -> dict[str, dict[str, An
     Args:
         plans: The planner's call plans for the pin.
         named: Native and schema names the catalog already covers.
+        closure: The extraction closure, whose groups name each domain.
 
     Returns:
         Per component name, the decision it derives with.
     """
-    domains = {
-        group: spec["domain"]
-        for group, spec in json.loads(CLOSURE.read_text(encoding="utf-8"))[
-            "groups"
-        ].items()
-    }
+    domains = {group: spec["domain"] for group, spec in closure["groups"].items()}
     overloads: dict[str, list[dict[str, Any]]] = {}
     for plan in plans["candidates"]:
         if plan["surface"] == "component" and plan["name"] not in named:
@@ -185,12 +181,48 @@ def generate(
     Returns:
         The lock document, and the run's report.
     """
-    report = Report()
     found = inventory(directory)
     sections = dict(policy.sections)
     plans = propose_components(found, source_defaults(directory), sections)
+    closure = json.loads((ANDROID / "compose-closure.json").read_text(encoding="utf-8"))
+    components, report = compile_components(
+        policy.components, plans, found, sections, closure
+    )
+    lock = {**sections, "components": dict(sorted(components.items()))}
+    holders, refused = derive_holders(found, source_drives(directory), lock)
+    report.errors.extend(refused)
+    lock["holders"] = holders
+    # What policy keeps -- held entries, value families -- still answers to the pin.
+    report.errors.extend(compare(lock, found))
+    report.errors.extend(compare_values(lock, found, source_defaults(directory)))
+    return {key: lock[key] for key in ORDER if key in lock}, report
+
+
+def compile_components(
+    rules: dict[str, dict[str, Any]],
+    plans: dict[str, Any],
+    found: Inventory,
+    sections: dict[str, Any],
+    closure: dict[str, Any],
+    taken: frozenset[str] = frozenset(),
+) -> tuple[dict[str, Any], Report]:
+    """Derive the components policy names, promote the rest, add their overloads.
+
+    Args:
+        rules: Per component, its policy: a decision and patch, or a hold.
+        plans: The planner's call plans; only these components are compiled.
+        found: The pinned inventory.
+        sections: The catalog sections the derivation reads.
+        closure: The extraction closure.
+        taken: Names another catalog already uses: an app's library may not
+            promote a component under the library's name.
+
+    Returns:
+        The components, and the run's report.
+    """
+    report = Report()
     components: dict[str, Any] = {}
-    for name, rule in sorted(policy.components.items()):
+    for name, rule in sorted(rules.items()):
         if "manual" in rule:
             components[name] = rule["entry"]
             report.manual[name] = rule["manual"]
@@ -213,13 +245,18 @@ def generate(
         report.derived[name] = len(json.dumps(patch))
     decisions = {
         name: rule["decision"]
-        for name, rule in policy.components.items()
+        for name, rule in rules.items()
         if "decision" in rule and name in components
     }
-    named = set(policy.components) | {
+    named = set(rules) | {
         entry["source"]["name"] for entry in components.values() if "source" in entry
     }
-    for name, decision in promotable(plans, named).items():
+    for name, decision in promotable(plans, named, closure).items():
+        if name in taken:
+            report.refused[name] = (
+                "the catalog already has this name; name it in policy (nativeName)"
+            )
+            continue
         try:
             entry = planned(name, decision, plans, found, sections)
         except CandidateError as exc:
@@ -241,14 +278,7 @@ def generate(
     components.update(added)
     report.overloads = sorted(added)
     report.coverage = _coverage(plans, components)
-    lock = {**sections, "components": dict(sorted(components.items()))}
-    holders, refused = derive_holders(found, source_drives(directory), lock)
-    report.errors.extend(refused)
-    lock["holders"] = holders
-    # What policy keeps -- held entries, value families -- still answers to the pin.
-    report.errors.extend(compare(lock, found))
-    report.errors.extend(compare_values(lock, found, source_defaults(directory)))
-    return {key: lock[key] for key in ORDER if key in lock}, report
+    return components, report
 
 
 def _coverage(

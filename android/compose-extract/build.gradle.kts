@@ -164,6 +164,68 @@ tasks.register("dumpComposeApi") {
     }
 }
 
+tasks.register("resolveComposeLibraries") {
+    group = "build"
+    description = "Resolve an app's own Compose libraries against the pinned BOM."
+    // pycompose add writes compose-libraries.txt and reads this report: the
+    // artifacts of each library's group, with digests for the closure, and any
+    // module the BOM pins that a library would move.
+    val rendererClasspath = renderer.configurations.getByName("debugCompileClasspath")
+    val libraries = rootProject.file("compose-libraries.txt")
+    val output = evidence.map { it.file("libraries.json") }
+    inputs.files(rendererClasspath)
+    inputs.file(libraries)
+    outputs.file(output)
+    doLast {
+        val groups =
+            libraries
+                .readLines()
+                .filter(String::isNotBlank)
+                .map { it.substringBefore(':') }
+                .toSet()
+        val bom =
+            rendererClasspath.incoming.resolutionResult.allComponents
+                .single {
+                    it.moduleVersion?.let { m ->
+                        m.group == "androidx.compose" && m.name == "compose-bom"
+                    } == true
+                }
+        val pinned =
+            bom.dependencies
+                .mapNotNull { it.requested as? ModuleComponentSelector }
+                .associate { "${it.group}:${it.module}" to it.version }
+        val resolved = rendererClasspath.resolvedConfiguration.resolvedArtifacts
+        val conflicts =
+            resolved.mapNotNull { artifact ->
+                val id = artifact.moduleVersion.id
+                val expected = pinned["${id.group}:${id.name}"]
+                if (expected == null || expected == id.version) {
+                    null
+                } else {
+                    mapOf(
+                        "module" to "${id.group}:${id.name}",
+                        "resolved" to id.version,
+                        "bom" to expected,
+                    )
+                }
+            }
+        val artifacts =
+            resolved
+                .filter { it.moduleVersion.id.group in groups }
+                .map {
+                    mapOf(
+                        "coordinate" to it.moduleVersion.id.toString(),
+                        "sha256" to sha256(it.file.readBytes()),
+                    )
+                }.sortedBy { it["coordinate"] }
+        output.get().asFile.apply { parentFile.mkdirs() }.writeText(
+            JsonOutput.prettyPrint(
+                JsonOutput.toJson(mapOf("artifacts" to artifacts, "conflicts" to conflicts)),
+            ),
+        )
+    }
+}
+
 /** Approved bindings by exact source identity, plus names bound by no source yet. */
 fun approvedBindings(schema: File): Pair<List<String>, List<String>> {
     val registry = JsonSlurper().parse(schema) as Map<*, *>
@@ -190,7 +252,11 @@ tasks.register("dumpComposeDefaults") {
     group = "build"
     description = "Resolve pinned source defaults as typed, non-executable evidence."
     dependsOn("dumpComposeApi")
-    val schema = rootProject.file("../schema/catalog.lock.json")
+    // The library's lock beside it, or -PpycomposeCatalog for an app's extraction.
+    val schema =
+        rootProject.file(
+            providers.gradleProperty("pycomposeCatalog").getOrElse("../schema/catalog.lock.json"),
+        )
     val bound = providers.provider { approvedBindings(schema) }
     val names =
         providers.provider {

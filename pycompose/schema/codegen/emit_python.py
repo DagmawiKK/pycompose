@@ -10,12 +10,15 @@ from typing import Any
 
 from pycompose.schema.codegen.literals import (
     GENERATED_NOTICE,
+    python_adjacent_statements,
 )
 from pycompose.schema.codegen.overloads import groups, keywords, python_name
 
 
 def render_python_components(
-    registry: dict[str, Any], package: str = "pycompose.m3"
+    registry: dict[str, Any],
+    package: str = "pycompose.m3",
+    own: dict[str, Any] | None = None,
 ) -> str:
     """Generate typed Python constructors from the native manifest.
 
@@ -23,6 +26,8 @@ def render_python_components(
         registry: The parsed schema.
         package: The package these are imported from, named in the module
             docstring so an app slice does not point readers at the catalog.
+        own: Components of the app's own libraries (its lock slice), which the
+            module registers with the runtime catalog when imported.
 
     Returns:
         The generated module.
@@ -61,6 +66,28 @@ def render_python_components(
     ):
         index = lines.index("from pycompose.errors import IrValidationError")
         lines.insert(index, "from pycompose.core.values import UNSET, _Unset")
+    if own:
+        # The runtime validates against the catalog, which knows only the
+        # library's components until the app's own are registered.
+        raw = json.dumps(own, sort_keys=True, separators=(",", ":"))
+        lines.insert(
+            lines.index("from collections.abc import Callable, Sequence"), "import json"
+        )
+        lines.insert(
+            lines.index("from pycompose.errors import IrValidationError") + 1,
+            "from pycompose.ir.generated_validators import REGISTRY",
+        )
+        lines.extend(
+            [
+                "REGISTRY.extend(",
+                "    json.loads(",
+                *python_adjacent_statements(raw),
+                "    )",
+                ")",
+                "",
+                "",
+            ]
+        )
     for name, spec in sorted(registry["components"].items()):
         for field, prop in sorted(spec["props"].items()):
             # Enum props annotate with their token scale even when they also
