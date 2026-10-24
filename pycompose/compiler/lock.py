@@ -24,7 +24,7 @@ from pycompose.compiler.classpath_dump import (
     source_defaults,
     source_drives,
 )
-from pycompose.compiler.component_binding import spell
+from pycompose.compiler.component_binding import spell, stamped
 from pycompose.compiler.components import propose_components
 from pycompose.compiler.entry_candidates import derive, select
 from pycompose.compiler.holders import derive as derive_holders
@@ -182,7 +182,7 @@ def generate(
         The lock document, and the run's report.
     """
     found = inventory(directory)
-    sections = dict(policy.sections)
+    sections = _stamped_values(policy.sections, found)
     plans = propose_components(found, source_defaults(directory), sections)
     closure = json.loads((ANDROID / "compose-closure.json").read_text(encoding="utf-8"))
     components, report = compile_components(
@@ -224,7 +224,7 @@ def compile_components(
     components: dict[str, Any] = {}
     for name, rule in sorted(rules.items()):
         if "manual" in rule:
-            components[name] = rule["entry"]
+            components[name] = _stamped_entry(rule["entry"], found)
             report.manual[name] = rule["manual"]
             if _derives(name, rule["entry"], plans, found, sections):
                 report.errors.append(
@@ -279,6 +279,33 @@ def compile_components(
     report.overloads = sorted(added)
     report.coverage = _coverage(plans, components)
     return components, report
+
+
+def _artifacts(found: Inventory) -> list[str]:
+    return [artifact["coordinate"] for artifact in found.document["artifacts"]]
+
+
+def _stamped_entry(entry: dict[str, Any], found: Inventory) -> dict[str, Any]:
+    """A held entry carrying its source at the pinned version."""
+    if "source" not in entry:
+        return entry
+    return {**entry, "source": stamped(entry["source"], _artifacts(found))}
+
+
+def _stamped_values(sections: dict[str, Any], found: Inventory) -> dict[str, Any]:
+    """The policy sections, each bound value type's source at the pinned version.
+
+    Policy names a declaration; the version is the pin's, so the lock is where
+    it is written.
+    """
+    artifacts = _artifacts(found)
+    values = {
+        name: {**spec, "source": stamped(spec["source"], artifacts)}
+        if isinstance(spec, dict) and "source" in spec
+        else spec
+        for name, spec in sections.get("valueTypes", {}).items()
+    }
+    return {**sections, "valueTypes": values}
 
 
 def _coverage(

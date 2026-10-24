@@ -109,3 +109,21 @@ def test_hand_written_components_are_the_ones_flagged() -> None:
         }
     }
     assert manual(lock, {"Crossfade"}) == {"Text", "Search", "Crossfade"}
+
+
+def test_a_decision_names_a_declaration_and_the_lock_stamps_the_pin() -> None:
+    from pycompose.compiler.component_binding import spell, stamped, unversioned
+
+    source = {
+        "artifact": "androidx.compose.ui:ui-android:1.0",
+        "owner": "androidx.compose.ui.TextKt",
+        "jvmName": "Text",
+        "descriptor": "()V",
+    }
+    # A BOM change does not change what a decision names.
+    assert spell(source) == spell(
+        {**source, "artifact": "androidx.compose.ui:ui-android:2.0"}
+    )
+    assert unversioned(source)["artifact"] == "androidx.compose.ui:ui-android"
+    pinned = stamped(unversioned(source), ["androidx.compose.ui:ui-android:2.0"])
+    assert pinned["artifact"] == "androidx.compose.ui:ui-android:2.0"

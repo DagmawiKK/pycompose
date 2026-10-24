@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -81,8 +82,45 @@ def identity(declaration: Declaration) -> dict[str, str]:
     }
 
 
+def unversioned(source: dict[str, str]) -> dict[str, str]:
+    """A declaration's identity without its artifact version.
+
+    The version belongs to the pin, not to a decision: a choice among
+    overloads or a held entry names the declaration, and the compiler stamps
+    the pinned version into the lock (:func:`stamped`). So a BOM upgrade never
+    invalidates a decision whose declaration did not change.
+
+    Args:
+        source: An identity, with or without the artifact version.
+
+    Returns:
+        The identity with the artifact as ``group:name``.
+    """
+    artifact = source.get("artifact", "")
+    if artifact.count(":") == 2:
+        artifact = artifact.rsplit(":", 1)[0]
+    return {**source, "artifact": artifact}
+
+
+def stamped(source: dict[str, Any], artifacts: Iterable[str]) -> dict[str, Any]:
+    """An identity carrying the version its artifact has in the pin.
+
+    Args:
+        source: An identity, with or without the artifact version.
+        artifacts: The pin's resolved artifact coordinates.
+
+    Returns:
+        The identity with the pinned coordinate, unchanged if none matches.
+    """
+    module = unversioned(source)["artifact"]
+    for coordinate in artifacts:
+        if coordinate.rsplit(":", 1)[0] == module:
+            return {**source, "artifact": coordinate}
+    return source
+
+
 def spell(source: dict[str, str]) -> str:
-    """Spell one identity for a message.
+    """Spell one identity, without its artifact version, for a decision or message.
 
     Args:
         source: An identity as :func:`identity` reads it.
@@ -91,7 +129,7 @@ def spell(source: dict[str, str]) -> str:
         A single-line reference to the declaration.
     """
     return (
-        f"{source.get('artifact', '?')} "
+        f"{unversioned(source).get('artifact', '?')} "
         f"{source.get('owner', '?')}.{source.get('jvmName', '?')}"
         f"{source.get('descriptor', '')}"
     )
@@ -123,7 +161,8 @@ def _manual(
     """Resolve a hand-written adapter that claims no single identity."""
     errors: tuple[str, ...] = ()
     if recorded is not None and not any(
-        identity(declaration) == recorded for declaration in candidates
+        unversioned(identity(declaration)) == unversioned(recorded)
+        for declaration in candidates
     ):
         errors = (f"{name}: recorded source is not pinned: {spell(recorded)}",)
     return Resolution(name, "manual", None, recorded, Face((), False, (), ()), errors)
@@ -221,7 +260,10 @@ def resolve(
         return _derived(name, recorded, problems, derived, accepted[0])
     if recorded is not None:
         errors = problems
-        if not any(identity(declaration) == recorded for declaration in candidates):
+        if not any(
+            unversioned(identity(declaration)) == unversioned(recorded)
+            for declaration in candidates
+        ):
             errors = (
                 *errors,
                 f"{name}: recorded source is not pinned: {spell(recorded)}",

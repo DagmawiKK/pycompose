@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose.compiler.classpath_dump import Inventory
-from pycompose.compiler.component_binding import resolutions
+from pycompose.compiler.component_binding import resolutions, unversioned
 from pycompose.compiler.propose import refresh
 from pycompose.core.registry_types import SCOPE_PATHS
 
@@ -22,8 +22,11 @@ DRIFT = "pinned proposal differs from approved binding; review before applying"
 
 def _derived(spec: dict[str, Any]) -> dict[str, Any]:
     """Reduce a descriptor to facts the compiler decides, ignoring approved bounds."""
+    facts = {key: spec[key] for key in DERIVED if key in spec}
+    if "source" in facts:
+        facts["source"] = unversioned(facts["source"])
     return {
-        **{key: spec[key] for key in DERIVED if key in spec},
+        **facts,
         "parameters": {
             field: {
                 key: rule[key]

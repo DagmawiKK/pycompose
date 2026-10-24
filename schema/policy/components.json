@@ -13,7 +13,7 @@
       "stability": "stable",
       "since": "1.23.0",
       "source": {
-        "artifact": "androidx.compose.animation:animation-android:1.12.1",
+        "artifact": "androidx.compose.animation:animation-android",
         "descriptor": "(Ljava/lang/Object;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Alignment;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V",
         "jvmName": "AnimatedContent",
         "name": "AnimatedContent",
@@ -42,7 +42,7 @@
     "decision": {
       "category": "animation",
       "stability": "stable",
-      "identity": "androidx.compose.animation:animation-android:1.12.1 androidx.compose.animation.AnimatedVisibilityKt.AnimatedVisibility(ZLandroidx/compose/ui/Modifier;Landroidx/compose/animation/EnterTransition;Landroidx/compose/animation/ExitTransition;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.animation:animation-android androidx.compose.animation.AnimatedVisibilityKt.AnimatedVisibility(ZLandroidx/compose/ui/Modifier;Landroidx/compose/animation/EnterTransition;Landroidx/compose/animation/ExitTransition;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "children": {
@@ -78,7 +78,7 @@
     "decision": {
       "category": "navigation",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.AppBarKt.BottomAppBar-1oL4kX8(Landroidx/compose/ui/Modifier;JJFLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.AppBarKt.BottomAppBar-1oL4kX8(Landroidx/compose/ui/Modifier;JJFLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "props": {
@@ -97,7 +97,7 @@
     "decision": {
       "category": "layout",
       "stability": "stable",
-      "identity": "androidx.compose.foundation:foundation-layout-android:1.12.1 androidx.compose.foundation.layout.BoxKt.Box(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.foundation:foundation-layout-android androidx.compose.foundation.layout.BoxKt.Box(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "since": null,
@@ -150,7 +150,7 @@
     "decision": {
       "category": "layout",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.CardKt.Card(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.CardKt.Card(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "since": "1.22.0"
@@ -189,7 +189,7 @@
     "decision": {
       "category": "status",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.ProgressIndicatorKt.CircularProgressIndicator-4lLiAd8(Landroidx/compose/ui/Modifier;JFJIFLandroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.ProgressIndicatorKt.CircularProgressIndicator-4lLiAd8(Landroidx/compose/ui/Modifier;JFJIFLandroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "optIn": null,
@@ -255,7 +255,7 @@
       "stability": "stable",
       "since": "1.23.0",
       "source": {
-        "artifact": "androidx.compose.animation:animation-android:1.12.1",
+        "artifact": "androidx.compose.animation:animation-android",
         "descriptor": "(Ljava/lang/Object;Landroidx/compose/ui/Modifier;Landroidx/compose/animation/core/FiniteAnimationSpec;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
         "jvmName": "Crossfade",
         "name": "Crossfade",
@@ -284,7 +284,7 @@
     "decision": {
       "category": "layout",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.NavigationDrawerKt.DismissibleDrawerSheet-afqeVBk(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.NavigationDrawerKt.DismissibleDrawerSheet-afqeVBk(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "since": "1.22.0"
@@ -343,7 +343,7 @@
     "decision": {
       "category": "layout",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.CardKt.ElevatedCard(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.CardKt.ElevatedCard(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "ElevatedFilterChip": {
@@ -382,7 +382,7 @@
     "decision": {
       "category": "buttons",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.FloatingActionButtonKt.ExtendedFloatingActionButton-X-z6DiA(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJLandroidx/compose/material3/FloatingActionButtonElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.FloatingActionButtonKt.ExtendedFloatingActionButton-X-z6DiA(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJLandroidx/compose/material3/FloatingActionButtonElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "FilledIconButton": {
@@ -511,7 +511,7 @@
     "decision": {
       "category": "media",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.IconKt.Icon-ww6aTOc(Landroidx/compose/ui/graphics/vector/ImageVector;Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.IconKt.Icon-ww6aTOc(Landroidx/compose/ui/graphics/vector/ImageVector;Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "since": "1.21.0",
@@ -547,7 +547,7 @@
     "decision": {
       "category": "media",
       "stability": "stable",
-      "identity": "androidx.compose.foundation:foundation-android:1.12.1 androidx.compose.foundation.ImageKt.Image(Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.foundation:foundation-android androidx.compose.foundation.ImageKt.Image(Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "since": "1.1.0",
@@ -653,7 +653,7 @@
     "decision": {
       "category": "status",
       "stability": "experimental",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.ProgressIndicatorKt.LinearProgressIndicator-GJbTh5U(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;JJIFLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.ProgressIndicatorKt.LinearProgressIndicator-GJbTh5U(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;JJIFLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "since": "1.20.0",
@@ -732,7 +732,7 @@
     "decision": {
       "category": "layout",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.NavigationDrawerKt.ModalDrawerSheet-afqeVBk(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.NavigationDrawerKt.ModalDrawerSheet-afqeVBk(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "since": "1.22.0"
@@ -777,7 +777,7 @@
       "category": "buttons",
       "stability": "stable",
       "nativeName": "SegmentedButton",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SegmentedButtonKt.SegmentedButton(Landroidx/compose/material3/MultiChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SegmentedButtonKt.SegmentedButton(Landroidx/compose/material3/MultiChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V"
     }
   },
   "MultiChoiceSegmentedButtonRow": {
@@ -850,7 +850,7 @@
     "decision": {
       "category": "layout",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.CardKt.OutlinedCard(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.CardKt.OutlinedCard(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "OutlinedIconButton": {
@@ -869,7 +869,7 @@
     "decision": {
       "category": "input",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.OutlinedTextFieldKt.OutlinedTextField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/text/input/VisualTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/runtime/Composer;IIII)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.OutlinedTextFieldKt.OutlinedTextField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/text/input/VisualTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/runtime/Composer;IIII)V"
     }
   },
   "PermanentDrawerSheet": {
@@ -1068,7 +1068,7 @@
     "decision": {
       "category": "input",
       "stability": "experimental",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarKt.SearchBar-Y92LkZI(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SearchBarKt.SearchBar-Y92LkZI(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "SearchBarInputField": {
@@ -1077,7 +1077,7 @@
       "stability": "experimental",
       "nativeName": "InputField",
       "hook": true,
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarDefaults.InputField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SearchBarDefaults.InputField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
       "observe": false
     },
     "patch": {
@@ -1110,7 +1110,7 @@
       "nativeName": "InputField",
       "hook": true,
       "holder": false,
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarDefaults.InputField(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SearchBarDefaults.InputField(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
       "observe": false
     },
     "patch": {
@@ -1161,7 +1161,7 @@
     "decision": {
       "category": "buttons",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SegmentedButtonKt.SegmentedButton(Landroidx/compose/material3/SingleChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SegmentedButtonKt.SegmentedButton(Landroidx/compose/material3/SingleChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V"
     }
   },
   "ShortNavigationBar": {
@@ -1186,7 +1186,7 @@
     "decision": {
       "category": "input",
       "stability": "experimental",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SliderKt.Slider(Landroidx/compose/material3/SliderState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SliderColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SliderKt.Slider(Landroidx/compose/material3/SliderState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SliderColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "Snackbar": {
@@ -1215,7 +1215,7 @@
       "category": "input",
       "stability": "experimental",
       "nativeName": "SearchBar",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarKt.SearchBar-nbWgWpA(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SearchBarKt.SearchBar-nbWgWpA(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
       "slots": {
@@ -1232,7 +1232,7 @@
       "nativeName": "InputField",
       "hook": true,
       "holder": "state",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SearchBarDefaults.InputField(Landroidx/compose/foundation/text/input/TextFieldState;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SearchBarDefaults.InputField(Landroidx/compose/foundation/text/input/TextFieldState;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
       "observe": false
     },
     "patch": {
@@ -1269,7 +1269,7 @@
     "decision": {
       "category": "layout",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.SurfaceKt.Surface-T9BRK9s(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFFLandroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SurfaceKt.Surface-T9BRK9s(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFFLandroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "SwipeToDismissBox": {
@@ -1291,14 +1291,14 @@
     "decision": {
       "category": "layout",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.TabKt.Tab-wqdebIU(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;JJLandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.TabKt.Tab-wqdebIU(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;JJLandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "Text": {
     "decision": {
       "category": "typography",
       "stability": "stable",
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.TextKt.Text-Nvy7gAk(Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/foundation/text/TextAutoSize;JLandroidx/compose/ui/text/font/FontStyle;Landroidx/compose/ui/text/font/FontWeight;Landroidx/compose/ui/text/font/FontFamily;JLandroidx/compose/ui/text/style/TextDecoration;Landroidx/compose/ui/text/style/TextAlign;JIZIILkotlin/jvm/functions/Function1;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;III)V"
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.TextKt.Text-Nvy7gAk(Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/foundation/text/TextAutoSize;JLandroidx/compose/ui/text/font/FontStyle;Landroidx/compose/ui/text/font/FontWeight;Landroidx/compose/ui/text/font/FontFamily;JLandroidx/compose/ui/text/style/TextDecoration;Landroidx/compose/ui/text/style/TextAlign;JIZIILkotlin/jvm/functions/Function1;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;III)V"
     },
     "patch": {
       "since": null,
@@ -1388,7 +1388,7 @@
       "flatten": [
         "label"
       ],
-      "identity": "androidx.compose.material3:material3-android:1.4.0 androidx.compose.material3.TextFieldKt.TextField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/text/input/VisualTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/runtime/Composer;IIII)V",
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.TextFieldKt.TextField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/text/input/VisualTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/runtime/Composer;IIII)V",
       "observe": false
     },
     "patch": {

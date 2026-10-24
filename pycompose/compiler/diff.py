@@ -59,6 +59,8 @@ def classify(old: dict[str, Any], new: dict[str, Any]) -> list[Change]:
             continue
         if section == "components":
             changes += _keyed(section, before or {}, after or {}, _component)
+        elif section == "valueTypes":
+            changes += _keyed(section, before or {}, after or {}, _value)
         elif isinstance(before, dict) and isinstance(after, dict):
             changes += _keyed(section, before, after, _changed)
         else:
@@ -88,6 +90,22 @@ def _keyed(
 def _changed(where: str, *_: Any) -> list[Change]:
     """A change no finer rule classifies: conservatively, behaviour."""
     return [Change(f"{where}:changed", "behaviour")]
+
+
+def _value(where: str, old: Any, new: Any) -> list[Change]:
+    """A value binding re-pinned to a newer artifact is fidelity, like a component."""
+    if (
+        isinstance(old, dict)
+        and isinstance(new, dict)
+        and {k: v for k, v in old.items() if k != "source"}
+        == {k: v for k, v in new.items() if k != "source"}
+    ):
+        return [
+            Change(
+                f"{where}.source:changed", _source(old.get("source"), new.get("source"))
+            )
+        ]
+    return _changed(where)
 
 
 def _component(where: str, old: dict[str, Any], new: dict[str, Any]) -> list[Change]:

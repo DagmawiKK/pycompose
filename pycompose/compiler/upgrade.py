@@ -140,18 +140,27 @@ def upgrade(version: str) -> tuple[list[Change], list[str], Report]:
     current = _BOM.search(text)
     if current is None:
         raise UpgradeError(f"{PIN} names no compose-bom")
-    PIN.write_text(_BOM.sub(f'compose-bom = "{version}"', text), encoding="utf-8")
     closure_path = ANDROID / "compose-closure.json"
-    closure = json.loads(closure_path.read_text(encoding="utf-8"))
-    closure_path.write_text(
-        dumps_closure(refresh_closure(closure, resolve(ANDROID))), encoding="utf-8"
-    )
-    extract(ANDROID)
+    closure_text = closure_path.read_text(encoding="utf-8")
     old = json.loads(LOCK.read_text(encoding="utf-8"))
-    policy = load()
-    lock, report = generate(policy)
-    if report.errors:
-        raise UpgradeError("; ".join(report.errors))
+    PIN.write_text(_BOM.sub(f'compose-bom = "{version}"', text), encoding="utf-8")
+    compiled = False
+    try:
+        closure_path.write_text(
+            dumps_closure(refresh_closure(json.loads(closure_text), resolve(ANDROID))),
+            encoding="utf-8",
+        )
+        extract(ANDROID)
+        policy = load()
+        lock, report = generate(policy)
+        if report.errors:
+            raise UpgradeError("; ".join(report.errors))
+        compiled = True
+    finally:
+        if not compiled:
+            # A failed upgrade leaves the pin it found: nothing committed changed.
+            PIN.write_text(text, encoding="utf-8")
+            closure_path.write_text(closure_text, encoding="utf-8")
     LOCK.write_text(dumps(lock), encoding="utf-8")
     found = inventory(DUMP_DIR)
     for stale in SIGNATURES.glob("*.txt"):

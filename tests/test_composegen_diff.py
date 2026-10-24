@@ -118,3 +118,17 @@ def test_observation_added_to_a_component_is_additive() -> None:
         "components.Chip.interaction:added": "additive",
         "components.Chip.props.onPress:added": "additive",
     }
+
+
+def test_a_value_binding_repinned_to_a_newer_artifact_is_fidelity() -> None:
+    def value(version: str, default: int = 0) -> dict[str, Any]:
+        source = {"artifact": f"g:a:{version}", "owner": "O", "jvmName": "c"}
+        return {"valueTypes": {"Dp": {"source": source, "default": default}}}
+
+    assert classify(value("1"), value("2")) == [
+        Change("valueTypes.Dp.source:changed", "fidelity")
+    ]
+    # Anything else that changed is still a behaviour change.
+    assert classify(value("1"), value("2", default=1)) == [
+        Change("valueTypes.Dp:changed", "behaviour")
+    ]

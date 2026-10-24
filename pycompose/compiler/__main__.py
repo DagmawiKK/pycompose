@@ -101,9 +101,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "upgrade":
         if not args.bom:
             parser.error("upgrade needs --bom")
-        from pycompose.compiler.upgrade import main as upgrade
-
-        return upgrade(args.bom)
+        return _upgrade(args.bom)
     try:
         lock, report = generate(load())
         found = inventory(DUMP_DIR)
@@ -137,6 +135,19 @@ def main(argv: list[str] | None = None) -> int:
         f"report at {REPORT}"
     )
     return 0
+
+
+def _upgrade(bom: str) -> int:
+    """Move to a new Compose BOM, reporting a refusal without a traceback."""
+    from pycompose.compiler.gradle import GradleError
+    from pycompose.compiler.upgrade import UpgradeError
+    from pycompose.compiler.upgrade import main as upgrade
+
+    try:
+        return upgrade(bom)
+    except (GradleError, UpgradeError) as exc:
+        print(f"upgrade: {exc}", file=sys.stderr)
+        return 2
 
 
 def _at(ref: str, path: Path) -> str | None:

@@ -25,7 +25,7 @@ def gradle(android: Path, *arguments: str) -> None:
         GradleError: If the wrapper exits non-zero.
     """
     result = subprocess.run(
-        [str(android / "gradlew"), "-q", *arguments],
+        [str((android / "gradlew").resolve()), "-q", *arguments],
         cwd=android,
         capture_output=True,
         text=True,

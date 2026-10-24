@@ -251,7 +251,7 @@
       "kotlinType": "androidx.compose.material3.ButtonColors",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.ButtonDefaults",
         "name": "buttonColors",
         "jvmName": "buttonColors-ro_MJ88",
@@ -301,7 +301,7 @@
       "kotlinType": "androidx.compose.material3.ButtonElevation",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.ButtonDefaults",
         "name": "buttonElevation",
         "jvmName": "buttonElevation-R_JCAzs",
@@ -523,7 +523,7 @@
       "kotlinType": "androidx.compose.ui.text.font.FontWeight",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-text-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-text-android",
         "owner": "androidx.compose.ui.text.font.FontWeight",
         "name": "<init>",
         "jvmName": "<init>",
@@ -547,7 +547,7 @@
       "kotlinType": "androidx.compose.foundation.layout.PaddingValues",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "artifact": "androidx.compose.foundation:foundation-layout-android",
         "owner": "androidx.compose.foundation.layout.PaddingKt",
         "name": "PaddingValues",
         "jvmName": "PaddingValues-a9UjIt4",
@@ -621,7 +621,7 @@
       "kotlinType": "androidx.compose.foundation.layout.WindowInsets",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "artifact": "androidx.compose.foundation:foundation-layout-android",
         "owner": "androidx.compose.foundation.layout.WindowInsetsKt",
         "name": "WindowInsets",
         "jvmName": "WindowInsets-a9UjIt4",
@@ -719,7 +719,7 @@
       "kotlinType": "androidx.compose.ui.graphics.Shape",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "artifact": "androidx.compose.foundation:foundation-android",
         "owner": "androidx.compose.foundation.shape.RoundedCornerShapeKt",
         "name": "RoundedCornerShape",
         "jvmName": "RoundedCornerShape-0680j_4",
@@ -743,7 +743,7 @@
       "kotlinType": "androidx.compose.ui.graphics.Shape",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "artifact": "androidx.compose.foundation:foundation-android",
         "owner": "androidx.compose.foundation.shape.CutCornerShapeKt",
         "name": "CutCornerShape",
         "jvmName": "CutCornerShape-0680j_4",
@@ -767,7 +767,7 @@
       "kotlinType": "androidx.compose.ui.geometry.Offset",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-geometry-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-geometry-android",
         "owner": "androidx.compose.ui.geometry.OffsetKt",
         "name": "Offset",
         "jvmName": "Offset",
@@ -793,7 +793,7 @@
       "kotlinType": "androidx.compose.ui.geometry.Size",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-geometry-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-geometry-android",
         "owner": "androidx.compose.ui.geometry.SizeKt",
         "name": "Size",
         "jvmName": "Size",
@@ -821,7 +821,7 @@
       "kotlinType": "androidx.compose.ui.graphics.Brush",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-graphics-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-graphics-android",
         "owner": "androidx.compose.ui.graphics.SolidColor",
         "name": "<init>",
         "jvmName": "<init>",
@@ -844,7 +844,7 @@
       "kotlinType": "androidx.compose.ui.graphics.Brush",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-graphics-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-graphics-android",
         "owner": "androidx.compose.ui.graphics.Brush$Companion",
         "name": "horizontalGradient",
         "jvmName": "horizontalGradient-8A-3gB4",
@@ -893,7 +893,7 @@
       "kotlinType": "androidx.compose.ui.graphics.Brush",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-graphics-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-graphics-android",
         "owner": "androidx.compose.ui.graphics.Brush$Companion",
         "name": "verticalGradient",
         "jvmName": "verticalGradient-8A-3gB4",
@@ -942,7 +942,7 @@
       "kotlinType": "androidx.compose.ui.graphics.Brush",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-graphics-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-graphics-android",
         "owner": "androidx.compose.ui.graphics.Brush$Companion",
         "name": "linearGradient",
         "jvmName": "linearGradient-mHitzGk",
@@ -992,7 +992,7 @@
       "kotlinType": "androidx.compose.ui.unit.Dp",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-unit-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-unit-android",
         "owner": "androidx.compose.ui.unit.Dp",
         "name": "<init>",
         "jvmName": "constructor-impl",
@@ -1014,7 +1014,7 @@
       "kotlinType": "androidx.compose.ui.unit.TextUnit",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-unit-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-unit-android",
         "owner": "androidx.compose.ui.unit.TextUnitKt",
         "name": "sp",
         "jvmName": "getSp",
@@ -1036,7 +1036,7 @@
       "kotlinType": "androidx.compose.ui.unit.TextUnit",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-unit-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-unit-android",
         "owner": "androidx.compose.ui.unit.TextUnitKt",
         "name": "em",
         "jvmName": "getEm",
@@ -1058,7 +1058,7 @@
       "kotlinType": "androidx.compose.ui.text.TextStyle",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-text-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-text-android",
         "owner": "androidx.compose.ui.text.TextStyle",
         "name": "<init>",
         "jvmName": "<init>",
@@ -1245,7 +1245,7 @@
       "kotlinType": "androidx.compose.ui.graphics.Color",
       "since": "1.11.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-graphics-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-graphics-android",
         "owner": "androidx.compose.ui.graphics.ColorKt",
         "name": "Color",
         "jvmName": "Color",
@@ -1306,7 +1306,7 @@
       "kotlinType": "androidx.compose.foundation.BorderStroke",
       "since": "1.12.0",
       "source": {
-        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "artifact": "androidx.compose.foundation:foundation-android",
         "owner": "androidx.compose.foundation.BorderStroke",
         "name": "<init>",
         "jvmName": "<init>",
@@ -1335,7 +1335,7 @@
       "kotlinType": "androidx.compose.ui.text.AnnotatedString",
       "since": "1.12.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-text-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-text-android",
         "owner": "androidx.compose.ui.text.AnnotatedString",
         "name": "<init>",
         "jvmName": "<init>",
@@ -1387,7 +1387,7 @@
       "kotlinType": "androidx.compose.ui.unit.DpOffset",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-unit-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-unit-android",
         "owner": "androidx.compose.ui.unit.DpKt",
         "name": "DpOffset",
         "jvmName": "DpOffset-YgX7TsA",
@@ -1415,7 +1415,7 @@
       "kotlinType": "androidx.compose.ui.unit.DpSize",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.ui:ui-unit-android:1.12.1",
+        "artifact": "androidx.compose.ui:ui-unit-android",
         "owner": "androidx.compose.ui.unit.DpKt",
         "name": "DpSize",
         "jvmName": "DpSize-YgX7TsA",
@@ -1443,7 +1443,7 @@
       "kotlinType": "androidx.compose.material3.ChipColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.AssistChipDefaults",
         "name": "assistChipColors",
         "jvmName": "assistChipColors-oq7We08",
@@ -1525,7 +1525,7 @@
       "kotlinType": "androidx.compose.material3.ChipElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.AssistChipDefaults",
         "name": "assistChipElevation",
         "jvmName": "assistChipElevation-aqJV_2Y",
@@ -1591,7 +1591,7 @@
       "kotlinType": "androidx.compose.material3.FloatingActionButtonElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.FloatingActionButtonDefaults",
         "name": "bottomAppBarFabElevation",
         "jvmName": "bottomAppBarFabElevation-a9UjIt4",
@@ -1661,7 +1661,7 @@
       "kotlinType": "androidx.compose.material3.CardColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.CardDefaults",
         "name": "cardColors",
         "jvmName": "cardColors-ro_MJ88",
@@ -1707,7 +1707,7 @@
       "kotlinType": "androidx.compose.material3.CardElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.CardDefaults",
         "name": "cardElevation",
         "jvmName": "cardElevation-aqJV_2Y",
@@ -1803,7 +1803,7 @@
       "kotlinType": "androidx.compose.material3.TopAppBarColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.TopAppBarDefaults",
         "name": "centerAlignedTopAppBarColors",
         "jvmName": "centerAlignedTopAppBarColors-zjMxDiM",
@@ -1861,7 +1861,7 @@
       "kotlinType": "androidx.compose.material3.CheckboxColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.CheckboxDefaults",
         "name": "colors",
         "jvmName": "colors-5tl4gsc",
@@ -1927,7 +1927,7 @@
       "kotlinType": "androidx.compose.material3.DatePickerColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.DatePickerDefaults",
         "name": "colors",
         "jvmName": "colors-bSRYm20",
@@ -2147,7 +2147,7 @@
       "kotlinType": "androidx.compose.material3.ChipColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.AssistChipDefaults",
         "name": "elevatedAssistChipColors",
         "jvmName": "elevatedAssistChipColors-oq7We08",
@@ -2229,7 +2229,7 @@
       "kotlinType": "androidx.compose.material3.ChipElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.AssistChipDefaults",
         "name": "elevatedAssistChipElevation",
         "jvmName": "elevatedAssistChipElevation-aqJV_2Y",
@@ -2325,7 +2325,7 @@
       "kotlinType": "androidx.compose.material3.CardColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.CardDefaults",
         "name": "elevatedCardColors",
         "jvmName": "elevatedCardColors-ro_MJ88",
@@ -2371,7 +2371,7 @@
       "kotlinType": "androidx.compose.material3.CardElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.CardDefaults",
         "name": "elevatedCardElevation",
         "jvmName": "elevatedCardElevation-aqJV_2Y",
@@ -2467,7 +2467,7 @@
       "kotlinType": "androidx.compose.material3.SelectableChipColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.FilterChipDefaults",
         "name": "elevatedFilterChipColors",
         "jvmName": "elevatedFilterChipColors-XqyqHi0",
@@ -2581,7 +2581,7 @@
       "kotlinType": "androidx.compose.material3.SelectableChipElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.FilterChipDefaults",
         "name": "elevatedFilterChipElevation",
         "jvmName": "elevatedFilterChipElevation-aqJV_2Y",
@@ -2677,7 +2677,7 @@
       "kotlinType": "androidx.compose.material3.ChipColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.SuggestionChipDefaults",
         "name": "elevatedSuggestionChipColors",
         "jvmName": "elevatedSuggestionChipColors-5tl4gsc",
@@ -2743,7 +2743,7 @@
       "kotlinType": "androidx.compose.material3.ChipElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.SuggestionChipDefaults",
         "name": "elevatedSuggestionChipElevation",
         "jvmName": "elevatedSuggestionChipElevation-aqJV_2Y",
@@ -2839,7 +2839,7 @@
       "kotlinType": "androidx.compose.material3.TextFieldColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.ExposedDropdownMenuDefaults",
         "name": "outlinedTextFieldColors",
         "jvmName": "outlinedTextFieldColors-FD9MK7s",
@@ -3069,7 +3069,7 @@
       "kotlinType": "androidx.compose.material3.IconButtonColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.IconButtonDefaults",
         "name": "filledIconButtonColors",
         "jvmName": "filledIconButtonColors-ro_MJ88",
@@ -3118,7 +3118,7 @@
       "kotlinType": "androidx.compose.material3.IconToggleButtonColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.IconButtonDefaults",
         "name": "filledIconToggleButtonColors",
         "jvmName": "filledIconToggleButtonColors-5tl4gsc",
@@ -3183,7 +3183,7 @@
       "kotlinType": "androidx.compose.material3.IconButtonColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.IconButtonDefaults",
         "name": "filledTonalIconButtonColors",
         "jvmName": "filledTonalIconButtonColors-ro_MJ88",
@@ -3232,7 +3232,7 @@
       "kotlinType": "androidx.compose.material3.IconToggleButtonColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.IconButtonDefaults",
         "name": "filledTonalIconToggleButtonColors",
         "jvmName": "filledTonalIconToggleButtonColors-5tl4gsc",
@@ -3294,7 +3294,7 @@
       "kotlinType": "androidx.compose.material3.SelectableChipColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.FilterChipDefaults",
         "name": "filterChipColors",
         "jvmName": "filterChipColors-XqyqHi0",
@@ -3408,7 +3408,7 @@
       "kotlinType": "androidx.compose.material3.SelectableChipElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.FilterChipDefaults",
         "name": "filterChipElevation",
         "jvmName": "filterChipElevation-aqJV_2Y",
@@ -3498,7 +3498,7 @@
       "kotlinType": "androidx.compose.material3.FloatingActionButtonElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.FloatingActionButtonDefaults",
         "name": "elevation",
         "jvmName": "elevation-xZ9-QkE",
@@ -3568,7 +3568,7 @@
       "kotlinType": "androidx.compose.material3.IconButtonColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.IconButtonDefaults",
         "name": "iconButtonColors",
         "jvmName": "iconButtonColors-ro_MJ88",
@@ -3621,7 +3621,7 @@
       "kotlinType": "androidx.compose.material3.IconToggleButtonColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.IconButtonDefaults",
         "name": "iconToggleButtonColors",
         "jvmName": "iconToggleButtonColors-5tl4gsc",
@@ -3690,7 +3690,7 @@
       "kotlinType": "androidx.compose.material3.SelectableChipColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.InputChipDefaults",
         "name": "inputChipColors",
         "jvmName": "inputChipColors-kwJvTHA",
@@ -3812,7 +3812,7 @@
       "kotlinType": "androidx.compose.material3.SelectableChipElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.InputChipDefaults",
         "name": "inputChipElevation",
         "jvmName": "inputChipElevation-aqJV_2Y",
@@ -3878,7 +3878,7 @@
       "kotlinType": "androidx.compose.material3.MenuItemColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.MenuDefaults",
         "name": "itemColors",
         "jvmName": "itemColors-5tl4gsc",
@@ -3944,7 +3944,7 @@
       "kotlinType": "androidx.compose.material3.TopAppBarColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.TopAppBarDefaults",
         "name": "largeTopAppBarColors",
         "jvmName": "largeTopAppBarColors-zjMxDiM",
@@ -4002,7 +4002,7 @@
       "kotlinType": "androidx.compose.material3.FloatingActionButtonElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.FloatingActionButtonDefaults",
         "name": "loweredElevation",
         "jvmName": "loweredElevation-xZ9-QkE",
@@ -4072,7 +4072,7 @@
       "kotlinType": "androidx.compose.material3.TopAppBarColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.TopAppBarDefaults",
         "name": "mediumTopAppBarColors",
         "jvmName": "mediumTopAppBarColors-zjMxDiM",
@@ -4130,7 +4130,7 @@
       "kotlinType": "androidx.compose.material3.NavigationBarItemColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.NavigationBarItemDefaults",
         "name": "colors",
         "jvmName": "colors-69fazGs",
@@ -4204,7 +4204,7 @@
       "kotlinType": "androidx.compose.material3.CardColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.CardDefaults",
         "name": "outlinedCardColors",
         "jvmName": "outlinedCardColors-ro_MJ88",
@@ -4250,7 +4250,7 @@
       "kotlinType": "androidx.compose.material3.CardElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.CardDefaults",
         "name": "outlinedCardElevation",
         "jvmName": "outlinedCardElevation-aqJV_2Y",
@@ -4324,7 +4324,7 @@
       "kotlinType": "androidx.compose.material3.IconButtonColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.IconButtonDefaults",
         "name": "outlinedIconButtonColors",
         "jvmName": "outlinedIconButtonColors-ro_MJ88",
@@ -4377,7 +4377,7 @@
       "kotlinType": "androidx.compose.material3.IconToggleButtonColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.IconButtonDefaults",
         "name": "outlinedIconToggleButtonColors",
         "jvmName": "outlinedIconToggleButtonColors-5tl4gsc",
@@ -4443,7 +4443,7 @@
       "kotlinType": "androidx.compose.material3.TextFieldColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.OutlinedTextFieldDefaults",
         "name": "colors",
         "jvmName": "colors-0hiis_0",
@@ -4804,7 +4804,7 @@
       "kotlinType": "androidx.compose.material3.RadioButtonColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.RadioButtonDefaults",
         "name": "colors",
         "jvmName": "colors-ro_MJ88",
@@ -4854,7 +4854,7 @@
       "kotlinType": "androidx.compose.material3.RichTooltipColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.TooltipDefaults",
         "name": "richTooltipColors",
         "jvmName": "richTooltipColors-ro_MJ88",
@@ -4907,7 +4907,7 @@
       "kotlinType": "androidx.compose.material3.SegmentedButtonColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.SegmentedButtonDefaults",
         "name": "colors",
         "jvmName": "colors-XqyqHi0",
@@ -5021,7 +5021,7 @@
       "kotlinType": "androidx.compose.material3.SliderColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.SliderDefaults",
         "name": "colors",
         "jvmName": "colors-q0g_0yA",
@@ -5119,7 +5119,7 @@
       "kotlinType": "androidx.compose.material3.ChipColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.SuggestionChipDefaults",
         "name": "suggestionChipColors",
         "jvmName": "suggestionChipColors-5tl4gsc",
@@ -5185,7 +5185,7 @@
       "kotlinType": "androidx.compose.material3.ChipElevation",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.SuggestionChipDefaults",
         "name": "suggestionChipElevation",
         "jvmName": "suggestionChipElevation-aqJV_2Y",
@@ -5251,7 +5251,7 @@
       "kotlinType": "androidx.compose.material3.SwitchColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.SwitchDefaults",
         "name": "colors",
         "jvmName": "colors-V1nXRL4",
@@ -5357,7 +5357,7 @@
       "kotlinType": "androidx.compose.material3.TextFieldColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.TextFieldDefaults",
         "name": "colors",
         "jvmName": "colors-0hiis_0",
@@ -5718,7 +5718,7 @@
       "kotlinType": "androidx.compose.material3.TimePickerColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.TimePickerDefaults",
         "name": "colors",
         "jvmName": "colors-u3YEpmA",
@@ -5851,7 +5851,7 @@
       "kotlinType": "androidx.compose.material3.TopAppBarColors",
       "since": "1.13.0",
       "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "artifact": "androidx.compose.material3:material3-android",
         "owner": "androidx.compose.material3.TopAppBarDefaults",
         "name": "topAppBarColors",
         "jvmName": "topAppBarColors-5tl4gsc",
