@@ -15,10 +15,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.compiler.component_face import DECODE_CLASSIFIERS
+from pycompose.compiler.propose_lookup import source_name
 from pycompose.core.registry_types import SCOPE_PATHS
 from pycompose.schema.codegen.defaults import render_default
-from tools.schema.component_face import DECODE_CLASSIFIERS
-from tools.schema.propose_lookup import source_name
 
 WIRE_SCALARS = {
     "int": "integer",

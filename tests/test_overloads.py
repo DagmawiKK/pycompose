@@ -65,7 +65,7 @@ def _plan(*parameters: tuple[str, str, bool]) -> dict[str, Any]:
 
 
 def test_an_overload_is_named_after_what_sets_it_apart() -> None:
-    from tools.composegen.overloads import suffix
+    from pycompose.compiler.overloads import suffix
 
     content = ("content", "kotlin/Function3", True)
     clickable = _plan(("onClick", "kotlin/Function0", True), content)

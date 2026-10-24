@@ -30,12 +30,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-if __package__ in (None, ""):  # pragma: no cover - only when run as a script
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-
-from tools.schema.classpath_dump import DUMP_DIR, Declaration, Inventory, inventory
-from tools.schema.component_face import Face, accepts, face
-from tools.schema.propose_lookup import ancestors
+from pycompose.compiler.classpath_dump import (
+    DUMP_DIR,
+    Declaration,
+    Inventory,
+    inventory,
+)
+from pycompose.compiler.component_face import Face, accepts, face
+from pycompose.compiler.propose_lookup import ancestors
 
 
 @dataclass(frozen=True)

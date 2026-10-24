@@ -21,8 +21,8 @@ from test_classpath_dump import (
 def test_value_proposal_derives_an_unused_constructor_without_parameter_policy() -> (
     None
 ):
-    from tools.schema.classpath_dump import Declaration
-    from tools.schema.propose import propose_value
+    from pycompose.compiler.classpath_dump import Declaration
+    from pycompose.compiler.propose import propose_value
 
     source = Declaration.read(
         declaration(
@@ -48,8 +48,8 @@ def test_value_proposal_derives_an_unused_constructor_without_parameter_policy()
 
 
 def test_value_proposal_refuses_a_constructor_no_app_can_call() -> None:
-    from tools.schema.classpath_dump import Declaration
-    from tools.schema.propose import propose_value
+    from pycompose.compiler.classpath_dump import Declaration
+    from pycompose.compiler.propose import propose_value
 
     source = Declaration.read(
         declaration(
@@ -68,8 +68,8 @@ def test_value_proposal_refuses_a_constructor_no_app_can_call() -> None:
 
 
 def test_member_proposal_reads_enum_entries_as_the_wire_vocabulary(tmp_path) -> None:
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.propose import propose_members
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.propose import propose_members
 
     write_inventory(
         tmp_path,
@@ -111,8 +111,8 @@ def test_member_proposal_reads_enum_entries_as_the_wire_vocabulary(tmp_path) -> 
 
 
 def test_icon_proposal_labels_members_by_their_path(tmp_path) -> None:
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.propose import propose_icons
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.propose import propose_icons
 
     image = type_doc("androidx/compose/ui/graphics/vector/ImageVector")
     write_inventory(
@@ -197,8 +197,8 @@ def test_icon_proposal_labels_members_by_their_path(tmp_path) -> None:
 
 
 def test_icon_proposal_refuses_a_holder_with_no_icons(tmp_path) -> None:
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.propose import propose_icons
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.propose import propose_icons
 
     write_inventory(tmp_path, [declaration()])
     with pytest.raises(ValueError, match="no public ImageVector members"):
@@ -215,8 +215,8 @@ def test_icon_proposal_refuses_a_holder_with_no_icons(tmp_path) -> None:
 
 
 def test_pinned_source_defaults_generate_native_factories(native_document) -> None:
-    from tools.schema.classpath_dump import inventory, source_defaults
-    from tools.schema.propose import propose_value
+    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose.compiler.propose import propose_value
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
     found = inventory(DUMP)
@@ -278,8 +278,8 @@ def test_internal_immutable_tokens_reduce_to_public_typed_defaults(
 
 def assert_resolves_token_defaults() -> None:
     """Pinned immutable elevation tokens reduce to 0/1 dp, not internal symbols."""
-    from tools.schema.classpath_dump import inventory, source_defaults
-    from tools.schema.propose import propose_value
+    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose.compiler.propose import propose_value
 
     found = inventory(DUMP)
     defaults = source_defaults(DUMP)
@@ -402,8 +402,8 @@ def test_unsafe_token_initializers_are_refused(
 
 
 def test_class_evidence_separates_sibling_vocabularies(native_document) -> None:
-    from tools.schema.classpath_dump import inventory, opt_in_index
-    from tools.schema.propose import propose_members
+    from pycompose.compiler.classpath_dump import inventory, opt_in_index
+    from pycompose.compiler.propose import propose_members
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
     found = inventory(DUMP)

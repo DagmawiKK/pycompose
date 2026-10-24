@@ -14,21 +14,22 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from tools.composegen.check import compare, compare_values
-from tools.composegen.overloads import extras
-from tools.composegen.policy import Policy, merge, redundant
-from tools.composegen.rules import SHAPES, reshape
-from tools.schema.candidate_props import CandidateError
-from tools.schema.classpath_dump import (
+from pycompose.compiler.candidate_props import CandidateError
+from pycompose.compiler.check import compare, compare_values
+from pycompose.compiler.classpath_dump import (
     DUMP_DIR,
     Inventory,
     inventory,
     source_defaults,
     source_drives,
 )
-from tools.schema.components import propose_components
-from tools.schema.entry_candidates import derive, select, spell
-from tools.schema.holders import derive as derive_holders
+from pycompose.compiler.component_binding import spell
+from pycompose.compiler.components import propose_components
+from pycompose.compiler.entry_candidates import derive, select
+from pycompose.compiler.holders import derive as derive_holders
+from pycompose.compiler.overloads import extras
+from pycompose.compiler.policy import Policy, merge, redundant
+from pycompose.compiler.rules import SHAPES, reshape
 
 ROOT = Path(__file__).resolve().parents[2]
 LOCK = ROOT / "schema/catalog.lock.json"
@@ -296,7 +297,8 @@ def _derives(
         decision["nativeName"] = source["name"]
     for attempt in (decision, {**decision, "identity": spell(source)}):
         try:
-            return planned(name, attempt, plans, found, sections)["source"] == source
+            derived = planned(name, attempt, plans, found, sections)
+            return bool(derived["source"] == source)
         except CandidateError:
             continue
     return False

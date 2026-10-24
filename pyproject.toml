@@ -89,7 +89,7 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["cli", "testing", "m3", "composition", "components", "bridge", "integrations", "extensions", "async_task", "repository", "ir", "state", "schema", "core", "utils"]
+layers = ["cli", "compiler", "testing", "m3", "composition", "components", "bridge", "integrations", "extensions", "async_task", "repository", "ir", "state", "schema", "core", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
 
@@ -160,10 +160,8 @@ explanation = "Python runtime is host-agnostic by construction (ADR-0004)."
 name = "Tools import the library; never the reverse"
 type = "layers"
 layers = ["tools", "pycompose"]
-explanation = """tools/ is repo-only tooling: it may read the library it serves (the
-classpath readers, drift checkers and proposals are built on registry internals), and the
-runtime never learns tools/ exists. Before tools.schema was a real package the gate could
-not see this direction at all."""
+explanation = """tools/ is repo-only tooling: it may read the library it serves (previews, the
+corpus and the template sync are built on registry internals), and the runtime never learns tools/ exists."""
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

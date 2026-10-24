@@ -10,9 +10,9 @@ turns that plan into a candidate registry entry:
   optional ``identity`` when several call plans compete -- is refused when
   missing, stale or ambiguous
 
-``tools/composegen`` derives every catalog component through this module;
-``stage`` and ``verify`` check a derived entry inside an isolated copy of the
-catalog, the way the compiler's own gates check the lock.
+The compiler (:mod:`pycompose.compiler.lock`) derives every catalog component
+through this module; ``stage`` and ``verify`` check a derived entry inside an
+isolated copy of the catalog, the way the compiler's own gates check the lock.
 """
 
 from __future__ import annotations
@@ -23,14 +23,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from tools.schema.candidate_props import (
+from pycompose.compiler.candidate_props import (
     CandidateError,
     family_index,
     scope_for,
     wire_shape,
 )
-from tools.schema.classpath_dump import Declaration, Inventory
-from tools.schema.component_binding import identity, resolutions, spell
+from pycompose.compiler.classpath_dump import Declaration, Inventory
+from pycompose.compiler.component_binding import identity, resolutions, spell
 
 
 @dataclass(frozen=True)
@@ -356,7 +356,7 @@ def verify(
     Returns:
         One message per fact the pin or the emitters refuse.
     """
-    from tools.composegen.check import compare
+    from pycompose.compiler.check import compare
 
     errors = compare(candidate, found)
     fresh = {item.name for item in derived}

@@ -73,15 +73,15 @@ def string(name: str) -> dict:
 
 def resolve_one(tmp_path: Path, records: list[dict], props: dict, **entry: object):
     """Resolve the synthetic component against one synthetic inventory."""
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.component_binding import resolutions
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.component_binding import resolutions
 
     write_inventory(tmp_path, records)
     return resolutions(registry(props, **entry), inventory(tmp_path))[0]
 
 
 def test_the_face_travels_under_native_names_and_holds_children() -> None:
-    from tools.schema.component_face import face
+    from pycompose.compiler.component_face import face
 
     entry = registry(
         {
@@ -107,7 +107,7 @@ def test_the_face_travels_under_native_names_and_holds_children() -> None:
 
 
 def test_a_reshaped_prop_the_pin_never_names_is_host_consumed() -> None:
-    from tools.schema.component_face import face
+    from pycompose.compiler.component_face import face
 
     entry = registry(
         {"resource": {"type": "string", "required": True}},
@@ -119,7 +119,7 @@ def test_a_reshaped_prop_the_pin_never_names_is_host_consumed() -> None:
 
 
 def test_a_reshaped_prop_the_pin_names_is_forwarded() -> None:
-    from tools.schema.component_face import face
+    from pycompose.compiler.component_face import face
 
     entry = registry(
         {"onPress": {"type": "actionId", "required": True}},
@@ -219,8 +219,8 @@ def test_a_recorded_source_must_equal_the_selected_overload(tmp_path: Path) -> N
 
 def test_a_schema_alias_resolves_through_its_native_name(tmp_path: Path) -> None:
     """A schema alias keeps its own key while the source selects the pin."""
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.component_binding import resolutions
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.component_binding import resolutions
 
     record = widget([modifier(), string("label")], jvm="Widget")
     catalog = registry(
@@ -313,8 +313,8 @@ def test_an_anchored_wrapper_verifies_its_recorded_identity(tmp_path: Path) -> N
 
 
 def test_resolutions_are_deterministic(tmp_path: Path) -> None:
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.component_binding import resolutions
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.component_binding import resolutions
 
     write_inventory(tmp_path, [widget([modifier(), string("label")], jvm="Widget-a")])
     found = inventory(tmp_path)
@@ -323,8 +323,8 @@ def test_resolutions_are_deterministic(tmp_path: Path) -> None:
 
 
 def test_the_checker_reports_an_unrecorded_component(tmp_path: Path) -> None:
-    from tools.composegen.check import compare
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.check import compare
+    from pycompose.compiler.classpath_dump import inventory
 
     write_inventory(tmp_path, [widget([modifier(), string("label")])])
     errors = compare(
@@ -336,8 +336,8 @@ def test_the_checker_reports_an_unrecorded_component(tmp_path: Path) -> None:
 def test_the_checker_reports_a_prop_no_single_overload_declares(
     tmp_path: Path,
 ) -> None:
-    from tools.composegen.check import compare
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.check import compare
+    from pycompose.compiler.classpath_dump import inventory
 
     write_inventory(tmp_path, [widget([modifier(), string("label")])])
     errors = compare(
@@ -355,8 +355,8 @@ def test_the_checker_reports_a_prop_no_single_overload_declares(
 def test_every_approved_component_resolves_to_one_pinned_overload(
     native_document,
 ) -> None:
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.component_binding import resolutions
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.component_binding import resolutions
 
     assert native_document["artifacts"]
     catalog = json.loads((ROOT / "schema/catalog.lock.json").read_text())
@@ -377,9 +377,9 @@ def test_every_approved_component_resolves_to_one_pinned_overload(
 
 
 def test_the_resolved_face_is_the_generated_call(native_document) -> None:
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.component_binding import resolutions
     from pycompose.schema.codegen.adapters import render
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.component_binding import resolutions
 
     assert native_document["artifacts"]
     catalog = json.loads((ROOT / "schema/catalog.lock.json").read_text())
@@ -399,8 +399,8 @@ def test_the_resolved_face_is_the_generated_call(native_document) -> None:
 
 
 def test_the_checker_is_green_on_the_approved_catalog(native_document) -> None:
-    from tools.composegen.check import compare
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.check import compare
+    from pycompose.compiler.classpath_dump import inventory
 
     assert native_document["artifacts"]
     catalog = json.loads((ROOT / "schema/catalog.lock.json").read_text())

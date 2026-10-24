@@ -4,7 +4,7 @@ The account's questions are all relational -- is this declaration already
 consumed by an approved binding, does an approved component still have a call
 plan, does a target diagnostic remain. This module projects the approved
 catalog, the pinned inventory and the planner's candidates into the sets and
-views those questions need; :mod:`tools.schema.accounting` turns them into the
+views those questions need; :mod:`pycompose.compiler.accounting` turns them into the
 report. Nothing here writes, approves or edits anything.
 """
 
@@ -13,12 +13,12 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any
 
+from pycompose.compiler.classpath_dump import Declaration, Inventory
 from pycompose.core.registry_vocabulary import (
     SCOPE_PATHS,
     STATE_KINDS,
     TRANSIENT_KINDS,
 )
-from tools.schema.classpath_dump import Declaration, Inventory
 
 
 def normalize(path: str) -> str:

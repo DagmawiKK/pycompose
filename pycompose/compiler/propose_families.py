@@ -15,15 +15,15 @@ from __future__ import annotations
 
 from typing import Any
 
-from tools.schema.classpath_dump import (
+from pycompose.compiler.classpath_dump import (
     Declaration,
     Inventory,
     OptInIndex,
     opt_in_index,
     required_opt_ins,
 )
-from tools.schema.propose_icons import propose_icons
-from tools.schema.propose_lookup import (
+from pycompose.compiler.propose_icons import propose_icons
+from pycompose.compiler.propose_lookup import (
     EXTENSIONS,
     ICONS,
     MEMBERS,
@@ -212,7 +212,7 @@ def propose_members(
     holders = {primary, *(source_name(name) for name in also_from)}
     members: dict[str, str] = {}
     required: set[str] = set()
-    entries = set()
+    entries: set[str] = set()
     hierarchy = ancestors(found)
     for declaration in found.declarations:
         if declaration.owner not in holders:
@@ -407,7 +407,7 @@ def bind(
                 since=since,
                 families=families,
                 defaults=evidence.get(
-                    (source.owner, source.jvm_name, source.jvm_descriptor)
+                    (source.owner, source.jvm_name or "", source.jvm_descriptor or "")
                 ),
                 role=approved.get("kind"),
                 approved_family=approved.get("family"),

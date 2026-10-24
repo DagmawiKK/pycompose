@@ -18,7 +18,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any
 
-from tools.schema.classpath_dump import (
+from pycompose.compiler.classpath_dump import (
     Declaration,
     Inventory,
     KotlinType,

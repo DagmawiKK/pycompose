@@ -221,4 +221,5 @@ def load_approvals(path: Path = APPROVALS) -> dict[str, str]:
     """
     if not path.is_file():
         return {}
-    return json.loads(path.read_text(encoding="utf-8"))["approved"]
+    approved: dict[str, str] = json.loads(path.read_text(encoding="utf-8"))["approved"]
+    return approved

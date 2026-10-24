@@ -64,7 +64,7 @@ def assert_calls_resolve_to_recorded_identities(report, classes: Path) -> None:
 
 
 def test_pinned_ui_defaults_cover_every_exact_overload(native_document):
-    from tools.schema.classpath_dump import inventory, source_defaults
+    from pycompose.compiler.classpath_dump import inventory, source_defaults
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
@@ -74,8 +74,8 @@ def test_pinned_ui_defaults_cover_every_exact_overload(native_document):
 
 
 def test_pinned_unconstructible_types_and_enum_vocabularies(native_document) -> None:
-    from tools.schema.classpath_dump import inventory, source_defaults
-    from tools.schema.propose import bind
+    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose.compiler.propose import bind
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
     found = inventory(DUMP)
@@ -92,8 +92,8 @@ def test_pinned_unconstructible_types_and_enum_vocabularies(native_document) -> 
 
 
 def test_pinned_denominator_separates_components_from_styling_hooks(native_document):
-    from tools.schema.classpath_dump import inventory, source_defaults
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose.compiler.components import propose_components
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
     report = propose_components(
@@ -147,8 +147,8 @@ def test_the_shipped_catalog_carries_no_unexplained_prop(native_document) -> Non
     has to be listed there too; otherwise the gate stays red for a reason the
     schema alone does not show.
     """
-    from tools.composegen.check import compare
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.check import compare
+    from pycompose.compiler.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
     registry = json.loads(Path("schema/catalog.lock.json").read_text())
@@ -163,8 +163,8 @@ def test_the_drift_check_re_derives_a_package_and_a_provider(native_document) ->
     all, so a stale one has to fail here rather than become a coercion nobody
     checked.
     """
-    from tools.composegen.check import compare
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.check import compare
+    from pycompose.compiler.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
@@ -205,8 +205,8 @@ def test_the_drift_check_re_derives_receivers_and_provided_scopes(
     scope the pin never hands down -- fails here rather than becoming a call
     that cannot compile.
     """
-    from tools.composegen.check import compare
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.check import compare
+    from pycompose.compiler.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)

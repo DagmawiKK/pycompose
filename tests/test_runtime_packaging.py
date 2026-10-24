@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = "pycompose/extensions/"
 TOOLING = (
     "pycompose/cli/",
+    "pycompose/compiler/",
     "pycompose/templates/",
     "pycompose/testing/",
     "tests/",
@@ -135,7 +136,9 @@ def test_the_packaged_runtime_still_excludes_tooling_directories() -> None:
     gradle = (ROOT / "pycompose/templates/android/host/build.gradle.kts").read_text(
         encoding="utf-8"
     )
-    directories = '"pycompose/cli/**", "pycompose/templates/**", "pycompose/testing/**"'
-    assert (
-        f"exclude({directories})" in gradle
-    ), "the packaged runtime no longer excludes tooling directories wholesale"
+    missing = [
+        directory
+        for directory in TOOLING
+        if directory.startswith("pycompose/") and f'"{directory}**"' not in gradle
+    ]
+    assert missing == [], "the packaged runtime no longer excludes these wholesale"

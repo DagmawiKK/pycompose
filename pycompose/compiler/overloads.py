@@ -19,10 +19,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.compiler.candidate_props import CandidateError
+from pycompose.compiler.component_binding import spell
 from pycompose.schema.codegen.adapter_helpers import is_mechanical
 from pycompose.schema.codegen.overloads import ambiguous, keywords
-from tools.schema.candidate_props import CandidateError
-from tools.schema.entry_candidates import spell
 
 
 def _pascal(name: str) -> str:
@@ -148,7 +148,7 @@ def _derive(
     if flatten:
         own["flatten"] = flatten
     try:
-        entry = derive(extra, own)
+        entry: dict[str, Any] = derive(extra, own)
     except CandidateError as exc:
         return str(exc).split(": ", 1)[-1]
     if not is_mechanical(entry):

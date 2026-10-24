@@ -12,7 +12,7 @@ generates or edits the approved catalog.
 What "accounted" means here:
 
 * ``ui`` declarations are the app-facing composable denominator. Every overload
-  is planned by :func:`tools.schema.components.propose_components` and lands in
+  is planned by :func:`pycompose.compiler.components.propose_components` and lands in
   exactly one of ``call-plan`` or ``blocked`` (with a classified reason).
 * ``support`` declarations are classified by what already consumes them: an
   approved value binding, a recognized holder (including nested owners such as
@@ -44,10 +44,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
-if __package__ in (None, ""):  # pragma: no cover - only when run as a script
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-
-from tools.schema.accounting_views import (
+from pycompose.compiler.accounting_views import (
     approval_facts,
     empty_bucket,
     grounding,
@@ -57,13 +54,13 @@ from tools.schema.accounting_views import (
     receivers,
     recognition,
 )
-from tools.schema.classpath_dump import (
+from pycompose.compiler.classpath_dump import (
     DUMP_DIR,
     Inventory,
     inventory,
     source_defaults,
 )
-from tools.schema.components import MODIFIER, propose_components
+from pycompose.compiler.components import MODIFIER, propose_components
 
 DOMAIN_PREFIXES: tuple[tuple[str, str], ...] = (
     ("androidx.compose.material3.adaptive", "navigation"),

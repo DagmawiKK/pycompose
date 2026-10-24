@@ -11,17 +11,13 @@ import argparse
 import hashlib
 import json
 import re
-import sys
 import tomllib
 from collections.abc import Iterator, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-if __package__ in (None, ""):  # pragma: no cover - only when run as a script
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-
-from tools.schema.classpath_types import (  # noqa: F401 -- typed view re-exports
+from pycompose.compiler.classpath_types import (  # noqa: F401 -- typed view re-exports
     BUILDERS,
     COMPOSABLE,
     DUMP_DIR,

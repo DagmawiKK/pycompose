@@ -15,22 +15,17 @@ can carry the entry's whole call.
 
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
-if __package__ in (None, ""):  # pragma: no cover - only when run as a script
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-
+from pycompose.compiler.classpath_dump import Declaration
+from pycompose.compiler.propose_lookup import source_name
 from pycompose.core.registry_types import SCOPE_PATHS
 from pycompose.schema.codegen.adapter_helpers import (
     STATE_ATTACH_GATES,
     STATE_CONSTRUCTOR_PROPS,
     _camel,
 )
-from tools.schema.classpath_dump import Declaration
-from tools.schema.propose_lookup import source_name
 
 MODIFIER = "androidx.compose.ui.Modifier"
 INTERACTION_SOURCE = "androidx.compose.foundation.interaction.MutableInteractionSource"

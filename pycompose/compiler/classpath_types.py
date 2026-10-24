@@ -8,6 +8,7 @@ validators live in ``classpath_dump``.
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -335,7 +336,7 @@ class Inventory:
         }
 
 
-def _classifiers(value: Any):
+def _classifiers(value: Any) -> Iterator[str]:
     if isinstance(value, dict):
         if "classifier" in value:
             yield value["classifier"]

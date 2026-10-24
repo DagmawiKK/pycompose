@@ -1,13 +1,12 @@
 """Shared test setup.
 
-``pycompose/schema/codegen`` ships inside the package because an installed
-``pycompose`` needs it (ADR-0014). The remaining schema tooling -- the classpath
-dump reader, the AndroidX API scraper, the drift checker -- is repo-only: it
-reads paths under ``android/`` that do not exist in a wheel, and nothing an app
-builds calls it.
+The codegen and the component compiler ship inside the package, because an
+installed ``pycompose`` runs them for an app (ADR-0014, ``pycompose add``). The
+rest of ``tools/`` -- line budgets, the template sync, previews and the corpus
+-- is repo-only.
 
-That means those tests need the repo root on the path so ``tools.schema``
-resolves, and pytest does not put it there. The shim used to be deleted along
+That means those tests need the repo root on the path so ``tools`` resolves,
+and pytest does not put it there. The shim used to be deleted along
 with a failing test rather than diagnosed; it is here now, and the reason is
 written down.
 """

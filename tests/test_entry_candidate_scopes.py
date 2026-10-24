@@ -8,8 +8,8 @@ import pytest
 from test_classpath_dump import type_doc
 from test_entry_candidates import catalog, modifier, plan, synthetic
 
-from tools.schema.candidate_props import CandidateError
-from tools.schema.entry_candidates import derive
+from pycompose.compiler.candidate_props import CandidateError
+from pycompose.compiler.entry_candidates import derive
 
 
 def test_a_scope_extension_derives_the_scope_it_composes_in(tmp_path: Path) -> None:

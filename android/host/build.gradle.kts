@@ -102,7 +102,12 @@ val stageRuntime by tasks.registering(Sync::class) {
         include("pycompose/**/*.py", "pycompose/py.typed")
         // Planning, evidence and project tooling are CLI-tier: nothing on a device
         // imports them, so they are excluded as directories, never by module list.
-        exclude("pycompose/cli/**", "pycompose/templates/**", "pycompose/testing/**")
+        exclude(
+            "pycompose/cli/**",
+            "pycompose/compiler/**",
+            "pycompose/templates/**",
+            "pycompose/testing/**",
+        )
         // Reference recipes are ordinary opt-in consumers of the extension contract.
         exclude {
             it.path.startsWith("pycompose/integrations/") &&

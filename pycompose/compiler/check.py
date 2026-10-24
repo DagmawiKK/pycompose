@@ -10,10 +10,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.compiler.classpath_dump import Inventory
+from pycompose.compiler.component_binding import resolutions
+from pycompose.compiler.propose import refresh
 from pycompose.core.registry_types import SCOPE_PATHS
-from tools.schema.classpath_dump import Inventory
-from tools.schema.component_binding import resolutions
-from tools.schema.propose import refresh
 
 DERIVED = ("source", "kotlinType", "native", "omitted")
 """Fields the pinned compiler alone decides; approved policy only adds."""
@@ -186,11 +186,11 @@ def scope_errors(name: str, entry: dict[str, Any], overloads: list[Any]) -> list
         and with_content
         and all(_content_scope(d, native) is not None for d in with_content)
     ):
-        scopes = sorted(
+        found = sorted(
             {scope for d in with_content if (scope := _content_scope(d, native))}
         )
         errors.append(
-            f"{name}: pinned content composes under {', '.join(scopes)}; "
+            f"{name}: pinned content composes under {', '.join(found)}; "
             "declare children.provides"
         )
     return errors
@@ -250,7 +250,7 @@ def compare(registry: dict[str, Any], found: Inventory) -> list[str]:
 
 
 def compare_values(
-    registry: dict[str, Any], found: Inventory, evidence: dict
+    registry: dict[str, Any], found: Inventory, evidence: dict[Any, Any]
 ) -> list[str]:
     """Re-derive every binding the same way ``--refresh`` does, and compare.
 

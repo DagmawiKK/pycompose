@@ -10,7 +10,7 @@ from test_classpath_dump import declaration, write_inventory
 
 
 def test_android_jvm_aar_retains_public_components(tmp_path: Path) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     # Resolved Material 3 Android artifacts can advertise JVM rather than
     # androidJvm; the Android environment and AAR attributes prove the variant.
@@ -46,7 +46,7 @@ def test_android_jvm_aar_retains_public_components(tmp_path: Path) -> None:
 def test_jvm_artifact_needs_complete_android_aar_evidence(
     tmp_path: Path, attribute: str, value: str | None
 ) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     document = write_inventory(tmp_path, [declaration()])
     attributes = {
@@ -66,7 +66,7 @@ def test_jvm_artifact_needs_complete_android_aar_evidence(
 
 
 def test_unspecified_variant_cannot_supply_public_ui(tmp_path: Path) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     document = write_inventory(tmp_path, [declaration()])
     document["artifacts"][0]["variant"] = None

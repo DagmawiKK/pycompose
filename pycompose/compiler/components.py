@@ -10,24 +10,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from collections import Counter, defaultdict
 from collections.abc import Iterable, Iterator
+from collections.abc import Set as AbstractSet
 from pathlib import Path
 from typing import Any, NamedTuple
 
-if __package__ in (None, ""):  # pragma: no cover - only when run as a script
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-
-from pycompose.core.registry_types import SCOPE_PATHS
-from pycompose.core.registry_vocabulary import (
-    HOST_VALUES,
-    RESOURCE_TYPES,
-    STATE_HOLDERS,
-    TRANSIENT_HOLDERS,
-)
-from pycompose.schema.codegen.defaults import render_default
-from tools.schema.classpath_dump import (
+from pycompose.compiler.classpath_dump import (
     DUMP_DIR,
     Declaration,
     Inventory,
@@ -38,7 +27,16 @@ from tools.schema.classpath_dump import (
     opt_in_index,
     source_defaults,
 )
-from tools.schema.propose import SCALARS, identity, source_name, value_families
+from pycompose.compiler.classpath_types import KotlinType
+from pycompose.compiler.propose import SCALARS, identity, source_name, value_families
+from pycompose.core.registry_types import SCOPE_PATHS
+from pycompose.core.registry_vocabulary import (
+    HOST_VALUES,
+    RESOURCE_TYPES,
+    STATE_HOLDERS,
+    TRANSIENT_HOLDERS,
+)
+from pycompose.schema.codegen.defaults import render_default
 
 # The pin reports receivers as classifier paths; derive that form from the
 # closed scope vocabulary instead of transcribing it a second time.
@@ -59,7 +57,7 @@ class DeclaredType(NamedTuple):
     arity: int = 0
 
 
-def _function(value) -> list[Any]:
+def _function(value: KotlinType) -> list[KotlinType]:
     """Return the synchronous arguments a native function type receives."""
     if (
         value.suspend
@@ -67,7 +65,7 @@ def _function(value) -> list[Any]:
         or any(t is None for _, t in value.arguments)
     ):
         raise ValueError("unresolved/suspending function needs a native protocol")
-    arguments = [t for _, t in value.arguments]
+    arguments = [t for _, t in value.arguments if t is not None]
     if arguments[-1].classifier != "kotlin/Unit" or arguments[-1].nullable:
         raise ValueError("synchronous result needs a provider/predicate protocol")
     return arguments[:-1]
@@ -79,7 +77,7 @@ CONSUMED = {"androidx/compose/foundation/layout/PaddingValues": "paddingValues"}
 LAZY_LIST = "androidx/compose/foundation/lazy/LazyListScope"
 
 
-def _slot(value) -> dict[str, Any]:
+def _slot(value: KotlinType) -> dict[str, Any]:
     """Classify a composable lambda as a scoped, unscoped or consuming slot.
 
     A receiver outside the closed scope vocabulary is not handed to the
@@ -113,13 +111,12 @@ def _slot(value) -> dict[str, Any]:
     return rule
 
 
-def _builder(value) -> dict[str, Any]:
+def _builder(value: KotlinType) -> dict[str, Any]:
     """A lazy list's builder lambda: the children are the items it lists."""
     receiver = value.arguments[0][1]
-    if receiver.classifier != LAZY_LIST or receiver.nullable:
-        raise ValueError(
-            f"builder scope needs a native protocol: {receiver.classifier}"
-        )
+    if receiver is None or receiver.classifier != LAZY_LIST or receiver.nullable:
+        named = receiver.classifier if receiver is not None else "unresolved"
+        raise ValueError(f"builder scope needs a native protocol: {named}")
     return {"policy": "slot", "receiver": None, "kind": "items"}
 
 
@@ -460,7 +457,7 @@ def _receiver(plan: dict[str, Any]) -> str | None:
     return receiver["classifier"] if receiver else None
 
 
-def _unspecified(plan: dict[str, Any], passed: set[str]) -> int:
+def _unspecified(plan: dict[str, Any], passed: AbstractSet[str]) -> int:
     """Default parameters a call passing ``passed`` leaves to their defaults."""
     return sum(
         1

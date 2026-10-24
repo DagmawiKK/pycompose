@@ -1,8 +1,8 @@
 """Run the component compiler.
 
-    python -m tools.composegen generate          # write lock, signatures, report
-    python -m tools.composegen generate --check  # fail if either is stale
-    python -m tools.composegen diff --base main  # classify changes since a ref
+    python -m pycompose.compiler generate          # write lock, signatures, report
+    python -m pycompose.compiler generate --check  # fail if either is stale
+    python -m pycompose.compiler diff --base main  # classify changes since a ref
 
 Run ``./gradlew dumpComposeApi dumpComposeDefaults`` in android/ first: the
 compiler reads the pinned evidence they extract. Then run
@@ -19,14 +19,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-if __package__ in {None, ""}:  # pragma: no cover - only when run as a script
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-
-from tools.composegen import signatures
-from tools.composegen.diff import classify, load_approvals, unapproved
-from tools.composegen.lock import LOCK, ROOT, Report, dumps, generate
-from tools.composegen.policy import load
-from tools.schema.classpath_dump import DUMP_DIR, inventory
+from pycompose.compiler import signatures
+from pycompose.compiler.classpath_dump import DUMP_DIR, inventory
+from pycompose.compiler.diff import classify, load_approvals, unapproved
+from pycompose.compiler.lock import LOCK, ROOT, Report, dumps, generate
+from pycompose.compiler.policy import load
 
 REPORT = DUMP_DIR / "composegen-report.md"
 SIGNATURES = ROOT / "schema/signatures"

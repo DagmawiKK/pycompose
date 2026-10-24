@@ -12,8 +12,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from tools.schema.classpath_dump import Inventory, opt_in_index, required_opt_ins
-from tools.schema.classpath_types import Declaration
+from pycompose.compiler.classpath_dump import Inventory, opt_in_index, required_opt_ins
+from pycompose.compiler.classpath_types import Declaration
 
 ANIMATING = frozenset({"androidx.compose.foundation.gestures.animateTo"})
 """Primitive drives that animate rather than snap: approved policy (plan 30 §4.3)."""

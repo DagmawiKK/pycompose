@@ -17,9 +17,9 @@ from __future__ import annotations
 import copy
 from typing import Any
 
+from pycompose.compiler.candidate_props import CandidateError
 from pycompose.core.registry_vocabulary import INTERACTION_KINDS, INTERACTION_REPORTS
 from pycompose.schema.codegen.state_families import STATE_FAMILIES, TRANSIENT_FAMILIES
-from tools.schema.candidate_props import CandidateError
 
 INTERACTION_SOURCE = "androidx/compose/foundation/interaction/MutableInteractionSource"
 SHAPES = frozenset({"flatten", "observe", "holder"})

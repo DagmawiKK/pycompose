@@ -29,10 +29,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
-if __package__ in (None, ""):  # pragma: no cover - only when run as a script
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-
-from tools.schema.classpath_dump import (
+from pycompose.compiler.classpath_dump import (
     DUMP_DIR,
     Inventory,
     inventory,
@@ -56,15 +53,15 @@ __all__ = [
     "value_families",
 ]
 
-from tools.schema.propose_families import (
+from pycompose.compiler.propose_families import (
     bind,
     propose_extension,
-    propose_icons,
     propose_members,
     propose_value,
     propose_vocabulary,
 )
-from tools.schema.propose_lookup import (
+from pycompose.compiler.propose_icons import propose_icons
+from pycompose.compiler.propose_lookup import (
     EXTENSIONS,
     ICONS,
     MEMBERS,
@@ -217,7 +214,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     try:
-        from tools.schema.classpath_dump import source_defaults
+        from pycompose.compiler.classpath_dump import source_defaults
 
         found = inventory(args.directory)
         evidence = source_defaults(args.directory)

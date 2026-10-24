@@ -177,7 +177,7 @@ jobs:
           PYCOMPOSE_NATIVE_API_TESTS: "1"
         run: |
           pytest -q tests/test_classpath_dump.py tests/test_component_proposals.py tests/test_composegen.py
-          python tools/schema/classpath_dump.py --report android/build/compose-api/capabilities.json
+          python -m pycompose.compiler.classpath_dump --report android/build/compose-api/capabilities.json
           python -m tools.composegen generate --check
       - name: Upload screenshot differences (informational)
         if: always() && hashFiles('android/host/build/reports/screenshots/summary.txt') != ''

@@ -23,10 +23,10 @@ from test_classpath_dump import (
     write_inventory,
 )
 
-from tools.schema.candidate_props import CandidateError
-from tools.schema.classpath_dump import Inventory, inventory
-from tools.schema.component_binding import identity, spell
-from tools.schema.entry_candidates import (
+from pycompose.compiler.candidate_props import CandidateError
+from pycompose.compiler.classpath_dump import Inventory, inventory
+from pycompose.compiler.component_binding import identity, spell
+from pycompose.compiler.entry_candidates import (
     check_fresh,
     derive,
     dumps,
@@ -512,8 +512,8 @@ def test_a_held_out_compatible_binding_derives_and_verifies() -> None:
     """A component the catalog does not carry still derives and verifies clean."""
     if os.environ.get("PYCOMPOSE_NATIVE_API_TESTS") != "1":
         pytest.skip("native CI runs the pinned artifact extraction")
-    from tools.schema.classpath_dump import source_defaults
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import source_defaults
+    from pycompose.compiler.components import propose_components
 
     approved = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     found = inventory(DUMP)
@@ -531,9 +531,9 @@ def test_a_held_out_compatible_binding_derives_and_verifies() -> None:
 def test_the_approved_pilot_entries_equal_their_derivation() -> None:
     if os.environ.get("PYCOMPOSE_NATIVE_API_TESTS") != "1":
         pytest.skip("native CI runs the pinned artifact extraction")
-    from tools.composegen.rules import reshape
-    from tools.schema.classpath_dump import source_defaults
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import source_defaults
+    from pycompose.compiler.components import propose_components
+    from pycompose.compiler.rules import reshape
 
     approved = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     found = inventory(DUMP)
