@@ -1,5 +1,12 @@
 package com.pycompose.ir
 
+import com.pycompose.ir.generated.IrContract
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -32,7 +39,11 @@ class HandshakeTest {
     }
 
     @Test
-    fun `the offer states the protocol and capabilities`() {
-        assertEquals("""{"protocol":1,"capabilities":[]}""", Handshake.offer())
+    fun `the offer states the protocol, capabilities and the components rendered`() {
+        val offer = Json.parseToJsonElement(Handshake.offer()).jsonObject
+        assertEquals(1, offer.getValue("protocol").jsonPrimitive.int)
+        assertEquals(JsonArray(emptyList()), offer.getValue("capabilities"))
+        val components = offer.getValue("components").jsonArray.map { it.jsonPrimitive.content }
+        assertEquals(IrContract.components.keys.sorted(), components)
     }
 }

@@ -29,6 +29,7 @@ from pycompose.ir.generated_validators import (
     REGISTRY,
     SCHEMA_VERSION,
 )
+from pycompose.ir.host import current_host
 from pycompose.ir.model import IRRoot
 from pycompose.ir.streams import stream_problems
 from pycompose.ir.validator_walk import _Validation
@@ -268,7 +269,7 @@ def validate_ir(
         supported=REGISTRY.supported_schema_versions or (SCHEMA_VERSION,),
     )
     require_version(snapshot.version, minimum=MIN_LIBRARY_VERSION, field="version")
-    validation = _Validation(debug, snapshot.schema_version)
+    validation = _Validation(debug, snapshot.schema_version, host=current_host())
     if reuse is not None:
         reuse.validated.start()
         reuse.bindings.start()

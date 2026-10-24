@@ -15,7 +15,7 @@ from uuid import uuid4
 
 from pycompose import async_task
 from pycompose.bridge.api import BridgeSurface
-from pycompose.bridge.handshake import answer
+from pycompose.bridge.handshake import answer, offered_components
 from pycompose.core.context import AppContext, carried, context
 from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
@@ -97,7 +97,12 @@ class RuntimeSession:
         self._check_injection(actions, container)
         actions.install_container(container)
         state = app.build(route=route, restore=restore)
-        surface = BridgeSurface(Store(state), actions, debug=self._debug)
+        surface = BridgeSurface(
+            Store(state),
+            actions,
+            debug=self._debug,
+            host_components=_host_components,
+        )
         if surface.expose_latest_snapshot() is None:
             raise BridgeError("app build produced no valid snapshot")
         return surface
@@ -251,6 +256,8 @@ def _user_modules(directory: Path) -> dict[str, ModuleType]:
 
 
 _session: RuntimeSession | None = None
+_host_components: frozenset[str] | None = None
+"""What the host's handshake said it renders, for every session it starts."""
 
 
 def handshake(offer: str) -> str:
@@ -262,7 +269,10 @@ def handshake(offer: str) -> str:
     Returns:
         This side's protocol and offered capabilities, as JSON.
     """
-    return answer(offer)
+    global _host_components  # noqa: PLW0603 -- one host per Python process
+    reply = answer(offer)
+    _host_components = offered_components(offer)
+    return reply
 
 
 def start(

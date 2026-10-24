@@ -22,6 +22,7 @@ from pycompose.core.reuse import SubtreeMemo
 from pycompose.core.traversal import NodeCycleError, walk_nodes
 from pycompose.errors import IrValidationError
 from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
+from pycompose.ir.host import Host
 from pycompose.utils.json_canonical import FrozenJsonValue, check_json
 
 
@@ -41,6 +42,7 @@ class _Validation:
         debug: bool,
         schema_version: str = SCHEMA_VERSION,
         derived_ids: bool = False,
+        host: Host | None = None,
     ) -> None:
         from pycompose.ir.validator import ValidationIssue
 
@@ -49,6 +51,8 @@ class _Validation:
         # Construction accepts an empty id: the emitter derives one from the
         # node's path before the snapshot boundary, where ids are mandatory.
         self.derived_ids = derived_ids
+        # A snapshot bound for a host refuses what it cannot render (ADR-0050).
+        self.host = host
         self.action_ids: frozenset[str] = frozenset()
         self.issues: list[ValidationIssue] = []
         self.ids: set[str] = set()
@@ -128,6 +132,9 @@ class _Validation:
                 else "component requires newer schema"
             )
             self.report(message, node)
+            return None
+        if self.host is not None and self.host.lacks(node.type):
+            self.report("the host has no such component; give it a Fallback", node)
             return None
         props = cast(Mapping[str, FrozenJsonValue], node.props.values)
         removed: set[str] = set()

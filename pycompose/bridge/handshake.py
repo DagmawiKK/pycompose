@@ -13,7 +13,7 @@ import json
 
 from pycompose.errors import BridgeError
 
-__all__ = ["CAPABILITIES", "PROTOCOL", "REQUIRED", "answer"]
+__all__ = ["CAPABILITIES", "PROTOCOL", "REQUIRED", "answer", "offered_components"]
 
 PROTOCOL = 1
 """Bumped only by a change no capability can describe."""
@@ -53,3 +53,26 @@ def answer(offer: str) -> str:
         {"capabilities": sorted(CAPABILITIES), "protocol": PROTOCOL},
         separators=(",", ":"),
     )
+
+
+def offered_components(offer: str) -> frozenset[str] | None:
+    """Return the component types the host's handshake says it renders.
+
+    A component the host lacks is replaced by its declared fallback before it
+    is sent (ADR-0050).
+
+    Args:
+        offer: The host's handshake, already accepted by :func:`answer`.
+
+    Returns:
+        The types, or None when the offer lists none: every component.
+
+    Raises:
+        BridgeError: If the list is not a list of names.
+    """
+    listed = json.loads(offer).get("components")
+    if listed is None:
+        return None
+    if not isinstance(listed, list) or not all(isinstance(n, str) for n in listed):
+        raise BridgeError("malformed host handshake")
+    return frozenset(listed)

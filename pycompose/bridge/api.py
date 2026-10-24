@@ -20,6 +20,7 @@ from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
 from pycompose.ir.echoes import ECHOES_SCHEMA
 from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
+from pycompose.ir.host import Host, hosted
 from pycompose.ir.model import IRRoot
 from pycompose.ir.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
 from pycompose.schema.version import at_least
@@ -63,6 +64,7 @@ class BridgeSurface:
         *,
         schema_version: str = SCHEMA_VERSION,
         debug: bool = True,
+        host_components: frozenset[str] | None = None,
     ) -> None:
         """Bind the app state and handlers, and emit the initial snapshot.
 
@@ -71,6 +73,8 @@ class BridgeSurface:
             actions: Registered pure transition handlers.
             schema_version: Wire schema version required by this host.
             debug: Strict IR validation and loud failure logging.
+            host_components: The component types the host's handshake offered;
+                None when it listed none.
 
         Raises:
             SchemaError: If the configured schema or library version is incompatible.
@@ -79,6 +83,8 @@ class BridgeSurface:
         self._actions = actions
         self._schema_version = schema_version
         self._debug = debug
+        self._host = Host(host_components, schema_version)
+        self._announced: set[str] = set()
         self._worker = current_thread()
         self._processing = False
         self._latest: str | None = None
@@ -130,12 +136,18 @@ class BridgeSurface:
         self, state: State
     ) -> tuple[IRRoot, str, dict[str, BindingSpec]] | None:
         echoes = self._echoes if at_least(self._schema_version, ECHOES_SCHEMA) else None
-        with windows(self._windows):
-            emitted = emit_ir(state, self._schema_version, self._reuse, echoes=echoes)
+        with hosted(self._host):
+            with windows(self._windows):
+                emitted = emit_ir(
+                    state, self._schema_version, self._reuse, echoes=echoes
+                )
+            result = validate_ir(emitted, debug=self._debug, reuse=self._reuse)
         if self._debug:
             for reason in self._reuse.expansion.reasons:
                 LOGGER.debug("Rebuilt %s", reason)
-        result = validate_ir(emitted, debug=self._debug, reuse=self._reuse)
+            for missing in sorted(self._host.substituted - self._announced):
+                LOGGER.warning("The host has no %s; showing its fallback", missing)
+            self._announced |= self._host.substituted
         for issue in result.issues:
             LOGGER.warning("IR validation: %s", issue)
         if result.snapshot is None:
