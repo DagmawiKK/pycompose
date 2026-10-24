@@ -61,6 +61,9 @@ class Report:
         errors: Refusals that stop the run, stale policy among them.
         overloads: Extra overloads exposed by rule, by name.
         skipped: Extra overloads not exposed, with the reason.
+        promoted: Components no policy names, exposed because they derive.
+        refused: Components no policy names that do not derive, with the reason.
+        coverage: Per artifact group, component overloads by outcome.
     """
 
     derived: dict[str, int] = field(default_factory=dict)
@@ -68,6 +71,62 @@ class Report:
     errors: list[str] = field(default_factory=list)
     overloads: list[str] = field(default_factory=list)
     skipped: dict[str, str] = field(default_factory=dict)
+    promoted: list[str] = field(default_factory=list)
+    refused: dict[str, str] = field(default_factory=dict)
+    coverage: dict[str, dict[str, int]] = field(default_factory=dict)
+
+
+CLOSURE = ROOT / "android/compose-closure.json"
+
+
+def promotable(plans: dict[str, Any], named: set[str]) -> dict[str, dict[str, Any]]:
+    """Review decisions for every component the closure has and no policy names.
+
+    A component is exposed because it derives, never because someone typed it
+    in (plan 31 §3.8): its category is its group's domain, it is experimental
+    when it needs an opt-in, and of several overloads the one taking the most
+    parameters is the primary; the rest follow as overloads. A name whose every
+    overload is deprecated is not promoted.
+
+    Args:
+        plans: The planner's call plans for the pin.
+        named: Native and schema names the catalog already covers.
+
+    Returns:
+        Per component name, the decision it derives with.
+    """
+    domains = {
+        group: spec["domain"]
+        for group, spec in json.loads(CLOSURE.read_text(encoding="utf-8"))[
+            "groups"
+        ].items()
+    }
+    overloads: dict[str, list[dict[str, Any]]] = {}
+    for plan in plans["candidates"]:
+        if plan["surface"] == "component" and plan["name"] not in named:
+            overloads.setdefault(plan["name"], []).append(plan)
+    decisions = {}
+    for name, found in sorted(overloads.items()):
+        current = [
+            plan
+            for plan in found
+            if "kotlin/Deprecated" not in (plan.get("annotations") or {})
+        ]
+        if not current:
+            continue
+        usable = [plan for plan in current if plan["status"] == "call-plan"]
+        primary = max(
+            usable or current,
+            key=lambda plan: (len(plan["parameters"]), spell(plan["source"])),
+        )
+        decision = {
+            "category": domains[primary["source"]["artifact"].split(":")[0]],
+            "stability": "experimental" if primary["optIn"] else "stable",
+        }
+        if len(usable) > 1:
+            decision["identity"] = spell(primary["source"])
+        decisions[name] = decision
+    return decisions
 
 
 def planned(
@@ -156,6 +215,22 @@ def generate(
         for name, rule in policy.components.items()
         if "decision" in rule and name in components
     }
+    named = set(policy.components) | {
+        entry["source"]["name"] for entry in components.values() if "source" in entry
+    }
+    for name, decision in promotable(plans, named).items():
+        try:
+            entry = planned(name, decision, plans, found, sections)
+        except CandidateError as exc:
+            report.refused[name] = str(exc).removeprefix(f"{name}: ")
+            continue
+        if entry.get("adapter") == "manual":
+            # Nobody wrote one, and no policy names it: there is none to register.
+            report.refused[name] = "needs a hand-written adapter"
+            continue
+        components[name] = entry
+        decisions[name] = decision
+        report.promoted.append(name)
     added, report.skipped = extras(
         components,
         decisions,
@@ -164,6 +239,7 @@ def generate(
     )
     components.update(added)
     report.overloads = sorted(added)
+    report.coverage = _coverage(plans, components)
     lock = {**sections, "components": dict(sorted(components.items()))}
     holders, refused = derive_holders(found, source_drives(directory), lock)
     report.errors.extend(refused)
@@ -172,6 +248,32 @@ def generate(
     report.errors.extend(compare(lock, found))
     report.errors.extend(compare_values(lock, found, source_defaults(directory)))
     return {key: lock[key] for key in ORDER if key in lock}, report
+
+
+def _coverage(
+    plans: dict[str, Any], components: dict[str, Any]
+) -> dict[str, dict[str, int]]:
+    """Count every component overload in the closure by group and outcome.
+
+    Every public declaration ends exposed, held or refused (plan 31 §3.6);
+    deprecated overloads are counted apart, since none is ever chosen.
+    """
+    exposed = {
+        json.dumps(entry.get("source"), sort_keys=True) for entry in components.values()
+    }
+    coverage: dict[str, dict[str, int]] = {}
+    for plan in plans["candidates"]:
+        if plan["surface"] != "component":
+            continue
+        if json.dumps(plan["source"], sort_keys=True) in exposed:
+            outcome = "exposed"
+        elif "kotlin/Deprecated" in (plan.get("annotations") or {}):
+            outcome = "deprecated"
+        else:
+            outcome = "refused"
+        group = coverage.setdefault(plan["source"]["artifact"].split(":")[0], {})
+        group[outcome] = group.get(outcome, 0) + 1
+    return dict(sorted(coverage.items()))
 
 
 def _derives(

@@ -406,3 +406,52 @@ def test_an_interaction_source_is_observed_unless_policy_declines() -> None:
     declined = reshape("Field", {"props": {}}, {"observe": False}, plan)
     assert "interaction" not in declined
     assert "onPress" not in declined["props"]
+
+
+def _candidate(name: str, artifact: str, **fields: object) -> dict[str, object]:
+    return {
+        "name": name,
+        "surface": "component",
+        "status": "call-plan",
+        "annotations": {},
+        "optIn": [],
+        "parameters": {},
+        **fields,
+        "source": {
+            "artifact": f"{artifact}:x:1",
+            "jvmName": name,
+            "descriptor": fields.get("descriptor", ""),
+        },
+    }
+
+
+def test_a_component_no_policy_names_is_promoted_with_derived_decisions() -> None:
+    from tools.composegen.lock import promotable
+
+    foundation, material = "androidx.compose.foundation", "androidx.compose.material3"
+    plans = {
+        "candidates": [
+            _candidate("Covered", material),
+            _candidate("Plain", foundation),
+            _candidate("Opted", material, optIn=["Experimental"]),
+            _candidate("Old", material, annotations={"kotlin/Deprecated": {}}),
+            _candidate("Two", material, parameters={"a": {}}, descriptor="(A)"),
+            _candidate(
+                "Two", material, parameters={"a": {}, "b": {}}, descriptor="(AB)"
+            ),
+        ]
+    }
+    decisions = promotable(plans, {"Covered"})
+    # Already covered, or deprecated in every overload: never promoted.
+    assert sorted(decisions) == ["Opted", "Plain", "Two"]
+    assert decisions["Plain"] == {"category": "foundation", "stability": "stable"}
+    assert decisions["Opted"]["stability"] == "experimental"
+    # Of several overloads, the one taking the most parameters is the primary.
+    assert decisions["Two"]["identity"].endswith("Two(AB)")
+
+
+def test_a_family_sharing_its_owner_needs_a_hand_written_adapter() -> None:
+    from tools.composegen.rules import reshape
+
+    entry = {"props": {}, "state": {"native": "state", "kind": "search"}}
+    assert reshape("Bar", entry, {}, _plan())["adapter"] == "manual"

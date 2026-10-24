@@ -125,6 +125,8 @@ def _project(entry: dict[str, Any]) -> list[str]:
     projected = family.props()
     entry["props"].update(copy.deepcopy(projected))
     entry["state"].update({"value": family.value[0], "report": family.report})
+    if family.shared:
+        entry["adapter"] = "manual"
     return list(projected)
 
 

@@ -63,12 +63,16 @@ class Family:
             named after the value unless ``reported`` says otherwise.
         reported: The report's own spec, for a family whose report is richer.
         held: Props the holder is built from, in the order the renderer takes.
+        shared: Whether the host shares one owner with nested declarations (a
+            search's text and bar state reach its input field), which only a
+            hand-written adapter composes.
     """
 
     value: tuple[str, dict[str, Any]]
     report: str
     reported: dict[str, Any] | None = None
     held: dict[str, dict[str, Any]] = field(default_factory=dict)
+    shared: bool = False
 
     def props(self) -> dict[str, dict[str, Any]]:
         """Every prop the family projects: value, report, then held props.
@@ -136,6 +140,7 @@ STATE_FAMILIES: dict[str, Family] = {
             **_SELECTION,
             "onEdit": _EDIT,
         },
+        shared=True,
     ),
     "swipe": Family(
         ("value", {"type": "enum", "values": list(SWIPE_VALUES)}), "onValueChange"

@@ -234,6 +234,16 @@ class RenderContext internal constructor(
         if (filled.isEmpty()) return null
         return { filled.forEach { child -> key(child.id) { node(child) } } }
     }
+
+    /**
+     * A named slot whose native lambda takes a receiver outside the scope
+     * vocabulary (a text field's `TextFieldLabelScope`): the children compose
+     * as they would anywhere, so the receiver is accepted and not passed on.
+     */
+    fun <S> slotIgnoringReceiver(
+        nodes: List<UiNode>,
+        slot: String,
+    ): (@Composable S.() -> Unit)? = slot(nodes, slot)?.let { content -> { content() } }
 }
 
 /**

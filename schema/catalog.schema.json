@@ -221,6 +221,10 @@
         "nullable": { "type": "boolean" },
         "consume": { "type": "string" },
         "provides": { "type": "string" },
+        "extension": {
+          "const": true,
+          "description": "The native lambda takes a receiver the children do not use."
+        },
         "host": { "const": true }
       }
     },

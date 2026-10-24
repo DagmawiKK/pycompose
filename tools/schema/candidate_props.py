@@ -474,6 +474,8 @@ def place_slot(
         review.append(f"{parameter}: app content children")
         return
     slot: dict[str, Any] = {"native": parameter}
+    if spec.get("extension"):
+        slot["extension"] = True
     if nullable:
         slot["nullable"] = True
         review.append(f"{parameter}: nullable named slot")

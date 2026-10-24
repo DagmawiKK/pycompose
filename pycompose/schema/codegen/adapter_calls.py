@@ -478,7 +478,10 @@ def _named_slot(slot_name: str, slot: dict[str, Any]) -> str:
             return f"{native} = {call}"
         return f"{native} = {call} ?: {{}}"
     if slot.get("nullable") and consume is None:
-        return f'{native} = context.slot(model.children, "{slot_name}")'
+        # A native lambda with a receiver the children do not use takes the
+        # slot through a lambda of that receiver's type.
+        call = "slotIgnoringReceiver" if slot.get("extension") else "slot"
+        return f'{native} = context.{call}(model.children, "{slot_name}")'
     body, parameter = _slot_body("model.children", slot_name, kind, consume)
     prefix = f"{parameter} -> " if parameter is not None else ""
     return f"{native} = {{ {prefix}{body} }}"

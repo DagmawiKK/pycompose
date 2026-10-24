@@ -1,0 +1,21 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.child",
+    "props": {
+     "text": "SharedTransitionLayout"
+    },
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {},
+  "type": "SharedTransitionLayout"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

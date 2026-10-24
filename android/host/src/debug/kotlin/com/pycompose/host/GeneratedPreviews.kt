@@ -61,6 +61,18 @@ private fun BasicAlertDialogPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "BasicAlertDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": "app.preview.onDismissRequest"}, "type": "BasicAlertDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "BasicText", showBackground = true)
+@Composable
+private fun BasicTextPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"text": {"text": "Preview", "type": "AnnotatedString"}}, "type": "BasicText"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "BasicTextField", showBackground = true)
+@Composable
+private fun BasicTextFieldPreview() {
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onValueChange": {"bound": {}, "handlerId": "preview.onValueChange", "payload": {"value": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onValueChange": "app.preview.onValueChange", "value": "Preview"}, "type": "BasicTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "BottomAppBar", showBackground = true)
 @Composable
 private fun BottomAppBarPreview() {
@@ -73,10 +85,22 @@ private fun BottomAppBarActionsPreview() {
     Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}], "id": "preview", "props": {}, "type": "BottomAppBarActions"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "BottomSheetScaffold", showBackground = true)
+@Composable
+private fun BottomSheetScaffoldPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.sheetContent", "props": {"text": "sheetContent"}, "slot": "sheetContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "BottomSheetScaffold"}, "type": "Text"}], "id": "preview", "props": {}, "type": "BottomSheetScaffold"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "Box", showBackground = true)
 @Composable
 private fun BoxPreview() {
     Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Box"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Box"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "BoxWithConstraints", showBackground = true)
+@Composable
+private fun BoxWithConstraintsPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "BoxWithConstraints"}, "type": "Text"}], "id": "preview", "props": {}, "type": "BoxWithConstraints"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Button", showBackground = true)
@@ -131,6 +155,12 @@ private fun ColumnPreview() {
 @Composable
 private fun CrossfadePreview() {
     Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Crossfade"}, "type": "Text"}], "id": "preview", "props": {"target": "Preview"}, "type": "Crossfade"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "DatePickerDialog", showBackground = true)
+@Composable
+private fun DatePickerDialogPreview() {
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}, {"id": "preview.child", "props": {"text": "DatePickerDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": "app.preview.onDismissRequest"}, "type": "DatePickerDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DismissibleDrawerSheet", showBackground = true)
@@ -211,6 +241,12 @@ private fun ExpandedFullScreenSearchBarPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "provider.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "ExpandedFullScreenSearchBar"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "expandedBar", "type": "ExpandedFullScreenSearchBar"}], "id": "provider", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "ExposedDropdownMenuBox", showBackground = true)
+@Composable
+private fun ExposedDropdownMenuBoxPreview() {
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onExpandedChange": {"bound": {}, "handlerId": "preview.onExpandedChange", "payload": {"expanded": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ExposedDropdownMenuBox"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onExpandedChange": "app.preview.onExpandedChange"}, "type": "ExposedDropdownMenuBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "ExtendedFloatingActionButton", showBackground = true)
 @Composable
 private fun ExtendedFloatingActionButtonPreview() {
@@ -257,6 +293,12 @@ private fun FilledTonalIconToggleButtonPreview() {
 @Composable
 private fun FilterChipPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"label": "Preview", "onClick": "app.preview.onClick", "selected": true}, "type": "FilterChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "FlexBox", showBackground = true)
+@Composable
+private fun FlexBoxPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FlexBox"}, "type": "Text"}], "id": "preview", "props": {}, "type": "FlexBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FloatingActionButton", showBackground = true)
@@ -317,6 +359,12 @@ private fun ImageImageVectorPreview() {
 @Composable
 private fun InputChipPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "InputChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "Label", showBackground = true)
+@Composable
+private fun LabelPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}, {"id": "preview.child", "props": {"text": "Label"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "LargeFloatingActionButton", showBackground = true)
@@ -481,6 +529,12 @@ private fun OutlinedIconToggleButtonPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedIconToggleButton"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "OutlinedIconToggleButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "OutlinedSecureTextField", showBackground = true)
+@Composable
+private fun OutlinedSecureTextFieldPreview() {
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "OutlinedSecureTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "OutlinedTextField", showBackground = true)
 @Composable
 private fun OutlinedTextFieldPreview() {
@@ -502,7 +556,7 @@ private fun PermanentNavigationDrawerPreview() {
 @Preview(name = "PlainTooltip", showBackground = true)
 @Composable
 private fun PlainTooltipPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "TooltipBox"}, "type": "Text"}, {"children": [{"id": "preview.child", "props": {"text": "PlainTooltip"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "tooltip", "type": "PlainTooltip"}], "id": "provider", "props": {}, "type": "TooltipBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Label"}, "type": "Text"}, {"children": [{"id": "preview.child", "props": {"text": "PlainTooltip"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "label", "type": "PlainTooltip"}], "id": "provider", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "PrimaryScrollableTabRow", showBackground = true)
@@ -532,7 +586,7 @@ private fun RadioButtonPreview() {
 @Preview(name = "RichTooltip", showBackground = true)
 @Composable
 private fun RichTooltipPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "TooltipBox"}, "type": "Text"}, {"children": [{"id": "preview.child", "props": {"text": "RichTooltip"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "tooltip", "type": "RichTooltip"}], "id": "provider", "props": {}, "type": "TooltipBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Label"}, "type": "Text"}, {"children": [{"id": "preview.child", "props": {"text": "RichTooltip"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "label", "type": "RichTooltip"}], "id": "provider", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Row", showBackground = true)
@@ -577,10 +631,28 @@ private fun SecondaryTabRowPreview() {
     Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.tabs", "props": {"text": "tabs"}, "slot": "tabs", "type": "Text"}], "id": "preview", "props": {"selectedTabIndex": 0}, "type": "SecondaryTabRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "SecureTextField", showBackground = true)
+@Composable
+private fun SecureTextFieldPreview() {
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "SecureTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "SegmentedButton", showBackground = true)
 @Composable
 private fun SegmentedButtonPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true, "shape": {"size": {"type": "Dp", "value": 8}, "type": "RoundedCornerShape"}}, "type": "SegmentedButton"}], "id": "provider", "props": {}, "type": "SingleChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "SelectionContainer", showBackground = true)
+@Composable
+private fun SelectionContainerPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SelectionContainer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "SelectionContainer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "SharedTransitionLayout", showBackground = true)
+@Composable
+private fun SharedTransitionLayoutPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SharedTransitionLayout"}, "type": "Text"}], "id": "preview", "props": {}, "type": "SharedTransitionLayout"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ShortNavigationBar", showBackground = true)
@@ -611,6 +683,12 @@ private fun SliderPreview() {
 @Composable
 private fun SliderValuePreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onValueChange": {"bound": {}, "handlerId": "preview.onValueChange", "payload": {"value": {"required": true, "type": "number"}}}}}, "root": {"id": "preview", "props": {"onValueChange": "app.preview.onValueChange", "value": 0.5}, "type": "SliderValue"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "SmallFloatingActionButton", showBackground = true)
+@Composable
+private fun SmallFloatingActionButtonPreview() {
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SmallFloatingActionButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "SmallFloatingActionButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Snackbar", showBackground = true)
@@ -719,6 +797,12 @@ private fun TextButtonPreview() {
 @Composable
 private fun TextFieldPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onValueChange": {"bound": {}, "handlerId": "preview.onValueChange", "payload": {"value": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onValueChange": "app.preview.onValueChange", "value": "Preview"}, "type": "TextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "TimePickerDialog", showBackground = true)
+@Composable
+private fun TimePickerDialogPreview() {
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}, {"id": "preview.child", "props": {"text": "TimePickerDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": "app.preview.onDismissRequest"}, "type": "TimePickerDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TooltipBox", showBackground = true)

@@ -347,6 +347,152 @@
         "allowed": true
       }
     },
+    "BasicText": {
+      "package": "androidx.compose.foundation.text",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/text/AnnotatedString;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function1;IZIILjava/util/Map;Landroidx/compose/ui/graphics/ColorProducer;Landroidx/compose/foundation/text/TextAutoSize;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "BasicText-CL7eQgs",
+        "name": "BasicText",
+        "owner": "androidx.compose.foundation.text.BasicTextKt"
+      },
+      "props": {
+        "minLines": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "default": 1
+        },
+        "overflow": {
+          "type": "value",
+          "valueType": "TextOverflow",
+          "nativeDefault": "androidx.compose.ui.text.style.TextOverflow.Companion.Clip"
+        },
+        "softWrap": {
+          "type": "boolean",
+          "default": true
+        },
+        "style": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "nativeDefault": "androidx.compose.ui.text.TextStyle.Companion.Default"
+        },
+        "text": {
+          "type": "value",
+          "valueType": "AnnotatedString",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
+    "BasicTextField": {
+      "package": "androidx.compose.foundation.text",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/ui/text/input/VisualTransformation;Lkotlin/jvm/functions/Function1;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Brush;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "BasicTextField",
+        "name": "BasicTextField",
+        "owner": "androidx.compose.foundation.text.BasicTextFieldKt"
+      },
+      "props": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "minLines": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "default": 1
+        },
+        "onValueChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ]
+        },
+        "readOnly": {
+          "type": "boolean",
+          "default": false
+        },
+        "singleLine": {
+          "type": "boolean",
+          "default": false
+        },
+        "textStyle": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "nativeDefault": "androidx.compose.ui.text.TextStyle.Companion.Default"
+        },
+        "value": {
+          "type": "string",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
+    },
     "BottomAppBar": {
       "package": "androidx.compose.material3",
       "category": "navigation",
@@ -421,6 +567,78 @@
         }
       }
     },
+    "BottomSheetScaffold": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;Landroidx/compose/material3/BottomSheetScaffoldState;FFLandroidx/compose/ui/graphics/Shape;JJFFLkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;JJLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "BottomSheetScaffold-sdMYb0k",
+        "name": "BottomSheetScaffold",
+        "owner": "androidx.compose.material3.BottomSheetScaffoldKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
+        },
+        "sheetContainerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.BottomSheetDefaults.ContainerColor"
+        },
+        "sheetMaxWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetMaxWidth"
+        },
+        "sheetPeekHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetPeekHeight"
+        },
+        "sheetShadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.Elevation"
+        },
+        "sheetShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.ExpandedShape"
+        },
+        "sheetSwipeEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "sheetTonalElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "consume": "paddingValues"
+      },
+      "slots": {
+        "sheetContent": {
+          "native": "sheetContent",
+          "provides": "ColumnScope"
+        },
+        "topBar": {
+          "native": "topBar",
+          "nullable": true
+        }
+      }
+    },
     "Box": {
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
@@ -457,6 +675,53 @@
         "allowed": true,
         "provides": "BoxScope",
         "min": 0
+      }
+    },
+    "BoxWithConstraints": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "BoxWithConstraints",
+        "name": "BoxWithConstraints",
+        "owner": "androidx.compose.foundation.layout.BoxWithConstraintsKt"
+      },
+      "props": {
+        "contentAlignment": {
+          "type": "enum",
+          "values": [
+            "bottomCenter",
+            "bottomEnd",
+            "bottomLeft",
+            "bottomRight",
+            "bottomStart",
+            "center",
+            "centerEnd",
+            "centerLeft",
+            "centerRight",
+            "centerStart",
+            "topCenter",
+            "topEnd",
+            "topLeft",
+            "topRight",
+            "topStart"
+          ],
+          "decode": "alignment",
+          "default": "topStart"
+        },
+        "propagateMinConstraints": {
+          "type": "boolean",
+          "default": false
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
       }
     },
     "Button": {
@@ -1001,6 +1266,56 @@
       "reshaped": [
         "target"
       ]
+    },
+    "DatePickerDialog": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;FLandroidx/compose/material3/DatePickerColors;Landroidx/compose/ui/window/DialogProperties;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "DatePickerDialog-GmEhDVc",
+        "name": "DatePickerDialog",
+        "owner": "androidx.compose.material3.DatePickerDialog_androidKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "DatePickerColors",
+          "nativeDefault": "androidx.compose.material3.DatePickerDefaults.colors()"
+        },
+        "onDismissRequest": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.DatePickerDefaults.shape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.DatePickerDefaults.TonalElevation"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "slots": {
+        "confirmButton": {
+          "native": "confirmButton"
+        },
+        "dismissButton": {
+          "native": "dismissButton",
+          "nullable": true
+        }
+      }
     },
     "DismissibleDrawerSheet": {
       "package": "androidx.compose.material3",
@@ -1929,6 +2244,44 @@
       },
       "adapter": "manual"
     },
+    "ExposedDropdownMenuBox": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ExposedDropdownMenuBox",
+        "name": "ExposedDropdownMenuBox",
+        "owner": "androidx.compose.material3.ExposedDropdownMenuKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "expanded": {
+          "type": "boolean",
+          "required": true
+        },
+        "onExpandedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "expanded",
+              "type": "boolean"
+            }
+          ]
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
     "ExtendedFloatingActionButton": {
       "package": "androidx.compose.material3",
       "category": "buttons",
@@ -2630,6 +2983,30 @@
         "onHover"
       ]
     },
+    "FlexBox": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "foundation",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/FlexBoxConfig;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "FlexBox",
+        "name": "FlexBox",
+        "owner": "androidx.compose.foundation.layout.FlexBoxKt"
+      },
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalFlexBoxApi"
+      ],
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
     "FloatingActionButton": {
       "package": "androidx.compose.material3",
       "category": "buttons",
@@ -3203,6 +3580,80 @@
         "trailingIcon": {
           "native": "trailingIcon",
           "nullable": true
+        }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
+    },
+    "Label": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;ZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Label",
+        "name": "Label",
+        "owner": "androidx.compose.material3.LabelKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "isPersistent": {
+          "type": "boolean",
+          "default": false
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "slots": {
+        "label": {
+          "native": "label",
+          "provides": "TooltipScope"
         }
       },
       "interaction": {
@@ -4916,6 +5367,183 @@
         "onHover"
       ]
     },
+    "OutlinedSecureTextField": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/text/TextStyle;Landroidx/compose/material3/TextFieldLabelPosition;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/foundation/text/input/InputTransformation;ICLandroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/input/KeyboardActionHandler;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;IIII)V",
+        "jvmName": "OutlinedSecureTextField-XvU6IwQ",
+        "name": "OutlinedSecureTextField",
+        "owner": "androidx.compose.material3.SecureTextFieldKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "TextFieldColors",
+          "nativeDefault": "androidx.compose.material3.OutlinedTextFieldDefaults.colors()"
+        },
+        "contentPadding": {
+          "type": "value",
+          "valueType": "PaddingValues",
+          "nativeDefault": "androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "isError": {
+          "type": "boolean",
+          "default": false
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.OutlinedTextFieldDefaults.shape"
+        },
+        "textStyle": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "nativeDefault": "(androidx.compose.material3.LocalTextStyle).current"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        },
+        "text": {
+          "type": "string",
+          "required": true
+        },
+        "onEdit": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "text",
+              "type": "string"
+            },
+            {
+              "name": "selectionStart",
+              "type": "integer"
+            },
+            {
+              "name": "selectionEnd",
+              "type": "integer"
+            },
+            {
+              "name": "revision",
+              "type": "integer"
+            }
+          ]
+        },
+        "selectionStart": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeType": "Int"
+        },
+        "selectionEnd": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeType": "Int"
+        },
+        "revision": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "label": {
+          "native": "label",
+          "extension": true,
+          "nullable": true
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "placeholder": {
+          "native": "placeholder",
+          "nullable": true
+        },
+        "prefix": {
+          "native": "prefix",
+          "nullable": true
+        },
+        "suffix": {
+          "native": "suffix",
+          "nullable": true
+        },
+        "supportingText": {
+          "native": "supportingText",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "state": {
+        "native": "state",
+        "kind": "textInput",
+        "value": "text",
+        "report": "onEdit"
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover",
+        "text",
+        "onEdit",
+        "selectionStart",
+        "selectionEnd",
+        "revision"
+      ]
+    },
     "OutlinedTextField": {
       "package": "androidx.compose.material3",
       "category": "input",
@@ -5883,6 +6511,178 @@
         }
       }
     },
+    "SecureTextField": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/text/TextStyle;Landroidx/compose/material3/TextFieldLabelPosition;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/foundation/text/input/InputTransformation;ICLandroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/input/KeyboardActionHandler;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;IIII)V",
+        "jvmName": "SecureTextField-XvU6IwQ",
+        "name": "SecureTextField",
+        "owner": "androidx.compose.material3.SecureTextFieldKt"
+      },
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "TextFieldColors",
+          "nativeDefault": "androidx.compose.material3.TextFieldDefaults.colors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "isError": {
+          "type": "boolean",
+          "default": false
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.TextFieldDefaults.shape"
+        },
+        "textStyle": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "nativeDefault": "(androidx.compose.material3.LocalTextStyle).current"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        },
+        "text": {
+          "type": "string",
+          "required": true
+        },
+        "onEdit": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "text",
+              "type": "string"
+            },
+            {
+              "name": "selectionStart",
+              "type": "integer"
+            },
+            {
+              "name": "selectionEnd",
+              "type": "integer"
+            },
+            {
+              "name": "revision",
+              "type": "integer"
+            }
+          ]
+        },
+        "selectionStart": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeType": "Int"
+        },
+        "selectionEnd": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeType": "Int"
+        },
+        "revision": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "label": {
+          "native": "label",
+          "extension": true,
+          "nullable": true
+        },
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "placeholder": {
+          "native": "placeholder",
+          "nullable": true
+        },
+        "prefix": {
+          "native": "prefix",
+          "nullable": true
+        },
+        "suffix": {
+          "native": "suffix",
+          "nullable": true
+        },
+        "supportingText": {
+          "native": "supportingText",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "state": {
+        "native": "state",
+        "kind": "textInput",
+        "value": "text",
+        "report": "onEdit"
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover",
+        "text",
+        "onEdit",
+        "selectionStart",
+        "selectionEnd",
+        "revision"
+      ]
+    },
     "SegmentedButton": {
       "package": "androidx.compose.material3",
       "category": "buttons",
@@ -5976,6 +6776,48 @@
         "onFocus",
         "onHover"
       ]
+    },
+    "SelectionContainer": {
+      "package": "androidx.compose.foundation.text.selection",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SelectionContainer",
+        "name": "SelectionContainer",
+        "owner": "androidx.compose.foundation.text.selection.SelectionContainerKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
+    "SharedTransitionLayout": {
+      "package": "androidx.compose.animation",
+      "category": "animation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.animation:animation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SharedTransitionLayout",
+        "name": "SharedTransitionLayout",
+        "owner": "androidx.compose.animation.SharedTransitionScopeKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
     },
     "ShortNavigationBar": {
       "package": "androidx.compose.material3",
@@ -6326,6 +7168,87 @@
       ],
       "overloadOf": "Slider"
     },
+    "SmallFloatingActionButton": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJLandroidx/compose/material3/FloatingActionButtonElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "SmallFloatingActionButton-X-z6DiA",
+        "name": "SmallFloatingActionButton",
+        "owner": "androidx.compose.material3.FloatingActionButtonKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "FloatingActionButtonElevation",
+          "nativeDefault": "androidx.compose.material3.FloatingActionButtonDefaults.elevation()"
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.FloatingActionButtonDefaults.smallShape"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "onPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "pressed",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onFocus": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "focused",
+              "type": "boolean"
+            }
+          ]
+        },
+        "onHover": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "hovered",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "interaction": {
+        "native": "interactionSource",
+        "observations": {
+          "press": "onPress",
+          "focus": "onFocus",
+          "hover": "onHover"
+        }
+      },
+      "reshaped": [
+        "onPress",
+        "onFocus",
+        "onHover"
+      ]
+    },
     "Snackbar": {
       "package": "androidx.compose.material3",
       "category": "status",
@@ -6571,6 +7494,7 @@
         "value": "expanded",
         "report": "onExpandedChange"
       },
+      "adapter": "manual",
       "reshaped": [
         "expanded",
         "onExpandedChange",
@@ -6579,8 +7503,7 @@
         "selectionEnd",
         "revision",
         "onEdit"
-      ],
-      "adapter": "manual"
+      ]
     },
     "StatefulSearchBarInputField": {
       "package": "androidx.compose.material3",
@@ -7804,6 +8727,60 @@
         "selection",
         "onSelectionChange"
       ]
+    },
+    "TimePickerDialog": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/window/DialogProperties;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;JLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "TimePickerDialog-FItCLgY",
+        "name": "TimePickerDialog",
+        "owner": "androidx.compose.material3.TimePickerDialogKt"
+      },
+      "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.TimePickerDialogDefaults.containerColor"
+        },
+        "onDismissRequest": {
+          "type": "actionId",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.TimePickerDialogDefaults.shape"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "ColumnScope"
+      },
+      "slots": {
+        "confirmButton": {
+          "native": "confirmButton"
+        },
+        "dismissButton": {
+          "native": "dismissButton",
+          "nullable": true
+        },
+        "modeToggleButton": {
+          "native": "modeToggleButton",
+          "nullable": true
+        },
+        "title": {
+          "native": "title"
+        }
+      }
     },
     "TooltipBox": {
       "package": "androidx.compose.material3",

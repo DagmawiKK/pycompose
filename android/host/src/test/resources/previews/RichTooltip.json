@@ -7,7 +7,7 @@
    {
     "id": "provider.child",
     "props": {
-     "text": "TooltipBox"
+     "text": "Label"
     },
     "type": "Text"
    },
@@ -23,13 +23,13 @@
     ],
     "id": "preview",
     "props": {},
-    "slot": "tooltip",
+    "slot": "label",
     "type": "RichTooltip"
    }
   ],
   "id": "provider",
   "props": {},
-  "type": "TooltipBox"
+  "type": "Label"
  },
  "schemaVersion": "1.23.0",
  "version": "0.1.0"

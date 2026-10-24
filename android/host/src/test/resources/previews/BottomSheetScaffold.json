@@ -1,0 +1,29 @@
+{
+ "metadata": {
+  "actionBindings": {}
+ },
+ "root": {
+  "children": [
+   {
+    "id": "preview.sheetContent",
+    "props": {
+     "text": "sheetContent"
+    },
+    "slot": "sheetContent",
+    "type": "Text"
+   },
+   {
+    "id": "preview.child",
+    "props": {
+     "text": "BottomSheetScaffold"
+    },
+    "type": "Text"
+   }
+  ],
+  "id": "preview",
+  "props": {},
+  "type": "BottomSheetScaffold"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

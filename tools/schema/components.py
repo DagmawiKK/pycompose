@@ -99,6 +99,9 @@ def _slot(value) -> dict[str, Any]:
         if native_receiver.classifier in SLASH_SCOPES:
             receiver = native_receiver.classifier
     rule: dict[str, Any] = {"policy": "slot", "receiver": receiver}
+    if receiver is None and "kotlin/ExtensionFunctionType" in value.annotations:
+        # The lambda still takes the receiver, so the call must pass one that does.
+        rule["extension"] = True
     if (
         len(arguments) == 1
         and not arguments[0].nullable

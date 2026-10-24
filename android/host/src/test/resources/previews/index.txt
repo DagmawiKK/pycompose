@@ -5,9 +5,13 @@ AssistChip
 Badge
 BadgedBox
 BasicAlertDialog
+BasicText
+BasicTextField
 BottomAppBar
 BottomAppBarActions
+BottomSheetScaffold
 Box
+BoxWithConstraints
 Button
 Card
 CardWithoutOnClick
@@ -17,6 +21,7 @@ CircularProgressIndicator
 CircularProgressIndicatorProgress
 Column
 Crossfade
+DatePickerDialog
 DismissibleDrawerSheet
 DismissibleNavigationDrawer
 DockedSearchBar
@@ -30,6 +35,7 @@ ElevatedFilterChip
 ElevatedSuggestionChip
 ExpandedDockedSearchBar
 ExpandedFullScreenSearchBar
+ExposedDropdownMenuBox
 ExtendedFloatingActionButton
 ExtendedFloatingActionButtonText
 FilledIconButton
@@ -38,6 +44,7 @@ FilledTonalButton
 FilledTonalIconButton
 FilledTonalIconToggleButton
 FilterChip
+FlexBox
 FloatingActionButton
 FlowColumn
 FlowRow
@@ -48,6 +55,7 @@ IconToggleButton
 Image
 ImageImageVector
 InputChip
+Label
 LargeFloatingActionButton
 LargeTopAppBar
 LazyColumn
@@ -75,6 +83,7 @@ OutlinedCard
 OutlinedCardWithoutOnClick
 OutlinedIconButton
 OutlinedIconToggleButton
+OutlinedSecureTextField
 OutlinedTextField
 PermanentDrawerSheet
 PermanentNavigationDrawer
@@ -91,12 +100,16 @@ SearchBarInputField
 SearchBarStateInputField
 SecondaryScrollableTabRow
 SecondaryTabRow
+SecureTextField
 SegmentedButton
+SelectionContainer
+SharedTransitionLayout
 ShortNavigationBar
 ShortNavigationBarItem
 SingleChoiceSegmentedButtonRow
 Slider
 SliderValue
+SmallFloatingActionButton
 Snackbar
 SnackbarHost
 Spacer
@@ -115,6 +128,7 @@ Text
 TextAnnotatedString
 TextButton
 TextField
+TimePickerDialog
 TooltipBox
 TopAppBar
 TriStateCheckbox

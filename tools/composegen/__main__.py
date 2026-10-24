@@ -47,6 +47,26 @@ def render(report: Report) -> str:
         f"- Derived from the pin: {len(report.derived)}",
         f"- Held whole by policy: {len(report.manual)}",
         f"- Extra overloads exposed by rule: {len(report.overloads)}",
+        f"- Promoted with no policy: {len(report.promoted)}",
+        f"- Refused with no policy: {len(report.refused)}",
+        "",
+        "## Coverage of component overloads, by group",
+        "",
+        "| Group | Exposed | Refused | Deprecated |",
+        "|---|---|---|---|",
+        *(
+            f"| {group} | {counts.get('exposed', 0)} | {counts.get('refused', 0)} "
+            f"| {counts.get('deprecated', 0)} |"
+            for group, counts in report.coverage.items()
+        ),
+        "",
+        "## Promoted",
+        "",
+        *(f"- {name}" for name in report.promoted),
+        "",
+        "## Refused, by reason",
+        "",
+        *(f"- {name}: {reason}" for name, reason in sorted(report.refused.items())),
         "",
         "## Held whole, by reason",
         "",

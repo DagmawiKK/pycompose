@@ -782,6 +782,124 @@
       },
       "type": "object"
     },
+    "C_BasicText": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "minLines": {
+              "default": 1,
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "overflow": {
+              "$ref": "#/definitions/Family_TextOverflow"
+            },
+            "softWrap": {
+              "default": true,
+              "type": "boolean"
+            },
+            "style": {
+              "$ref": "#/definitions/Family_TextStyle"
+            },
+            "text": {
+              "$ref": "#/definitions/Family_AnnotatedString"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "BasicText"
+        }
+      },
+      "type": "object"
+    },
+    "C_BasicTextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "minLines": {
+              "default": 1,
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onValueChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "singleLine": {
+              "default": false,
+              "type": "boolean"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "BasicTextField"
+        }
+      },
+      "type": "object"
+    },
     "C_BottomAppBar": {
       "properties": {
         "children": {
@@ -893,6 +1011,165 @@
       },
       "type": "object"
     },
+    "C_BottomSheetScaffold": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "sheetContent",
+                  "topBar"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "sheetContainerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "sheetMaxWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "sheetPeekHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "sheetShadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "sheetShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "sheetSwipeEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "sheetTonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "BottomSheetScaffold"
+        }
+      },
+      "type": "object"
+    },
     "C_Box": {
       "properties": {
         "children": {
@@ -932,6 +1209,59 @@
         },
         "type": {
           "const": "Box"
+        }
+      },
+      "type": "object"
+    },
+    "C_BoxWithConstraints": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomLeft",
+                "bottomRight",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerLeft",
+                "centerRight",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topLeft",
+                "topRight",
+                "topStart"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "propagateMinConstraints": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "BoxWithConstraints"
         }
       },
       "type": "object"
@@ -1504,6 +1834,79 @@
         },
         "type": {
           "const": "Crossfade"
+        }
+      },
+      "type": "object"
+    },
+    "C_DatePickerDialog": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "confirmButton",
+                  "dismissButton"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_DatePickerColors"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDismissRequest": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "DatePickerDialog"
         }
       },
       "type": "object"
@@ -2526,6 +2929,46 @@
       },
       "type": "object"
     },
+    "C_ExposedDropdownMenuBox": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "expanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onExpandedChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "required": [
+            "expanded",
+            "onExpandedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ExposedDropdownMenuBox"
+        }
+      },
+      "type": "object"
+    },
     "C_ExtendedFloatingActionButton": {
       "properties": {
         "children": {
@@ -3065,6 +3508,35 @@
         },
         "type": {
           "const": "FilterChip"
+        }
+      },
+      "type": "object"
+    },
+    "C_FlexBox": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "FlexBox"
         }
       },
       "type": "object"
@@ -3637,6 +4109,59 @@
         },
         "type": {
           "const": "InputChip"
+        }
+      },
+      "type": "object"
+    },
+    "C_Label": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "isPersistent": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Label"
         }
       },
       "type": "object"
@@ -5387,6 +5912,113 @@
       },
       "type": "object"
     },
+    "C_OutlinedSecureTextField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "revision": {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "revision",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedSecureTextField"
+        }
+      },
+      "type": "object"
+    },
     "C_OutlinedTextField": {
       "properties": {
         "children": {
@@ -6618,6 +7250,110 @@
       },
       "type": "object"
     },
+    "C_SecureTextField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "revision": {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "revision",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SecureTextField"
+        }
+      },
+      "type": "object"
+    },
     "C_SegmentedButton": {
       "properties": {
         "children": {
@@ -6691,6 +7427,64 @@
         },
         "type": {
           "const": "SegmentedButton"
+        }
+      },
+      "type": "object"
+    },
+    "C_SelectionContainer": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "SelectionContainer"
+        }
+      },
+      "type": "object"
+    },
+    "C_SharedTransitionLayout": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "SharedTransitionLayout"
         }
       },
       "type": "object"
@@ -6998,6 +7792,73 @@
         },
         "type": {
           "const": "SliderValue"
+        }
+      },
+      "type": "object"
+    },
+    "C_SmallFloatingActionButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_FloatingActionButtonElevation"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SmallFloatingActionButton"
         }
       },
       "type": "object"
@@ -8528,6 +9389,69 @@
       },
       "type": "object"
     },
+    "C_TimePickerDialog": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "confirmButton",
+                  "dismissButton",
+                  "modeToggleButton",
+                  "title"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDismissRequest": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TimePickerDialog"
+        }
+      },
+      "type": "object"
+    },
     "C_TooltipBox": {
       "properties": {
         "children": {
@@ -9695,13 +10619,25 @@
               "$ref": "#/definitions/C_BasicAlertDialog"
             },
             {
+              "$ref": "#/definitions/C_BasicText"
+            },
+            {
+              "$ref": "#/definitions/C_BasicTextField"
+            },
+            {
               "$ref": "#/definitions/C_BottomAppBar"
             },
             {
               "$ref": "#/definitions/C_BottomAppBarActions"
             },
             {
+              "$ref": "#/definitions/C_BottomSheetScaffold"
+            },
+            {
               "$ref": "#/definitions/C_Box"
+            },
+            {
+              "$ref": "#/definitions/C_BoxWithConstraints"
             },
             {
               "$ref": "#/definitions/C_Button"
@@ -9729,6 +10665,9 @@
             },
             {
               "$ref": "#/definitions/C_Crossfade"
+            },
+            {
+              "$ref": "#/definitions/C_DatePickerDialog"
             },
             {
               "$ref": "#/definitions/C_DismissibleDrawerSheet"
@@ -9770,6 +10709,9 @@
               "$ref": "#/definitions/C_ExpandedFullScreenSearchBar"
             },
             {
+              "$ref": "#/definitions/C_ExposedDropdownMenuBox"
+            },
+            {
               "$ref": "#/definitions/C_ExtendedFloatingActionButton"
             },
             {
@@ -9792,6 +10734,9 @@
             },
             {
               "$ref": "#/definitions/C_FilterChip"
+            },
+            {
+              "$ref": "#/definitions/C_FlexBox"
             },
             {
               "$ref": "#/definitions/C_FloatingActionButton"
@@ -9822,6 +10767,9 @@
             },
             {
               "$ref": "#/definitions/C_InputChip"
+            },
+            {
+              "$ref": "#/definitions/C_Label"
             },
             {
               "$ref": "#/definitions/C_LargeFloatingActionButton"
@@ -9905,6 +10853,9 @@
               "$ref": "#/definitions/C_OutlinedIconToggleButton"
             },
             {
+              "$ref": "#/definitions/C_OutlinedSecureTextField"
+            },
+            {
               "$ref": "#/definitions/C_OutlinedTextField"
             },
             {
@@ -9953,7 +10904,16 @@
               "$ref": "#/definitions/C_SecondaryTabRow"
             },
             {
+              "$ref": "#/definitions/C_SecureTextField"
+            },
+            {
               "$ref": "#/definitions/C_SegmentedButton"
+            },
+            {
+              "$ref": "#/definitions/C_SelectionContainer"
+            },
+            {
+              "$ref": "#/definitions/C_SharedTransitionLayout"
             },
             {
               "$ref": "#/definitions/C_ShortNavigationBar"
@@ -9969,6 +10929,9 @@
             },
             {
               "$ref": "#/definitions/C_SliderValue"
+            },
+            {
+              "$ref": "#/definitions/C_SmallFloatingActionButton"
             },
             {
               "$ref": "#/definitions/C_Snackbar"
@@ -10023,6 +10986,9 @@
             },
             {
               "$ref": "#/definitions/C_TextField"
+            },
+            {
+              "$ref": "#/definitions/C_TimePickerDialog"
             },
             {
               "$ref": "#/definitions/C_TooltipBox"
@@ -26563,6 +27529,124 @@
       },
       "type": "object"
     },
+    "V_1_23_0_BasicText": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "minLines": {
+              "default": 1,
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "overflow": {
+              "$ref": "#/definitions/Family_TextOverflow"
+            },
+            "softWrap": {
+              "default": true,
+              "type": "boolean"
+            },
+            "style": {
+              "$ref": "#/definitions/Family_TextStyle"
+            },
+            "text": {
+              "$ref": "#/definitions/Family_AnnotatedString"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "BasicText"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_BasicTextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "minLines": {
+              "default": 1,
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onValueChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "singleLine": {
+              "default": false,
+              "type": "boolean"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "onValueChange",
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "BasicTextField"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_BottomAppBar": {
       "properties": {
         "children": {
@@ -26674,6 +27758,165 @@
       },
       "type": "object"
     },
+    "V_1_23_0_BottomSheetScaffold": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "sheetContent",
+                  "topBar"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "sheetContainerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "sheetMaxWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "sheetPeekHeight": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "sheetShadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "sheetShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "sheetSwipeEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "sheetTonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "BottomSheetScaffold"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Box": {
       "properties": {
         "children": {
@@ -26713,6 +27956,59 @@
         },
         "type": {
           "const": "Box"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_BoxWithConstraints": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentAlignment": {
+              "default": "topStart",
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomLeft",
+                "bottomRight",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerLeft",
+                "centerRight",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topLeft",
+                "topRight",
+                "topStart"
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "propagateMinConstraints": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "BoxWithConstraints"
         }
       },
       "type": "object"
@@ -27285,6 +28581,79 @@
         },
         "type": {
           "const": "Crossfade"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_DatePickerDialog": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "confirmButton",
+                  "dismissButton"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_DatePickerColors"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDismissRequest": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "DatePickerDialog"
         }
       },
       "type": "object"
@@ -28307,6 +29676,46 @@
       },
       "type": "object"
     },
+    "V_1_23_0_ExposedDropdownMenuBox": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "expanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onExpandedChange": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "required": [
+            "expanded",
+            "onExpandedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ExposedDropdownMenuBox"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_ExtendedFloatingActionButton": {
       "properties": {
         "children": {
@@ -28846,6 +30255,35 @@
         },
         "type": {
           "const": "FilterChip"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_FlexBox": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "FlexBox"
         }
       },
       "type": "object"
@@ -29418,6 +30856,59 @@
         },
         "type": {
           "const": "InputChip"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_Label": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "isPersistent": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Label"
         }
       },
       "type": "object"
@@ -31153,13 +32644,25 @@
               "$ref": "#/definitions/V_1_23_0_BasicAlertDialog"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_BasicText"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_BasicTextField"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_BottomAppBar"
             },
             {
               "$ref": "#/definitions/V_1_23_0_BottomAppBarActions"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_BottomSheetScaffold"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_Box"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_BoxWithConstraints"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Button"
@@ -31187,6 +32690,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_Crossfade"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_DatePickerDialog"
             },
             {
               "$ref": "#/definitions/V_1_23_0_DismissibleDrawerSheet"
@@ -31228,6 +32734,9 @@
               "$ref": "#/definitions/V_1_23_0_ExpandedFullScreenSearchBar"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_ExposedDropdownMenuBox"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_ExtendedFloatingActionButton"
             },
             {
@@ -31250,6 +32759,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_FilterChip"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_FlexBox"
             },
             {
               "$ref": "#/definitions/V_1_23_0_FloatingActionButton"
@@ -31280,6 +32792,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_InputChip"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_Label"
             },
             {
               "$ref": "#/definitions/V_1_23_0_LargeFloatingActionButton"
@@ -31363,6 +32878,9 @@
               "$ref": "#/definitions/V_1_23_0_OutlinedIconToggleButton"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_OutlinedSecureTextField"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_OutlinedTextField"
             },
             {
@@ -31411,7 +32929,16 @@
               "$ref": "#/definitions/V_1_23_0_SecondaryTabRow"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_SecureTextField"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_SegmentedButton"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SelectionContainer"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SharedTransitionLayout"
             },
             {
               "$ref": "#/definitions/V_1_23_0_ShortNavigationBar"
@@ -31427,6 +32954,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_SliderValue"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SmallFloatingActionButton"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Snackbar"
@@ -31481,6 +33011,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_TextField"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_TimePickerDialog"
             },
             {
               "$ref": "#/definitions/V_1_23_0_TooltipBox"
@@ -31824,6 +33357,113 @@
         },
         "type": {
           "const": "OutlinedIconToggleButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_OutlinedSecureTextField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "revision": {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "revision",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "OutlinedSecureTextField"
         }
       },
       "type": "object"
@@ -33059,6 +34699,110 @@
       },
       "type": "object"
     },
+    "V_1_23_0_SecureTextField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "revision": {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "revision",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SecureTextField"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_SegmentedButton": {
       "properties": {
         "children": {
@@ -33132,6 +34876,64 @@
         },
         "type": {
           "const": "SegmentedButton"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SelectionContainer": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "SelectionContainer"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SharedTransitionLayout": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "SharedTransitionLayout"
         }
       },
       "type": "object"
@@ -33439,6 +35241,73 @@
         },
         "type": {
           "const": "SliderValue"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SmallFloatingActionButton": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "elevation": {
+              "$ref": "#/definitions/Family_FloatingActionButtonElevation"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onClick": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onFocus": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onHover": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onPress": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SmallFloatingActionButton"
         }
       },
       "type": "object"
@@ -34965,6 +36834,69 @@
         },
         "type": {
           "const": "TextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_TimePickerDialog": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "confirmButton",
+                  "dismissButton",
+                  "modeToggleButton",
+                  "title"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDismissRequest": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            }
+          },
+          "required": [
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "TimePickerDialog"
         }
       },
       "type": "object"
