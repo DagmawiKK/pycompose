@@ -45,6 +45,9 @@ extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
     )
     sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
     sourceSets.getByName("test").kotlin.srcDir("../architecture/src/test/kotlin")
+    // Device-free rendering of an app's snapshots (`pycompose render`); it ships
+    // with every generated project, unlike the library's own tests.
+    sourceSets.getByName("test").kotlin.srcDir("src/render/kotlin")
     lint {
         abortOnError = true
         warningsAsErrors = true
@@ -125,6 +128,15 @@ val stageRuntime by tasks.registering(Sync::class) {
 }
 tasks.matching { it.name.matches(Regex("merge.*PythonSources")) }.configureEach {
     dependsOn(stageRuntime)
+}
+
+// `pycompose render` names its request; RenderSnapshots renders nothing without it.
+tasks.withType<Test>().configureEach {
+    providers
+        .gradleProperty(
+            "pycomposeRender",
+        ).orNull
+        ?.let { systemProperty("pycompose.render", it) }
 }
 
 kotlin {

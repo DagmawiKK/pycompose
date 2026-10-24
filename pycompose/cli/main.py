@@ -5,22 +5,20 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
-import time
 from pathlib import Path
 
-from pycompose.cli import console
+from pycompose.cli import console, project_commands
 from pycompose.cli.build import build_project
 from pycompose.cli.config import KEYS, Setting, change, settings
 from pycompose.cli.doctor import doctor
 from pycompose.cli.extensions import show_evidence, show_plan
 from pycompose.cli.init import init_project
 from pycompose.cli.install import Deploy, install_project
-from pycompose.cli.prebuild import explain, generated, prebuild
+from pycompose.cli.prebuild import generated
 from pycompose.cli.project import ProjectError, load_project
 from pycompose.cli.run import run_project
 from pycompose.cli.stubs import generate_stubs
 from pycompose.cli.sync import sync_resources
-from pycompose.cli.toolchain import setup
 from pycompose.cli.validate import validate_file
 from pycompose.errors import PyComposeError
 from pycompose.version import __version__
@@ -34,9 +32,11 @@ _MENU = (
     ("config", "Show or change the app name, id and version"),
     ("add", "Wrap a Compose library from Maven into the app's catalog"),
     ("check", "Find what a build or the store would refuse, without either"),
+    ("render", "Screenshot the app and dump its semantics, with no device"),
     ("prebuild", "Generate the Android project from the app and show what changed"),
     ("explain", "Say which config keys produced a generated Android file"),
     ("setup", "Install the pinned JDK and Android SDK"),
+    ("dev-client", "Build the prebuilt dev client once for this PyCompose"),
     ("migrate", "Move an app-owned Android project to a generated one"),
     ("sync", "Sync named resources into the Android host"),
     ("doctor", "Report Android toolchain and schema compatibility"),
@@ -70,6 +70,11 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--device", help="ADB serial number")
     run.add_argument(
         "--port", type=int, default=0, help="Loopback server port (default: automatic)"
+    )
+    run.add_argument(
+        "--dev-client",
+        action="store_true",
+        help="Run on the prebuilt dev client: no Gradle build of the app",
     )
     build = commands.add_parser(
         "build", help="Package an Android app through its Gradle wrapper"
@@ -116,6 +121,11 @@ def _parser() -> argparse.ArgumentParser:
     commands.add_parser(
         "check", help="Find what a build or the store would refuse, without either"
     )
+    render = commands.add_parser(
+        "render", help="Screenshot the app and dump its semantics, with no device"
+    )
+    render.add_argument("snapshots", nargs="*", type=Path, help="snapshot JSON files")
+    render.add_argument("--out", type=Path, default=Path("screenshots"))
     commands.add_parser(
         "prebuild",
         help="Generate the Android project from the app and show what changed",
@@ -125,6 +135,10 @@ def _parser() -> argparse.ArgumentParser:
     )
     explain.add_argument("path", help="a file of .pycompose/android")
     commands.add_parser("setup", help="Install the pinned JDK and Android SDK")
+    client = commands.add_parser(
+        "dev-client", help="Build the prebuilt dev client once for this PyCompose"
+    )
+    client.add_argument("--rebuild", action="store_true")
     commands.add_parser(
         "migrate", help="Move an app-owned Android project to a generated one"
     )
@@ -288,79 +302,13 @@ def _doctor(_args: argparse.Namespace) -> int:
     return 0
 
 
-def _add(args: argparse.Namespace) -> int:
-    # The compiler is imported only when a library is added: no other command
-    # pays for it.
-    from pycompose.cli.add import add_library
-
-    report = add_library(load_project(Path.cwd()), args.coordinate)
-    for name in report.promoted + report.overloads:
-        console.ok(f"{name}: exposed")
-    for name, reason in sorted(report.refused.items()):
-        console.warn(f"{name}: refused -- {reason}")
-    console.notice("Import exposed components from m3; pycompose build regenerates it.")
-    return 0
-
-
-def _check(_args: argparse.Namespace) -> int:
-    from pycompose.cli.check import check
-
-    started = time.monotonic()
-    problems = check(Path.cwd())
-    for problem in problems:
-        console.warn(f"{problem.where}: {problem.message} -- {problem.fix}")
-    elapsed = time.monotonic() - started
-    if problems:
-        console.notice(f"{len(problems)} problems in {elapsed:.1f}s")
-        return 1
-    console.ok(f"No problems found in {elapsed:.1f}s")
-    return 0
-
-
-def _prebuild(_args: argparse.Namespace) -> int:
-    changed = prebuild(load_project(Path.cwd()))
-    for name in changed:
-        console.line(name)
-    console.ok(f"Android project generated; {len(changed)} files changed")
-    return 0
-
-
-def _explain(args: argparse.Namespace) -> int:
-    for source in explain(load_project(Path.cwd()), args.path):
-        console.line(source)
-    return 0
-
-
-def _migrate(_args: argparse.Namespace) -> int:
-    from pycompose.cli.migrate import migrate
-
-    found = migrate(load_project(Path.cwd()))
-    for refusal in found.refused:
-        console.warn(refusal)
-    if found.refused:
-        console.notice("Nothing changed; give these a config key or a fragment.")
-        return 1
-    for name in found.fragments:
-        console.line(f"resources/android/res/{name}: kept as a fragment")
-    if found.icon is not None:
-        console.line("icon.svg: the launcher icon, as [app] icon")
-    console.ok("The Android project is now generated on every build")
-    return 0
-
-
-def _setup(_args: argparse.Namespace) -> int:
-    setup()
-    console.ok("Toolchain installed; pycompose doctor checks it")
-    return 0
-
-
 def _sync(args: argparse.Namespace) -> int:
     project = load_project(Path.cwd())
     if generated(project):
         if args.check:
             console.line("The Android project is generated on every build")
             return 0
-        return _prebuild(args)
+        return project_commands.prebuild_command(args)
     changed = sync_resources(project, check=args.check)
     if not changed:
         console.line("Resources up to date")
@@ -372,7 +320,12 @@ def _sync(args: argparse.Namespace) -> int:
 
 def _run(args: argparse.Namespace) -> int:
     try:
-        run_project(load_project(Path.cwd()), device=args.device, port=args.port)
+        run_project(
+            load_project(Path.cwd()),
+            device=args.device,
+            port=args.port,
+            dev_client=args.dev_client,
+        )
     except KeyboardInterrupt:
         return 0
     return 0
@@ -436,12 +389,14 @@ def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(arguments)
     handlers = {
         "init": _init,
-        "add": _add,
-        "check": _check,
-        "prebuild": _prebuild,
-        "explain": _explain,
-        "setup": _setup,
-        "migrate": _migrate,
+        "add": project_commands.add_command,
+        "check": project_commands.check_command,
+        "render": project_commands.render_command,
+        "prebuild": project_commands.prebuild_command,
+        "explain": project_commands.explain_command,
+        "setup": project_commands.setup_command,
+        "dev-client": project_commands.dev_client_command,
+        "migrate": project_commands.migrate_command,
         "sync": _sync,
         "validate": _validate,
         "build": _build,

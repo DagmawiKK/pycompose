@@ -28,3 +28,32 @@ def test_a_selector_must_name_exactly_one_node() -> None:
             app.find(type="NavigationBarItem")
         with pytest.raises(AssertionError, match="has no onClick"):
             app.act("onClick", app.find(text="Notes"))
+
+
+def test_the_first_screen_is_composed_as_the_device_composes_it() -> None:
+    import json
+
+    from pycompose.cli.project import load_project
+    from pycompose.cli.render import first_screen
+
+    snapshot = json.loads(first_screen(load_project(NOTES)))
+    assert snapshot["root"]["type"]
+    assert snapshot["schemaVersion"]
+
+
+def test_a_walked_screen_renders_to_a_png_and_semantics(tmp_path: Path) -> None:
+    import json
+    import os
+    import shutil
+
+    if os.environ.get("PYCOMPOSE_RENDER_TESTS") != "1":
+        pytest.skip("rendering runs the app's generated host under Gradle")
+    root = tmp_path / "notes"
+    shutil.copytree(NOTES, root, ignore=shutil.ignore_patterns(".pycompose"))
+    with AppDriver(root, route="notes") as app:
+        app.click(type="FloatingActionButton")
+        image, semantics = app.render(tmp_path / "out", "editor")
+    assert image.read_bytes().startswith(b"\x89PNG")
+    dump = json.loads(semantics.read_text())
+    assert dump["reports"] == []
+    assert "Title" in json.dumps(dump["windows"])

@@ -18,6 +18,7 @@ a semantics dump (``pycompose render``).
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -26,6 +27,7 @@ from pathlib import Path
 from types import TracebackType
 from typing import Any, Self
 
+import pycompose
 from pycompose.bridge.imports import fresh_imports
 from pycompose.bridge.runtime import RuntimeSession
 from pycompose.extensions.environment import install as install_paths
@@ -256,6 +258,11 @@ class AppDriver:
         with tempfile.TemporaryDirectory() as directory:
             snapshot = Path(directory) / f"{name}.json"
             snapshot.write_text(json.dumps(self.snapshot()), encoding="utf-8")
+            # The CLI of this very library, whichever is installed elsewhere.
+            library = str(Path(pycompose.__file__).resolve().parents[1])
+            path = os.pathsep.join(
+                filter(None, [library, os.environ.get("PYTHONPATH")])
+            )
             result = subprocess.run(
                 [
                     sys.executable,
@@ -266,6 +273,7 @@ class AppDriver:
                     "--out",
                     str(out),
                 ],
+                env={**os.environ, "PYTHONPATH": path},
                 cwd=self.root,
                 capture_output=True,
                 text=True,

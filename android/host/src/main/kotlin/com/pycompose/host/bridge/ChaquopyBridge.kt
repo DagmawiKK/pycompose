@@ -13,6 +13,7 @@ class ChaquopyBridge(
     private val debug: Boolean,
     private val asyncSink: (String, String) -> Unit,
     private val outcomeAdmission: ((String, String) -> Boolean)? = null,
+    private val dev: DevSource? = null,
 ) : BridgeSurface {
     private val application = context.applicationContext
     private var owner: Thread? = null
@@ -37,6 +38,11 @@ class ChaquopyBridge(
                 .callAttr("handshake", Handshake.offer())
                 .toString(),
         )
+        // A dev client runs the app its dev server serves, not the one it was built with.
+        dev?.let {
+            it.pull()
+            Python.getInstance().getModule(MODULE).callAttr("use_source", it.source.absolutePath)
+        }
         sessionId =
             Python
                 .getInstance()
@@ -112,16 +118,20 @@ class ChaquopyBridge(
         restore: String,
     ): Boolean {
         requireWorker()
-        if (!debug) return false
-        return if (!initialized) {
-            start(route, restore)
-            true
-        } else {
-            Python
-                .getInstance()
-                .getModule(MODULE)
-                .callAttr("reload", route, restore)
-                .toBoolean()
+        return when {
+            !debug -> false
+            !initialized -> {
+                start(route, restore)
+                true
+            }
+            // A dev client reloads only when its dev server served something new.
+            dev != null && !dev.pull() -> false
+            else ->
+                Python
+                    .getInstance()
+                    .getModule(MODULE)
+                    .callAttr("reload", route, restore)
+                    .toBoolean()
         }
     }
 

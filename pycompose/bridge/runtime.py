@@ -275,6 +275,16 @@ def handshake(offer: str) -> str:
     return reply
 
 
+def use_source(path: str) -> None:
+    """Import the app from ``path`` first: a dev client's bundle (plan 31 §18.8).
+
+    Args:
+        path: The app's Python directory, as the dev server served it.
+    """
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+
 def start(
     entrypoint: str,
     route: str,

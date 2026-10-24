@@ -330,24 +330,22 @@ def _gradle(
     return code
 
 
-def build_project(
-    project: Project, *, kind: str = "apk", release: bool = False
-) -> tuple[Path, ...]:
-    """Sync resources, invoke the host Gradle task, and locate its artifacts.
+def prepare(project: Project) -> tuple[Path, dict[str, str]]:
+    """Make the Android project current and its Gradle environment ready.
+
+    Every Gradle run goes through here: the generated project is regenerated,
+    the app's resources and component slice are written, and the app's facts
+    are handed to Gradle as properties.
 
     Args:
-        project: Project containing a root Gradle wrapper and host module.
-        kind: apk or aab output.
-        release: Require configured signing and build the release variant.
+        project: The app.
 
     Returns:
-        Output artifact paths; installability still requires native integration.
+        The Gradle wrapper and the environment to run it in.
 
     Raises:
-        ProjectError: If scaffold, signing, Gradle execution or output is invalid.
+        ProjectError: If the scaffold or the configuration is invalid.
     """
-    if kind not in {"apk", "aab"}:
-        raise ProjectError("build format must be apk or aab")
     check_project_versions(project)
     native = project.android_root
     if generated(project):
@@ -367,18 +365,40 @@ def build_project(
     if (home := jdk_home()) is not None and "JAVA_HOME" not in env:
         env["JAVA_HOME"] = home
     _app_properties(project, env)
-    secrets = _signing(project, env) if release else ()
     stage_extensions(project, env)
     if not generated(project):
         sync_resources(project)
     _codegen(project)
+    return wrapper, env
+
+
+def build_project(
+    project: Project, *, kind: str = "apk", release: bool = False
+) -> tuple[Path, ...]:
+    """Sync resources, invoke the host Gradle task, and locate its artifacts.
+
+    Args:
+        project: Project containing a root Gradle wrapper and host module.
+        kind: apk or aab output.
+        release: Require configured signing and build the release variant.
+
+    Returns:
+        Output artifact paths; installability still requires native integration.
+
+    Raises:
+        ProjectError: If scaffold, signing, Gradle execution or output is invalid.
+    """
+    if kind not in {"apk", "aab"}:
+        raise ProjectError("build format must be apk or aab")
+    wrapper, env = prepare(project)
+    secrets = _signing(project, env) if release else ()
     variant = "release" if release else "debug"
     task = f":host:{'assemble' if kind == 'apk' else 'bundle'}{variant.title()}"
     step(f"{task} ({variant} {kind})")
     started = time.monotonic()
     code = _gradle(
         [str(wrapper), task, "--console=plain", "--no-daemon"],
-        cwd=native,
+        cwd=project.android_root,
         env=env,
         secrets=secrets,
     )

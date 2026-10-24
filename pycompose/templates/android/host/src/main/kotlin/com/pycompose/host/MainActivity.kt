@@ -28,10 +28,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pycompose.host.bridge.ChaquopyBridge
+import com.pycompose.host.bridge.DevSource
 import com.pycompose.host.resources.AndroidResources
 import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.host.ui.BuiltinComponents
@@ -39,6 +41,9 @@ import com.pycompose.host.ui.PyComposeTheme
 import com.pycompose.ir.Lifecycle
 import com.pycompose.renderer.ActionDispatcher
 import com.pycompose.renderer.Renderer
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
 
 class MainActivity : ComponentActivity() {
@@ -54,6 +59,7 @@ class MainActivity : ComponentActivity() {
                 model::navigate,
             ) { message -> Log.w("PyCompose", message) }
         enableEdgeToEdge()
+        followDevServer()
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {
@@ -147,6 +153,33 @@ class MainActivity : ComponentActivity() {
         model.lifecycle("onConfigChanged", configurationPayload())
     }
 
+    /** The dev server a debug build was launched against (`pycompose run --dev-client`). */
+    private val dev: DevSource? by lazy {
+        intent.getStringExtra("pycompose.dev.url")?.takeIf { BuildConfig.DEBUG }?.let { url ->
+            DevSource(
+                url,
+                intent.getStringExtra("pycompose.dev.token").orEmpty(),
+                intent.getStringExtra("pycompose.dev.source") ?: "app",
+                filesDir.resolve("pycompose-dev"),
+            )
+        }
+    }
+
+    /** A dev client follows its dev server: an unchanged bundle reloads nothing. */
+    private fun followDevServer() {
+        if (dev == null) return
+        lifecycleScope.launch {
+            while (isActive) {
+                delay(DEV_POLL_MS)
+                model.reload()
+            }
+        }
+    }
+
+    private companion object {
+        const val DEV_POLL_MS = 1_000L
+    }
+
     /** The activity owns the bridge and the native effect capabilities it exposes. */
     private fun CreationExtras.createModel(): PyComposeViewModel =
         PyComposeViewModel(
@@ -156,6 +189,7 @@ class MainActivity : ComponentActivity() {
                 BuildConfig.DEBUG,
                 AsyncResult::deliver,
                 AsyncResult::offer,
+                dev,
             ),
             createSavedStateHandle(),
             (application as PyComposeApplication).pythonWorker,
