@@ -1213,59 +1213,6 @@
       },
       "type": "object"
     },
-    "C_BoxWithConstraints": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomLeft",
-                "bottomRight",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerLeft",
-                "centerRight",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topLeft",
-                "topRight",
-                "topStart"
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "propagateMinConstraints": {
-              "default": false,
-              "type": "boolean"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "BoxWithConstraints"
-        }
-      },
-      "type": "object"
-    },
     "C_Button": {
       "properties": {
         "children": false,
@@ -10681,9 +10628,6 @@
             },
             {
               "$ref": "#/definitions/C_Box"
-            },
-            {
-              "$ref": "#/definitions/C_BoxWithConstraints"
             },
             {
               "$ref": "#/definitions/C_Button"
@@ -28696,59 +28640,6 @@
       },
       "type": "object"
     },
-    "V_1_23_0_BoxWithConstraints": {
-      "properties": {
-        "children": {
-          "items": {},
-          "type": "array"
-        },
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomLeft",
-                "bottomRight",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerLeft",
-                "centerRight",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topLeft",
-                "topRight",
-                "topStart"
-              ]
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "propagateMinConstraints": {
-              "default": false,
-              "type": "boolean"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "const": "BoxWithConstraints"
-        }
-      },
-      "type": "object"
-    },
     "V_1_23_0_Button": {
       "properties": {
         "children": false,
@@ -33442,9 +33333,6 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_Box"
-            },
-            {
-              "$ref": "#/definitions/V_1_23_0_BoxWithConstraints"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Button"

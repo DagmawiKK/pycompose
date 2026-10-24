@@ -223,6 +223,10 @@ def compile_components(
     report = Report()
     components: dict[str, Any] = {}
     for name, rule in sorted(rules.items()):
+        if "refuse" in rule:
+            # A component that derives but is no use on the wire: policy says why.
+            report.refused[name] = rule["refuse"]
+            continue
         if "manual" in rule:
             components[name] = _stamped_entry(rule["entry"], found)
             report.manual[name] = rule["manual"]

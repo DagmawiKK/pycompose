@@ -9,7 +9,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlexBox
 import androidx.compose.foundation.layout.FlowColumn
@@ -131,7 +130,6 @@ import com.pycompose.ir.generated.BottomAppBar as BottomAppBarNode
 import com.pycompose.ir.generated.BottomAppBarActions as BottomAppBarActionsNode
 import com.pycompose.ir.generated.BottomSheetScaffold as BottomSheetScaffoldNode
 import com.pycompose.ir.generated.Box as BoxNode
-import com.pycompose.ir.generated.BoxWithConstraints as BoxWithConstraintsNode
 import com.pycompose.ir.generated.Button as ButtonNode
 import com.pycompose.ir.generated.Card as CardNode
 import com.pycompose.ir.generated.CardWithoutOnClick as CardWithoutOnClickNode
@@ -482,16 +480,6 @@ object GeneratedAdapters {
                     modifier = modifier,
                     contentAlignment = contentAlignmentValue,
                     content = { context.childrenInBoxScope(this, model.children) },
-                )
-            }
-            .register("BoxWithConstraints") { node, modifier, context ->
-                val model = node as BoxWithConstraintsNode
-                val contentAlignmentValue: androidx.compose.ui.Alignment = com.pycompose.renderer.PropResolver.alignment(model.props.contentAlignment).getOrDefault(androidx.compose.ui.Alignment.TopStart)
-                BoxWithConstraints(
-                    modifier = modifier,
-                    contentAlignment = contentAlignmentValue,
-                    propagateMinConstraints = model.props.propagateMinConstraints,
-                    content = { context.children(model.children) },
                 )
             }
             .register("Button") { node, modifier, context ->

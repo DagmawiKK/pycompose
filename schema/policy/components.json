@@ -123,6 +123,9 @@
       }
     }
   },
+  "BoxWithConstraints": {
+    "refuse": "its content reads the incoming constraints, which the wire cannot carry to its children; without them it is a Box that subcomposes"
+  },
   "Button": {
     "decision": {
       "category": "buttons",

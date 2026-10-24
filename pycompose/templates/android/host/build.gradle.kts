@@ -11,7 +11,7 @@ extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
         applicationId =
             providers.gradleProperty("pycomposeApplicationId").getOrElse("com.pycompose.sample")
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = providers.gradleProperty("pycomposeVersionCode").getOrElse("1").toInt()
         versionName = providers.gradleProperty("pycomposeVersionName").getOrElse("0.1.0")
         ndk {

@@ -174,3 +174,41 @@ def test_the_apps_permissions_are_written_into_the_generated_manifest(
         "[android] permissions"
         in generation.sources["host/src/main/AndroidManifest.xml"]
     )
+
+
+def test_build_plugins_add_typed_changes_in_their_declared_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from dataclasses import replace
+
+    from pycompose.cli import plugins
+
+    def camera(model: plugins.AndroidModel) -> plugins.AndroidModel:
+        return replace(model, features={"android.hardware.camera": False})
+
+    def maps(model: plugins.AndroidModel) -> plugins.AndroidModel:
+        return replace(model, meta_data={"com.example.key": "${MAPS_KEY}"})
+
+    class Point:
+        def __init__(self, name: str, function: plugins.Plugin) -> None:
+            self.name, self.load = name, lambda: function
+
+    monkeypatch.setattr(
+        plugins,
+        "entry_points",
+        lambda group: [Point("camera", camera), Point("maps", maps)]
+        * (group == plugins.GROUP),
+    )
+    root = _notes(tmp_path)
+    config = root / "pycompose.toml"
+    config.write_text(
+        config.read_text() + '\n[android]\nplugins = ["camera", "maps"]\n'
+    )
+    manifest = (
+        plan(load_project(root)).files["host/src/main/AndroidManifest.xml"].decode()
+    )
+    assert 'android:name="android.hardware.camera" android:required="false"' in manifest
+    assert 'android:name="com.example.key"' in manifest
+    config.write_text(config.read_text().replace('"maps"]', '"missing"]'))
+    with pytest.raises(ProjectError, match="not installed"):
+        plan(load_project(root))

@@ -303,25 +303,6 @@ data class Box(
 }
 
 @Serializable
-data class BoxWithConstraintsProps(
-    val `contentAlignment`: String = "topStart",
-    override val `modifier`: JsonObject? = null,
-    val `propagateMinConstraints`: Boolean = false,
-) : UiProps
-
-@Serializable
-@SerialName("BoxWithConstraints")
-data class BoxWithConstraints(
-    override val id: String,
-    override val props: BoxWithConstraintsProps,
-    override val children: List<UiNode> = emptyList(),
-    override val slot: String? = null,
-) : UiNode {
-    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
-    override val componentType: String get() = "BoxWithConstraints"
-}
-
-@Serializable
 data class ButtonProps(
     val `colors`: JsonElement? = null,
     val `elevation`: OptionalValue = OptionalValue.Absent,

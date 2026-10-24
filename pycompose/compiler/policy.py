@@ -26,8 +26,9 @@ class Policy:
 
     Attributes:
         sections: Catalog sections no derivation produces yet.
-        components: Per component: ``decision`` and an optional ``patch``, or
-            ``manual`` (the reason it is held whole) and ``entry``.
+        components: Per component: ``decision`` and an optional ``patch``,
+            ``manual`` (the reason it is held whole) and ``entry``, or
+            ``refuse`` (why a component that derives is not exposed).
     """
 
     sections: dict[str, Any]

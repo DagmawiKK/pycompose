@@ -30,7 +30,6 @@ __all__ = [
     "BottomAppBarActions",
     "BottomSheetScaffold",
     "Box",
-    "BoxWithConstraints",
     "Button",
     "Card",
     "CardWithoutOnClick",
@@ -168,24 +167,6 @@ _BoxContentAlignment = Literal[
     "bottomStart",
     "bottomCenter",
     "bottomEnd",
-]
-
-_BoxWithConstraintsContentAlignment = Literal[
-    "bottomCenter",
-    "bottomEnd",
-    "bottomLeft",
-    "bottomRight",
-    "bottomStart",
-    "center",
-    "centerEnd",
-    "centerLeft",
-    "centerRight",
-    "centerStart",
-    "topCenter",
-    "topEnd",
-    "topLeft",
-    "topRight",
-    "topStart",
 ]
 
 _ColumnHorizontalAlignment = Literal[
@@ -935,48 +916,6 @@ class Box(Component):
         props: dict[str, PropValue] = {}
         if content_alignment is not None:
             props["content_alignment"] = content_alignment
-        if contents and children:
-            raise IrValidationError(
-                "children given positionally and by name", node_id=id
-            )
-        normalized = content_nodes(contents or children, key="children")
-        super().__init__(id=id, children=normalized, modifier=modifier, **props)
-
-
-class BoxWithConstraints(Component):
-    """Native BoxWithConstraints; props and defaults follow the component manifest."""
-
-    __slots__ = ()
-    component_type = "BoxWithConstraints"
-
-    def __init__(
-        self,
-        *contents: Node,
-        id: str | None = None,
-        content_alignment: _BoxWithConstraintsContentAlignment | None = None,
-        modifier: Modifier | None = None,
-        propagate_min_constraints: bool | None = None,
-        children: Content = (),
-    ) -> None:
-        """Construct a registered BoxWithConstraints.
-
-        Args:
-            *contents: Children given in order, as Compose's content lambda.
-            id: Stable instance key; None derives the node's path id.
-            content_alignment: Native contentAlignment; None uses its default.
-            modifier: Native modifier; None uses its default.
-            propagate_min_constraints: Native propagateMinConstraints; None uses its
-                default.
-            children: Ordered child nodes with stable keys.
-
-        Raises:
-            IrValidationError: If children are given twice.
-        """
-        props: dict[str, PropValue] = {}
-        if content_alignment is not None:
-            props["content_alignment"] = content_alignment
-        if propagate_min_constraints is not None:
-            props["propagate_min_constraints"] = propagate_min_constraints
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id

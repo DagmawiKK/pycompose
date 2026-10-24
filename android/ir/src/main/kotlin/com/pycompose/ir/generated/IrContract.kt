@@ -175,17 +175,6 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
-        "BoxWithConstraints" to ComponentRule(
-            slots = setOf(),
-            childrenAllowed = true,
-            minimumChildren = 0,
-            since = "1.23.0",
-            props = mapOf(
-                "contentAlignment" to PropertyRule("enum", required = false, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
-                "modifier" to PropertyRule("modifier", required = false),
-                "propagateMinConstraints" to PropertyRule("boolean", required = false),
-            ),
-        ),
         "Button" to ComponentRule(
             slots = setOf(),
             childrenAllowed = false,

@@ -46,6 +46,8 @@ def test_every_held_component_says_why() -> None:
         if "manual" in rule:
             assert rule["manual"].strip(), name
             assert rule["entry"], name
+        elif "refuse" in rule:
+            assert rule["refuse"].strip(), name
         else:
             assert "decision" in rule, name
 

@@ -97,12 +97,6 @@ private fun BoxPreview() {
     Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Box"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Box"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
-@Preview(name = "BoxWithConstraints", showBackground = true)
-@Composable
-private fun BoxWithConstraintsPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "BoxWithConstraints"}, "type": "Text"}], "id": "preview", "props": {}, "type": "BoxWithConstraints"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
-}
-
 @Preview(name = "Button", showBackground = true)
 @Composable
 private fun ButtonPreview() {

@@ -31,6 +31,7 @@ import os
 import threading
 from collections import deque
 from collections.abc import Iterator, Sequence
+from contextlib import contextmanager
 from dataclasses import is_dataclass
 from importlib import import_module
 from pathlib import Path
@@ -85,6 +86,30 @@ def root() -> Path:
     else:
         return Path(str(files_dir))
     return Path(os.environ.get("PYCOMPOSE_HOME", Path.cwd()))
+
+
+@contextmanager
+def documents_at(path: Path | str) -> Iterator[None]:
+    """Keep the app's documents in ``path`` for a while, then where they were.
+
+    A device-free run -- ``pycompose check``, a test driving the app -- must
+    neither read the developer's data nor leave its own in the working
+    directory.
+
+    Args:
+        path: The directory to use. Created on first write.
+
+    Yields:
+        None: While documents live there.
+    """
+    global _override  # noqa: PLW0603 -- process-wide, like the worker
+    with _lock:
+        previous, _override = _override, Path(path)
+    try:
+        yield
+    finally:
+        with _lock:
+            _override = previous
 
 
 def use_root(path: Path | str) -> None:

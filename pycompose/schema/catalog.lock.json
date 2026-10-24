@@ -677,53 +677,6 @@
         "min": 0
       }
     },
-    "BoxWithConstraints": {
-      "package": "androidx.compose.foundation.layout",
-      "category": "foundation",
-      "stability": "stable",
-      "since": "1.23.0",
-      "source": {
-        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
-        "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
-        "jvmName": "BoxWithConstraints",
-        "name": "BoxWithConstraints",
-        "owner": "androidx.compose.foundation.layout.BoxWithConstraintsKt"
-      },
-      "props": {
-        "contentAlignment": {
-          "type": "enum",
-          "values": [
-            "bottomCenter",
-            "bottomEnd",
-            "bottomLeft",
-            "bottomRight",
-            "bottomStart",
-            "center",
-            "centerEnd",
-            "centerLeft",
-            "centerRight",
-            "centerStart",
-            "topCenter",
-            "topEnd",
-            "topLeft",
-            "topRight",
-            "topStart"
-          ],
-          "decode": "alignment",
-          "default": "topStart"
-        },
-        "propagateMinConstraints": {
-          "type": "boolean",
-          "default": false
-        },
-        "modifier": {
-          "type": "modifier"
-        }
-      },
-      "children": {
-        "allowed": true
-      }
-    },
     "Button": {
       "package": "androidx.compose.material3",
       "category": "buttons",

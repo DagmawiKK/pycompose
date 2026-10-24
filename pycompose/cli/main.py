@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 from pycompose.cli import console
@@ -32,6 +33,7 @@ _MENU = (
     ("release", "Package a signed release artifact"),
     ("config", "Show or change the app name, id and version"),
     ("add", "Wrap a Compose library from Maven into the app's catalog"),
+    ("check", "Find what a build or the store would refuse, without either"),
     ("prebuild", "Generate the Android project from the app and show what changed"),
     ("explain", "Say which config keys produced a generated Android file"),
     ("setup", "Install the pinned JDK and Android SDK"),
@@ -111,6 +113,9 @@ def _parser() -> argparse.ArgumentParser:
         "add", help="Wrap a Compose library from Maven into the app's catalog"
     )
     add.add_argument("coordinate", help="group:artifact or group:artifact:version")
+    commands.add_parser(
+        "check", help="Find what a build or the store would refuse, without either"
+    )
     commands.add_parser(
         "prebuild",
         help="Generate the Android project from the app and show what changed",
@@ -297,6 +302,21 @@ def _add(args: argparse.Namespace) -> int:
     return 0
 
 
+def _check(_args: argparse.Namespace) -> int:
+    from pycompose.cli.check import check
+
+    started = time.monotonic()
+    problems = check(Path.cwd())
+    for problem in problems:
+        console.warn(f"{problem.where}: {problem.message} -- {problem.fix}")
+    elapsed = time.monotonic() - started
+    if problems:
+        console.notice(f"{len(problems)} problems in {elapsed:.1f}s")
+        return 1
+    console.ok(f"No problems found in {elapsed:.1f}s")
+    return 0
+
+
 def _prebuild(_args: argparse.Namespace) -> int:
     changed = prebuild(load_project(Path.cwd()))
     for name in changed:
@@ -417,6 +437,7 @@ def main(argv: list[str] | None = None) -> int:
     handlers = {
         "init": _init,
         "add": _add,
+        "check": _check,
         "prebuild": _prebuild,
         "explain": _explain,
         "setup": _setup,
