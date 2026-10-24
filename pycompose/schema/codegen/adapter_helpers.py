@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.core.registry_types import CONSUMERS, SCOPES, SLOT_KINDS
+from pycompose.core.registry_types import CONSUMERS, SLOT_KINDS
 from pycompose.schema.codegen.state_families import STATE_FAMILIES
 
 SCALAR_KOTLIN = {
@@ -140,13 +140,30 @@ component.
 """
 
 STATE_ATTACH_GATES = {"scroll": "scrollable"}
-"""Props gating a family whose holder rides the call's modifier.
+"""Props gating a family whose holder may ride the call's modifier.
 
 ``Column`` has no scroll parameter -- scrolling attaches through its modifier,
-so the state cannot fill a native parameter. The holder exists whenever the
-schema declares one, and the boolean prop named here decides whether the
-adapter attaches it to the modifier the call receives.
+so the state cannot fill a native parameter. Its entry declares the boolean
+prop named here, which decides whether the adapter attaches the holder to the
+modifier the call receives. An entry without that prop (``ExposedDropdownMenu``
+takes a ``ScrollState``) passes the holder as its native parameter.
 """
+
+
+def attach_gate(state: dict[str, Any] | None, props: dict[str, Any]) -> str | None:
+    """The prop gating a holder that rides the modifier, or None when it does not.
+
+    Args:
+        state: The component's ``state`` entry, if any.
+        props: The component's props.
+
+    Returns:
+        The gate prop's wire name.
+    """
+    if state is None:
+        return None
+    gate = STATE_ATTACH_GATES.get(state.get("kind", ""))
+    return gate if gate in props else None
 
 
 def qualify(source: str) -> str:
@@ -194,9 +211,7 @@ def _declared_slots(entry: dict[str, Any]) -> bool:
     if any(slot.get("host") for slot in entry.get("slots", {}).values()):
         return False
     children = entry.get("children", {})
-    scoped = children.get("provides") in {None, *SCOPES} and not (
-        "provides" in children and children.get("consume") is not None
-    )
+    scoped = not ("provides" in children and children.get("consume") is not None)
     return (
         children.get("kind") in {None, *SLOT_KINDS}
         and children.get("consume") in {None, *CONSUMERS}
@@ -204,7 +219,6 @@ def _declared_slots(entry: dict[str, Any]) -> bool:
         and all(
             slot.get("kind", "content") in SLOT_KINDS
             and slot.get("consume") in {None, *CONSUMERS}
-            and slot.get("provides") in {None, *SCOPES}
             and not (slot.get("provides") and slot.get("consume"))
             and not (slot.get("provides") and slot.get("kind", "content") != "content")
             for slot in entry.get("slots", {}).values()
@@ -231,7 +245,7 @@ def _held_props(entry: dict[str, Any]) -> set[str]:
     kind = state.get("kind")
     if isinstance(kind, str):
         held.update(STATE_CONSTRUCTOR_PROPS.get(kind, ()))
-        gate = STATE_ATTACH_GATES.get(kind)
+        gate = attach_gate(state, entry.get("props", {}))
         if gate is not None:
             held.add(gate)
     return held
@@ -380,6 +394,11 @@ class _Fragments:
         if body:
             self.trailing.append(body)
             self.trailing_parameter = parameter or self.trailing_parameter
+
+
+def simple(scope: str) -> str:
+    """A scope's class as the adapters spell it: imported, so by simple name."""
+    return scope.rsplit(".", 1)[-1]
 
 
 def native_name(name: str, entry: dict[str, Any]) -> str:

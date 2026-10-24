@@ -18,7 +18,7 @@ from typing import Protocol, cast
 from pycompose.core.registry_elements import ChildrenRule, SlotRule
 from pycompose.core.registry_props import InteractionRule, PropDef, StateRule
 from pycompose.core.registry_transient import TransientRule
-from pycompose.core.registry_vocabulary import ADAPTERS, SCOPES, WRAPPERS
+from pycompose.core.registry_vocabulary import ADAPTERS, WRAPPERS
 from pycompose.errors import ComponentRegistryError
 
 
@@ -294,8 +294,8 @@ class ComponentSpec:
             not isinstance(self.package, str) or not self.package
         ):
             raise ComponentRegistryError("package must be a non-empty dotted name")
-        if self.scope is not None and self.scope not in SCOPES:
-            raise ComponentRegistryError(f"scope must be one of {', '.join(SCOPES)}")
+        if self.scope is not None and not (isinstance(self.scope, str) and self.scope):
+            raise ComponentRegistryError("scope must name a scope")
         if self.overload_of is not None and (
             not isinstance(self.overload_of, str) or not self.overload_of
         ):

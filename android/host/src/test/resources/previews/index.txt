@@ -34,6 +34,7 @@ ElevatedFilterChip
 ElevatedSuggestionChip
 ExpandedDockedSearchBar
 ExpandedFullScreenSearchBar
+ExposedDropdownMenu
 ExposedDropdownMenuBox
 ExtendedFloatingActionButton
 ExtendedFloatingActionButtonText

@@ -17,7 +17,6 @@ from typing import Any
 
 from pycompose.compiler.component_face import DECODE_CLASSIFIERS
 from pycompose.compiler.propose_lookup import source_name
-from pycompose.core.registry_types import SCOPE_PATHS
 from pycompose.schema.codegen.defaults import render_default
 
 WIRE_SCALARS = {
@@ -41,20 +40,18 @@ PAYLOAD_NAMES = {
 DECODE_TOKENS = {classifier: token for token, classifier in DECODE_CLASSIFIERS.items()}
 """Pinned classifier back to its wire decode token."""
 
-SCOPE_NAMES = {path: scope for scope, path in SCOPE_PATHS.items()}
-"""Pinned scope classifier back to its short approved name."""
 
-
-def scope_for(classifier: str) -> str | None:
-    """Return the closed scope name for a pinned receiver classifier.
+def scope_for(classifier: str) -> str:
+    """Return the scope name entries use for a pinned receiver classifier.
 
     Args:
         classifier: A metadata classifier, slash-separated or source-spelled.
 
     Returns:
-        The scope name, or None when the receiver is not a composition scope.
+        Its dotted class name: unambiguous across libraries, and what the
+        generated adapters import.
     """
-    return SCOPE_NAMES.get(source_name(classifier))
+    return source_name(classifier)
 
 
 class CandidateError(ValueError):
@@ -116,7 +113,7 @@ def wire_shape(
             review.append(f"{parameter}: omitted ({reason})")
             continue
         if policy == "slot":
-            place_slot(name, parameter, spec, children, slots, review)
+            place_slot(parameter, spec, children, slots, review)
             continue
         prop = _prop(name, parameter, spec, families, review)
         if prop is not None:
@@ -421,7 +418,6 @@ def _event_prop(
 
 
 def place_slot(
-    name: str,
     parameter: str,
     spec: dict[str, Any],
     children: dict[str, Any],
@@ -431,26 +427,16 @@ def place_slot(
     """Route one composable parameter to children or a named slot.
 
     Args:
-        name: The component's schema name, for refusal messages.
         parameter: The native parameter name.
         spec: The plan's parameter rule.
         children: The children block to update in place.
         slots: The named slots to update in place.
         review: Review notes to append to.
-
-    Raises:
-        CandidateError: The slot carries a scope the renderer cannot compose.
     """
     receiver = spec.get("receiver")
     nullable = bool(spec["type"]["nullable"])
     if receiver is not None:
-        classifier = source_name(receiver)
         scope = scope_for(receiver)
-        if scope is None:
-            raise CandidateError(
-                f"{name}.{parameter}: slot receiver {classifier} has no "
-                "renderable scope"
-            )
         if parameter == "content":
             children.update({"allowed": True, "kind": "content", "provides": scope})
             review.append(f"{parameter}: app content children in {scope}")
@@ -474,8 +460,6 @@ def place_slot(
         review.append(f"{parameter}: app content children")
         return
     slot: dict[str, Any] = {"native": parameter}
-    if spec.get("extension"):
-        slot["extension"] = True
     if nullable:
         slot["nullable"] = True
         review.append(f"{parameter}: nullable named slot")

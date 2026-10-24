@@ -28,7 +28,6 @@ from pycompose.compiler.classpath_types import KotlinType
 from pycompose.compiler.opt_ins import OptInIndex, opt_in_index
 from pycompose.compiler.propose import SCALARS, identity, source_name, value_families
 from pycompose.compiler.resolution import MODIFIER, block_unaddressable_overloads
-from pycompose.core.registry_types import SCOPE_PATHS
 from pycompose.core.registry_vocabulary import (
     HOST_VALUES,
     RESOURCE_TYPES,
@@ -37,9 +36,6 @@ from pycompose.core.registry_vocabulary import (
 )
 from pycompose.schema.codegen.defaults import render_default
 
-# The pin reports receivers as classifier paths; derive that form from the
-# closed scope vocabulary instead of transcribing it a second time.
-SLASH_SCOPES = frozenset(path.replace(".", "/") for path in SCOPE_PATHS.values())
 HOLDER_KINDS = {holder: kind for kind, holder in STATE_HOLDERS.items()}
 TRANSIENT_BY_HOLDER = {holder: kind for kind, holder in TRANSIENT_HOLDERS.items()}
 
@@ -67,9 +63,9 @@ LAZY_LIST = "androidx/compose/foundation/lazy/LazyListScope"
 def _slot(value: KotlinType) -> dict[str, Any]:
     """Classify a composable lambda as a scoped, unscoped or consuming slot.
 
-    A receiver outside the closed scope vocabulary is not handed to the
-    children -- they compose as they would anywhere -- so the slot is unscoped;
-    only a scope the renderer provides reaches them (ADR-0016 decision 1).
+    A receiver the lambda carries is handed to the children, so a child that
+    composes only inside it can (ADR-0016 decision 1); one that needs none
+    composes as it would anywhere.
     """
     arguments = _function(value)
     receiver = None
@@ -81,12 +77,8 @@ def _slot(value: KotlinType) -> dict[str, Any]:
             raise ValueError(
                 f"slot scope needs a native protocol: {native_receiver.classifier}"
             )
-        if native_receiver.classifier in SLASH_SCOPES:
-            receiver = native_receiver.classifier
+        receiver = native_receiver.classifier
     rule: dict[str, Any] = {"policy": "slot", "receiver": receiver}
-    if receiver is None and "kotlin/ExtensionFunctionType" in value.annotations:
-        # The lambda still takes the receiver, so the call must pass one that does.
-        rule["extension"] = True
     if (
         len(arguments) == 1
         and not arguments[0].nullable
@@ -208,31 +200,34 @@ def _symbols(expression: dict[str, Any]) -> Iterator[str]:
         yield from _symbols(expression["receiver"])
 
 
-def _scope_providers(declarations: Iterable[Declaration]) -> set[str]:
+def _scope_providers(
+    declarations: Iterable[Declaration], scopes: frozenset[str]
+) -> set[str]:
     """Classifiers an app composes *inside*, not merely passes as a parameter.
 
-    A scope is provided by a composable that declares it as its own receiver (a
-    scoped builder) or as the receiver of a composable lambda parameter
-    (``content: FooScope.() -> Unit``). Members of such a type are composed by
-    the app within its provider; members of any other type only reach an app as
-    a parameter of the component that consumes them (ADR-0016 decision 1).
+    A builder's own receiver, or a slot lambda's (``scopes``); members of any
+    other type reach an app only as parameters (ADR-0016 decision 1).
     """
-    providers: set[str] = set()
-    for declaration in declarations:
-        if not declaration.composable:
-            continue
-        if declaration.receiver is not None:
-            providers.add(declaration.receiver.classifier)
-        for parameter in declaration.parameters:
-            value = parameter.type
-            if (
-                "androidx/compose/runtime/Composable" in value.annotations
-                and "kotlin/ExtensionFunctionType" in value.annotations
-                and value.arguments
-                and value.arguments[0][1] is not None
-            ):
-                providers.add(value.arguments[0][1].classifier)
-    return providers
+    return {d.receiver.classifier for d in declarations if d.receiver} | scopes
+
+
+def slot_scopes(declarations: Iterable[Declaration]) -> frozenset[str]:
+    """Receivers a pinned slot lambda carries: the only ones a host can hand down.
+
+    A declaration on one, or in one, has a parent to compose inside.
+    """
+    return frozenset(
+        receiver.classifier
+        for declaration in declarations
+        if declaration.composable
+        for parameter in declaration.parameters
+        if "androidx/compose/runtime/Composable" in parameter.type.annotations
+        and "kotlin/ExtensionFunctionType" in parameter.type.annotations
+        and parameter.type.arguments
+        and (receiver := parameter.type.arguments[0][1]) is not None
+        and not receiver.nullable
+        and not receiver.arguments
+    )
 
 
 def _surface(source: Declaration, scope_providers: set[str]) -> str:
@@ -258,19 +253,24 @@ def _plan(
     scope_providers: set[str],
     index: OptInIndex,
     objects: frozenset[str] = frozenset(),
+    scopes: frozenset[str] = frozenset(),
 ) -> dict[str, Any]:
     """Plan one exact overload, recording every capability it would need.
 
     A member of an ``object`` (``SearchBarDefaults.InputField``) is called
-    through the object, so its dispatch receiver needs no protocol.
+    through the object, so its dispatch receiver needs no protocol. A member of
+    a scope (``ExposedDropdownMenu``) composes inside it, as an extension on it
+    does: that receiver is the plan's.
     """
     parameters: dict[str, Any] = {}
     gaps = []
     holder = source.dispatch_receiver
     static = holder is not None and holder.classifier.replace("/", ".") in objects
+    member = holder is not None and not static and source.receiver is None
+    receiver = holder if member else source.receiver
     if (
-        (source.receiver and source.receiver.classifier not in SLASH_SCOPES)
-        or (holder and not static)
+        (receiver is not None and receiver.classifier not in scopes)
+        or (holder and not static and not member)
         or source.context_receivers
         or source.document.get("typeParameters")
     ):
@@ -324,7 +324,7 @@ def _plan(
         + source.name,
         "annotations": source.annotations,
         "parameters": parameters,
-        "receiver": source.receiver.document if source.receiver else None,
+        "receiver": receiver.document if receiver else None,
         "optIn": sorted(opt_ins),
         "dependencies": {
             "values": sorted(
@@ -336,7 +336,7 @@ def _plan(
                     for p in parameters.values()
                     if p["policy"] == "slot" and p["receiver"]
                 }
-                | ({source.receiver.classifier} if source.receiver else set())
+                | ({receiver.classifier} if receiver else set())
             ),
         },
         "gaps": gaps,
@@ -416,7 +416,10 @@ def propose_components(
     # Every representable argument is passed explicitly, so the arguments a call
     # carries are what Kotlin resolves on; overloads those arguments cannot tell
     # apart are refused rather than silently bound to a sibling.
-    scope_providers = _scope_providers(found.declarations)
+    scopes = slot_scopes(found.declarations)
+    scope_providers = _scope_providers(
+        (d for d in found.declarations if d.composable), scopes
+    )
     objects = frozenset(c.classifier for c in found.classes if c.class_kind == "OBJECT")
     candidates = [
         _plan(
@@ -427,6 +430,7 @@ def propose_components(
             scope_providers,
             index,
             objects,
+            scopes,
         )
         for source in sorted(
             found.ui,

@@ -9,11 +9,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlexBox
 import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,6 +48,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ElevatedSuggestionChip
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuBoxScope
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledIconToggleButton
@@ -70,6 +74,7 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.ModalWideNavigationRail
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
+import androidx.compose.material3.MultiChoiceSegmentedButtonRowScope
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
@@ -95,6 +100,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.ShortNavigationBar
 import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SingleChoiceSegmentedButtonRowScope
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Snackbar
@@ -106,7 +112,9 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldLabelScope
 import androidx.compose.material3.TimePickerDialog
+import androidx.compose.material3.TooltipScope
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.material3.VerticalDivider
@@ -150,6 +158,7 @@ import com.pycompose.ir.generated.ElevatedCard as ElevatedCardNode
 import com.pycompose.ir.generated.ElevatedCardWithoutOnClick as ElevatedCardWithoutOnClickNode
 import com.pycompose.ir.generated.ElevatedFilterChip as ElevatedFilterChipNode
 import com.pycompose.ir.generated.ElevatedSuggestionChip as ElevatedSuggestionChipNode
+import com.pycompose.ir.generated.ExposedDropdownMenu as ExposedDropdownMenuNode
 import com.pycompose.ir.generated.ExposedDropdownMenuBox as ExposedDropdownMenuBoxNode
 import com.pycompose.ir.generated.ExtendedFloatingActionButton as ExtendedFloatingActionButtonNode
 import com.pycompose.ir.generated.ExtendedFloatingActionButtonText as ExtendedFloatingActionButtonTextNode
@@ -251,10 +260,6 @@ import com.pycompose.renderer.publish
 import com.pycompose.renderer.scrollState
 import com.pycompose.renderer.sheetState
 import com.pycompose.renderer.sliderState
-import com.pycompose.renderer.slotInBoxScope
-import com.pycompose.renderer.slotInColumnScope
-import com.pycompose.renderer.slotInRowScope
-import com.pycompose.renderer.slotInTooltipScope
 import com.pycompose.renderer.snackbar
 import com.pycompose.renderer.swipeState
 import com.pycompose.renderer.textInputState
@@ -315,7 +320,7 @@ object GeneratedAdapters {
                 AnimatedVisibility(
                     modifier = modifier,
                     visible = model.props.visible,
-                    content = { context.children(model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("AssistChip") { node, modifier, context ->
@@ -354,15 +359,15 @@ object GeneratedAdapters {
                 Badge(
                     modifier = modifier,
                     containerColor = containerColorValue,
-                    content = { context.childrenInRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("BadgedBox") { node, modifier, context ->
                 val model = node as BadgedBoxNode
                 BadgedBox(
                     modifier = modifier,
-                    badge = context.slotInBoxScope(model.children, "badge") ?: {},
-                    content = { context.childrenInBoxScope(this, model.children) },
+                    badge = context.slotIn<BoxScope>(model.children, "badge") ?: {},
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("BasicAlertDialog") { node, modifier, context ->
@@ -410,7 +415,7 @@ object GeneratedAdapters {
                 val model = node as BottomAppBarNode
                 BottomAppBar(
                     modifier = modifier,
-                    content = { context.childrenInRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("BottomAppBarActions") { node, modifier, context ->
@@ -432,7 +437,7 @@ object GeneratedAdapters {
                     contentPadding = contentPaddingValue,
                     tonalElevation = tonalElevationValue,
                     windowInsets = windowInsetsValue,
-                    actions = context.slotInRowScope(model.children, "actions") ?: {},
+                    actions = context.slotIn<RowScope>(model.children, "actions") ?: {},
                     floatingActionButton = context.slot(model.children, "floatingActionButton"),
                 )
             }
@@ -468,7 +473,7 @@ object GeneratedAdapters {
                     sheetShape = sheetShapeValue,
                     sheetSwipeEnabled = model.props.sheetSwipeEnabled,
                     sheetTonalElevation = sheetTonalElevationValue,
-                    sheetContent = context.slotInColumnScope(model.children, "sheetContent") ?: {},
+                    sheetContent = context.slotIn<ColumnScope>(model.children, "sheetContent") ?: {},
                     topBar = context.slot(model.children, "topBar"),
                     content = { padding -> Column(Modifier.padding(padding)) { context.children(model.children) } },
                 )
@@ -479,7 +484,7 @@ object GeneratedAdapters {
                 Box(
                     modifier = modifier,
                     contentAlignment = contentAlignmentValue,
-                    content = { context.childrenInBoxScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("Button") { node, modifier, context ->
@@ -528,7 +533,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
                     interactionSource = interactionSourceValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("CardWithoutOnClick") { node, modifier, context ->
@@ -551,7 +556,7 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     elevation = elevationValue,
                     shape = shapeValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("CenterAlignedTopAppBar") { node, modifier, context ->
@@ -567,7 +572,7 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     expandedHeight = expandedHeightValue,
                     windowInsets = windowInsetsValue,
-                    actions = context.slotInRowScope(model.children, "actions") ?: {},
+                    actions = context.slotIn<RowScope>(model.children, "actions") ?: {},
                     navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() },
                     title = { context.slot(model.children, "title")?.invoke() },
                 )
@@ -644,7 +649,7 @@ object GeneratedAdapters {
                 Column(
                     modifier = scrollStateValue.attachTo(modifier, model.props.scrollable),
                     horizontalAlignment = horizontalAlignmentValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("DatePickerDialog") { node, modifier, context ->
@@ -663,7 +668,7 @@ object GeneratedAdapters {
                     tonalElevation = tonalElevationValue,
                     confirmButton = { context.slot(model.children, "confirmButton")?.invoke() },
                     dismissButton = context.slot(model.children, "dismissButton"),
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("DismissibleDrawerSheet") { node, modifier, context ->
@@ -685,7 +690,7 @@ object GeneratedAdapters {
                     drawerShape = drawerShapeValue,
                     drawerTonalElevation = drawerTonalElevationValue,
                     windowInsets = windowInsetsValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("DismissibleNavigationDrawer") { node, modifier, context ->
@@ -716,7 +721,7 @@ object GeneratedAdapters {
                     shape = shapeValue,
                     tonalElevation = tonalElevationValue,
                     inputField = { context.slot(model.children, "inputField")?.invoke() },
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("DropdownMenu") { node, modifier, context ->
@@ -747,7 +752,7 @@ object GeneratedAdapters {
                     shadowElevation = shadowElevationValue,
                     shape = shapeValue,
                     tonalElevation = tonalElevationValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("DropdownMenuItem") { node, modifier, context ->
@@ -833,7 +838,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
                     interactionSource = interactionSourceValue,
-                    content = { context.childrenInRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("ElevatedCard") { node, modifier, context ->
@@ -853,7 +858,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
                     interactionSource = interactionSourceValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("ElevatedCardWithoutOnClick") { node, modifier, context ->
@@ -869,7 +874,7 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     elevation = elevationValue,
                     shape = shapeValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("ElevatedFilterChip") { node, modifier, context ->
@@ -938,13 +943,48 @@ object GeneratedAdapters {
                     label = { context.slot(model.children, "label")?.invoke() },
                 )
             }
+            .registerScoped<ExposedDropdownMenuBoxScope>("ExposedDropdownMenu") { node, modifier, context ->
+                val model = node as ExposedDropdownMenuNode
+                val borderWire = model.props.border
+                val borderValue = when (borderWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.borderStroke(borderWire.value).getOrThrow()
+                }
+                val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
+                    is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.MenuDefaults.containerColor)
+                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.MenuDefaults.containerColor)
+                    else -> androidx.compose.material3.MenuDefaults.containerColor
+                }
+                val shadowElevationWire = model.props.shadowElevation
+                val shadowElevationValue = if (shadowElevationWire != null) shadowElevationWire.dp else androidx.compose.material3.MenuDefaults.ShadowElevation
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.MenuDefaults.shape
+                val tonalElevationWire = model.props.tonalElevation
+                val tonalElevationValue = if (tonalElevationWire != null) tonalElevationWire.dp else androidx.compose.material3.MenuDefaults.TonalElevation
+                val scrollStateValue = context.scrollState(model.props.offset, model.props.onScrollIdle)
+                context.publish(model.id, scrollStateValue)
+                ExposedDropdownMenu(
+                    modifier = modifier,
+                    border = borderValue,
+                    containerColor = containerColorValue,
+                    expanded = model.props.expanded,
+                    matchAnchorWidth = model.props.matchAnchorWidth,
+                    onDismissRequest = { context.actions.dispatch(model.props.onDismissRequest) },
+                    shadowElevation = shadowElevationValue,
+                    shape = shapeValue,
+                    tonalElevation = tonalElevationValue,
+                    scrollState = scrollStateValue,
+                    content = { context.childrenIn(this, model.children) },
+                )
+            }
             .register("ExposedDropdownMenuBox") { node, modifier, context ->
                 val model = node as ExposedDropdownMenuBoxNode
                 ExposedDropdownMenuBox(
                     modifier = modifier,
                     expanded = model.props.expanded,
                     onExpandedChange = { expanded -> context.event(model.props.onExpandedChange, JsonPrimitive(expanded)) },
-                    content = { context.children(model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("ExtendedFloatingActionButton") { node, modifier, context ->
@@ -966,7 +1006,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
                     interactionSource = interactionSourceValue,
-                    content = { context.childrenInRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("ExtendedFloatingActionButtonText") { node, modifier, context ->
@@ -1059,7 +1099,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
                     interactionSource = interactionSourceValue,
-                    content = { context.childrenInRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("FilledTonalIconButton") { node, modifier, context ->
@@ -1115,7 +1155,7 @@ object GeneratedAdapters {
                 val model = node as FlexBoxNode
                 FlexBox(
                     modifier = modifier,
-                    content = { context.children(model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("FloatingActionButton") { node, modifier, context ->
@@ -1147,7 +1187,7 @@ object GeneratedAdapters {
                     modifier = modifier,
                     itemHorizontalAlignment = itemHorizontalAlignmentValue,
                     maxItemsInEachColumn = model.props.maxItemsInEachColumn.toInt(),
-                    content = { context.children(model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("FlowRow") { node, modifier, context ->
@@ -1157,7 +1197,7 @@ object GeneratedAdapters {
                     modifier = modifier,
                     itemVerticalAlignment = itemVerticalAlignmentValue,
                     maxItemsInEachRow = model.props.maxItemsInEachRow.toInt(),
-                    content = { context.children(model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("HorizontalDivider") { node, modifier, context ->
@@ -1268,7 +1308,7 @@ object GeneratedAdapters {
                     modifier = modifier,
                     isPersistent = model.props.isPersistent,
                     interactionSource = interactionSourceValue,
-                    label = context.slotInTooltipScope(model.children, "label") ?: {},
+                    label = context.slotIn<TooltipScope>(model.children, "label") ?: {},
                     content = { context.children(model.children) },
                 )
             }
@@ -1310,7 +1350,7 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     expandedHeight = expandedHeightValue,
                     windowInsets = windowInsetsValue,
-                    actions = context.slotInRowScope(model.children, "actions") ?: {},
+                    actions = context.slotIn<RowScope>(model.children, "actions") ?: {},
                     navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() },
                     title = { context.slot(model.children, "title")?.invoke() },
                 )
@@ -1433,7 +1473,7 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     expandedHeight = expandedHeightValue,
                     windowInsets = windowInsetsValue,
-                    actions = context.slotInRowScope(model.children, "actions") ?: {},
+                    actions = context.slotIn<RowScope>(model.children, "actions") ?: {},
                     navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() },
                     title = { context.slot(model.children, "title")?.invoke() },
                 )
@@ -1447,7 +1487,7 @@ object GeneratedAdapters {
                         sheetState = sheetStateValue.state,
                         onDismissRequest = {},
                         dragHandle = context.slot(model.children, "dragHandle"),
-                        content = { context.childrenInColumnScope(this, model.children) },
+                        content = { context.childrenIn(this, model.children) },
                     )
                 }
             }
@@ -1470,7 +1510,7 @@ object GeneratedAdapters {
                     drawerShape = drawerShapeValue,
                     drawerTonalElevation = drawerTonalElevationValue,
                     windowInsets = windowInsetsValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("ModalNavigationDrawer") { node, modifier, context ->
@@ -1498,7 +1538,7 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
-            .registerMultiChoiceSegmentedButtonRowScoped("MultiChoiceSegmentedButton") { node, modifier, context ->
+            .registerScoped<MultiChoiceSegmentedButtonRowScope>("MultiChoiceSegmentedButton") { node, modifier, context ->
                 val model = node as MultiChoiceSegmentedButtonNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.segmentedButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.SegmentedButtonDefaults.colors()
@@ -1525,7 +1565,7 @@ object GeneratedAdapters {
                 MultiChoiceSegmentedButtonRow(
                     modifier = modifier,
                     space = spaceValue,
-                    content = { context.childrenInMultiChoiceSegmentedButtonRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("NavigationBar") { node, modifier, context ->
@@ -1544,10 +1584,10 @@ object GeneratedAdapters {
                     containerColor = containerColorValue,
                     tonalElevation = tonalElevationValue,
                     windowInsets = windowInsetsValue,
-                    content = { context.childrenInRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
-            .registerRowScoped("NavigationBarItem") { node, modifier, context ->
+            .registerScoped<RowScope>("NavigationBarItem") { node, modifier, context ->
                 val model = node as NavigationBarItemNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.navigationBarItemColors(colorsWire).getOrThrow() else androidx.compose.material3.NavigationBarItemDefaults.colors()
@@ -1590,8 +1630,8 @@ object GeneratedAdapters {
                     modifier = modifier,
                     containerColor = containerColorValue,
                     windowInsets = windowInsetsValue,
-                    header = context.slotInColumnScope(model.children, "header"),
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    header = context.slotIn<ColumnScope>(model.children, "header"),
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("NavigationRailItem") { node, modifier, context ->
@@ -1654,7 +1694,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
                     interactionSource = interactionSourceValue,
-                    content = { context.childrenInRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("OutlinedCard") { node, modifier, context ->
@@ -1674,7 +1714,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
                     interactionSource = interactionSourceValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("OutlinedCardWithoutOnClick") { node, modifier, context ->
@@ -1693,7 +1733,7 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     elevation = elevationValue,
                     shape = shapeValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("OutlinedIconButton") { node, modifier, context ->
@@ -1753,7 +1793,7 @@ object GeneratedAdapters {
                     textStyle = textStyleValue,
                     interactionSource = interactionSourceValue,
                     state = stateValue,
-                    label = context.slotIgnoringReceiver(model.children, "label"),
+                    label = context.slotIn<TextFieldLabelScope>(model.children, "label"),
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     placeholder = context.slot(model.children, "placeholder"),
                     prefix = context.slot(model.children, "prefix"),
@@ -1812,7 +1852,7 @@ object GeneratedAdapters {
                     drawerShape = drawerShapeValue,
                     drawerTonalElevation = drawerTonalElevationValue,
                     windowInsets = windowInsetsValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("PermanentNavigationDrawer") { node, modifier, context ->
@@ -1883,7 +1923,7 @@ object GeneratedAdapters {
                     contentAlignment = contentAlignmentValue,
                     isRefreshing = model.props.isRefreshing,
                     onRefresh = { context.actions.dispatch(model.props.onRefresh) },
-                    content = { context.childrenInBoxScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("RadioButton") { node, modifier, context ->
@@ -1906,7 +1946,7 @@ object GeneratedAdapters {
                 Row(
                     modifier = modifier,
                     verticalAlignment = verticalAlignmentValue,
-                    content = { context.childrenInRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("Scaffold") { node, modifier, context ->
@@ -1945,7 +1985,7 @@ object GeneratedAdapters {
                     tonalElevation = tonalElevationValue,
                     windowInsets = windowInsetsValue,
                     inputField = { context.slot(model.children, "inputField")?.invoke() },
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("SecondaryScrollableTabRow") { node, modifier, context ->
@@ -2019,7 +2059,7 @@ object GeneratedAdapters {
                     textStyle = textStyleValue,
                     interactionSource = interactionSourceValue,
                     state = stateValue,
-                    label = context.slotIgnoringReceiver(model.children, "label"),
+                    label = context.slotIn<TextFieldLabelScope>(model.children, "label"),
                     leadingIcon = context.slot(model.children, "leadingIcon"),
                     placeholder = context.slot(model.children, "placeholder"),
                     prefix = context.slot(model.children, "prefix"),
@@ -2028,7 +2068,7 @@ object GeneratedAdapters {
                     trailingIcon = context.slot(model.children, "trailingIcon"),
                 )
             }
-            .registerSingleChoiceSegmentedButtonRowScoped("SegmentedButton") { node, modifier, context ->
+            .registerScoped<SingleChoiceSegmentedButtonRowScope>("SegmentedButton") { node, modifier, context ->
                 val model = node as SegmentedButtonNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.segmentedButtonColors(colorsWire).getOrThrow() else androidx.compose.material3.SegmentedButtonDefaults.colors()
@@ -2059,7 +2099,7 @@ object GeneratedAdapters {
                 val model = node as SharedTransitionLayoutNode
                 SharedTransitionLayout(
                     modifier = modifier,
-                    content = { context.children(model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("ShortNavigationBar") { node, modifier, context ->
@@ -2104,7 +2144,7 @@ object GeneratedAdapters {
                 SingleChoiceSegmentedButtonRow(
                     modifier = modifier,
                     space = spaceValue,
-                    content = { context.childrenInSingleChoiceSegmentedButtonRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("Slider") { node, modifier, context ->
@@ -2375,8 +2415,8 @@ object GeneratedAdapters {
                     enableDismissFromStartToEnd = model.props.enableDismissFromStartToEnd,
                     gesturesEnabled = model.props.gesturesEnabled,
                     state = stateValue,
-                    backgroundContent = context.slotInRowScope(model.children, "backgroundContent") ?: {},
-                    content = { context.childrenInRowScope(this, model.children) },
+                    backgroundContent = context.slotIn<RowScope>(model.children, "backgroundContent") ?: {},
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("Switch") { node, modifier, context ->
@@ -2428,7 +2468,7 @@ object GeneratedAdapters {
                     selected = model.props.selected,
                     selectedContentColor = selectedContentColorValue,
                     interactionSource = interactionSourceValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("TextAnnotatedString") { node, modifier, context ->
@@ -2527,7 +2567,7 @@ object GeneratedAdapters {
                     dismissButton = context.slot(model.children, "dismissButton"),
                     modeToggleButton = context.slot(model.children, "modeToggleButton"),
                     title = { context.slot(model.children, "title")?.invoke() },
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("TopAppBar") { node, modifier, context ->
@@ -2543,7 +2583,7 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     expandedHeight = expandedHeightValue,
                     windowInsets = windowInsetsValue,
-                    actions = context.slotInRowScope(model.children, "actions") ?: {},
+                    actions = context.slotIn<RowScope>(model.children, "actions") ?: {},
                     navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() },
                     title = { context.slot(model.children, "title")?.invoke() },
                 )

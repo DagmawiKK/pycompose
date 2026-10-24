@@ -283,7 +283,7 @@ def test_styling_hooks_leave_the_component_denominator(tmp_path):
         },
         {
             "reason": "receiver/generic declaration needs a native protocol",
-            "blocks": ["Inside"],
+            "blocks": [],
             "hooks": ["Thumb"],
             "limits": [],
         },

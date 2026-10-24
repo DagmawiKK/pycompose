@@ -53,6 +53,7 @@ __all__ = [
     "ElevatedSuggestionChip",
     "ExpandedDockedSearchBar",
     "ExpandedFullScreenSearchBar",
+    "ExposedDropdownMenu",
     "ExposedDropdownMenuBox",
     "ExtendedFloatingActionButton",
     "ExtendedFloatingActionButtonText",
@@ -397,6 +398,7 @@ class AnimatedVisibility(Component):
         modifier: Modifier | None = None,
         visible: bool,
         children: Content = (),
+        content: Content | None = None,
     ) -> None:
         """Construct a registered AnimatedVisibility.
 
@@ -406,12 +408,19 @@ class AnimatedVisibility(Component):
             modifier: Native modifier; None uses its default.
             visible: Required native visible.
             children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
 
         Raises:
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
         props["visible"] = visible
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -2343,6 +2352,85 @@ class ExpandedFullScreenSearchBar(Component):
         )
 
 
+class ExposedDropdownMenu(Component):
+    """Native ExposedDropdownMenu; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ExposedDropdownMenu"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        container_color: JsonValue | Expression | None = None,
+        expanded: bool,
+        match_anchor_width: bool | None = None,
+        modifier: Modifier | None = None,
+        offset: int | float | None = None,
+        on_dismiss_request: ActionTarget,
+        on_scroll_idle: ActionTarget | None = None,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered ExposedDropdownMenu.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            container_color: Native containerColor; None uses its default.
+            expanded: Required native expanded.
+            match_anchor_width: Native matchAnchorWidth; None uses its default.
+            modifier: Native modifier; None uses its default.
+            offset: Native offset; None uses its default.
+            on_dismiss_request: Required native onDismissRequest.
+            on_scroll_idle: Native onScrollIdle; None uses its default.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if container_color is not None:
+            props["container_color"] = container_color
+        props["expanded"] = expanded
+        if match_anchor_width is not None:
+            props["match_anchor_width"] = match_anchor_width
+        if offset is not None:
+            props["offset"] = offset
+        props["on_dismiss_request"] = on_dismiss_request
+        if on_scroll_idle is not None:
+            props["on_scroll_idle"] = on_scroll_idle
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class ExposedDropdownMenuBox(Component):
     """Native ExposedDropdownMenuBox;
     props and defaults follow the component manifest."""
@@ -2358,6 +2446,7 @@ class ExposedDropdownMenuBox(Component):
         modifier: Modifier | None = None,
         on_expanded_change: ActionTarget,
         children: Content = (),
+        content: Content | None = None,
     ) -> None:
         """Construct a registered ExposedDropdownMenuBox.
 
@@ -2368,6 +2457,7 @@ class ExposedDropdownMenuBox(Component):
             modifier: Native modifier; None uses its default.
             on_expanded_change: Required native onExpandedChange.
             children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
 
         Raises:
             IrValidationError: If children are given twice.
@@ -2375,6 +2465,12 @@ class ExposedDropdownMenuBox(Component):
         props: dict[str, PropValue] = {}
         props["expanded"] = expanded
         props["on_expanded_change"] = on_expanded_change
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -2916,6 +3012,7 @@ class FlexBox(Component):
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
+        content: Content | None = None,
     ) -> None:
         """Construct a registered FlexBox.
 
@@ -2924,11 +3021,18 @@ class FlexBox(Component):
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
 
         Raises:
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -3019,6 +3123,7 @@ class FlowColumn(Component):
         max_items_in_each_column: int | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
+        content: Content | None = None,
     ) -> None:
         """Construct a registered FlowColumn.
 
@@ -3031,6 +3136,7 @@ class FlowColumn(Component):
                 default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
 
         Raises:
             IrValidationError: If children are given twice.
@@ -3040,6 +3146,12 @@ class FlowColumn(Component):
             props["item_horizontal_alignment"] = item_horizontal_alignment
         if max_items_in_each_column is not None:
             props["max_items_in_each_column"] = max_items_in_each_column
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -3062,6 +3174,7 @@ class FlowRow(Component):
         max_items_in_each_row: int | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
+        content: Content | None = None,
     ) -> None:
         """Construct a registered FlowRow.
 
@@ -3073,6 +3186,7 @@ class FlowRow(Component):
             max_items_in_each_row: Native maxItemsInEachRow; None uses its default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
 
         Raises:
             IrValidationError: If children are given twice.
@@ -3082,6 +3196,12 @@ class FlowRow(Component):
             props["item_vertical_alignment"] = item_vertical_alignment
         if max_items_in_each_row is not None:
             props["max_items_in_each_row"] = max_items_in_each_row
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -6288,6 +6408,7 @@ class SharedTransitionLayout(Component):
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
+        content: Content | None = None,
     ) -> None:
         """Construct a registered SharedTransitionLayout.
 
@@ -6296,11 +6417,18 @@ class SharedTransitionLayout(Component):
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
 
         Raises:
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id

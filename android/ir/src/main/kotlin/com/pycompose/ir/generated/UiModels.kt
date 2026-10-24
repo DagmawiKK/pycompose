@@ -824,6 +824,33 @@ data class ExpandedFullScreenSearchBar(
 }
 
 @Serializable
+data class ExposedDropdownMenuProps(
+    val `border`: OptionalValue = OptionalValue.Absent,
+    val `containerColor`: JsonElement? = null,
+    val `expanded`: Boolean,
+    val `matchAnchorWidth`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `offset`: Double? = null,
+    val `onDismissRequest`: String,
+    val `onScrollIdle`: String? = null,
+    val `shadowElevation`: Double? = null,
+    val `shape`: JsonElement? = null,
+    val `tonalElevation`: Double? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ExposedDropdownMenu")
+data class ExposedDropdownMenu(
+    override val id: String,
+    override val props: ExposedDropdownMenuProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "ExposedDropdownMenu"
+}
+
+@Serializable
 data class ExposedDropdownMenuBoxProps(
     val `expanded`: Boolean,
     override val `modifier`: JsonObject? = null,

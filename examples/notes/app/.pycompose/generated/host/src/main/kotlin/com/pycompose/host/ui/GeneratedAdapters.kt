@@ -8,6 +8,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -87,7 +88,7 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     shape = shapeValue,
                     interactionSource = interactionSourceValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("CardWithoutOnClick") { node, modifier, context ->
@@ -110,7 +111,7 @@ object GeneratedAdapters {
                     colors = colorsValue,
                     elevation = elevationValue,
                     shape = shapeValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("Column") { node, modifier, context ->
@@ -121,7 +122,7 @@ object GeneratedAdapters {
                 Column(
                     modifier = scrollStateValue.attachTo(modifier, model.props.scrollable),
                     horizontalAlignment = horizontalAlignmentValue,
-                    content = { context.childrenInColumnScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("FloatingActionButton") { node, modifier, context ->
@@ -266,7 +267,7 @@ object GeneratedAdapters {
                         sheetState = sheetStateValue.state,
                         onDismissRequest = {},
                         dragHandle = context.slot(model.children, "dragHandle"),
-                        content = { context.childrenInColumnScope(this, model.children) },
+                        content = { context.childrenIn(this, model.children) },
                     )
                 }
             }
@@ -286,10 +287,10 @@ object GeneratedAdapters {
                     containerColor = containerColorValue,
                     tonalElevation = tonalElevationValue,
                     windowInsets = windowInsetsValue,
-                    content = { context.childrenInRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
-            .registerRowScoped("NavigationBarItem") { node, modifier, context ->
+            .registerScoped<RowScope>("NavigationBarItem") { node, modifier, context ->
                 val model = node as NavigationBarItemNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.navigationBarItemColors(colorsWire).getOrThrow() else androidx.compose.material3.NavigationBarItemDefaults.colors()
@@ -312,7 +313,7 @@ object GeneratedAdapters {
                 Row(
                     modifier = modifier,
                     verticalAlignment = verticalAlignmentValue,
-                    content = { context.childrenInRowScope(this, model.children) },
+                    content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("Scaffold") { node, modifier, context ->

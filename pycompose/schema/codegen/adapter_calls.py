@@ -18,11 +18,12 @@ from pycompose.schema.codegen.adapter_helpers import (
     RESOLVER_OWNER,
     RESOLVER_RETURN,
     SCALAR_KOTLIN,
-    STATE_ATTACH_GATES,
     STATE_CONSTRUCTOR_PROPS,
     _camel,
     _Fragments,
+    attach_gate,
     qualify,
+    simple,
     state_call,
 )
 from pycompose.schema.codegen.values import resolver_call
@@ -260,7 +261,7 @@ def _state(
     gated = state["kind"] in GATED_STATES
     # An attach family fills no parameter: its holder rides the modifier the
     # composer rewrites, and the component is composed unconditionally.
-    attached = state["kind"] in STATE_ATTACH_GATES
+    attached = attach_gate(state, props) is not None
     arguments = (
         []
         if attached
@@ -434,7 +435,7 @@ def _slot_body(
         read = f"items({listed}, key = {{ it.id }}) {{ context.node(it) }}"
     elif name is None:
         read = (
-            f"context.childrenIn{provides}(this, {nodes})"
+            f"context.childrenIn(this, {nodes})"
             if provides is not None and consume is None
             else f"context.children({nodes})"
         )
@@ -473,15 +474,12 @@ def _named_slot(slot_name: str, slot: dict[str, Any]) -> str:
         # that same receiver to scoped children.  A non-null parameter still
         # needs a lambda when the format is empty; the empty lambda preserves
         # the native default.
-        call = f'context.slotIn{provides}(model.children, "{slot_name}")'
+        call = f'context.slotIn<{simple(provides)}>(model.children, "{slot_name}")'
         if slot.get("nullable"):
             return f"{native} = {call}"
         return f"{native} = {call} ?: {{}}"
     if slot.get("nullable") and consume is None:
-        # A native lambda with a receiver the children do not use takes the
-        # slot through a lambda of that receiver's type.
-        call = "slotIgnoringReceiver" if slot.get("extension") else "slot"
-        return f'{native} = context.{call}(model.children, "{slot_name}")'
+        return f'{native} = context.slot(model.children, "{slot_name}")'
     body, parameter = _slot_body("model.children", slot_name, kind, consume)
     prefix = f"{parameter} -> " if parameter is not None else ""
     return f"{native} = {{ {prefix}{body} }}"

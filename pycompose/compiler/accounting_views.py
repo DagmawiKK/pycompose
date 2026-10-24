@@ -15,7 +15,6 @@ from typing import Any
 
 from pycompose.compiler.classpath_dump import Declaration, Inventory
 from pycompose.core.registry_vocabulary import (
-    SCOPE_PATHS,
     STATE_KINDS,
     TRANSIENT_KINDS,
 )
@@ -124,7 +123,13 @@ def approval_facts(
         "jvmIdentities": jvm_identities,
         "holders": holders,
         "plannedOwners": planned_owners,
-        "scopes": frozenset(path.replace(".", "/") for path in SCOPE_PATHS.values()),
+        # The receivers planned slots hand down: what a scope member composes in.
+        "scopes": frozenset(
+            parameter["receiver"]
+            for candidate in candidates
+            for parameter in candidate["parameters"].values()
+            if parameter.get("policy") == "slot" and parameter.get("receiver")
+        ),
     }
 
 

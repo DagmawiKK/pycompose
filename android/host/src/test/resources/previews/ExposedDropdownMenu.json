@@ -1,0 +1,50 @@
+{
+ "metadata": {
+  "actionBindings": {
+   "app.preview.onDismissRequest": {
+    "bound": {},
+    "handlerId": "preview.onDismissRequest",
+    "payload": {}
+   },
+   "app.preview.onExpandedChange": {
+    "bound": {},
+    "handlerId": "preview.onExpandedChange",
+    "payload": {
+     "expanded": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   }
+  }
+ },
+ "root": {
+  "children": [
+   {
+    "children": [
+     {
+      "id": "preview.child",
+      "props": {
+       "text": "ExposedDropdownMenu"
+      },
+      "type": "Text"
+     }
+    ],
+    "id": "preview",
+    "props": {
+     "expanded": true,
+     "onDismissRequest": "app.preview.onDismissRequest"
+    },
+    "type": "ExposedDropdownMenu"
+   }
+  ],
+  "id": "provider",
+  "props": {
+   "expanded": true,
+   "onExpandedChange": "app.preview.onExpandedChange"
+  },
+  "type": "ExposedDropdownMenuBox"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

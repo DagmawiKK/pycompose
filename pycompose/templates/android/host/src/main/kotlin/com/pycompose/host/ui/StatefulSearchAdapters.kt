@@ -168,7 +168,7 @@ private fun ComponentRegistry.Builder.dockedExpandedBars(): ComponentRegistry.Bu
                     docked.props.tonalElevation?.dp ?: SearchBarDefaults.TonalElevation,
                 shadowElevation =
                     docked.props.shadowElevation?.dp ?: SearchBarDefaults.ShadowElevation,
-                content = { context.childrenInColumnScope(this, docked.children) },
+                content = { context.childrenIn(this, docked.children) },
             )
         }
     }
@@ -198,7 +198,7 @@ private fun ComponentRegistry.Builder.fullScreenExpandedBars(): ComponentRegistr
                 shadowElevation =
                     full.props.shadowElevation?.dp ?: SearchBarDefaults.ShadowElevation,
                 windowInsets = { SearchBarDefaults.fullScreenWindowInsets },
-                content = { context.childrenInColumnScope(this, full.children) },
+                content = { context.childrenIn(this, full.children) },
             )
         }
     }

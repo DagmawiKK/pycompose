@@ -1,7 +1,7 @@
 """The closed vocabularies of the component registry.
 
 One module owns every closed set the registry, the codegen and the pin
-audit speak: slot kinds, scope names and their compiler paths,
+audit speak: slot kinds,
 interaction and state families, prop owners, adapter modes, decoders and
 delegating wrappers. A closed set that two layers must agree on is safest
 when the second definition cannot exist: these tuples are the only
@@ -24,41 +24,6 @@ CONSUMERS = ("paddingValues",)
 
 A consumed scope is never lost: the adapter applies it in the one place Compose
 idiomatically applies it, and the app cannot apply it twice.
-"""
-
-SCOPES = (
-    "RowScope",
-    "ColumnScope",
-    "BoxScope",
-    "SingleChoiceSegmentedButtonRowScope",
-    "MultiChoiceSegmentedButtonRowScope",
-    "TooltipScope",
-)
-"""Composition scopes a component can require or hand to its children.
-
-Closed like :data:`CONSUMERS`: the renderer owns one registration path per scope,
-so a name outside this tuple has no path to land in. The first three are layout
-scopes; the segmented-button rows and the tooltip add receivers whose members
-exist only inside their own content lambdas.
-"""
-
-SCOPE_PATHS = {
-    "RowScope": "androidx.compose.foundation.layout.RowScope",
-    "ColumnScope": "androidx.compose.foundation.layout.ColumnScope",
-    "BoxScope": "androidx.compose.foundation.layout.BoxScope",
-    "SingleChoiceSegmentedButtonRowScope": (
-        "androidx.compose.material3.SingleChoiceSegmentedButtonRowScope"
-    ),
-    "MultiChoiceSegmentedButtonRowScope": (
-        "androidx.compose.material3.MultiChoiceSegmentedButtonRowScope"
-    ),
-    "TooltipScope": "androidx.compose.material3.TooltipScope",
-}
-"""Name -> fully-qualified receiver path for every member of :data:`SCOPES`.
-
-Paired with the closed tuple and verified against it by the vocabulary tests;
-codegen and the pin audit derive the compiler's slash form from these paths, so
-no second path table exists anywhere.
 """
 
 INTERACTION_KINDS = ("press", "focus", "hover")

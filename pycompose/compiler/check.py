@@ -10,10 +10,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.compiler.candidate_props import scope_for
 from pycompose.compiler.classpath_dump import Inventory
 from pycompose.compiler.component_binding import resolutions, unversioned
 from pycompose.compiler.propose import refresh
-from pycompose.core.registry_types import SCOPE_PATHS
 
 DERIVED = ("source", "kotlinType", "native", "omitted")
 """Fields the pinned compiler alone decides; approved policy only adds."""
@@ -128,12 +128,11 @@ def _content_scope(declaration: Any, native: str) -> str | None:
         if "kotlin/ExtensionFunctionType" not in parameter.type.annotations:
             continue
         arguments = [type_ for _, type_ in parameter.type.arguments]
-        if not arguments:
+        # Children compose in a receiver-only lambda: one that also passes an
+        # argument (a key, an item) is another protocol's.
+        if len(arguments) != 2 or arguments[0] is None:
             continue
-        classifier = arguments[0].classifier
-        for scope, path in SCOPE_PATHS.items():
-            if path.replace(".", "/") == classifier:
-                return scope
+        return scope_for(arguments[0].classifier)
     return None
 
 
@@ -158,9 +157,9 @@ def scope_errors(name: str, entry: dict[str, Any], overloads: list[Any]) -> list
     with_parameters = [d for d in overloads if d.parameters]
     declared = entry.get("scope")
     if declared is not None:
-        path = SCOPE_PATHS.get(declared, "").replace(".", "/")
         if not any(
-            d.receiver is not None and d.receiver.classifier == path
+            (receiver := d.receiver or d.dispatch_receiver) is not None
+            and scope_for(receiver.classifier) == declared
             for d in with_parameters
         ):
             errors.append(
@@ -186,6 +185,7 @@ def scope_errors(name: str, entry: dict[str, Any], overloads: list[Any]) -> list
             )
     elif (
         children.get("allowed")
+        and children.get("kind") != "items"
         and with_content
         and all(_content_scope(d, native) is not None for d in with_content)
     ):

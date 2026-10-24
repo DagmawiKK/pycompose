@@ -164,11 +164,16 @@ def test_recognition_classifies_support_by_what_consumes_it() -> None:
             "status": "call-plan",
             "call": "androidx.compose.material3.Button",
             "parameters": {
+                "content": {
+                    "policy": "slot",
+                    "receiver": "androidx/compose/foundation/layout/RowScope",
+                    "type": type_doc("kotlin/Function1"),
+                },
                 "interactionSource": {
                     "type": type_doc(
                         "androidx/compose/foundation/interaction/MutableInteractionSource"
                     )
-                }
+                },
             },
             "receiver": None,
         }

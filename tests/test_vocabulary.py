@@ -6,8 +6,6 @@ import ast
 import re
 from pathlib import Path
 
-from pycompose.core.registry_types import CONSUMERS, SCOPE_PATHS, SCOPES, SLOT_KINDS
-
 ROOT = Path(__file__).resolve().parents[1]
 HOME = ROOT / "pycompose" / "core" / "registry_vocabulary.py"
 
@@ -69,9 +67,3 @@ def test_the_closed_vocabularies_are_defined_in_one_module() -> None:
             assert not re.search(
                 rf"^{term}\s*(?::[^=\n]*)?=", text, re.MULTILINE
             ), f"{path} redefines {term}; import it from registry_vocabulary"
-
-
-def test_scope_paths_pair_with_the_closed_scope_tuple() -> None:
-    """The path table covers the scope tuple exactly; neither grows alone."""
-    assert set(SCOPE_PATHS) == set(SCOPES)
-    assert SLOT_KINDS and CONSUMERS

@@ -20,7 +20,6 @@ from typing import Any
 
 from pycompose.compiler.classpath_dump import Declaration
 from pycompose.compiler.propose_lookup import source_name
-from pycompose.core.registry_types import SCOPE_PATHS
 from pycompose.schema.codegen.adapter_helpers import (
     STATE_ATTACH_GATES,
     STATE_CONSTRUCTOR_PROPS,
@@ -203,10 +202,8 @@ def _wiring_face(
     if children.get("allowed"):
         name = children.get("native", "content")
         provides = children.get("provides")
-        if children.get("kind") == "items":
-            receiver = ITEMS_RECEIVER
-        else:
-            receiver = (SCOPE_PATHS.get(provides, provides) or "") if provides else ""
+        items = children.get("kind") == "items"
+        receiver = ITEMS_RECEIVER if items else provides or ""
         add(
             "children",
             name,
@@ -356,9 +353,9 @@ def _content_parameter(
 
 
 def _has_receiver(declaration: Declaration, scope: str) -> bool:
-    """Whether one declaration is an extension on the named composition scope."""
-    path = SCOPE_PATHS.get(scope, "").replace(".", "/")
-    return declaration.receiver is not None and declaration.receiver.classifier == path
+    """Whether one declaration composes inside the named scope: on it, or in it."""
+    receiver = declaration.receiver or declaration.dispatch_receiver
+    return receiver is not None and source_name(receiver.classifier) == scope
 
 
 def accepts(

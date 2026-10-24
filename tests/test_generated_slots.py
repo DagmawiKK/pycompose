@@ -53,7 +53,7 @@ def test_primary_children_reach_the_declared_parameter() -> None:
     says nothing about where that parameter sits in the signature.
     """
     block = render("Column", components()["Column"])
-    assert "content = { context.childrenInColumnScope(this, model.children) }," in block
+    assert "content = { context.childrenIn(this, model.children) }," in block
     # A parent whose lambda carries no scope passes nothing down.
     drawer = components()["DismissibleNavigationDrawer"]
     block = render("DismissibleNavigationDrawer", drawer)
@@ -82,9 +82,7 @@ def test_search_bars_separate_the_input_field_from_the_result_content() -> None:
             'inputField = { context.slot(model.children, "inputField")?.invoke() }'
             in block
         )
-        assert (
-            "content = { context.childrenInColumnScope(this, model.children) }" in block
-        )
+        assert "content = { context.childrenIn(this, model.children) }" in block
 
 
 def test_a_nullable_slot_keeps_compose_default() -> None:
@@ -152,7 +150,7 @@ def test_a_scoped_component_registers_through_its_scope() -> None:
     only inside a lambda that carries that receiver.
     """
     block = render("NavigationBarItem", components()["NavigationBarItem"])
-    assert '.registerRowScoped("NavigationBarItem")' in block
+    assert '.registerScoped<RowScope>("NavigationBarItem")' in block
 
 
 def test_a_provider_hands_its_children_the_receiver() -> None:
@@ -161,13 +159,9 @@ def test_a_provider_hands_its_children_the_receiver() -> None:
     The receiver is what makes a scoped child composable at all, so a provided
     scope composes the children inside it rather than beside it.
     """
-    for name, scope in (
-        ("Box", "BoxScope"),
-        ("Column", "ColumnScope"),
-        ("Row", "RowScope"),
-    ):
+    for name in ("Box", "Column", "Row"):
         block = render(name, components()[name])
-        assert f"context.childrenIn{scope}(this, model.children)" in block, name
+        assert "context.childrenIn(this, model.children)" in block, name
 
 
 def test_a_scoped_named_slot_hands_its_receiver_to_its_children() -> None:
@@ -177,39 +171,40 @@ def test_a_scoped_named_slot_hands_its_receiver_to_its_children() -> None:
     scoped renderer too; the non-null form keeps an empty lambda so the native
     empty-lambda default survives.
     """
-    from pycompose.schema.codegen.adapters import extra_imports
-
     top = render("TopAppBar", components()["TopAppBar"])
-    assert 'actions = context.slotInRowScope(model.children, "actions") ?: {}' in top
+    assert 'actions = context.slotIn<RowScope>(model.children, "actions") ?: {}' in top
     assert (
         'navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() }'
         in top
     )
-    assert "com.pycompose.renderer.slotInRowScope" in extra_imports(
-        components()["TopAppBar"]
-    )
-
     rail = render("NavigationRail", components()["NavigationRail"])
-    assert 'header = context.slotInColumnScope(model.children, "header")' in rail
-    assert "com.pycompose.renderer.slotInColumnScope" in extra_imports(
-        components()["NavigationRail"]
-    )
-
+    assert 'header = context.slotIn<ColumnScope>(model.children, "header")' in rail
     badge = render("BadgedBox", components()["BadgedBox"])
-    assert 'badge = context.slotInBoxScope(model.children, "badge") ?: {}' in badge
-    assert "com.pycompose.renderer.slotInBoxScope" in extra_imports(
-        components()["BadgedBox"]
-    )
+    assert 'badge = context.slotIn<BoxScope>(model.children, "badge") ?: {}' in badge
+
+
+def test_the_adapters_import_every_receiver_they_name() -> None:
+    """A scope is its receiver class, so the file imports it, whatever library."""
+    from pycompose.schema.codegen.adapters import render_file
+
+    source = render_file(json.loads(SCHEMA_PATH.read_text()))
+    for scope in (
+        "androidx.compose.foundation.layout.RowScope",
+        "androidx.compose.material3.ExposedDropdownMenuBoxScope",
+    ):
+        assert f"import {scope}\n" in source
+    # A member of its scope is called on the receiver, so it is never imported.
+    assert "import androidx.compose.material3.ExposedDropdownMenu\n" not in source
 
 
 @pytest.mark.parametrize(
     ("component", "change", "message"),
     [
-        ("NavigationBarItem", {"scope": "TouchScope"}, "scope must be one of"),
+        ("NavigationBarItem", {"scope": "TouchScope"}, "must name a receiver class"),
         (
             "Card",
             {"children": {"allowed": True, "kind": "content", "provides": "Touch"}},
-            "children.provides must be one of",
+            "children.provides must name a receiver class",
         ),
         (
             "Card",
@@ -217,7 +212,7 @@ def test_a_scoped_named_slot_hands_its_receiver_to_its_children() -> None:
                 "children": {
                     "allowed": True,
                     "kind": "content",
-                    "provides": "RowScope",
+                    "provides": "androidx.compose.foundation.layout.RowScope",
                     "consume": "paddingValues",
                 }
             },
@@ -225,13 +220,19 @@ def test_a_scoped_named_slot_hands_its_receiver_to_its_children() -> None:
         ),
         (
             "Card",
-            {"children": {"allowed": True, "kind": "items", "provides": "RowScope"}},
+            {
+                "children": {
+                    "allowed": True,
+                    "kind": "items",
+                    "provides": "androidx.compose.foundation.layout.RowScope",
+                }
+            },
             "needs the content kind",
         ),
         (
             "Scaffold",
             {"slots": {"topBar": {"native": "topBar", "provides": "Touch"}}},
-            "'provides' must be one of",
+            "'provides' must name a receiver class",
         ),
         (
             "Scaffold",
@@ -239,7 +240,7 @@ def test_a_scoped_named_slot_hands_its_receiver_to_its_children() -> None:
                 "slots": {
                     "topBar": {
                         "native": "topBar",
-                        "provides": "RowScope",
+                        "provides": "androidx.compose.foundation.layout.RowScope",
                         "consume": "paddingValues",
                     }
                 }
@@ -253,7 +254,7 @@ def test_a_scoped_named_slot_hands_its_receiver_to_its_children() -> None:
                     "topBar": {
                         "native": "topBar",
                         "kind": "items",
-                        "provides": "RowScope",
+                        "provides": "androidx.compose.foundation.layout.RowScope",
                     }
                 }
             },
@@ -268,7 +269,7 @@ def test_the_schema_refuses_a_scope_it_cannot_wire(
     change: dict,
     message: str,
 ) -> None:
-    """The vocabulary is closed on both ends, so a typo fails at codegen."""
+    """A scope names its receiver class on both ends, so a typo fails at codegen."""
     from pycompose.schema.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())

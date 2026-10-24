@@ -122,9 +122,13 @@ def test_the_tooltip_trio_shares_a_scope_and_one_visibility_state() -> None:
         "value": "visible",
         "report": "onVisibilityChange",
     }
-    assert box["slots"]["tooltip"]["provides"] == "TooltipScope"
+    assert (
+        box["slots"]["tooltip"]["provides"] == "androidx.compose.material3.TooltipScope"
+    )
     for name in ("PlainTooltip", "RichTooltip"):
-        assert components[name]["scope"] == "TooltipScope", name
+        assert (
+            components[name]["scope"] == "androidx.compose.material3.TooltipScope"
+        ), name
     for name in ("PlainTooltip", "RichTooltip"):
         for prop in components[name]["props"].values():
             if prop["type"] == "color":

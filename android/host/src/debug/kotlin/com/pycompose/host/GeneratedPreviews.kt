@@ -235,6 +235,12 @@ private fun ExpandedFullScreenSearchBarPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "provider.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "ExpandedFullScreenSearchBar"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "expandedBar", "type": "ExpandedFullScreenSearchBar"}], "id": "provider", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "ExposedDropdownMenu", showBackground = true)
+@Composable
+private fun ExposedDropdownMenuPreview() {
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}, "app.preview.onExpandedChange": {"bound": {}, "handlerId": "preview.onExpandedChange", "payload": {"expanded": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"children": [{"id": "preview.child", "props": {"text": "ExposedDropdownMenu"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onDismissRequest": "app.preview.onDismissRequest"}, "type": "ExposedDropdownMenu"}], "id": "provider", "props": {"expanded": true, "onExpandedChange": "app.preview.onExpandedChange"}, "type": "ExposedDropdownMenuBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "ExposedDropdownMenuBox", showBackground = true)
 @Composable
 private fun ExposedDropdownMenuBoxPreview() {

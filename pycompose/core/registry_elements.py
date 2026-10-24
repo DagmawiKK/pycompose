@@ -16,7 +16,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import cast
 
-from pycompose.core.registry_vocabulary import CONSUMERS, SCOPES, SLOT_KINDS
+from pycompose.core.registry_vocabulary import CONSUMERS, SLOT_KINDS
 from pycompose.errors import ComponentRegistryError
 
 
@@ -193,17 +193,15 @@ class ChildrenRule:
                 f"{where}: 'consume' must be one of {', '.join(CONSUMERS)}"
             )
         provides = data.get("provides")
-        if provides is not None and provides not in SCOPES:
-            raise ComponentRegistryError(
-                f"{where}: 'provides' must be one of {', '.join(SCOPES)}"
-            )
+        if provides is not None and (not isinstance(provides, str) or not provides):
+            raise ComponentRegistryError(f"{where}: 'provides' must name a scope")
         return cls(
             allowed=allowed,
             kind=kind,
             min=minimum,
             native=native,
             consume=cast("str | None", consume),
-            provides=cast("str | None", provides),
+            provides=provides,
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -238,8 +236,6 @@ class SlotRule:
         consume: Slot scope the adapter consumes on the subtree's behalf.
         provides: Composition scope the pinned slot lambda carries, handed to
             the children so a scoped child composes under its provider.
-        extension: Whether the native lambda takes a receiver outside the scope
-            vocabulary, which the children do not use.
         host: Whether the host composes the slot with this node's native
             state instead of passing it to a native parameter. A host slot
             carries no native policy at all.
@@ -250,7 +246,6 @@ class SlotRule:
     nullable: bool = False
     consume: str | None = None
     provides: str | None = None
-    extension: bool = False
     host: bool = False
 
     @classmethod
@@ -290,20 +285,14 @@ class SlotRule:
                 f"{where}: 'consume' must be one of {', '.join(CONSUMERS)}"
             )
         provides = data.get("provides")
-        if provides is not None and provides not in SCOPES:
-            raise ComponentRegistryError(
-                f"{where}: 'provides' must be one of {', '.join(SCOPES)}"
-            )
-        extension = data.get("extension", False)
-        if extension is not False and extension is not True:
-            raise ComponentRegistryError(f"{where}: 'extension' must be a boolean")
+        if provides is not None and (not isinstance(provides, str) or not provides):
+            raise ComponentRegistryError(f"{where}: 'provides' must name a scope")
         return cls(
             native=native,
             kind=cast("str", kind),
             nullable=nullable,
             consume=cast("str | None", consume),
-            provides=cast("str | None", provides),
-            extension=extension,
+            provides=provides,
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -323,6 +312,4 @@ class SlotRule:
             out["consume"] = self.consume
         if self.provides is not None:
             out["provides"] = self.provides
-        if self.extension:
-            out["extension"] = True
         return out

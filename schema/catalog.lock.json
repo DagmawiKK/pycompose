@@ -160,6 +160,8 @@
       },
       "children": {
         "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.animation.AnimatedVisibilityScope",
         "min": 0
       }
     },
@@ -287,7 +289,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "RowScope"
+        "provides": "androidx.compose.foundation.layout.RowScope"
       }
     },
     "BadgedBox": {
@@ -310,12 +312,12 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "BoxScope"
+        "provides": "androidx.compose.foundation.layout.BoxScope"
       },
       "slots": {
         "badge": {
           "native": "badge",
-          "provides": "BoxScope"
+          "provides": "androidx.compose.foundation.layout.BoxScope"
         }
       }
     },
@@ -512,7 +514,7 @@
       },
       "children": {
         "allowed": true,
-        "provides": "RowScope",
+        "provides": "androidx.compose.foundation.layout.RowScope",
         "min": 0
       }
     },
@@ -559,7 +561,7 @@
       "slots": {
         "actions": {
           "native": "actions",
-          "provides": "RowScope"
+          "provides": "androidx.compose.foundation.layout.RowScope"
         },
         "floatingActionButton": {
           "native": "floatingActionButton",
@@ -631,7 +633,7 @@
       "slots": {
         "sheetContent": {
           "native": "sheetContent",
-          "provides": "ColumnScope"
+          "provides": "androidx.compose.foundation.layout.ColumnScope"
         },
         "topBar": {
           "native": "topBar",
@@ -673,7 +675,7 @@
       },
       "children": {
         "allowed": true,
-        "provides": "BoxScope",
+        "provides": "androidx.compose.foundation.layout.BoxScope",
         "min": 0
       }
     },
@@ -842,7 +844,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "interaction": {
         "native": "interactionSource",
@@ -899,7 +901,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "overloadOf": "Card"
     },
@@ -949,7 +951,7 @@
         },
         "actions": {
           "native": "actions",
-          "provides": "RowScope"
+          "provides": "androidx.compose.foundation.layout.RowScope"
         }
       }
     },
@@ -1175,7 +1177,7 @@
       },
       "children": {
         "allowed": true,
-        "provides": "ColumnScope",
+        "provides": "androidx.compose.foundation.layout.ColumnScope",
         "min": 0
       },
       "reshaped": [
@@ -1258,7 +1260,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "slots": {
         "confirmButton": {
@@ -1310,7 +1312,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       }
     },
     "DismissibleNavigationDrawer": {
@@ -1416,7 +1418,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "slots": {
         "inputField": {
@@ -1477,7 +1479,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       }
     },
     "DropdownMenuItem": {
@@ -1758,7 +1760,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "RowScope"
+        "provides": "androidx.compose.foundation.layout.RowScope"
       },
       "interaction": {
         "native": "interactionSource",
@@ -1844,7 +1846,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "interaction": {
         "native": "interactionSource",
@@ -1895,7 +1897,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "overloadOf": "ElevatedCard"
     },
@@ -2143,7 +2145,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "slots": {
         "inputField": {
@@ -2188,7 +2190,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "slots": {
         "inputField": {
@@ -2196,6 +2198,92 @@
         }
       },
       "adapter": "manual"
+    },
+    "ExposedDropdownMenu": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/ScrollState;ZLandroidx/compose/ui/graphics/Shape;JFFLandroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "ExposedDropdownMenu-vNxi1II",
+        "name": "ExposedDropdownMenu",
+        "owner": "androidx.compose.material3.ExposedDropdownMenuBoxScope"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true
+        },
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "decode": "color",
+          "fallback": "androidx.compose.material3.MenuDefaults.containerColor"
+        },
+        "expanded": {
+          "type": "boolean",
+          "required": true
+        },
+        "matchAnchorWidth": {
+          "type": "boolean",
+          "default": true
+        },
+        "onDismissRequest": {
+          "type": "actionId",
+          "required": true
+        },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.ShadowElevation"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.shape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.TonalElevation"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "onScrollIdle": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "offset",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
+      },
+      "scope": "androidx.compose.material3.ExposedDropdownMenuBoxScope",
+      "state": {
+        "native": "scrollState",
+        "kind": "scroll",
+        "value": "offset",
+        "report": "onScrollIdle"
+      },
+      "reshaped": [
+        "offset",
+        "onScrollIdle"
+      ]
     },
     "ExposedDropdownMenuBox": {
       "package": "androidx.compose.material3",
@@ -2232,7 +2320,9 @@
         }
       },
       "children": {
-        "allowed": true
+        "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.material3.ExposedDropdownMenuBoxScope"
       }
     },
     "ExtendedFloatingActionButton": {
@@ -2302,7 +2392,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "RowScope"
+        "provides": "androidx.compose.foundation.layout.RowScope"
       },
       "interaction": {
         "native": "interactionSource",
@@ -2661,7 +2751,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "RowScope"
+        "provides": "androidx.compose.foundation.layout.RowScope"
       },
       "interaction": {
         "native": "interactionSource",
@@ -2957,7 +3047,9 @@
         }
       },
       "children": {
-        "allowed": true
+        "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.foundation.layout.FlexBoxScope"
       }
     },
     "FloatingActionButton": {
@@ -3078,6 +3170,8 @@
       },
       "children": {
         "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.foundation.layout.FlowColumnScope",
         "min": 0
       }
     },
@@ -3117,6 +3211,8 @@
       },
       "children": {
         "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.foundation.layout.FlowRowScope",
         "min": 0
       }
     },
@@ -3606,7 +3702,7 @@
       "slots": {
         "label": {
           "native": "label",
-          "provides": "TooltipScope"
+          "provides": "androidx.compose.material3.TooltipScope"
         }
       },
       "interaction": {
@@ -3754,7 +3850,7 @@
         },
         "actions": {
           "native": "actions",
-          "provides": "RowScope"
+          "provides": "androidx.compose.foundation.layout.RowScope"
         }
       }
     },
@@ -4143,7 +4239,7 @@
         },
         "actions": {
           "native": "actions",
-          "provides": "RowScope"
+          "provides": "androidx.compose.foundation.layout.RowScope"
         }
       }
     },
@@ -4206,7 +4302,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "state": {
         "native": "sheetState",
@@ -4269,7 +4365,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       }
     },
     "ModalNavigationDrawer": {
@@ -4437,7 +4533,7 @@
           "native": "label"
         }
       },
-      "scope": "MultiChoiceSegmentedButtonRowScope",
+      "scope": "androidx.compose.material3.MultiChoiceSegmentedButtonRowScope",
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -4476,7 +4572,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "MultiChoiceSegmentedButtonRowScope"
+        "provides": "androidx.compose.material3.MultiChoiceSegmentedButtonRowScope"
       }
     },
     "NavigationBar": {
@@ -4514,7 +4610,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "RowScope"
+        "provides": "androidx.compose.foundation.layout.RowScope"
       }
     },
     "NavigationBarItem": {
@@ -4594,7 +4690,7 @@
           "nullable": true
         }
       },
-      "scope": "RowScope",
+      "scope": "androidx.compose.foundation.layout.RowScope",
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -4722,12 +4818,12 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "slots": {
         "header": {
           "native": "header",
-          "provides": "ColumnScope",
+          "provides": "androidx.compose.foundation.layout.ColumnScope",
           "nullable": true
         }
       }
@@ -5006,7 +5102,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "RowScope"
+        "provides": "androidx.compose.foundation.layout.RowScope"
       },
       "interaction": {
         "native": "interactionSource",
@@ -5092,7 +5188,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "interaction": {
         "native": "interactionSource",
@@ -5148,7 +5244,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "overloadOf": "OutlinedCard"
     },
@@ -5444,7 +5540,7 @@
       "slots": {
         "label": {
           "native": "label",
-          "extension": true,
+          "provides": "androidx.compose.material3.TextFieldLabelScope",
           "nullable": true
         },
         "leadingIcon": {
@@ -5680,7 +5776,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       }
     },
     "PermanentNavigationDrawer": {
@@ -5753,7 +5849,7 @@
         "allowed": true,
         "kind": "content"
       },
-      "scope": "TooltipScope",
+      "scope": "androidx.compose.material3.TooltipScope",
       "adapter": "manual",
       "reshaped": [
         "showCaret"
@@ -5909,7 +6005,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "BoxScope"
+        "provides": "androidx.compose.foundation.layout.BoxScope"
       }
     },
     "RadioButton": {
@@ -6056,7 +6152,7 @@
           "nullable": true
         }
       },
-      "scope": "TooltipScope",
+      "scope": "androidx.compose.material3.TooltipScope",
       "adapter": "manual",
       "reshaped": [
         "showCaret",
@@ -6094,7 +6190,7 @@
       },
       "children": {
         "allowed": true,
-        "provides": "RowScope",
+        "provides": "androidx.compose.foundation.layout.RowScope",
         "min": 0
       }
     },
@@ -6195,7 +6291,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "slots": {
         "inputField": {
@@ -6583,7 +6679,7 @@
       "slots": {
         "label": {
           "native": "label",
-          "extension": true,
+          "provides": "androidx.compose.material3.TextFieldLabelScope",
           "nullable": true
         },
         "leadingIcon": {
@@ -6715,7 +6811,7 @@
           "native": "label"
         }
       },
-      "scope": "SingleChoiceSegmentedButtonRowScope",
+      "scope": "androidx.compose.material3.SingleChoiceSegmentedButtonRowScope",
       "interaction": {
         "native": "interactionSource",
         "observations": {
@@ -6769,7 +6865,9 @@
         }
       },
       "children": {
-        "allowed": true
+        "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.animation.SharedTransitionScope"
       }
     },
     "ShortNavigationBar": {
@@ -6916,7 +7014,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "SingleChoiceSegmentedButtonRowScope"
+        "provides": "androidx.compose.material3.SingleChoiceSegmentedButtonRowScope"
       }
     },
     "Slider": {
@@ -8099,12 +8197,12 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "RowScope"
+        "provides": "androidx.compose.foundation.layout.RowScope"
       },
       "slots": {
         "backgroundContent": {
           "native": "backgroundContent",
-          "provides": "RowScope"
+          "provides": "androidx.compose.foundation.layout.RowScope"
         }
       },
       "state": {
@@ -8362,7 +8460,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "interaction": {
         "native": "interactionSource",
@@ -8716,7 +8814,7 @@
       "children": {
         "allowed": true,
         "kind": "content",
-        "provides": "ColumnScope"
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
       },
       "slots": {
         "confirmButton": {
@@ -8803,7 +8901,7 @@
       "slots": {
         "tooltip": {
           "native": "tooltip",
-          "provides": "TooltipScope"
+          "provides": "androidx.compose.material3.TooltipScope"
         }
       },
       "state": {
@@ -8866,7 +8964,7 @@
         },
         "actions": {
           "native": "actions",
-          "provides": "RowScope"
+          "provides": "androidx.compose.foundation.layout.RowScope"
         }
       }
     },

@@ -193,13 +193,16 @@ def test_a_plan_derives_props_slots_children_and_defaults(tmp_path: Path) -> Non
     assert entry["children"] == {
         "allowed": True,
         "kind": "content",
-        "provides": "RowScope",
+        "provides": "androidx.compose.foundation.layout.RowScope",
     }
     assert entry["slots"] == {
         "label": {"native": "label"},
         "leadingIcon": {"native": "leadingIcon", "nullable": True},
     }
-    assert "content: app content children in RowScope" in item.review
+    assert (
+        "content: app content children in androidx.compose.foundation.layout.RowScope"
+        in item.review
+    )
     assert "label: required native slot; absence renders an empty lambda" in item.review
 
 

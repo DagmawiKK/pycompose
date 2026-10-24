@@ -24,11 +24,12 @@ def test_a_scope_extension_derives_the_scope_it_composes_in(tmp_path: Path) -> N
         catalog(),
         {"category": "test", "stability": "stable"},
     )
-    assert item.entry["scope"] == "SingleChoiceSegmentedButtonRowScope"
     assert (
-        "receiver: composes only inside SingleChoiceSegmentedButtonRowScope"
-        in item.review
+        item.entry["scope"]
+        == "androidx.compose.material3.SingleChoiceSegmentedButtonRowScope"
     )
+    scope = "androidx.compose.material3.SingleChoiceSegmentedButtonRowScope"
+    assert f"receiver: composes only inside {scope}" in item.review
 
 
 def test_a_schema_alias_keeps_the_native_identity(tmp_path: Path) -> None:

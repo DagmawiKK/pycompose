@@ -200,7 +200,10 @@ def _check_declared(plan: dict[str, Any], declaration: Declaration) -> None:
                 f"{plan['name']}.{parameter}: plan and pin disagree on defaults"
             )
     planned_receiver = plan.get("receiver")
-    pinned_receiver = declaration.receiver
+    # A member of a scope composes inside it as an extension on it does.
+    pinned_receiver = declaration.receiver or (
+        declaration.dispatch_receiver if planned_receiver is not None else None
+    )
     if (planned_receiver is None) != (pinned_receiver is None):
         raise CandidateError(
             f"{plan['name']}: plan and pin disagree on the declaration receiver"
@@ -291,18 +294,21 @@ def derive(
     ]
     if transients:
         entry["transient"] = transients[0]
-    if declaration.receiver is not None:
-        classifier = declaration.receiver.classifier
-        planned = plan.get("receiver")
-        if planned is None or planned.get("classifier") != classifier:
+    planned = plan.get("receiver")
+    if planned is not None:
+        # An extension on a scope, or a member of one, composes inside it.
+        native = declaration.receiver or declaration.dispatch_receiver
+        if native is None or planned.get("classifier") != native.classifier:
             raise CandidateError(
                 f"{name}: plan does not record the pinned declaration receiver"
             )
-        scope = scope_for(classifier)
-        if scope is None:
-            raise CandidateError(f"{name}: receiver {classifier} has no closed scope")
+        scope = scope_for(native.classifier)
         entry["scope"] = scope
         review.append(f"receiver: composes only inside {scope}")
+    elif declaration.receiver is not None:
+        raise CandidateError(
+            f"{name}: plan does not record the pinned declaration receiver"
+        )
     return Derived(name, entry, tuple(review))
 
 

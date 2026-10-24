@@ -512,6 +512,25 @@ object IrContract {
                 "tonalElevation" to PropertyRule("dp", required = false),
             ),
         ),
+        "ExposedDropdownMenu" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "border" to PropertyRule("value", required = false, valueType = "BorderStroke", nullable = true),
+                "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "expanded" to PropertyRule("boolean", required = true),
+                "matchAnchorWidth" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "offset" to PropertyRule("number", required = false),
+                "onDismissRequest" to PropertyRule("actionId", required = true),
+                "onScrollIdle" to PropertyRule("actionId", required = false),
+                "shadowElevation" to PropertyRule("dp", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "tonalElevation" to PropertyRule("dp", required = false),
+            ),
+        ),
         "ExposedDropdownMenuBox" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -2015,6 +2034,7 @@ object IrContract {
     val streams: Map<String, Set<String>> = mapOf(
         "Column" to setOf("offset", "progress"),
         "DismissibleNavigationDrawer" to setOf("progress"),
+        "ExposedDropdownMenu" to setOf("offset", "progress"),
         "ModalNavigationDrawer" to setOf("progress"),
     )
     val streamNames: Set<String> = setOf("offset", "progress")

@@ -373,10 +373,6 @@ def test_a_modifier_riding_family_carries_its_boolean_gate_prop(
             "needs the props valueRange, steps",
         ),
         (
-            lambda registry: _state(registry).update(kind="scroll"),
-            "needs the props scrollable",
-        ),
-        (
             lambda registry: _with_scrollable(registry, "number"),
             "'scrollable' must be a boolean",
         ),

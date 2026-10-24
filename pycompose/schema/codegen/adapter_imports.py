@@ -11,7 +11,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from pycompose.core.registry_vocabulary import STATE_STREAMS
-from pycompose.schema.codegen.adapter_helpers import STATE_ATTACH_GATES, state_call
+from pycompose.schema.codegen.adapter_helpers import attach_gate, state_call
 
 
 def extra_imports(entry: dict[str, Any]) -> set[str]:
@@ -28,7 +28,7 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
         qualified.add(f"com.pycompose.renderer.{state_call(state['kind'])}")
         if state["kind"] in STATE_STREAMS:
             qualified.add("com.pycompose.renderer.publish")
-        if state["kind"] in STATE_ATTACH_GATES:
+        if attach_gate(state, entry.get("props", {})) is not None:
             # The holder rides the component's modifier, so the extension making
             # that ride callable must be imported where the call is written.
             qualified.add("com.pycompose.renderer.attachTo")
@@ -44,9 +44,6 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
                     "androidx.compose.ui.Modifier",
                 }
             )
-    for slot in entry.get("slots", {}).values():
-        if provides := slot.get("provides"):
-            qualified.add(f"com.pycompose.renderer.slotIn{provides}")
     if entry.get("children", {}).get("kind") == "items":
         # The primary children are the unslotted ones, and an extension becomes
         # callable only where it is imported.

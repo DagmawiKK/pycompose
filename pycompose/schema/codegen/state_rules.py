@@ -331,11 +331,9 @@ def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None
         extra for extra in STATE_CONSTRUCTOR_PROPS.get(kind, ()) if extra not in props
     ]
     gate = STATE_ATTACH_GATES.get(kind)
-    if gate is not None and gate not in props:
-        missing.append(gate)
     if missing:
         die(f"{where}: state kind {kind!r} needs the props {', '.join(missing)}")
-    if gate is not None and props[gate].get("type") != "boolean":
+    if gate in props and props[gate].get("type") != "boolean":
         die(f"{where}: prop {gate!r} must be a boolean")
     if kind == "sheet":
         validate_anchor(where, "value", props["value"], SHEET_VALUES)

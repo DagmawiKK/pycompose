@@ -50,10 +50,12 @@ from pycompose.schema.codegen.adapter_helpers import (
     _camel,
     _Fragments,
     _slot,
+    attach_gate,
     composables,
     is_mechanical,
     native_name,
     scalar_wire,
+    simple,
 )
 from pycompose.schema.codegen.adapter_imports import extra_imports
 
@@ -195,7 +197,7 @@ def _render_scalar(prop_name: str, spec: dict[str, Any], out: _Fragments) -> boo
     return True
 
 
-def _held(state: dict[str, Any] | None) -> set[str]:
+def _held(state: dict[str, Any] | None, props: dict[str, Any]) -> set[str]:
     """Return every prop a state declaration keeps from the native arguments.
 
     The desired value and its report reach the holder, not the component, and
@@ -204,6 +206,7 @@ def _held(state: dict[str, Any] | None) -> set[str]:
 
     Args:
         state: The component's raw ``state`` entry, or None.
+        props: The component's props, which say whether an attach is gated.
 
     Returns:
         The prop names the adapter must not render as native arguments.
@@ -212,7 +215,7 @@ def _held(state: dict[str, Any] | None) -> set[str]:
         return set()
     held = {state["value"], state["report"]}
     held.update(STATE_CONSTRUCTOR_PROPS.get(state["kind"], ()))
-    gate = STATE_ATTACH_GATES.get(state["kind"])
+    gate = attach_gate(state, props)
     if gate is not None:
         held.add(gate)
     return held
@@ -259,7 +262,7 @@ def _host_locals(entry: dict[str, Any], out: _Fragments) -> str | None:
                 f"context.RequestWindows({state['native']}Value, model.props.window, "
                 "model.props.itemOffset, model.children.unslotted().size)"
             )
-        attach = STATE_ATTACH_GATES.get(state["kind"])
+        attach = attach_gate(state, entry.get("props", {}))
         if attach is not None:
             # The holder rides the modifier: the component's first argument is
             # the attach itself, gated by the prop the app states.
@@ -317,7 +320,7 @@ def render(name: str, entry: dict[str, Any]) -> str:
     observed = set((interaction.get("observations") or {}).values())
     state = entry.get("state")
     transient = entry.get("transient")
-    held = _held(state)
+    held = _held(state, entry.get("props", {}))
     if transient is not None:
         # Every prop of a transient component is a request input the host
         # consumes on its behalf; none names a native parameter of its own.
@@ -371,9 +374,7 @@ def render(name: str, entry: dict[str, Any]) -> str:
         # composition of the component it projects.
         call = f"                if ({gate}) {{\n{call}\n                }}"
     scope = entry.get("scope")
-    registration = (
-        f"register{scope.removesuffix('Scope')}Scoped" if scope else "register"
-    )
+    registration = f"registerScoped<{simple(scope)}>" if scope else "register"
     return (
         f'            .{registration}("{name}") {{ node, modifier, context ->\n'
         f"                val model = node as {node}\n"
@@ -381,6 +382,16 @@ def render(name: str, entry: dict[str, Any]) -> str:
         + f"{call}\n"
         f"            }}"
     )
+
+
+def _scopes(entry: dict[str, Any]) -> set[str]:
+    """The receivers an adapter spells: the scope it registers in, and its slots'.
+
+    Children compose through ``childrenIn``, which takes any receiver unnamed.
+    """
+    slots = entry.get("slots", {}).values()
+    named = {entry.get("scope"), *(slot.get("provides") for slot in slots)}
+    return {scope for scope in named if scope is not None}
 
 
 def render_file(registry: dict[str, Any]) -> str:
@@ -404,7 +415,11 @@ def render_file(registry: dict[str, Any]) -> str:
             opt_ins.update(entry.get("optIn", ()))
             package = entry["package"]
             native = native_name(name, entry)
-            imports.add(f"import {package}.{native}")
+            scopes = _scopes(entry)
+            if (entry.get("source") or {}).get("owner") != entry.get("scope"):
+                # A member of its scope is called on the receiver, never imported.
+                imports.add(f"import {package}.{native}")
+            imports.update(f"import {scope}" for scope in scopes)
             for extra in composables(native, entry):
                 imports.add(f"import {package}.{extra}")
             for qualified in extra_imports(entry):

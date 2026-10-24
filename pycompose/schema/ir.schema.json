@@ -2876,6 +2876,127 @@
       },
       "type": "object"
     },
+    "C_ExposedDropdownMenu": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "expanded": {
+              "type": "boolean"
+            },
+            "matchAnchorWidth": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "offset": {
+              "type": "number"
+            },
+            "onDismissRequest": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onScrollIdle": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "expanded",
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ExposedDropdownMenu"
+        }
+      },
+      "type": "object"
+    },
     "C_ExposedDropdownMenuBox": {
       "properties": {
         "children": {
@@ -10697,6 +10818,9 @@
             },
             {
               "$ref": "#/definitions/C_ExpandedFullScreenSearchBar"
+            },
+            {
+              "$ref": "#/definitions/C_ExposedDropdownMenu"
             },
             {
               "$ref": "#/definitions/C_ExposedDropdownMenuBox"
@@ -30303,6 +30427,127 @@
       },
       "type": "object"
     },
+    "V_1_23_0_ExposedDropdownMenu": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "containerColor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "expanded": {
+              "type": "boolean"
+            },
+            "matchAnchorWidth": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "offset": {
+              "type": "number"
+            },
+            "onDismissRequest": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "onScrollIdle": {
+              "pattern": "^(?:increment|submit|app\\.[A-Za-z0-9_.-]+)(?![\\s\\S])",
+              "type": "string"
+            },
+            "shadowElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "expanded",
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ExposedDropdownMenu"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_ExposedDropdownMenuBox": {
       "properties": {
         "children": {
@@ -33402,6 +33647,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_ExpandedFullScreenSearchBar"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ExposedDropdownMenu"
             },
             {
               "$ref": "#/definitions/V_1_23_0_ExposedDropdownMenuBox"

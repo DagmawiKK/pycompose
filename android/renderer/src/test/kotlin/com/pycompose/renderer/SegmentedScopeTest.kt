@@ -2,7 +2,9 @@ package com.pycompose.renderer
 
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
+import androidx.compose.material3.MultiChoiceSegmentedButtonRowScope
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SingleChoiceSegmentedButtonRowScope
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -31,7 +33,7 @@ class SegmentedScopeTest {
         val registry =
             ComponentRegistry
                 .Builder()
-                .registerSingleChoiceSegmentedButtonRowScoped("Text") { _, modifier, _ ->
+                .registerScoped<SingleChoiceSegmentedButtonRowScope>("Text") { _, modifier, _ ->
                     BasicText("Single scoped", modifier)
                 }.build()
         val renderer = Renderer(registry, ActionDispatcher {})
@@ -39,7 +41,7 @@ class SegmentedScopeTest {
 
         compose.setContent {
             SingleChoiceSegmentedButtonRow {
-                context.childrenInSingleChoiceSegmentedButtonRowScope(this, listOf(child))
+                context.childrenIn(this, listOf(child))
             }
         }
 
@@ -51,7 +53,7 @@ class SegmentedScopeTest {
         val registry =
             ComponentRegistry
                 .Builder()
-                .registerMultiChoiceSegmentedButtonRowScoped("Text") { _, modifier, _ ->
+                .registerScoped<MultiChoiceSegmentedButtonRowScope>("Text") { _, modifier, _ ->
                     BasicText("Multi scoped", modifier)
                 }.build()
         val renderer = Renderer(registry, ActionDispatcher {})
@@ -59,7 +61,7 @@ class SegmentedScopeTest {
 
         compose.setContent {
             MultiChoiceSegmentedButtonRow {
-                context.childrenInMultiChoiceSegmentedButtonRowScope(this, listOf(child))
+                context.childrenIn(this, listOf(child))
             }
         }
 

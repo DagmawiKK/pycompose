@@ -125,7 +125,7 @@ def test_an_alias_registers_its_schema_name_and_calls_its_native_name() -> None:
     entry = copy.deepcopy(components()["NavigationBarItem"])
     entry["source"]["name"] = "NativeNavigationBarItem"
     block = render("AliasedNavigationBarItem", entry)
-    assert '.registerRowScoped("AliasedNavigationBarItem")' in block
+    assert '.registerScoped<RowScope>("AliasedNavigationBarItem")' in block
     assert "val model = node as AliasedNavigationBarItemNode" in block
     assert "\n                NativeNavigationBarItem(\n" in block
     assert "\n                AliasedNavigationBarItem(\n" not in block
@@ -147,7 +147,7 @@ def test_each_component_is_registered_exactly_once_across_both_files() -> None:
     # No leading dot: TextField's adapter opens a helper, so its register call
     # starts a statement rather than continuing a chain. A scoped component
     # registers through its scope's method, which the same pattern catches.
-    pattern = r'register(?:\w+)?\("(\w+)"'
+    pattern = r'register(?:Scoped<\w+>)?\("(\w+)"'
     generated_names = re.findall(pattern, GENERATED.read_text())
     manual_names = re.findall(pattern, manual_sources())
 
@@ -164,14 +164,16 @@ def test_each_component_is_registered_exactly_once_across_both_files() -> None:
     )
 
     scoped = {
-        name: f"{stem}Scope"
-        for stem, name in re.findall(
-            r'register(\w+?)Scoped\("(\w+)"\)',
+        name: scope
+        for scope, name in re.findall(
+            r'registerScoped<(\w+)>\("(\w+)"\)',
             GENERATED.read_text() + manual_sources(),
         )
     }
     declared = {
-        name: entry["scope"] for name, entry in registry.items() if entry.get("scope")
+        name: entry["scope"].rsplit(".", 1)[-1]
+        for name, entry in registry.items()
+        if entry.get("scope")
     }
     assert scoped == declared, (
         f"registered through {scoped}, declared {declared}; a scoped component "
@@ -307,7 +309,7 @@ def test_no_optional_prop_is_passed_through() -> None:
         # report, the holder's constructor props and the attach gate -- is
         # passed to a host holder that takes it nullable by design, and so is
         # every prop of a transient component, whose request the host fills.
-        held = _held(entry.get("state"))
+        held = _held(entry.get("state"), entry.get("props", {}))
         if entry.get("transient") is not None:
             held |= set(entry["props"])
         for prop, spec in entry["props"].items():

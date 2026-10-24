@@ -8,7 +8,7 @@ and slots. Importing :mod:`.rules` for ``die`` and shared constants is fine;
 import math
 from typing import Any
 
-from pycompose.core.registry_types import CONSUMERS, SCOPES, SLOT_KINDS
+from pycompose.core.registry_types import CONSUMERS, SLOT_KINDS
 from pycompose.schema.codegen.rules import (
     DOTTED_NAME,
     NATIVE_PARAMETER,
@@ -51,25 +51,30 @@ def _validate_children(name: str, children: dict[str, Any]) -> None:
     provides = children.get("provides")
     if provides is None:
         return
-    if provides not in SCOPES:
-        die(
-            f"component {name!r} children.provides must be one of "
-            + ", ".join(sorted(SCOPES))
-        )
+    if not _receiver_class(provides):
+        die(f"component {name!r} children.provides must name a receiver class")
     if children.get("consume") is not None:
         die(f"component {name!r} children cannot consume and provide a scope")
     if children.get("kind", "content") != "content":
         die(f"component {name!r} children.provides needs the content kind")
 
 
-def _validate_scope(name: str, comp: dict[str, Any]) -> None:
-    """Check a component's declared receiver against the scope vocabulary.
+def _receiver_class(value: object) -> bool:
+    """Whether a scope is spelled as the dotted receiver class adapters import."""
+    return (
+        isinstance(value, str)
+        and "." in value
+        and DOTTED_NAME.fullmatch(value) is not None
+    )
 
-    A component the pin declares as an extension on a composition scope cannot
-    be looked up like a plain one: its receiver exists only inside the parent
-    lambda that provides it, so the adapter registers through the matching
-    scoped method. The vocabulary is closed, and the fact itself is re-derived
-    from the pinned inventory by ``composegen``'s check.
+
+def _validate_scope(name: str, comp: dict[str, Any]) -> None:
+    """Check a component's declared receiver names a scope.
+
+    A component the pin declares inside a composition scope cannot be looked up
+    like a plain one: its receiver exists only inside the parent lambda that
+    provides it, so the adapter registers as scoped to that receiver class.
+    The fact itself is re-derived from the pinned inventory by the compiler.
 
     Args:
         name: Component name, for error messages.
@@ -78,8 +83,8 @@ def _validate_scope(name: str, comp: dict[str, Any]) -> None:
     scope = comp.get("scope")
     if scope is None:
         return
-    if scope not in SCOPES:
-        die(f"component {name!r} scope must be one of " + ", ".join(sorted(SCOPES)))
+    if not _receiver_class(scope):
+        die(f"component {name!r} scope must name a receiver class")
 
 
 def _validate_slots(
@@ -179,8 +184,8 @@ def _validate_slot_provides(where: str, slot: dict[str, Any]) -> None:
     provides = slot.get("provides")
     if provides is None:
         return
-    if provides not in SCOPES:
-        die(f"{where}: 'provides' must be one of " + ", ".join(sorted(SCOPES)))
+    if not _receiver_class(provides):
+        die(f"{where}: 'provides' must name a receiver class")
     if slot.get("consume") is not None:
         # Consuming a scope and providing one would need two nested lambdas;
         # the renderer has no such shape.
