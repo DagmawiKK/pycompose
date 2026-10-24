@@ -15,6 +15,7 @@ from typing import IO
 
 from pycompose.cli.console import echo, echo_error, ok, step
 from pycompose.cli.extensions import check_extensions, stage_extensions
+from pycompose.cli.prebuild import generated, prebuild
 from pycompose.cli.project import (
     Project,
     ProjectError,
@@ -23,6 +24,7 @@ from pycompose.cli.project import (
 )
 from pycompose.cli.requirements import validate_requirements
 from pycompose.cli.sync import sync_resources
+from pycompose.cli.toolchain import jdk_home
 
 SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
 
@@ -89,7 +91,8 @@ def _check_requirements_scaffold(project: Project, requirements: list[str]) -> N
     Raises:
         ProjectError: If requirements are declared on an older template.
     """
-    if not requirements:
+    if not requirements or generated(project):
+        # A generated project is always the current template.
         return
     version = _scaffold_template_version(project)
     if version is not None and version >= _MIN_REQUIREMENTS_TEMPLATE:
@@ -347,6 +350,8 @@ def build_project(
         raise ProjectError("build format must be apk or aab")
     check_project_versions(project)
     native = project.android_root
+    if generated(project):
+        prebuild(project)
     wrapper = project_path(native, "gradlew.bat" if os.name == "nt" else "gradlew")
     if not wrapper.is_file() or not any(
         (native / name).is_file() for name in ("settings.gradle.kts", "settings.gradle")
@@ -359,10 +364,13 @@ def build_project(
         relative = wrapper.relative_to(project.root)
         raise ProjectError(f"Gradle wrapper is not executable; run chmod +x {relative}")
     env = dict(os.environ)
+    if (home := jdk_home()) is not None and "JAVA_HOME" not in env:
+        env["JAVA_HOME"] = home
     _app_properties(project, env)
     secrets = _signing(project, env) if release else ()
     stage_extensions(project, env)
-    sync_resources(project)
+    if not generated(project):
+        sync_resources(project)
     _codegen(project)
     variant = "release" if release else "debug"
     task = f":host:{'assemble' if kind == 'apk' else 'bundle'}{variant.title()}"

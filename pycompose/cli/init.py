@@ -21,23 +21,31 @@ class InitError(PyComposeError):
 def _copy_assets(
     source: Traversable, target: Path, *, android_root: Path | None = None
 ) -> None:
+    """Copy the template: the app's files to ``target``, Android files beside them.
+
+    Without ``android_root`` only the app's own files are copied -- its Python,
+    its resources and its dotfiles -- since the Android project is generated.
+    """
     for asset in sorted(source.iterdir(), key=lambda entry: entry.name):
-        base = target
-        if (
-            android_root is not None
-            and asset.name not in {"app", "resources"}
-            and not asset.name.startswith(".")
-        ):
-            base = android_root
-        destination = base / asset.name
-        if asset.is_dir():
-            destination.mkdir()
-            _copy_assets(asset, destination)
-        elif asset.is_file():
-            with destination.open("xb") as output:
-                output.write(asset.read_bytes())
-            if asset.name == "gradlew":
-                destination.chmod(0o755)
+        android = asset.name not in {"app", "resources"} and not asset.name.startswith(
+            "."
+        )
+        if android and android_root is None:
+            continue
+        _copy(asset, (android_root if android else None) or target)
+
+
+def _copy(asset: Traversable, base: Path) -> None:
+    destination = base / asset.name
+    if asset.is_dir():
+        destination.mkdir()
+        for child in sorted(asset.iterdir(), key=lambda entry: entry.name):
+            _copy(child, destination)
+    elif asset.is_file():
+        with destination.open("xb") as output:
+            output.write(asset.read_bytes())
+        if asset.name == "gradlew":
+            destination.chmod(0o755)
 
 
 def _generate_slice(target: Path, android_root: Path) -> None:
@@ -145,18 +153,9 @@ def init_project(
         raise
     android_root = target / android_dir
     android_root.mkdir(parents=True, exist_ok=True)
-    _copy_assets(template, target, android_root=android_root)
-    if not native:
-        # Native sources remain versionable and editable, not disposable cache.
-        # Their own ignore file excludes Gradle caches and generated artifacts.
-        ignore = target / ".gitignore"
-        ignore.write_text(
-            ignore.read_text(encoding="utf-8") + "!.pycompose/android/\n",
-            encoding="utf-8",
-        )
-        (android_root / ".gitignore").write_bytes(
-            template.joinpath(".gitignore").read_bytes()
-        )
+    # A native project owns its Android files; any other is generated from the
+    # app on every build (plan 31 §21), so only the app's own files are copied.
+    _copy_assets(template, target, android_root=android_root if native else None)
     # The launcher label is an app string like any other, so it flows through
     # the same resource pipeline and localizes with it.
     with (target / "resources" / "strings.json").open(
@@ -167,6 +166,11 @@ def init_project(
         "x", encoding="utf-8", newline="\n"
     ) as output:
         output.write(config)
+    if not native:
+        from pycompose.cli.prebuild import prebuild
+        from pycompose.cli.project import load_project
+
+        prebuild(load_project(target))
     if android_scaffold:
         _generate_slice(target, android_root)
     return target, True, android_scaffold

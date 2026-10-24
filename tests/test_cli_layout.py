@@ -98,7 +98,7 @@ with zipfile.ZipFile(output, "w") as archive:
     assert not (project / ".pycompose/android").exists()
 
 
-def test_native_sources_are_versionable_but_build_outputs_are_ignored(
+def test_the_generated_project_is_never_committed(
     tmp_path: Path,
 ) -> None:
     assert cli(tmp_path, "init", "demo").returncode == 0
@@ -122,7 +122,9 @@ def test_native_sources_are_versionable_but_build_outputs_are_ignored(
         check=False,
     )
     assert result.returncode == 0, result.stderr
-    assert result.stdout.splitlines() == paths[3:]
+    # The Android project is build output (plan 31 §21); only an owned
+    # project's resource ownership record is kept.
+    assert result.stdout.splitlines() == [p for p in paths if "resource-sync" not in p]
 
 
 @pytest.mark.parametrize("native", [False, True])

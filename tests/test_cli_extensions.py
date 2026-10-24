@@ -12,7 +12,7 @@ from test_cli_init import cli
 def test_external_definition_plans_without_importing_its_implementation(
     tmp_path: Path,
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     (project / "app" / "dangerous.py").write_text("raise RuntimeError('imported')\n")
     (project / "custom.toml").write_text(
@@ -43,16 +43,15 @@ def select(project: Path, definitions: list[str], *, internet: bool = False) -> 
             stream.write('\n[android]\npermissions = ["android.permission.INTERNET"]\n')
 
 
-@pytest.mark.parametrize("native", [False, True])
 def test_reference_extensions_use_generic_build_selection_without_native_edits(
     tmp_path: Path,
-    native: bool,
 ) -> None:
-    args = ["--native"] if native else []
-    assert cli(tmp_path, "init", "demo", *args).returncode == 0
+    # An owned project's manifest is the app's; a generated one's is rewritten
+    # with the permissions on every build (test_generated_project).
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     select(project, ["builtin:httpx", "builtin:sqlite"], internet=True)
-    native_root = project if native else project / ".pycompose/android"
+    native_root = project
     source_manifest = native_root / "host/src/main/AndroidManifest.xml"
     original = source_manifest.read_bytes()
     wrapper(
@@ -86,7 +85,7 @@ with zipfile.ZipFile(output, "w") as archive:
 def test_missing_required_capability_stops_before_build_output_changes(
     tmp_path: Path,
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     select(project, ["builtin:httpx"])
     wrapper(project, 'from pathlib import Path\nPath("launched").touch()\n')
@@ -113,7 +112,7 @@ def test_invalid_selection_fails_without_imports_or_tracebacks(
     tmp_path: Path,
     declaration: str,
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     with (project / "pycompose.toml").open("a") as stream:
         stream.write(f"\n[extensions]\n{declaration}\n")
@@ -123,7 +122,7 @@ def test_invalid_selection_fails_without_imports_or_tracebacks(
 
 
 def test_target_restrictions_are_not_desktop_import_success(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     (project / "native.toml").write_text(
         'format = 1\ninterface = 1\nid = "example.native"\nversion = "1.0.0"\n'
@@ -142,7 +141,7 @@ def test_target_restrictions_are_not_desktop_import_success(tmp_path: Path) -> N
 
 
 def test_plan_reports_missing_host_runtime_before_build(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     config = project / "pycompose.toml"
     config.write_text(

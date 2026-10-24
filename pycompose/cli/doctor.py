@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from pycompose.cli.project import check_project_versions, load_project
+from pycompose.cli.toolchain import android_sdk, jdk_home
 from pycompose.errors import PyComposeError
 from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.version import __version__
@@ -47,7 +48,8 @@ def _probe(executable: str, argument: str) -> tuple[bool, str]:
 
 
 def _jdk() -> ToolCheck:
-    home = os.environ.get("JAVA_HOME")
+    # The JDK pycompose setup installed is the one builds use.
+    home = jdk_home() or os.environ.get("JAVA_HOME")
     executable = (
         str(Path(home) / "bin" / ("java.exe" if os.name == "nt" else "java"))
         if home
@@ -82,7 +84,7 @@ def _sdk_path(directory: Path) -> Path | None:
                     line.partition("=")[2].replace("\\:", ":").replace("\\\\", "\\")
                 ).expanduser()
                 return path if path.is_absolute() else directory / path
-    return None
+    return android_sdk()
 
 
 def _sdk(sdk: Path | None) -> ToolCheck:

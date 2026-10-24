@@ -16,7 +16,7 @@ from test_cli_init import cli
 def test_run_builds_installs_launches_and_cleans_up_its_reverse_tunnel(
     tmp_path: Path,
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     wrapper(
         project,
@@ -101,7 +101,7 @@ if sys.argv[1:] == ["devices"]:
 def test_run_rejects_unavailable_or_ambiguous_devices_before_building(
     tmp_path: Path, devices: str
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     tools = tmp_path / "tools"
     tools.mkdir()
     adb = tools / "adb"
@@ -125,7 +125,7 @@ def test_run_rejects_unavailable_or_ambiguous_devices_before_building(
 
 
 def test_run_missing_adb_is_actionable(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     result = cli(
         tmp_path / "demo",
         "run",

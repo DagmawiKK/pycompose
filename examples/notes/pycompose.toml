@@ -1,0 +1,27 @@
+[app]
+name = "Notes"
+application_id = "com.example.notes"
+version_name = "0.1.0"
+version_code = 1
+# One SVG on the adaptive icon's 108-unit grid; the background is a colour.
+icon = "icon.svg"
+icon_background = "#00696E"
+
+[python]
+entrypoint = "main:app"
+source_dir = "app"
+requirements = []
+
+[resources]
+path = "resources"
+
+[signing]
+keystore = ""
+key_alias = ""
+store_password_env = "PYCOMPOSE_STORE_PASSWORD"
+key_password_env = "PYCOMPOSE_KEY_PASSWORD"
+
+[toolchain]
+library_version = "0.1.0"
+schema_version = "1.23.0"
+android_dir = ".pycompose/android"

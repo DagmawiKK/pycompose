@@ -14,10 +14,12 @@ from pycompose.cli.doctor import doctor
 from pycompose.cli.extensions import show_evidence, show_plan
 from pycompose.cli.init import init_project
 from pycompose.cli.install import Deploy, install_project
+from pycompose.cli.prebuild import explain, generated, prebuild
 from pycompose.cli.project import ProjectError, load_project
 from pycompose.cli.run import run_project
 from pycompose.cli.stubs import generate_stubs
 from pycompose.cli.sync import sync_resources
+from pycompose.cli.toolchain import setup
 from pycompose.cli.validate import validate_file
 from pycompose.errors import PyComposeError
 from pycompose.version import __version__
@@ -30,6 +32,10 @@ _MENU = (
     ("release", "Package a signed release artifact"),
     ("config", "Show or change the app name, id and version"),
     ("add", "Wrap a Compose library from Maven into the app's catalog"),
+    ("prebuild", "Generate the Android project from the app and show what changed"),
+    ("explain", "Say which config keys produced a generated Android file"),
+    ("setup", "Install the pinned JDK and Android SDK"),
+    ("migrate", "Move an app-owned Android project to a generated one"),
     ("sync", "Sync named resources into the Android host"),
     ("doctor", "Report Android toolchain and schema compatibility"),
     ("extensions", "Plan explicitly selected extension capabilities"),
@@ -105,6 +111,18 @@ def _parser() -> argparse.ArgumentParser:
         "add", help="Wrap a Compose library from Maven into the app's catalog"
     )
     add.add_argument("coordinate", help="group:artifact or group:artifact:version")
+    commands.add_parser(
+        "prebuild",
+        help="Generate the Android project from the app and show what changed",
+    )
+    explain = commands.add_parser(
+        "explain", help="Say which config keys produced a generated Android file"
+    )
+    explain.add_argument("path", help="a file of .pycompose/android")
+    commands.add_parser("setup", help="Install the pinned JDK and Android SDK")
+    commands.add_parser(
+        "migrate", help="Move an app-owned Android project to a generated one"
+    )
     sync = commands.add_parser(
         "sync", help="Sync named resources into the Android host"
     )
@@ -279,8 +297,51 @@ def _add(args: argparse.Namespace) -> int:
     return 0
 
 
+def _prebuild(_args: argparse.Namespace) -> int:
+    changed = prebuild(load_project(Path.cwd()))
+    for name in changed:
+        console.line(name)
+    console.ok(f"Android project generated; {len(changed)} files changed")
+    return 0
+
+
+def _explain(args: argparse.Namespace) -> int:
+    for source in explain(load_project(Path.cwd()), args.path):
+        console.line(source)
+    return 0
+
+
+def _migrate(_args: argparse.Namespace) -> int:
+    from pycompose.cli.migrate import migrate
+
+    found = migrate(load_project(Path.cwd()))
+    for refusal in found.refused:
+        console.warn(refusal)
+    if found.refused:
+        console.notice("Nothing changed; give these a config key or a fragment.")
+        return 1
+    for name in found.fragments:
+        console.line(f"resources/android/res/{name}: kept as a fragment")
+    if found.icon is not None:
+        console.line("icon.svg: the launcher icon, as [app] icon")
+    console.ok("The Android project is now generated on every build")
+    return 0
+
+
+def _setup(_args: argparse.Namespace) -> int:
+    setup()
+    console.ok("Toolchain installed; pycompose doctor checks it")
+    return 0
+
+
 def _sync(args: argparse.Namespace) -> int:
-    changed = sync_resources(load_project(Path.cwd()), check=args.check)
+    project = load_project(Path.cwd())
+    if generated(project):
+        if args.check:
+            console.line("The Android project is generated on every build")
+            return 0
+        return _prebuild(args)
+    changed = sync_resources(project, check=args.check)
     if not changed:
         console.line("Resources up to date")
     else:
@@ -356,6 +417,10 @@ def main(argv: list[str] | None = None) -> int:
     handlers = {
         "init": _init,
         "add": _add,
+        "prebuild": _prebuild,
+        "explain": _explain,
+        "setup": _setup,
+        "migrate": _migrate,
         "sync": _sync,
         "validate": _validate,
         "build": _build,

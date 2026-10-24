@@ -134,6 +134,7 @@ kotlin {
 dependencies {
     implementation(project(":ir"))
     implementation(project(":renderer"))
+    if (rootProject.file("fragments").isDirectory) implementation(project(":fragments"))
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.compose.material3.adaptive.navigation.suite)

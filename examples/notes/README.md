@@ -8,29 +8,22 @@ host. Python declares the tree; the host draws it.
 
 ## Running it
 
-The Python lives in `app/`, which is where `pycompose init` puts it by default
-(`python.source_dir = "app"`, `python.entrypoint = "main:app"`). To get a
-running Android project:
+The example is a complete project: `pycompose.toml`, the Python in `app/`, its
+strings in `resources/`, and its launcher icon as one SVG, `icon.svg`. There is
+no Android folder to copy or edit. Every build generates the Android project
+into `.pycompose/android/` from those files (plan 31 §21), so upgrading
+PyCompose changes nothing here.
 
 ```bash
-pycompose init notes                       # app-focused project
-cp -R examples/notes/app/. notes/app/       # drop this app in
-cp -R examples/notes/overlay/resources/. notes/resources/
-cp -R examples/notes/overlay/host/. notes/.pycompose/android/host/
-cd notes && pycompose run                   # build, install, launch, watch edits
+cd examples/notes
+pycompose run          # generate, build, install, launch, watch edits
 ```
 
-`overlay/` carries the two things this app owns outside Python: `app_name` in
-`resources/strings.json` is the launcher label, and the `app_icon*` vectors in
-`host/src/main/res/` draw the launcher icon — an adaptive icon whose monochrome
-layer gives it a themed-icon form. Both are ordinary Android resources, so both
-localize like every other string.
-
-The host is under `.pycompose/android/` in a default project. With
-`pycompose init notes --native` (or an existing root-level project), copy the
-overlay's `host/.` into `notes/host/` instead. Copy directory **contents** using
-the trailing `/.`; copying `app` into `app/` would leave the starter entrypoint
-unchanged and put the Notes entrypoint one level too deep.
+`[app] icon` names the SVG, drawn on the adaptive icon's 108-unit grid, and
+`icon_background` is its background colour. The same artwork becomes the themed
+icon's monochrome layer and the legacy icon for older devices.
+`pycompose explain host/src/main/res/drawable/app_icon.xml` says which keys
+produced any generated file.
 
 Or drive it with no device and no Gradle at all:
 
