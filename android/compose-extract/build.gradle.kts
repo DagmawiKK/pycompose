@@ -164,25 +164,27 @@ tasks.register("dumpComposeApi") {
     }
 }
 
-tasks.register("resolveComposeLibraries") {
+tasks.register("resolveCompose") {
     group = "build"
-    description = "Resolve an app's own Compose libraries against the pinned BOM."
-    // pycompose add writes compose-libraries.txt and reads this report: the
-    // artifacts of each library's group, with digests for the closure, and any
-    // module the BOM pins that a library would move.
+    description = "Resolve the closure's and the app's groups against the pinned BOM."
+    // What the closure must pin, for the pin as it now stands: every resolved
+    // artifact of its groups and of the app's own libraries (compose-libraries.txt),
+    // with digests; each tooling module at the BOM's version; and every module the
+    // BOM pins that something moved. pycompose add and upgrade --bom read it.
     val rendererClasspath = renderer.configurations.getByName("debugCompileClasspath")
+    val closureFile = rootProject.file("compose-closure.json")
     val libraries = rootProject.file("compose-libraries.txt")
-    val output = evidence.map { it.file("libraries.json") }
+    val output = evidence.map { it.file("resolved.json") }
     inputs.files(rendererClasspath)
-    inputs.file(libraries)
+    inputs.files(listOf(closureFile, libraries).filter(File::isFile))
     outputs.file(output)
     doLast {
+        val closure = JsonSlurper().parse(closureFile) as Map<*, *>
+        val requested =
+            if (libraries.isFile) libraries.readLines().filter(String::isNotBlank) else emptyList()
         val groups =
-            libraries
-                .readLines()
-                .filter(String::isNotBlank)
-                .map { it.substringBefore(':') }
-                .toSet()
+            (closure["groups"] as Map<*, *>).keys.map(Any?::toString).toSet() +
+                requested.map { it.substringBefore(':') }
         val bom =
             rendererClasspath.incoming.resolutionResult.allComponents
                 .single {
@@ -218,9 +220,31 @@ tasks.register("resolveComposeLibraries") {
                         "sha256" to sha256(it.file.readBytes()),
                     )
                 }.sortedBy { it["coordinate"] }
+        // Tooling never rides the app classpath: each module resolves alone, at
+        // the version the BOM now pins for it.
+        val tooling =
+            (closure["tooling"] as List<*>).map { raw ->
+                val module = (raw as Map<*, *>)["coordinate"].toString().substringBeforeLast(':')
+                val version = pinned[module] ?: raw["coordinate"].toString().substringAfterLast(':')
+                val dependency = renderer.dependencies.create("$module:$version")
+                val detached = renderer.configurations.detachedConfiguration(dependency)
+                detached.isTransitive = false
+                detached.attributes { inheritFrom(rendererClasspath.attributes) }
+                mapOf(
+                    "coordinate" to "$module:$version",
+                    "sha256" to sha256(detached.singleFile.readBytes()),
+                )
+            }
         output.get().asFile.apply { parentFile.mkdirs() }.writeText(
             JsonOutput.prettyPrint(
-                JsonOutput.toJson(mapOf("artifacts" to artifacts, "conflicts" to conflicts)),
+                JsonOutput.toJson(
+                    mapOf(
+                        "bom" to checkNotNull(bom.moduleVersion).version,
+                        "artifacts" to artifacts,
+                        "tooling" to tooling,
+                        "conflicts" to conflicts,
+                    ),
+                ),
             ),
         )
     }

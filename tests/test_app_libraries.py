@@ -128,17 +128,18 @@ def test_the_newest_version_fitting_the_bom_is_chosen(
 ) -> None:
     tried = []
 
-    def gradle(android: Path, *_tasks: str) -> None:
+    def resolve(android: Path) -> dict[str, Any]:
         listed = (android / add.LIBRARIES).read_text().split(":")[-1].strip()
         tried.append(listed)
         moved = (
             [{"module": "m:m", "resolved": "2", "bom": "1"}] if listed == "2.0" else []
         )
-        report = android / "build/compose-api/libraries.json"
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(_resolved(*moved)))
+        # The report covers the closure's own groups too; only the library's join.
+        google = {"coordinate": "androidx.compose.ui:ui-android:1.0", "sha256": "a"}
+        resolved = _resolved(*moved)
+        return {**resolved, "artifacts": [google, *resolved["artifacts"]]}
 
-    monkeypatch.setattr(add, "_gradle", gradle)
+    monkeypatch.setattr(add, "resolve", resolve)
     libraries, closure = add._fitting(
         tmp_path, DEFAULT, [], "com.example.md", "markdown", ["2.0", "1.9"]
     )

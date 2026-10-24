@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import re
 import shutil
-import subprocess
 import urllib.request
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -30,6 +29,7 @@ from pycompose.compiler.app import (
     compile_app,
     layered_closure,
 )
+from pycompose.compiler.gradle import extract, resolve
 from pycompose.compiler.lock import Report, dumps
 from pycompose.schema.codegen.app_slice import APP_LOCK
 from pycompose.schema.codegen.rules import SCHEMA_PATH
@@ -85,12 +85,7 @@ def add_library(project: Project, coordinate: str) -> Report:
             (android / "compose-closure.json").write_text(
                 json.dumps(closure, indent=2) + "\n", encoding="utf-8"
             )
-            _gradle(
-                android,
-                ":compose-extract:dumpComposeApi",
-                ":compose-extract:dumpComposeDefaults",
-                f"-PpycomposeCatalog={SCHEMA_PATH}",
-            )
+            extract(android, f"-PpycomposeCatalog={SCHEMA_PATH}")
             policy = _read(project.root / APP_POLICY).get("components", {})
             lock, report = compile_app(
                 android / "build/compose-api", android, library, policy
@@ -132,10 +127,13 @@ def _fitting(
     for version in versions:
         libraries = sorted([*others, f"{group}:{artifact}:{version}"])
         _write_libraries(android, libraries)
-        _gradle(android, ":compose-extract:resolveComposeLibraries")
-        resolved = json.loads(
-            (android / "build/compose-api/libraries.json").read_text(encoding="utf-8")
-        )
+        resolved = resolve(android)
+        own = {library.split(":")[0] for library in libraries}
+        resolved["artifacts"] = [
+            found
+            for found in resolved["artifacts"]
+            if found["coordinate"].split(":")[0] in own
+        ]
         try:
             return libraries, layered_closure(default, resolved)
         except AppLibraryError as exc:
@@ -189,9 +187,8 @@ def _extractor(android: Path) -> Iterator[dict[str, Any]]:
         raise ProjectError("an extraction is already in progress", path=android)
     with as_file(files("pycompose").joinpath("templates", "extract")) as assets:
         shutil.copytree(assets / "compose-extract", module)
-        default = json.loads(
-            (assets / "compose-closure.json").read_text(encoding="utf-8")
-        )
+        shutil.copyfile(assets / "compose-closure.json", closure)
+        default = json.loads(closure.read_text(encoding="utf-8"))
     try:
         yield default
     finally:
@@ -216,18 +213,3 @@ def _read(path: Path) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ProjectError("expected a JSON object", path=path)
     return data
-
-
-def _gradle(android: Path, *arguments: str) -> None:
-    wrapper = android / "gradlew"
-    result = subprocess.run(
-        [str(wrapper), "-q", *arguments],
-        cwd=android,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode != 0:
-        raise ProjectError(
-            "Gradle failed", tasks=" ".join(arguments), output=result.stderr[-2000:]
-        )

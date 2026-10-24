@@ -3,6 +3,7 @@
     python -m pycompose.compiler generate          # write lock, signatures, report
     python -m pycompose.compiler generate --check  # fail if either is stale
     python -m pycompose.compiler diff --base main  # classify changes since a ref
+    python -m pycompose.compiler upgrade --bom V   # move to a new Compose BOM
 
 Run ``./gradlew dumpComposeApi dumpComposeDefaults`` in android/ first: the
 compiler reads the pinned evidence they extract. Then run
@@ -90,12 +91,19 @@ def main(argv: list[str] | None = None) -> int:
         A process exit status.
     """
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["generate", "diff"])
+    parser.add_argument("command", choices=["generate", "diff", "upgrade"])
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--base", default="HEAD", help="git ref to compare with")
+    parser.add_argument("--bom", help="the Compose BOM to upgrade to")
     args = parser.parse_args(argv)
     if args.command == "diff":
         return _diff(args.base)
+    if args.command == "upgrade":
+        if not args.bom:
+            parser.error("upgrade needs --bom")
+        from pycompose.compiler.upgrade import main as upgrade
+
+        return upgrade(args.bom)
     try:
         lock, report = generate(load())
         found = inventory(DUMP_DIR)
