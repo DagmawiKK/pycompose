@@ -15,13 +15,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.compiler.classpath_dump import (
-    Declaration,
-    Inventory,
-    OptInIndex,
-    opt_in_index,
-    required_opt_ins,
-)
+from pycompose.compiler.classpath_dump import Declaration, Inventory
+from pycompose.compiler.opt_ins import OptInIndex, opt_in_index, required_opt_ins
 from pycompose.compiler.propose_icons import propose_icons
 from pycompose.compiler.propose_lookup import (
     EXTENSIONS,

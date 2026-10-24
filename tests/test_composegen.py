@@ -331,25 +331,25 @@ def _overload(receiver: str | None = None, **parameters: tuple[bool, bool]) -> d
 
 def test_the_overload_leaving_fewer_defaults_wins_a_tie() -> None:
     """Kotlin spec 11.6: equally specific, fewer unspecified defaults is chosen."""
-    from pycompose.compiler.components import _competing
+    from pycompose.compiler.resolution import competing
 
     current = _overload(items=(True, True), spacing=(False, True))
     deprecated = _overload(
         items=(True, True), spacing=(False, True), overflow=(False, True)
     )
-    assert not _competing(current, deprecated)
-    assert _competing(deprecated, current)
+    assert not competing(current, deprecated)
+    assert competing(deprecated, current)
 
 
 def test_an_extension_on_a_scope_never_competes_with_a_top_level_overload() -> None:
-    from pycompose.compiler.components import _competing
+    from pycompose.compiler.resolution import competing
 
     top = _overload(visible=(True, False))
     scoped = _overload(
         "androidx/compose/foundation/layout/RowScope", visible=(True, False)
     )
-    assert not _competing(top, scoped)
-    assert not _competing(scoped, top)
+    assert not competing(top, scoped)
+    assert not competing(scoped, top)
 
 
 def test_a_transient_holder_takes_its_family_projection() -> None:

@@ -60,7 +60,8 @@ from pycompose.compiler.classpath_dump import (
     inventory,
     source_defaults,
 )
-from pycompose.compiler.components import MODIFIER, propose_components
+from pycompose.compiler.components import propose_components
+from pycompose.compiler.resolution import MODIFIER
 
 DOMAIN_PREFIXES: tuple[tuple[str, str], ...] = (
     ("androidx.compose.material3.adaptive", "navigation"),

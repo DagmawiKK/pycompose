@@ -109,10 +109,8 @@ def build_app(
         render_kotlin_models,
         render_kotlin_registry,
     )
-    from pycompose.schema.codegen.emit_python import (
-        render_python_components,
-        render_python_exports,
-    )
+    from pycompose.schema.codegen.emit_modules import render_python_exports
+    from pycompose.schema.codegen.emit_python import render_python_components
     from pycompose.schema.codegen.holders_kotlin import render_holder_drives
     from pycompose.schema.codegen.values import render_python
     from pycompose.schema.codegen.values_kotlin import (
@@ -273,12 +271,12 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         render_kotlin_models,
         render_kotlin_registry,
     )
-    from pycompose.schema.codegen.emit_python import (
+    from pycompose.schema.codegen.emit_modules import (
         render_payloads,
-        render_python_components,
         render_python_exports,
         render_validators,
     )
+    from pycompose.schema.codegen.emit_python import render_python_components
     from pycompose.schema.codegen.emit_wire import render_ir_schema
     from pycompose.schema.codegen.holders_kotlin import render_holder_drives
     from pycompose.schema.codegen.values import render_python as render_values

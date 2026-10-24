@@ -402,7 +402,8 @@ def test_unsafe_token_initializers_are_refused(
 
 
 def test_class_evidence_separates_sibling_vocabularies(native_document) -> None:
-    from pycompose.compiler.classpath_dump import inventory, opt_in_index
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.opt_ins import opt_in_index
     from pycompose.compiler.propose import propose_members
 
     assert native_document["provenance"]["bom"] == "2026.09.00"

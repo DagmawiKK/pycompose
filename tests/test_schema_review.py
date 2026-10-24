@@ -274,8 +274,8 @@ def test_stage_cannot_target_the_approved_schema(tmp_path, monkeypatch, capsys) 
 
 
 def test_opt_in_evidence_comes_from_the_pin(native_document) -> None:
-    from pycompose.compiler.classpath_dump import (
-        inventory,
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.opt_ins import (
         opt_in_index,
         opt_in_markers,
         required_opt_ins,

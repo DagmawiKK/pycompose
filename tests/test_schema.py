@@ -39,13 +39,11 @@ def _registry() -> dict:
 
 
 def _gen() -> object:
-    """The codegen emission module, imported the ordinary way.
+    """The module rendering the runtime tables, imported the ordinary way.
 
-    Emitters live beside the loader now: the renderers moved into
-    ``emit_python`` / ``emit_wire`` and the loader into ``rules``, so the
-    freshness checks grade the modules that actually produce each artifact.
+    The freshness checks grade the module that actually produces each artifact.
     """
-    return importlib.import_module("pycompose.schema.codegen.emit_python")
+    return importlib.import_module("pycompose.schema.codegen.emit_modules")
 
 
 def _expected(renderer: str) -> str:
