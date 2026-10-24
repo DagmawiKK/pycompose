@@ -83,8 +83,8 @@ jobs:
             base="$(git rev-parse HEAD^)"
           fi
           python -m tools.composegen diff --base "$base"
-      - name: Native template drift check
-        run: python tools/template/sync.py --check
+      - name: Package asset assembly (template, extractor, lock copies)
+        run: pytest -q tests/test_template_parity.py
       - name: Schema + golden tests
         run: pytest -q -k "schema or golden"
       - name: Verify goldens ship in the wheel
@@ -197,12 +197,12 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
-      - if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
+      - if: hashFiles('android/settings.gradle.kts') != ''
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: ${{ env.JDK_VERSION }}
-      - if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
+      - if: hashFiles('android/settings.gradle.kts') != ''
         uses: gradle/actions/setup-gradle@v4
       - uses: android-actions/setup-android@v3
         with:
@@ -263,7 +263,7 @@ jobs:
           PY
           "$RUNNER_TEMP/cli-venv/bin/pycompose" validate wheel-smoke/ui.json
       - name: Build template (host debug APK)
-        if: hashFiles('pycompose/templates/android/settings.gradle.kts') != ''
+        if: hashFiles('android/settings.gradle.kts') != ''
         working-directory: ${{ runner.temp }}/wheel-smoke
         run: |
           "$RUNNER_TEMP/cli-venv/bin/pycompose" build apk

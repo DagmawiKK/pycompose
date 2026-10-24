@@ -26,6 +26,13 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+# The package's copied assets -- the Android template, the extraction module,
+# the lock and wire schema -- are assembled from their sources, never committed;
+# the session runs against copies made from what is checked out now.
+from tools.template.sync import assemble  # noqa: E402
+
+assemble()
+
 
 @pytest.fixture(scope="session")
 def native_document():

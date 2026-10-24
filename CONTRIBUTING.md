@@ -68,7 +68,7 @@ report:
    `pydoclint` (Google-style docstrings), `lint-imports`, `tools/limits.py`,
    `pytest`.
 2. **Schema and codegen** — `tools/schema/gen.py --check`,
-   `tools/template/sync.py --check`, schema and golden tests, wheel smoke.
+   the package-asset assembly tests, schema and golden tests, wheel smoke.
 3. **Kotlin** — Spotless, Detekt, Android lint, unit tests including ArchUnit,
    and the pinned Compose API inventory check.
 4. **Template build smoke** — `pycompose init`, an installed-wheel CLI run, and
@@ -109,8 +109,11 @@ its base. Check its report if you touch the IR, diffing, or bridge.
   `schema/policy/approvals.json` approves its id with a reason
   (`{"approved": {"<id>": "<reason>"}}`); clear approvals once the change
   merges, because an approval naming no current change also fails.
-- **Native template stays in sync.** `android/` and
-  `pycompose/templates/android/` are checked by `tools/template/sync.py --check`.
+- **Package copies are assembled, never committed.** The template a scaffolded
+  app gets (`android/` plus `pycompose/templates/overlay/`), the extraction
+  module and the lock and wire schema copies are written by
+  `tools/template/sync.py`; the build backend, the test session and the
+  pre-commit hook run it. Edit the source, never the copy.
 - **No large files or secrets.** Files over 500 KB and private keys are
   rejected by pre-commit.
 - **Tests.** New behaviour comes with tests; bug fixes come with a test that

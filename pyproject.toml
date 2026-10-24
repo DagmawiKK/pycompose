@@ -1,6 +1,8 @@
 [build-system]
 requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
+# setuptools, after assembling the package's copied assets (tools/template/sync.py).
+build-backend = "backend"
+backend-path = ["tools/packaging"]
 
 [project]
 name = "pycompose"
@@ -80,7 +82,7 @@ disallow_untyped_defs = true
 disallow_any_generics = true
 no_implicit_optional = true
 check_untyped_defs = true
-exclude = ["templates/android", "build"]
+exclude = ["templates", "build"]
 
 [tool.importlinter]
 root_packages = ["pycompose", "tools"]

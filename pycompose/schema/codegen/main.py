@@ -35,8 +35,6 @@ __all__ = [
 ROOT = Path(__file__).resolve().parents[3]
 
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
-BUNDLED_SCHEMA_PATH = ROOT / "pycompose" / "schema" / "ir.schema.json"
-BUNDLED_CATALOG_PATH = PACKAGED_CATALOG
 VALIDATORS_PATH = ROOT / "pycompose" / "ir" / "generated_validators.py"
 PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
 KOTLIN_ADAPTERS_PATH = (
@@ -228,47 +226,6 @@ def _slicing_problem(registry: dict[str, Any], used: set[str], app: Path) -> str
     return None
 
 
-def _mirror_template(artifacts: dict[Path, str]) -> None:
-    """Mirror every module counterpart into the template, in place.
-
-    The template is the project ``pycompose init`` scaffolds, and it carries the
-    framework sources verbatim. Whatever the modules have is what a generated app
-    gets, so every counterpart is mirrored -- not just the generated half, which
-    would ship a project whose renderer predates its adapters.
-
-    A counterpart this run regenerated is copied from ``artifacts`` rather than
-    read back from disk: disk still holds the previous run's output, so reading
-    the file would mirror content one generation behind.
-
-    Args:
-        artifacts: The run's pending artifacts, keyed by path; template copies
-            are added to it and generated copies are reused as-is.
-    """
-    template = ROOT / "pycompose/templates/android"
-    for path in sorted(template.rglob("*")):
-        if not path.is_file() or path in artifacts:
-            continue
-        source = ROOT / "android" / path.relative_to(template)
-        if not source.is_file():
-            continue
-        generated = artifacts.get(source)
-        if generated is not None:
-            artifacts[path] = generated
-            continue
-        raw = source.read_bytes()
-        try:
-            contents = raw.decode("utf-8")
-        except UnicodeDecodeError:
-            contents = None
-        if contents is None or "\r" in contents:
-            # Not plain LF text: the Gradle wrapper jar is not source at all,
-            # and gradlew.bat keeps its CRLF line endings. `pycompose init`
-            # copies both, and tests/test_template_parity.py compares them byte
-            # for byte -- it sees what a text artifact cannot.
-            continue
-        artifacts[path] = contents
-
-
 def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     """Build every framework artifact one generation emits, without touching disk.
 
@@ -300,8 +257,6 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
 
     artifacts = {
         IR_SCHEMA_PATH: render_ir_schema(registry),
-        BUNDLED_SCHEMA_PATH: render_ir_schema(registry),
-        BUNDLED_CATALOG_PATH: SCHEMA_PATH.read_text(encoding="utf-8"),
         VALIDATORS_PATH: render_validators(registry),
         PAYLOADS_PATH: render_payloads(registry),
         KOTLIN_MODELS_PATH: render_kotlin_models(registry),
@@ -344,7 +299,6 @@ def main(argv: list[str] | None = None) -> int:
         return build_app(args.app, check=args.check)
     registry = load_registry()
     artifacts = framework_artifacts(registry)
-    _mirror_template(artifacts)
     for fixture in sorted((ROOT / "pycompose/testing/fixtures").glob("*.json")):
         # The repository's own tests read these through the modules' test
         # source sets. A scaffold ships no framework tests, so the template
