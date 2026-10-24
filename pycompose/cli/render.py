@@ -33,10 +33,11 @@ def render(project: Project, snapshots: list[Path], out: Path) -> list[Path]:
         out: Where the results go, named after each snapshot.
 
     Returns:
-        The PNG files written.
+        The PNG files written; a snapshot that failed to render has its report
+        in its semantics dump and no image.
 
     Raises:
-        ProjectError: If rendering failed or wrote nothing.
+        ProjectError: If rendering failed or wrote no result.
     """
     out = out.resolve()
     with tempfile.TemporaryDirectory(prefix="pycompose-render-") as scratch:
@@ -77,11 +78,13 @@ def render(project: Project, snapshots: list[Path], out: Path) -> list[Path]:
         )
     if result.returncode != 0:
         raise ProjectError("rendering failed", output=result.stdout[-3000:])
-    written = [out / f"{path.stem}.png" for path in snapshots]
-    missing = [path.name for path in written if not path.is_file()]
+    dumps = [out / f"{path.stem}.semantics.json" for path in snapshots]
+    missing = [path.name for path in dumps if not path.is_file()]
     if missing:
-        raise ProjectError("rendering wrote no image", missing=", ".join(missing))
-    return written
+        raise ProjectError("rendering wrote no result", missing=", ".join(missing))
+    # A sample that threw has its report and no image.
+    images = [out / f"{path.stem}.png" for path in snapshots]
+    return [image for image in images if image.is_file()]
 
 
 def first_screen(project: Project) -> str:

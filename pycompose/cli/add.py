@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import tempfile
 import urllib.request
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -23,6 +24,8 @@ from typing import Any
 from xml.etree import ElementTree
 
 from pycompose.cli.project import Project, ProjectError
+from pycompose.cli.render import render
+from pycompose.cli.validate import validate_file
 from pycompose.compiler.app import (
     APP_POLICY,
     AppLibraryError,
@@ -31,6 +34,9 @@ from pycompose.compiler.app import (
 )
 from pycompose.compiler.gradle import extract, resolve
 from pycompose.compiler.lock import Report, dumps
+from pycompose.compiler.samples import sample
+from pycompose.errors import IrValidationError
+from pycompose.ir.generated_validators import REGISTRY
 from pycompose.schema.codegen.app_slice import APP_LOCK
 from pycompose.schema.codegen.rules import SCHEMA_PATH
 
@@ -79,7 +85,7 @@ def add_library(project: Project, coordinate: str) -> Report:
     written = False
     try:
         with _extractor(android) as default:
-            libraries, closure = _fitting(
+            libraries, closure, bytecode = _fitting(
                 android, default, others, group, artifact, versions
             )
             (android / "compose-closure.json").write_text(
@@ -94,6 +100,24 @@ def add_library(project: Project, coordinate: str) -> Report:
             raise ProjectError(
                 "the compiler refused the run", errors="; ".join(report.errors)
             )
+        previous = (
+            lock_path.read_text(encoding="utf-8") if lock_path.is_file() else None
+        )
+        # Class-file major 61 is Java 17; a JVM render needs at least the newest.
+        lock["jvm"] = max(17, bytecode - 44)
+        lock_path.write_text(dumps({"libraries": libraries, **lock}), encoding="utf-8")
+        gated = False
+        try:
+            refused = render_gate(project, lock["components"])
+            gated = True
+        finally:
+            if not gated:
+                # Rendering itself failed: the lock goes back to what it was.
+                _restore(lock_path, previous)
+        for name, reason in refused.items():
+            del lock["components"][name]
+            report.refused[name] = reason
+            report.promoted = [n for n in report.promoted if n != name]
         lock_path.write_text(dumps({"libraries": libraries, **lock}), encoding="utf-8")
         written = True
     finally:
@@ -101,6 +125,57 @@ def add_library(project: Project, coordinate: str) -> Report:
             # A run that wrote no lock leaves the classpath as the lock says.
             _write_libraries(android, current.get("libraries", []))
     return report
+
+
+def render_gate(project: Project, components: dict[str, Any]) -> dict[str, str]:
+    """Render one sample per app component, as the library's gate renders its own.
+
+    Args:
+        project: The app, whose lock slice already holds ``components``.
+        components: The app's own components.
+
+    Returns:
+        The components to refuse, with why: no sample its types can build, a
+        sample the validator refuses, or a render the renderer reported on.
+    """
+    if not components:
+        return {}
+    REGISTRY.extend(components)
+    library = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    catalog = {**library, "components": {**library["components"], **components}}
+    refused: dict[str, str] = {}
+    with tempfile.TemporaryDirectory(prefix="pycompose-samples-") as scratch:
+        directory = Path(scratch)
+        snapshots = []
+        for name in sorted(components):
+            path = directory / f"{name}.json"
+            try:
+                path.write_text(json.dumps(sample(catalog, name)), encoding="utf-8")
+                validate_file(path, wire=False)
+            except ValueError as exc:
+                refused[name] = f"it has no sample: {exc}"
+                continue
+            except (ProjectError, IrValidationError) as exc:
+                refused[name] = f"its sample does not validate: {exc}"
+                continue
+            snapshots.append(path)
+        out = directory / "rendered"
+        if snapshots:
+            render(project, snapshots, out)
+        for path in snapshots:
+            dump = json.loads((out / f"{path.stem}.semantics.json").read_text("utf-8"))
+            if dump["reports"]:
+                refused[path.stem] = "renders with a report: " + "; ".join(
+                    dump["reports"]
+                )
+    return refused
+
+
+def _restore(path: Path, previous: str | None) -> None:
+    if previous is None:
+        path.unlink(missing_ok=True)
+    else:
+        path.write_text(previous, encoding="utf-8")
 
 
 def sync_libraries(project: Project) -> None:
@@ -121,7 +196,7 @@ def _fitting(
     group: str,
     artifact: str,
     versions: list[str],
-) -> tuple[list[str], dict[str, Any]]:
+) -> tuple[list[str], dict[str, Any], int]:
     """The first version whose resolution leaves every BOM-pinned module alone."""
     refusals = []
     for version in versions:
@@ -135,7 +210,7 @@ def _fitting(
             if found["coordinate"].split(":")[0] in own
         ]
         try:
-            return libraries, layered_closure(default, resolved)
+            return libraries, layered_closure(default, resolved), resolved["bytecode"]
         except AppLibraryError as exc:
             refusals.append(f"{version}: {exc}")
     raise ProjectError(

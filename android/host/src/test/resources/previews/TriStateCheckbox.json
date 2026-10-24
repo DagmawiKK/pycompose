@@ -21,7 +21,7 @@
    },
    "onClick": "app.preview.onClick",
    "state": {
-    "name": "On",
+    "name": "Indeterminate",
     "type": "ToggleableState"
    }
   },

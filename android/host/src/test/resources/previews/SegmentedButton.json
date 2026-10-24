@@ -28,9 +28,9 @@
      "shape": {
       "size": {
        "type": "Dp",
-       "value": 8
+       "value": 0
       },
-      "type": "RoundedCornerShape"
+      "type": "CutCornerShape"
      }
     },
     "type": "SegmentedButton"

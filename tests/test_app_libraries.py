@@ -27,6 +27,7 @@ def _resolved(*conflicts: dict[str, str]) -> dict[str, Any]:
     return {
         "artifacts": [{"coordinate": MARKDOWN, "sha256": "b" * 64}],
         "conflicts": list(conflicts),
+        "bytecode": 61,
     }
 
 
@@ -140,12 +141,13 @@ def test_the_newest_version_fitting_the_bom_is_chosen(
         return {**resolved, "artifacts": [google, *resolved["artifacts"]]}
 
     monkeypatch.setattr(add, "resolve", resolve)
-    libraries, closure = add._fitting(
+    libraries, closure, bytecode = add._fitting(
         tmp_path, DEFAULT, [], "com.example.md", "markdown", ["2.0", "1.9"]
     )
     assert tried == ["2.0", "1.9"]
     assert libraries == ["com.example.md:markdown:1.9"]
     assert "com.example.md" in closure["groups"]
+    assert bytecode == 61
 
 
 def test_a_malformed_coordinate_is_refused_before_anything_runs(tmp_path: Path) -> None:

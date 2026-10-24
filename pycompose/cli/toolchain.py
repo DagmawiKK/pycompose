@@ -127,17 +127,47 @@ def android_sdk() -> Path | None:
     return None
 
 
-def jdk_home() -> str | None:
-    """The managed JDK, once ``setup`` has installed it.
+def jdk_home(root: Path = HOME / "jdk") -> str | None:
+    """A managed JDK, once installed: by default the one ``setup`` installs.
+
+    Args:
+        root: Where it was unpacked.
 
     Returns:
         Its home, or None.
     """
-    root = HOME / "jdk"
     for home in (root, root / "Contents/Home"):
         if (home / "bin" / ("java.exe" if os.name == "nt" else "java")).is_file():
             return str(home)
     return None
+
+
+def test_jdk(needed: int) -> tuple[int, str]:
+    """The pinned JDK that loads classes compiled for Java ``needed``.
+
+    Installed on first need, beside the build's JDK.
+
+    Args:
+        needed: The newest Java an app library's classes were compiled for.
+
+    Returns:
+        The JDK's version and home.
+
+    Raises:
+        ProjectError: If no pinned JDK is that new.
+    """
+    pinned = {int(v): archives for v, archives in lock().locked["test_jdks"].items()}
+    fitting = sorted(version for version in pinned if version >= needed)
+    if not fitting:
+        raise ProjectError("no pinned JDK loads this app's libraries", java=str(needed))
+    version = fitting[0]
+    root = HOME / f"jdk{version}"
+    if jdk_home(root) is None:
+        archive = pinned[version][host()]
+        _install(archive["url"], "sha256", archive["sha256"], root)
+    home = jdk_home(root)
+    assert home is not None, root
+    return version, home
 
 
 def host() -> str:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import shutil
 import tarfile
 from pathlib import Path
@@ -144,8 +145,22 @@ def test_the_toolchain_is_read_from_the_template_and_the_lock() -> None:
     assert pinned.compile_sdk == 37
     assert pinned.min_sdk == 24
     assert pinned.gradle and len(pinned.gradle_sha256) == 64
-    for archive in pinned.locked["jdk"]["archives"].values():
-        assert len(archive["sha256"]) == 64
+    test_jdks = pinned.locked["test_jdks"].values()
+    for archives in [pinned.locked["jdk"]["archives"], *test_jdks]:
+        assert {len(archive["sha256"]) for archive in archives.values()} == {64}
+
+
+def test_a_library_needing_newer_java_gets_the_nearest_pinned_jdk(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(toolchain, "HOME", tmp_path)
+    java = tmp_path / "jdk21/bin" / ("java.exe" if os.name == "nt" else "java")
+    java.parent.mkdir(parents=True)
+    java.touch()
+    # Classes for Java 18 load on the nearest pinned JDK, already installed.
+    assert toolchain.test_jdk(18) == (21, str(tmp_path / "jdk21"))
+    with pytest.raises(ProjectError, match="no pinned JDK"):
+        toolchain.test_jdk(99)
 
 
 def test_an_archive_member_escaping_its_directory_is_refused(tmp_path: Path) -> None:

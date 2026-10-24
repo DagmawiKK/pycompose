@@ -131,7 +131,8 @@ def build_app(
     try:
         own = app_components(app_lock)
         registry = with_app_lock(load_catalog(SCHEMA_PATH), own)
-        used = discover(python_root, registry)
+        # The app's own libraries are always built: it asked for them by name.
+        used = discover(python_root, registry) | set(own)
     except AppCodegenError as exc:
         print(f"gen.py: {exc}", file=sys.stderr)
         return 1

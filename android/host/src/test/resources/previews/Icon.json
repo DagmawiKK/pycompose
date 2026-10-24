@@ -7,7 +7,7 @@
   "props": {
    "contentDescription": "Preview",
    "imageVector": {
-    "name": "Filled.Add",
+    "name": "AutoMirrored.Filled.ArrowBack",
     "type": "materialIcon"
    }
   },

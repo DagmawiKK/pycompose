@@ -16,6 +16,15 @@ linux-x64 = { url = "https://github.com/adoptium/temurin17-binaries/releases/dow
 linux-aarch64 = { url = "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.20.1%2B1/OpenJDK17U-jdk_aarch64_linux_hotspot_17.0.20.1_1.tar.gz", sha256 = "457b57af8f9c93ec39080bb8c764f559dc8c89a6da1a39d718a400b7890d3e41" }
 windows-x64 = { url = "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.20.1%2B1/OpenJDK17U-jdk_x64_windows_hotspot_17.0.20.1_1.zip", sha256 = "e53a79c3c3d86865bd7e787903884331068e71321714ffd44f145785affc7cb0" }
 
+# A newer JDK for device-free tests, installed only when an app library's
+# classes need it (its lock slice's `jvm`); builds stay on the JDK above.
+[test_jdks.21]
+mac-aarch64 = { url = "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.13_9.tar.gz", sha256 = "bf036b35b071bfb2f54f2c0af8ee8d88afa95ee6eb3dce02c0f94cfc2524d04a" }
+mac-x64 = { url = "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jdk_x64_mac_hotspot_21.0.13_9.tar.gz", sha256 = "9aa1d1c17ae5467a022679e7e0af5c00797d94ac462ed1a46f4db07a8a34a6dd" }
+linux-x64 = { url = "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jdk_x64_linux_hotspot_21.0.13_9.tar.gz", sha256 = "d7f5d5cf865a2902b70ff549b97586a7d3f234e016f041ab447ea740c7d66d1c" }
+linux-aarch64 = { url = "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jdk_aarch64_linux_hotspot_21.0.13_9.tar.gz", sha256 = "e3522e707fc7dbe2a72c30746b1e7068301a0213ecd213d4491f35a14eb55578" }
+windows-x64 = { url = "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_x64_windows_hotspot_21.0.12.1_1.zip", sha256 = "f9d6e191ab098c0d416e7d588a24420a8621cd2f4720dab2459b8b7b2d2d8b4e" }
+
 [android]
 # Google's repository publishes SHA-1 digests for these archives.
 cmdline_tools = "23.0"

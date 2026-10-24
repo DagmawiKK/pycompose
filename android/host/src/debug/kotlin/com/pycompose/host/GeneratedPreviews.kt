@@ -322,7 +322,7 @@ private fun HorizontalDividerPreview() {
 @Preview(name = "Icon", showBackground = true)
 @Composable
 private fun IconPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "imageVector": {"name": "Filled.Add", "type": "materialIcon"}}, "type": "Icon"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "imageVector": {"name": "AutoMirrored.Filled.ArrowBack", "type": "materialIcon"}}, "type": "Icon"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "IconButton", showBackground = true)
@@ -346,7 +346,7 @@ private fun ImagePreview() {
 @Preview(name = "ImageImageVector", showBackground = true)
 @Composable
 private fun ImageImageVectorPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "imageVector": {"name": "Filled.Add", "type": "materialIcon"}}, "type": "ImageImageVector"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "imageVector": {"name": "AutoMirrored.Filled.ArrowBack", "type": "materialIcon"}}, "type": "ImageImageVector"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "InputChip", showBackground = true)
@@ -442,7 +442,7 @@ private fun ModalWideNavigationRailPreview() {
 @Preview(name = "MultiChoiceSegmentedButton", showBackground = true)
 @Composable
 private fun MultiChoiceSegmentedButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange", "shape": {"size": {"type": "Dp", "value": 8}, "type": "RoundedCornerShape"}}, "type": "MultiChoiceSegmentedButton"}], "id": "provider", "props": {}, "type": "MultiChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange", "shape": {"size": {"type": "Dp", "value": 0}, "type": "CutCornerShape"}}, "type": "MultiChoiceSegmentedButton"}], "id": "provider", "props": {}, "type": "MultiChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "MultiChoiceSegmentedButtonRow", showBackground = true)
@@ -634,7 +634,7 @@ private fun SecureTextFieldPreview() {
 @Preview(name = "SegmentedButton", showBackground = true)
 @Composable
 private fun SegmentedButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true, "shape": {"size": {"type": "Dp", "value": 8}, "type": "RoundedCornerShape"}}, "type": "SegmentedButton"}], "id": "provider", "props": {}, "type": "SingleChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true, "shape": {"size": {"type": "Dp", "value": 0}, "type": "CutCornerShape"}}, "type": "SegmentedButton"}], "id": "provider", "props": {}, "type": "SingleChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SelectionContainer", showBackground = true)
@@ -670,7 +670,7 @@ private fun SingleChoiceSegmentedButtonRowPreview() {
 @Preview(name = "Slider", showBackground = true)
 @Composable
 private fun SliderPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Slider", "type": "semantics"}]}, "valueRange": {"end": 1.0, "start": 0.0, "type": "Range"}}, "type": "Slider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Slider", "type": "semantics"}]}, "valueRange": {"end": 1, "start": 0, "type": "Range"}}, "type": "Slider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SliderValue", showBackground = true)
@@ -814,7 +814,7 @@ private fun TopAppBarPreview() {
 @Preview(name = "TriStateCheckbox", showBackground = true)
 @Composable
 private fun TriStateCheckboxPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TriStateCheckbox", "type": "semantics"}]}, "onClick": "app.preview.onClick", "state": {"name": "On", "type": "ToggleableState"}}, "type": "TriStateCheckbox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TriStateCheckbox", "type": "semantics"}]}, "onClick": "app.preview.onClick", "state": {"name": "Indeterminate", "type": "ToggleableState"}}, "type": "TriStateCheckbox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "VerticalDivider", showBackground = true)

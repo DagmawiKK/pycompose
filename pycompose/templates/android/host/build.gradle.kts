@@ -131,7 +131,17 @@ tasks.matching { it.name.matches(Regex("merge.*PythonSources")) }.configureEach 
 }
 
 // `pycompose render` names its request; RenderSnapshots renders nothing without it.
+// An app library built for a newer Java loads only on a JVM at least that new:
+// the app's lock slice names it, and only the tests run there.
+val testJvm = providers.gradleProperty("pycomposeTestJvm").orNull?.toInt()
 tasks.withType<Test>().configureEach {
+    if (testJvm != null && testJvm > 17) {
+        javaLauncher.set(
+            javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(testJvm))
+            },
+        )
+    }
     providers
         .gradleProperty(
             "pycomposeRender",

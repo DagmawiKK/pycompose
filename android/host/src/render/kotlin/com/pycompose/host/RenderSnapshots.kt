@@ -71,18 +71,26 @@ class RenderSnapshots(
                 ActionDispatcher {},
                 debug = true,
             ) { reports.add(it) }
-        compose.setContent {
-            PyComposeTheme {
-                Box(Modifier.fillMaxSize().background(Color.White)) { renderer.Render(ir) }
-            }
-        }
-        compose.waitForIdle()
         val directory = File(out).apply { mkdirs() }
-        val image = compose.onRoot().captureToImage().asAndroidBitmap()
-        File(directory, "$name.png").outputStream().use {
-            image.compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
-        val windows = compose.onAllNodes(isRoot()).fetchSemanticsNodes().map(::describe)
+        // A sample that throws is that sample's report, not the run's failure:
+        // the caller decides what a report means (`pycompose add` refuses it).
+        val windows =
+            runCatching {
+                compose.setContent {
+                    PyComposeTheme {
+                        Box(Modifier.fillMaxSize().background(Color.White)) { renderer.Render(ir) }
+                    }
+                }
+                compose.waitForIdle()
+                val image = compose.onRoot().captureToImage().asAndroidBitmap()
+                File(directory, "$name.png").outputStream().use {
+                    image.compress(Bitmap.CompressFormat.PNG, 100, it)
+                }
+                compose.onAllNodes(isRoot()).fetchSemanticsNodes().map(::describe)
+            }.getOrElse { failure ->
+                reports.add("throws ${failure::class.java.simpleName}: ${failure.message}")
+                emptyList()
+            }
         val dump =
             buildJsonObject {
                 put("windows", JsonArray(windows))

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import subprocess
@@ -24,7 +25,8 @@ from pycompose.cli.project import (
 )
 from pycompose.cli.requirements import validate_requirements
 from pycompose.cli.sync import sync_resources
-from pycompose.cli.toolchain import jdk_home
+from pycompose.cli.toolchain import jdk_home, test_jdk
+from pycompose.schema.codegen.app_slice import APP_LOCK
 
 SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
 
@@ -165,6 +167,22 @@ def _app_properties(project: Project, env: dict[str, str]) -> None:
         Path(__file__).resolve().parents[2]
     )
     env["ORG_GRADLE_PROJECT_pycomposeBuildPython"] = sys.executable
+
+
+def _jvm_properties(project: Project, env: dict[str, str]) -> None:
+    """Name the JVM device-free tests need, when the host's 17 cannot load them.
+
+    An app library compiled for a newer Java loads only on a JVM at least that
+    new; its lock slice records which (``jvm``).
+    """
+    lock = project.root / APP_LOCK
+    needed = 17
+    if lock.is_file():
+        needed = json.loads(lock.read_text(encoding="utf-8")).get("jvm", 17)
+    if needed > 17:
+        version, home = test_jdk(needed)
+        env["ORG_GRADLE_PROJECT_pycomposeTestJvm"] = str(version)
+        env["ORG_GRADLE_PROJECT_org.gradle.java.installations.paths"] = home
 
 
 def _signing(project: Project, env: dict[str, str]) -> tuple[str, ...]:
@@ -365,6 +383,7 @@ def prepare(project: Project) -> tuple[Path, dict[str, str]]:
     if (home := jdk_home()) is not None and "JAVA_HOME" not in env:
         env["JAVA_HOME"] = home
     _app_properties(project, env)
+    _jvm_properties(project, env)
     stage_extensions(project, env)
     if not generated(project):
         sync_resources(project)

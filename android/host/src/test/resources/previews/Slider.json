@@ -14,8 +14,8 @@
     ]
    },
    "valueRange": {
-    "end": 1.0,
-    "start": 0.0,
+    "end": 1,
+    "start": 0,
     "type": "Range"
    }
   },

@@ -7,6 +7,7 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.process.ExecOperations
 import java.security.MessageDigest
 import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
 import javax.inject.Inject
 
 // Development tooling only (plan 31 S1): extract the pinned Compose API and its
@@ -220,6 +221,13 @@ tasks.register("resolveCompose") {
                         "sha256" to sha256(it.file.readBytes()),
                     )
                 }.sortedBy { it["coordinate"] }
+        // The newest bytecode the app's own libraries carry: a JVM older than it
+        // cannot load them, so a device-free render must run on one at least this new.
+        val libraryGroups = requested.map { it.substringBefore(':') }.toSet()
+        val bytecode =
+            resolved
+                .filter { it.moduleVersion.id.group in libraryGroups }
+                .maxOfOrNull { classMajor(it.file) } ?: 0
         // Tooling never rides the app classpath: each module resolves alone, at
         // the version the BOM now pins for it.
         val tooling =
@@ -243,11 +251,34 @@ tasks.register("resolveCompose") {
                         "artifacts" to artifacts,
                         "tooling" to tooling,
                         "conflicts" to conflicts,
+                        "bytecode" to bytecode,
                     ),
                 ),
             ),
         )
     }
+}
+
+/** The highest class-file major version in a jar, or in an AAR's classes.jar. */
+fun classMajor(file: File): Int {
+    fun scan(stream: ZipInputStream): Int {
+        var highest = 0
+        while (true) {
+            val entry = stream.nextEntry ?: break
+            if (entry.name.endsWith(".class")) {
+                val header = stream.readNBytes(8)
+                if (header.size ==
+                    8
+                ) {
+                    highest = maxOf(highest, (header[6].toInt() shl 8) or header[7].toInt())
+                }
+            } else if (entry.name == "classes.jar") {
+                highest = maxOf(highest, scan(ZipInputStream(stream)))
+            }
+        }
+        return highest
+    }
+    return ZipInputStream(file.inputStream()).use(::scan)
 }
 
 /** Approved bindings by exact source identity, plus names bound by no source yet. */

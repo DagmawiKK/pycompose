@@ -33,17 +33,21 @@ def _node(root: dict[str, Any]) -> Node:
     return built[id(root)]
 
 
-def validate_file(path: Path) -> None:
+def validate_file(path: Path, *, wire: bool = True) -> None:
     """Validate an IR file without importing app code or requiring Android.
 
     Args:
         path: JSON snapshot file, canonical or ordinarily formatted.
+        wire: Also check the bundled wire schema. It describes the library's
+            catalog only, so an app's own components are checked by the
+            runtime registry alone, once registered.
 
     Raises:
         ProjectError: If the envelope or metadata shape is invalid.
     """
     raw = read_json(path)
-    WireSchema().check(raw)
+    if wire:
+        WireSchema().check(raw)
     data = cast("dict[str, Any]", raw)
     if set(data) - {"version", "schemaVersion", "root", "metadata"}:
         raise ProjectError("unknown snapshot envelope fields")
