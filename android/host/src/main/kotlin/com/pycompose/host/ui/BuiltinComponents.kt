@@ -6,14 +6,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.PropResolver
@@ -70,27 +63,31 @@ object BuiltinComponents {
     private fun ComponentRegistry.Builder.textInputs(): ComponentRegistry.Builder =
         register("TextField") { node, modifier, context ->
             val input = node as InputNode
-            val report: (String) -> Unit = { value ->
-                context.event(input.props.onValueChange, JsonPrimitive(value))
-            }
             val caret = input.props.selection
             val onCaret = input.props.onSelectionChange
+            val echoed = rememberEchoedText(input.id, input.props.value, caret?.toInt())
+            val report: (String) -> Unit = { value ->
+                echoed.typed(value)
+                context.event(input.props.onValueChange, JsonPrimitive(value))
+            }
             // Controlled when the app says where the caret is, which puts it in
             // the snapshot and makes it testable. Uncontrolled otherwise, where
             // Compose owns it and the app never sees it. Both halves must be
             // declared: one alone would either drop every caret report or reject
             // every keystroke.
             if (caret != null && onCaret != null) {
-                val wanted = input.props.value
-                val offset = caret.toInt().coerceIn(0, wanted.length)
                 TextField(
-                    value = TextFieldValue(text = wanted, selection = TextRange(offset)),
+                    value = echoed.value,
                     // The caret travels back on the same callback that reports the
                     // text: the event channel carries one value per action, and M3
                     // has no selection callback of its own at this version. A caret
                     // moved without the text changing is therefore not reported.
                     onValueChange = { updated ->
-                        report(updated.text)
+                        val changed = updated.text != echoed.text
+                        echoed.typed(updated)
+                        if (changed) {
+                            context.event(input.props.onValueChange, JsonPrimitive(updated.text))
+                        }
                         context.event(onCaret, JsonPrimitive(updated.selection.start))
                     },
                     modifier = modifier,
@@ -99,7 +96,7 @@ object BuiltinComponents {
                 )
             } else {
                 TextField(
-                    value = input.props.value,
+                    value = echoed.text,
                     onValueChange = report,
                     modifier = modifier,
                     enabled = input.props.enabled,
@@ -112,17 +109,13 @@ object BuiltinComponents {
     private fun ComponentRegistry.Builder.searchFields(): ComponentRegistry.Builder =
         register("SearchBarInputField") { node, modifier, context ->
             val field = node as SearchBarInputFieldNode
-            // The native field owns the caret, but the app owns the text. Keeping
-            // the latest keystroke locally until the snapshot echoes it prevents
-            // an older snapshot from moving the caret to the start between keys.
-            var query by remember(field.id) { mutableStateOf(field.props.query) }
-            LaunchedEffect(field.props.query) {
-                if (field.props.query != query) query = field.props.query
-            }
+            // The native field owns the caret, but the app owns the text: the
+            // latest keystroke stays until the app states other text.
+            val query = rememberEchoedText(field.id, field.props.query)
             SearchBarDefaults.InputField(
-                query = query,
+                query = query.text,
                 onQueryChange = { value ->
-                    query = value
+                    query.typed(value)
                     context.event(field.props.onQueryChange, JsonPrimitive(value))
                 },
                 onSearch = { query ->
