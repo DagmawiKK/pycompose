@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
@@ -123,6 +124,7 @@ import androidx.compose.material3.WideNavigationRail
 import androidx.compose.material3.WideNavigationRailItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -147,6 +149,7 @@ import com.pycompose.ir.generated.CircularProgressIndicator as CircularProgressI
 import com.pycompose.ir.generated.CircularProgressIndicatorProgress as CircularProgressIndicatorProgressNode
 import com.pycompose.ir.generated.Column as ColumnNode
 import com.pycompose.ir.generated.DatePickerDialog as DatePickerDialogNode
+import com.pycompose.ir.generated.DisableSelection as DisableSelectionNode
 import com.pycompose.ir.generated.DismissibleDrawerSheet as DismissibleDrawerSheetNode
 import com.pycompose.ir.generated.DismissibleNavigationDrawer as DismissibleNavigationDrawerNode
 import com.pycompose.ir.generated.DockedSearchBar as DockedSearchBarNode
@@ -201,6 +204,7 @@ import com.pycompose.ir.generated.NavigationRail as NavigationRailNode
 import com.pycompose.ir.generated.NavigationRailItem as NavigationRailItemNode
 import com.pycompose.ir.generated.NavigationSuiteItem as NavigationSuiteItemNode
 import com.pycompose.ir.generated.NavigationSuiteScaffold as NavigationSuiteScaffoldNode
+import com.pycompose.ir.generated.NavigationSuiteScaffoldLayout as NavigationSuiteScaffoldLayoutNode
 import com.pycompose.ir.generated.OutlinedButton as OutlinedButtonNode
 import com.pycompose.ir.generated.OutlinedCard as OutlinedCardNode
 import com.pycompose.ir.generated.OutlinedCardWithoutOnClick as OutlinedCardWithoutOnClickNode
@@ -670,6 +674,14 @@ object GeneratedAdapters {
                     dismissButton = context.slot(model.children, "dismissButton"),
                     content = { context.childrenIn(this, model.children) },
                 )
+            }
+            .register("DisableSelection") { node, modifier, context ->
+                val model = node as DisableSelectionNode
+                Box(modifier = modifier) {
+                DisableSelection(
+                    content = { context.children(model.children) },
+                )
+                }
             }
             .register("DismissibleDrawerSheet") { node, modifier, context ->
                 val model = node as DismissibleDrawerSheetNode
@@ -1667,8 +1679,18 @@ object GeneratedAdapters {
                 NavigationSuiteScaffold(
                     modifier = modifier,
                     navigationItems = { context.slot(model.children, "navigationItems")?.invoke() },
+                    primaryActionContent = { context.slot(model.children, "primaryActionContent")?.invoke() },
                     content = { context.children(model.children) },
                 )
+            }
+            .register("NavigationSuiteScaffoldLayout") { node, modifier, context ->
+                val model = node as NavigationSuiteScaffoldLayoutNode
+                Box(modifier = modifier) {
+                NavigationSuiteScaffoldLayout(
+                    navigationSuite = { context.slot(model.children, "navigationSuite")?.invoke() },
+                    content = { context.children(model.children) },
+                )
+                }
             }
             .register("OutlinedButton") { node, modifier, context ->
                 val model = node as OutlinedButtonNode

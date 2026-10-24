@@ -284,6 +284,10 @@ def derive(
         entry["optIn"] = sorted(plan["optIn"])
     entry["props"] = props
     entry["children"] = children
+    if "modifier" not in plan["parameters"]:
+        # The wire carries a modifier for every node: a Box wears this one's.
+        entry["boxed"] = True
+        review.append("modifier: none native; a Box carries the node's")
     if slots:
         entry["slots"] = slots
     entry.update(_holders(plan))
@@ -294,22 +298,41 @@ def derive(
     ]
     if transients:
         entry["transient"] = transients[0]
-    planned = plan.get("receiver")
-    if planned is not None:
-        # An extension on a scope, or a member of one, composes inside it.
-        native = declaration.receiver or declaration.dispatch_receiver
-        if native is None or planned.get("classifier") != native.classifier:
-            raise CandidateError(
-                f"{name}: plan does not record the pinned declaration receiver"
-            )
-        scope = scope_for(native.classifier)
+    if (scope := _scope(name, plan, declaration)) is not None:
         entry["scope"] = scope
         review.append(f"receiver: composes only inside {scope}")
-    elif declaration.receiver is not None:
+    return Derived(name, entry, tuple(review))
+
+
+def _scope(name: str, plan: dict[str, Any], declaration: Declaration) -> str | None:
+    """The scope a declaration composes inside: on it as an extension, or in it.
+
+    Args:
+        name: The component's schema name, for the refusal.
+        plan: Its call plan.
+        declaration: The pinned declaration the plan was made from.
+
+    Returns:
+        The scope's receiver class, or None when it composes anywhere.
+
+    Raises:
+        CandidateError: The plan and the pin disagree on that receiver.
+    """
+    planned = plan.get("receiver")
+    native = declaration.receiver or (
+        declaration.dispatch_receiver if planned is not None else None
+    )
+    if planned is None and native is None:
+        return None
+    if (
+        planned is None
+        or native is None
+        or planned.get("classifier") != (native.classifier)
+    ):
         raise CandidateError(
             f"{name}: plan does not record the pinned declaration receiver"
         )
-    return Derived(name, entry, tuple(review))
+    return scope_for(native.classifier)
 
 
 def _holders(plan: dict[str, Any]) -> dict[str, Any]:

@@ -189,6 +189,7 @@
         "wrapper": { "type": "string" },
         "scope": { "type": "string" },
         "overloadOf": { "type": "string", "minLength": 1 },
+        "boxed": { "const": true },
         "adapter": { "type": "string" },
         "reshaped": {
           "type": "array",

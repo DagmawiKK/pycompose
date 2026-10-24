@@ -943,15 +943,15 @@
         "allowed": false
       },
       "slots": {
-        "title": {
-          "native": "title"
+        "actions": {
+          "native": "actions",
+          "provides": "androidx.compose.foundation.layout.RowScope"
         },
         "navigationIcon": {
           "native": "navigationIcon"
         },
-        "actions": {
-          "native": "actions",
-          "provides": "androidx.compose.foundation.layout.RowScope"
+        "title": {
+          "native": "title"
         }
       }
     },
@@ -1271,6 +1271,28 @@
           "nullable": true
         }
       }
+    },
+    "DisableSelection": {
+      "package": "androidx.compose.foundation.text.selection",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V",
+        "jvmName": "DisableSelection",
+        "name": "DisableSelection",
+        "owner": "androidx.compose.foundation.text.selection.SelectionContainerKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "boxed": true
     },
     "DismissibleDrawerSheet": {
       "package": "androidx.compose.material3",
@@ -3842,15 +3864,15 @@
         "allowed": false
       },
       "slots": {
-        "title": {
-          "native": "title"
+        "actions": {
+          "native": "actions",
+          "provides": "androidx.compose.foundation.layout.RowScope"
         },
         "navigationIcon": {
           "native": "navigationIcon"
         },
-        "actions": {
-          "native": "actions",
-          "provides": "androidx.compose.foundation.layout.RowScope"
+        "title": {
+          "native": "title"
         }
       }
     },
@@ -4231,15 +4253,15 @@
         "allowed": false
       },
       "slots": {
-        "title": {
-          "native": "title"
+        "actions": {
+          "native": "actions",
+          "provides": "androidx.compose.foundation.layout.RowScope"
         },
         "navigationIcon": {
           "native": "navigationIcon"
         },
-        "actions": {
-          "native": "actions",
-          "provides": "androidx.compose.foundation.layout.RowScope"
+        "title": {
+          "native": "title"
         }
       }
     },
@@ -5023,6 +5045,36 @@
       "slots": {
         "navigationItems": {
           "native": "navigationItems"
+        },
+        "primaryActionContent": {
+          "native": "primaryActionContent"
+        }
+      }
+    },
+    "NavigationSuiteScaffoldLayout": {
+      "package": "androidx.compose.material3.adaptive.navigationsuite",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-adaptive-navigation-suite-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Ljava/lang/String;Landroidx/compose/material3/adaptive/navigationsuite/NavigationSuiteScaffoldState;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "NavigationSuiteScaffoldLayout-koyC03U",
+        "name": "NavigationSuiteScaffoldLayout",
+        "owner": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "boxed": true,
+      "slots": {
+        "navigationSuite": {
+          "native": "navigationSuite"
         }
       }
     },
@@ -8956,15 +9008,15 @@
         "allowed": false
       },
       "slots": {
-        "title": {
-          "native": "title"
+        "actions": {
+          "native": "actions",
+          "provides": "androidx.compose.foundation.layout.RowScope"
         },
         "navigationIcon": {
           "native": "navigationIcon"
         },
-        "actions": {
-          "native": "actions",
-          "provides": "androidx.compose.foundation.layout.RowScope"
+        "title": {
+          "native": "title"
         }
       }
     },

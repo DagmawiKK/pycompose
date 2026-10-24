@@ -157,6 +157,12 @@ private fun DatePickerDialogPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}, {"id": "preview.child", "props": {"text": "DatePickerDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": "app.preview.onDismissRequest"}, "type": "DatePickerDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "DisableSelection", showBackground = true)
+@Composable
+private fun DisableSelectionPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "DisableSelection"}, "type": "Text"}], "id": "preview", "props": {}, "type": "DisableSelection"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "DismissibleDrawerSheet", showBackground = true)
 @Composable
 private fun DismissibleDrawerSheetPreview() {
@@ -496,7 +502,13 @@ private fun NavigationSuiteItemPreview() {
 @Preview(name = "NavigationSuiteScaffold", showBackground = true)
 @Composable
 private fun NavigationSuiteScaffoldPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.navigationItems", "props": {"text": "navigationItems"}, "slot": "navigationItems", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffold"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationSuiteScaffold"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.navigationItems", "props": {"text": "navigationItems"}, "slot": "navigationItems", "type": "Text"}, {"id": "preview.primaryActionContent", "props": {"text": "primaryActionContent"}, "slot": "primaryActionContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffold"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationSuiteScaffold"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "NavigationSuiteScaffoldLayout", showBackground = true)
+@Composable
+private fun NavigationSuiteScaffoldLayoutPreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.navigationSuite", "props": {"text": "navigationSuite"}, "slot": "navigationSuite", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffoldLayout"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationSuiteScaffoldLayout"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "OutlinedButton", showBackground = true)

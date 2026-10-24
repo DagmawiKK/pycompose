@@ -256,6 +256,8 @@ class ComponentSpec:
             method, and only a parent that provides the scope can compose it.
         overload_of: The primary component whose Python name reaches this
             overload; the keywords a call passes choose between them.
+        boxed: Codegen-only: the native callable takes no modifier, so the
+            adapter composes it inside a ``Box`` wearing the node's.
         source: The exact pinned overload the generated call binds, as the
             binding compiler resolves it: artifact, owner, name, JVM name and
             JVM descriptor. Absent when the adapter is hand-written and
@@ -279,6 +281,7 @@ class ComponentSpec:
     package: str | None = None
     scope: str | None = None
     overload_of: str | None = None
+    boxed: bool = False
     source: Mapping[str, str] | None = None
 
     def __post_init__(self) -> None:
@@ -399,6 +402,7 @@ class ComponentSpec:
             package=package,
             scope=cast("str | None", data.get("scope")),
             overload_of=cast("str | None", data.get("overloadOf")),
+            boxed=data.get("boxed") is True,
             source=_source(name, data.get("source")),
         )
 
@@ -438,6 +442,7 @@ class ComponentSpec:
             "wrapper": self.wrapper,
             "scope": self.scope,
             "overloadOf": self.overload_of,
+            "boxed": self.boxed,
         }
         result.update({key: value for key, value in optional.items() if value})
         if self.source is not None:

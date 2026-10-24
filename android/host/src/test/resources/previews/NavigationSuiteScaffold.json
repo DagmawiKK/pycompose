@@ -13,6 +13,14 @@
     "type": "Text"
    },
    {
+    "id": "preview.primaryActionContent",
+    "props": {
+     "text": "primaryActionContent"
+    },
+    "slot": "primaryActionContent",
+    "type": "Text"
+   },
+   {
     "id": "preview.child",
     "props": {
      "text": "NavigationSuiteScaffold"

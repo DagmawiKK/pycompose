@@ -291,6 +291,8 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
     if comp.get("stability") not in STABILITIES:
         die(f"component {name!r} has unknown stability {comp.get('stability')!r}")
     _validate_opt_in(name, comp)
+    if comp.get("boxed", True) is not True:
+        die(f"component {name!r} boxed must be true when present")
     _validate_scope(name, comp)
     props = comp.get("props")
     if not isinstance(props, dict):

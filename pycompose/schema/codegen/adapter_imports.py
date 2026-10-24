@@ -32,6 +32,8 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
             # The holder rides the component's modifier, so the extension making
             # that ride callable must be imported where the call is written.
             qualified.add("com.pycompose.renderer.attachTo")
+    if entry.get("boxed"):
+        qualified.add("androidx.compose.foundation.layout.Box")
     if (transient := entry.get("transient")) is not None:
         qualified.add(f"com.pycompose.renderer.{transient['kind']}")
     slots = [entry.get("children", {}), *entry.get("slots", {}).values()]

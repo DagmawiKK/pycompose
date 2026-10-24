@@ -279,3 +279,13 @@ def test_the_schema_refuses_a_scope_it_cannot_wire(
     monkeypatch.setattr(rules, "SCHEMA_PATH", path)
     with pytest.raises(SystemExit, match=message):
         main.load_registry()
+
+
+def test_a_component_taking_no_modifier_sits_in_a_box_wearing_the_nodes() -> None:
+    """``DisableSelection`` has no modifier; the wire still carries one per node."""
+    entry = components()["DisableSelection"]
+    assert entry["boxed"] is True
+    block = render("DisableSelection", entry)
+    assert "Box(modifier = modifier) {" in block
+    native = block[block.index("DisableSelection(") :]
+    assert "modifier" not in native

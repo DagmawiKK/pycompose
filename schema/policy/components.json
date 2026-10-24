@@ -163,17 +163,6 @@
     "decision": {
       "category": "app-bars",
       "stability": "experimental"
-    },
-    "patch": {
-      "slots": {
-        "navigationIcon": {
-          "native": "navigationIcon"
-        },
-        "actions": {
-          "native": "actions",
-          "provides": "androidx.compose.foundation.layout.RowScope"
-        }
-      }
     }
   },
   "Checkbox": {
@@ -282,6 +271,9 @@
         "target"
       ]
     }
+  },
+  "CustomizedLookaheadAnimationVisualDebugging": {
+    "refuse": "a debugging aid for lookahead animations: it draws nothing an app ships"
   },
   "DismissibleDrawerSheet": {
     "decision": {
@@ -593,17 +585,6 @@
     "decision": {
       "category": "app-bars",
       "stability": "experimental"
-    },
-    "patch": {
-      "slots": {
-        "navigationIcon": {
-          "native": "navigationIcon"
-        },
-        "actions": {
-          "native": "actions",
-          "provides": "androidx.compose.foundation.layout.RowScope"
-        }
-      }
     }
   },
   "LazyColumn": {
@@ -678,21 +659,13 @@
       "stability": "stable"
     }
   },
+  "LookaheadAnimationVisualDebugging": {
+    "refuse": "a debugging aid for lookahead animations: it draws nothing an app ships"
+  },
   "MediumTopAppBar": {
     "decision": {
       "category": "app-bars",
       "stability": "experimental"
-    },
-    "patch": {
-      "slots": {
-        "navigationIcon": {
-          "native": "navigationIcon"
-        },
-        "actions": {
-          "native": "actions",
-          "provides": "androidx.compose.foundation.layout.RowScope"
-        }
-      }
     }
   },
   "ModalBottomSheet": {
@@ -1050,20 +1023,6 @@
       },
       "children": {
         "kind": "content"
-      },
-      "slots": {
-        "bottomBar": {
-          "native": "bottomBar"
-        },
-        "floatingActionButton": {
-          "native": "floatingActionButton"
-        },
-        "snackbarHost": {
-          "native": "snackbarHost"
-        },
-        "topBar": {
-          "native": "topBar"
-        }
       }
     }
   },
@@ -1447,17 +1406,6 @@
     "decision": {
       "category": "app-bars",
       "stability": "experimental"
-    },
-    "patch": {
-      "slots": {
-        "navigationIcon": {
-          "native": "navigationIcon"
-        },
-        "actions": {
-          "native": "actions",
-          "provides": "androidx.compose.foundation.layout.RowScope"
-        }
-      }
     }
   },
   "TriStateCheckbox": {

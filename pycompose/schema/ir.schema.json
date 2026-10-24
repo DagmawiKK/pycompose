@@ -1858,6 +1858,35 @@
       },
       "type": "object"
     },
+    "C_DisableSelection": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "DisableSelection"
+        }
+      },
+      "type": "object"
+    },
     "C_DismissibleDrawerSheet": {
       "properties": {
         "children": {
@@ -5657,7 +5686,8 @@
             "properties": {
               "slot": {
                 "enum": [
-                  "navigationItems"
+                  "navigationItems",
+                  "primaryActionContent"
                 ]
               }
             }
@@ -5683,6 +5713,43 @@
         },
         "type": {
           "const": "NavigationSuiteScaffold"
+        }
+      },
+      "type": "object"
+    },
+    "C_NavigationSuiteScaffoldLayout": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "navigationSuite"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationSuiteScaffoldLayout"
         }
       },
       "type": "object"
@@ -10781,6 +10848,9 @@
               "$ref": "#/definitions/C_DatePickerDialog"
             },
             {
+              "$ref": "#/definitions/C_DisableSelection"
+            },
+            {
               "$ref": "#/definitions/C_DismissibleDrawerSheet"
             },
             {
@@ -10950,6 +11020,9 @@
             },
             {
               "$ref": "#/definitions/C_NavigationSuiteScaffold"
+            },
+            {
+              "$ref": "#/definitions/C_NavigationSuiteScaffoldLayout"
             },
             {
               "$ref": "#/definitions/C_OutlinedButton"
@@ -29409,6 +29482,35 @@
       },
       "type": "object"
     },
+    "V_1_23_0_DisableSelection": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "DisableSelection"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_DismissibleDrawerSheet": {
       "properties": {
         "children": {
@@ -33506,7 +33608,8 @@
             "properties": {
               "slot": {
                 "enum": [
-                  "navigationItems"
+                  "navigationItems",
+                  "primaryActionContent"
                 ]
               }
             }
@@ -33532,6 +33635,43 @@
         },
         "type": {
           "const": "NavigationSuiteScaffold"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_NavigationSuiteScaffoldLayout": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "navigationSuite"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationSuiteScaffoldLayout"
         }
       },
       "type": "object"
@@ -33608,6 +33748,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_DatePickerDialog"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_DisableSelection"
             },
             {
               "$ref": "#/definitions/V_1_23_0_DismissibleDrawerSheet"
@@ -33779,6 +33922,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_NavigationSuiteScaffold"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_NavigationSuiteScaffoldLayout"
             },
             {
               "$ref": "#/definitions/V_1_23_0_OutlinedButton"

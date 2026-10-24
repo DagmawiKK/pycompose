@@ -88,12 +88,7 @@ def wire_shape(
 
     Returns:
         The props, the children block, the named slots, and the review notes.
-
-    Raises:
-        CandidateError: A parameter asks for a shape the wire cannot carry.
     """
-    if "modifier" not in plan["parameters"]:
-        raise CandidateError(f"{name}: no modifier parameter; the wire carries one")
     props: dict[str, Any] = {}
     slots: dict[str, Any] = {}
     children: dict[str, Any] = {"allowed": False}

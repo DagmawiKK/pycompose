@@ -180,12 +180,12 @@ def _parameter(
         if expression.get("kind") == "unsupported":
             raise ValueError("default: " + expression["reason"])
         render_default(expression, set())
-        if rule["policy"] == "slot" and (
-            expression.get("kind") != "literal"
-            or expression.get("value") is not None
-            or not parameter.type.nullable
-        ):
-            # Only an absent/null slot default is renderable. Anything else needs
+        empty = expression.get("kind") == "emptyLambda" or (
+            expression == {**expression, "kind": "literal", "value": None}
+            and parameter.type.nullable
+        )
+        if rule["policy"] == "slot" and not empty:
+            # Absence renders null or an empty lambda; any other default needs
             # a native protocol and would silently change what renders.
             raise ValueError("optional slot needs an explicit null policy")
         rule["default"] = expression

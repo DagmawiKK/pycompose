@@ -357,18 +357,9 @@ def render(name: str, entry: dict[str, Any]) -> str:
     indent = "                "
     if gate is not None:
         indent += "    "
-    body = "\n".join(f"{indent}    {argument}," for argument in out.arguments)
-    tail = ""
-    if out.trailing:
-        head = " {"
-        if out.trailing_parameter is not None:
-            head = f" {{ {out.trailing_parameter} ->"
-        body_lines = "\n".join(f"{indent}    {line}" for line in out.trailing)
-        tail = head + "\n" + body_lines + "\n" + indent + "}"
     node = f"{name}Node"
-    native = native_name(name, entry)
     prelude = "\n".join(f"                {line}" for line in out.locals)
-    call = f"{indent}{native}(\n{body}\n{indent}){tail}"
+    call = _call(native_name(name, entry), out, indent, boxed=bool(entry.get("boxed")))
     if gate is not None:
         # The holder stays outside the gate: the state must outlive the
         # composition of the component it projects.
@@ -382,6 +373,23 @@ def render(name: str, entry: dict[str, Any]) -> str:
         + f"{call}\n"
         f"            }}"
     )
+
+
+def _call(native: str, out: _Fragments, indent: str, *, boxed: bool) -> str:
+    """The native call; one taking no modifier sits in a Box wearing the node's."""
+    arguments = out.arguments[1:] if boxed else out.arguments
+    body = "\n".join(f"{indent}    {argument}," for argument in arguments)
+    tail = ""
+    if out.trailing:
+        head = " {"
+        if out.trailing_parameter is not None:
+            head = f" {{ {out.trailing_parameter} ->"
+        body_lines = "\n".join(f"{indent}    {line}" for line in out.trailing)
+        tail = head + "\n" + body_lines + "\n" + indent + "}"
+    call = f"{indent}{native}(\n{body}\n{indent}){tail}"
+    if boxed:
+        call = f"{indent}Box({out.arguments[0]}) {{\n{call}\n{indent}}}"
+    return call
 
 
 def _scopes(entry: dict[str, Any]) -> set[str]:

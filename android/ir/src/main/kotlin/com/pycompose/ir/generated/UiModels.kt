@@ -522,6 +522,23 @@ data class DatePickerDialog(
 }
 
 @Serializable
+data class DisableSelectionProps(
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("DisableSelection")
+data class DisableSelection(
+    override val id: String,
+    override val props: DisableSelectionProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "DisableSelection"
+}
+
+@Serializable
 data class DismissibleDrawerSheetProps(
     val `drawerContainerColor`: JsonElement? = null,
     val `drawerShape`: JsonElement? = null,
@@ -1787,6 +1804,23 @@ data class NavigationSuiteScaffold(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "NavigationSuiteScaffold"
+}
+
+@Serializable
+data class NavigationSuiteScaffoldLayoutProps(
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("NavigationSuiteScaffoldLayout")
+data class NavigationSuiteScaffoldLayout(
+    override val id: String,
+    override val props: NavigationSuiteScaffoldLayoutProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "NavigationSuiteScaffoldLayout"
 }
 
 @Serializable

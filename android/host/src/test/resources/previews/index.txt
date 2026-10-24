@@ -21,6 +21,7 @@ CircularProgressIndicatorProgress
 Column
 Crossfade
 DatePickerDialog
+DisableSelection
 DismissibleDrawerSheet
 DismissibleNavigationDrawer
 DockedSearchBar
@@ -78,6 +79,7 @@ NavigationRail
 NavigationRailItem
 NavigationSuiteItem
 NavigationSuiteScaffold
+NavigationSuiteScaffoldLayout
 OutlinedButton
 OutlinedCard
 OutlinedCardWithoutOnClick

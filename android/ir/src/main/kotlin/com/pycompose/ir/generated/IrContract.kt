@@ -314,6 +314,15 @@ object IrContract {
                 "tonalElevation" to PropertyRule("dp", required = false),
             ),
         ),
+        "DisableSelection" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
         "DismissibleDrawerSheet" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -1118,7 +1127,16 @@ object IrContract {
             ),
         ),
         "NavigationSuiteScaffold" to ComponentRule(
-            slots = setOf("navigationItems"),
+            slots = setOf("navigationItems", "primaryActionContent"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
+        "NavigationSuiteScaffoldLayout" to ComponentRule(
+            slots = setOf("navigationSuite"),
             childrenAllowed = true,
             minimumChildren = 0,
             since = "1.23.0",

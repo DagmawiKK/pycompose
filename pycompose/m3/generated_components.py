@@ -40,6 +40,7 @@ __all__ = [
     "Column",
     "Crossfade",
     "DatePickerDialog",
+    "DisableSelection",
     "DismissibleDrawerSheet",
     "DismissibleNavigationDrawer",
     "DockedSearchBar",
@@ -97,6 +98,7 @@ __all__ = [
     "NavigationRailItem",
     "NavigationSuiteItem",
     "NavigationSuiteScaffold",
+    "NavigationSuiteScaffoldLayout",
     "OutlinedButton",
     "OutlinedCard",
     "OutlinedCardWithoutOnClick",
@@ -1473,6 +1475,39 @@ class DatePickerDialog(Component):
         super().__init__(
             id=id, children=normalized + slotted, modifier=modifier, **props
         )
+
+
+class DisableSelection(Component):
+    """Native DisableSelection; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "DisableSelection"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered DisableSelection.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class DismissibleDrawerSheet(Component):
@@ -4794,6 +4829,7 @@ class NavigationSuiteScaffold(Component):
         modifier: Modifier | None = None,
         children: Content = (),
         navigation_items: Content | None = None,
+        primary_action_content: Content | None = None,
     ) -> None:
         """Construct a registered NavigationSuiteScaffold.
 
@@ -4803,6 +4839,7 @@ class NavigationSuiteScaffold(Component):
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
             navigation_items: Nodes for the native navigationItems slot.
+            primary_action_content: Nodes for the native primaryActionContent slot.
 
         Raises:
             IrValidationError: If children are given twice.
@@ -4819,6 +4856,57 @@ class NavigationSuiteScaffold(Component):
                 navigation_items,
                 key="navigationItems",
                 slot="navigationItems",
+            )
+        if primary_action_content is not None:
+            slotted += slot_nodes(
+                primary_action_content,
+                key="primaryActionContent",
+                slot="primaryActionContent",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
+class NavigationSuiteScaffoldLayout(Component):
+    """Native NavigationSuiteScaffoldLayout;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationSuiteScaffoldLayout"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        navigation_suite: Content | None = None,
+    ) -> None:
+        """Construct a registered NavigationSuiteScaffoldLayout.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+            navigation_suite: Nodes for the native navigationSuite slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if navigation_suite is not None:
+            slotted += slot_nodes(
+                navigation_suite,
+                key="navigationSuite",
+                slot="navigationSuite",
             )
         super().__init__(
             id=id, children=normalized + slotted, modifier=modifier, **props

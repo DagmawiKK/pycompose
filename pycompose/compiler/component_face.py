@@ -158,7 +158,7 @@ def _prop_face(
     host: list[str] = []
     problems: list[str] = []
     for prop, spec in entry.get("props", {}).items():
-        if prop in held:
+        if prop in held or (spec["type"] == "modifier" and entry.get("boxed")):
             continue
         if "provider" in spec:
             native = spec["provider"]["native"]
@@ -255,9 +255,11 @@ def face(
     families = family_types(registry)
     prop_args, anonymous, host, prop_problems = _prop_face(entry, families, pin_names)
     wiring_args, wiring_problems = _wiring_face(entry, pin_names)
-    named: dict[str, Argument] = {
-        "modifier": Argument("modifier", "modifier", MODIFIER)
-    }
+    named: dict[str, Argument] = (
+        {}
+        if entry.get("boxed")
+        else {"modifier": Argument("modifier", "modifier", MODIFIER)}
+    )
     named.update(prop_args)
     named.update(wiring_args)
     return Face(

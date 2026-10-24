@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 import org.jetbrains.kotlin.psi.KtPrefixExpression
@@ -61,8 +62,16 @@ internal class Defaults(private val context: BindingContext) {
             node is KtConstantExpression || node is KtPrefixExpression -> literal(node, type)
             reference != null -> property(node, reference, type)
             call != null -> call(call, node)
-            else -> error("unsupported default syntax: ${node.javaClass.simpleName}")
+            else -> emptyLambda(node)
         }
+    }
+
+    /** `content: @Composable () -> Unit = {}`: a slot that draws nothing; nothing else. */
+    private fun emptyLambda(node: KtExpression): Map<String, Any?> {
+        check(node is KtLambdaExpression && node.bodyExpression?.statements.isNullOrEmpty()) {
+            "unsupported default syntax: ${node.javaClass.simpleName}"
+        }
+        return mapOf("kind" to "emptyLambda")
     }
 
     private fun literal(node: KtExpression, type: KotlinType): Map<String, Any?> {
