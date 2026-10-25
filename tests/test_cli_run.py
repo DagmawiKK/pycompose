@@ -138,6 +138,7 @@ def test_run_missing_adb_is_actionable(tmp_path: Path) -> None:
 def test_run_on_the_dev_client_installs_it_and_serves_the_app(tmp_path: Path) -> None:
     import zipfile
 
+    from pycompose.cli.dev_client import FINGERPRINT, framework_fingerprint
     from pycompose.version import __version__
 
     assert cli(tmp_path, "init", "demo", "--native").returncode == 0
@@ -149,6 +150,7 @@ def test_run_on_the_dev_client_installs_it_and_serves_the_app(tmp_path: Path) ->
     client.parent.mkdir(parents=True)
     with zipfile.ZipFile(client, "w") as archive:
         archive.writestr("AndroidManifest.xml", "fixture only")
+    (client.parent / FINGERPRINT).write_text(framework_fingerprint())
     tools = tmp_path / "tools"
     tools.mkdir()
     adb = tools / "adb"
@@ -200,3 +202,24 @@ if sys.argv[1:] == ["devices"]:
     start = next(c for c in commands if "start" in c)
     assert "com.pycompose.devclient/com.pycompose.host.MainActivity" in start
     assert start[start.index("pycompose.dev.source") + 1] == "app"
+
+
+def test_a_dev_client_built_from_another_framework_is_refused(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from pycompose.cli import dev_client
+    from pycompose.cli.project import ProjectError
+    from pycompose.version import __version__
+
+    monkeypatch.setattr(dev_client, "HOME", tmp_path / "home" / "toolchain")
+    client = tmp_path / "home" / "dev-client" / __version__ / "dev-client.apk"
+    client.parent.mkdir(parents=True)
+    client.write_bytes(b"apk")
+    (client.parent / dev_client.FINGERPRINT).write_text("built-from-before\n")
+    # Running it would serve the app to a framework without today's API.
+    with pytest.raises(ProjectError, match="dev-client --rebuild"):
+        dev_client.dev_client()
+    (client.parent / dev_client.FINGERPRINT).write_text(
+        dev_client.framework_fingerprint()
+    )
+    assert dev_client.dev_client() == client
