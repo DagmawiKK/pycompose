@@ -5,9 +5,9 @@ Write Android app UIs in Python; they render as native Jetpack Compose
 it. The two sides exchange only data — a canonical JSON snapshot one way, action
 ids and payloads the other — never objects, callbacks, or reflection.
 
-> Early development. The contract, code generation, CLI, and a curated Material 3
-> component surface work end-to-end, including hot reload and signed release
-> builds. The API and the component catalog will keep evolving.
+> Early development. The contract, the component compiler, the CLI and about 130
+> Material 3 and foundation components work end to end, including hot reload, a
+> prebuilt dev client and signed release builds. The API will keep evolving.
 
 ## How it works
 
@@ -23,9 +23,16 @@ tap → action id + payload → Python handler → new snapshot → host renders
   Python never pushes and never learns device details.
 - **One worker.** A single Python thread; Compose's main thread never runs
   Python.
-- **One source of truth.** A single component catalog generates the Python
-  components, the Kotlin models, and the wire validators. Generated code is
-  committed and never hand-edited.
+- **Derived from Compose itself.** A compiler reads the pinned Compose libraries
+  and derives each component's props, slots and defaults, the value types they
+  take, the state holders behind controlled components, and the modifiers a
+  parent's scope offers its children. The result is a committed lock that must
+  reproduce from the pin; Python components, Kotlin adapters and wire
+  validators are generated from it and never hand-edited.
+- **Controlled without a fight.** A stated value drives the native holder only
+  when it changes, and each value the user settles on is reported once, so
+  Python can own a picker's time or a sheet's position without overriding a
+  gesture in progress.
 - **Loud in debug, safe in release.** Snapshot validation fails closed in debug
   builds and degrades safely in release; library/schema/host version mismatches
   fail fast.
@@ -41,6 +48,8 @@ tap → action id + payload → Python handler → new snapshot → host renders
 | Android SDK | platform 37 and build tools, found via `ANDROID_HOME` or the project's `local.properties` |
 | Device | any API 24+ device or emulator (`arm64-v8a` or `x86_64`) |
 | Network | first build only: Gradle, Maven, and Chaquopy artifacts |
+
+`pycompose setup` installs the pinned JDK and Android SDK if you have neither.
 
 ## Install
 
@@ -65,7 +74,15 @@ pycompose run            # the same, plus hot reload for .py and resources/
 ```
 
 No device attached? `pycompose build apk` (or `pycompose release apk`)
-packages without installing.
+packages without installing, and `pycompose check` finds what a build or the
+store would refuse without running either.
+
+**Skip Gradle while you iterate.** `pycompose dev-client` builds, once per
+PyCompose version, a debug host that carries the whole catalog. After that,
+`pycompose run --dev-client` installs it and serves your app to it: edits to
+`.py` files and resources reload on the device with no Android build at all. A
+dev client built from an older framework is refused with the command that
+rebuilds it.
 
 `init` lays out a project you can open in a text editor; there is no Kotlin or
 XML to touch:
@@ -75,7 +92,10 @@ XML to touch:
 | `app/` | the app's Python source (entrypoint `main:app` by default) |
 | `resources/` | strings, drawables, fonts — synced into the host |
 | `pycompose.toml` | identity, version, Python requirements, permissions, signing, extensions |
-| `.pycompose/android/` | the versioned Android scaffold the CLI builds in — commit it |
+| `.pycompose/` | the Android project, generated from the app on every build; ignored by git |
+
+`pycompose prebuild` shows what the generated project would change, and
+`pycompose explain <file>` names the settings that produced a generated file.
 
 An app is one `App` in the entry module. Here is a counter, in full:
 
@@ -175,25 +195,71 @@ atomically on disk, outside the saved-state budget. `pycompose.async_task.run`
 hands blocking work to a bounded executor and delivers the result back as an
 ordinary action, so the worker never freezes behind a request.
 
+**Controlled components** — a component whose native state lives in a holder
+(a picker, a slider, a drawer, a sheet, a tooltip) takes the value as a prop
+and reports changes through an `on_<value>_change` action:
+
+```python
+TimePicker(
+    hour=session.hour,
+    minute=session.minute,
+    on_hour_change=set_hour,
+    on_minute_change=set_minute,
+)
+```
+
+Omit a value to leave it to the user; set it to move the native control.
+
 **Modifiers** — `Modifier()` chains `padding`, `size`, `fill_max_width`, `clip`,
-`background`, `clickable`, and window-inset padding.
+`background`, `clickable`, window-inset padding and accessibility `semantics`.
+It also offers the modifiers a parent's scope declares, which a child wears
+only inside that parent: `weight` in a `Row` or `Column`, `row_align`,
+`column_align` and `box_align`, `match_parent_size`, and `menu_anchor` for the
+field that opens an `ExposedDropdownMenuBox`:
+
+```python
+Row(
+    children=[
+        Text(text="Name", modifier=Modifier().weight(1)),
+        Text(text="Value", modifier=Modifier().weight(2)),
+    ]
+)
+```
+
+One worn outside such a parent is reported by the host rather than ignored.
 
 ## Components
 
-110 Material 3 components. `*` marks experimental entries.
+134 Material 3 and foundation components, 145 counting the overloads a
+component reaches through its own name. `*` marks experimental entries.
 
 | Category | Components |
 | --- | --- |
-| Typography | `Text` |
-| Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard`, `PullToRefreshBox`, `SwipeToDismissBox`, `VerticalDragHandle`, `FlowRow`\*, `FlowColumn`\* |
-| App bars | `TopAppBar`\*, `CenterAlignedTopAppBar`\*, `MediumTopAppBar`\*, `LargeTopAppBar`\*, `BottomAppBar` |
-| Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `SegmentedButton`, `MultiChoiceSegmentedButton`, `SingleChoiceSegmentedButtonRow`, `MultiChoiceSegmentedButtonRow`, `IconButton`, `FilledIconButton`, `FilledIconToggleButton`, `FilledTonalIconButton`, `FilledTonalIconToggleButton`, `IconToggleButton`, `OutlinedIconButton`, `OutlinedIconToggleButton`, `FloatingActionButton`, `LargeFloatingActionButton`, `ExtendedFloatingActionButton` |
-| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `StatefulSearchBarInputField`\*, `StatefulSearchBar`\*, `SearchBarStateInputField`\*, `ExpandedDockedSearchBar`\*, `ExpandedFullScreenSearchBar`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
-| Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `NavigationRail`, `NavigationRailItem`, `ShortNavigationBar`, `ShortNavigationBarItem`, `WideNavigationRail`, `WideNavigationRailItem`, `ModalWideNavigationRail`, `NavigationSuiteScaffold`, `NavigationSuiteItem`, `NavigationDrawerItem`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet`, `PermanentNavigationDrawer`, `PermanentDrawerSheet`, `Tab`, `LeadingIconTab`, `SecondaryTabRow`, `PrimaryTabRow`, `PrimaryScrollableTabRow`, `SecondaryScrollableTabRow` |
-| Overlays and status | `ModalBottomSheet`\*, `SnackbarHost`, `Snackbar`, `AlertDialog`, `BasicAlertDialog`\*, `DropdownMenu`, `DropdownMenuItem`, `TooltipBox`\*, `PlainTooltip`\*, `RichTooltip`\*, `Badge`, `BadgedBox`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
+| Typography | `Text`, `TextAnnotatedString`, `BasicText`, `Label`\* |
+| Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `BottomSheetScaffold`\*, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard`, `FlowRow`\*, `FlowColumn`\*, `FlexBox`\*, `PullToRefreshBox`, `SwipeToDismissBox`, `VerticalDragHandle`, `HorizontalDivider`, `VerticalDivider`, `SelectionContainer`, `DisableSelection` |
+| App bars | `TopAppBar`\*, `CenterAlignedTopAppBar`\*, `MediumTopAppBar`\*, `LargeTopAppBar`\*, `BottomAppBar`, `BottomAppBarActions` |
+| Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `SegmentedButton`, `MultiChoiceSegmentedButton`, `SingleChoiceSegmentedButtonRow`, `MultiChoiceSegmentedButtonRow`, `IconButton`, `FilledIconButton`, `FilledIconToggleButton`, `FilledTonalIconButton`, `FilledTonalIconToggleButton`, `IconToggleButton`, `OutlinedIconButton`, `OutlinedIconToggleButton`, `FloatingActionButton`, `SmallFloatingActionButton`, `LargeFloatingActionButton`, `ExtendedFloatingActionButton`, `ExtendedFloatingActionButtonText` |
+| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SecureTextField`, `OutlinedSecureTextField`, `BasicTextField`, `ExposedDropdownMenuBox`\*, `ExposedDropdownMenu`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
+| Search | `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `StatefulSearchBarInputField`\*, `StatefulSearchBar`\*, `SearchBarStateInputField`\*, `ExpandedDockedSearchBar`\*, `ExpandedFullScreenSearchBar`\* |
+| Pickers | `DatePicker`, `DatePickerDialog`, `TimePicker`\*, `TimeInput`\*, `TimePickerDialog` |
+| Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `NavigationRail`, `NavigationRailItem`, `ShortNavigationBar`, `ShortNavigationBarItem`, `WideNavigationRail`, `WideNavigationRailItem`, `ModalWideNavigationRail`, `NavigationSuiteScaffold`, `NavigationSuiteScaffoldLayout`, `NavigationSuite`, `NavigationSuiteItem`, `NavigationDrawerItem`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet`, `PermanentNavigationDrawer`, `PermanentDrawerSheet`, `Tab`, `TabContent`, `LeadingIconTab`, `PrimaryTabRow`, `SecondaryTabRow`, `PrimaryScrollableTabRow`, `SecondaryScrollableTabRow` |
+| Overlays and status | `ModalBottomSheet`\*, `AlertDialog`, `BasicAlertDialog`\*, `DropdownMenu`, `DropdownMenuItem`, `TooltipBox`\*, `PlainTooltip`\*, `RichTooltip`\*, `Snackbar`, `SnackbarHost`, `Badge`, `BadgedBox`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
 | Lists | `LazyColumn`, `LazyRow`, `ListItem` |
-| Animation | `AnimatedVisibility`, `AnimatedContent`, `Crossfade` |
-| Media and dividers | `Icon`, `Image`, `HorizontalDivider`, `VerticalDivider` |
+| Animation | `AnimatedVisibility`, `AnimatedContent`, `Crossfade`, `SharedTransitionLayout` |
+| Media | `Icon`, `Image` |
+
+`pycompose add group:artifact[:version]` wraps another Compose library from
+Maven into the app's own catalog, through the same compiler; each of its
+components is rendered once on the JVM before it is exposed. A component the
+host lacks shows its declared fallback instead of failing.
+
+`DatePicker`, `TimePicker` and `TimeInput` are controlled through their state's
+own properties: `selected_date_millis`, `hour`, `minute`. Setting `hour` from
+Python moves the analog dial's hand as well as the number.
+
+`ExposedDropdownMenuBox` opens from the child wearing `menu_anchor`, usually a
+field or a text: `Modifier.menu_anchor(ExposedDropdownMenuAnchorType("PrimaryNotEditable"))`,
+with the anchor type from `pycompose.values`.
 
 `SearchBar` and `DockedSearchBar` take the editable field through the
 `inputField` slot; suggestions and results are ordinary children and compose in
@@ -268,12 +334,20 @@ is dismissed before it commits, the observers report `hidden` and a failed
 | Command | What it does |
 | --- | --- |
 | `pycompose init <name> [--native]` | Scaffold a project; `--native` keeps Android sources at the root |
-| `pycompose run [--device <serial>]` | Build, install, launch, and watch `.py` and `resources/` for hot reload |
+| `pycompose run [--device <serial>] [--dev-client]` | Build, install, launch, and watch `.py` and `resources/` for hot reload; `--dev-client` skips the app's Gradle build |
+| `pycompose dev-client [--rebuild]` | Build the prebuilt dev client once for this PyCompose version |
 | `pycompose debug [--no-launch]` | One build-install-launch pass, no watcher |
+| `pycompose check` | Find what a build or the store would refuse, without either |
+| `pycompose render [<snapshot.json>…] [--out <dir>]` | Screenshot the app and dump its semantics on the JVM, with no device |
+| `pycompose bench [--keys N] [--interval S]` | Type into the running debug app and report each stage of a pass: median, 95th percentile, worst |
 | `pycompose build [apk\|aab] [--release]` | Package through the project's Gradle wrapper |
 | `pycompose install [--release] [--launch]` | Install a built APK and verify the installed bytes match the artifact |
 | `pycompose release [apk\|aab] [--install]` | Build a signed release artifact |
+| `pycompose add <group:artifact[:version]>` | Wrap a Compose library from Maven into the app's catalog |
 | `pycompose config show` / `set <key> <value>` | Read or rewrite `label`, `application_id`, `version_name`, `version_code` |
+| `pycompose prebuild` / `explain <file>` | Generate the Android project and show what changed; name the settings behind a generated file |
+| `pycompose migrate` | Move an app-owned Android project to a generated one |
+| `pycompose setup` | Install the pinned JDK and Android SDK |
 | `pycompose sync [--check]` | Sync named resources into the host; `--check` reports drift only |
 | `pycompose doctor` | Report Android toolchain and schema compatibility |
 | `pycompose validate <file>` | Validate IR JSON against the registry and wire schema |
@@ -283,6 +357,27 @@ is dismissed before it commits, the observers report `hidden` and a failed
 Release signing reads `[signing]` from `pycompose.toml` and the passwords from
 the `PYCOMPOSE_STORE_PASSWORD` and `PYCOMPOSE_KEY_PASSWORD` environment
 variables.
+
+## Measuring
+
+A debug build logs one line per pass, under the `PyCompose.pass` logcat tag,
+when the frame showing it is drawn. Each line has the time spent in each stage:
+the queue, the Python pass (split into handler, view, validation and
+serialization), the pull, the host's apply, and the frame. Focus a text field in
+the running app and run `pycompose bench` to type into it and summarize:
+
+```
+40 passes for 40 keystrokes (ms)
+stage           p50      p95      max
+python          6.4      8.4     10.6
+apply           1.9      2.6      3.8
+frame          27.6     33.1     42.4
+total          36.9     42.6     51.0
+```
+
+That is the notes example's editor on an arm64 emulator, warm; measure on the
+phones you target, and run it more than once, since the first passes after an
+install are much slower.
 
 ## Extensions
 
@@ -312,11 +407,23 @@ npm ci                                  # commit-message linting
 make fmt && make precommit && make test
 ```
 
-Commit messages follow Conventional Commits. The component catalog is the single
-source of truth: components are registered, then the generated artifacts
-(Python components, Kotlin models, validators, JSON schema) are regenerated and
-committed — never hand-edited. A new package or boundary comes with its contract
-in the same change.
+Commit messages follow Conventional Commits. A new package or boundary comes
+with its contract in the same change.
+
+The catalog lock, `schema/catalog.lock.json`, is generated and must reproduce
+from the pinned Compose libraries plus the review decisions in
+`schema/policy/`:
+
+```bash
+cd android && ./gradlew dumpComposeApi dumpComposeDefaults && cd ..
+python -m pycompose.compiler generate   # rewrite the lock; --check verifies it
+python tools/schema/gen.py              # regenerate code from it; --check verifies it
+```
+
+The compiler writes a report of what it derived and what it refused, with the
+reason, to `android/build/compose-api/composegen-report.md`. Generated Python
+components, Kotlin models and adapters, validators and the wire schema are
+committed and never hand-edited; `make codegen-check` runs every check.
 
 ## License
 
