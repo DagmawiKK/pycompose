@@ -35,8 +35,6 @@ __all__ = [
 ROOT = Path(__file__).resolve().parents[3]
 
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
-BUNDLED_SCHEMA_PATH = ROOT / "pycompose" / "schema" / "ir.schema.json"
-BUNDLED_CATALOG_PATH = PACKAGED_CATALOG
 VALIDATORS_PATH = ROOT / "pycompose" / "ir" / "generated_validators.py"
 PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
 KOTLIN_ADAPTERS_PATH = (
@@ -54,6 +52,7 @@ PYTHON_EXPORTS_PATH = ROOT / "pycompose/m3/__init__.py"
 KOTLIN_VALUES_RELATIVE = Path(
     "android/renderer/src/main/kotlin/com/pycompose/renderer/generated/ValueResolver.kt"
 )
+KOTLIN_DRIVES_RELATIVE = KOTLIN_VALUES_RELATIVE.with_name("HolderDrives.kt")
 
 
 def _read(path: Path) -> str | None:
@@ -68,6 +67,8 @@ def build_app(
     *,
     android_root: Path | None = None,
     check: bool = False,
+    app_lock: Path | None = None,
+    kotlin: bool = True,
 ) -> int:
     """Generate an app's component slice, or verify it (ADR-0014).
 
@@ -87,6 +88,10 @@ def build_app(
         python_root: Where the app's Python lives; receives the generated package.
         android_root: Where the Kotlin slice goes; defaults to ``python_root``.
         check: Report drift instead of writing.
+        app_lock: The app's lock slice (``compose.lock.json``), whose components
+            join the library's; None or a missing file adds none.
+        kotlin: Also write the Kotlin half. The dev server writes only the
+            Python package: the dev client carries the whole catalog.
 
     Returns:
         Process exit code: 0 clean, 1 on drift or an unresolvable app.
@@ -98,19 +103,23 @@ def build_app(
         APP_PACKAGE,
         FLOOR_COMPONENTS,
         AppCodegenError,
+        app_components,
         discover,
         discover_values,
         load_catalog,
         slice_registry,
+        with_app_lock,
     )
     from pycompose.schema.codegen.emit_kotlin import (
         render_generated_adapters,
         render_kotlin_models,
         render_kotlin_registry,
     )
-    from pycompose.schema.codegen.emit_python import (
-        render_python_components,
-        render_python_exports,
+    from pycompose.schema.codegen.emit_modules import render_python_exports
+    from pycompose.schema.codegen.emit_python import render_python_components
+    from pycompose.schema.codegen.holders_kotlin import render_holder_drives
+    from pycompose.schema.codegen.scoped_modifiers_kotlin import (
+        render_scoped_modifiers,
     )
     from pycompose.schema.codegen.values import render_python
     from pycompose.schema.codegen.values_kotlin import (
@@ -119,13 +128,15 @@ def build_app(
     )
 
     native = python_root if android_root is None else android_root
-    for root in (python_root, native):
+    for root in (python_root, native) if kotlin else (python_root,):
         if not root.is_dir():
             print(f"gen.py: not a directory: {root}", file=sys.stderr)
             return 1
     try:
-        registry = load_catalog(SCHEMA_PATH)
-        used = discover(python_root, registry)
+        own = app_components(app_lock)
+        registry = with_app_lock(load_catalog(SCHEMA_PATH), own)
+        # The app's own libraries are always built: it asked for them by name.
+        used = discover(python_root, registry) | set(own)
     except AppCodegenError as exc:
         print(f"gen.py: {exc}", file=sys.stderr)
         return 1
@@ -142,17 +153,34 @@ def build_app(
 
     package = APP_PACKAGE
     artifacts: dict[Path, str] = {
-        python_root / package / "generated_components.py": (
-            render_python_components(sliced, package)
+        python_root / package / "generated_components.py": render_python_components(
+            sliced,
+            package,
+            {
+                name: entry
+                for name, entry in sliced["components"].items()
+                if name in own
+            },
         ),
         python_root / package / "__init__.py": render_python_exports(sliced, package),
         python_root / package / "values.py": render_python(sliced),
+    }
+    kotlin_artifacts = {
         native / _IR_RELATIVE / "UiModels.kt": render_kotlin_models(sliced),
         native / _IR_RELATIVE / "IrContract.kt": render_kotlin_registry(sliced),
         native / _IR_RELATIVE / "ValueModels.kt": render_models(sliced),
         native / _VALUES_RELATIVE: render_native(sliced),
+        # The renderer's own holder code calls every drive, used or not: unsliced.
+        native / _VALUES_RELATIVE.with_name("HolderDrives.kt"): render_holder_drives(
+            registry
+        ),
         native / _ADAPTERS_RELATIVE: render_generated_adapters(sliced),
+        native / _VALUES_RELATIVE.with_name("ScopedModifiers.kt"): (
+            render_scoped_modifiers(sliced)
+        ),
     }
+    if kotlin:
+        artifacts.update(kotlin_artifacts)
 
     if check:
         drifted = [
@@ -211,47 +239,6 @@ def _slicing_problem(registry: dict[str, Any], used: set[str], app: Path) -> str
     return None
 
 
-def _mirror_template(artifacts: dict[Path, str]) -> None:
-    """Mirror every module counterpart into the template, in place.
-
-    The template is the project ``pycompose init`` scaffolds, and it carries the
-    framework sources verbatim. Whatever the modules have is what a generated app
-    gets, so every counterpart is mirrored -- not just the generated half, which
-    would ship a project whose renderer predates its adapters.
-
-    A counterpart this run regenerated is copied from ``artifacts`` rather than
-    read back from disk: disk still holds the previous run's output, so reading
-    the file would mirror content one generation behind.
-
-    Args:
-        artifacts: The run's pending artifacts, keyed by path; template copies
-            are added to it and generated copies are reused as-is.
-    """
-    template = ROOT / "pycompose/templates/android"
-    for path in sorted(template.rglob("*")):
-        if not path.is_file() or path in artifacts:
-            continue
-        source = ROOT / "android" / path.relative_to(template)
-        if not source.is_file():
-            continue
-        generated = artifacts.get(source)
-        if generated is not None:
-            artifacts[path] = generated
-            continue
-        raw = source.read_bytes()
-        try:
-            contents = raw.decode("utf-8")
-        except UnicodeDecodeError:
-            contents = None
-        if contents is None or "\r" in contents:
-            # Not plain LF text: the Gradle wrapper jar is not source at all,
-            # and gradlew.bat keeps its CRLF line endings. `pycompose init`
-            # copies both, and tests/test_template_parity.py compares them byte
-            # for byte -- it sees what a text artifact cannot.
-            continue
-        artifacts[path] = contents
-
-
 def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     """Build every framework artifact one generation emits, without touching disk.
 
@@ -267,13 +254,20 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         render_kotlin_models,
         render_kotlin_registry,
     )
-    from pycompose.schema.codegen.emit_python import (
+    from pycompose.schema.codegen.emit_modules import (
         render_payloads,
-        render_python_components,
         render_python_exports,
         render_validators,
     )
+    from pycompose.schema.codegen.emit_python import render_python_components
     from pycompose.schema.codegen.emit_wire import render_ir_schema
+    from pycompose.schema.codegen.holders_kotlin import render_holder_drives
+    from pycompose.schema.codegen.scoped_modifiers_kotlin import (
+        render_scoped_modifiers,
+    )
+    from pycompose.schema.codegen.scoped_modifiers_python import (
+        render_scoped_operations,
+    )
     from pycompose.schema.codegen.values import render_python as render_values
     from pycompose.schema.codegen.values_kotlin import (
         render_models,
@@ -282,8 +276,6 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
 
     artifacts = {
         IR_SCHEMA_PATH: render_ir_schema(registry),
-        BUNDLED_SCHEMA_PATH: render_ir_schema(registry),
-        BUNDLED_CATALOG_PATH: SCHEMA_PATH.read_text(encoding="utf-8"),
         VALIDATORS_PATH: render_validators(registry),
         PAYLOADS_PATH: render_payloads(registry),
         KOTLIN_MODELS_PATH: render_kotlin_models(registry),
@@ -295,6 +287,13 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         ROOT / KOTLIN_VALUES_RELATIVE: render_native(registry),
     }
     artifacts[KOTLIN_ADAPTERS_PATH] = render_generated_adapters(registry)
+    artifacts[ROOT / KOTLIN_DRIVES_RELATIVE] = render_holder_drives(registry)
+    artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("ScopedModifiers.kt")] = (
+        render_scoped_modifiers(registry)
+    )
+    artifacts[ROOT / "pycompose/components/scoped_modifiers.py"] = (
+        render_scoped_operations(registry)
+    )
     return artifacts
 
 
@@ -325,7 +324,6 @@ def main(argv: list[str] | None = None) -> int:
         return build_app(args.app, check=args.check)
     registry = load_registry()
     artifacts = framework_artifacts(registry)
-    _mirror_template(artifacts)
     for fixture in sorted((ROOT / "pycompose/testing/fixtures").glob("*.json")):
         # The repository's own tests read these through the modules' test
         # source sets. A scaffold ships no framework tests, so the template

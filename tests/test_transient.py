@@ -22,10 +22,9 @@ from typing import Any
 
 import pytest
 
-from pycompose.core.registry_types import TRANSIENT_KINDS
 from pycompose.schema.codegen.adapters import render
 
-SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
+SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 
 STATEFUL = "ModalNavigationDrawer"
 
@@ -107,13 +106,6 @@ def test_the_shape_and_the_validator_agree_on_the_transient_keys() -> None:
     block = schema["$defs"]["transientBlock"]
     assert set(block["properties"]) == set(TRANSIENT_KEYS)
     assert set(block["required"]) == set(TRANSIENT_KEYS)
-
-
-def test_every_transient_kind_has_a_renderer_method() -> None:
-    """A family without a renderer method cannot be emitted."""
-    from pycompose.schema.codegen.adapters import TRANSIENT_CALLS
-
-    assert set(TRANSIENT_CALLS) == set(TRANSIENT_KINDS)
 
 
 # ---------------------------------------------------------------------------

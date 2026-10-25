@@ -17,11 +17,13 @@ has no finer structural operation (ADR-0018 decision 2).
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from typing import cast
 
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
+from pycompose.core.reuse import Reuse
 from pycompose.ir.model import IRRoot
 from pycompose.ir.serializer import node_bytes
 from pycompose.utils.json_canonical import FrozenJsonValue, canonical_json_bytes
@@ -42,11 +44,13 @@ class SetProp:
 
     Attributes:
         id: Node id carrying the change.
+        at: Child indices from the root to that node.
         prop: The node's ``camelCase`` prop name.
         value: The node's new prop value, as emitted.
     """
 
     id: str
+    at: tuple[int, ...]
     prop: str
     value: JsonValue | FrozenJsonValue
 
@@ -57,10 +61,12 @@ class ReplaceSubtree:
 
     Attributes:
         id: Node id of the topmost changed subtree.
+        at: Child indices from the root to that node.
         payload: That subtree exactly as emitted, never a partial patch of it.
     """
 
     id: str
+    at: tuple[int, ...]
     payload: Node
 
 
@@ -72,7 +78,9 @@ def diff_nodes(base: Node, new: Node) -> tuple[PatchOp, ...]:
 
     Ops are deterministic: depth-first in the new tree, a node's ops before
     its children's, siblings left to right, prop names sorted. Nothing below a
-    replaced subtree is diffed.
+    replaced subtree is diffed. Each op locates its node by child indices, which
+    are the same in both trees along any path the diff descends, so the host
+    finds it without reading meaning into ids.
 
     Args:
         base: The root the host declared it still holds.
@@ -82,28 +90,31 @@ def diff_nodes(base: Node, new: Node) -> tuple[PatchOp, ...]:
         The ops that turn ``base`` into ``new``.
     """
     ops: list[PatchOp] = []
-    pending: list[tuple[Node, Node]] = [(base, new)]
+    pending: list[tuple[Node, Node, tuple[int, ...]]] = [(base, new, ())]
     while pending:
-        old, candidate = pending.pop()
+        old, candidate, at = pending.pop()
         if old is candidate:
             continue
         if not _compatible(old, candidate):
-            ops.append(ReplaceSubtree(id=candidate.id, payload=candidate))
+            ops.append(ReplaceSubtree(id=candidate.id, at=at, payload=candidate))
             continue
         previous = old.props.values
         current = candidate.props.values
         if previous != current:
             if previous.keys() - current.keys():
                 # A prop vanished; no op can remove one, so the node ships whole.
-                ops.append(ReplaceSubtree(id=candidate.id, payload=candidate))
+                ops.append(ReplaceSubtree(id=candidate.id, at=at, payload=candidate))
                 continue
             for name in sorted(current):
                 value = current[name]
                 if name not in previous or previous[name] != value:
-                    ops.append(SetProp(id=candidate.id, prop=name, value=value))
+                    ops.append(SetProp(id=candidate.id, at=at, prop=name, value=value))
         # Queued reversed so pop() walks siblings left to right.
         pending.extend(
-            zip(reversed(old.children), reversed(candidate.children), strict=False)
+            (left, right, (*at, index))
+            for index, (left, right) in reversed(
+                list(enumerate(zip(old.children, candidate.children, strict=True)))
+            )
         )
     return tuple(ops)
 
@@ -136,7 +147,9 @@ def _compatible(old: Node, new: Node) -> bool:
     )
 
 
-def full_bytes(root: IRRoot, *, serial: int) -> bytes:
+def full_bytes(
+    root: IRRoot, *, serial: int, surface: str, reuse: Reuse | None = None
+) -> bytes:
     """Serialize the pull result carrying the whole snapshot.
 
     The result is the snapshot's own envelope plus ``kind`` and ``serial``, so
@@ -145,6 +158,8 @@ def full_bytes(root: IRRoot, *, serial: int) -> bytes:
     Args:
         root: The snapshot being published.
         serial: The serial this content is published under.
+        surface: The surface the snapshot renders on.
+        reuse: The session's subtree bytes, copied in where a subtree recurs.
 
     Returns:
         Canonical UTF-8 bytes.
@@ -154,11 +169,15 @@ def full_bytes(root: IRRoot, *, serial: int) -> bytes:
         output.extend(b',"metadata":')
         output.extend(canonical_json_bytes(root.metadata))
     output.extend(b',"root":')
-    output.extend(node_bytes(root.root))
+    output.extend(
+        node_bytes(root.root, reuse.serialized if reuse is not None else None)
+    )
     output.extend(b',"schemaVersion":')
     output.extend(canonical_json_bytes(root.schema_version))
     output.extend(b',"serial":')
     output.extend(str(serial).encode())
+    output.extend(b',"surface":')
+    output.extend(canonical_json_bytes(surface))
     output.extend(b',"version":')
     output.extend(canonical_json_bytes(root.version))
     output.extend(b"}")
@@ -171,33 +190,59 @@ def patch_bytes(
     *,
     base_serial: int,
     serial: int,
+    surface: str,
+    base: IRRoot | None = None,
 ) -> bytes:
     """Serialize the pull result carrying ops against the host's base.
 
-    Metadata (bindings, effects, app data) rides every envelope: it belongs to
-    the snapshot that carried it, and a prop-only patch that dropped it would
-    strand navigation and persistence (ADR-0018 decision 3).
+    Metadata (bindings, effects, app data) belongs to the snapshot that carried
+    it, so every envelope states it (ADR-0018 decision 3). Given the ``base``,
+    binding contracts travel as a ``bindings`` delta against the base's --
+    ``set`` for new or changed ids, ``remove`` for dropped ones -- since a
+    keystroke rarely changes any, and app data equal to the base's is not sent
+    again but named in ``keep``, for the host to carry over. Effects belong to
+    one transition and always travel whole.
 
     Args:
         root: The snapshot the ops lead to; supplies version and metadata.
         ops: Ops from :func:`diff_nodes`, in their deterministic order.
         base_serial: The serial the host declared it still holds.
         serial: The serial this content is published under.
+        surface: The surface the snapshot renders on.
+        base: The snapshot the host holds, for a bindings delta; None sends
+            the metadata whole.
 
     Returns:
         Canonical UTF-8 bytes.
     """
+    metadata: Mapping[str, object] | None = root.metadata
+    delta: dict[str, object] | None = None
+    keep: list[str] = []
+    if base is not None:
+        metadata, delta = _bindings_delta(base.metadata, root.metadata)
+        held = (base.metadata or {}).get("data")
+        if metadata is not None and held is not None and metadata.get("data") == held:
+            metadata = {k: v for k, v in metadata.items() if k != "data"} or None
+            keep.append("data")
     output = bytearray(b'{"baseSerial":')
     output.extend(str(base_serial).encode())
+    if delta is not None:
+        output.extend(b',"bindings":')
+        output.extend(canonical_json_bytes(delta))
+    if keep:
+        output.extend(b',"keep":')
+        output.extend(canonical_json_bytes(keep))
     output.extend(b',"kind":"patch"')
-    if root.metadata is not None:
+    if metadata is not None:
         output.extend(b',"metadata":')
-        output.extend(canonical_json_bytes(root.metadata))
+        output.extend(canonical_json_bytes(metadata))
     output.extend(b',"ops":[')
     for index, op in enumerate(ops):
         if index:
             output.extend(b",")
-        output.extend(b'{"id":')
+        output.extend(b'{"at":')
+        output.extend(canonical_json_bytes(list(op.at)))
+        output.extend(b',"id":')
         output.extend(canonical_json_bytes(op.id))
         if isinstance(op, SetProp):
             output.extend(b',"op":"setProp","prop":')
@@ -212,7 +257,39 @@ def patch_bytes(
     output.extend(canonical_json_bytes(root.schema_version))
     output.extend(b',"serial":')
     output.extend(str(serial).encode())
+    output.extend(b',"surface":')
+    output.extend(canonical_json_bytes(surface))
     output.extend(b',"version":')
     output.extend(canonical_json_bytes(root.version))
     output.extend(b"}")
     return bytes(output)
+
+
+def _bindings_delta(
+    base: Mapping[str, object] | None, current: Mapping[str, object] | None
+) -> tuple[Mapping[str, object] | None, dict[str, object]]:
+    """Split the bindings out of ``current`` as a delta against ``base``.
+
+    The delta is stated even when empty: its presence is what tells the host
+    the metadata beside it holds no bindings of its own.
+
+    Args:
+        base: The held snapshot's metadata.
+        current: The published snapshot's metadata.
+
+    Returns:
+        The other metadata sections (None when there are none), and the
+        bindings delta.
+    """
+    previous = cast("Mapping[str, object]", (base or {}).get("actionBindings", {}))
+    latest = cast("Mapping[str, object]", (current or {}).get("actionBindings", {}))
+    rest = {
+        key: value for key, value in (current or {}).items() if key != "actionBindings"
+    }
+    changed = {
+        key: value
+        for key, value in latest.items()
+        if not (previous.get(key) is value or previous.get(key) == value)
+    }
+    removed = sorted(key for key in previous if key not in latest)
+    return rest or None, {"remove": removed, "set": changed}

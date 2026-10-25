@@ -11,7 +11,7 @@ import json
 import threading
 import time
 from collections.abc import Callable
-from typing import Any, TypedDict
+from typing import Any
 
 import pytest
 
@@ -22,46 +22,38 @@ from pycompose.m3 import Text
 from pycompose.state import Actions, State, Store
 
 
-class Arrived(TypedDict):
-    value: str
-
-
-class Tagged(TypedDict):
-    request: str
-    value: str
-
-
 @action
-def arrived(state: State, payload: Arrived) -> State:
+def arrived(state: State, value: str) -> State:
     """Record a background result.
 
     Args:
         state: Snapshot before the result.
-        payload: The value the background work produced.
+        value: The value the background work produced.
 
     Returns:
         The next snapshot showing the result.
     """
     return State(
-        root=Text(id="text", text=payload["value"]),
+        root=Text(id="text", text=value),
         version=state.version + 1,
-        data={"last": payload["value"]},
+        data={"last": value},
     )
 
 
 @action
-def echo_request(state: State, payload: Tagged) -> State:
+def echo_request(state: State, request: str, value: str) -> State:
     """Record a background result that was bound to a request.
 
     Args:
         state: Snapshot before the result.
-        payload: The bound request id and the produced value.
+        request: The request id bound when the work was submitted.
+        value: The value the work produced.
 
     Returns:
         The next snapshot showing both.
     """
     return State(
-        root=Text(id="text", text=f"{payload['request']}:{payload['value']}"),
+        root=Text(id="text", text=f"{request}:{value}"),
         version=state.version + 1,
     )
 
@@ -440,9 +432,9 @@ def test_an_app_can_do_work_while_the_screen_keeps_responding() -> None:
     queued: list[str] = []
 
     @action
-    def refresh(state: State, payload: Arrived) -> State:
+    def refresh(state: State, value: str) -> State:
         return State(
-            root=Text(id="text", text=payload["value"]),
+            root=Text(id="text", text=value),
             version=state.version + 1,
         )
 

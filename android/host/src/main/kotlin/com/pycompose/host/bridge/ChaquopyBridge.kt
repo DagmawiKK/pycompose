@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Looper
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import com.pycompose.ir.Handshake
 
 /** No PyObject is retained by Kotlin. Module calls and results stay on the worker. */
 class ChaquopyBridge(
@@ -12,6 +13,7 @@ class ChaquopyBridge(
     private val debug: Boolean,
     private val asyncSink: (String, String) -> Unit,
     private val outcomeAdmission: ((String, String) -> Boolean)? = null,
+    private val dev: DevSource? = null,
 ) : BridgeSurface {
     private val application = context.applicationContext
     private var owner: Thread? = null
@@ -27,6 +29,19 @@ class ChaquopyBridge(
         requireWorker()
         synchronized(startLock) {
             if (!Python.isStarted()) Python.start(AndroidPlatform(application))
+        }
+        // Each side checks the other speaks its protocol before any session exists.
+        Handshake.accept(
+            Python
+                .getInstance()
+                .getModule(MODULE)
+                .callAttr("handshake", Handshake.offer())
+                .toString(),
+        )
+        // A dev client runs the app its dev server serves, not the one it was built with.
+        dev?.let {
+            it.pull()
+            Python.getInstance().getModule(MODULE).callAttr("use_source", it.source.absolutePath)
         }
         sessionId =
             Python
@@ -64,6 +79,31 @@ class ChaquopyBridge(
             .toString()
     }
 
+    override fun fetchLatest(
+        surface: String,
+        baseSerial: Long,
+    ): String {
+        requireWorker()
+        return Python
+            .getInstance()
+            .getModule(MODULE)
+            .callAttr("fetch_latest", surface, baseSerial)
+            .toString()
+    }
+
+    override fun requestWindow(
+        surface: String,
+        key: String,
+        first: Int,
+        last: Int,
+    ) {
+        requireWorker()
+        Python
+            .getInstance()
+            .getModule(MODULE)
+            .callAttr("request_window", surface, key, first, last)
+    }
+
     override fun fetchLatestError(): String {
         requireWorker()
         return Python
@@ -78,16 +118,20 @@ class ChaquopyBridge(
         restore: String,
     ): Boolean {
         requireWorker()
-        if (!debug) return false
-        return if (!initialized) {
-            start(route, restore)
-            true
-        } else {
-            Python
-                .getInstance()
-                .getModule(MODULE)
-                .callAttr("reload", route, restore)
-                .toBoolean()
+        return when {
+            !debug -> false
+            !initialized -> {
+                start(route, restore)
+                true
+            }
+            // A dev client reloads only when its dev server served something new.
+            dev != null && !dev.pull() -> false
+            else ->
+                Python
+                    .getInstance()
+                    .getModule(MODULE)
+                    .callAttr("reload", route, restore)
+                    .toBoolean()
         }
     }
 

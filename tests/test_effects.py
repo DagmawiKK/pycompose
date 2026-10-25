@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from typing import TypedDict
 
 import pytest
 
@@ -42,17 +41,13 @@ def test_effects_ride_the_envelope_in_declaration_order() -> None:
     ]
 
 
-class TogglePayload(TypedDict):
-    task_id: int
-
-
 @action
-def toggle(state: State, payload: TogglePayload) -> State:  # noqa: ARG001
+def toggle(state: State, task_id: int) -> State:  # noqa: ARG001
     return state
 
 
 def test_effects_and_binding_contracts_share_one_metadata_object() -> None:
-    binding = toggle.bind(id="task_1", task_id=1)
+    binding = toggle.with_args(task_id=1)
     state = State(
         root=Button(id="done", text="Done", on_click=binding),
         effects=(Effect("toast", {"message": "saved"}),),

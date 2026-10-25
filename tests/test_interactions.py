@@ -26,7 +26,7 @@ from pycompose.m3 import Button
 from pycompose.schema.codegen.adapters import render
 from pycompose.state import State
 
-SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
+SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 
 
 def snapshot(root: Node) -> dict:
@@ -47,7 +47,7 @@ def components() -> dict[str, Any]:
     """Return the schema's component entries, keyed by name.
 
     Returns:
-        Every component entry in ``components.json``.
+        Every component entry in the catalog lock.
     """
     return json.loads(SCHEMA_PATH.read_text())["components"]
 

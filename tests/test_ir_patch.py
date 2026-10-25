@@ -36,41 +36,49 @@ def _text(text: str, *, slot: str | None = None) -> Node:
 
 def test_diff_prop_change_is_a_single_set_prop() -> None:
     ops = diff_nodes(_text("hi"), _text("hi!"))
-    assert ops == (SetProp(id=ROOT_ID, prop="text", value="hi!"),)
+    assert ops == (SetProp(id=ROOT_ID, at=(), prop="text", value="hi!"),)
 
 
 def test_diff_added_prop_is_a_set_prop() -> None:
     base = Node(id=ROOT_ID, type="Text", props=Props({}))
     assert diff_nodes(base, _text("a")) == (
-        SetProp(id=ROOT_ID, prop="text", value="a"),
+        SetProp(id=ROOT_ID, at=(), prop="text", value="a"),
     )
 
 
 def test_diff_removed_prop_ships_the_node_whole() -> None:
     new = Node(id=ROOT_ID, type="Text", props=Props({}))
-    assert diff_nodes(_text("a"), new) == (ReplaceSubtree(id=ROOT_ID, payload=new),)
+    assert diff_nodes(_text("a"), new) == (
+        ReplaceSubtree(id=ROOT_ID, at=(), payload=new),
+    )
 
 
 def test_diff_type_change_ships_the_node_whole() -> None:
     new = Node(id=ROOT_ID, type="Button", props=Props({"text": "a"}))
-    assert diff_nodes(_text("a"), new) == (ReplaceSubtree(id=ROOT_ID, payload=new),)
+    assert diff_nodes(_text("a"), new) == (
+        ReplaceSubtree(id=ROOT_ID, at=(), payload=new),
+    )
 
 
 def test_diff_root_id_change_ships_the_node_whole() -> None:
     new = Node(id="replaced", type="Text", props=Props({"text": "a"}))
-    assert diff_nodes(_text("a"), new) == (ReplaceSubtree(id="replaced", payload=new),)
+    assert diff_nodes(_text("a"), new) == (
+        ReplaceSubtree(id="replaced", at=(), payload=new),
+    )
 
 
 def test_diff_slot_change_ships_the_node_whole() -> None:
     new = _text("a", slot="bottomBar")
-    assert diff_nodes(_text("a"), new) == (ReplaceSubtree(id=ROOT_ID, payload=new),)
+    assert diff_nodes(_text("a"), new) == (
+        ReplaceSubtree(id=ROOT_ID, at=(), payload=new),
+    )
 
 
 def test_diff_child_count_change_ships_the_parent_whole() -> None:
     child = Node(id=child_id(ROOT_ID, 0), type="Text", props=Props({"text": "a"}))
     base = Node(id=ROOT_ID, type="Column", children=(child,))
     new = Node(id=ROOT_ID, type="Column", children=(child, child))
-    assert diff_nodes(base, new) == (ReplaceSubtree(id=ROOT_ID, payload=new),)
+    assert diff_nodes(base, new) == (ReplaceSubtree(id=ROOT_ID, at=(), payload=new),)
 
 
 def test_diff_child_id_change_ships_the_parent_whole() -> None:
@@ -78,7 +86,7 @@ def test_diff_child_id_change_ships_the_parent_whole() -> None:
     new_child = Node(id="root.b", type="Text", props=Props({"text": "a"}))
     base = Node(id=ROOT_ID, type="Column", children=(base_child,))
     new = Node(id=ROOT_ID, type="Column", children=(new_child,))
-    assert diff_nodes(base, new) == (ReplaceSubtree(id=ROOT_ID, payload=new),)
+    assert diff_nodes(base, new) == (ReplaceSubtree(id=ROOT_ID, at=(), payload=new),)
 
 
 def test_diff_deep_prop_change_is_one_op() -> None:
@@ -105,7 +113,9 @@ def test_diff_deep_prop_change_is_one_op() -> None:
             ),
         ),
     )
-    assert diff_nodes(base, new) == (SetProp(id=leaf_id, prop="text", value="b"),)
+    assert diff_nodes(base, new) == (
+        SetProp(id=leaf_id, at=(0, 0), prop="text", value="b"),
+    )
 
 
 def test_diff_prefers_the_topmost_changed_subtree() -> None:
@@ -123,7 +133,7 @@ def test_diff_prefers_the_topmost_changed_subtree() -> None:
         children=(Node(id=child_id(ROOT_ID, 0), type="Box", children=(new_leaf,)),),
     )
     assert diff_nodes(base, new) == (
-        ReplaceSubtree(id=new.children[0].id, payload=new.children[0]),
+        ReplaceSubtree(id=new.children[0].id, at=(0,), payload=new.children[0]),
     )
 
 
@@ -139,7 +149,9 @@ def test_diff_skips_shared_branches_by_identity() -> None:
         type="Column",
         children=(shared, Node(id="root.b", type="Text", props=Props({"text": "b"}))),
     )
-    assert diff_nodes(base, new) == (SetProp(id="root.b", prop="text", value="b"),)
+    assert diff_nodes(base, new) == (
+        SetProp(id="root.b", at=(1,), prop="text", value="b"),
+    )
 
 
 # --- envelope bytes --------------------------------------------------------
@@ -147,7 +159,7 @@ def test_diff_skips_shared_branches_by_identity() -> None:
 
 def test_full_envelope_is_the_snapshot_plus_kind_and_serial() -> None:
     root = _snapshot(_text("hi"), metadata={"data": {"note": "a"}})
-    raw = full_bytes(root, serial=3)
+    raw = full_bytes(root, serial=3, surface="main")
     value = json.loads(raw)
     assert value["kind"] == "full"
     assert value["serial"] == 3
@@ -163,7 +175,7 @@ def test_full_envelope_is_the_snapshot_plus_kind_and_serial() -> None:
 def test_patch_envelope_carries_serials_metadata_and_ops() -> None:
     root = _snapshot(_text("hi!"), metadata={"data": {"note": "a"}})
     ops = diff_nodes(_text("hi"), root.root)
-    raw = patch_bytes(root, ops, base_serial=4, serial=5)
+    raw = patch_bytes(root, ops, base_serial=4, serial=5, surface="main")
     value = json.loads(raw)
     assert value["kind"] == "patch"
     assert value["baseSerial"] == 4
@@ -171,7 +183,7 @@ def test_patch_envelope_carries_serials_metadata_and_ops() -> None:
     assert value["schemaVersion"] == SCHEMA_VERSION
     assert value["metadata"] == {"data": {"note": "a"}}
     assert value["ops"] == [
-        {"id": ROOT_ID, "op": "setProp", "prop": "text", "value": "hi!"}
+        {"at": [], "id": ROOT_ID, "op": "setProp", "prop": "text", "value": "hi!"}
     ]
     assert canonical_json_bytes(value) == raw
 
@@ -180,30 +192,35 @@ def test_patch_envelope_serializes_replace_ops_and_empty_op_lists() -> None:
     new = Node(id=ROOT_ID, type="Text", props=Props({}))
     root = _snapshot(new)
     ops = diff_nodes(_text("hi"), new)
-    value = json.loads(patch_bytes(root, ops, base_serial=1, serial=2))
+    value = json.loads(patch_bytes(root, ops, base_serial=1, serial=2, surface="main"))
     assert value["ops"] == [
         {
+            "at": [],
             "id": ROOT_ID,
             "op": "replaceSubtree",
             "payload": {"id": ROOT_ID, "props": {}, "type": "Text"},
         }
     ]
-    empty = json.loads(patch_bytes(root, (), base_serial=2, serial=2))
+    empty = json.loads(patch_bytes(root, (), base_serial=2, serial=2, surface="main"))
     assert empty["ops"] == []
 
 
 def test_patch_bytes_omits_absent_metadata() -> None:
-    value = json.loads(patch_bytes(_snapshot(_text("a")), (), base_serial=1, serial=1))
+    value = json.loads(
+        patch_bytes(_snapshot(_text("a")), (), base_serial=1, serial=1, surface="main")
+    )
     assert "metadata" not in value
 
 
 def test_envelopes_are_byte_stable_and_deterministic() -> None:
     root = _snapshot(_text("hi!"))
     ops = diff_nodes(_text("hi"), root.root)
-    first = patch_bytes(root, ops, base_serial=1, serial=2)
-    second = patch_bytes(root, ops, base_serial=1, serial=2)
+    first = patch_bytes(root, ops, base_serial=1, serial=2, surface="main")
+    second = patch_bytes(root, ops, base_serial=1, serial=2, surface="main")
     assert first == second
-    assert full_bytes(root, serial=2) == full_bytes(root, serial=2)
+    assert full_bytes(root, serial=2, surface="main") == full_bytes(
+        root, serial=2, surface="main"
+    )
 
 
 def test_a_prop_patch_is_orders_of_magnitude_smaller_than_the_snapshot() -> None:
@@ -215,10 +232,10 @@ def test_a_prop_patch_is_orders_of_magnitude_smaller_than_the_snapshot() -> None
     base = Node(id=ROOT_ID, type="Column", children=leaves)
     new = Node(id=ROOT_ID, type="Column", children=(*leaves[:-1], edited))
     ops = diff_nodes(base, new)
-    assert ops == (SetProp(id="root.item63", prop="text", value="notes"),)
+    assert ops == (SetProp(id="root.item63", at=(63,), prop="text", value="notes"),)
     root = _snapshot(new)
-    patch = patch_bytes(root, ops, base_serial=1, serial=2)
-    full = full_bytes(root, serial=2)
+    patch = patch_bytes(root, ops, base_serial=1, serial=2, surface="main")
+    full = full_bytes(root, serial=2, surface="main")
     assert len(patch) < len(full) // 10
 
 
@@ -336,3 +353,28 @@ def test_diff_is_empty_exactly_when_the_trees_are_equal(base: Node, new: Node) -
     base = _qualify(base, ROOT_ID)
     new = _qualify(new, ROOT_ID)
     assert (diff_nodes(base, new) == ()) == (base == new)
+
+
+def test_app_data_equal_to_the_base_is_kept_rather_than_sent_again() -> None:
+    base = _snapshot(_text("hi"), metadata={"data": {"note": "a"}})
+    root = _snapshot(_text("hi!"), metadata={"data": {"note": "a"}})
+    ops = diff_nodes(base.root, root.root)
+
+    value = json.loads(
+        patch_bytes(root, ops, base_serial=1, serial=2, surface="main", base=base)
+    )
+
+    assert value["keep"] == ["data"]
+    assert "metadata" not in value
+
+
+def test_changed_app_data_is_sent_whole() -> None:
+    base = _snapshot(_text("hi"), metadata={"data": {"note": "a"}})
+    root = _snapshot(_text("hi"), metadata={"data": {"note": "b"}})
+
+    value = json.loads(
+        patch_bytes(root, (), base_serial=1, serial=2, surface="main", base=base)
+    )
+
+    assert "keep" not in value
+    assert value["metadata"]["data"] == {"note": "b"}

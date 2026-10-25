@@ -2,7 +2,7 @@
 
 import json
 from dataclasses import replace
-from typing import Literal, TypedDict
+from typing import Literal
 
 import pytest
 
@@ -14,27 +14,18 @@ from pycompose.m3 import Button, FilterChip
 from pycompose.state import Actions, State, Store
 
 
-class RenamePayload(TypedDict):
-    task_id: int
-    value: str
-
-
-class FilterPayload(TypedDict):
-    value: Literal["all", "active", "done"]
+@action
+def rename(state: State, task_id: int, value: str) -> State:  # noqa: ARG001
+    return replace(state, version=state.version + task_id)
 
 
 @action
-def rename(state: State, payload: RenamePayload) -> State:
-    return replace(state, version=state.version + payload["task_id"])
-
-
-@action
-def choose_filter(state: State, payload: FilterPayload) -> State:
-    return replace(state, version=len(payload["value"]))
+def choose_filter(state: State, value: Literal["all", "active", "done"]) -> State:
+    return replace(state, version=len(value))
 
 
 def test_bound_app_action_round_trips_without_native_catalog_registration() -> None:
-    binding = rename.bind(id="task_7", task_id=7)
+    binding = rename.with_args(task_id=7)
     state = State(root=Button(id="rename", text="Rename", on_click=binding))
     snapshot = emit_ir(state, "1.2.0")
     assert validate_ir(snapshot).snapshot is snapshot
@@ -58,7 +49,7 @@ def test_bound_app_action_round_trips_without_native_catalog_registration() -> N
 def test_bound_values_cannot_be_overridden_and_old_envelopes_reject_app_bindings() -> (
     None
 ):
-    binding = rename.bind(id="task_7", task_id=7)
+    binding = rename.with_args(task_id=7)
     state = State(root=Button(id="rename", text="Rename", on_click=binding))
     with pytest.raises(IrValidationError, match="schema"):
         validate_ir(emit_ir(state, "1.1.0"))
@@ -73,7 +64,7 @@ def test_bound_values_cannot_be_overridden_and_old_envelopes_reject_app_bindings
 
 
 def test_literal_payloads_survive_the_round_trip_through_frozen_metadata() -> None:
-    binding = choose_filter.bind(id="done", value="done")
+    binding = choose_filter.with_args(value="done")
     state = State(
         root=FilterChip(id="done", label="Done", selected=True, on_click=binding)
     )
@@ -98,4 +89,58 @@ def test_literal_payloads_survive_the_round_trip_through_frozen_metadata() -> No
     assert bridge.expose_latest_snapshot() == before
     assert store.value.version == len("done")
     with pytest.raises(IrValidationError):
-        choose_filter.bind(id="bad", value="archived")
+        choose_filter.with_args(value="archived")
+
+
+@action
+def pick(state: State, task_id: int) -> State:
+    return replace(state, version=task_id)
+
+
+@action
+def advance(state: State) -> State:
+    task = state.version + 1
+    return replace(state, root=_primary(task), version=task)
+
+
+def _primary(task: int) -> Button:
+    return Button(
+        id="primary",
+        text=f"Task {task}",
+        on_click=pick.with_args(task_id=task),
+    )
+
+
+def _serial(bridge: BridgeSurface) -> int:
+    return int(json.loads(bridge.expose_envelope(-1))["serial"])
+
+
+def test_a_tap_resolves_against_the_snapshot_the_user_saw() -> None:
+    store = Store(State(root=_primary(10), version=10))
+    bridge = BridgeSurface(store, Actions(pick, advance))
+    binding = str(pick.with_args(task_id=10))
+    seen = _serial(bridge)
+    bridge.accept_action(json.dumps({"actionId": advance.name, "payload": {}}))
+
+    bridge.accept_action(
+        json.dumps({"actionId": binding, "payload": {}, "serial": seen})
+    )
+
+    assert store.value.version == 10
+
+
+def test_a_tap_from_a_snapshot_no_longer_held_is_refused() -> None:
+    store = Store(State(root=_primary(10), version=10))
+    bridge = BridgeSurface(store, Actions(pick, advance))
+    binding = str(pick.with_args(task_id=10))
+    seen = _serial(bridge)
+    for _ in range(9):
+        bridge.accept_action(json.dumps({"actionId": advance.name, "payload": {}}))
+    version = store.value.version
+
+    bridge.accept_action(
+        json.dumps({"actionId": binding, "payload": {}, "serial": seen})
+    )
+
+    assert store.value.version == version
+    assert "stale action" in bridge.expose_latest_error()

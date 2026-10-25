@@ -3,25 +3,124 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import ClassVar, cast
+from difflib import get_close_matches
+from types import CodeType
+from typing import Any, ClassVar, NoReturn, cast
 
 from pycompose.components.modifiers import Modifier
 from pycompose.core import Node, Props
+from pycompose.core.expressions import Expression
+from pycompose.core.ids import call_location, call_site
 from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
+from pycompose.core.values import _Unset
 from pycompose.errors import IrValidationError
+from pycompose.ir.generated_validators import REGISTRY
 from pycompose.ir.validator import validate_component
+from pycompose.state.app_action import AppAction
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
+
+ActionTarget = str | AppAction[Any]
+"""What an action prop takes: an app action, a binding of one, or a registry id."""
+
+
+PropValue = JsonValue | AppAction[Any] | Expression
+"""What a component prop takes before construction makes it wire data."""
+
+
+_CONSTRUCTORS: set[CodeType] = set()
+"""Every component ``__init__``, stepped over to find the app's declaring line."""
+
+
+_COMMON = frozenset({"id", "modifier", "children", "content"})
+"""Keywords every component takes, so none of them tells overloads apart."""
+
+
+def _overload(
+    cls: type[Component], positional: bool, kwargs: Mapping[str, Any]
+) -> type[Component]:
+    """The one overload of ``cls`` whose keywords a call fits, else ``cls``.
+
+    An argument left at its absent value is not passed; children, given
+    positionally or by name, are the ``content`` keyword. When nothing fits,
+    ``cls`` is returned so its own constructor reports what is missing.
+    """
+    given = {
+        key
+        for key, value in kwargs.items()
+        if value is not None and not isinstance(value, _Unset)
+    } - _COMMON
+    if positional or kwargs.get("children") or kwargs.get("content") is not None:
+        given.add("content")
+    fits = [
+        overload
+        for overload in (cls, *cls.overloads)
+        if overload.required_keywords <= given <= overload.accepted_keywords
+    ]
+    return fits[0] if len(fits) == 1 else cls
 
 
 class Component(Node):
     """A Node with a registered component type and Pythonic prop names.
 
-    Explicit ids are stable sibling keys. No automatic counters or object ids
-    participate in composition. Emission produces plain IR Nodes when ids change.
+    Explicit ids are stable sibling keys; a component without one is keyed by
+    the line that declares it. No automatic counters or object ids participate
+    in composition. Emission produces plain IR Nodes when ids change.
     """
 
     __slots__ = ()
     component_type: ClassVar[str]
+    required_keywords: ClassVar[frozenset[str]] = frozenset()
+    accepted_keywords: ClassVar[frozenset[str]] = frozenset()
+    overloads: ClassVar[tuple[type[Component], ...]] = ()
+    """The other overloads this name reaches; keywords choose among them."""
+
+    def __new__(cls, *_children: Any, **kwargs: Any) -> Any:
+        """Choose the overload a call means, or build a windowed declaration.
+
+        ``Card(on_click=open, ...)`` and ``Card(...)`` are two native overloads
+        behind one name: the keywords a call passes select exactly one, which
+        codegen proves per name. The chosen class's ``__init__`` then runs.
+        ``LazyColumn(items=notes, key=..., item=...)`` lists data rather than
+        nodes; the host then asks for the window it shows.
+
+        Args:
+            *_children: Positional children, read by ``__init__``.
+            **kwargs: The component's keyword arguments.
+
+        Returns:
+            A :class:`Windowed` declaration, or a new instance of the overload.
+        """
+        chosen = (
+            _overload(cls, bool(_children), kwargs)
+            if "overloads" in cls.__dict__
+            else cls
+        )
+        item = kwargs.pop("item", None)
+        if item is None:
+            return super().__new__(chosen)
+        from pycompose.components.windowed import Windowed
+
+        site = call_site(0, _CONSTRUCTORS | {Component.__new__.__code__})
+        return Windowed(
+            chosen,
+            site=site,
+            id=kwargs.pop("id", None),
+            items=kwargs.pop("items", ()),
+            key=kwargs.pop("key", None),
+            item=item,
+            **kwargs,
+        )
+
+    def __init_subclass__(cls, **kwargs: Any) -> None:
+        """Record a subclass's constructor so call sites skip past it.
+
+        Args:
+            **kwargs: Passed on to ``object.__init_subclass__``.
+        """
+        super().__init_subclass__(**kwargs)
+        constructor = cls.__dict__.get("__init__")
+        if constructor is not None:
+            _CONSTRUCTORS.add(constructor.__code__)
 
     def __init__(
         self,
@@ -29,16 +128,15 @@ class Component(Node):
         id: str | None = None,
         children: Sequence[Node] = (),
         modifier: Modifier | Mapping[str, JsonValue | FrozenJsonValue] | None = None,
-        **props: JsonValue,
+        **props: PropValue,
     ) -> None:
         """Construct immutable IR and validate this component, not its subtree.
 
         Args:
-            id: Stable sibling key or already-qualified node id. None leaves
-                identity to the emitter, which derives a deterministic path id
-                -- only for a node nothing addresses: a component carrying an
-                action binding or an action-bearing modifier must stay
-                nameable, so it keeps an explicit id.
+            id: Stable sibling key or already-qualified node id. None keys the
+                node by the line that declares it; a component carrying an
+                action declared in a loop must still have an id, since only an
+                id survives a reorder.
             children: Child nodes in render order.
             modifier: Ordered Modifier or a modifier wire object.
             **props: Snake_case props declared by the component registry.
@@ -51,17 +149,34 @@ class Component(Node):
                 raise IrValidationError(
                     "prop name is not snake_case", node_id=id or "", prop=name
                 )
+        # A control may take an app action itself; it binds nothing of its own.
+        # An expression is wire data from here on; emission resolves its keys.
+        values = {
+            name: value.binding()
+            if isinstance(value, AppAction)
+            else value.to_wire()
+            if isinstance(value, Expression)
+            else value
+            for name, value in props.items()
+        }
         wire = cast(
-            "dict[str, JsonValue | FrozenJsonValue]", props_from_kwargs(**props)
+            "dict[str, JsonValue | FrozenJsonValue]", props_from_kwargs(**values)
         )
         if modifier is not None:
             wire["modifier"] = freeze_json(
                 modifier.values if isinstance(modifier, Modifier) else modifier
             )
         super().__init__(
-            id=id or "", type=self.component_type, props=Props(wire), children=children
+            id=id or "",
+            type=self.component_type,
+            props=Props(wire),
+            children=children,
+            site="" if id else call_site(0, _CONSTRUCTORS),
         )
-        validate_component(self)
+        try:
+            validate_component(self)
+        except IrValidationError as exc:
+            _refuse(exc, self)
         keys: set[str] = set()
         for child in self.children:
             if not child.id:
@@ -70,3 +185,33 @@ class Component(Node):
             if child.id in keys:
                 raise IrValidationError("duplicate child key", node_id=id, key=child.id)
             keys.add(child.id)
+
+
+_CONSTRUCTORS.add(Component.__init__.__code__)
+
+
+def _refuse(error: IrValidationError, node: Component) -> NoReturn:
+    """Add where a refused declaration is, and what its prop could have been.
+
+    Args:
+        error: The validator's refusal of this one node.
+        node: The node it refused.
+
+    Raises:
+        IrValidationError: The same refusal, naming the app's file and line,
+            and for a prop with a closed set of values, the values and the
+            closest one.
+    """
+    context = dict(error.context)
+    context["source"] = call_location(1, _CONSTRUCTORS)
+    prop = context.get("prop")
+    definition = REGISTRY.components.get(node.type)
+    rule = definition.props.get(str(prop)) if definition is not None else None
+    if rule is not None and rule.values:
+        allowed = [str(value) for value in rule.values]
+        context["expected"] = ", ".join(allowed)
+        value = node.props.get(str(prop))
+        close = get_close_matches(str(value), allowed, n=1) if value is not None else []
+        if close:
+            context["did_you_mean"] = close[0]
+    raise IrValidationError(error.args[0] if error.args else "", **context) from None

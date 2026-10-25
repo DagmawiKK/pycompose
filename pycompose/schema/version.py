@@ -6,7 +6,7 @@ import re
 
 from pycompose.errors import SchemaError
 
-__all__ = ["require_version"]
+__all__ = ["at_least", "require_version"]
 
 _VERSION = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
 
@@ -15,6 +15,19 @@ def _parts(value: str) -> tuple[int, ...]:
     if not isinstance(value, str) or _VERSION.fullmatch(value) is None:
         raise SchemaError("version must be MAJOR.MINOR.PATCH", version=value)
     return tuple(int(part) for part in value.split("."))
+
+
+def at_least(value: str, since: str) -> bool:
+    """Report whether version ``value`` is ``since`` or later.
+
+    Args:
+        value: The version in use.
+        since: The first version with the feature.
+
+    Returns:
+        ``True`` when ``value`` carries the feature.
+    """
+    return _parts(value) >= _parts(since)
 
 
 def require_version(

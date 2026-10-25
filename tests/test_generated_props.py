@@ -247,16 +247,16 @@ def decoded_example() -> tuple[str, str]:
     entry = {
         "children": {"allowed": False},
         "props": {
-            "resource": {
-                "type": "resource",
-                "values": ["drawable", "asset"],
-                "decode": "resourceImage",
-                "required": True,
+            "style": {
+                "type": "enum",
+                "values": ["bodyLarge", "bodyMedium"],
+                "decode": "textStyle",
+                "default": "bodyMedium",
             },
-            "contentDescription": {"type": "string"},
+            "text": {"type": "string", "required": True},
         },
     }
-    return "Image", render_one("Image", entry)
+    return "Text", render_one("Text", entry)
 
 
 def test_a_decoded_prop_becomes_a_local_not_an_inline_call() -> None:
@@ -267,17 +267,31 @@ def test_a_decoded_prop_becomes_a_local_not_an_inline_call() -> None:
     """
     name, block = decoded_example()
     assert block, f"{name} should render"
-    assert (
-        "val resourceValue: androidx.compose.ui.graphics.painter.Painter? = "
-        "resources?.image(" in block
-    )
-    assert "resource = resourceValue" in block
+    assert "val styleValue: androidx.compose.ui.text.TextStyle = " in block
+    assert "style = styleValue" in block
 
 
-def test_a_bad_resource_degrades_rather_than_throwing() -> None:
-    """ADR-0005: Compose must never see an exception from a malformed prop."""
-    _, block = decoded_example()
-    assert ".getOrNull()" in block
+def test_a_resource_prop_needs_a_wrapper() -> None:
+    """A resource loads off the Compose thread, which no generated call does.
+
+    ADR-0005's degrade-don't-throw rule is the wrapper's job (ResourceImage,
+    ResourceText), so an entry with a resource prop and no wrapper is not
+    generated rather than generated to block or throw.
+    """
+    from pycompose.schema.codegen.adapters import render as render_one
+
+    entry = {
+        "children": {"allowed": False},
+        "props": {
+            "painter": {
+                "type": "resource",
+                "values": ["drawable"],
+                "decode": "resourceImage",
+                "required": True,
+            }
+        },
+    }
+    assert render_one("Icon", entry) == ""
 
 
 def test_an_optional_decoded_prop_is_not_passed_to_a_non_null_resolver() -> None:
@@ -318,3 +332,66 @@ def test_the_registry_refuses_an_unknown_decoder() -> None:
 
     with pytest.raises(ComponentRegistryError):
         PropDef.from_mapping({"type": "enum", "decode": "diagonal"}, where="test")
+
+
+def test_an_index_prop_is_guarded_by_the_items_it_indexes() -> None:
+    """Compose throws outside its items; the adapter clamps or composes nothing."""
+    from pycompose.schema.codegen.adapters import extra_imports
+    from pycompose.schema.codegen.adapters import render as render_one
+
+    entry = components()["PrimaryTabRow"]
+    block = render_one("PrimaryTabRow", entry)
+    assert (
+        "val selectedTabIndexValue = context.index(model.props.selectedTabIndex, "
+        'model.children.inSlot("tabs"), node.id)'
+    ) in block
+    assert "if (selectedTabIndexValue != null) {" in block
+    assert "selectedTabIndex = selectedTabIndexValue," in block
+    assert {"com.pycompose.renderer.index", "com.pycompose.renderer.inSlot"} <= (
+        extra_imports(entry)
+    )
+
+
+@pytest.mark.parametrize(
+    "change",
+    [{"type": "string", "indexOf": "tabs"}, {"type": "integer", "indexOf": "rows"}],
+)
+def test_an_index_must_be_an_integer_naming_a_slot(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, change: dict[str, str]
+) -> None:
+    from pycompose.schema.codegen import main, rules
+
+    registry = json.loads(SCHEMA_PATH.read_text())
+    registry["components"]["PrimaryTabRow"]["props"]["selectedTabIndex"] = change
+    path = tmp_path / "components.json"
+    path.write_text(json.dumps(registry))
+    monkeypatch.setattr(rules, "SCHEMA_PATH", path)
+    with pytest.raises(SystemExit, match="'indexOf' must be an integer naming a slot"):
+        main.load_registry()
+
+
+def test_an_optional_callback_reaches_nobody_when_unbound() -> None:
+    """A nullable action id must not reach dispatch, which takes a String."""
+    from pycompose.schema.codegen.adapters import render as render_one
+
+    entry = {
+        "children": {"allowed": False},
+        "props": {
+            "onDone": {"type": "actionId"},
+            "onMove": {
+                "type": "actionId",
+                "payload": [{"name": "value", "type": "number"}],
+            },
+            "value": {"type": "number", "nativeType": "Float", "required": True},
+        },
+    }
+    block = render_one("Slider", entry)
+    assert (
+        "onDone = { model.props.onDone?.let { context.actions.dispatch(it) } }" in block
+    )
+    assert (
+        "onMove = { value -> model.props.onMove?.let "
+        "{ context.event(it, JsonPrimitive(value)) } }"
+    ) in block
+    # The wire carries a double; Compose takes a Float.
+    assert "value = model.props.value.toFloat()" in block

@@ -3,19 +3,16 @@
 package com.pycompose.renderer
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.MultiChoiceSegmentedButtonRowScope
-import androidx.compose.material3.SingleChoiceSegmentedButtonRowScope
-import androidx.compose.material3.TooltipScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.pycompose.ir.AppBinding
 import com.pycompose.ir.AppBindings
+import com.pycompose.ir.Echoes
 import com.pycompose.ir.ValidatedIr
 import com.pycompose.ir.generated.IrContract
 import com.pycompose.ir.generated.UiNode
@@ -63,7 +60,8 @@ class RenderContext internal constructor(
      * The sink fixes the three collaborators an observation needs, so every
      * caller hands the same three-argument function to the state helpers.
      */
-    internal val observations = ObservationSink(bindings, actions, renderer.report)
+    internal val observations =
+        ObservationSink(bindings, actions, renderer.report, renderer.reports)
 
     /**
      * Report one diagnostic for a node the host cannot compose as declared.
@@ -77,6 +75,37 @@ class RenderContext internal constructor(
     fun diagnostic(message: String) {
         renderer.report(message)
     }
+
+    /**
+     * Ask the app to compose items [first] to [last] of the lazy list keyed [window].
+     *
+     * @param window The list's window key, as its snapshot stated it.
+     * @param first The first item index wanted.
+     * @param last The last item index wanted.
+     */
+    fun requestWindow(
+        window: String,
+        first: Int,
+        last: Int,
+    ) {
+        renderer.windows(window, first, last)
+    }
+
+    /**
+     * Ask the app for the window of a lazy list as the user scrolls it (ADR-0043).
+     *
+     * @param state The list's native state, which knows what is visible.
+     * @param window The list's window key, or null for a list stated whole.
+     * @param offset The index of the first item the app composed.
+     * @param size How many items the app composed.
+     */
+    @Composable
+    fun RequestWindows(
+        state: androidx.compose.foundation.lazy.LazyListState,
+        window: String?,
+        offset: Long?,
+        size: Int,
+    ) = requestWindows(state, window, offset, size)
 
     fun event(
         actionId: String,
@@ -111,13 +140,30 @@ class RenderContext internal constructor(
         }
     }
 
+    /**
+     * Keyed content's subtrees for one node: the children Python sent for each key.
+     *
+     * @param id The node's id, which the subtrees' lifetime follows.
+     * @param current The key the snapshot draws now.
+     * @param nodes The children Python sent for [current].
+     */
+    @Composable fun keyedContent(
+        id: String,
+        current: String,
+        nodes: List<UiNode>,
+    ): KeyedContent {
+        val keyed = remember(id) { KeyedContent() }
+        keyed.show(current, this, nodes)
+        return keyed
+    }
+
     /** Primary children, in declaration order. */
     @Composable fun children(nodes: List<UiNode>) {
         nodes.unslotted().forEach { child -> key(child.id) { node(child) } }
     }
 
     /**
-     * Primary children composed under the RowScope their parent's lambda carries.
+     * Primary children composed under the receiver their parent's lambda carries.
      *
      * A scoped component's adapter takes its receiver as a parameter, because the
      * receiver exists only inside the content lambda that provides it. This is
@@ -127,28 +173,8 @@ class RenderContext internal constructor(
      * @param scope The receiver the parent's pinned content lambda carries.
      * @param nodes The parent's child nodes, in declaration order.
      */
-    @Composable fun childrenInRowScope(
-        scope: RowScope,
-        nodes: List<UiNode>,
-    ) {
-        nodes.unslotted().forEach { child ->
-            key(child.id) { renderer.ScopedNode(child, this, scope) }
-        }
-    }
-
-    /** Primary children composed under their parent's ColumnScope, as [childrenInRowScope]. */
-    @Composable fun childrenInColumnScope(
-        scope: ColumnScope,
-        nodes: List<UiNode>,
-    ) {
-        nodes.unslotted().forEach { child ->
-            key(child.id) { renderer.ScopedNode(child, this, scope) }
-        }
-    }
-
-    /** Primary children composed under their parent's BoxScope, as [childrenInRowScope]. */
-    @Composable fun childrenInBoxScope(
-        scope: BoxScope,
+    @Composable fun childrenIn(
+        scope: Any,
         nodes: List<UiNode>,
     ) {
         nodes.unslotted().forEach { child ->
@@ -157,30 +183,22 @@ class RenderContext internal constructor(
     }
 
     /**
-     * Primary children composed under a single-choice segmented row.
+     * A named slot whose native lambda carries a receiver [S], or null when empty.
      *
-     * The row's content lambda carries a receiver that exists only there; the
-     * segmented buttons are extensions on that receiver, not a RowScope one.
-     *
-     * @param scope The receiver the row's pinned content lambda carries.
-     * @param nodes The row's child nodes, in declaration order.
+     * The lambda hands that receiver to each child, as [childrenIn] does. Empty
+     * stays null; the generated adapter supplies `{}` for a non-null parameter,
+     * preserving the native empty-lambda default.
      */
-    @Composable fun childrenInSingleChoiceSegmentedButtonRowScope(
-        scope: SingleChoiceSegmentedButtonRowScope,
+    fun <S : Any> slotIn(
         nodes: List<UiNode>,
-    ) {
-        nodes.unslotted().forEach { child ->
-            key(child.id) { renderer.ScopedNode(child, this, scope) }
-        }
-    }
-
-    /** Multi-choice children, as [childrenInSingleChoiceSegmentedButtonRowScope]. */
-    @Composable fun childrenInMultiChoiceSegmentedButtonRowScope(
-        scope: MultiChoiceSegmentedButtonRowScope,
-        nodes: List<UiNode>,
-    ) {
-        nodes.unslotted().forEach { child ->
-            key(child.id) { renderer.ScopedNode(child, this, scope) }
+        slot: String,
+    ): (@Composable S.() -> Unit)? {
+        val filled = nodes.inSlot(slot)
+        if (filled.isEmpty()) return null
+        return {
+            filled.forEach { child ->
+                key(child.id) { renderer.ScopedNode(child, this@RenderContext, this) }
+            }
         }
     }
 
@@ -201,119 +219,21 @@ class RenderContext internal constructor(
     }
 }
 
-/**
- * A named slot whose native lambda carries a RowScope.
- *
- * The returned lambda has the receiver the pinned parameter expects, and
- * passes the same receiver to each child so a scoped child composes under
- * its provider. Empty stays null; the generated adapter supplies `{}` for
- * a non-null parameter, preserving the native empty-lambda default.
- */
-fun RenderContext.slotInRowScope(
-    nodes: List<UiNode>,
-    slot: String,
-): (@Composable RowScope.() -> Unit)? {
-    val filled = nodes.inSlot(slot)
-    if (filled.isEmpty()) return null
-    return {
-        filled.forEach { child ->
-            key(child.id) { renderer.ScopedNode(child, this@slotInRowScope, this) }
-        }
-    }
-}
-
-/** A named slot whose native lambda carries a ColumnScope, as [slotInRowScope]. */
-fun RenderContext.slotInColumnScope(
-    nodes: List<UiNode>,
-    slot: String,
-): (@Composable ColumnScope.() -> Unit)? {
-    val filled = nodes.inSlot(slot)
-    if (filled.isEmpty()) return null
-    return {
-        filled.forEach { child ->
-            key(child.id) { renderer.ScopedNode(child, this@slotInColumnScope, this) }
-        }
-    }
-}
-
-/** A named slot whose native lambda carries a BoxScope, as [slotInRowScope]. */
-fun RenderContext.slotInBoxScope(
-    nodes: List<UiNode>,
-    slot: String,
-): (@Composable BoxScope.() -> Unit)? {
-    val filled = nodes.inSlot(slot)
-    if (filled.isEmpty()) return null
-    return {
-        filled.forEach { child ->
-            key(child.id) { renderer.ScopedNode(child, this@slotInBoxScope, this) }
-        }
-    }
-}
-
-/** A named slot whose lambda carries a single-choice segmented row, as [slotInRowScope]. */
-fun RenderContext.slotInSingleChoiceSegmentedButtonRowScope(
-    nodes: List<UiNode>,
-    slot: String,
-): (@Composable SingleChoiceSegmentedButtonRowScope.() -> Unit)? {
-    val filled = nodes.inSlot(slot)
-    if (filled.isEmpty()) return null
-    return {
-        filled.forEach { child ->
-            key(child.id) {
-                renderer.ScopedNode(
-                    child,
-                    this@slotInSingleChoiceSegmentedButtonRowScope,
-                    this,
-                )
-            }
-        }
-    }
-}
-
-/** A named slot whose lambda carries a multi-choice segmented row, as [slotInRowScope]. */
-fun RenderContext.slotInMultiChoiceSegmentedButtonRowScope(
-    nodes: List<UiNode>,
-    slot: String,
-): (@Composable MultiChoiceSegmentedButtonRowScope.() -> Unit)? {
-    val filled = nodes.inSlot(slot)
-    if (filled.isEmpty()) return null
-    return {
-        filled.forEach { child ->
-            key(child.id) {
-                renderer.ScopedNode(
-                    child,
-                    this@slotInMultiChoiceSegmentedButtonRowScope,
-                    this,
-                )
-            }
-        }
-    }
-}
-
-/** A named slot whose lambda carries a tooltip scope, as [slotInRowScope]. */
-fun RenderContext.slotInTooltipScope(
-    nodes: List<UiNode>,
-    slot: String,
-): (@Composable TooltipScope.() -> Unit)? {
-    val filled = nodes.inSlot(slot)
-    if (filled.isEmpty()) return null
-    return {
-        filled.forEach { child ->
-            key(child.id) {
-                renderer.ScopedNode(child, this@slotInTooltipScope, this)
-            }
-        }
-    }
-}
-
 /** Stateless registry-driven engine; only wire-validated snapshots enter this seam. */
 class Renderer(
     private val registry: ComponentRegistry,
     private val actions: ActionDispatcher,
     private val debug: Boolean = false,
+    internal val windows: (String, Int, Int) -> Unit = { _, _, _ -> },
     internal val report: (String) -> Unit = {},
 ) {
     private val modifiers = ModifierBuilder(actions)
+
+    /** Report numbers for the session, kept across snapshots. */
+    internal val reports = Reports()
+
+    /** Streams each composed holder publishes, by node id, for expressions to read. */
+    internal val streams = mutableStateMapOf<String, Map<String, Stream>>()
 
     @Composable fun Render(ir: ValidatedIr) {
         val context =
@@ -324,12 +244,21 @@ class Renderer(
                     AppBindings.read(ir.snapshot.metadata, ir.snapshot.schemaVersion),
                 )
             }
-        key(ir.snapshot.root.id) { Node(ir.snapshot.root, context) }
+        val answered =
+            remember(ir) {
+                val echoes = Echoes.read(ir.snapshot.metadata)
+                val check: (String) -> Boolean = { reports.answered(it, echoes) }
+                check
+            }
+        CompositionLocalProvider(LocalAnswered provides answered) {
+            key(ir.snapshot.root.id) { Node(ir.snapshot.root, context) }
+        }
     }
 
     @Composable internal fun Node(
         node: UiNode,
         context: RenderContext,
+        scope: Any? = null,
     ) {
         val adapter = registry[node.componentType]
         if (adapter == null) {
@@ -346,104 +275,38 @@ class Renderer(
             if (debug) BasicText("Unsupported: ${node.componentType}")
             return
         }
-        val modifier = modifierFor(node) ?: return
+        val modifier = modifierFor(node, scope) ?: return
         adapter(node, modifier, context)
     }
 
-    /** Compose one child of a RowScope content lambda, through its scoped adapter. */
+    /**
+     * Compose one child of a content lambda carrying [scope], through its scoped adapter.
+     *
+     * A child whose adapter needs another receiver, or none, composes as it
+     * would anywhere, still wearing [scope]'s modifiers; a scoped one whose
+     * receiver is missing is reported there.
+     */
     @Composable internal fun ScopedNode(
         node: UiNode,
         context: RenderContext,
-        scope: RowScope,
+        scope: Any,
     ) {
-        val adapter = registry.rowScoped(node.componentType)
-        if (adapter == null) {
-            Node(node, context)
+        val adapter = registry.scoped(node.componentType)
+        if (adapter == null || !adapter.scope.isInstance(scope)) {
+            Node(node, context, scope)
             return
         }
-        val modifier = modifierFor(node) ?: return
-        scope.adapter(node, modifier, context)
-    }
-
-    /** Compose one child of a ColumnScope content lambda, through its scoped adapter. */
-    @Composable internal fun ScopedNode(
-        node: UiNode,
-        context: RenderContext,
-        scope: ColumnScope,
-    ) {
-        val adapter = registry.columnScoped(node.componentType)
-        if (adapter == null) {
-            Node(node, context)
-            return
-        }
-        val modifier = modifierFor(node) ?: return
-        scope.adapter(node, modifier, context)
-    }
-
-    /** Compose one child of a BoxScope content lambda, through its scoped adapter. */
-    @Composable internal fun ScopedNode(
-        node: UiNode,
-        context: RenderContext,
-        scope: BoxScope,
-    ) {
-        val adapter = registry.boxScoped(node.componentType)
-        if (adapter == null) {
-            Node(node, context)
-            return
-        }
-        val modifier = modifierFor(node) ?: return
-        scope.adapter(node, modifier, context)
-    }
-
-    /** Compose one child of a single-choice segmented row, through its scoped adapter. */
-    @Composable internal fun ScopedNode(
-        node: UiNode,
-        context: RenderContext,
-        scope: SingleChoiceSegmentedButtonRowScope,
-    ) {
-        val adapter = registry.singleChoiceScoped(node.componentType)
-        if (adapter == null) {
-            Node(node, context)
-            return
-        }
-        val modifier = modifierFor(node) ?: return
-        scope.adapter(node, modifier, context)
-    }
-
-    /** Compose one child of a multi-choice segmented row, through its scoped adapter. */
-    @Composable internal fun ScopedNode(
-        node: UiNode,
-        context: RenderContext,
-        scope: MultiChoiceSegmentedButtonRowScope,
-    ) {
-        val adapter = registry.multiChoiceScoped(node.componentType)
-        if (adapter == null) {
-            Node(node, context)
-            return
-        }
-        val modifier = modifierFor(node) ?: return
-        scope.adapter(node, modifier, context)
-    }
-
-    /** Compose one child of a tooltip slot, through its scoped adapter. */
-    @Composable internal fun ScopedNode(
-        node: UiNode,
-        context: RenderContext,
-        scope: TooltipScope,
-    ) {
-        val adapter = registry.tooltipScoped(node.componentType)
-        if (adapter == null) {
-            Node(node, context)
-            return
-        }
-        val modifier = modifierFor(node) ?: return
-        scope.adapter(node, modifier, context)
+        val modifier = modifierFor(node, scope) ?: return
+        adapter.renderIn(scope, node, modifier, context)
     }
 
     /** Build one node's modifier, reporting once when the wire carries a bad one. */
     @Composable
-    private fun modifierFor(node: UiNode): Modifier? {
-        val result = modifiers.build(node.props.modifier)
+    private fun modifierFor(
+        node: UiNode,
+        scope: Any?,
+    ): Modifier? {
+        val result = modifiers.build(node.props.modifier, scope)
         val modifier = result.getOrNull()
         if (modifier == null) {
             remember(node.id, node.props) {

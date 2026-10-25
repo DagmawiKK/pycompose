@@ -11,7 +11,7 @@ import jsonschema
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-COMPONENTS_PATH = ROOT / "schema" / "components.json"
+COMPONENTS_PATH = ROOT / "schema" / "catalog.lock.json"
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
 VALIDATORS_PATH = ROOT / "pycompose" / "ir" / "generated_validators.py"
 PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
@@ -33,17 +33,17 @@ PROP_TYPE_VOCABULARY = {
 
 
 def _registry() -> dict:
-    return json.loads(COMPONENTS_PATH.read_text(encoding="utf-8"))
+    from pycompose.schema.codegen.rules import with_rules
+
+    return with_rules(json.loads(COMPONENTS_PATH.read_text(encoding="utf-8")))
 
 
 def _gen() -> object:
-    """The codegen emission module, imported the ordinary way.
+    """The module rendering the runtime tables, imported the ordinary way.
 
-    Emitters live beside the loader now: the renderers moved into
-    ``emit_python`` / ``emit_wire`` and the loader into ``rules``, so the
-    freshness checks grade the modules that actually produce each artifact.
+    The freshness checks grade the module that actually produces each artifact.
     """
-    return importlib.import_module("pycompose.schema.codegen.emit_python")
+    return importlib.import_module("pycompose.schema.codegen.emit_modules")
 
 
 def _expected(renderer: str) -> str:

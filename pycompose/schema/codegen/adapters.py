@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.core.registry_vocabulary import STATE_STREAMS
 from pycompose.schema.codegen.adapter_calls import (
     _callback,
     _decoded,
@@ -45,17 +46,19 @@ from pycompose.schema.codegen.adapter_helpers import (
     RESOLVER_RETURN,
     SCALAR_KOTLIN,
     STATE_ATTACH_GATES,
-    STATE_CALLS,
     STATE_CONSTRUCTOR_PROPS,
-    TRANSIENT_CALLS,
     _camel,
     _Fragments,
     _slot,
+    attach_gate,
     composables,
     is_mechanical,
     native_name,
     scalar_wire,
+    simple,
 )
+from pycompose.schema.codegen.adapter_imports import extra_imports
+from pycompose.schema.codegen.state_families import property_props
 
 __all__ = [
     "DECODED",
@@ -66,72 +69,13 @@ __all__ = [
     "RESOLVER_RETURN",
     "SCALAR_KOTLIN",
     "STATE_ATTACH_GATES",
-    "STATE_CALLS",
     "STATE_CONSTRUCTOR_PROPS",
-    "TRANSIENT_CALLS",
     "composables",
     "extra_imports",
     "is_mechanical",
     "render",
     "render_file",
 ]
-
-
-def extra_imports(entry: dict[str, Any]) -> set[str]:
-    """List the fully qualified imports an adapter needs beyond its component.
-
-    Args:
-        entry: The component's schema entry.
-
-    Returns:
-        Import statements' targets, sorted by the caller.
-    """
-    qualified: set[str] = set()
-    for spec in entry.get("props", {}).values():
-        if spec.get("type") == "color" and "valueType" in spec:
-            qualified.add("kotlinx.serialization.json.JsonObject")
-        if spec.get("type") == "dp":
-            # Kotlin's own conversion is an extension property, so the import
-            # is what makes ``model.props.x.dp`` resolve.
-            qualified.add("androidx.compose.ui.unit.dp")
-    if (state := entry.get("state")) is not None:
-        qualified.add(f"com.pycompose.renderer.{STATE_CALLS[state['kind']]}")
-        if state["kind"] in STATE_ATTACH_GATES:
-            # The holder rides the component's modifier, so the extension making
-            # that ride callable must be imported where the call is written.
-            qualified.add("com.pycompose.renderer.attachTo")
-    if (transient := entry.get("transient")) is not None:
-        qualified.add(f"com.pycompose.renderer.{TRANSIENT_CALLS[transient['kind']]}")
-    slots = [entry.get("children", {}), *entry.get("slots", {}).values()]
-    for slot in slots:
-        if slot.get("consume") == "paddingValues":
-            qualified.update(
-                {
-                    "androidx.compose.foundation.layout.Column",
-                    "androidx.compose.foundation.layout.padding",
-                    "androidx.compose.ui.Modifier",
-                }
-            )
-    for slot in entry.get("slots", {}).values():
-        if provides := slot.get("provides"):
-            qualified.add(f"com.pycompose.renderer.slotIn{provides}")
-    if entry.get("children", {}).get("kind") == "items":
-        # The primary children are the unslotted ones, and an extension becomes
-        # callable only where it is imported.
-        qualified.update(
-            {
-                "androidx.compose.foundation.lazy.items",
-                "com.pycompose.renderer.unslotted",
-            }
-        )
-    if any(slot.get("kind") == "items" for slot in entry.get("slots", {}).values()):
-        qualified.update(
-            {
-                "androidx.compose.foundation.lazy.items",
-                "com.pycompose.renderer.inSlot",
-            }
-        )
-    return qualified
 
 
 def _render_dp(prop_name: str, spec: dict[str, Any], out: _Fragments) -> bool:
@@ -237,13 +181,24 @@ def _render_scalar(prop_name: str, spec: dict[str, Any], out: _Fragments) -> boo
         # An enum, color or resource with no decode. Refused rather than
         # guessed: the value set does not say which resolver family it is.
         return False
-    if spec.get("required") or "default" in spec:
+    if "indexOf" in spec:
+        # Compose reads its items at this index while measuring and throws
+        # outside them; the host clamps and reports, and with no items composes
+        # nothing (ADR-0005).
+        slot = spec["indexOf"]
+        out.locals.append(
+            f"val {prop_name}Value = context.index(model.props.{prop_name}, "
+            f'model.children.inSlot("{slot}"), node.id)'
+        )
+        out.arguments.append(f"{prop_name} = {prop_name}Value")
+        out.gates.append(f"{prop_name}Value != null")
+    elif spec.get("required") or "default" in spec:
         # A nullable property would not compile where Compose wants a value.
         out.arguments.append(f"{prop_name} = {scalar_wire(prop_name, spec)}")
     return True
 
 
-def _held(state: dict[str, Any] | None) -> set[str]:
+def _held(state: dict[str, Any] | None, props: dict[str, Any]) -> set[str]:
     """Return every prop a state declaration keeps from the native arguments.
 
     The desired value and its report reach the holder, not the component, and
@@ -252,15 +207,18 @@ def _held(state: dict[str, Any] | None) -> set[str]:
 
     Args:
         state: The component's raw ``state`` entry, or None.
+        props: The component's props, which say whether an attach is gated.
 
     Returns:
         The prop names the adapter must not render as native arguments.
     """
     if state is None:
         return set()
+    if state["kind"] == "properties":
+        return set(property_props(state))
     held = {state["value"], state["report"]}
     held.update(STATE_CONSTRUCTOR_PROPS.get(state["kind"], ()))
-    gate = STATE_ATTACH_GATES.get(state["kind"])
+    gate = attach_gate(state, props)
     if gate is not None:
         held.add(gate)
     return held
@@ -292,10 +250,22 @@ def _host_locals(entry: dict[str, Any], out: _Fragments) -> str | None:
         out.arguments.append(f"{interaction['native']} = interactionSourceValue")
     gate: str | None = None
     if state is not None:
-        local, arguments, gate = _state(state, entry.get("props", {}))
-        out.locals.append(local)
+        locals_, arguments, gate = _state(state, entry.get("props", {}))
+        out.locals.extend(locals_)
         out.arguments.extend(arguments)
-        attach = STATE_ATTACH_GATES.get(state["kind"])
+        if state["kind"] in STATE_STREAMS:
+            # Expressions anywhere in the snapshot may read this holder's streams.
+            out.locals.append(f"context.publish(model.id, {state['native']}Value)")
+        if (
+            state["kind"] == "lazyList"
+            and entry.get("children", {}).get("kind") == "items"
+        ):
+            # The list asks for the window it shows as the user scrolls.
+            out.locals.append(
+                f"context.RequestWindows({state['native']}Value, model.props.window, "
+                "model.props.itemOffset, model.children.unslotted().size)"
+            )
+        attach = attach_gate(state, entry.get("props", {}))
         if attach is not None:
             # The holder rides the modifier: the component's first argument is
             # the attach itself, gated by the prop the app states.
@@ -353,7 +323,7 @@ def render(name: str, entry: dict[str, Any]) -> str:
     observed = set((interaction.get("observations") or {}).values())
     state = entry.get("state")
     transient = entry.get("transient")
-    held = _held(state)
+    held = _held(state, entry.get("props", {}))
     if transient is not None:
         # Every prop of a transient component is a request input the host
         # consumes on its behalf; none names a native parameter of its own.
@@ -361,55 +331,33 @@ def render(name: str, entry: dict[str, Any]) -> str:
     if not _resolve_constructor(state, entry.get("props", {}), out):
         return ""
     for prop, spec in entry.get("props", {}).items():
-        if prop in observed or prop in held:
+        if "protocol" in spec or prop in observed or prop in held:
             # The host fills the source or the state holder; an observed prop
-            # reports state and a held prop carries the app's desired state,
-            # but neither names a native parameter of its own.
+            # reports state, a held prop carries the app's desired state, and a
+            # protocol prop steers the host itself: none names a native parameter.
             continue
         if not _render_prop(prop, spec, out):
             return ""
-    gate = _host_locals(entry, out)
+    gate = " && ".join(filter(None, [_host_locals(entry, out), *out.gates])) or None
     for slot_name, slot in sorted(entry.get("slots", {}).items()):
         out.arguments.append(_named_slot(slot_name, slot))
 
     children = entry.get("children", {})
     if children.get("allowed"):
-        # Emitted by name rather than trailing: the schema says which parameter
-        # the primary children reach, and says nothing about where it sits.
-        children_body, parameter = _slot_body(
-            "model.children",
-            None,
-            children.get("kind"),
-            children.get("consume"),
-            children.get("provides"),
-        )
-        prefix = f"{parameter} -> " if parameter is not None else ""
-        native = children.get("native", "content")
-        out.arguments.append(f"{native} = {{ {prefix}{children_body} }}")
+        out.arguments.append(_children(children, out))
 
     indent = "                "
     if gate is not None:
         indent += "    "
-    body = "\n".join(f"{indent}    {argument}," for argument in out.arguments)
-    tail = ""
-    if out.trailing:
-        head = " {"
-        if out.trailing_parameter is not None:
-            head = f" {{ {out.trailing_parameter} ->"
-        body_lines = "\n".join(f"{indent}    {line}" for line in out.trailing)
-        tail = head + "\n" + body_lines + "\n" + indent + "}"
     node = f"{name}Node"
-    native = native_name(name, entry)
     prelude = "\n".join(f"                {line}" for line in out.locals)
-    call = f"{indent}{native}(\n{body}\n{indent}){tail}"
+    call = _call(native_name(name, entry), out, indent, boxed=bool(entry.get("boxed")))
     if gate is not None:
         # The holder stays outside the gate: the state must outlive the
         # composition of the component it projects.
         call = f"                if ({gate}) {{\n{call}\n                }}"
     scope = entry.get("scope")
-    registration = (
-        f"register{scope.removesuffix('Scope')}Scoped" if scope else "register"
-    )
+    registration = f"registerScoped<{simple(scope)}>" if scope else "register"
     return (
         f'            .{registration}("{name}") {{ node, modifier, context ->\n'
         f"                val model = node as {node}\n"
@@ -417,6 +365,59 @@ def render(name: str, entry: dict[str, Any]) -> str:
         + f"{call}\n"
         f"            }}"
     )
+
+
+def _children(children: dict[str, Any], out: _Fragments) -> str:
+    """The argument the primary children reach, by name: never trailing.
+
+    The schema says which parameter the children reach, and nothing about
+    where it sits. Keyed content draws, for each key Compose asks for, the
+    subtree Python sent for it: an outgoing key keeps its own while it animates.
+    """
+    native = children.get("native", "content")
+    if children.get("kind") == "keyed":
+        out.locals.append(
+            "val keyed = context.keyedContent("
+            f"model.id, model.props.{_camel(children['key'])}, model.children)"
+        )
+        scope = "this" if children.get("provides") else "null"
+        return f"{native} = {{ key -> keyed.Content({scope}, key) }}"
+    body, parameter = _slot_body(
+        "model.children",
+        None,
+        children.get("kind"),
+        children.get("consume"),
+        children.get("provides"),
+    )
+    prefix = f"{parameter} -> " if parameter is not None else ""
+    return f"{native} = {{ {prefix}{body} }}"
+
+
+def _call(native: str, out: _Fragments, indent: str, *, boxed: bool) -> str:
+    """The native call; one taking no modifier sits in a Box wearing the node's."""
+    arguments = out.arguments[1:] if boxed else out.arguments
+    body = "\n".join(f"{indent}    {argument}," for argument in arguments)
+    tail = ""
+    if out.trailing:
+        head = " {"
+        if out.trailing_parameter is not None:
+            head = f" {{ {out.trailing_parameter} ->"
+        body_lines = "\n".join(f"{indent}    {line}" for line in out.trailing)
+        tail = head + "\n" + body_lines + "\n" + indent + "}"
+    call = f"{indent}{native}(\n{body}\n{indent}){tail}"
+    if boxed:
+        call = f"{indent}Box({out.arguments[0]}) {{\n{call}\n{indent}}}"
+    return call
+
+
+def _scopes(entry: dict[str, Any]) -> set[str]:
+    """The receivers an adapter spells: the scope it registers in, and its slots'.
+
+    Children compose through ``childrenIn``, which takes any receiver unnamed.
+    """
+    slots = entry.get("slots", {}).values()
+    named = {entry.get("scope"), *(slot.get("provides") for slot in slots)}
+    return {scope for scope in named if scope is not None}
 
 
 def render_file(registry: dict[str, Any]) -> str:
@@ -440,7 +441,11 @@ def render_file(registry: dict[str, Any]) -> str:
             opt_ins.update(entry.get("optIn", ()))
             package = entry["package"]
             native = native_name(name, entry)
-            imports.add(f"import {package}.{native}")
+            scopes = _scopes(entry)
+            if (entry.get("source") or {}).get("owner") != entry.get("scope"):
+                # A member of its scope is called on the receiver, never imported.
+                imports.add(f"import {package}.{native}")
+            imports.update(f"import {scope}" for scope in scopes)
             for extra in composables(native, entry):
                 imports.add(f"import {package}.{extra}")
             for qualified in extra_imports(entry):
@@ -448,7 +453,7 @@ def render_file(registry: dict[str, Any]) -> str:
             imports.add(f"import com.pycompose.ir.generated.{name} as {name}Node")
 
     header = [
-        "// Generated by tools/schema/gen.py from schema/components.json.",
+        "// Generated by tools/schema/gen.py from schema/catalog.lock.json.",
         "// Do not edit: change the schema and regenerate.",
     ]
     if opt_ins:

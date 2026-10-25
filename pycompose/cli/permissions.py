@@ -74,6 +74,39 @@ def effective_permissions(project: Project) -> tuple[str, ...]:
     return tuple(dict.fromkeys([*existing, *chosen]))
 
 
+def with_permissions(text: str, chosen: tuple[str, ...]) -> str:
+    """A manifest declaring every chosen permission it does not already declare.
+
+    Args:
+        text: The manifest.
+        chosen: The app's explicit permission choices.
+
+    Returns:
+        The manifest with the missing ``uses-permission`` entries added.
+
+    Raises:
+        ProjectError: If the manifest cannot be read or has no closing element.
+    """
+    try:
+        root = ElementTree.fromstring(text)
+    except (ElementTree.ParseError, DefusedXmlException) as exc:
+        raise ProjectError("cannot read the AndroidManifest.xml") from exc
+    existing = {
+        entry.get(f"{{{_ANDROID}}}name") for entry in root.findall("uses-permission")
+    }
+    missing = sorted(set(chosen) - existing)
+    if not missing:
+        return text
+    additions = "".join(
+        f'    <uses-permission xmlns:android="{_ANDROID}" android:name="{name}" />\n'
+        for name in missing
+    )
+    generated = text.replace("</manifest>", additions + "</manifest>")
+    if generated == text:
+        raise ProjectError("manifest needs an explicit closing manifest element")
+    return generated
+
+
 def stage_manifest(project: Project) -> Path | None:
     """Generate a manifest input without rewriting user-owned native XML.
 
@@ -82,27 +115,14 @@ def stage_manifest(project: Project) -> Path | None:
 
     Returns:
         Generated manifest path, or None when the user's manifest is sufficient.
-
-    Raises:
-        ProjectError: If a generated permission cannot be inserted safely.
     """
     chosen = selected_permissions(project)
     if not chosen:
         return None
-    text, root = _manifest(project)
-    existing = {
-        entry.get(f"{{{_ANDROID}}}name") for entry in root.findall("uses-permission")
-    }
-    missing = sorted(set(chosen) - existing)
-    if not missing:
-        return None
-    additions = "".join(
-        f'    <uses-permission xmlns:android="{_ANDROID}" android:name="{name}" />\n'
-        for name in missing
-    )
-    generated = text.replace("</manifest>", additions + "</manifest>")
+    text, _ = _manifest(project)
+    generated = with_permissions(text, chosen)
     if generated == text:
-        raise ProjectError("manifest needs an explicit closing manifest element")
+        return None
     path = project_path(
         project.android_root, ".pycompose/extensions/AndroidManifest.xml"
     )

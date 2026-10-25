@@ -8,14 +8,14 @@ lazily -- the house pattern -- so the module graph stays acyclic).
 import json
 import re
 from pathlib import Path
-from typing import Any, NoReturn
+from typing import Any, NoReturn, cast
 
 ROOT = Path(__file__).resolve().parents[3]
 
-PACKAGED_CATALOG = ROOT / "pycompose" / "schema" / "components.json"
+PACKAGED_CATALOG = ROOT / "pycompose" / "schema" / "catalog.lock.json"
 """The catalog as shipped in the wheel, for an app with no repo checkout."""
 
-SCHEMA_PATH = ROOT / "schema/components.json"
+SCHEMA_PATH = ROOT / "schema/catalog.lock.json"
 if not SCHEMA_PATH.is_file():
     # An installed wheel has no repository above it.
     SCHEMA_PATH = PACKAGED_CATALOG
@@ -80,7 +80,7 @@ def die(message: str) -> NoReturn:
 
 
 def load_registry() -> dict[str, Any]:
-    """Read and structurally validate ``schema/components.json``."""
+    """Read and structurally validate ``schema/catalog.lock.json``."""
     try:
         raw = SCHEMA_PATH.read_text(encoding="utf-8")
     except OSError as exc:
@@ -89,14 +89,46 @@ def load_registry() -> dict[str, Any]:
         registry: dict[str, Any] = json.loads(raw)
     except json.JSONDecodeError as exc:
         die(f"invalid JSON in {SCHEMA_PATH}: {exc}")
+    with_rules(registry)
     _validate_registry(registry)
+    return registry
+
+
+WINDOW_PROPS: dict[str, dict[str, Any]] = {
+    "itemCount": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+    "itemOffset": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+    "window": {"type": "string"},
+}
+"""What a lazy container states so the host can ask for a window of it (ADR-0043)."""
+
+
+def with_rules(registry: dict[str, Any]) -> dict[str, Any]:
+    """Apply the catalog's rules: every lazy container gets windowing's props.
+
+    A lazy container states how many items it has, the index of the first one
+    it composed, and the key the host asks for windows by. These are protocol,
+    not native parameters, so they are marked as such and no adapter passes
+    them on and no Python signature offers them.
+
+    Args:
+        registry: The catalog, extended in place.
+
+    Returns:
+        The same catalog, for chaining.
+    """
+    for entry in registry.get("components", {}).values():
+        if entry.get("children", {}).get("kind") == "items":
+            for name, prop in WINDOW_PROPS.items():
+                entry.setdefault("props", {}).setdefault(
+                    name, {**prop, "protocol": "window"}
+                )
     return registry
 
 
 def _validate_registry(registry: dict[str, Any]) -> None:
     for key in REGISTRY_KEYS:
         if key not in registry:
-            die(f"missing top-level key {key!r} in components.json")
+            die(f"missing top-level key {key!r} in the catalog lock")
     if not isinstance(registry["schemaVersion"], str):
         die("schemaVersion must be a string")
     require_semver(registry["schemaVersion"], "schemaVersion")
@@ -110,6 +142,9 @@ def _validate_registry(registry: dict[str, Any]) -> None:
         die("'components' must be a non-empty object")
     for name, comp in sorted(components.items()):
         _validate_component(name, comp)
+    from pycompose.schema.codegen.overloads import validate as validate_overloads
+
+    validate_overloads(components, die)
     _validate_versions(registry)
 
     actions = registry["actions"]
@@ -242,6 +277,7 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
         _validate_scope,
         _validate_slots,
     )
+    from pycompose.schema.codegen.state_families import property_props
     from pycompose.schema.codegen.state_rules import (
         _validate_interaction,
         _validate_state,
@@ -256,17 +292,28 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
     if comp.get("stability") not in STABILITIES:
         die(f"component {name!r} has unknown stability {comp.get('stability')!r}")
     _validate_opt_in(name, comp)
+    if comp.get("boxed", True) is not True:
+        die(f"component {name!r} boxed must be true when present")
     _validate_scope(name, comp)
     props = comp.get("props")
     if not isinstance(props, dict):
         die(f"component {name!r} needs a 'props' object")
+    state = comp.get("state")
+    derived = isinstance(state, dict) and state.get("kind") == "properties"
+    held = set(property_props(cast("dict[str, Any]", state))) if derived else set()
     for prop_name, prop in sorted(props.items()):
-        _validate_prop(name, prop_name, prop)
+        _validate_prop(name, prop_name, prop, held=prop_name in held)
     children = comp.get("children")
     if not isinstance(children, dict):
         die(f"component {name!r} needs a 'children' object")
-    _validate_children(name, children)
+    _validate_children(name, children, props)
     _validate_slots(name, props, children, comp.get("slots", {}))
+    for prop_name, prop in sorted(props.items()):
+        slot = prop.get("indexOf")
+        if slot is not None and (
+            prop.get("type") != "integer" or slot not in comp.get("slots", {})
+        ):
+            die(f"prop {name}.{prop_name} 'indexOf' must be an integer naming a slot")
     _validate_interaction(
         name, props, children, comp.get("slots", {}), comp.get("interaction")
     )

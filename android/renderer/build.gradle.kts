@@ -60,6 +60,15 @@ dependencies {
     // Material 2 is a design profile of its own (pycompose.m2), never a default
     // of the Material 3 namespace.
     implementation(libs.compose.material)
+    // The app's own Compose libraries (`pycompose add`, plan 31 §16.3): on the
+    // extraction classpath like Google's, and exposed to :host, whose generated
+    // adapters call them. The library itself lists none.
+    rootProject
+        .file("compose-libraries.txt")
+        .takeIf { it.isFile }
+        ?.readLines()
+        ?.filter(String::isNotBlank)
+        ?.forEach { api(it) }
     testImplementation(libs.compose.test)
     testImplementation(libs.robolectric)
     testImplementation(libs.junit4)

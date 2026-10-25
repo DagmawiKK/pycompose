@@ -44,7 +44,7 @@ def test_a_gated_family_composes_its_component_from_the_holder() -> None:
     assert "open =" not in adapter
     assert "onOpenChange =" not in adapter
     assert 'dragHandle = context.slot(model.children, "dragHandle")' in adapter
-    scoped = "content = { context.childrenInColumnScope(this, model.children) }"
+    scoped = "content = { context.childrenIn(this, model.children) }"
     assert scoped in adapter
 
 
@@ -197,12 +197,11 @@ def test_a_swipe_holder_reports_the_settled_anchor_and_fills_row_slots() -> None
     assert "value =" not in adapter
     assert "onValueChange =" not in adapter
     assert (
-        "backgroundContent = context.slotInRowScope("
+        "backgroundContent = context.slotIn<RowScope>("
         'model.children, "backgroundContent") ?: {}' in adapter
     )
-    assert "content = { context.childrenInRowScope(this, model.children) }" in adapter
+    assert "content = { context.childrenIn(this, model.children) }" in adapter
     assert "com.pycompose.renderer.swipeState" in extra_imports(entry)
-    assert "com.pycompose.renderer.slotInRowScope" in extra_imports(entry)
 
 
 def test_a_held_enum_value_does_not_block_a_mechanical_adapter() -> None:

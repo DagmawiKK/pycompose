@@ -102,11 +102,11 @@ def test_the_background_and_content_are_row_scoped() -> None:
     assert entry["children"] == {
         "allowed": True,
         "kind": "content",
-        "provides": "RowScope",
+        "provides": "androidx.compose.foundation.layout.RowScope",
     }
     assert entry["slots"] == {
         "backgroundContent": {
             "native": "backgroundContent",
-            "provides": "RowScope",
+            "provides": "androidx.compose.foundation.layout.RowScope",
         }
     }

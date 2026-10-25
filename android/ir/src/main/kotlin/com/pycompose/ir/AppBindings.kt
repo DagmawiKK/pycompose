@@ -4,8 +4,10 @@ import com.pycompose.ir.generated.IrContract
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 
 /** Pure binding data. Kotlin never resolves or holds a Python handler. */
 data class AppBinding(
@@ -47,7 +49,7 @@ object AppBindings {
     }
 
     private fun rule(definition: JsonObject): PropertyRule {
-        require(definition.keys.all { it in setOf("type", "required", "values") })
+        require(definition.keys.all { it in setOf("type", "required", "values", "nullable") })
         val type = WireValidator.string(definition["type"], "payload.type")
         require(type in payloadTypes) { "Unsupported payload type" }
         val required =
@@ -63,7 +65,13 @@ object AppBindings {
                         .toSet()
                 }.orEmpty()
         require(type != "enum" || values.isNotEmpty()) { "Empty payload enum" }
-        return PropertyRule(type, required, values)
+        // A report that may carry null: a derived family's cleared property.
+        val nullable =
+            definition["nullable"]?.let {
+                require(!it.jsonPrimitive.isString)
+                checkNotNull(it.jsonPrimitive.booleanOrNull)
+            } ?: false
+        return PropertyRule(type, required, values, nullable = nullable)
     }
 
     /** Host-created event data must satisfy the currently published binding contract. */
@@ -74,7 +82,17 @@ object AppBindings {
         runCatching {
             val raw =
                 Json.parseToJsonElement(source) as? JsonObject ?: error("Invalid action envelope")
-            require(raw.keys.all { it in setOf("actionId", "payload") })
+            require(raw.keys.all { it in setOf("actionId", "payload", "seq", "serial", "surface") })
+            raw["surface"]?.let { WireValidator.string(it, "surface") }
+            for (counter in listOf("seq", "serial")) {
+                raw[counter]?.let { value ->
+                    require(
+                        value is JsonPrimitive && !value.isString && (value.longOrNull ?: 0) > 0,
+                    ) {
+                        "$counter must be a positive integer"
+                    }
+                }
+            }
             val id = WireValidator.string(raw["actionId"], "actionId")
             val payload = raw["payload"] as? JsonObject ?: error("Invalid action payload")
             val bindings = read(ir.snapshot.metadata, ir.snapshot.schemaVersion)

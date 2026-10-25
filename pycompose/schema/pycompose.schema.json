@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pycompose.dev/schema/pycompose.schema.json",
+  "title": "pycompose.toml",
+  "description": "An app's whole configuration: the Android project is generated from it (plan 31 §21.4).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["app", "python", "toolchain"],
+  "properties": {
+    "app": {
+      "type": "object",
+      "description": "The app's identity, written once for every platform.",
+      "additionalProperties": false,
+      "required": ["name", "application_id", "version_name", "version_code"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "description": "The app's name."},
+        "application_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z_]\\w*(\\.[A-Za-z_]\\w*)+$",
+          "description": "The store identity, a reverse domain name such as com.example.notes."
+        },
+        "version_name": {"type": "string", "minLength": 1, "description": "The version people see, such as 1.2.0."},
+        "version_code": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2100000000,
+          "description": "The version stores compare: a whole number that grows with every release."
+        },
+        "icon": {"type": "string", "pattern": "\\.svg$", "description": "One SVG on the adaptive icon's 108-unit grid."},
+        "icon_background": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+          "description": "The launcher icon's background colour, as #RRGGBB."
+        }
+      }
+    },
+    "python": {
+      "type": "object",
+      "description": "Where the app's Python lives and what it installs.",
+      "additionalProperties": false,
+      "properties": {
+        "entrypoint": {
+          "type": "string",
+          "pattern": "^[A-Za-z_]\\w*(\\.[A-Za-z_]\\w*)*:[A-Za-z_]\\w*$",
+          "description": "module:object naming the app's App, such as main:app."
+        },
+        "source_dir": {"type": "string", "minLength": 1, "description": "The directory holding the app's Python, relative to this file."},
+        "requirements": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "description": "Packages installed into the app at build time, as pip requirement specifiers."
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "description": "Strings, images and files the app ships.",
+      "additionalProperties": false,
+      "properties": {
+        "path": {"type": "string", "minLength": 1, "description": "The resources directory, relative to this file."}
+      }
+    },
+    "signing": {
+      "type": "object",
+      "description": "Release signing: names of environment variables, never the secrets themselves.",
+      "additionalProperties": false,
+      "properties": {
+        "keystore": {"type": "string", "description": "The release keystore's path."},
+        "key_alias": {"type": "string", "description": "The key's alias in the keystore."},
+        "store_password_env": {"type": "string", "description": "The environment variable holding the keystore password."},
+        "key_password_env": {"type": "string", "description": "The environment variable holding the key password."}
+      }
+    },
+    "android": {
+      "type": "object",
+      "description": "Settings only Android has.",
+      "additionalProperties": false,
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[A-Za-z_]\\w*(\\.[A-Za-z_]\\w*)+$"},
+          "description": "Permissions the app asks for, such as android.permission.INTERNET: explicit consent, never derived."
+        },
+        "plugins": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "description": "Build plugins from installed packages, run in this order."
+        }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Python integrations the app opts into.",
+      "additionalProperties": false,
+      "properties": {
+        "definitions": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "description": "Extension definitions: builtin:name or a path to a definition file."
+        }
+      }
+    },
+    "toolchain": {
+      "type": "object",
+      "description": "Which PyCompose and wire schema the app was written against.",
+      "additionalProperties": false,
+      "required": ["schema_version"],
+      "properties": {
+        "library_version": {"type": "string", "description": "The oldest PyCompose the app needs."},
+        "schema_version": {"type": "string", "description": "The wire schema the app speaks."},
+        "template_version": {"type": "string", "description": "An app-owned Android project's template version; generated projects need none."},
+        "android_dir": {
+          "type": "string",
+          "description": "Where the Android project lives: .pycompose/android when generated, . when the app owns it."
+        }
+      }
+    }
+  }
+}

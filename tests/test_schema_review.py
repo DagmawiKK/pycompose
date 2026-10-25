@@ -8,14 +8,14 @@ from test_classpath_dump import DUMP, ROOT
 
 
 def test_refresh_rebinds_the_whole_catalog_without_hand_edits(native_document) -> None:
-    from tools.schema.check_upstream import compare_values
-    from tools.schema.classpath_dump import inventory, source_defaults
-    from tools.schema.propose import refresh
+    from pycompose.compiler.check import compare_values
+    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose.compiler.propose import refresh
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     evidence = source_defaults(DUMP)
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     results = refresh(found, evidence, registry)
     derived = [item for item in results if "proposal" in item]
     # Every approved binding carrying an artifact source is re-derived, not
@@ -111,7 +111,7 @@ def vocabulary_binding(
 
 
 def test_stage_applies_mechanical_drift_and_holds_decisions() -> None:
-    from tools.schema.propose import stage
+    from pycompose.compiler.propose import stage
 
     colors = colors_binding("androidx.compose.material3:material3-android:1.3.1")
     checkbox = {**colors_binding("androidx.compose.material3:material3-android:1.3.1")}
@@ -212,7 +212,7 @@ def test_stage_applies_mechanical_drift_and_holds_decisions() -> None:
 
 
 def test_stage_refuses_vocabulary_removals_and_moved_identities() -> None:
-    from tools.schema.propose import stage
+    from pycompose.compiler.propose import stage
 
     vocabulary = vocabulary_binding(
         "androidx.compose.material3:material3-android:1.3.1",
@@ -254,7 +254,7 @@ def test_stage_refuses_vocabulary_removals_and_moved_identities() -> None:
 
 
 def test_stage_cannot_target_the_approved_schema(tmp_path, monkeypatch, capsys) -> None:
-    from tools.schema import propose
+    from pycompose.compiler import propose
 
     schema = tmp_path / "components.json"
     schema.write_text(json.dumps({"schemaVersion": "1.0.0", "valueTypes": {}}) + "\n")
@@ -263,7 +263,7 @@ def test_stage_cannot_target_the_approved_schema(tmp_path, monkeypatch, capsys) 
     linked.symlink_to(schema)
     monkeypatch.setattr(propose, "inventory", lambda _directory: object())
     monkeypatch.setattr(
-        "tools.schema.classpath_dump.source_defaults", lambda _directory: {}
+        "pycompose.compiler.classpath_dump.source_defaults", lambda _directory: {}
     )
     assert (
         propose.main(["--refresh", "--schema", str(schema), "--stage", str(linked)])
@@ -274,8 +274,8 @@ def test_stage_cannot_target_the_approved_schema(tmp_path, monkeypatch, capsys) 
 
 
 def test_opt_in_evidence_comes_from_the_pin(native_document) -> None:
-    from tools.schema.classpath_dump import (
-        inventory,
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.opt_ins import (
         opt_in_index,
         opt_in_markers,
         required_opt_ins,
@@ -335,14 +335,14 @@ def test_a_language_level_family_is_reviewed_not_re_derived(native_document) -> 
     """
     from test_value_codegen import RANGE_FAMILY
 
-    from tools.schema.check_upstream import compare_values
-    from tools.schema.classpath_dump import inventory, source_defaults
-    from tools.schema.propose import refresh
+    from pycompose.compiler.check import compare_values
+    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose.compiler.propose import refresh
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     evidence = source_defaults(DUMP)
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["valueTypes"]["Range"] = json.loads(json.dumps(RANGE_FAMILY))
     results = refresh(found, evidence, registry)
     assert "Range" not in {item["name"] for item in results}

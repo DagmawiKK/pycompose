@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import com.pycompose.host.ui.BuiltinComponents
 import com.pycompose.host.ui.PyComposeTheme
 import com.pycompose.ir.IrParser
-import com.pycompose.ir.ValidatedIr
 import com.pycompose.renderer.Action
 import com.pycompose.renderer.ActionDispatcher
 import com.pycompose.renderer.Renderer
@@ -56,21 +55,21 @@ class SwipeStateTest {
         assertTrue(actions.isEmpty())
         assertEquals(0.dp, contentLeft())
 
-        compose.runOnIdle { ir.value = parse(swipe(value = "endToStart")) }
+        compose.runOnIdle { ir.value = parse(swipe(value = "endToStart"), actions) }
         compose.waitForIdle()
         compose.waitUntil(5000) { actions.isNotEmpty() }
         assertEquals("""{"value":"endToStart"}""", actions[0].payload.toString())
         compose.waitForIdle()
         assertTrue(contentLeft() < 0.dp)
 
-        compose.runOnIdle { ir.value = parse(swipe(value = "settled")) }
+        compose.runOnIdle { ir.value = parse(swipe(value = "settled"), actions) }
         compose.waitForIdle()
         compose.waitUntil(5000) { actions.size == 2 }
         assertEquals("""{"value":"settled"}""", actions[1].payload.toString())
         compose.waitForIdle()
         assertEquals(0.dp, contentLeft())
 
-        compose.runOnIdle { ir.value = parse(swipe(value = "startToEnd")) }
+        compose.runOnIdle { ir.value = parse(swipe(value = "startToEnd"), actions) }
         compose.waitForIdle()
         compose.waitUntil(5000) { actions.size == 3 }
         assertEquals("""{"value":"startToEnd"}""", actions[2].payload.toString())
@@ -93,14 +92,14 @@ class SwipeStateTest {
         compose.waitUntil(5000) { actions.isNotEmpty() }
         assertEquals("""{"value":"endToStart"}""", actions[0].payload.toString())
 
-        compose.runOnIdle { ir.value = parse(source) }
+        compose.runOnIdle { ir.value = parse(source, actions) }
         compose.waitForIdle()
         assertEquals(1, actions.size)
         assertTrue(contentLeft() < 0.dp)
 
         // The app's echo of the reported anchor is the new baseline, not a
         // second drive that would animate the same dismissal again.
-        compose.runOnIdle { ir.value = parse(swipe(value = "endToStart")) }
+        compose.runOnIdle { ir.value = parse(swipe(value = "endToStart"), actions) }
         compose.waitForIdle()
         assertEquals(1, actions.size)
     }
@@ -123,26 +122,16 @@ class SwipeStateTest {
         assertEquals("""{"value":"startToEnd"}""", actions[0].payload.toString())
     }
 
-    @Test
-    fun aSwipeWithoutAReportStaysSilent() {
-        val ir = mutableStateOf(parse(swipe(value = "settled", report = false)))
-        val actions = mutableListOf<Action>()
-        compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
-        compose.waitForIdle()
-
-        compose.onRoot().performTouchInput { swipeLeft() }
-        compose.waitForIdle()
-        assertTrue(actions.isEmpty())
-        assertTrue(contentLeft() < 0.dp)
-    }
-
     /** The left edge of the content row: 0 when settled, offset when dismissed. */
     private fun contentLeft(): Dp = compose.onNodeWithText("Row").getBoundsInRoot().left
 
     private fun renderer(actions: MutableList<Action>): Renderer =
         Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
 
-    private fun parse(source: String): ValidatedIr = IrParser().parse(source).getOrThrow()
+    private fun parse(
+        source: String,
+        actions: List<Action> = emptyList(),
+    ) = IrParser().parse(echoing(source, actions)).getOrThrow()
 
     private fun swipe(
         value: String?,

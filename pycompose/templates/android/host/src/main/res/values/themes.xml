@@ -1,5 +1,0 @@
-<resources>
-    <!-- The platform theme owns the window and splash background shown before
-         Compose draws; the night variant is what keeps a dark device dark. -->
-    <style name="Theme.PyCompose" parent="android:style/Theme.DeviceDefault.Light.NoActionBar" />
-</resources>

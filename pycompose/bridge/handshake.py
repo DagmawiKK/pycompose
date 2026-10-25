@@ -1,0 +1,78 @@
+"""The session handshake: what each side of the bridge speaks (plan 31 §16.8).
+
+The host and the Python app may come from different builds, so before a session
+starts each states its protocol version and the capabilities it offers, and each
+checks the other offers what it requires. A mismatch fails at startup naming
+what is missing, instead of misrendering later. New wire shapes arrive as
+capabilities, so each grows without a flag day.
+"""
+
+from __future__ import annotations
+
+import json
+
+from pycompose.errors import BridgeError
+
+__all__ = ["CAPABILITIES", "PROTOCOL", "REQUIRED", "answer", "offered_components"]
+
+PROTOCOL = 1
+"""Bumped only by a change no capability can describe."""
+
+CAPABILITIES: frozenset[str] = frozenset()
+"""What this side offers the host."""
+
+REQUIRED: frozenset[str] = frozenset()
+"""What this side needs the host to offer."""
+
+
+def answer(offer: str) -> str:
+    """Check the host's handshake and answer with this side's.
+
+    Args:
+        offer: The host's handshake: its protocol and the capabilities it offers.
+
+    Returns:
+        This side's handshake, as JSON.
+
+    Raises:
+        BridgeError: If the protocols differ or the host lacks a required
+            capability.
+    """
+    try:
+        host = json.loads(offer)
+        protocol = host["protocol"]
+        offered = set(host["capabilities"])
+    except (TypeError, ValueError, KeyError) as exc:
+        raise BridgeError("malformed host handshake") from exc
+    if protocol != PROTOCOL:
+        raise BridgeError("bridge protocol mismatch", host=protocol, app=PROTOCOL)
+    missing = REQUIRED - offered
+    if missing:
+        raise BridgeError("host lacks capabilities", missing=",".join(sorted(missing)))
+    return json.dumps(
+        {"capabilities": sorted(CAPABILITIES), "protocol": PROTOCOL},
+        separators=(",", ":"),
+    )
+
+
+def offered_components(offer: str) -> frozenset[str] | None:
+    """Return the component types the host's handshake says it renders.
+
+    A component the host lacks is replaced by its declared fallback before it
+    is sent (ADR-0050).
+
+    Args:
+        offer: The host's handshake, already accepted by :func:`answer`.
+
+    Returns:
+        The types, or None when the offer lists none: every component.
+
+    Raises:
+        BridgeError: If the list is not a list of names.
+    """
+    listed = json.loads(offer).get("components")
+    if listed is None:
+        return None
+    if not isinstance(listed, list) or not all(isinstance(n, str) for n in listed):
+        raise BridgeError("malformed host handshake")
+    return frozenset(listed)

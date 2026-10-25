@@ -16,7 +16,7 @@ from test_cli_init import cli
 def test_run_builds_installs_launches_and_cleans_up_its_reverse_tunnel(
     tmp_path: Path,
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     wrapper(
         project,
@@ -101,7 +101,7 @@ if sys.argv[1:] == ["devices"]:
 def test_run_rejects_unavailable_or_ambiguous_devices_before_building(
     tmp_path: Path, devices: str
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     tools = tmp_path / "tools"
     tools.mkdir()
     adb = tools / "adb"
@@ -125,7 +125,7 @@ def test_run_rejects_unavailable_or_ambiguous_devices_before_building(
 
 
 def test_run_missing_adb_is_actionable(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     result = cli(
         tmp_path / "demo",
         "run",
@@ -133,3 +133,70 @@ def test_run_missing_adb_is_actionable(tmp_path: Path) -> None:
     )
     assert result.returncode == 2
     assert "adb missing" in result.stderr
+
+
+def test_run_on_the_dev_client_installs_it_and_serves_the_app(tmp_path: Path) -> None:
+    import zipfile
+
+    from pycompose.version import __version__
+
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
+    project = tmp_path / "demo"
+    # A Gradle run would fail: the dev client is used, the app is not built.
+    wrapper(project, "raise SystemExit(9)\n")
+    home = tmp_path / "home"
+    client = home / "dev-client" / __version__ / "dev-client.apk"
+    client.parent.mkdir(parents=True)
+    with zipfile.ZipFile(client, "w") as archive:
+        archive.writestr("AndroidManifest.xml", "fixture only")
+    tools = tmp_path / "tools"
+    tools.mkdir()
+    adb = tools / "adb"
+    adb.write_text(
+        f"#!{sys.executable}\n"
+        + """import json, sys
+from pathlib import Path
+with Path("adb.jsonl").open("a") as log:
+    log.write(json.dumps(sys.argv[1:]) + "\\n")
+if sys.argv[1:] == ["devices"]:
+    print("List of devices attached\\nfixture-device\\tdevice")
+"""
+    )
+    adb.chmod(0o755)
+    # The SDK's adb wins over PATH: an exported ANDROID_HOME would reach a real
+    # device instead of the fixture.
+    env = {
+        **os.environ,
+        "PYTHONPATH": str(Path(__file__).parents[1]),
+        "PATH": str(tools),
+        "PYCOMPOSE_HOME": str(home),
+        "ANDROID_HOME": "",
+        "ANDROID_SDK_ROOT": "",
+    }
+    process = subprocess.Popen(
+        [sys.executable, "-m", "pycompose.cli", "run", "--dev-client"],
+        cwd=project,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    log = project / "adb.jsonl"
+    try:
+        deadline = time.monotonic() + 10
+        while time.monotonic() < deadline and process.poll() is None:
+            if log.exists() and "start" in log.read_text():
+                break
+            time.sleep(0.02)
+        process.send_signal(signal.SIGINT)
+        output, errors = process.communicate(timeout=5)
+    finally:
+        if process.poll() is None:
+            process.kill()
+    assert process.returncode == 0, output + errors
+    commands = [json.loads(line) for line in log.read_text().splitlines()]
+    install = next(c for c in commands if "install" in c)
+    assert install[-1] == str(client)
+    start = next(c for c in commands if "start" in c)
+    assert "com.pycompose.devclient/com.pycompose.host.MainActivity" in start
+    assert start[start.index("pycompose.dev.source") + 1] == "app"

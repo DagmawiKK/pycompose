@@ -108,7 +108,7 @@ def test_the_previews_switch_rewrites_what_every_row_shows(app: ModuleType) -> N
     assert data(host.snapshot())["previews"] is True
     assert [node["checked"] for node in nodes(host.snapshot(), "Switch")] == [True]
 
-    host.tap("set_previews", "previews", value=False)
+    host.tap("set_previews", value=False)
     snapshot = host.snapshot()
     assert data(snapshot)["previews"] is False
     assert [node["checked"] for node in nodes(snapshot, "Switch")] == [False]
@@ -139,7 +139,7 @@ def test_the_filter_bar_narrows_the_list_without_leaving_it(app: ModuleType) -> 
         item["selected"] for item in nodes(host.snapshot(), "NavigationBarItem")
     ] == [True, False]
 
-    host.tap("set_listing", "listing_text")
+    host.tap("set_listing", {"value": "with_text"})
     snapshot = host.snapshot()
     assert data(snapshot)["listing"] == "with_text"
     assert data(snapshot)["route"] == "notes"
@@ -158,7 +158,7 @@ def test_a_filter_that_matches_nothing_names_the_filter(app: ModuleType) -> None
     host = Host(app, follow_navigation=False, repo=a_store([(1, "Blank", "  ")]))
     assert "Blank" in [props["text"] for props in nodes(host.snapshot(), "Text")]
 
-    host.tap("set_listing", "listing_text")
+    host.tap("set_listing", {"value": "with_text"})
     texts = [props["text"] for props in nodes(host.snapshot(), "Text")]
     assert "No notes with text yet." in texts
     assert "No notes yet." not in texts
@@ -194,7 +194,7 @@ def test_the_about_bar_states_a_share_the_host_reads(app: ModuleType) -> None:
     assert [bar["progress"] for bar in seeded] == [1.0]
 
     # A note with no body yet: the share the app states follows the notes.
-    host.tap("new_note", "new")
+    host.tap("new_note")
     stated = nodes(host.snapshot(), "LinearProgressIndicator")[0]["progress"]
     assert stated == pytest.approx(2 / 3)
 
@@ -240,17 +240,17 @@ def test_the_about_sheet_opens_and_closes_through_one_transition(
     assert data(host.snapshot())["aboutOpen"] is False
 
     # The button states the value it wants, so the binding carries it.
-    host.tap("set_about", "about")
+    host.tap("set_about", {"open": True})
     snapshot = host.snapshot()
     assert data(snapshot)["aboutOpen"] is True
     assert nodes(snapshot, "ModalBottomSheet")[0]["open"] is True
 
     # What the host sends once the sheet has settled: the user dismissed it.
     # This binding names no value, so the event is the one carrying it.
-    host.tap("set_about", "about_sheet", open=False)
+    host.tap("set_about", {}, open=False)
     assert data(host.snapshot())["aboutOpen"] is False
 
-    host.tap("set_about", "about_close")
+    host.tap("set_about", {"open": False})
     assert data(host.snapshot())["aboutOpen"] is False
 
 
@@ -259,7 +259,7 @@ def test_creating_a_note_requests_navigation_rather_than_moving_itself(
 ) -> None:
     """The app asks; the host decides. Nothing here relocates the screen alone."""
     host = Host(app, follow_navigation=False)
-    host.tap("new_note", "new")
+    host.tap("new_note")
     snapshot = host.snapshot()
 
     # The note exists and a move is requested, but the screen has not moved.
@@ -279,17 +279,17 @@ def test_a_route_this_app_does_not_know_leaves_the_screen_where_it_was(
     app: ModuleType,
 ) -> None:
     host = Host(app, follow_navigation=False)
-    host.tap("new_note", "new")
+    host.tap("new_note")
     host.follow("somewhere/unknown")
     assert data(host.snapshot())["route"] == "notes"
 
 
 def test_opening_and_leaving_a_note_round_trips(app: ModuleType) -> None:
     host = Host(app)
-    host.tap("open_note", "n1")
+    host.tap("open_note", {"note_id": 1})
     assert data(host.snapshot())["route"] == "note:1"
 
-    host.tap("go_back", "back")
+    host.tap("go_back")
     snapshot = host.snapshot()
     assert data(snapshot)["route"] == "notes"
     assert host.titles == ["Try it", "Welcome"]
@@ -299,7 +299,7 @@ def test_system_back_leaves_the_editor_and_closes_the_app_from_the_list(
     app: ModuleType,
 ) -> None:
     host = Host(app)
-    host.tap("open_note", "n1")
+    host.tap("open_note", {"note_id": 1})
     host.lifecycle("onBackRequested")
     assert data(host.snapshot())["route"] == "notes"
 
@@ -314,12 +314,12 @@ def test_a_route_change_never_rebuilds_the_session(app: ModuleType) -> None:
     the screen changed is still here afterwards, because nothing was thrown away.
     """
     host = Host(app)
-    host.tap("new_note", "new")
-    host.tap("set_title", "title", value="Half-typed")
+    host.tap("new_note")
+    host.tap("set_title", value="Half-typed")
     assert host.titles[0] == "Half-typed"
 
-    host.tap("go_back", "back")
-    host.tap("open_note", "n3")
+    host.tap("go_back")
+    host.tap("open_note", {"note_id": 3})
     snapshot = host.snapshot()
     assert data(snapshot)["route"] == "note:3"
     assert host.titles[0] == "Half-typed"
@@ -342,15 +342,15 @@ def test_the_host_route_wins_over_the_route_in_the_save(app: ModuleType) -> None
 
 def test_typing_updates_the_note_being_edited(app: ModuleType) -> None:
     host = Host(app)
-    host.tap("new_note", "new")
-    host.tap("set_title", "title", value="Groceries")
-    host.tap("set_body", "body", value="Milk\nBread")
+    host.tap("new_note")
+    host.tap("set_title", value="Groceries")
+    host.tap("set_body", value="Milk\nBread")
     assert host.titles[0] == "Groceries"
     assert held_of(host, 3).body == "Milk\nBread"
 
     # The list describes its own size, from a rule in the domain rather than
     # from whatever state happened to be carrying the notes.
-    host.tap("go_back", "back")
+    host.tap("go_back")
     assert "3 notes" in [props["text"] for props in nodes(host.snapshot(), "Text")]
 
 
@@ -362,7 +362,7 @@ def test_the_editor_bar_is_an_icon_button_beside_a_rule(app: ModuleType) -> None
     only which colour it wants.
     """
     host = Host(app)
-    host.tap("open_note", "n2")
+    host.tap("open_note", {"note_id": 2})
     snapshot = host.snapshot()
     assert len(nodes(snapshot, "IconButton")) == 1
     assert [
@@ -374,14 +374,14 @@ def test_the_editor_bar_is_an_icon_button_beside_a_rule(app: ModuleType) -> None
 
 def test_each_row_deletes_only_its_own_note(app: ModuleType) -> None:
     host = Host(app)
-    host.tap("delete_note", "n1")
+    host.tap("delete_note", {"note_id": 1})
     assert host.titles == ["Try it"]
 
 
 def test_deleting_the_open_note_returns_to_the_list(app: ModuleType) -> None:
     host = Host(app)
-    host.tap("open_note", "n2")
-    host.tap("delete_note", "editor")
+    host.tap("open_note", {"note_id": 2})
+    host.tap("delete_note")
     snapshot = host.snapshot()
     assert data(snapshot)["route"] == "notes"
     assert host.titles == ["Welcome"]
@@ -389,8 +389,8 @@ def test_deleting_the_open_note_returns_to_the_list(app: ModuleType) -> None:
 
 def test_a_cleared_title_is_stored_empty_and_reads_as_a_note(app: ModuleType) -> None:
     host = Host(app)
-    host.tap("open_note", "n1")
-    host.tap("set_title", "title", value="")
+    host.tap("open_note", {"note_id": 1})
+    host.tap("set_title", value="")
     snapshot = host.snapshot()
     # Stored as the user left it; the placeholder belongs to the view, not the data.
     assert held_of(host, 1).title == ""
@@ -399,9 +399,9 @@ def test_a_cleared_title_is_stored_empty_and_reads_as_a_note(app: ModuleType) ->
 
 def test_an_empty_body_previews_itself_clearly(app: ModuleType) -> None:
     host = Host(app)
-    host.tap("open_note", "n1")
-    host.tap("set_body", "body", value="   ")
-    host.tap("go_back", "back")
+    host.tap("open_note", {"note_id": 1})
+    host.tap("set_body", value="   ")
+    host.tap("go_back")
     texts = [props["text"] for props in nodes(host.snapshot(), "Text")]
     assert "No additional text" in texts
 
@@ -414,9 +414,9 @@ def test_half_typed_text_survives_process_death(app: ModuleType) -> None:
     """
     disk = a_store()
     first = Host(app, repo=disk)
-    first.tap("new_note", "new")
-    first.tap("set_title", "title", value="Half-typed")
-    first.tap("set_body", "body", value="interrupted mid-sentence")
+    first.tap("new_note")
+    first.tap("set_title", value="Half-typed")
+    first.tap("set_body", value="interrupted mid-sentence")
     published = first.snapshot()["metadata"]["data"]
 
     # A brand new process, same storage, and the bytes the host kept.
@@ -429,7 +429,7 @@ def test_half_typed_text_survives_process_death(app: ModuleType) -> None:
     assert held_of(second, 3).body == "interrupted mid-sentence"
 
     # And the restored session is still editable, not merely readable.
-    second.tap("set_body", "body", value="still here")
+    second.tap("set_body", value="still here")
     assert held_of(second, 3).body == "still here"
 
 

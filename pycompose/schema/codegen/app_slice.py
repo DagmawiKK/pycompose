@@ -28,8 +28,14 @@ import json
 from pathlib import Path
 from typing import Any
 
+from pycompose.schema.codegen.rules import with_rules
+
 APP_PACKAGE = "m3"
 """The app-side generated package, mirroring ``pycompose.m3``."""
+
+APP_LOCK = "compose.lock.json"
+"""The app's lock slice beside ``pycompose.toml``: its own libraries' components
+(plan 31 §16.3), compiled by ``pycompose add`` and committed like a lock file."""
 
 GENERATED_RELATIVE = Path(".pycompose/generated")
 """Where a project's generated slice lives, relative to the project root.
@@ -57,8 +63,6 @@ _ADAPTERS_RELATIVE = (
 
 FLOOR_COMPONENTS = frozenset(
     {
-        "AnimatedContent",
-        "Crossfade",
         "Image",
         "PlainTooltip",
         "RichTooltip",
@@ -101,7 +105,7 @@ def discover(app: Path, catalog: dict[str, Any]) -> set[str]:
 
     Args:
         app: The app's root directory.
-        catalog: Every component entry from ``components.json``.
+        catalog: Every component entry from the catalog lock.
 
     Returns:
         The referenced component names.
@@ -197,9 +201,15 @@ def slice_registry(
     Returns:
         A registry carrying only those components.
     """
+    components = registry["components"]
+    # A primary's overloads come with it: the keywords of a call, not its
+    # name, decide which of them reaches the wire.
+    reached = used | {
+        name for name, entry in components.items() if entry.get("overloadOf") in used
+    }
     narrowed = {key: value for key, value in registry.items() if key != "components"}
     narrowed["components"] = {
-        name: entry for name, entry in registry["components"].items() if name in used
+        name: entry for name, entry in components.items() if name in reached
     }
     from pycompose.schema.codegen.values import dependency_closure
 
@@ -207,8 +217,46 @@ def slice_registry(
     return narrowed
 
 
+def app_components(path: Path | None) -> dict[str, Any]:
+    """The components an app's own libraries bring, from its lock slice.
+
+    Args:
+        path: The app's lock slice, or None when the app declares no libraries.
+
+    Returns:
+        Component entries by name; none without a slice.
+
+    Raises:
+        AppCodegenError: If the slice is not valid JSON.
+    """
+    if path is None or not path.is_file():
+        return {}
+    try:
+        components: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))[
+            "components"
+        ]
+    except (json.JSONDecodeError, KeyError) as exc:
+        raise AppCodegenError(f"invalid lock slice {path}: {exc}") from exc
+    return components
+
+
+def with_app_lock(registry: dict[str, Any], own: dict[str, Any]) -> dict[str, Any]:
+    """The catalog an app builds against: the library's plus its own components.
+
+    Args:
+        registry: The library's catalog.
+        own: The app's own components (:func:`app_components`).
+
+    Returns:
+        The catalog with the app's components merged over the library's.
+    """
+    if not own:
+        return registry
+    return with_rules({**registry, "components": {**registry["components"], **own}})
+
+
 def load_catalog(path: Path) -> dict[str, Any]:
-    """Read ``components.json``.
+    """Read the catalog lock.
 
     Args:
         path: The schema file.
@@ -220,6 +268,6 @@ def load_catalog(path: Path) -> dict[str, Any]:
         AppCodegenError: If the file is not valid JSON.
     """
     try:
-        return json.loads(path.read_text(encoding="utf-8"))  # type: ignore[no-any-return]
+        return with_rules(json.loads(path.read_text(encoding="utf-8")))
     except json.JSONDecodeError as exc:
         raise AppCodegenError(f"invalid JSON in {path}: {exc}") from exc

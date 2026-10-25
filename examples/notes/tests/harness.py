@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import sys
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, cast
 
@@ -16,6 +17,7 @@ sys.path.insert(0, str(ROOT))
 
 from pycompose import AppContext, install_context  # noqa: E402
 from pycompose.bridge import BridgeSurface  # noqa: E402
+from pycompose.core.props import to_camel_case  # noqa: E402
 from pycompose.state import Store  # noqa: E402
 
 
@@ -91,17 +93,20 @@ class Host:
         assert source is not None, self.error
         return cast("dict[str, Any]", json.loads(source))
 
-    def tap(self, handler: str, instance: str = "", **payload: Any) -> None:
-        """Deliver one action envelope addressed by handler and instance.
+    def tap(
+        self, handler: str, bound: Mapping[str, Any] | None = None, **event: Any
+    ) -> None:
+        """Deliver one action envelope to the control a handler is bound to.
 
         Args:
             handler: The action's function name.
-            instance: The bind instance that names this control.
-            **payload: Event fields the handler declares.
+            bound: The values the control binds, when several controls bind
+                one handler; None for the only control bound to it.
+            **event: Event fields the handler declares as unfilled.
         """
-        action_id = self._id_for(handler, instance)
+        action_id = self._id_for(handler, bound)
         self._bridge.accept_action(
-            json.dumps({"actionId": action_id, "payload": payload})
+            json.dumps({"actionId": action_id, "payload": event})
         )
         self._follow_navigation()
 
@@ -139,26 +144,39 @@ class Host:
         """
         self.lifecycle("onRouteChanged", route=destination)
 
-    def _id_for(self, handler: str, instance: str) -> str:
-        """Return the binding id a control was given in the current snapshot.
+    def _id_for(self, handler: str, bound: Mapping[str, Any] | None) -> str:
+        """Return the binding a control was given in the current snapshot.
+
+        A control is named by its handler, and by the values it binds when
+        several controls bind one handler.
 
         Args:
             handler: The action's function name.
-            instance: The bind instance for this control.
+            bound: The values the control binds, or None for the only one.
 
         Returns:
             The binding id.
 
         Raises:
-            AssertionError: If no live binding matches.
+            AssertionError: Unless exactly one live binding matches.
         """
         bindings = (self.snapshot().get("metadata") or {}).get("actionBindings", {})
-        for binding_id in bindings:
-            if binding_id.endswith(f".{handler}.{instance}"):
-                return cast("str", binding_id)
-        raise AssertionError(
-            f"no live binding for {handler}.{instance}: {list(bindings)}"
+        wanted = (
+            None
+            if bound is None
+            else {to_camel_case(key): value for key, value in bound.items()}
         )
+        matches = [
+            binding_id
+            for binding_id, contract in bindings.items()
+            if contract["handlerId"].rpartition(".")[2] == handler
+            and (wanted is None or contract["bound"] == wanted)
+        ]
+        if len(matches) != 1:
+            raise AssertionError(
+                f"{len(matches)} live bindings for {handler} {bound}: {list(bindings)}"
+            )
+        return cast("str", matches[0])
 
 
 def titles(snapshot: dict[str, Any]) -> list[str]:

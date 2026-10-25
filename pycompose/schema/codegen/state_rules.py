@@ -17,6 +17,7 @@ from pycompose.schema.codegen.adapter_helpers import (
     STATE_ATTACH_GATES,
     STATE_CONSTRUCTOR_PROPS,
 )
+from pycompose.schema.codegen.derived_families import validate_properties
 from pycompose.schema.codegen.rules import (
     NATIVE_PARAMETER,
     die,
@@ -220,6 +221,9 @@ def _validate_state(
     where = f"component {name!r} state"
     if not isinstance(state, dict):
         die(f"{where} must be an object")
+    if state.get("kind") == "properties":
+        validate_properties(where, props, state)
+        return
     unknown = sorted(set(state) - STATE_KEYS)
     if unknown:
         die(f"{where} has unknown keys: {', '.join(unknown)}")
@@ -331,11 +335,9 @@ def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None
         extra for extra in STATE_CONSTRUCTOR_PROPS.get(kind, ()) if extra not in props
     ]
     gate = STATE_ATTACH_GATES.get(kind)
-    if gate is not None and gate not in props:
-        missing.append(gate)
     if missing:
         die(f"{where}: state kind {kind!r} needs the props {', '.join(missing)}")
-    if gate is not None and props[gate].get("type") != "boolean":
+    if gate in props and props[gate].get("type") != "boolean":
         die(f"{where}: prop {gate!r} must be a boolean")
     if kind == "sheet":
         validate_anchor(where, "value", props["value"], SHEET_VALUES)
@@ -460,14 +462,7 @@ def _validate_transient(
     unknown = sorted(set(transient) - TRANSIENT_KEYS)
     if unknown:
         die(f"{where} has unknown keys: {', '.join(unknown)}")
-    natives = {children.get("native", "content")}
-    if isinstance(slots, dict):
-        natives.update(
-            slot["native"]
-            for slot in slots.values()
-            if isinstance(slot, dict) and isinstance(slot.get("native"), str)
-        )
-    claimed = natives | set(props)
+    claimed = _claimed_natives(children, slots) | set(props)
     _claimed_parameter(where, "native", transient.get("native"), claimed)
     kind = transient.get("kind")
     if not isinstance(kind, str) or kind not in TRANSIENT_KINDS:

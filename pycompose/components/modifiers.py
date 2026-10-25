@@ -4,11 +4,14 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import cast
+from typing import Any, cast
 
+from pycompose.components.modifier_operation import _Operation
+from pycompose.components.scoped_modifiers import ScopedOperations
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.ir.validator import validate_modifier
+from pycompose.state.app_action import AppAction
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
 from pycompose.values import Dp, PaddingValues
 
@@ -16,8 +19,11 @@ _PADDING_SIDES = ("start", "top", "end", "bottom")
 
 
 @dataclass(frozen=True, slots=True)
-class Modifier:
+class Modifier(ScopedOperations):
     """An immutable sequence: order and repeated operations affect layout.
+
+    Operations a composition scope declares (``weight``, ``menu_anchor``) come
+    from :class:`ScopedOperations`, generated from the pin.
 
     Attributes:
         values: Frozen modifier wire object with ordered operations.
@@ -41,6 +47,7 @@ class Modifier:
         operation = freeze_json({"type": name, **props})
         return Modifier({"operations": (*operations, operation)})
 
+    @_Operation
     def padding(
         self,
         value: int | float | dict[str, JsonValue] | None = None,
@@ -110,6 +117,7 @@ class Modifier:
             value=PaddingValues(**{name: Dp(amount) for name, amount in sides.items()}),
         )
 
+    @_Operation
     def fill_max_width(self, fraction: int | float = 1) -> Modifier:
         """Append fillMaxWidth with an inclusive zero-to-one fraction.
 
@@ -121,6 +129,7 @@ class Modifier:
         """
         return self._append("fillMaxWidth", fraction=fraction)
 
+    @_Operation
     def size(
         self,
         width: int | float | dict[str, JsonValue],
@@ -139,6 +148,7 @@ class Modifier:
             "size", width=width, height=width if height is None else height
         )
 
+    @_Operation
     def clip(self, shape: str | dict[str, JsonValue]) -> Modifier:
         """Append a registry-declared clipping shape.
 
@@ -150,6 +160,7 @@ class Modifier:
         """
         return self._append("clip", shape=shape)
 
+    @_Operation
     def background(self, brush: dict[str, JsonValue]) -> Modifier:
         """Paint a decoded native brush behind content.
 
@@ -161,6 +172,7 @@ class Modifier:
         """
         return self._append("background", brush=brush)
 
+    @_Operation
     def window_insets_padding(self, insets: dict[str, JsonValue]) -> Modifier:
         """Apply density-aware native insets.
 
@@ -172,17 +184,65 @@ class Modifier:
         """
         return self._append("windowInsetsPadding", insets=insets)
 
-    def clickable(self, on_click: str, *, enabled: bool = True) -> Modifier:
-        """Append a registered action reference, never a Python callback.
+    @_Operation
+    def clickable(
+        self, on_click: str | AppAction[Any], *, enabled: bool = True
+    ) -> Modifier:
+        """Append an action reference, never a Python callback.
 
         Args:
-            on_click: Registered action id.
+            on_click: An app action, a binding of one, or a registered action id.
             enabled: Whether clicks are enabled.
 
         Returns:
             A new modifier.
         """
-        return self._append("clickable", onClick=on_click, enabled=enabled)
+        target = on_click.binding() if isinstance(on_click, AppAction) else on_click
+        return self._append("clickable", onClick=target, enabled=enabled)
+
+    @_Operation
+    def semantics(
+        self,
+        *,
+        content_description: str | None = None,
+        state_description: str | None = None,
+        role: str | None = None,
+        heading: bool | None = None,
+        live_region: str | None = None,
+        test_tag: str | None = None,
+        traversal_index: int | float | None = None,
+    ) -> Modifier:
+        """Describe the element to accessibility services, as Compose's ``semantics``.
+
+        A control with no text of its own (a Checkbox, a Switch, a Slider)
+        takes its label here.
+
+        Args:
+            content_description: What a screen reader announces.
+            state_description: The state announced instead of the default one.
+            role: button, checkbox, switch, radioButton, tab, image,
+                dropdownList, valuePicker or carousel.
+            heading: Whether the element heads a section.
+            live_region: polite or assertive, to announce changes.
+            test_tag: A tag tests find the element by.
+            traversal_index: Order among siblings for accessibility traversal.
+
+        Returns:
+            A new modifier.
+        """
+        given = {
+            "contentDescription": content_description,
+            "stateDescription": state_description,
+            "role": role,
+            "heading": heading,
+            "liveRegion": live_region,
+            "testTag": test_tag,
+            "traversalIndex": traversal_index,
+        }
+        return self._append(
+            "semantics",
+            **{key: value for key, value in given.items() if value is not None},
+        )
 
     def to_wire(self) -> dict[str, JsonValue]:
         """Return a detached modifier wire object.

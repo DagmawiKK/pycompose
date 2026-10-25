@@ -8,29 +8,22 @@ host. Python declares the tree; the host draws it.
 
 ## Running it
 
-The Python lives in `app/`, which is where `pycompose init` puts it by default
-(`python.source_dir = "app"`, `python.entrypoint = "main:app"`). To get a
-running Android project:
+The example is a complete project: `pycompose.toml`, the Python in `app/`, its
+strings in `resources/`, and its launcher icon as one SVG, `icon.svg`. There is
+no Android folder to copy or edit. Every build generates the Android project
+into `.pycompose/android/` from those files (plan 31 §21), so upgrading
+PyCompose changes nothing here.
 
 ```bash
-pycompose init notes                       # app-focused project
-cp -R examples/notes/app/. notes/app/       # drop this app in
-cp -R examples/notes/overlay/resources/. notes/resources/
-cp -R examples/notes/overlay/host/. notes/.pycompose/android/host/
-cd notes && pycompose run                   # build, install, launch, watch edits
+cd examples/notes
+pycompose run          # generate, build, install, launch, watch edits
 ```
 
-`overlay/` carries the two things this app owns outside Python: `app_name` in
-`resources/strings.json` is the launcher label, and the `app_icon*` vectors in
-`host/src/main/res/` draw the launcher icon — an adaptive icon whose monochrome
-layer gives it a themed-icon form. Both are ordinary Android resources, so both
-localize like every other string.
-
-The host is under `.pycompose/android/` in a default project. With
-`pycompose init notes --native` (or an existing root-level project), copy the
-overlay's `host/.` into `notes/host/` instead. Copy directory **contents** using
-the trailing `/.`; copying `app` into `app/` would leave the starter entrypoint
-unchanged and put the Notes entrypoint one level too deep.
+`[app] icon` names the SVG, drawn on the adaptive icon's 108-unit grid, and
+`icon_background` is its background colour. The same artwork becomes the themed
+icon's monochrome layer and the legacy icon for older devices.
+`pycompose explain host/src/main/res/drawable/app_icon.xml` says which keys
+produced any generated file.
 
 Or drive it with no device and no Gradle at all:
 
@@ -43,26 +36,26 @@ python examples/notes/tests/smoke.py
 ```
 notes/
 ├── app/                       # python.source_dir — this is the whole app
-│   ├── main.py                # build() — the only thing the host calls
+│   ├── main.py                # app — the entry object the session runs
 │   └── notes_app/
-│       ├── model.py           # Note, Repository. Frozen data, no UI.
+│       ├── domain/            # What a note is and what you can do with notes.
+│       ├── data/              # How notes are kept, behind the domain's Protocol.
+│       ├── container.py       # The app's long-lived objects, built once.
+│       ├── state.py           # Session, the shell that survives process death.
 │       ├── theme.py           # Light and dark palettes.
-│       ├── storage.py         # JSON in and out, degrading rather than raising.
-│       ├── handlers.py        # The action references screens bind to.
+│       ├── actions.py         # The transitions a user can trigger.
 │       ├── views/
 │       │   ├── list_screen.py # Composable: the list of notes.
 │       │   └── editor_screen.py
-│       ├── view_model.py      # App state → one immutable snapshot.
-│       └── actions.py         # The transitions a user can trigger.
+│       └── view_model.py      # Shell plus repository → one screen.
 └── tests/
     ├── harness.py             # Stands in for the Android host.
     └── smoke.py               # End-to-end walk through the whole app.
 ```
 
-Dependencies only ever point downwards. `views` and `view_model` know about the
-model; only `actions` knows about the view-model. `handlers.py` exists so that a
-screen can bind an action without importing the module that defines it, which
-would otherwise make those three modules circular.
+Dependencies only ever point downwards. `actions` knows the domain and the
+session shell; `views` import the handlers they bind; `view_model` composes the
+views. Nothing points back up, so no screen needs a registry threaded into it.
 
 ## How the data flows
 
@@ -75,7 +68,7 @@ host action → Python action → new State → canonical IR snapshot → host r
 Each screen row binds its note's id when it is declared:
 
 ```python
-.clickable(handlers.open_note.bind(id=f"n{note.id}", note_id=note.id))
+Card(on_click=open_note.with_args(note_id=note.id), ...)
 ```
 
 so one `open_note` handler serves every row on screen. The host holds an id and a

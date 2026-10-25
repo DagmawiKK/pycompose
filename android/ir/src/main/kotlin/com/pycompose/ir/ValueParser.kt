@@ -22,7 +22,16 @@ object ValueParser {
         value: JsonElement,
         family: String,
         specs: JsonObject = ValueContract.specs,
-    ): Result<Unit> = runCatching { tagged(value, family, 0, specs) }
+    ): Result<Unit> =
+        runCatching {
+            if (Expressions.isExpression(value)) {
+                // The host evaluates it each frame; it gives a colour (plan 31 §6).
+                require(family == "Color") { "An expression gives a Color, not a $family" }
+                Expressions.validate(value as JsonObject, "color")
+            } else {
+                tagged(value, family, 0, specs)
+            }
+        }
 
     internal fun validateFloat(value: JsonElement) {
         number(value, JsonObject(mapOf("type" to JsonPrimitive("float"))))

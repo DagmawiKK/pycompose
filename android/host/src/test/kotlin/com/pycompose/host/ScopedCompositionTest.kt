@@ -214,4 +214,87 @@ class ScopedCompositionTest {
                 .size,
         )
     }
+
+    @Test
+    fun aMenuAnchorOpensItsExposedDropdownMenu() {
+        // ``menuAnchor`` is a member of ExposedDropdownMenuBoxScope: worn on the
+        // box's child, the click reaches onExpandedChange, which is the only way
+        // the menu ever opens.
+        val source =
+            """
+            {"version":"0.1.0","schemaVersion":"1.23.0",
+             "metadata":{"actionBindings":{
+               "app.demo.open":{"handlerId":"demo.open","payload":{
+                 "expanded":{"required":true,"type":"boolean"}},"bound":{}}}},
+             "root":{"id":"root","type":"ExposedDropdownMenuBox","props":{
+               "expanded":false,"onExpandedChange":"app.demo.open"},"children":[
+               {"id":"root.anchor","type":"Text","props":{"text":"Choose a fruit",
+                 "modifier":{"operations":[{"type":"menuAnchor",
+                   "menuAnchorType":{"type":"ExposedDropdownMenuAnchorType",
+                     "name":"PrimaryNotEditable"},"enabled":true}]}}}]}}
+            """.trimIndent()
+        compose.setContent { PyComposeTheme { renderer(debug = true).Render(parse(source)) } }
+
+        compose.onNodeWithText("Choose a fruit").performClick()
+        assertEquals(listOf("app.demo.open"), actions.map { it.actionId })
+        assertEquals("""{"expanded":true}""", actions.last().payload.toString())
+    }
+
+    @Test
+    fun weightSharesARowBetweenTheChildrenWearingIt() {
+        val source =
+            """
+            {"version":"0.1.0","schemaVersion":"1.23.0",
+             "root":{"id":"root","type":"Row","props":{
+               "modifier":{"operations":[{"type":"size","width":300,"height":40}]}},
+               "children":[
+               {"id":"root.a","type":"Text","props":{"text":"A",
+                 "modifier":{"operations":[{"type":"weight","weight":1}]}}},
+               {"id":"root.b","type":"Text","props":{"text":"B",
+                 "modifier":{"operations":[{"type":"weight","weight":2}]}}}]}}
+            """.trimIndent()
+        compose.setContent { PyComposeTheme { renderer().Render(parse(source)) } }
+
+        val a =
+            compose
+                .onNodeWithText("A")
+                .fetchSemanticsNode()
+                .size.width
+        val b =
+            compose
+                .onNodeWithText("B")
+                .fetchSemanticsNode()
+                .size.width
+        assertEquals(2 * a.toDouble(), b.toDouble(), 2.0)
+    }
+
+    @Test
+    fun aScopedModifierOutsideItsScopeIsReportedRatherThanDropped() {
+        // A Column carries ColumnScope, not the menu box's: nothing correct
+        // can anchor there, so the node degrades and says why.
+        val reports = mutableListOf<String>()
+        val source =
+            """
+            {"version":"0.1.0","schemaVersion":"1.23.0",
+             "root":{"id":"root","type":"Column","props":{},"children":[
+               {"id":"root.stray","type":"Text","props":{"text":"Stray",
+                 "modifier":{"operations":[{"type":"menuAnchor",
+                   "menuAnchorType":{"type":"ExposedDropdownMenuAnchorType",
+                     "name":"PrimaryNotEditable"}}]}}}]}}
+            """.trimIndent()
+        val renderer =
+            Renderer(
+                BuiltinComponents.registry(),
+                ActionDispatcher { actions.add(it) },
+                debug = true,
+                report = { reports.add(it) },
+            )
+        compose.setContent { PyComposeTheme { renderer.Render(parse(source)) } }
+
+        compose.onNodeWithText("Unsupported: Text").assertIsDisplayed()
+        assertEquals(
+            listOf("Cannot render root.stray: Text: menuAnchor needs a parent declaring it"),
+            reports,
+        )
+    }
 }

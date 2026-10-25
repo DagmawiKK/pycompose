@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import inspect
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import Any, Generic, ParamSpec
+from typing import Any, Generic, ParamSpec, cast
 
 from pycompose.core.context import context, has_context
 from pycompose.core.expansion import DeferredNode, expand_nodes
+from pycompose.core.ids import call_site
 from pycompose.core.node import Node
 from pycompose.errors import IrError, IrValidationError
+from pycompose.state.app_state import AppState
 
 __all__ = [
     "Composable",
@@ -140,11 +142,22 @@ class _Call(DeferredNode):
     def __init__(
         self, definition: Composable[Any], id: str, arguments: Mapping[str, Any]
     ) -> None:
-        super(_Call, self).__init__(id=id, type="@composable")
+        super(_Call, self).__init__(
+            id=id, type="@composable", site="" if id else call_site(2)
+        )
         object.__setattr__(self, "definition", definition)
-        detached = _detach(arguments)
+        detached = cast("Mapping[str, Any]", _detach(arguments))
         object.__setattr__(self, "arguments", detached)
-        object.__setattr__(self, "key", (definition, _argument_key(detached)))
+        # The app's state is keyed by its type: whether a build still holds is
+        # decided by the fields it read, not by which session object it got.
+        arguments_key = tuple(
+            (
+                name,
+                (type(value),) if isinstance(value, AppState) else _argument_key(value),
+            )
+            for name, value in detached.items()
+        )
+        object.__setattr__(self, "key", (definition, arguments_key))
 
     @property
     def recursion_key(self) -> object:
@@ -153,6 +166,23 @@ class _Call(DeferredNode):
     @property
     def source(self) -> str:
         return self.definition.source
+
+    def tracked(self) -> Mapping[str, object]:
+        return {
+            name: value
+            for name, value in self.arguments.items()
+            if isinstance(value, AppState)
+        }
+
+    def inputs(self) -> Iterator[object]:
+        pending: list[object] = list(self.arguments.values())
+        while pending:
+            value = pending.pop()
+            yield value
+            if isinstance(value, tuple | frozenset):
+                pending.extend(value)
+            elif isinstance(value, Mapping):
+                pending.extend(value.values())
 
     def build(self) -> tuple[Node, ...]:
         node = self.definition.function(**self.arguments)
@@ -196,7 +226,12 @@ class Composable(Generic[P]):
         ):
             raise IrValidationError("composable reserves id and must be synchronous")
         parameters = [
-            inspect.Parameter("id", inspect.Parameter.KEYWORD_ONLY, annotation=str),
+            inspect.Parameter(
+                "id",
+                inspect.Parameter.KEYWORD_ONLY,
+                default=None,
+                annotation=str | None,
+            ),
             *(
                 parameter.replace(kind=inspect.Parameter.KEYWORD_ONLY)
                 if parameter.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
@@ -205,7 +240,7 @@ class Composable(Generic[P]):
             ),
         ]
         self.__signature__ = inspect.Signature(parameters, return_annotation=Node)
-        self.__annotations__.update({"id": str, "return": Node})
+        self.__annotations__.update({"id": str | None, "return": Node})
 
     def _from_context(self, props: dict[str, Any]) -> dict[str, Any]:
         """Fill omitted optional inputs from the app context.
@@ -241,11 +276,12 @@ class Composable(Generic[P]):
             filled[name] = ambient.get(name)
         return filled
 
-    def __call__(self, *, id: str, **props: Any) -> Node:
+    def __call__(self, *, id: str | None = None, **props: Any) -> Node:
         """Declare an instance without executing its function.
 
         Args:
-            id: Stable key distinguishing this instance from its siblings.
+            id: Stable key distinguishing this instance from its siblings; None
+                keys it by the line that declares it, which a loop must not do.
             **props: Explicit function inputs, including content and modifiers.
 
         Returns:
@@ -265,7 +301,7 @@ class Composable(Generic[P]):
                 reason=str(exc),
             ) from exc
         try:
-            return _Call(self, id, props)
+            return _Call(self, id or "", props)
         except (IrError, RecursionError, TypeError) as exc:
             raise IrValidationError(
                 "invalid composable declaration",

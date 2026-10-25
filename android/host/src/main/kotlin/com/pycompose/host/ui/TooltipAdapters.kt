@@ -7,10 +7,10 @@ import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TooltipScope
 import androidx.compose.ui.unit.dp
 import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.TooltipPropResolver
-import com.pycompose.renderer.slotInTooltipScope
 import com.pycompose.renderer.tooltipState
 import com.pycompose.ir.generated.PlainTooltip as PlainTooltipNode
 import com.pycompose.ir.generated.RichTooltip as RichTooltipNode
@@ -33,7 +33,7 @@ internal fun ComponentRegistry.Builder.tooltips(): ComponentRegistry.Builder =
                         .tooltipPosition(box.props.position)
                         .getOrDefault(TooltipAnchorPosition.Above),
                 ),
-            tooltip = context.slotInTooltipScope(box.children, "tooltip") ?: {},
+            tooltip = context.slotIn<TooltipScope>(box.children, "tooltip") ?: {},
             state = state,
             modifier = modifier,
             onDismissRequest = { state.dismiss() },
@@ -45,7 +45,7 @@ internal fun ComponentRegistry.Builder.tooltips(): ComponentRegistry.Builder =
     }.plainTooltips().richTooltips()
 
 private fun ComponentRegistry.Builder.plainTooltips(): ComponentRegistry.Builder =
-    registerTooltipScoped("PlainTooltip") { node, modifier, context ->
+    registerScoped<TooltipScope>("PlainTooltip") { node, modifier, context ->
         val tip = node as PlainTooltipNode
         PlainTooltip(
             modifier = modifier,
@@ -62,7 +62,7 @@ private fun ComponentRegistry.Builder.plainTooltips(): ComponentRegistry.Builder
     }
 
 private fun ComponentRegistry.Builder.richTooltips(): ComponentRegistry.Builder =
-    registerTooltipScoped("RichTooltip") { node, modifier, context ->
+    registerScoped<TooltipScope>("RichTooltip") { node, modifier, context ->
         val tip = node as RichTooltipNode
         RichTooltip(
             modifier = modifier,

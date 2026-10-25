@@ -11,7 +11,7 @@ extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
         applicationId =
             providers.gradleProperty("pycomposeApplicationId").getOrElse("com.pycompose.sample")
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = providers.gradleProperty("pycomposeVersionCode").getOrElse("1").toInt()
         versionName = providers.gradleProperty("pycomposeVersionName").getOrElse("0.1.0")
         ndk {
@@ -45,6 +45,9 @@ extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
     )
     sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
     sourceSets.getByName("test").kotlin.srcDir("../architecture/src/test/kotlin")
+    // Device-free rendering of an app's snapshots (`pycompose render`); it ships
+    // with every generated project, unlike the library's own tests.
+    sourceSets.getByName("test").kotlin.srcDir("src/render/kotlin")
     lint {
         abortOnError = true
         warningsAsErrors = true
@@ -56,6 +59,9 @@ extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
 chaquopy {
     defaultConfig {
         version = "3.12"
+        // `pycompose build` names the interpreter it runs on, so bytecode is
+        // compiled at build time instead of on the device at first start.
+        providers.gradleProperty("pycomposeBuildPython").orNull?.let { buildPython(it) }
         // App requirements arrive as newline-separated data from
         // pycompose.toml; the app never edits this file to add a package.
         val requirements =
@@ -99,7 +105,12 @@ val stageRuntime by tasks.registering(Sync::class) {
         include("pycompose/**/*.py", "pycompose/py.typed")
         // Planning, evidence and project tooling are CLI-tier: nothing on a device
         // imports them, so they are excluded as directories, never by module list.
-        exclude("pycompose/cli/**", "pycompose/templates/**", "pycompose/testing/**")
+        exclude(
+            "pycompose/cli/**",
+            "pycompose/compiler/**",
+            "pycompose/templates/**",
+            "pycompose/testing/**",
+        )
         // Reference recipes are ordinary opt-in consumers of the extension contract.
         exclude {
             it.path.startsWith("pycompose/integrations/") &&
@@ -119,6 +130,25 @@ tasks.matching { it.name.matches(Regex("merge.*PythonSources")) }.configureEach 
     dependsOn(stageRuntime)
 }
 
+// `pycompose render` names its request; RenderSnapshots renders nothing without it.
+// An app library built for a newer Java loads only on a JVM at least that new:
+// the app's lock slice names it, and only the tests run there.
+val testJvm = providers.gradleProperty("pycomposeTestJvm").orNull?.toInt()
+tasks.withType<Test>().configureEach {
+    if (testJvm != null && testJvm > 17) {
+        javaLauncher.set(
+            javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(testJvm))
+            },
+        )
+    }
+    providers
+        .gradleProperty(
+            "pycomposeRender",
+        ).orNull
+        ?.let { systemProperty("pycompose.render", it) }
+}
+
 kotlin {
     jvmToolchain(17)
 }
@@ -126,6 +156,7 @@ kotlin {
 dependencies {
     implementation(project(":ir"))
     implementation(project(":renderer"))
+    if (rootProject.file("fragments").isDirectory) implementation(project(":fragments"))
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.compose.material3.adaptive.navigation.suite)
@@ -136,6 +167,7 @@ dependencies {
     implementation(libs.lifecycle.savedstate)
     implementation(libs.coroutines.android)
     implementation(libs.serialization.json)
+    implementation(libs.tracing)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.archunit)
     testRuntimeOnly(libs.junit.platform.launcher)
@@ -145,4 +177,8 @@ dependencies {
     testImplementation(libs.junit4)
     testRuntimeOnly(libs.junit.vintage)
     debugImplementation(libs.compose.test.manifest)
+    // Debug builds can show @Preview functions; the library's generated
+    // catalog of every component lives in src/debug and ships with no app.
+    debugImplementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
 }

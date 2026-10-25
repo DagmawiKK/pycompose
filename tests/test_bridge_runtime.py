@@ -241,3 +241,35 @@ actions.register("increment", increment)
     finally:
         sys.modules.pop("rollback_app", None)
         sys.modules.pop("device_helper", None)
+
+
+def test_a_reloaded_session_answers_an_old_serial_with_the_whole_snapshot(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    module = tmp_path / "pull_app.py"
+    source = """from pycompose.m3 import Text
+from pycompose.state import Actions, App, AppState, State
+class Shell(AppState):
+    route: str = "home"
+actions = Actions()
+def view(shell):
+    return Text(id="text", text=%r)
+app = App(state=Shell, view=view, route="route")
+actions.register("increment",
+    lambda state, _: State(root=Text(id="text", text="changed")))
+"""
+    module.write_text(source % "first")
+    monkeypatch.syspath_prepend(str(tmp_path))
+    try:
+        session = RuntimeSession("pull_app:app", "home", debug=True)
+        first = json.loads(session.envelope("main", -1))
+        assert first["kind"] == "full"
+        session.accept_action('{"actionId":"increment","payload":{}}')
+        patch = json.loads(session.envelope("main", first["serial"]))
+        assert (patch["kind"], patch["baseSerial"]) == ("patch", first["serial"])
+
+        module.write_text(source % "reloaded")
+        assert session.reload("home") is True
+        assert json.loads(session.envelope("main", patch["serial"]))["kind"] == "full"
+    finally:
+        sys.modules.pop("pull_app", None)

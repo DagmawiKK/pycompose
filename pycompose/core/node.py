@@ -126,6 +126,8 @@ class Node:
         children: Child nodes (empty for leaves).
         slot: Named slot this node fills in its parent, or ``None`` for the
             parent's primary children.
+        site: The line of code that declared a node with no id, which keys it
+            among its siblings; empty for nodes built outside a declaration.
     """
 
     id: str
@@ -133,6 +135,7 @@ class Node:
     props: Props = field(default_factory=Props)
     children: tuple[Node, ...] = ()
     slot: str | None = None
+    site: str = ""
 
     def __init__(
         self,
@@ -141,6 +144,7 @@ class Node:
         props: Props | Mapping[str, JsonValue | FrozenJsonValue] = _EMPTY_PROPS,
         children: Iterable[Node] = (),
         slot: str | None = None,
+        site: str = "",
     ) -> None:
         """Construct a node, normalizing mappings into immutable Props.
 
@@ -152,12 +156,14 @@ class Node:
             props: Immutable Props or caller-owned mapping to detach.
             children: Child nodes, normalized to a tuple.
             slot: Named slot in the parent, or ``None`` for primary children.
+            site: Declaring call site, the sibling key of a node with no id.
         """
         object.__setattr__(self, "id", id)
         object.__setattr__(self, "type", type)
         object.__setattr__(self, "props", props)
         object.__setattr__(self, "children", children)
         object.__setattr__(self, "slot", slot)
+        object.__setattr__(self, "site", site)
         self.__post_init__()
 
     def __post_init__(self) -> None:
@@ -213,3 +219,20 @@ class Node:
             object.__setattr__(marked, name, getattr(self, name))
         object.__setattr__(marked, "slot", slot)
         return marked
+
+    def with_id(self, node_id: str) -> Node:
+        """Return this node keyed by ``node_id``, keeping its concrete class.
+
+        Args:
+            node_id: The sibling key it takes.
+
+        Returns:
+            A node equal to this one apart from its id.
+        """
+        if node_id == self.id:
+            return self
+        keyed = object.__new__(type(self))
+        for name in _slot_names(type(self)):
+            object.__setattr__(keyed, name, getattr(self, name))
+        object.__setattr__(keyed, "id", node_id)
+        return keyed

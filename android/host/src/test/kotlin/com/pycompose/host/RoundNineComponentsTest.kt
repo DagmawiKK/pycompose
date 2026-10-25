@@ -1,5 +1,9 @@
 package com.pycompose.host
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTextInput
@@ -52,9 +56,9 @@ class RoundNineComponentsTest {
                   {"id":"lazy.row.two","type":"Text","props":{"text":"Lazy two"}}]},
                 {"id":"visible","type":"AnimatedVisibility","props":{"visible":true},"children":[
                   {"id":"visible.text","type":"Text","props":{"text":"Visible one"}}]},
-                {"id":"content","type":"AnimatedContent","props":{"target":"one"},"children":[
+                {"id":"content","type":"AnimatedContent","props":{"targetState":"one"},"children":[
                   {"id":"content.text","type":"Text","props":{"text":"Animated content"}}]},
-                {"id":"crossfade","type":"Crossfade","props":{"target":"one"},"children":[
+                {"id":"crossfade","type":"Crossfade","props":{"targetState":"one"},"children":[
                   {"id":"crossfade.text","type":"Text","props":{"text":"Crossfade content"}}]},
                 {"id":"bottom","type":"BottomAppBar","props":{},"children":[
                   {"id":"bottom.text","type":"Text","props":{"text":"Bottom bar"}}]}]}}
@@ -76,6 +80,72 @@ class RoundNineComponentsTest {
         compose.onNodeWithText("Animated content").assertExists()
         compose.onNodeWithText("Crossfade content").assertExists()
         compose.onNodeWithText("Bottom bar").assertExists()
+    }
+
+    @Test
+    fun anOutgoingKeyKeepsItsOwnSubtreeWhileItAnimatesOut() {
+        fun snapshot(key: String) =
+            parse(
+                """
+                {"version":"0.1.0","schemaVersion":"1.23.0","root":{
+                  "id":"fade","type":"Crossfade","props":{"targetState":"$key"},"children":[
+                    {"id":"fade.$key","type":"Text","props":{"text":"Page $key"}}]}}
+                """.trimIndent(),
+            )
+        var shown by mutableStateOf(snapshot("one"))
+        val renderer = renderer(mutableListOf())
+        compose.setContent { PyComposeTheme { renderer.Render(shown) } }
+        compose.onNodeWithText("Page one").assertExists()
+
+        compose.mainClock.autoAdvance = false
+        shown = snapshot("two")
+        Snapshot.sendApplyNotifications()
+        compose.mainClock.advanceTimeBy(FRAME_MS)
+        // Python sent only page two; page one still fades out as itself.
+        compose.onNodeWithText("Page one").assertExists()
+        compose.onNodeWithText("Page two").assertExists()
+
+        compose.mainClock.autoAdvance = true
+        compose.waitForIdle()
+        compose.onNodeWithText("Page one").assertDoesNotExist()
+        compose.onNodeWithText("Page two").assertExists()
+    }
+
+    @Test
+    fun theKeyOnScreenTakesItsNewSubtreeAndItsNewBindings() {
+        // Found on an emulator: a page kept its first subtree and first bindings,
+        // so Python's updates never showed and a later binding was unknown.
+        val first =
+            parse(
+                """
+                {"version":"0.1.0","schemaVersion":"1.23.0","root":{
+                  "id":"page","type":"AnimatedContent","props":{"targetState":"time"},"children":[
+                    {"id":"page.text","type":"Text","props":{"text":"First"}}]}}
+                """.trimIndent(),
+            )
+        val second =
+            parse(
+                """
+                {"version":"0.1.0","schemaVersion":"1.23.0",
+                 "metadata":{"actionBindings":{"app.page.note":{"handlerId":"page.note",
+                   "payload":{"value":{"required":true,"type":"string"}},"bound":{}}}},
+                 "root":{
+                  "id":"page","type":"AnimatedContent","props":{"targetState":"time"},"children":[
+                    {"id":"page.field","type":"TextField","props":{
+                      "value":"","label":"Second","onValueChange":"app.page.note"}}]}}
+                """.trimIndent(),
+            )
+        val actions = mutableListOf<Action>()
+        var shown by mutableStateOf(first)
+        val renderer = renderer(actions)
+        compose.setContent { PyComposeTheme { renderer.Render(shown) } }
+        compose.onNodeWithText("First").assertExists()
+
+        shown = second
+        compose.waitForIdle()
+        compose.onNodeWithText("Second").performTextInput("a")
+        compose.waitUntil(5000) { actions.any { it.actionId == "app.page.note" } }
+        assertEquals("""{"value":"a"}""", actions.last().payload.toString())
     }
 
     @Test
@@ -120,5 +190,9 @@ class RoundNineComponentsTest {
             actions.lastOrNull { it.actionId == "app.demo.query" }?.payload?.toString() ==
                 """{"query":"Updated query!"}"""
         }
+    }
+
+    private companion object {
+        const val FRAME_MS = 100L
     }
 }

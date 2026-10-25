@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TypedDict
 
 import pytest
 
@@ -18,29 +17,21 @@ from pycompose.state import Actions, State, Store
 seen: list[str] = []
 
 
-class Empty(TypedDict):
-    pass
-
-
-class ConfigPayload(TypedDict):
-    orientation: str
-    dark_mode: bool
-    locale: str
-    density: float
-
-
 @action
-def on_resume(state: State, payload: Empty) -> State:  # noqa: ARG001
+def on_resume(state: State) -> State:
     """A resumed app decides for itself whether anything needs reloading."""
     seen.append("resume")
     return replace_root(state, "resumed")
 
 
 @action
-def on_config_changed(state: State, payload: ConfigPayload) -> State:
+def on_config_changed(
+    state: State, orientation: str, dark_mode: bool, locale: str, density: float
+) -> State:
     """Only UI-affecting facts belong here; the host sends what Python cannot see."""
-    seen.append(f"{payload['orientation']}/{payload['locale']}/{payload['density']}")
-    return replace_root(state, payload["locale"])
+    appearance = "dark" if dark_mode else "light"
+    seen.append(f"{orientation}/{locale}/{density}/{appearance}")
+    return replace_root(state, locale)
 
 
 def replace_root(state: State, text: str) -> State:
@@ -85,7 +76,7 @@ def test_lifecycle_events_reach_python_through_the_ordinary_action_queue() -> No
     assert json.loads(bridge.expose_latest_snapshot() or "{}")["root"]["props"][
         "text"
     ] == ("fr-FR")
-    assert seen == ["resume", "landscape/fr-FR/3.0"]
+    assert seen == ["resume", "landscape/fr-FR/3.0/dark"]
     assert bridge.expose_latest_error() == ""
 
 
@@ -184,10 +175,39 @@ def test_handlers_receive_python_names_never_the_wire_spelling() -> None:
         )
     )
     # The handler read payload["locale"], never the camelCase wire spelling.
-    assert seen == ["portrait/en-GB/2.0"]
+    assert seen == ["portrait/en-GB/2.0/light"]
 
 
 def test_lifecycle_is_not_a_ui_action_so_components_cannot_bind_it() -> None:
     with pytest.raises(IrValidationError, match="invalid prop"):
         Button(id="x", text="Go", on_click="onResume")
     assert emit_ir(State(root=Text(id="t", text="ok")), "1.4.0").metadata is None
+
+
+def test_a_handler_receives_only_the_host_fields_it_declares() -> None:
+    received: list[str] = []
+
+    @action
+    def on_config_changed(state: State, locale: str) -> State:
+        received.append(locale)
+        return state
+
+    bridge = BridgeSurface(
+        Store(State(root=Text(id="text", text="home"))), Actions(on_config_changed)
+    )
+    bridge.accept_action(
+        json.dumps(
+            {
+                "actionId": "onConfigChanged",
+                "payload": {
+                    "orientation": "portrait",
+                    "darkMode": False,
+                    "locale": "en-GB",
+                    "density": 2.0,
+                },
+            }
+        )
+    )
+
+    assert received == ["en-GB"]
+    assert bridge.expose_latest_error() == ""

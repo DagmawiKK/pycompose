@@ -8,8 +8,8 @@ import pytest
 from test_classpath_dump import type_doc
 from test_entry_candidates import catalog, modifier, plan, synthetic
 
-from tools.schema.candidate_props import CandidateError
-from tools.schema.entry_candidates import derive
+from pycompose.compiler.candidate_props import CandidateError
+from pycompose.compiler.entry_candidates import derive
 
 
 def test_a_scope_extension_derives_the_scope_it_composes_in(tmp_path: Path) -> None:
@@ -24,11 +24,12 @@ def test_a_scope_extension_derives_the_scope_it_composes_in(tmp_path: Path) -> N
         catalog(),
         {"category": "test", "stability": "stable"},
     )
-    assert item.entry["scope"] == "SingleChoiceSegmentedButtonRowScope"
     assert (
-        "receiver: composes only inside SingleChoiceSegmentedButtonRowScope"
-        in item.review
+        item.entry["scope"]
+        == "androidx.compose.material3.SingleChoiceSegmentedButtonRowScope"
     )
+    scope = "androidx.compose.material3.SingleChoiceSegmentedButtonRowScope"
+    assert f"receiver: composes only inside {scope}" in item.review
 
 
 def test_a_schema_alias_keeps_the_native_identity(tmp_path: Path) -> None:

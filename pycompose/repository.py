@@ -31,6 +31,7 @@ import os
 import threading
 from collections import deque
 from collections.abc import Iterator, Sequence
+from contextlib import contextmanager
 from dataclasses import is_dataclass
 from importlib import import_module
 from pathlib import Path
@@ -85,6 +86,30 @@ def root() -> Path:
     else:
         return Path(str(files_dir))
     return Path(os.environ.get("PYCOMPOSE_HOME", Path.cwd()))
+
+
+@contextmanager
+def documents_at(path: Path | str) -> Iterator[None]:
+    """Keep the app's documents in ``path`` for a while, then where they were.
+
+    A device-free run -- ``pycompose check``, a test driving the app -- must
+    neither read the developer's data nor leave its own in the working
+    directory.
+
+    Args:
+        path: The directory to use. Created on first write.
+
+    Yields:
+        None: While documents live there.
+    """
+    global _override  # noqa: PLW0603 -- process-wide, like the worker
+    with _lock:
+        previous, _override = _override, Path(path)
+    try:
+        yield
+    finally:
+        with _lock:
+            _override = previous
 
 
 def use_root(path: Path | str) -> None:
@@ -192,6 +217,12 @@ class Document(Generic[T]):
             raise StateError("document name must be a plain file name")
         self._codec = _codec_for(model)
         self._path = Path(directory) / name if directory is not None else root() / name
+        # Immutable items can be shared between loads, so an unchanged file
+        # returns the same objects: no re-decode, and views keyed by identity
+        # (ExpansionMemo) see unchanged items as unchanged.
+        params = getattr(self._codec.cls, "__dataclass_params__", None)
+        self._shareable = bool(params and params.frozen)
+        self._cached: tuple[tuple[int, int, int], list[object]] | None = None
 
     @property
     def path(self) -> Path:
@@ -213,7 +244,17 @@ class Document(Generic[T]):
             The stored items.
         """
         with _lock:
-            return cast("list[T]", self._read())
+            try:
+                stat = self._path.stat()
+                signature = (stat.st_ino, stat.st_size, stat.st_mtime_ns)
+            except OSError:
+                signature = None
+            if self._cached is not None and self._cached[0] == signature:
+                return cast("list[T]", list(self._cached[1]))
+            items = self._read()
+            if self._shareable and signature is not None:
+                self._cached = (signature, items)
+            return cast("list[T]", list(items))
 
     def save(self, items: Sequence[T]) -> None:
         """Replace everything held, atomically.

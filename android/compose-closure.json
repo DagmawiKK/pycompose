@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "comment": "Extraction closure for dumpComposeApi: which artifact groups may be extracted and the exact bytes of the pinned resolution. Groups are policy; artifacts are the frozen extraction set; tooling artifacts resolve through a dedicated configuration (composeToolingClasspath), are verified, and are never extracted; support artifacts resolve inside extracted groups but carry no Android app surface (JVM support jars), are verified, and are never extracted. Every group is extracted: every resolved artifact of these groups must be listed here as an extraction artifact, tooling, or support, and every listed artifact must be present and digest-matched. Domains classify evidence and accounting. Change only with the migration it belongs to.",
+  "comment": "Extraction closure for dumpComposeApi: which artifact groups may be extracted and the exact bytes of the pinned resolution. Groups are policy; artifacts are the frozen extraction set; tooling artifacts resolve through a dedicated configuration (composeToolingClasspath), are verified, and are never extracted; support artifacts resolve inside extracted groups but carry no Android app surface (JVM support jars), are verified, and are never extracted. Every group is extracted: every resolved artifact of these groups must be listed here as an extraction artifact, tooling, or support, and every listed artifact must be present and digest-matched. Domains classify evidence and accounting. The components flag marks the groups whose public, Unit-returning composables are components; every other composable is support. Change only with the migration it belongs to.",
   "groups": {
     "androidx.activity": {"status": "extracted", "category": "app-surface", "domain": "activity"},
-    "androidx.compose.animation": {"status": "extracted", "category": "app-surface", "domain": "animation"},
-    "androidx.compose.foundation": {"status": "extracted", "category": "app-surface", "domain": "foundation"},
+    "androidx.compose.animation": {"status": "extracted", "category": "app-surface", "domain": "animation", "components": true},
+    "androidx.compose.foundation": {"status": "extracted", "category": "app-surface", "domain": "foundation", "components": true},
     "androidx.compose.material": {"status": "extracted", "category": "app-surface", "domain": "m2", "design": "m2"},
-    "androidx.compose.material3": {"status": "extracted", "category": "app-surface", "domain": "material3", "design": "m3"},
-    "androidx.compose.material3.adaptive": {"status": "extracted", "category": "app-surface", "domain": "adaptive", "design": "m3"},
+    "androidx.compose.material3": {"status": "extracted", "category": "app-surface", "domain": "material3", "design": "m3", "components": true},
+    "androidx.compose.material3.adaptive": {"status": "extracted", "category": "app-surface", "domain": "adaptive", "design": "m3", "components": true},
     "androidx.compose.runtime": {"status": "extracted", "category": "app-surface", "domain": "runtime"},
     "androidx.compose.ui": {"status": "extracted", "category": "app-surface", "domain": "ui"},
     "androidx.constraintlayout": {"status": "extracted", "category": "app-surface", "domain": "constraintlayout"},

@@ -30,6 +30,7 @@ from typing import (
 )
 
 from pycompose.core.props import JsonValue, to_snake_case
+from pycompose.core.reads import record
 from pycompose.errors import StateError
 from pycompose.state.app_state_codec import (
     _accepts,
@@ -231,6 +232,19 @@ class AppState(metaclass=_AppStateMeta):
         # real check on a declared state happens in the codec, at runtime, on
         # every field of every transition.
         def __init__(self, **changes: Any) -> None: ...
+
+    def __getattribute__(self, name: str) -> Any:
+        """Read one attribute, noting a field read for fine-grained reuse.
+
+        Args:
+            name: The attribute.
+
+        Returns:
+            Its value.
+        """
+        if name in object.__getattribute__(type(self), "__dataclass_fields__"):
+            record(self, name)
+        return object.__getattribute__(self, name)
 
     def evolve(self: _StateT, **changes: Any) -> _StateT:
         """Return a copy of this state with fields replaced.

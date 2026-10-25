@@ -3,6 +3,9 @@
 import pytest
 
 from pycompose import composable
+from pycompose.core.expansion import ExpansionMemo
+from pycompose.core.reuse import Reuse
+from pycompose.errors import IrValidationError
 from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.m3 import Column, Modifier, Scaffold, Text
 from pycompose.state import State
@@ -234,3 +237,43 @@ def test_a_composable_fills_a_declared_slot() -> None:
     title = root["children"][1]
     assert title["id"] == "root.bar.title"
     assert title["props"]["text"] == "Notes"
+
+
+def _rows(names: list[str], render: object) -> State:
+    return State(
+        root=Column(
+            id="screen",
+            children=tuple(render(id=f"row{i}", name=n) for i, n in enumerate(names)),  # type: ignore[operator]
+        )
+    )
+
+
+def test_a_memo_reruns_only_the_composables_whose_inputs_changed() -> None:
+    calls: list[str] = []
+
+    @composable
+    def row(*, name: str):
+        calls.append(name)
+        return Text(id="name", text=name)
+
+    reuse = Reuse()
+    emit_ir(_rows(["Ada", "Grace"], row), "1.0.0", reuse)
+    reused = emit_ir(_rows(["Ada", "Hopper"], row), "1.0.0", reuse)
+
+    assert calls == ["Ada", "Grace", "Hopper"]
+    fresh = emit_ir(_rows(["Ada", "Hopper"], row), "1.0.0")
+    assert to_dict(reused) == to_dict(fresh)
+
+
+def test_verification_catches_a_composable_reading_outside_its_inputs() -> None:
+    outside = ["Ada"]
+
+    @composable
+    def row(*, name: str):
+        return Text(id="name", text=f"{name} {outside[0]}")
+
+    reuse = Reuse(ExpansionMemo(verify_every=1))
+    emit_ir(_rows(["x"], row), "1.0.0", reuse)
+    outside[0] = "Grace"
+    with pytest.raises(IrValidationError, match="outside its arguments"):
+        emit_ir(_rows(["x"], row), "1.0.0", reuse)

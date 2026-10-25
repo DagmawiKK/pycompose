@@ -18,12 +18,16 @@ def test_generated_native_calls_render_defaults_slots_and_events(
 ):
     from dataclasses import replace
 
+    from pycompose.compiler.classpath_dump import (
+        Declaration,
+        inventory,
+        source_defaults,
+    )
+    from pycompose.compiler.components import propose_components
     from pycompose.schema.codegen.native_calls import call_name, render_call
-    from tools.schema.classpath_dump import Declaration, inventory, source_defaults
-    from tools.schema.components import propose_components
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
-    schema = Path("schema/components.json")
+    schema = Path("schema/catalog.lock.json")
     original = schema.read_bytes()
     report = propose_components(
         inventory(DUMP), source_defaults(DUMP), json.loads(original)
@@ -134,12 +138,12 @@ def test_generated_native_calls_render_defaults_slots_and_events(
 def test_cli_refuses_to_overwrite_the_approved_schema(tmp_path):
     import sys
 
-    schema = Path("schema/components.json")
+    schema = Path("schema/catalog.lock.json")
     original = schema.read_bytes()
     linked = tmp_path / "linked.json"
     linked.symlink_to(schema.resolve())
     result = subprocess.run(
-        [sys.executable, "tools/schema/components.py", "--out", str(linked)],
+        [sys.executable, "-m", "pycompose.compiler.components", "--out", str(linked)],
         capture_output=True,
         text=True,
         check=False,
@@ -150,8 +154,8 @@ def test_cli_refuses_to_overwrite_the_approved_schema(tmp_path):
 
 
 def test_batch_preserves_overloads_and_reports_required_and_optional_gaps(tmp_path):
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.components import propose_components
 
     records = [
         declaration(
@@ -207,8 +211,8 @@ def test_batch_preserves_overloads_and_reports_required_and_optional_gaps(tmp_pa
 
 
 def test_styling_hooks_leave_the_component_denominator(tmp_path):
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.components import propose_components
 
     row_scope = type_doc("androidx/compose/foundation/layout/RowScope")
     missing = type_doc("example/Missing")
@@ -279,7 +283,7 @@ def test_styling_hooks_leave_the_component_denominator(tmp_path):
         },
         {
             "reason": "receiver/generic declaration needs a native protocol",
-            "blocks": ["Inside"],
+            "blocks": [],
             "hooks": ["Thumb"],
             "limits": [],
         },
@@ -287,8 +291,8 @@ def test_styling_hooks_leave_the_component_denominator(tmp_path):
 
 
 def test_parameter_policies_use_types_not_component_or_parameter_names(tmp_path):
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.components import propose_components
 
     unit = type_doc("kotlin/Unit")
     record = declaration(
@@ -375,8 +379,8 @@ def test_parameter_policies_use_types_not_component_or_parameter_names(tmp_path)
 
 
 def test_unsafe_defaults_and_behavior_are_never_exposed_as_ignored_props(tmp_path):
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.components import propose_components
 
     record = declaration(
         parameters=[
@@ -416,9 +420,9 @@ def test_unsafe_defaults_and_behavior_are_never_exposed_as_ignored_props(tmp_pat
 
 
 def test_overloads_distinguished_by_a_required_parameter_stay_addressable(tmp_path):
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.components import propose_components
     from pycompose.schema.codegen.native_calls import render_call
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.components import propose_components
 
     unit = type_doc("kotlin/Unit")
     records = [
@@ -448,8 +452,8 @@ def test_overloads_distinguished_by_a_required_parameter_stay_addressable(tmp_pa
 
 
 def test_overloads_a_call_cannot_tell_apart_are_refused(tmp_path):
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.components import propose_components
 
     unit = type_doc("kotlin/Unit")
     records = [
@@ -473,19 +477,21 @@ def test_overloads_a_call_cannot_tell_apart_are_refused(tmp_path):
     ]
     write_inventory(tmp_path, records)
     report = propose_components(inventory(tmp_path), {}, {})
-    # `track` has no wire policy, so both overloads accept the same arguments
-    # and neither can be selected by name.
-    assert {p["status"] for p in report["candidates"]} == {"blocked"}
-    assert all(
-        any(g["reason"].startswith("overload identity") for g in p["gaps"])
-        for p in report["candidates"]
+    # `track` has no wire policy, so both overloads accept the same arguments.
+    # Kotlin then picks the one leaving fewer defaults unspecified (spec 11.6):
+    # the plain overload is reachable, the detailed one never is.
+    status = {p["source"]["descriptor"]: p["status"] for p in report["candidates"]}
+    assert status == {"plain": "call-plan", "detailed": "blocked"}
+    detailed = next(
+        p for p in report["candidates"] if p["source"]["descriptor"] == "detailed"
     )
+    assert any(g["reason"].startswith("overload identity") for g in detailed["gaps"])
 
 
 def test_optional_slot_without_null_policy_is_refused(tmp_path):
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.components import propose_components
     from pycompose.schema.codegen.native_calls import render_call
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.components import propose_components
 
     unit = type_doc("kotlin/Unit")
     record = declaration(
@@ -524,9 +530,9 @@ def test_optional_slot_without_null_policy_is_refused(tmp_path):
 def test_call_generation_refuses_blockers_and_opaque_expressions(tmp_path):
     import pytest
 
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.components import propose_components
     from pycompose.schema.codegen.native_calls import render_call
-    from tools.schema.classpath_dump import inventory
-    from tools.schema.components import propose_components
 
     write_inventory(
         tmp_path,

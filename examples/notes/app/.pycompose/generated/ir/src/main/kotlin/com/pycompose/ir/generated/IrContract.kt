@@ -11,16 +11,6 @@ object IrContract {
     const val MIN_LIBRARY_VERSION: String = "0.1.0"
     val actionIds: Set<String> = setOf("increment", "submit")
     val components: Map<String, ComponentRule> = mapOf(
-        "AnimatedContent" to ComponentRule(
-            slots = setOf(),
-            childrenAllowed = true,
-            minimumChildren = 0,
-            since = "1.23.0",
-            props = mapOf(
-                "modifier" to PropertyRule("modifier", required = false),
-                "target" to PropertyRule("string", required = true),
-            ),
-        ),
         "Card" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -39,6 +29,19 @@ object IrContract {
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
             ),
         ),
+        "CardWithoutOnClick" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "border" to PropertyRule("value", required = false, valueType = "BorderStroke", nullable = true),
+                "colors" to PropertyRule("value", required = false, valueType = "CardColors"),
+                "elevation" to PropertyRule("value", required = false, valueType = "CardElevation"),
+                "modifier" to PropertyRule("modifier", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+            ),
+        ),
         "Column" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -50,16 +53,6 @@ object IrContract {
                 "offset" to PropertyRule("number", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
                 "scrollable" to PropertyRule("boolean", required = false),
-            ),
-        ),
-        "Crossfade" to ComponentRule(
-            slots = setOf(),
-            childrenAllowed = true,
-            minimumChildren = 0,
-            since = "1.23.0",
-            props = mapOf(
-                "modifier" to PropertyRule("modifier", required = false),
-                "target" to PropertyRule("string", required = true),
             ),
         ),
         "ExpandedDockedSearchBar" to ComponentRule(
@@ -151,6 +144,18 @@ object IrContract {
                 "resource" to PropertyRule("resource", required = true, values = setOf("drawable", "asset")),
             ),
         ),
+        "ImageImageVector" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "alignment" to PropertyRule("enum", required = false, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
+                "contentDescription" to PropertyRule("string", required = true, nullable = true),
+                "imageVector" to PropertyRule("value", required = true, valueType = "ImageVector"),
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
         "LazyColumn" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -158,9 +163,12 @@ object IrContract {
             since = "1.0.0",
             props = mapOf(
                 "firstVisibleIndex" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
+                "itemCount" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
+                "itemOffset" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
                 "verticalArrangement" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom", "spaceEvenly", "spaceBetween", "spaceAround")),
+                "window" to PropertyRule("string", required = false),
             ),
         ),
         "LinearProgressIndicator" to ComponentRule(
@@ -172,6 +180,19 @@ object IrContract {
                 "color" to PropertyRule("color", required = false, valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "progress" to PropertyRule("number", required = true, since = "1.20.0"),
+                "trackColor" to PropertyRule("color", required = false, valueType = "Color"),
+            ),
+        ),
+        "LinearProgressIndicatorWithoutProgress" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "color" to PropertyRule("color", required = false, valueType = "Color"),
+                "gapSize" to PropertyRule("dp", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "strokeCap" to PropertyRule("value", required = false, valueType = "StrokeCap"),
                 "trackColor" to PropertyRule("color", required = false, valueType = "Color"),
             ),
         ),
@@ -436,8 +457,16 @@ object IrContract {
         ),
     )
     val modifiers: Map<String, Map<String, PropertyRule>> = mapOf(
+        "alignByBaseline" to mapOf(
+        ),
+        "animateEnterExit" to mapOf(
+                "label" to PropertyRule("string", required = false),
+        ),
         "background" to mapOf(
                 "brush" to PropertyRule("value", required = true, since = "1.11.0", valueType = "Brush"),
+        ),
+        "boxAlign" to mapOf(
+                "alignment" to PropertyRule("enum", required = true, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
         ),
         "clickable" to mapOf(
                 "enabled" to PropertyRule("boolean", required = true),
@@ -446,20 +475,76 @@ object IrContract {
         "clip" to mapOf(
                 "shape" to PropertyRule("enum", required = true, values = setOf("rectangle", "circle", "rounded"), valueType = "Shape"),
         ),
+        "columnAlign" to mapOf(
+                "alignment" to PropertyRule("enum", required = true, values = setOf("centerHorizontally", "end", "left", "right", "start")),
+        ),
+        "fillMaxColumnWidth" to mapOf(
+                "fraction" to PropertyRule("number", required = false),
+        ),
+        "fillMaxRowHeight" to mapOf(
+                "fraction" to PropertyRule("number", required = false),
+        ),
         "fillMaxWidth" to mapOf(
                 "fraction" to PropertyRule("number", required = true, minimum = 0.0, maximum = 1.0),
         ),
+        "maskBorder" to mapOf(
+                "border" to PropertyRule("value", required = true, valueType = "BorderStroke"),
+                "shape" to PropertyRule("value", required = true, valueType = "Shape"),
+        ),
+        "maskClip" to mapOf(
+                "shape" to PropertyRule("value", required = true, valueType = "Shape"),
+        ),
+        "matchParentSize" to mapOf(
+        ),
+        "menuAnchor" to mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "menuAnchorType" to PropertyRule("value", required = true, valueType = "ExposedDropdownMenuAnchorType"),
+        ),
         "padding" to mapOf(
                 "value" to PropertyRule("dp", required = true, valueType = "PaddingValues", minimum = 0.0),
+        ),
+        "renderInSharedTransitionScopeOverlay" to mapOf(
+                "zIndexInOverlay" to PropertyRule("number", required = false),
+        ),
+        "rowAlign" to mapOf(
+                "alignment" to PropertyRule("enum", required = true, values = setOf("bottom", "centerVertically", "top")),
+        ),
+        "semantics" to mapOf(
+                "contentDescription" to PropertyRule("string", required = false),
+                "heading" to PropertyRule("boolean", required = false),
+                "liveRegion" to PropertyRule("enum", required = false, values = setOf("polite", "assertive")),
+                "role" to PropertyRule("enum", required = false, values = setOf("button", "checkbox", "switch", "radioButton", "tab", "image", "dropdownList", "valuePicker", "carousel")),
+                "stateDescription" to PropertyRule("string", required = false),
+                "testTag" to PropertyRule("string", required = false),
+                "traversalIndex" to PropertyRule("number", required = false),
         ),
         "size" to mapOf(
                 "height" to PropertyRule("dp", required = true, valueType = "Dp", minimum = 0.0),
                 "width" to PropertyRule("dp", required = true, valueType = "Dp", minimum = 0.0),
         ),
+        "skipToLookaheadPosition" to mapOf(
+        ),
+        "skipToLookaheadSize" to mapOf(
+        ),
+        "tabIndicatorOffset" to mapOf(
+                "matchContentSize" to PropertyRule("boolean", required = false),
+                "selectedTabIndex" to PropertyRule("integer", required = true, minimum = -2147483648.0, maximum = 2147483647.0),
+        ),
+        "weight" to mapOf(
+                "fill" to PropertyRule("boolean", required = false),
+                "weight" to PropertyRule("number", required = true),
+        ),
         "windowInsetsPadding" to mapOf(
                 "insets" to PropertyRule("value", required = true, since = "1.11.0", valueType = "WindowInsets"),
         ),
     )
+    val streams: Map<String, Set<String>> = mapOf(
+        "Column" to setOf("offset", "progress"),
+    )
+    val streamNames: Set<String> = setOf("offset", "progress")
+    val expressionOps: Set<String> = setOf("times", "plus", "minus", "clamp", "alpha", "mix")
+    const val EXPRESSION_DEPTH = 8
+    const val EXPRESSION_NODES = 32
     val actionPayloads: Map<String, Map<String, PropertyRule>> = mapOf(
         "increment" to mapOf(
                 "by" to PropertyRule("integer", required = false),

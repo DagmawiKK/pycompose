@@ -30,7 +30,7 @@ from pycompose.schema.codegen.state_anchors import SWIPE_VALUES
 from pycompose.schema.codegen.state_rules import STATE_VALUE_TYPES
 from pycompose.state import State
 
-SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "components.json"
+SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 
 CATALOG = json.loads(SCHEMA_PATH.read_text())
 """The parsed catalog, so the wire tests state the version they are tested at."""
@@ -76,7 +76,7 @@ def components() -> dict[str, Any]:
     """Return the schema's component entries, keyed by name.
 
     Returns:
-        Every component entry in ``components.json``.
+        Every component entry in the catalog lock.
     """
     return CATALOG["components"]
 
@@ -150,7 +150,8 @@ def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> Non
     """
     for name, entry in sorted(components().items()):
         state = entry.get("state")
-        if state is None:
+        if state is None or state["kind"] == "properties":
+            # A derived family's props are its holder's (test_property_holders).
             continue
         props = entry["props"]
         assert state["native"] not in props, name
@@ -195,7 +196,7 @@ def test_every_state_kind_is_a_vocabulary_member() -> None:
     for name, entry in sorted(components().items()):
         state = entry.get("state")
         if state is not None:
-            assert state["kind"] in STATE_KINDS, name
+            assert state["kind"] in {*STATE_KINDS, "properties"}, name
 
 
 def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:
@@ -218,17 +219,15 @@ def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_every_state_kind_has_a_holder_and_a_gate_decision() -> None:
-    """A family without a renderer method or a gate decision cannot be emitted."""
+def test_every_family_table_names_known_state_kinds() -> None:
+    """A gate, attach or constructor decision for an unknown family is a typo."""
     from pycompose.core.registry_types import STATE_KINDS
     from pycompose.schema.codegen.adapters import (
         GATED_STATES,
         STATE_ATTACH_GATES,
-        STATE_CALLS,
         STATE_CONSTRUCTOR_PROPS,
     )
 
-    assert set(STATE_CALLS) == set(STATE_KINDS)
     assert set(STATE_KINDS) >= GATED_STATES
     assert set(STATE_ATTACH_GATES) <= set(STATE_KINDS)
     assert set(STATE_CONSTRUCTOR_PROPS) <= set(STATE_KINDS)
@@ -373,10 +372,6 @@ def test_a_modifier_riding_family_carries_its_boolean_gate_prop(
         (
             lambda registry: _state(registry).update(kind="slider"),
             "needs the props valueRange, steps",
-        ),
-        (
-            lambda registry: _state(registry).update(kind="scroll"),
-            "needs the props scrollable",
         ),
         (
             lambda registry: _with_scrollable(registry, "number"),

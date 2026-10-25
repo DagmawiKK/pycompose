@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import subprocess
+import sys
 import threading
 import time
 import zipfile
@@ -14,6 +16,7 @@ from typing import IO
 
 from pycompose.cli.console import echo, echo_error, ok, step
 from pycompose.cli.extensions import check_extensions, stage_extensions
+from pycompose.cli.prebuild import generated, prebuild
 from pycompose.cli.project import (
     Project,
     ProjectError,
@@ -22,6 +25,8 @@ from pycompose.cli.project import (
 )
 from pycompose.cli.requirements import validate_requirements
 from pycompose.cli.sync import sync_resources
+from pycompose.cli.toolchain import jdk_home, test_jdk
+from pycompose.schema.codegen.app_slice import APP_LOCK
 
 SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
 
@@ -88,7 +93,8 @@ def _check_requirements_scaffold(project: Project, requirements: list[str]) -> N
     Raises:
         ProjectError: If requirements are declared on an older template.
     """
-    if not requirements:
+    if not requirements or generated(project):
+        # A generated project is always the current template.
         return
     version = _scaffold_template_version(project)
     if version is not None and version >= _MIN_REQUIREMENTS_TEMPLATE:
@@ -160,6 +166,23 @@ def _app_properties(project: Project, env: dict[str, str]) -> None:
     env["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"] = str(
         Path(__file__).resolve().parents[2]
     )
+    env["ORG_GRADLE_PROJECT_pycomposeBuildPython"] = sys.executable
+
+
+def _jvm_properties(project: Project, env: dict[str, str]) -> None:
+    """Name the JVM device-free tests need, when the host's 17 cannot load them.
+
+    An app library compiled for a newer Java loads only on a JVM at least that
+    new; its lock slice records which (``jvm``).
+    """
+    lock = project.root / APP_LOCK
+    needed = 17
+    if lock.is_file():
+        needed = json.loads(lock.read_text(encoding="utf-8")).get("jvm", 17)
+    if needed > 17:
+        version, home = test_jdk(needed)
+        env["ORG_GRADLE_PROJECT_pycomposeTestJvm"] = str(version)
+        env["ORG_GRADLE_PROJECT_org.gradle.java.installations.paths"] = home
 
 
 def _signing(project: Project, env: dict[str, str]) -> tuple[str, ...]:
@@ -231,7 +254,7 @@ def _artifacts(project: Project, kind: str, variant: str) -> tuple[Path, ...]:
     return tuple(result)
 
 
-def _codegen(project: Project) -> None:
+def codegen(project: Project, *, kotlin: bool = True) -> None:
     """Regenerate the app's component slice before Gradle runs (ADR-0014).
 
     Bound to the build because a slice that is regenerated on demand is never
@@ -246,11 +269,13 @@ def _codegen(project: Project) -> None:
 
     Args:
         project: The project being built.
+        kotlin: Also write the Kotlin half, which only a Gradle build compiles.
 
     Raises:
         ProjectError: If the slice cannot be generated.
     """
-    from pycompose.schema.codegen.app_slice import uses_generated_slice
+    from pycompose.cli.add import sync_libraries
+    from pycompose.schema.codegen.app_slice import APP_LOCK, uses_generated_slice
     from pycompose.schema.codegen.main import build_app
 
     python = project.table("python")
@@ -258,9 +283,20 @@ def _codegen(project: Project) -> None:
     if not isinstance(source, str):
         raise ProjectError("invalid python.source_dir")
     directory = project_path(project.root, source)
+    # The app's own libraries reach the classpath from its lock slice.
+    sync_libraries(project)
     if not uses_generated_slice(directory):
         return
-    if build_app(directory, android_root=project.android_root) != 0:
+    app_lock = project.root / APP_LOCK
+    if (
+        build_app(
+            directory,
+            android_root=project.android_root,
+            app_lock=app_lock,
+            kotlin=kotlin,
+        )
+        != 0
+    ):
         raise ProjectError("component slice generation failed", path=directory)
 
 
@@ -321,6 +357,49 @@ def _gradle(
     return code
 
 
+def prepare(project: Project) -> tuple[Path, dict[str, str]]:
+    """Make the Android project current and its Gradle environment ready.
+
+    Every Gradle run goes through here: the generated project is regenerated,
+    the app's resources and component slice are written, and the app's facts
+    are handed to Gradle as properties.
+
+    Args:
+        project: The app.
+
+    Returns:
+        The Gradle wrapper and the environment to run it in.
+
+    Raises:
+        ProjectError: If the scaffold or the configuration is invalid.
+    """
+    check_project_versions(project)
+    native = project.android_root
+    if generated(project):
+        prebuild(project)
+    wrapper = project_path(native, "gradlew.bat" if os.name == "nt" else "gradlew")
+    if not wrapper.is_file() or not any(
+        (native / name).is_file() for name in ("settings.gradle.kts", "settings.gradle")
+    ):
+        raise ProjectError(
+            "Android scaffold is missing; restore the native project directory",
+            path=native,
+        )
+    if os.name != "nt" and not os.access(wrapper, os.X_OK):
+        relative = wrapper.relative_to(project.root)
+        raise ProjectError(f"Gradle wrapper is not executable; run chmod +x {relative}")
+    env = dict(os.environ)
+    if (home := jdk_home()) is not None and "JAVA_HOME" not in env:
+        env["JAVA_HOME"] = home
+    _app_properties(project, env)
+    _jvm_properties(project, env)
+    stage_extensions(project, env)
+    if not generated(project):
+        sync_resources(project)
+    codegen(project)
+    return wrapper, env
+
+
 def build_project(
     project: Project, *, kind: str = "apk", release: bool = False
 ) -> tuple[Path, ...]:
@@ -339,32 +418,15 @@ def build_project(
     """
     if kind not in {"apk", "aab"}:
         raise ProjectError("build format must be apk or aab")
-    check_project_versions(project)
-    native = project.android_root
-    wrapper = project_path(native, "gradlew.bat" if os.name == "nt" else "gradlew")
-    if not wrapper.is_file() or not any(
-        (native / name).is_file() for name in ("settings.gradle.kts", "settings.gradle")
-    ):
-        raise ProjectError(
-            "Android scaffold is missing; restore the native project directory",
-            path=native,
-        )
-    if os.name != "nt" and not os.access(wrapper, os.X_OK):
-        relative = wrapper.relative_to(project.root)
-        raise ProjectError(f"Gradle wrapper is not executable; run chmod +x {relative}")
-    env = dict(os.environ)
-    _app_properties(project, env)
+    wrapper, env = prepare(project)
     secrets = _signing(project, env) if release else ()
-    stage_extensions(project, env)
-    sync_resources(project)
-    _codegen(project)
     variant = "release" if release else "debug"
     task = f":host:{'assemble' if kind == 'apk' else 'bundle'}{variant.title()}"
     step(f"{task} ({variant} {kind})")
     started = time.monotonic()
     code = _gradle(
         [str(wrapper), task, "--console=plain", "--no-daemon"],
-        cwd=native,
+        cwd=project.android_root,
         env=env,
         secrets=secrets,
     )

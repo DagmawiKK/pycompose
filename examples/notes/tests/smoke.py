@@ -45,29 +45,29 @@ def main_() -> None:
     host = Host(main)
     show("fresh install", host)
 
-    host.tap("new_note", "new")
+    host.tap("new_note")
     show("tap New note", host, effects(host.snapshot()))
 
-    host.tap("set_title", "title", value="Groceries")
-    host.tap("set_body", "body", value="Milk\nBread\nCoffee")
+    host.tap("set_title", value="Groceries")
+    host.tap("set_body", value="Milk\nBread\nCoffee")
     show("type title and body", host)
 
-    host.tap("go_back", "back")
+    host.tap("go_back")
     show("back to the list", host, effects(host.snapshot()))
 
     # The button binds the value it wants, so the host sends no payload for it.
-    host.tap("set_about", "about")
+    host.tap("set_about", {"open": True})
     show("tap How this works", host, f"aboutOpen={data(host.snapshot())['aboutOpen']}")
 
     # The sheet reports what it settled on, as after a swipe. This binding names
     # no value, so the event is the one that carries it -- and the app assigns
     # it rather than toggling what it believed.
-    host.tap("set_about", "about_sheet", open=False)
+    host.tap("set_about", {}, open=False)
     show(
         "swipe the sheet away", host, f"aboutOpen={data(host.snapshot())['aboutOpen']}"
     )
 
-    host.tap("open_note", "n1")
+    host.tap("open_note", {"note_id": 1})
     show("open the note", host, effects(host.snapshot()))
 
     host.lifecycle("onBackRequested")
@@ -84,8 +84,8 @@ def main_() -> None:
     print(f"{'switch to dark mode':<34} background={background}")
 
     # The half-typed-text case: kill the process mid-sentence.
-    host.tap("open_note", "n1")
-    host.tap("set_title", "title", value="Half-typed")
+    host.tap("open_note", {"note_id": 1})
+    host.tap("set_title", value="Half-typed")
     published = host.snapshot()["metadata"]["data"]
 
     revived = Host(main, route=published["route"], restore=_json(published))
@@ -94,8 +94,8 @@ def main_() -> None:
     print(f"{'  text survived':<34} {revived.titles!r}")
     assert revived.error == "", revived.error
 
-    revived.tap("go_back", "back")
-    revived.tap("delete_note", "n1")
+    revived.tap("go_back")
+    revived.tap("delete_note", {"note_id": 1})
     show("delete the note", revived)
 
 

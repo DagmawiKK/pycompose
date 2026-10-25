@@ -18,7 +18,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 NOTES_APP = ROOT / "examples/notes/app"
-CATALOG = json.loads((ROOT / "schema/components.json").read_text())
+CATALOG = json.loads((ROOT / "schema/catalog.lock.json").read_text())
 GEN = ROOT / "tools/schema/gen.py"
 
 
@@ -86,15 +86,25 @@ def test_the_committed_slice_is_current() -> None:
 def test_the_slice_holds_exactly_the_components_the_app_references(
     slice_names: set[str],
 ) -> None:
-    """Discovery is by AST name, so the slice follows the source."""
+    """Discovery is by AST name, so the slice follows the source.
+
+    A used name brings its overloads: the keywords of a call, not its name,
+    choose which of them reaches the wire.
+    """
     from pycompose.schema.codegen.app_slice import (
         FLOOR_COMPONENTS,
         discover,
         load_catalog,
     )
 
-    referenced = discover(NOTES_APP, load_catalog(ROOT / "schema/components.json"))
-    assert slice_names == referenced | FLOOR_COMPONENTS
+    referenced = discover(NOTES_APP, load_catalog(ROOT / "schema/catalog.lock.json"))
+    used = referenced | FLOOR_COMPONENTS
+    overloads = {
+        name
+        for name, entry in CATALOG["components"].items()
+        if entry.get("overloadOf") in used
+    }
+    assert slice_names == used | overloads
     assert len(slice_names) < len(
         CATALOG["components"]
     ), "the example no longer demonstrates anything if it uses everything"
@@ -119,7 +129,9 @@ def test_the_two_slices_agree(slice_names: set[str]) -> None:
     into different languages from the same input. The test is the guarantee.
     """
     python_slice = (NOTES_APP / "m3/generated_components.py").read_text()
-    python_names = set(re.findall(r"^class (\w+)\(", python_slice, re.MULTILINE))
+    # A primary with overloads builds through a private base; its public class
+    # is the name the slice holds.
+    python_names = set(re.findall(r"^class ([A-Z]\w*)\(", python_slice, re.MULTILINE))
     assert python_names == slice_names
 
 
@@ -190,7 +202,7 @@ def test_an_imported_component_counts_even_if_never_used(tmp_path: Path) -> None
     app = tmp_path / "app"
     app.mkdir()
     (app / "screen.py").write_text("from m3 import Button\n\nX = 1\n")
-    used = discover(app, load_catalog(ROOT / "schema/components.json"))
+    used = discover(app, load_catalog(ROOT / "schema/catalog.lock.json"))
     assert used == {"Button"}
 
 
@@ -202,7 +214,7 @@ def test_the_generated_package_does_not_discover_itself(tmp_path: Path) -> None:
     (app / "m3").mkdir(parents=True)
     (app / "m3/generated_components.py").write_text("class Everything: pass\n")
     (app / "screen.py").write_text("X = 1\n")
-    catalog = load_catalog(ROOT / "schema/components.json")
+    catalog = load_catalog(ROOT / "schema/catalog.lock.json")
     assert discover(app, catalog) == set()
 
 
@@ -213,7 +225,7 @@ def test_usage_as_an_attribute_counts(tmp_path: Path) -> None:
     app = tmp_path / "app"
     app.mkdir()
     (app / "screen.py").write_text("import m3\n\nnode = m3.Spacer\n")
-    assert discover(app, load_catalog(ROOT / "schema/components.json")) == {"Spacer"}
+    assert discover(app, load_catalog(ROOT / "schema/catalog.lock.json")) == {"Spacer"}
 
 
 def test_an_app_with_no_components_is_an_error(tmp_path: Path) -> None:
@@ -287,7 +299,7 @@ def test_the_catalog_ships_in_the_package() -> None:
 
     assert (
         codegen.PACKAGED_CATALOG.is_file()
-    ), "components.json is not shipped; an installed pycompose cannot generate"
+    ), "the catalog lock is not shipped; an installed pycompose cannot generate"
 
 
 def test_the_packaged_catalog_matches_the_source() -> None:
@@ -302,7 +314,7 @@ def test_the_packaged_catalog_matches_the_source() -> None:
 
     assert (
         codegen.PACKAGED_CATALOG.read_bytes()
-        == (ROOT / "schema/components.json").read_bytes()
+        == (ROOT / "schema/catalog.lock.json").read_bytes()
     )
 
 

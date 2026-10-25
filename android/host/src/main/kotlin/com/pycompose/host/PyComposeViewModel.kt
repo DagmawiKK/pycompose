@@ -7,8 +7,8 @@ import com.pycompose.ir.AppBindings
 import com.pycompose.ir.AppData
 import com.pycompose.ir.EffectRequest
 import com.pycompose.ir.Effects
-import com.pycompose.ir.IrParser
 import com.pycompose.ir.Lifecycle
+import com.pycompose.ir.SnapshotStream
 import com.pycompose.ir.ValidatedIr
 import com.pycompose.renderer.Action
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,20 +21,31 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * An accepted snapshot paired atomically with its native session lifetime.
  *
  * @param ir Validated wire data to render.
  * @param epoch Host-local generation, retained on rotation and advanced on Python restart.
+ * @param traces The spans of the commands that produced it, closed by the frame that shows it.
+ * @param serial The serial the app published it under; actions taken on it name it.
  */
 data class SessionSnapshot(
     val ir: ValidatedIr,
     val epoch: Long,
+    val traces: List<Int> = emptyList(),
+    val serial: Long = SnapshotStream.NONE,
 )
 
-/** Host owns only latest IR and minimal navigation state, never the Python Store. */
+/**
+ * Host owns only latest IR and minimal navigation state, never the Python Store.
+ *
+ * It is the one object between the activity and the Python worker: its public calls
+ * queue commands, and its private ones run them on the worker. Splitting the two halves
+ * would put the worker's queue and its consumer in different types, so it sits just
+ * over detekt's default function count.
+ */
+@Suppress("TooManyFunctions")
 class PyComposeViewModel(
     private val bridge: BridgeSurface,
     private val savedState: SavedStateHandle,
@@ -53,8 +64,8 @@ class PyComposeViewModel(
         }
     private val pendingEffects = mutableListOf<EffectRequest>()
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
-    private val commands = Channel<Command>(QUEUE_CAPACITY)
-    private val parser = IrParser()
+    private val commands = Channel<Queued>(QUEUE_CAPACITY)
+    private val stream = SnapshotStream()
     private val mutableSnapshot = MutableStateFlow<SessionSnapshot?>(null)
     private val mutableError = MutableStateFlow("")
     val snapshot: StateFlow<SessionSnapshot?> = mutableSnapshot.asStateFlow()
@@ -84,7 +95,7 @@ class PyComposeViewModel(
         val saved = restore
         scope.launch {
             try {
-                perform {
+                perform(listOf(ActionTrace.begin())) {
                     bridge.start(restored, saved)
                     // Facts Python cannot observe itself (appearance, size, locale) must
                     // reach it before the first pull: the pull is the frame the user
@@ -93,45 +104,16 @@ class PyComposeViewModel(
                     initialConfig?.let { config ->
                         bridge.acceptAction(Action("onConfigChanged", config).toJson())
                     }
+                    true
                 }
-                for (command in commands) {
-                    perform {
-                        when (command) {
-                            is Command.Dispatch -> {
-                                val source = command.action.toJson()
-                                val current =
-                                    checkNotNull(mutableSnapshot.value) { "No active snapshot" }
-                                AppBindings.validateAction(source, current.ir).getOrThrow()
-                                bridge.acceptAction(source)
-                            }
-                            is Command.Lifecycle -> {
-                                // Platform events validate against the lifecycle
-                                // contract alone: no snapshot has to exist yet.
-                                Lifecycle.check(command.event, command.payload)
-                                bridge.acceptAction(command.action.toJson())
-                            }
-                            is Command.Reload -> {
-                                if (bridge.reload(command.route, restore)) {
-                                    epoch += 1
-                                    savedState[EPOCH] = epoch
-                                }
-                            }
-                            is Command.Navigate -> {
-                                // A route change is an ordinary inbound action, not a
-                                // reason to rebuild Python. Restarting here would
-                                // discard the app's session on every navigation, which
-                                // is what makes a ViewModel impossible to retain.
-                                Lifecycle.check("onRouteChanged", command.action.payload)
-                                bridge.acceptAction(command.action.toJson())
-                            }
-                            is Command.Push -> {
-                                // A background result, delivered exactly as a tap would
-                                // be: the payload is the app's, and its handler's
-                                // declared contract is what checks it.
-                                bridge.acceptAction(command.action.toJson())
-                            }
-                        }
-                    }
+                for (first in commands) {
+                    // Everything queued behind the first command runs before one
+                    // pull: a burst costs one snapshot, not one per command.
+                    val batch =
+                        coalesce(
+                            listOf(first) + generateSequence { commands.tryReceive().getOrNull() },
+                        )
+                    perform(batch.map { it.cookie }) { batch.map { run(it.command) }.any { it } }
                 }
             } finally {
                 // Cancellation runs this synchronous teardown on the owning worker.
@@ -139,6 +121,60 @@ class PyComposeViewModel(
                 runCatching { bridge.close() }
                     .onFailure { mutableError.value = "Python cleanup failed" }
             }
+        }
+    }
+
+    /**
+     * Deliver one command; its failure is reported and the rest of the batch still runs.
+     *
+     * @return Whether it reached Python, so there may be a new snapshot to pull.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    private fun run(command: Command): Boolean {
+        try {
+            when (command) {
+                is Command.Dispatch -> {
+                    val source = command.action.toJson()
+                    val current =
+                        checkNotNull(mutableSnapshot.value) { "No active snapshot" }
+                    AppBindings.validateAction(source, current.ir).getOrThrow()
+                    bridge.acceptAction(source)
+                }
+                is Command.Lifecycle -> {
+                    // Platform events validate against the lifecycle
+                    // contract alone: no snapshot has to exist yet.
+                    Lifecycle.check(command.event, command.payload)
+                    bridge.acceptAction(command.action.toJson())
+                }
+                is Command.Reload -> {
+                    if (bridge.reload(command.route, restore)) {
+                        // A new Python session knows no serial the host holds.
+                        stream.reset()
+                        epoch += 1
+                        savedState[EPOCH] = epoch
+                    }
+                }
+                is Command.Navigate -> {
+                    // A route change is an ordinary inbound action, not a
+                    // reason to rebuild Python. Restarting here would
+                    // discard the app's session on every navigation, which
+                    // is what makes a ViewModel impossible to retain.
+                    Lifecycle.check("onRouteChanged", command.action.payload)
+                    bridge.acceptAction(command.action.toJson())
+                }
+                is Command.Window ->
+                    bridge.requestWindow(stream.surface, command.key, command.first, command.last)
+                is Command.Push -> {
+                    // A background result, delivered exactly as a tap would
+                    // be: the payload is the app's, and its handler's
+                    // declared contract is what checks it.
+                    bridge.acceptAction(command.action.toJson())
+                }
+            }
+            return true
+        } catch (failure: Exception) {
+            mutableError.value = failure.message ?: "Python worker failure"
+            return false
         }
     }
 
@@ -152,7 +188,18 @@ class PyComposeViewModel(
     }
 
     fun dispatch(action: Action) {
-        enqueue(Command.Dispatch(action))
+        // Stamped with what was on screen when the user acted, not when it is processed.
+        val shown = mutableSnapshot.value?.serial?.takeIf { it != SnapshotStream.NONE }
+        enqueue(Command.Dispatch(action.copy(serial = shown)))
+    }
+
+    /** Ask Python for items [first] to [last] of the lazy list keyed [key]. */
+    fun requestWindow(
+        key: String,
+        first: Int,
+        last: Int,
+    ) {
+        enqueue(Command.Window(key, first, last))
     }
 
     fun reload() {
@@ -189,8 +236,10 @@ class PyComposeViewModel(
 
     // Both Channel admission and MutableStateFlow writes are thread-safe.
     private fun enqueue(command: Command): Boolean {
-        val accepted = commands.trySend(command).isSuccess
+        val cookie = ActionTrace.begin()
+        val accepted = commands.trySend(Queued(command, cookie)).isSuccess
         if (!accepted) {
+            ActionTrace.end(cookie)
             mutableError.value =
                 "Python action queue unavailable"
         }
@@ -199,11 +248,19 @@ class PyComposeViewModel(
 
     // Boundary failures become diagnostics, never UI crashes.
     @Suppress("TooGenericExceptionCaught")
-    private fun perform(operation: () -> Unit) {
+    private fun perform(
+        cookies: List<Int>,
+        operation: () -> Boolean,
+    ) {
+        var shown = false
         try {
-            operation()
-            val source = bridge.fetchLatestSnapshot()
-            val result = parser.parse(source)
+            // A batch none of which reached Python has nothing new to pull.
+            if (!ActionTrace.stage("pycompose.python", operation)) return
+            val envelope =
+                ActionTrace.stage("pycompose.pull") {
+                    bridge.fetchLatest(stream.surface, stream.serial)
+                }
+            val result = ActionTrace.stage("pycompose.apply") { stream.accept(envelope) }
             result
                 .onSuccess { candidate ->
                     // Effects belong to the snapshot that carried them: a repeat
@@ -211,7 +268,9 @@ class PyComposeViewModel(
                     val previous = mutableSnapshot.value
                     val changed = candidate.snapshot != previous?.ir?.snapshot
                     if (changed || previous?.epoch != epoch) {
-                        mutableSnapshot.value = SessionSnapshot(candidate, epoch)
+                        mutableSnapshot.value =
+                            SessionSnapshot(candidate, epoch, cookies, stream.serial)
+                        shown = true
                     }
                     mutableError.value = bridge.fetchLatestError()
                     if (changed) {
@@ -221,6 +280,9 @@ class PyComposeViewModel(
                 }.onFailure { mutableError.value = it.message ?: "Invalid IR snapshot" }
         } catch (failure: Exception) {
             mutableError.value = failure.message ?: "Python worker failure"
+        } finally {
+            // A command that changed nothing on screen has no frame to close its span.
+            if (!shown) cookies.forEach(ActionTrace::end)
         }
     }
 
@@ -265,39 +327,6 @@ class PyComposeViewModel(
 
     override fun onCleared() {
         close()
-    }
-
-    private sealed interface Command {
-        data class Dispatch(
-            val action: Action,
-        ) : Command
-
-        data class Lifecycle(
-            val event: String,
-            val payload: JsonObject,
-        ) : Command {
-            val action: Action = Action(event, payload)
-        }
-
-        data class Reload(
-            val route: String,
-        ) : Command
-
-        /** A background result, queued from whatever thread produced it. */
-        data class Push(
-            val action: Action,
-        ) : Command
-
-        data class Navigate(
-            val route: String,
-        ) : Command {
-            /** The route change, delivered to Python as an ordinary action. */
-            val action: Action =
-                Action(
-                    "onRouteChanged",
-                    JsonObject(mapOf("route" to JsonPrimitive(route))),
-                )
-        }
     }
 
     companion object {

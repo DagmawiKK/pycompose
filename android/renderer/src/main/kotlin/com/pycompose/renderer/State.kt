@@ -16,6 +16,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -25,21 +26,67 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
+import com.pycompose.renderer.generated.driveTo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.json.JsonPrimitive
 
 /**
+ * One node's projection protocol: drive its native holder when the app's desired
+ * value changes, and report each settled native value once.
+ *
+ * The holder belongs to the host and lives exactly as long as the node, so a
+ * snapshot pull never recreates state a gesture is moving. Driving only on a
+ * *change* of the desired value is the whole protocol: re-asserting an unchanged
+ * value would fight a user who just moved the holder by gesture. A native settle
+ * becomes the last desired value, so the app's echo of the report cannot re-drive
+ * it. The report baseline is read during composition, not in the observer: a
+ * holder without anchors yet can settle in the same dispatch as its first drive,
+ * before the observer's first read, and that settle must still be reported.
+ *
+ * Families differ only in what they pass. [lastDesired] starts at the desired
+ * value and is saveable where the holder is created at that value and restored.
+ *
+ * @param state The node's remembered native holder; both effects are keyed to it.
+ * @param desired The app's desired value; null drives nothing.
+ * @param lastDesired The last value driven or settled.
+ * @param settled Reads the holder's settled value in wire terms.
+ * @param report Dispatches one settled value to the app; null reports none.
+ * @param answered Whether the app has answered every report; until it has, the desired
+ *   value answers an older one and is not driven.
+ * @param drive Moves the holder towards a desired value.
+ */
+@Suppress("LongParameterList")
+@Composable
+internal fun <V : Any> Reconcile(
+    state: Any,
+    desired: V?,
+    lastDesired: MutableState<V?>,
+    settled: () -> V,
+    report: ((V) -> Unit)?,
+    answered: Boolean,
+    drive: suspend (V) -> Unit,
+) {
+    val baseline = remember(state) { Settled(settled()) }
+    val channel = rememberUpdatedState(report)
+    OnDesired(state, desired, answered) { wanted ->
+        if (wanted != lastDesired.value) {
+            lastDesired.value = wanted
+            wanted?.let { drive(it) }
+        }
+    }
+    LaunchedEffect(state) {
+        snapshotFlow(settled).collect { value ->
+            if (value != baseline.value) {
+                baseline.value = value
+                lastDesired.value = value
+                channel.value?.invoke(value)
+            }
+        }
+    }
+}
+
+/**
  * The host-owned drawer state for one node, reconciled to the app's desired value.
- *
- * The state belongs to the host and lives exactly as long as the node: it is
- * remembered under the node's key, so pulling a snapshot re-renders the tree
- * without recreating state a gesture is already moving. Python states the
- * desired value in the snapshot; the host drives the state towards it, gestures
- * and animation included, and reports each settled change as an action.
- *
- * Driving only on a *change* of the desired value is the whole protocol:
- * re-asserting the value on every snapshot would fight a user who just swiped
- * the drawer shut, and that change is exactly what the report tells the app.
  *
  * @param open Desired state; null leaves the state to the app's gestures.
  * @param report Action id settled changes report to; null reports none.
@@ -49,32 +96,29 @@ import kotlinx.serialization.json.JsonPrimitive
 internal fun rememberHostDrawerState(
     open: Boolean?,
     report: String?,
-    observation: (String, String, Boolean) -> Unit,
+    observation: Observation,
 ): DrawerState {
     val state = rememberDrawerState(DrawerValue.Closed)
-    val settled = remember(state) { Settled(state.currentValue) }
-    LaunchedEffect(state, open) {
-        when (open) {
-            true -> state.open()
-            false -> state.close()
-            null -> Unit
-        }
-    }
-    val channel = rememberUpdatedState(report)
-    LaunchedEffect(state) {
-        // A report is a change from the value composition found. Seeding the
-        // baseline here would lose the first one: a drawer without anchors yet
-        // settles in the same dispatch as the drive, before this flow's first
-        // read.
-        snapshotFlow { state.currentValue }.collect { value ->
-            if (value != settled.value) {
-                settled.value = value
-                channel.value?.let { observation("open", it, value == DrawerValue.Open) }
-            }
-        }
-    }
+    Reconcile(
+        state,
+        open,
+        remember(state) { mutableStateOf<Boolean?>(null) },
+        settled = { state.currentValue == DrawerValue.Open },
+        report = report?.let { id -> { value -> observation("open", id, JsonPrimitive(value)) } },
+        answered = answered(report),
+    ) { state.driveTo(if (it) DrawerValue.Open else DrawerValue.Closed) }
     return state
 }
+
+/** A native anchor's wire alias: its entry name in lowerCamel, as every anchor family spells it. */
+internal val Enum<*>.wire: String get() = name.replaceFirstChar { it.lowercaseChar() }
+
+/** The native anchor a wire alias names, or null when the host cannot know it. */
+internal inline fun <reified E : Enum<E>> String.anchor(): E? =
+    enumValues<E>().firstOrNull {
+        it.wire ==
+            this
+    }
 
 /** The settled value one node last reported, seeded where its composition started. */
 internal class Settled<T>(
@@ -105,7 +149,7 @@ internal fun rememberHostSliderState(
     report: String?,
     valueRange: ClosedFloatingPointRange<Float>?,
     steps: Long?,
-    observation: (String, String, Float) -> Unit,
+    observation: Observation,
 ): SliderState {
     val range = valueRange ?: (0f..1f)
     val count = (steps ?: 0L).toInt()
@@ -135,18 +179,20 @@ internal fun rememberHostSliderState(
         val current = state.value
         if (current != settled.value) {
             settled.value = current
-            channel.value?.let { action -> currentObservation.value("value", action, current) }
+            channel.value?.let { action ->
+                currentObservation.value("value", action, JsonPrimitive(current))
+            }
         }
     }
     LaunchedEffect(state) { state.onValueChangeFinished = reportSettled }
-    LaunchedEffect(state, value) {
-        if (value != lastDesired.value) {
-            val desired = value?.toFloat()
+    OnDesired(state, value, answered(report)) { wanted ->
+        if (wanted != lastDesired.value) {
+            val desired = wanted?.toFloat()
             if (desired != null && desired != state.value) {
                 state.value = desired
                 reportSettled()
             }
-            lastDesired.value = value
+            lastDesired.value = wanted
         }
     }
     return state
@@ -158,9 +204,7 @@ internal fun rememberHostSliderState(
  * A tooltip has no settled callback of its own: hover, focus and long press show
  * it through the native state, an outside click dismisses it, and a
  * non-persistent tooltip closes on its own timer. The holder therefore reports
- * the *visible* transition rather than a gesture callback, and treats a native
- * change as the new baseline so the app's echo of that change cannot re-show a
- * tooltip the user just dismissed.
+ * the *visible* transition rather than a gesture callback.
  *
  * @param visible Desired visibility; null leaves the tooltip to its gestures.
  * @param isPersistent Whether the native tooltip waits for an explicit dismissal.
@@ -173,35 +217,27 @@ internal fun rememberHostTooltipState(
     visible: Boolean?,
     isPersistent: Boolean,
     report: String?,
-    observation: (String, String, Boolean) -> Unit,
+    observation: Observation,
 ): TooltipState {
     val state = rememberTooltipState(isPersistent = isPersistent)
-    val lastDesired = remember(state) { mutableStateOf<Boolean?>(null) }
-    val settled = remember(state) { Settled(state.isVisible) }
-    val channel = rememberUpdatedState(report)
-    val currentObservation = rememberUpdatedState(observation)
-    LaunchedEffect(state, visible) {
-        if (visible != lastDesired.value) {
-            lastDesired.value = visible
-            when (visible) {
-                true -> {
-                    // Let the anchor's initial unfocused notification run first:
-                    // native keyboard handling dismisses a visible tooltip there.
-                    withFrameNanos { }
-                    state.show()
-                }
-                false -> state.dismiss()
-                null -> Unit
-            }
-        }
-    }
-    LaunchedEffect(state) {
-        snapshotFlow { state.isVisible }.collect { value ->
-            if (value != settled.value) {
-                settled.value = value
-                lastDesired.value = value
-                channel.value?.let { currentObservation.value("visible", it, value) }
-            }
+    Reconcile(
+        state,
+        visible,
+        remember(state) { mutableStateOf<Boolean?>(null) },
+        settled = { state.isVisible },
+        report =
+            report?.let { id ->
+                { value -> observation("visible", id, JsonPrimitive(value)) }
+            },
+        answered = answered(report),
+    ) {
+        if (it) {
+            // Let the anchor's initial unfocused notification run first:
+            // native keyboard handling dismisses a visible tooltip there.
+            withFrameNanos { }
+            state.show()
+        } else {
+            state.dismiss()
         }
     }
     return state
@@ -224,19 +260,19 @@ internal fun rememberHostTooltipState(
 internal fun rememberHostScrollState(
     offset: Double?,
     report: String?,
-    observation: (String, String, Int) -> Unit,
+    observation: Observation,
 ): ScrollState {
     // Top, like the drawer starts closed: a stated offset is a drive from
     // there, and the drive's own settle is what reports the arrival.
     val state = rememberScrollState(initial = 0)
     val lastDesired = rememberSaveable { mutableStateOf<Double?>(null) }
-    LaunchedEffect(state, offset) {
-        if (offset != lastDesired.value) {
-            val desired = offset?.toInt()
+    OnDesired(state, offset, answered(report)) { wanted ->
+        if (wanted != lastDesired.value) {
+            val desired = wanted?.toInt()
             if (desired != null && desired != state.value) {
                 state.scrollTo(desired)
             }
-            lastDesired.value = offset
+            lastDesired.value = wanted
         }
     }
     ObserveIdlePosition(state, { state.value }, "offset", report, observation)
@@ -274,20 +310,20 @@ fun ScrollState.attachTo(
 internal fun rememberHostLazyListState(
     index: Long?,
     report: String?,
-    observation: (String, String, Int) -> Unit,
+    observation: Observation,
 ): LazyListState {
     val state = rememberLazyListState()
     val lastDesired = rememberSaveable { mutableStateOf<Long?>(null) }
-    LaunchedEffect(state, index) {
-        if (index != lastDesired.value) {
-            val desired = index?.toInt()
+    OnDesired(state, index, answered(report)) { wanted ->
+        if (wanted != lastDesired.value) {
+            val desired = wanted?.toInt()
             if (
                 desired != null &&
                 (desired != state.firstVisibleItemIndex || state.firstVisibleItemScrollOffset != 0)
             ) {
                 state.scrollToItem(desired)
             }
-            lastDesired.value = index
+            lastDesired.value = wanted
         }
     }
     ObserveIdlePosition(state, {
@@ -303,7 +339,7 @@ private fun ObserveIdlePosition(
     position: () -> Int,
     kind: String,
     report: String?,
-    observation: (String, String, Int) -> Unit,
+    observation: Observation,
 ) {
     val currentPosition = rememberUpdatedState(position)
     val currentObservation = rememberUpdatedState(observation)
@@ -324,7 +360,7 @@ private fun ObserveIdlePosition(
                 ) {
                     settled.value = value
                     channel.value?.let {
-                        currentObservation.value(kind, it, value)
+                        currentObservation.value(kind, it, JsonPrimitive(value))
                     }
                 }
             }
@@ -374,7 +410,7 @@ private val snackbarRequestSaver =
 internal fun rememberHostSnackbar(
     id: String,
     request: SnackbarRequest,
-    observation: (String, String, JsonPrimitive) -> Unit,
+    observation: Observation,
 ): SnackbarHostState {
     val state = remember(id) { SnackbarHostState() }
     // Keep the highest accepted request before keying the effect. Rejecting an

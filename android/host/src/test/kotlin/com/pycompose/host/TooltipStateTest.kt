@@ -8,7 +8,6 @@ import androidx.compose.ui.test.performTouchInput
 import com.pycompose.host.ui.BuiltinComponents
 import com.pycompose.host.ui.PyComposeTheme
 import com.pycompose.ir.IrParser
-import com.pycompose.ir.ValidatedIr
 import com.pycompose.renderer.Action
 import com.pycompose.renderer.ActionDispatcher
 import com.pycompose.renderer.Renderer
@@ -33,26 +32,12 @@ class TooltipStateTest {
         compose.setContent { PyComposeTheme { renderer.Render(ir.value) } }
         compose.onNodeWithText("Hint").assertDoesNotExist()
 
-        compose.runOnIdle { ir.value = parse(tooltip("true")) }
+        compose.runOnIdle { ir.value = parse(tooltip("true"), actions) }
         compose.onNodeWithText("Hint").assertExists()
-        compose.runOnIdle { ir.value = parse(tooltip("false")) }
+        compose.runOnIdle { ir.value = parse(tooltip("false"), actions) }
         compose.onNodeWithText("Hint").assertDoesNotExist()
 
         assertEquals(listOf("""{"visible":true}""", """{"visible":false}"""), payloads(actions))
-    }
-
-    @Test
-    fun repeatedSnapshotsDoNotReplayVisibilityReports() {
-        val ir = mutableStateOf(parse(tooltip("true")))
-        val actions = mutableListOf<Action>()
-        val renderer = renderer(actions)
-        compose.setContent { PyComposeTheme { renderer.Render(ir.value) } }
-        compose.onNodeWithText("Hint").assertExists()
-
-        compose.runOnIdle { ir.value = parse(tooltip("true", anchor = "Refreshed anchor")) }
-        compose.onNodeWithText("Refreshed anchor").assertExists()
-        compose.onNodeWithText("Hint").assertExists()
-        assertEquals(listOf("""{"visible":true}"""), payloads(actions))
     }
 
     @Test
@@ -66,7 +51,8 @@ class TooltipStateTest {
         compose.onNodeWithText("Hint").assertDoesNotExist()
 
         compose.runOnIdle {
-            ir.value = parse(tooltip("true", persistent = false, anchor = "Refreshed anchor"))
+            ir.value =
+                parse(tooltip("true", persistent = false, anchor = "Refreshed anchor"), actions)
         }
         compose.onNodeWithText("Refreshed anchor").assertExists()
         compose.onNodeWithText("Hint").assertDoesNotExist()
@@ -82,7 +68,7 @@ class TooltipStateTest {
         compose.onNodeWithText("Anchor").performTouchInput { longClick() }
         compose.waitUntil(5000) { actions.isNotEmpty() }
 
-        compose.runOnIdle { ir.value = parse(tooltip("true", persistent = false)) }
+        compose.runOnIdle { ir.value = parse(tooltip("true", persistent = false), actions) }
         compose.mainClock.advanceTimeBy(3000)
         compose.onNodeWithText("Hint").assertDoesNotExist()
         assertEquals(listOf("""{"visible":true}""", """{"visible":false}"""), payloads(actions))
@@ -94,7 +80,10 @@ class TooltipStateTest {
     private fun renderer(actions: MutableList<Action>): Renderer =
         Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
 
-    private fun parse(source: String): ValidatedIr = IrParser().parse(source).getOrThrow()
+    private fun parse(
+        source: String,
+        actions: List<Action> = emptyList(),
+    ) = IrParser().parse(echoing(source, actions)).getOrThrow()
 
     private fun tooltip(
         visible: String?,

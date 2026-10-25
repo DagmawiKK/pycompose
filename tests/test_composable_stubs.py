@@ -69,7 +69,7 @@ def test_composable_runtime_signature_exposes_the_instance_key() -> None:
 
     signature = inspect.signature(greeting)
     assert signature.parameters["id"].kind == inspect.Parameter.KEYWORD_ONLY
-    assert signature.parameters["id"].default is inspect.Parameter.empty
+    assert signature.parameters["id"].default is None
     assert signature.parameters["text"].annotation is str
     assert signature.parameters["text"].default == "Hello"
     assert signature.return_annotation is Node

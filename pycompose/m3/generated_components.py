@@ -4,11 +4,13 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from collections.abc import Callable, Sequence
+from typing import Any, Literal, cast, overload
 
-from pycompose.components.base import Component
+from pycompose.components.base import ActionTarget, Component, PropValue
 from pycompose.components.modifiers import Modifier
 from pycompose.composition import Content, content_nodes, slot_nodes
+from pycompose.core.expressions import Expression
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
 from pycompose.core.values import UNSET, _Unset
@@ -22,15 +24,24 @@ __all__ = [
     "Badge",
     "BadgedBox",
     "BasicAlertDialog",
+    "BasicText",
+    "BasicTextField",
     "BottomAppBar",
+    "BottomAppBarActions",
+    "BottomSheetScaffold",
     "Box",
     "Button",
     "Card",
+    "CardWithoutOnClick",
     "CenterAlignedTopAppBar",
     "Checkbox",
     "CircularProgressIndicator",
+    "CircularProgressIndicatorProgress",
     "Column",
     "Crossfade",
+    "DatePicker",
+    "DatePickerDialog",
+    "DisableSelection",
     "DismissibleDrawerSheet",
     "DismissibleNavigationDrawer",
     "DockedSearchBar",
@@ -39,17 +50,22 @@ __all__ = [
     "ElevatedAssistChip",
     "ElevatedButton",
     "ElevatedCard",
+    "ElevatedCardWithoutOnClick",
     "ElevatedFilterChip",
     "ElevatedSuggestionChip",
     "ExpandedDockedSearchBar",
     "ExpandedFullScreenSearchBar",
+    "ExposedDropdownMenu",
+    "ExposedDropdownMenuBox",
     "ExtendedFloatingActionButton",
+    "ExtendedFloatingActionButtonText",
     "FilledIconButton",
     "FilledIconToggleButton",
     "FilledTonalButton",
     "FilledTonalIconButton",
     "FilledTonalIconToggleButton",
     "FilterChip",
+    "FlexBox",
     "FloatingActionButton",
     "FlowColumn",
     "FlowRow",
@@ -58,13 +74,16 @@ __all__ = [
     "IconButton",
     "IconToggleButton",
     "Image",
+    "ImageImageVector",
     "InputChip",
+    "Label",
     "LargeFloatingActionButton",
     "LargeTopAppBar",
     "LazyColumn",
     "LazyRow",
     "LeadingIconTab",
     "LinearProgressIndicator",
+    "LinearProgressIndicatorWithoutProgress",
     "ListItem",
     "MediumTopAppBar",
     "ModalBottomSheet",
@@ -78,12 +97,17 @@ __all__ = [
     "NavigationDrawerItem",
     "NavigationRail",
     "NavigationRailItem",
+    "NavigationSuite",
     "NavigationSuiteItem",
     "NavigationSuiteScaffold",
+    "NavigationSuiteScaffoldLayout",
+    "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType",
     "OutlinedButton",
     "OutlinedCard",
+    "OutlinedCardWithoutOnClick",
     "OutlinedIconButton",
     "OutlinedIconToggleButton",
+    "OutlinedSecureTextField",
     "OutlinedTextField",
     "PermanentDrawerSheet",
     "PermanentNavigationDrawer",
@@ -100,11 +124,16 @@ __all__ = [
     "SearchBarStateInputField",
     "SecondaryScrollableTabRow",
     "SecondaryTabRow",
+    "SecureTextField",
     "SegmentedButton",
+    "SelectionContainer",
+    "SharedTransitionLayout",
     "ShortNavigationBar",
     "ShortNavigationBarItem",
     "SingleChoiceSegmentedButtonRow",
     "Slider",
+    "SliderValue",
+    "SmallFloatingActionButton",
     "Snackbar",
     "SnackbarHost",
     "Spacer",
@@ -112,12 +141,20 @@ __all__ = [
     "StatefulSearchBarInputField",
     "SuggestionChip",
     "Surface",
+    "SurfaceChecked",
+    "SurfaceOnClick",
+    "SurfaceSelected",
     "SwipeToDismissBox",
     "Switch",
     "Tab",
+    "TabContent",
     "Text",
+    "TextAnnotatedString",
     "TextButton",
     "TextField",
+    "TimeInput",
+    "TimePicker",
+    "TimePickerDialog",
     "TooltipBox",
     "TopAppBar",
     "TriStateCheckbox",
@@ -127,6 +164,24 @@ __all__ = [
     "WideNavigationRailItem",
 ]
 
+
+_AnimatedContentContentAlignment = Literal[
+    "bottomCenter",
+    "bottomEnd",
+    "bottomLeft",
+    "bottomRight",
+    "bottomStart",
+    "center",
+    "centerEnd",
+    "centerLeft",
+    "centerRight",
+    "centerStart",
+    "topCenter",
+    "topEnd",
+    "topLeft",
+    "topRight",
+    "topStart",
+]
 
 _BoxContentAlignment = Literal[
     "topStart",
@@ -156,6 +211,24 @@ _FlowRowItemVerticalAlignment = Literal[
     "top",
     "center",
     "bottom",
+]
+
+_ImageImageVectorAlignment = Literal[
+    "bottomCenter",
+    "bottomEnd",
+    "bottomLeft",
+    "bottomRight",
+    "bottomStart",
+    "center",
+    "centerEnd",
+    "centerLeft",
+    "centerRight",
+    "centerStart",
+    "topCenter",
+    "topEnd",
+    "topLeft",
+    "topRight",
+    "topStart",
 ]
 
 _LazyColumnVerticalArrangement = Literal[
@@ -233,13 +306,13 @@ class AlertDialog(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | None = None,
-        icon_content_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
+        icon_content_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
-        on_dismiss_request: str,
+        on_dismiss_request: ActionTarget,
         shape: JsonValue | None = None,
-        text_content_color: JsonValue | None = None,
-        title_content_color: JsonValue | None = None,
+        text_content_color: JsonValue | Expression | None = None,
+        title_content_color: JsonValue | Expression | None = None,
         tonal_elevation: int | float | None = None,
         confirm_button: Content | None = None,
         dismiss_button: Content | None = None,
@@ -265,7 +338,7 @@ class AlertDialog(Component):
             text: Nodes for the native text slot.
             title: Nodes for the native title slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if icon_content_color is not None:
@@ -309,23 +382,39 @@ class AnimatedContent(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
+        content_alignment: _AnimatedContentContentAlignment | None = None,
+        label: str | None = None,
         modifier: Modifier | None = None,
-        target: str,
+        target_state: str,
         children: Content = (),
     ) -> None:
         """Construct a registered AnimatedContent.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            content_alignment: Native contentAlignment; None uses its default.
+            label: Native label; None uses its default.
             modifier: Native modifier; None uses its default.
-            target: Required native target.
+            target_state: Required native targetState.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
-        props["target"] = target
-        normalized = content_nodes(children, key="children")
+        props: dict[str, PropValue] = {}
+        if content_alignment is not None:
+            props["content_alignment"] = content_alignment
+        if label is not None:
+            props["label"] = label
+        props["target_state"] = target_state
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -337,23 +426,43 @@ class AnimatedVisibility(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
+        label: str | None = None,
         modifier: Modifier | None = None,
         visible: bool,
         children: Content = (),
+        content: Content | None = None,
     ) -> None:
         """Construct a registered AnimatedVisibility.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            label: Native label; None uses its default.
             modifier: Native modifier; None uses its default.
             visible: Required native visible.
             children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
+        if label is not None:
+            props["label"] = label
         props["visible"] = visible
-        normalized = content_nodes(children, key="children")
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -371,7 +480,10 @@ class AssistChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         label: Content | None = None,
         leading_icon: Content | None = None,
@@ -386,12 +498,15 @@ class AssistChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             label: Nodes for the native label slot.
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if not isinstance(elevation, _Unset):
@@ -399,6 +514,12 @@ class AssistChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         slotted: tuple[Node, ...] = ()
@@ -423,9 +544,9 @@ class Badge(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -433,6 +554,7 @@ class Badge(Component):
         """Construct a registered Badge.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -440,9 +562,9 @@ class Badge(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content is not None:
@@ -451,7 +573,11 @@ class Badge(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -463,7 +589,7 @@ class BadgedBox(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -473,6 +599,7 @@ class BadgedBox(Component):
         """Construct a registered BadgedBox.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -480,16 +607,20 @@ class BadgedBox(Component):
             badge: Nodes for the native badge slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if content is not None:
             if children:
                 raise IrValidationError(
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if badge is not None:
             slotted += slot_nodes(badge, key="badge", slot="badge")
@@ -506,24 +637,133 @@ class BasicAlertDialog(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
-        on_dismiss_request: str,
+        on_dismiss_request: ActionTarget,
         children: Content = (),
     ) -> None:
         """Construct a registered BasicAlertDialog.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             on_dismiss_request: Required native onDismissRequest.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["on_dismiss_request"] = on_dismiss_request
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class BasicText(Component):
+    """Native BasicText; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "BasicText"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        min_lines: int | None = None,
+        modifier: Modifier | None = None,
+        overflow: JsonValue | None = None,
+        soft_wrap: bool | None = None,
+        style: JsonValue | None = None,
+        text: JsonValue,
+    ) -> None:
+        """Construct a registered BasicText.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            min_lines: Native minLines; None uses its default.
+            modifier: Native modifier; None uses its default.
+            overflow: Native overflow; None uses its default.
+            soft_wrap: Native softWrap; None uses its default.
+            style: Native style; None uses its default.
+            text: Required native text.
+        """
+        props: dict[str, PropValue] = {}
+        if min_lines is not None:
+            props["min_lines"] = min_lines
+        if overflow is not None:
+            props["overflow"] = overflow
+        if soft_wrap is not None:
+            props["soft_wrap"] = soft_wrap
+        if style is not None:
+            props["style"] = style
+        props["text"] = text
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class BasicTextField(Component):
+    """Native BasicTextField; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "BasicTextField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        min_lines: int | None = None,
+        modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        on_value_change: ActionTarget,
+        read_only: bool | None = None,
+        single_line: bool | None = None,
+        text_style: JsonValue | None = None,
+        value: str,
+    ) -> None:
+        """Construct a registered BasicTextField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            min_lines: Native minLines; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            on_value_change: Required native onValueChange.
+            read_only: Native readOnly; None uses its default.
+            single_line: Native singleLine; None uses its default.
+            text_style: Native textStyle; None uses its default.
+            value: Required native value.
+        """
+        props: dict[str, PropValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        if min_lines is not None:
+            props["min_lines"] = min_lines
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        props["on_value_change"] = on_value_change
+        if read_only is not None:
+            props["read_only"] = read_only
+        if single_line is not None:
+            props["single_line"] = single_line
+        if text_style is not None:
+            props["text_style"] = text_style
+        props["value"] = value
+        super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
 class BottomAppBar(Component):
@@ -534,7 +774,7 @@ class BottomAppBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -542,13 +782,155 @@ class BottomAppBar(Component):
         """Construct a registered BottomAppBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
-        normalized = content_nodes(children, key="children")
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class BottomAppBarActions(Component):
+    """Native BottomAppBar; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "BottomAppBarActions"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_padding: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        tonal_elevation: int | float | None = None,
+        window_insets: JsonValue | None = None,
+        actions: Content | None = None,
+        floating_action_button: Content | None = None,
+    ) -> None:
+        """Construct a registered BottomAppBarActions.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            modifier: Native modifier; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            actions: Nodes for the native actions slot.
+            floating_action_button: Nodes for the native floatingActionButton slot.
+        """
+        props: dict[str, PropValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        slotted: tuple[Node, ...] = ()
+        if actions is not None:
+            slotted += slot_nodes(actions, key="actions", slot="actions")
+        if floating_action_button is not None:
+            slotted += slot_nodes(
+                floating_action_button,
+                key="floatingActionButton",
+                slot="floatingActionButton",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class BottomSheetScaffold(Component):
+    """Native BottomSheetScaffold; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "BottomSheetScaffold"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        container_color: JsonValue | Expression | None = None,
+        modifier: Modifier | None = None,
+        sheet_container_color: JsonValue | Expression | None = None,
+        sheet_max_width: int | float | None = None,
+        sheet_peek_height: int | float | None = None,
+        sheet_shadow_elevation: int | float | None = None,
+        sheet_shape: JsonValue | None = None,
+        sheet_swipe_enabled: bool | None = None,
+        sheet_tonal_elevation: int | float | None = None,
+        children: Content = (),
+        sheet_content: Content | None = None,
+        top_bar: Content | None = None,
+    ) -> None:
+        """Construct a registered BottomSheetScaffold.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            modifier: Native modifier; None uses its default.
+            sheet_container_color: Native sheetContainerColor; None uses its
+                default.
+            sheet_max_width: Native sheetMaxWidth; None uses its default.
+            sheet_peek_height: Native sheetPeekHeight; None uses its default.
+            sheet_shadow_elevation: Native sheetShadowElevation; None uses its
+                default.
+            sheet_shape: Native sheetShape; None uses its default.
+            sheet_swipe_enabled: Native sheetSwipeEnabled; None uses its default.
+            sheet_tonal_elevation: Native sheetTonalElevation; None uses its
+                default.
+            children: Ordered child nodes with stable keys.
+            sheet_content: Nodes for the native sheetContent slot.
+            top_bar: Nodes for the native topBar slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if sheet_container_color is not None:
+            props["sheet_container_color"] = sheet_container_color
+        if sheet_max_width is not None:
+            props["sheet_max_width"] = sheet_max_width
+        if sheet_peek_height is not None:
+            props["sheet_peek_height"] = sheet_peek_height
+        if sheet_shadow_elevation is not None:
+            props["sheet_shadow_elevation"] = sheet_shadow_elevation
+        if sheet_shape is not None:
+            props["sheet_shape"] = sheet_shape
+        if sheet_swipe_enabled is not None:
+            props["sheet_swipe_enabled"] = sheet_swipe_enabled
+        if sheet_tonal_elevation is not None:
+            props["sheet_tonal_elevation"] = sheet_tonal_elevation
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if sheet_content is not None:
+            slotted += slot_nodes(
+                sheet_content,
+                key="sheetContent",
+                slot="sheetContent",
+            )
+        if top_bar is not None:
+            slotted += slot_nodes(top_bar, key="topBar", slot="topBar")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class Box(Component):
@@ -559,7 +941,7 @@ class Box(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         content_alignment: _BoxContentAlignment | None = None,
         modifier: Modifier | None = None,
@@ -568,15 +950,23 @@ class Box(Component):
         """Construct a registered Box.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             content_alignment: Native contentAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if content_alignment is not None:
             props["content_alignment"] = content_alignment
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -594,10 +984,10 @@ class Button(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         text: str,
     ) -> None:
         """Construct a registered Button.
@@ -614,7 +1004,7 @@ class Button(Component):
             on_press: Native onPress; None uses its default.
             text: Required native text.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if not isinstance(elevation, _Unset):
@@ -632,25 +1022,44 @@ class Button(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
-class Card(Component):
+class _Card(Component):
     """Native Card; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Card"
+    required_keywords = frozenset(
+        {
+            "on_click",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "colors",
+            "content",
+            "elevation",
+            "enabled",
+            "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
+            "shape",
+        }
+    )
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         colors: JsonValue | None = None,
         elevation: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -658,6 +1067,7 @@ class Card(Component):
         """Construct a registered Card.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             colors: Native colors; None uses its default.
@@ -673,9 +1083,9 @@ class Card(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -699,8 +1109,61 @@ class Card(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Card(_Card):
+    """Native Card; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> Card: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> CardWithoutOnClick: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class CenterAlignedTopAppBar(Component):
@@ -734,7 +1197,7 @@ class CenterAlignedTopAppBar(Component):
             navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if expanded_height is not None:
@@ -768,10 +1231,10 @@ class Checkbox(Component):
         checked: bool,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
     ) -> None:
         """Construct a registered Checkbox.
 
@@ -785,7 +1248,7 @@ class Checkbox(Component):
             on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if enabled is not None:
             props["enabled"] = enabled
@@ -799,22 +1262,31 @@ class Checkbox(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
-class CircularProgressIndicator(Component):
+class _CircularProgressIndicator(Component):
     """Native CircularProgressIndicator;
     props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "CircularProgressIndicator"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "color",
+            "stroke_cap",
+            "stroke_width",
+            "track_color",
+        }
+    )
 
     def __init__(
         self,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         stroke_cap: JsonValue | None = None,
         stroke_width: int | float | None = None,
-        track_color: JsonValue | None = None,
+        track_color: JsonValue | Expression | None = None,
     ) -> None:
         """Construct a registered CircularProgressIndicator.
 
@@ -826,7 +1298,7 @@ class CircularProgressIndicator(Component):
             stroke_width: Native strokeWidth; None uses its default.
             track_color: Native trackColor; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
         if stroke_cap is not None:
@@ -838,6 +1310,48 @@ class CircularProgressIndicator(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
+class CircularProgressIndicator(_CircularProgressIndicator):
+    """Native CircularProgressIndicator; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        color: JsonValue | Expression | None = None,
+        modifier: Modifier | None = None,
+        stroke_cap: JsonValue | None = None,
+        stroke_width: int | float | None = None,
+        track_color: JsonValue | Expression | None = None,
+    ) -> CircularProgressIndicator: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        color: JsonValue | Expression | None = None,
+        gap_size: int | float | None = None,
+        modifier: Modifier | None = None,
+        progress: int | float,
+        stroke_cap: JsonValue | None = None,
+        stroke_width: int | float | None = None,
+        track_color: JsonValue | Expression | None = None,
+    ) -> CircularProgressIndicatorProgress: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
+
+
 class Column(Component):
     """Native Column; props and defaults follow the component manifest."""
 
@@ -846,18 +1360,19 @@ class Column(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         horizontal_alignment: _ColumnHorizontalAlignment | None = None,
         modifier: Modifier | None = None,
         offset: int | float | None = None,
-        on_scroll_idle: str | None = None,
+        on_scroll_idle: ActionTarget | None = None,
         scrollable: bool | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered Column.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             horizontal_alignment: Native horizontalAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -865,8 +1380,11 @@ class Column(Component):
             on_scroll_idle: Native onScrollIdle; None uses its default.
             scrollable: Native scrollable; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if horizontal_alignment is not None:
             props["horizontal_alignment"] = horizontal_alignment
         if offset is not None:
@@ -875,7 +1393,11 @@ class Column(Component):
             props["on_scroll_idle"] = on_scroll_idle
         if scrollable is not None:
             props["scrollable"] = scrollable
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -887,23 +1409,193 @@ class Crossfade(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
+        label: str | None = None,
         modifier: Modifier | None = None,
-        target: str,
+        target_state: str,
         children: Content = (),
     ) -> None:
         """Construct a registered Crossfade.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            label: Native label; None uses its default.
+            modifier: Native modifier; None uses its default.
+            target_state: Required native targetState.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if label is not None:
+            props["label"] = label
+        props["target_state"] = target_state
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class DatePicker(Component):
+    """Native DatePicker; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "DatePicker"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        displayed_month_millis: int | None = None,
+        modifier: Modifier | None = None,
+        on_displayed_month_millis_change: ActionTarget | None = None,
+        on_selected_date_millis_change: ActionTarget | None = None,
+        selected_date_millis: int | None | _Unset = UNSET,
+        show_mode_toggle: bool | None = None,
+    ) -> None:
+        """Construct a registered DatePicker.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            displayed_month_millis: Native displayedMonthMillis; None uses its
+                default.
+            modifier: Native modifier; None uses its default.
+            on_displayed_month_millis_change: Native onDisplayedMonthMillisChange;
+                None uses its default.
+            on_selected_date_millis_change: Native onSelectedDateMillisChange; None
+                uses its default.
+            selected_date_millis: Native selectedDateMillis; omitted uses its
+                default; None is null.
+            show_mode_toggle: Native showModeToggle; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if displayed_month_millis is not None:
+            props["displayed_month_millis"] = displayed_month_millis
+        if on_displayed_month_millis_change is not None:
+            props["on_displayed_month_millis_change"] = on_displayed_month_millis_change
+        if on_selected_date_millis_change is not None:
+            props["on_selected_date_millis_change"] = on_selected_date_millis_change
+        if not isinstance(selected_date_millis, _Unset):
+            props["selected_date_millis"] = selected_date_millis
+        if show_mode_toggle is not None:
+            props["show_mode_toggle"] = show_mode_toggle
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class DatePickerDialog(Component):
+    """Native DatePickerDialog; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "DatePickerDialog"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        on_dismiss_request: ActionTarget,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        confirm_button: Content | None = None,
+        dismiss_button: Content | None = None,
+    ) -> None:
+        """Construct a registered DatePickerDialog.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_dismiss_request: Required native onDismissRequest.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            confirm_button: Nodes for the native confirmButton slot.
+            dismiss_button: Nodes for the native dismissButton slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        props["on_dismiss_request"] = on_dismiss_request
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if confirm_button is not None:
+            slotted += slot_nodes(
+                confirm_button,
+                key="confirmButton",
+                slot="confirmButton",
+            )
+        if dismiss_button is not None:
+            slotted += slot_nodes(
+                dismiss_button,
+                key="dismissButton",
+                slot="dismissButton",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
+class DisableSelection(Component):
+    """Native DisableSelection; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "DisableSelection"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered DisableSelection.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
-            target: Required native target.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
-        props["target"] = target
-        normalized = content_nodes(children, key="children")
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -916,9 +1608,9 @@ class DismissibleDrawerSheet(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        drawer_container_color: JsonValue | None = None,
+        drawer_container_color: JsonValue | Expression | None = None,
         drawer_shape: JsonValue | None = None,
         drawer_tonal_elevation: int | float | None = None,
         modifier: Modifier | None = None,
@@ -929,6 +1621,7 @@ class DismissibleDrawerSheet(Component):
         """Construct a registered DismissibleDrawerSheet.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             drawer_container_color: Native drawerContainerColor; None uses its
                 default.
@@ -941,9 +1634,9 @@ class DismissibleDrawerSheet(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
             props["drawer_container_color"] = drawer_container_color
         if drawer_shape is not None:
@@ -958,7 +1651,11 @@ class DismissibleDrawerSheet(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -971,11 +1668,11 @@ class DismissibleNavigationDrawer(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_open_change: str | None = None,
+        on_open_change: ActionTarget | None = None,
         open: bool | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -984,6 +1681,7 @@ class DismissibleNavigationDrawer(Component):
         """Construct a registered DismissibleNavigationDrawer.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             gestures_enabled: Native gesturesEnabled; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -994,9 +1692,9 @@ class DismissibleNavigationDrawer(Component):
             drawer: Nodes for the native drawerContent slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if gestures_enabled is not None:
             props["gestures_enabled"] = gestures_enabled
         if on_open_change is not None:
@@ -1009,7 +1707,11 @@ class DismissibleNavigationDrawer(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if drawer is not None:
             slotted += slot_nodes(drawer, key="drawer", slot="drawer")
@@ -1026,11 +1728,11 @@ class DockedSearchBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
-        on_expanded_change: str,
+        on_expanded_change: ActionTarget,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | None = None,
@@ -1041,6 +1743,7 @@ class DockedSearchBar(Component):
         """Construct a registered DockedSearchBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             expanded: Required native expanded.
             modifier: Native modifier; None uses its default.
@@ -1053,9 +1756,9 @@ class DockedSearchBar(Component):
             input_field: Nodes for the native inputField slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["expanded"] = expanded
         props["on_expanded_change"] = on_expanded_change
         if shadow_elevation is not None:
@@ -1070,7 +1773,11 @@ class DockedSearchBar(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if input_field is not None:
             slotted += slot_nodes(input_field, key="inputField", slot="inputField")
@@ -1087,13 +1794,13 @@ class DropdownMenu(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
-        on_dismiss_request: str,
+        on_dismiss_request: ActionTarget,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | None = None,
@@ -1103,6 +1810,7 @@ class DropdownMenu(Component):
         """Construct a registered DropdownMenu.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             container_color: Native containerColor; None uses its default.
@@ -1116,9 +1824,9 @@ class DropdownMenu(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if container_color is not None:
@@ -1137,7 +1845,11 @@ class DropdownMenu(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1155,7 +1867,10 @@ class DropdownMenuItem(Component):
         content_padding: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         leading_icon: Content | None = None,
         text: Content | None = None,
         trailing_icon: Content | None = None,
@@ -1169,11 +1884,14 @@ class DropdownMenuItem(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             leading_icon: Nodes for the native leadingIcon slot.
             text: Nodes for the native text slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if content_padding is not None:
@@ -1181,6 +1899,12 @@ class DropdownMenuItem(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         slotted: tuple[Node, ...] = ()
         if leading_icon is not None:
             slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
@@ -1210,7 +1934,10 @@ class ElevatedAssistChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         label: Content | None = None,
         leading_icon: Content | None = None,
@@ -1226,12 +1953,15 @@ class ElevatedAssistChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             label: Nodes for the native label slot.
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -1241,6 +1971,12 @@ class ElevatedAssistChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         slotted: tuple[Node, ...] = ()
@@ -1265,7 +2001,7 @@ class ElevatedButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         colors: JsonValue | None = None,
@@ -1273,7 +2009,10 @@ class ElevatedButton(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1281,6 +2020,7 @@ class ElevatedButton(Component):
         """Construct a registered ElevatedButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             colors: Native colors; None uses its default.
@@ -1289,14 +2029,17 @@ class ElevatedButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -1308,6 +2051,12 @@ class ElevatedButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -1316,25 +2065,50 @@ class ElevatedButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class ElevatedCard(Component):
+class _ElevatedCard(Component):
     """Native ElevatedCard; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "ElevatedCard"
+    required_keywords = frozenset(
+        {
+            "on_click",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "colors",
+            "content",
+            "elevation",
+            "enabled",
+            "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
+            "shape",
+        }
+    )
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         elevation: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1342,20 +2116,24 @@ class ElevatedCard(Component):
         """Construct a registered ElevatedCard.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             elevation: Native elevation; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if elevation is not None:
@@ -1363,6 +2141,12 @@ class ElevatedCard(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -1371,8 +2155,59 @@ class ElevatedCard(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ElevatedCard(_ElevatedCard):
+    """Native ElevatedCard; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> ElevatedCard: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> ElevatedCardWithoutOnClick: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class ElevatedFilterChip(Component):
@@ -1390,7 +2225,10 @@ class ElevatedFilterChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         shape: JsonValue | None = None,
         label: Content | None = None,
@@ -1407,13 +2245,16 @@ class ElevatedFilterChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             shape: Native shape; None uses its default.
             label: Nodes for the native label slot.
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -1423,6 +2264,12 @@ class ElevatedFilterChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         if shape is not None:
             props["shape"] = shape
@@ -1456,7 +2303,10 @@ class ElevatedSuggestionChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         icon: Content | None = None,
         label: Content | None = None,
@@ -1471,11 +2321,14 @@ class ElevatedSuggestionChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -1485,6 +2338,12 @@ class ElevatedSuggestionChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         slotted: tuple[Node, ...] = ()
@@ -1504,7 +2363,7 @@ class ExpandedDockedSearchBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         shadow_elevation: int | float | None = None,
@@ -1517,6 +2376,7 @@ class ExpandedDockedSearchBar(Component):
         """Construct a registered ExpandedDockedSearchBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             shadow_elevation: Native shadowElevation; None uses its default.
@@ -1527,9 +2387,9 @@ class ExpandedDockedSearchBar(Component):
             input_field: Nodes for the native inputField slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if shadow_elevation is not None:
             props["shadow_elevation"] = shadow_elevation
         if shape is not None:
@@ -1542,7 +2402,11 @@ class ExpandedDockedSearchBar(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if input_field is not None:
             slotted += slot_nodes(input_field, key="inputField", slot="inputField")
@@ -1560,7 +2424,7 @@ class ExpandedFullScreenSearchBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         collapsed_shape: JsonValue | None = None,
         modifier: Modifier | None = None,
@@ -1573,6 +2437,7 @@ class ExpandedFullScreenSearchBar(Component):
         """Construct a registered ExpandedFullScreenSearchBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             collapsed_shape: Native collapsedShape; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -1583,9 +2448,9 @@ class ExpandedFullScreenSearchBar(Component):
             input_field: Nodes for the native inputField slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if collapsed_shape is not None:
             props["collapsed_shape"] = collapsed_shape
         if shadow_elevation is not None:
@@ -1598,13 +2463,144 @@ class ExpandedFullScreenSearchBar(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if input_field is not None:
             slotted += slot_nodes(input_field, key="inputField", slot="inputField")
         super().__init__(
             id=id, children=normalized + slotted, modifier=modifier, **props
         )
+
+
+class ExposedDropdownMenu(Component):
+    """Native ExposedDropdownMenu; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ExposedDropdownMenu"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        container_color: JsonValue | Expression | None = None,
+        expanded: bool,
+        match_anchor_width: bool | None = None,
+        modifier: Modifier | None = None,
+        offset: int | float | None = None,
+        on_dismiss_request: ActionTarget,
+        on_scroll_idle: ActionTarget | None = None,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered ExposedDropdownMenu.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            container_color: Native containerColor; None uses its default.
+            expanded: Required native expanded.
+            match_anchor_width: Native matchAnchorWidth; None uses its default.
+            modifier: Native modifier; None uses its default.
+            offset: Native offset; None uses its default.
+            on_dismiss_request: Required native onDismissRequest.
+            on_scroll_idle: Native onScrollIdle; None uses its default.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if container_color is not None:
+            props["container_color"] = container_color
+        props["expanded"] = expanded
+        if match_anchor_width is not None:
+            props["match_anchor_width"] = match_anchor_width
+        if offset is not None:
+            props["offset"] = offset
+        props["on_dismiss_request"] = on_dismiss_request
+        if on_scroll_idle is not None:
+            props["on_scroll_idle"] = on_scroll_idle
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ExposedDropdownMenuBox(Component):
+    """Native ExposedDropdownMenuBox;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ExposedDropdownMenuBox"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        expanded: bool,
+        modifier: Modifier | None = None,
+        on_expanded_change: ActionTarget,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered ExposedDropdownMenuBox.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            expanded: Required native expanded.
+            modifier: Native modifier; None uses its default.
+            on_expanded_change: Required native onExpandedChange.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["expanded"] = expanded
+        props["on_expanded_change"] = on_expanded_change
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class ExtendedFloatingActionButton(Component):
@@ -1616,12 +2612,15 @@ class ExtendedFloatingActionButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1629,24 +2628,34 @@ class ExtendedFloatingActionButton(Component):
         """Construct a registered ExtendedFloatingActionButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             elevation: Native elevation; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if elevation is not None:
             props["elevation"] = elevation
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -1655,8 +2664,75 @@ class ExtendedFloatingActionButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ExtendedFloatingActionButtonText(Component):
+    """Native ExtendedFloatingActionButton;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ExtendedFloatingActionButtonText"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        container_color: JsonValue | Expression | None = None,
+        elevation: JsonValue | None = None,
+        expanded: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shape: JsonValue | None = None,
+        icon: Content | None = None,
+        text: Content | None = None,
+    ) -> None:
+        """Construct a registered ExtendedFloatingActionButtonText.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            elevation: Native elevation; None uses its default.
+            expanded: Native expanded; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            shape: Native shape; None uses its default.
+            icon: Nodes for the native icon slot.
+            text: Nodes for the native text slot.
+        """
+        props: dict[str, PropValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if elevation is not None:
+            props["elevation"] = elevation
+        if expanded is not None:
+            props["expanded"] = expanded
+        props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        if shape is not None:
+            props["shape"] = shape
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        if text is not None:
+            slotted += slot_nodes(text, key="text", slot="text")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class FilledIconButton(Component):
@@ -1667,35 +2743,55 @@ class FilledIconButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered FilledIconButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1708,38 +2804,58 @@ class FilledIconToggleButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         checked: bool,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered FilledIconToggleButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             checked: Required native checked.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1751,7 +2867,7 @@ class FilledTonalButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         colors: JsonValue | None = None,
@@ -1759,7 +2875,10 @@ class FilledTonalButton(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1767,6 +2886,7 @@ class FilledTonalButton(Component):
         """Construct a registered FilledTonalButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             colors: Native colors; None uses its default.
@@ -1775,14 +2895,17 @@ class FilledTonalButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if colors is not None:
@@ -1794,6 +2917,12 @@ class FilledTonalButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -1802,7 +2931,11 @@ class FilledTonalButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1815,35 +2948,55 @@ class FilledTonalIconButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered FilledTonalIconButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1856,38 +3009,58 @@ class FilledTonalIconToggleButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         checked: bool,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered FilledTonalIconToggleButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             checked: Required native checked.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -1904,10 +3077,10 @@ class FilterChip(Component):
         enabled: bool | None = None,
         label: str,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         leading_icon: Content | None = None,
         trailing_icon: Content | None = None,
@@ -1927,7 +3100,7 @@ class FilterChip(Component):
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["label"] = label
@@ -1951,6 +3124,47 @@ class FilterChip(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class FlexBox(Component):
+    """Native FlexBox; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "FlexBox"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered FlexBox.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class FloatingActionButton(Component):
     """Native FloatingActionButton; props and defaults follow the component manifest."""
 
@@ -1959,15 +3173,15 @@ class FloatingActionButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -1975,6 +3189,7 @@ class FloatingActionButton(Component):
         """Construct a registered FloatingActionButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             elevation: Native elevation; None uses its default.
@@ -1988,9 +3203,9 @@ class FloatingActionButton(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if elevation is not None:
@@ -2010,7 +3225,11 @@ class FloatingActionButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2022,16 +3241,18 @@ class FlowColumn(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         item_horizontal_alignment: _FlowColumnItemHorizontalAlignment | None = None,
         max_items_in_each_column: int | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
+        content: Content | None = None,
     ) -> None:
         """Construct a registered FlowColumn.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             item_horizontal_alignment: Native itemHorizontalAlignment; None uses its
                 default.
@@ -2039,13 +3260,27 @@ class FlowColumn(Component):
                 default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if item_horizontal_alignment is not None:
             props["item_horizontal_alignment"] = item_horizontal_alignment
         if max_items_in_each_column is not None:
             props["max_items_in_each_column"] = max_items_in_each_column
-        normalized = content_nodes(children, key="children")
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2057,29 +3292,45 @@ class FlowRow(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         item_vertical_alignment: _FlowRowItemVerticalAlignment | None = None,
         max_items_in_each_row: int | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
+        content: Content | None = None,
     ) -> None:
         """Construct a registered FlowRow.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             item_vertical_alignment: Native itemVerticalAlignment; None uses its
                 default.
             max_items_in_each_row: Native maxItemsInEachRow; None uses its default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if item_vertical_alignment is not None:
             props["item_vertical_alignment"] = item_vertical_alignment
         if max_items_in_each_row is not None:
             props["max_items_in_each_row"] = max_items_in_each_row
-        normalized = content_nodes(children, key="children")
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2093,7 +3344,7 @@ class HorizontalDivider(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         thickness: int | float | None = None,
     ) -> None:
@@ -2105,7 +3356,7 @@ class HorizontalDivider(Component):
             modifier: Native modifier; None uses its default.
             thickness: Native thickness; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
         if thickness is not None:
@@ -2126,7 +3377,7 @@ class Icon(Component):
         content_description: str | None,
         image_vector: JsonValue,
         modifier: Modifier | None = None,
-        tint: JsonValue | None = None,
+        tint: JsonValue | Expression | None = None,
     ) -> None:
         """Construct a registered Icon.
 
@@ -2137,7 +3388,7 @@ class Icon(Component):
             modifier: Native modifier; None uses its default.
             tint: Native tint; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["content_description"] = content_description
         props["image_vector"] = image_vector
         if tint is not None:
@@ -2153,21 +3404,22 @@ class IconButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
         """Construct a registered IconButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
@@ -2180,9 +3432,9 @@ class IconButton(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -2200,7 +3452,11 @@ class IconButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2212,46 +3468,77 @@ class IconToggleButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         checked: bool,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered IconToggleButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             checked: Required native checked.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class Image(Component):
+class _Image(Component):
     """Native Image; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Image"
+    required_keywords = frozenset(
+        {
+            "resource",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "content_description",
+            "resource",
+        }
+    )
 
     def __init__(
         self,
@@ -2269,11 +3556,48 @@ class Image(Component):
             modifier: Native modifier; None uses its default.
             resource: Required native resource.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if content_description is not None:
             props["content_description"] = content_description
         props["resource"] = resource
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class Image(_Image):
+    """Native Image; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        content_description: str | None = None,
+        modifier: Modifier | None = None,
+        resource: str,
+    ) -> Image: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        alignment: _ImageImageVectorAlignment | None = None,
+        content_description: str | None,
+        image_vector: JsonValue,
+        modifier: Modifier | None = None,
+    ) -> ImageImageVector: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class InputChip(Component):
@@ -2290,7 +3614,10 @@ class InputChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         shape: JsonValue | None = None,
         avatar: Content | None = None,
@@ -2307,6 +3634,9 @@ class InputChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             shape: Native shape; None uses its default.
             avatar: Nodes for the native avatar slot.
@@ -2314,7 +3644,7 @@ class InputChip(Component):
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if not isinstance(elevation, _Unset):
@@ -2322,6 +3652,12 @@ class InputChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         if shape is not None:
             props["shape"] = shape
@@ -2341,6 +3677,62 @@ class InputChip(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class Label(Component):
+    """Native Label; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Label"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        is_persistent: bool | None = None,
+        modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        children: Content = (),
+        label: Content | None = None,
+    ) -> None:
+        """Construct a registered Label.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            is_persistent: Native isPersistent; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            children: Ordered child nodes with stable keys.
+            label: Nodes for the native label slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if is_persistent is not None:
+            props["is_persistent"] = is_persistent
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
 class LargeFloatingActionButton(Component):
     """Native LargeFloatingActionButton;
     props and defaults follow the component manifest."""
@@ -2350,35 +3742,55 @@ class LargeFloatingActionButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered LargeFloatingActionButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             elevation: Native elevation; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if elevation is not None:
             props["elevation"] = elevation
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2414,7 +3826,7 @@ class LargeTopAppBar(Component):
             navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if collapsed_height is not None:
             props["collapsed_height"] = collapsed_height
         if colors is not None:
@@ -2445,43 +3857,55 @@ class LazyColumn(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         first_visible_index: int | None = None,
         modifier: Modifier | None = None,
-        on_scroll_idle: str | None = None,
+        on_scroll_idle: ActionTarget | None = None,
         vertical_arrangement: _LazyColumnVerticalArrangement | None = None,
         children: Content = (),
-        items: Content | None = None,
+        items: Content | Sequence[Any] | None = None,
+        key: Callable[[Any], str | int] | None = None,
+        item: Callable[[Any], Node] | None = None,
     ) -> None:
         """Construct a registered LazyColumn.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             first_visible_index: Native firstVisibleIndex; None uses its default.
             modifier: Native modifier; None uses its default.
             on_scroll_idle: Native onScrollIdle; None uses its default.
             vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
-            items: Alternative spelling for items children.
+            items: The children, or with item the data whose window the host
+                composes.
+            key: Each item's stable key, required with item.
+            item: Builds one item's node; the host asks for which.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if first_visible_index is not None:
             props["first_visible_index"] = first_visible_index
         if on_scroll_idle is not None:
             props["on_scroll_idle"] = on_scroll_idle
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
+        if key is not None or item is not None:
+            raise IrValidationError("key= needs item=", node_id=id)
         if items is not None:
             if children:
                 raise IrValidationError(
                     "cannot supply both slot and children", node_id=id
                 )
-            children = content_nodes(items, key="items")
-        normalized = content_nodes(children, key="children")
+            children = content_nodes(cast(Content, items), key="items")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2493,39 +3917,51 @@ class LazyRow(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         first_visible_index: int | None = None,
         modifier: Modifier | None = None,
-        on_scroll_idle: str | None = None,
+        on_scroll_idle: ActionTarget | None = None,
         children: Content = (),
-        items: Content | None = None,
+        items: Content | Sequence[Any] | None = None,
+        key: Callable[[Any], str | int] | None = None,
+        item: Callable[[Any], Node] | None = None,
     ) -> None:
         """Construct a registered LazyRow.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             first_visible_index: Native firstVisibleIndex; None uses its default.
             modifier: Native modifier; None uses its default.
             on_scroll_idle: Native onScrollIdle; None uses its default.
             children: Ordered child nodes with stable keys.
-            items: Alternative spelling for items children.
+            items: The children, or with item the data whose window the host
+                composes.
+            key: Each item's stable key, required with item.
+            item: Builds one item's node; the host asks for which.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if first_visible_index is not None:
             props["first_visible_index"] = first_visible_index
         if on_scroll_idle is not None:
             props["on_scroll_idle"] = on_scroll_idle
+        if key is not None or item is not None:
+            raise IrValidationError("key= needs item=", node_id=id)
         if items is not None:
             if children:
                 raise IrValidationError(
                     "cannot supply both slot and children", node_id=id
                 )
-            children = content_nodes(items, key="items")
-        normalized = content_nodes(children, key="children")
+            children = content_nodes(cast(Content, items), key="items")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2541,9 +3977,12 @@ class LeadingIconTab(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
-        selected_content_color: JsonValue | None = None,
+        selected_content_color: JsonValue | Expression | None = None,
         icon: Content | None = None,
         text: Content | None = None,
     ) -> None:
@@ -2554,16 +3993,25 @@ class LeadingIconTab(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             selected_content_color: Native selectedContentColor; None uses its
                 default.
             icon: Nodes for the native icon slot.
             text: Nodes for the native text slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         if selected_content_color is not None:
             props["selected_content_color"] = selected_content_color
@@ -2575,21 +4023,33 @@ class LeadingIconTab(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
-class LinearProgressIndicator(Component):
+class _LinearProgressIndicator(Component):
     """Native LinearProgressIndicator;
     props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "LinearProgressIndicator"
+    required_keywords = frozenset(
+        {
+            "progress",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "color",
+            "progress",
+            "track_color",
+        }
+    )
 
     def __init__(
         self,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         progress: int | float,
-        track_color: JsonValue | None = None,
+        track_color: JsonValue | Expression | None = None,
     ) -> None:
         """Construct a registered LinearProgressIndicator.
 
@@ -2600,13 +4060,52 @@ class LinearProgressIndicator(Component):
             progress: Required native progress.
             track_color: Native trackColor; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
         props["progress"] = progress
         if track_color is not None:
             props["track_color"] = track_color
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class LinearProgressIndicator(_LinearProgressIndicator):
+    """Native LinearProgressIndicator; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        color: JsonValue | Expression | None = None,
+        modifier: Modifier | None = None,
+        progress: int | float,
+        track_color: JsonValue | Expression | None = None,
+    ) -> LinearProgressIndicator: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        color: JsonValue | Expression | None = None,
+        gap_size: int | float | None = None,
+        modifier: Modifier | None = None,
+        stroke_cap: JsonValue | None = None,
+        track_color: JsonValue | Expression | None = None,
+    ) -> LinearProgressIndicatorWithoutProgress: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class ListItem(Component):
@@ -2641,7 +4140,7 @@ class ListItem(Component):
             supporting_content: Nodes for the native supportingContent slot.
             trailing_content: Nodes for the native trailingContent slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if shadow_elevation is not None:
             props["shadow_elevation"] = shadow_elevation
         if tonal_elevation is not None:
@@ -2712,7 +4211,7 @@ class MediumTopAppBar(Component):
             navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if collapsed_height is not None:
             props["collapsed_height"] = collapsed_height
         if colors is not None:
@@ -2743,11 +4242,11 @@ class ModalBottomSheet(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
-        on_open_change: str | None = None,
-        on_value_change: str | None = None,
+        on_open_change: ActionTarget | None = None,
+        on_value_change: ActionTarget | None = None,
         open: bool | None = None,
         skip_partially_expanded: bool | None = None,
         value: _ModalBottomSheetValue | None = None,
@@ -2758,6 +4257,7 @@ class ModalBottomSheet(Component):
         """Construct a registered ModalBottomSheet.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             on_open_change: Native onOpenChange; None uses its default.
@@ -2771,9 +4271,9 @@ class ModalBottomSheet(Component):
             drag_handle: Nodes for the native dragHandle slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if on_open_change is not None:
             props["on_open_change"] = on_open_change
         if on_value_change is not None:
@@ -2790,7 +4290,11 @@ class ModalBottomSheet(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if drag_handle is not None:
             slotted += slot_nodes(drag_handle, key="dragHandle", slot="dragHandle")
@@ -2807,9 +4311,9 @@ class ModalDrawerSheet(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        drawer_container_color: JsonValue | None = None,
+        drawer_container_color: JsonValue | Expression | None = None,
         drawer_shape: JsonValue | None = None,
         drawer_tonal_elevation: int | float | None = None,
         modifier: Modifier | None = None,
@@ -2820,6 +4324,7 @@ class ModalDrawerSheet(Component):
         """Construct a registered ModalDrawerSheet.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             drawer_container_color: Native drawerContainerColor; None uses its
                 default.
@@ -2832,9 +4337,9 @@ class ModalDrawerSheet(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
             props["drawer_container_color"] = drawer_container_color
         if drawer_shape is not None:
@@ -2849,7 +4354,11 @@ class ModalDrawerSheet(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2862,12 +4371,13 @@ class ModalNavigationDrawer(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_open_change: str | None = None,
+        on_open_change: ActionTarget | None = None,
         open: bool | None = None,
+        scrim_color: JsonValue | Expression | None = None,
         children: Content = (),
         content: Content | None = None,
         drawer: Content | None = None,
@@ -2875,32 +4385,40 @@ class ModalNavigationDrawer(Component):
         """Construct a registered ModalNavigationDrawer.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             gestures_enabled: Native gesturesEnabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_open_change: Native onOpenChange; None uses its default.
             open: Native open; None uses its default.
+            scrim_color: Native scrimColor; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
             drawer: Nodes for the native drawerContent slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if gestures_enabled is not None:
             props["gestures_enabled"] = gestures_enabled
         if on_open_change is not None:
             props["on_open_change"] = on_open_change
         if open is not None:
             props["open"] = open
+        if scrim_color is not None:
+            props["scrim_color"] = scrim_color
         if content is not None:
             if children:
                 raise IrValidationError(
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if drawer is not None:
             slotted += slot_nodes(drawer, key="drawer", slot="drawer")
@@ -2918,7 +4436,7 @@ class ModalWideNavigationRail(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -2926,12 +4444,20 @@ class ModalWideNavigationRail(Component):
         """Construct a registered ModalWideNavigationRail.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
-        normalized = content_nodes(children, key="children")
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -2950,7 +4476,10 @@ class MultiChoiceSegmentedButton(Component):
         content_padding: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue,
         label: Content | None = None,
     ) -> None:
@@ -2964,10 +4493,13 @@ class MultiChoiceSegmentedButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Required native shape.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
@@ -2976,6 +4508,12 @@ class MultiChoiceSegmentedButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["shape"] = shape
         slotted: tuple[Node, ...] = ()
         if label is not None:
@@ -2992,7 +4530,7 @@ class MultiChoiceSegmentedButtonRow(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         space: int | float | None = None,
@@ -3002,6 +4540,7 @@ class MultiChoiceSegmentedButtonRow(Component):
         """Construct a registered MultiChoiceSegmentedButtonRow.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             space: Native space; None uses its default.
@@ -3009,9 +4548,9 @@ class MultiChoiceSegmentedButtonRow(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if space is not None:
             props["space"] = space
         if content is not None:
@@ -3020,7 +4559,11 @@ class MultiChoiceSegmentedButtonRow(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3032,9 +4575,9 @@ class NavigationBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         tonal_elevation: int | float | None = None,
         window_insets: JsonValue | None = None,
@@ -3044,6 +4587,7 @@ class NavigationBar(Component):
         """Construct a registered NavigationBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -3053,9 +4597,9 @@ class NavigationBar(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if tonal_elevation is not None:
@@ -3068,7 +4612,11 @@ class NavigationBar(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3086,10 +4634,10 @@ class NavigationBarItem(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         icon: Content | None = None,
         label: Content | None = None,
@@ -3110,7 +4658,7 @@ class NavigationBarItem(Component):
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if always_show_label is not None:
             props["always_show_label"] = always_show_label
         if colors is not None:
@@ -3144,7 +4692,10 @@ class NavigationDrawerItem(Component):
         *,
         id: str | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         badge: Content | None = None,
         icon: Content | None = None,
@@ -3156,13 +4707,22 @@ class NavigationDrawerItem(Component):
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             badge: Nodes for the native badge slot.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
         if badge is not None:
@@ -3182,9 +4742,9 @@ class NavigationRail(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         children: Content = (),
@@ -3194,6 +4754,7 @@ class NavigationRail(Component):
         """Construct a registered NavigationRail.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -3203,9 +4764,9 @@ class NavigationRail(Component):
             header: Nodes for the native header slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if window_insets is not None:
@@ -3216,7 +4777,11 @@ class NavigationRail(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if header is not None:
             slotted += slot_nodes(header, key="header", slot="header")
@@ -3238,7 +4803,10 @@ class NavigationRailItem(Component):
         always_show_label: bool | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         icon: Content | None = None,
         label: Content | None = None,
@@ -3251,16 +4819,25 @@ class NavigationRailItem(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if always_show_label is not None:
             props["always_show_label"] = always_show_label
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
         if icon is not None:
@@ -3268,6 +4845,53 @@ class NavigationRailItem(Component):
         if label is not None:
             slotted += slot_nodes(label, key="label", slot="label")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class NavigationSuite(Component):
+    """Native NavigationSuite; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationSuite"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        navigation_suite_type: JsonValue,
+        children: Content = (),
+        primary_action_content: Content | None = None,
+    ) -> None:
+        """Construct a registered NavigationSuite.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            navigation_suite_type: Required native navigationSuiteType.
+            children: Ordered child nodes with stable keys.
+            primary_action_content: Nodes for the native primaryActionContent slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["navigation_suite_type"] = navigation_suite_type
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if primary_action_content is not None:
+            slotted += slot_nodes(
+                primary_action_content,
+                key="primaryActionContent",
+                slot="primaryActionContent",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class NavigationSuiteItem(Component):
@@ -3282,7 +4906,10 @@ class NavigationSuiteItem(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         badge: Content | None = None,
         icon: Content | None = None,
@@ -3295,15 +4922,24 @@ class NavigationSuiteItem(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             badge: Nodes for the native badge slot.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
         if badge is not None:
@@ -3324,22 +4960,32 @@ class NavigationSuiteScaffold(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
         navigation_items: Content | None = None,
+        primary_action_content: Content | None = None,
     ) -> None:
         """Construct a registered NavigationSuiteScaffold.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
             navigation_items: Nodes for the native navigationItems slot.
+            primary_action_content: Nodes for the native primaryActionContent slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
-        normalized = content_nodes(children, key="children")
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if navigation_items is not None:
             slotted += slot_nodes(
@@ -3347,9 +4993,122 @@ class NavigationSuiteScaffold(Component):
                 key="navigationItems",
                 slot="navigationItems",
             )
+        if primary_action_content is not None:
+            slotted += slot_nodes(
+                primary_action_content,
+                key="primaryActionContent",
+                slot="primaryActionContent",
+            )
         super().__init__(
             id=id, children=normalized + slotted, modifier=modifier, **props
         )
+
+
+class _NavigationSuiteScaffoldLayout(Component):
+    """Native NavigationSuiteScaffoldLayout;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationSuiteScaffoldLayout"
+    required_keywords = frozenset(
+        {
+            "navigation_suite_type",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "content",
+            "navigation_suite",
+            "navigation_suite_type",
+            "primary_action_content",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        navigation_suite_type: JsonValue,
+        children: Content = (),
+        navigation_suite: Content | None = None,
+        primary_action_content: Content | None = None,
+    ) -> None:
+        """Construct a registered NavigationSuiteScaffoldLayout.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            navigation_suite_type: Required native navigationSuiteType.
+            children: Ordered child nodes with stable keys.
+            navigation_suite: Nodes for the native navigationSuite slot.
+            primary_action_content: Nodes for the native primaryActionContent slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["navigation_suite_type"] = navigation_suite_type
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if navigation_suite is not None:
+            slotted += slot_nodes(
+                navigation_suite,
+                key="navigationSuite",
+                slot="navigationSuite",
+            )
+        if primary_action_content is not None:
+            slotted += slot_nodes(
+                primary_action_content,
+                key="primaryActionContent",
+                slot="primaryActionContent",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
+class NavigationSuiteScaffoldLayout(_NavigationSuiteScaffoldLayout):
+    """Native NavigationSuiteScaffoldLayout; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        navigation_suite_type: JsonValue,
+        children: Content = (),
+        navigation_suite: Content | None = None,
+        primary_action_content: Content | None = None,
+    ) -> NavigationSuiteScaffoldLayout: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        navigation_suite: Content | None = None,
+    ) -> NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class OutlinedButton(Component):
@@ -3360,14 +5119,17 @@ class OutlinedButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         content_padding: JsonValue | None = None,
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -3375,6 +5137,7 @@ class OutlinedButton(Component):
         """Construct a registered OutlinedButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             content_padding: Native contentPadding; None uses its default.
@@ -3382,14 +5145,17 @@ class OutlinedButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if content_padding is not None:
@@ -3399,6 +5165,12 @@ class OutlinedButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -3407,25 +5179,50 @@ class OutlinedButton(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class OutlinedCard(Component):
+class _OutlinedCard(Component):
     """Native OutlinedCard; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "OutlinedCard"
+    required_keywords = frozenset(
+        {
+            "on_click",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "colors",
+            "content",
+            "elevation",
+            "enabled",
+            "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
+            "shape",
+        }
+    )
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         elevation: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -3433,20 +5230,24 @@ class OutlinedCard(Component):
         """Construct a registered OutlinedCard.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             elevation: Native elevation; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if elevation is not None:
@@ -3454,6 +5255,12 @@ class OutlinedCard(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         if content is not None:
@@ -3462,8 +5269,60 @@ class OutlinedCard(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class OutlinedCard(_OutlinedCard):
+    """Native OutlinedCard; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> OutlinedCard: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> OutlinedCardWithoutOnClick: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class OutlinedIconButton(Component):
@@ -3474,35 +5333,55 @@ class OutlinedIconButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered OutlinedIconButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3515,39 +5394,175 @@ class OutlinedIconToggleButton(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         checked: bool,
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered OutlinedIconToggleButton.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             checked: Required native checked.
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class OutlinedSecureTextField(Component):
+    """Native OutlinedSecureTextField;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "OutlinedSecureTextField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
+        enabled: bool | None = None,
+        is_error: bool | None = None,
+        modifier: Modifier | None = None,
+        on_edit: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        revision: int,
+        selection_end: int,
+        selection_start: int,
+        shape: JsonValue | None = None,
+        text: str,
+        text_obfuscation_mode: JsonValue | None = None,
+        text_style: JsonValue | None = None,
+        label: Content | None = None,
+        leading_icon: Content | None = None,
+        placeholder: Content | None = None,
+        prefix: Content | None = None,
+        suffix: Content | None = None,
+        supporting_text: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered OutlinedSecureTextField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            enabled: Native enabled; None uses its default.
+            is_error: Native isError; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_edit: Required native onEdit.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            revision: Required native revision.
+            selection_end: Required native selectionEnd.
+            selection_start: Required native selectionStart.
+            shape: Native shape; None uses its default.
+            text: Required native text.
+            text_obfuscation_mode: Native textObfuscationMode; None uses its
+                default.
+            text_style: Native textStyle; None uses its default.
+            label: Nodes for the native label slot.
+            leading_icon: Nodes for the native leadingIcon slot.
+            placeholder: Nodes for the native placeholder slot.
+            prefix: Nodes for the native prefix slot.
+            suffix: Nodes for the native suffix slot.
+            supporting_text: Nodes for the native supportingText slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if enabled is not None:
+            props["enabled"] = enabled
+        if is_error is not None:
+            props["is_error"] = is_error
+        props["on_edit"] = on_edit
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        props["revision"] = revision
+        props["selection_end"] = selection_end
+        props["selection_start"] = selection_start
+        if shape is not None:
+            props["shape"] = shape
+        props["text"] = text
+        if text_obfuscation_mode is not None:
+            props["text_obfuscation_mode"] = text_obfuscation_mode
+        if text_style is not None:
+            props["text_style"] = text_style
+        slotted: tuple[Node, ...] = ()
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if placeholder is not None:
+            slotted += slot_nodes(placeholder, key="placeholder", slot="placeholder")
+        if prefix is not None:
+            slotted += slot_nodes(prefix, key="prefix", slot="prefix")
+        if suffix is not None:
+            slotted += slot_nodes(suffix, key="suffix", slot="suffix")
+        if supporting_text is not None:
+            slotted += slot_nodes(
+                supporting_text,
+                key="supportingText",
+                slot="supportingText",
+            )
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class OutlinedTextField(Component):
@@ -3565,7 +5580,10 @@ class OutlinedTextField(Component):
         is_error: bool | None = None,
         min_lines: int | None = None,
         modifier: Modifier | None = None,
-        on_value_change: str,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        on_value_change: ActionTarget,
         read_only: bool | None = None,
         shape: JsonValue | None = None,
         single_line: bool | None = None,
@@ -3588,6 +5606,9 @@ class OutlinedTextField(Component):
             is_error: Native isError; None uses its default.
             min_lines: Native minLines; None uses its default.
             modifier: Native modifier; None uses its default.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             on_value_change: Required native onValueChange.
             read_only: Native readOnly; None uses its default.
             shape: Native shape; None uses its default.
@@ -3602,7 +5623,7 @@ class OutlinedTextField(Component):
             supporting_text: Nodes for the native supportingText slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -3611,6 +5632,12 @@ class OutlinedTextField(Component):
             props["is_error"] = is_error
         if min_lines is not None:
             props["min_lines"] = min_lines
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["on_value_change"] = on_value_change
         if read_only is not None:
             props["read_only"] = read_only
@@ -3655,9 +5682,9 @@ class PermanentDrawerSheet(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        drawer_container_color: JsonValue | None = None,
+        drawer_container_color: JsonValue | Expression | None = None,
         drawer_shape: JsonValue | None = None,
         drawer_tonal_elevation: int | float | None = None,
         modifier: Modifier | None = None,
@@ -3668,6 +5695,7 @@ class PermanentDrawerSheet(Component):
         """Construct a registered PermanentDrawerSheet.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             drawer_container_color: Native drawerContainerColor; None uses its
                 default.
@@ -3680,9 +5708,9 @@ class PermanentDrawerSheet(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
             props["drawer_container_color"] = drawer_container_color
         if drawer_shape is not None:
@@ -3697,7 +5725,11 @@ class PermanentDrawerSheet(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3710,7 +5742,7 @@ class PermanentNavigationDrawer(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -3719,13 +5751,21 @@ class PermanentNavigationDrawer(Component):
         """Construct a registered PermanentNavigationDrawer.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
             drawer_content: Nodes for the native drawerContent slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
-        normalized = content_nodes(children, key="children")
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if drawer_content is not None:
             slotted += slot_nodes(
@@ -3746,10 +5786,10 @@ class PlainTooltip(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
-        content_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
         max_width: int | float | None = None,
         modifier: Modifier | None = None,
         show_caret: bool | None = None,
@@ -3759,6 +5799,7 @@ class PlainTooltip(Component):
         """Construct a registered PlainTooltip.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             content_color: Native contentColor; None uses its default.
@@ -3769,9 +5810,9 @@ class PlainTooltip(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -3786,7 +5827,11 @@ class PlainTooltip(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3801,8 +5846,8 @@ class PrimaryScrollableTabRow(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | None = None,
-        content_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
         edge_padding: int | float | None = None,
         min_tab_width: int | float | None = None,
         modifier: Modifier | None = None,
@@ -3821,7 +5866,7 @@ class PrimaryScrollableTabRow(Component):
             selected_tab_index: Required native selectedTabIndex.
             tabs: Nodes for the native tabs slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -3847,8 +5892,8 @@ class PrimaryTabRow(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | None = None,
-        content_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         selected_tab_index: int,
         tabs: Content | None = None,
@@ -3863,7 +5908,7 @@ class PrimaryTabRow(Component):
             selected_tab_index: Required native selectedTabIndex.
             tabs: Nodes for the native tabs slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -3883,18 +5928,19 @@ class PullToRefreshBox(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         content_alignment: _PullToRefreshBoxContentAlignment | None = None,
         is_refreshing: bool,
         modifier: Modifier | None = None,
-        on_refresh: str,
+        on_refresh: ActionTarget,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
         """Construct a registered PullToRefreshBox.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             content_alignment: Native contentAlignment; None uses its default.
             is_refreshing: Required native isRefreshing.
@@ -3904,9 +5950,9 @@ class PullToRefreshBox(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if content_alignment is not None:
             props["content_alignment"] = content_alignment
         props["is_refreshing"] = is_refreshing
@@ -3917,7 +5963,11 @@ class PullToRefreshBox(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -3934,10 +5984,10 @@ class RadioButton(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
     ) -> None:
         """Construct a registered RadioButton.
@@ -3953,7 +6003,7 @@ class RadioButton(Component):
             on_press: Native onPress; None uses its default.
             selected: Required native selected.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -3977,15 +6027,15 @@ class RichTooltip(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        action_content_color: JsonValue | None = None,
-        container_color: JsonValue | None = None,
-        content_color: JsonValue | None = None,
+        action_content_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
         max_width: int | float | None = None,
         modifier: Modifier | None = None,
         show_caret: bool | None = None,
-        title_content_color: JsonValue | None = None,
+        title_content_color: JsonValue | Expression | None = None,
         children: Content = (),
         content: Content | None = None,
         action: Content | None = None,
@@ -3994,6 +6044,7 @@ class RichTooltip(Component):
         """Construct a registered RichTooltip.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             action_content_color: Native actionContentColor; None uses its default.
             container_color: Native containerColor; None uses its default.
@@ -4008,9 +6059,9 @@ class RichTooltip(Component):
             title: Nodes for the native title slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if action_content_color is not None:
             props["action_content_color"] = action_content_color
         if container_color is not None:
@@ -4029,7 +6080,11 @@ class RichTooltip(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if action is not None:
             slotted += slot_nodes(action, key="action", slot="action")
@@ -4048,7 +6103,7 @@ class Row(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         vertical_alignment: _RowVerticalAlignment | None = None,
@@ -4057,15 +6112,23 @@ class Row(Component):
         """Construct a registered Row.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             vertical_alignment: Native verticalAlignment; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if vertical_alignment is not None:
             props["vertical_alignment"] = vertical_alignment
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -4077,9 +6140,9 @@ class Scaffold(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -4091,6 +6154,7 @@ class Scaffold(Component):
         """Construct a registered Scaffold.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -4102,9 +6166,9 @@ class Scaffold(Component):
             top_bar: Nodes for the native topBar slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content is not None:
@@ -4113,7 +6177,11 @@ class Scaffold(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if bottom_bar is not None:
             slotted += slot_nodes(bottom_bar, key="bottomBar", slot="bottomBar")
@@ -4144,11 +6212,11 @@ class SearchBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
-        on_expanded_change: str,
+        on_expanded_change: ActionTarget,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | None = None,
@@ -4160,6 +6228,7 @@ class SearchBar(Component):
         """Construct a registered SearchBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             expanded: Required native expanded.
             modifier: Native modifier; None uses its default.
@@ -4173,9 +6242,9 @@ class SearchBar(Component):
             input_field: Nodes for the native inputField slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["expanded"] = expanded
         props["on_expanded_change"] = on_expanded_change
         if shadow_elevation is not None:
@@ -4192,7 +6261,11 @@ class SearchBar(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if input_field is not None:
             slotted += slot_nodes(input_field, key="inputField", slot="inputField")
@@ -4214,9 +6287,9 @@ class SearchBarInputField(Component):
         enabled: bool | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
-        on_expanded_change: str,
-        on_query_change: str,
-        on_search: str,
+        on_expanded_change: ActionTarget,
+        on_query_change: ActionTarget,
+        on_search: ActionTarget,
         query: str,
         leading_icon: Content | None = None,
         placeholder: Content | None = None,
@@ -4237,7 +6310,7 @@ class SearchBarInputField(Component):
             placeholder: Nodes for the native placeholder slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["expanded"] = expanded
@@ -4272,7 +6345,7 @@ class SearchBarStateInputField(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_search: str,
+        on_search: ActionTarget,
         read_only: bool | None = None,
         shape: JsonValue | None = None,
         text_style: JsonValue | None = None,
@@ -4299,7 +6372,7 @@ class SearchBarStateInputField(Component):
             suffix: Nodes for the native suffix slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -4340,8 +6413,8 @@ class SecondaryScrollableTabRow(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | None = None,
-        content_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
         edge_padding: int | float | None = None,
         min_tab_width: int | float | None = None,
         modifier: Modifier | None = None,
@@ -4360,7 +6433,7 @@ class SecondaryScrollableTabRow(Component):
             selected_tab_index: Required native selectedTabIndex.
             tabs: Nodes for the native tabs slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -4386,8 +6459,8 @@ class SecondaryTabRow(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | None = None,
-        content_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         selected_tab_index: int,
         tabs: Content | None = None,
@@ -4402,7 +6475,7 @@ class SecondaryTabRow(Component):
             selected_tab_index: Required native selectedTabIndex.
             tabs: Nodes for the native tabs slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -4411,6 +6484,117 @@ class SecondaryTabRow(Component):
         slotted: tuple[Node, ...] = ()
         if tabs is not None:
             slotted += slot_nodes(tabs, key="tabs", slot="tabs")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class SecureTextField(Component):
+    """Native SecureTextField; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SecureTextField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        is_error: bool | None = None,
+        modifier: Modifier | None = None,
+        on_edit: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        revision: int,
+        selection_end: int,
+        selection_start: int,
+        shape: JsonValue | None = None,
+        text: str,
+        text_obfuscation_mode: JsonValue | None = None,
+        text_style: JsonValue | None = None,
+        label: Content | None = None,
+        leading_icon: Content | None = None,
+        placeholder: Content | None = None,
+        prefix: Content | None = None,
+        suffix: Content | None = None,
+        supporting_text: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered SecureTextField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            enabled: Native enabled; None uses its default.
+            is_error: Native isError; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_edit: Required native onEdit.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            revision: Required native revision.
+            selection_end: Required native selectionEnd.
+            selection_start: Required native selectionStart.
+            shape: Native shape; None uses its default.
+            text: Required native text.
+            text_obfuscation_mode: Native textObfuscationMode; None uses its
+                default.
+            text_style: Native textStyle; None uses its default.
+            label: Nodes for the native label slot.
+            leading_icon: Nodes for the native leadingIcon slot.
+            placeholder: Nodes for the native placeholder slot.
+            prefix: Nodes for the native prefix slot.
+            suffix: Nodes for the native suffix slot.
+            supporting_text: Nodes for the native supportingText slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if enabled is not None:
+            props["enabled"] = enabled
+        if is_error is not None:
+            props["is_error"] = is_error
+        props["on_edit"] = on_edit
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        props["revision"] = revision
+        props["selection_end"] = selection_end
+        props["selection_start"] = selection_start
+        if shape is not None:
+            props["shape"] = shape
+        props["text"] = text
+        if text_obfuscation_mode is not None:
+            props["text_obfuscation_mode"] = text_obfuscation_mode
+        if text_style is not None:
+            props["text_style"] = text_style
+        slotted: tuple[Node, ...] = ()
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if placeholder is not None:
+            slotted += slot_nodes(placeholder, key="placeholder", slot="placeholder")
+        if prefix is not None:
+            slotted += slot_nodes(prefix, key="prefix", slot="prefix")
+        if suffix is not None:
+            slotted += slot_nodes(suffix, key="suffix", slot="suffix")
+        if supporting_text is not None:
+            slotted += slot_nodes(
+                supporting_text,
+                key="supportingText",
+                slot="supportingText",
+            )
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
@@ -4428,7 +6612,10 @@ class SegmentedButton(Component):
         content_padding: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         shape: JsonValue,
         label: Content | None = None,
@@ -4442,11 +6629,14 @@ class SegmentedButton(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             shape: Required native shape.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if content_padding is not None:
@@ -4454,12 +6644,93 @@ class SegmentedButton(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         props["shape"] = shape
         slotted: tuple[Node, ...] = ()
         if label is not None:
             slotted += slot_nodes(label, key="label", slot="label")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class SelectionContainer(Component):
+    """Native SelectionContainer; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SelectionContainer"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered SelectionContainer.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class SharedTransitionLayout(Component):
+    """Native SharedTransitionLayout;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SharedTransitionLayout"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered SharedTransitionLayout.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class ShortNavigationBar(Component):
@@ -4470,10 +6741,11 @@ class ShortNavigationBar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | None = None,
-        content_color: JsonValue | None = None,
+        arrangement: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         children: Content = (),
@@ -4481,21 +6753,32 @@ class ShortNavigationBar(Component):
         """Construct a registered ShortNavigationBar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            arrangement: Native arrangement; None uses its default.
             container_color: Native containerColor; None uses its default.
             content_color: Native contentColor; None uses its default.
             modifier: Native modifier; None uses its default.
             window_insets: Native windowInsets; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
+        if arrangement is not None:
+            props["arrangement"] = arrangement
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
             props["content_color"] = content_color
         if window_insets is not None:
             props["window_insets"] = window_insets
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -4511,8 +6794,12 @@ class ShortNavigationBarItem(Component):
         *,
         id: str | None = None,
         enabled: bool | None = None,
+        icon_position: JsonValue | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
         icon: Content | None = None,
         label: Content | None = None,
@@ -4522,16 +6809,28 @@ class ShortNavigationBarItem(Component):
         Args:
             id: Stable instance key; None derives the node's path id.
             enabled: Native enabled; None uses its default.
+            icon_position: Native iconPosition; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
+        if icon_position is not None:
+            props["icon_position"] = icon_position
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
         if icon is not None:
@@ -4550,7 +6849,7 @@ class SingleChoiceSegmentedButtonRow(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         space: int | float | None = None,
@@ -4560,6 +6859,7 @@ class SingleChoiceSegmentedButtonRow(Component):
         """Construct a registered SingleChoiceSegmentedButtonRow.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             space: Native space; None uses its default.
@@ -4567,9 +6867,9 @@ class SingleChoiceSegmentedButtonRow(Component):
             content: Alternative spelling for content children.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if space is not None:
             props["space"] = space
         if content is not None:
@@ -4578,15 +6878,37 @@ class SingleChoiceSegmentedButtonRow(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class Slider(Component):
+class _Slider(Component):
     """Native Slider; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Slider"
+    required_keywords = frozenset(
+        {
+            "value_range",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "colors",
+            "enabled",
+            "on_focus",
+            "on_hover",
+            "on_press",
+            "on_value_change_finished",
+            "steps",
+            "value",
+            "value_range",
+        }
+    )
 
     def __init__(
         self,
@@ -4595,7 +6917,10 @@ class Slider(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_value_change_finished: str | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        on_value_change_finished: ActionTarget | None = None,
         steps: int | None = None,
         value: int | float | None = None,
         value_range: JsonValue,
@@ -4607,17 +6932,26 @@ class Slider(Component):
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             on_value_change_finished: Native onValueChangeFinished; None uses its
                 default.
             steps: Native steps; None uses its default.
             value: Native value; None uses its default.
             value_range: Required native valueRange.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if on_value_change_finished is not None:
             props["on_value_change_finished"] = on_value_change_finished
         if steps is not None:
@@ -4628,6 +6962,117 @@ class Slider(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
+class Slider(_Slider):
+    """Native Slider; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        on_value_change_finished: ActionTarget | None = None,
+        steps: int | None = None,
+        value: int | float | None = None,
+        value_range: JsonValue,
+    ) -> Slider: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        on_value_change: ActionTarget,
+        on_value_change_finished: ActionTarget | None = None,
+        steps: int | None = None,
+        value: int | float,
+    ) -> SliderValue: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
+
+
+class SmallFloatingActionButton(Component):
+    """Native SmallFloatingActionButton;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SmallFloatingActionButton"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        container_color: JsonValue | Expression | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered SmallFloatingActionButton.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            elevation: Native elevation; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if elevation is not None:
+            props["elevation"] = elevation
+        props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        if shape is not None:
+            props["shape"] = shape
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class Snackbar(Component):
     """Native Snackbar; props and defaults follow the component manifest."""
 
@@ -4636,13 +7081,13 @@ class Snackbar(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
-        action_content_color: JsonValue | None = None,
+        action_content_color: JsonValue | Expression | None = None,
         action_on_new_line: bool | None = None,
-        container_color: JsonValue | None = None,
-        content_color: JsonValue | None = None,
-        dismiss_action_content_color: JsonValue | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
+        dismiss_action_content_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
@@ -4652,6 +7097,7 @@ class Snackbar(Component):
         """Construct a registered Snackbar.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             action_content_color: Native actionContentColor; None uses its default.
             action_on_new_line: Native actionOnNewLine; None uses its default.
@@ -4664,8 +7110,11 @@ class Snackbar(Component):
             children: Ordered child nodes with stable keys.
             action: Nodes for the native action slot.
             dismiss_action: Nodes for the native dismissAction slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if action_content_color is not None:
             props["action_content_color"] = action_content_color
         if action_on_new_line is not None:
@@ -4678,7 +7127,11 @@ class Snackbar(Component):
             props["dismiss_action_content_color"] = dismiss_action_content_color
         if shape is not None:
             props["shape"] = shape
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if action is not None:
             slotted += slot_nodes(action, key="action", slot="action")
@@ -4706,7 +7159,7 @@ class SnackbarHost(Component):
         action_label: str | None = None,
         message: str,
         modifier: Modifier | None = None,
-        on_dismiss: str | None = None,
+        on_dismiss: ActionTarget | None = None,
         serial: int,
     ) -> None:
         """Construct a registered SnackbarHost.
@@ -4719,7 +7172,7 @@ class SnackbarHost(Component):
             on_dismiss: Native onDismiss; None uses its default.
             serial: Required native serial.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if action_label is not None:
             props["action_label"] = action_label
         props["message"] = message
@@ -4747,7 +7200,7 @@ class Spacer(Component):
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -4763,8 +7216,8 @@ class StatefulSearchBar(Component):
         id: str | None = None,
         expanded: bool | None = None,
         modifier: Modifier | None = None,
-        on_edit: str,
-        on_expanded_change: str | None = None,
+        on_edit: ActionTarget,
+        on_expanded_change: ActionTarget | None = None,
         revision: int,
         selection_end: int,
         selection_start: int,
@@ -4793,7 +7246,7 @@ class StatefulSearchBar(Component):
             expanded_bar: Nodes the host composes for the expandedBar slot.
             input_field: Nodes for the native inputField slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if expanded is not None:
             props["expanded"] = expanded
         props["on_edit"] = on_edit
@@ -4831,9 +7284,9 @@ class StatefulSearchBarInputField(Component):
         enabled: bool | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
-        on_edit: str,
-        on_expanded_change: str,
-        on_search: str,
+        on_edit: ActionTarget,
+        on_expanded_change: ActionTarget,
+        on_search: ActionTarget,
         read_only: bool | None = None,
         revision: int,
         selection_end: int,
@@ -4871,7 +7324,7 @@ class StatefulSearchBarInputField(Component):
             suffix: Nodes for the native suffix slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
@@ -4922,7 +7375,10 @@ class SuggestionChip(Component):
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         shape: JsonValue | None = None,
         icon: Content | None = None,
         label: Content | None = None,
@@ -4936,11 +7392,14 @@ class SuggestionChip(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             shape: Native shape; None uses its default.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if not isinstance(elevation, _Unset):
@@ -4948,6 +7407,12 @@ class SuggestionChip(Component):
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         if shape is not None:
             props["shape"] = shape
         slotted: tuple[Node, ...] = ()
@@ -4958,18 +7423,29 @@ class SuggestionChip(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
-class Surface(Component):
+class _Surface(Component):
     """Native Surface; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Surface"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "color",
+            "content",
+            "shadow_elevation",
+            "shape",
+            "tonal_elevation",
+        }
+    )
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         shadow_elevation: int | float | None = None,
         shape: JsonValue | None = None,
@@ -4979,6 +7455,7 @@ class Surface(Component):
         """Construct a registered Surface.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             border: Native border; omitted uses its default; None is null.
             color: Native color; None uses its default.
@@ -4987,8 +7464,11 @@ class Surface(Component):
             shape: Native shape; None uses its default.
             tonal_elevation: Native tonalElevation; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if not isinstance(border, _Unset):
             props["border"] = border
         if color is not None:
@@ -4999,8 +7479,99 @@ class Surface(Component):
             props["shape"] = shape
         if tonal_elevation is not None:
             props["tonal_elevation"] = tonal_elevation
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Surface(_Surface):
+    """Native Surface; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | Expression | None = None,
+        modifier: Modifier | None = None,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> Surface: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        checked: bool,
+        color: JsonValue | Expression | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> SurfaceChecked: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | Expression | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> SurfaceOnClick: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | Expression | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        selected: bool,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> SurfaceSelected: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class SwipeToDismissBox(Component):
@@ -5011,13 +7582,13 @@ class SwipeToDismissBox(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         enable_dismiss_from_end_to_start: bool | None = None,
         enable_dismiss_from_start_to_end: bool | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_value_change: str | None = None,
+        on_value_change: ActionTarget | None = None,
         value: _SwipeToDismissBoxValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -5026,6 +7597,7 @@ class SwipeToDismissBox(Component):
         """Construct a registered SwipeToDismissBox.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             enable_dismiss_from_end_to_start: Native enableDismissFromEndToStart;
                 None uses its default.
@@ -5040,9 +7612,9 @@ class SwipeToDismissBox(Component):
             background_content: Nodes for the native backgroundContent slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enable_dismiss_from_end_to_start is not None:
             props["enable_dismiss_from_end_to_start"] = enable_dismiss_from_end_to_start
         if enable_dismiss_from_start_to_end is not None:
@@ -5059,7 +7631,11 @@ class SwipeToDismissBox(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if background_content is not None:
             slotted += slot_nodes(
@@ -5086,10 +7662,10 @@ class Switch(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_checked_change: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         thumb_content: Content | None = None,
     ) -> None:
         """Construct a registered Switch.
@@ -5106,7 +7682,7 @@ class Switch(Component):
             on_press: Native onPress; None uses its default.
             thumb_content: Nodes for the native thumbContent slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         props["checked"] = checked
         if colors is not None:
             props["colors"] = colors
@@ -5141,9 +7717,12 @@ class Tab(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         selected: bool,
-        selected_content_color: JsonValue | None = None,
+        selected_content_color: JsonValue | Expression | None = None,
         icon: Content | None = None,
         text: Content | None = None,
     ) -> None:
@@ -5154,16 +7733,25 @@ class Tab(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             selected: Required native selected.
             selected_content_color: Native selectedContentColor; None uses its
                 default.
             icon: Nodes for the native icon slot.
             text: Nodes for the native text slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["selected"] = selected
         if selected_content_color is not None:
             props["selected_content_color"] = selected_content_color
@@ -5173,6 +7761,74 @@ class Tab(Component):
         if text is not None:
             slotted += slot_nodes(text, key="text", slot="text")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class TabContent(Component):
+    """Native Tab; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TabContent"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        selected: bool,
+        selected_content_color: JsonValue | Expression | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered TabContent.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            selected: Required native selected.
+            selected_content_color: Native selectedContentColor; None uses its
+                default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        props["selected"] = selected
+        if selected_content_color is not None:
+            props["selected_content_color"] = selected_content_color
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class Text(Component):
@@ -5185,7 +7841,7 @@ class Text(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         font_resource: str | None = None,
         locale: str | None = None,
         modifier: Modifier | None = None,
@@ -5205,7 +7861,7 @@ class Text(Component):
             style: Native style; None uses its default.
             text: Required native text.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
         if font_resource is not None:
@@ -5217,6 +7873,84 @@ class Text(Component):
         if style is not None:
             props["style"] = style
         props["text"] = text
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class TextAnnotatedString(Component):
+    """Native Text; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TextAnnotatedString"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        color: JsonValue | Expression | None = None,
+        font_family: JsonValue | None | _Unset = UNSET,
+        font_size: JsonValue | None = None,
+        font_style: JsonValue | None | _Unset = UNSET,
+        font_weight: JsonValue | None | _Unset = UNSET,
+        letter_spacing: JsonValue | None = None,
+        line_height: JsonValue | None = None,
+        min_lines: int | None = None,
+        modifier: Modifier | None = None,
+        overflow: JsonValue | None = None,
+        soft_wrap: bool | None = None,
+        style: JsonValue | None = None,
+        text: JsonValue,
+        text_align: JsonValue | None | _Unset = UNSET,
+        text_decoration: JsonValue | None | _Unset = UNSET,
+    ) -> None:
+        """Construct a registered TextAnnotatedString.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            color: Native color; None uses its default.
+            font_family: Native fontFamily; omitted uses its default; None is null.
+            font_size: Native fontSize; None uses its default.
+            font_style: Native fontStyle; omitted uses its default; None is null.
+            font_weight: Native fontWeight; omitted uses its default; None is null.
+            letter_spacing: Native letterSpacing; None uses its default.
+            line_height: Native lineHeight; None uses its default.
+            min_lines: Native minLines; None uses its default.
+            modifier: Native modifier; None uses its default.
+            overflow: Native overflow; None uses its default.
+            soft_wrap: Native softWrap; None uses its default.
+            style: Native style; None uses its default.
+            text: Required native text.
+            text_align: Native textAlign; omitted uses its default; None is null.
+            text_decoration: Native textDecoration; omitted uses its default; None
+                is null.
+        """
+        props: dict[str, PropValue] = {}
+        if color is not None:
+            props["color"] = color
+        if not isinstance(font_family, _Unset):
+            props["font_family"] = font_family
+        if font_size is not None:
+            props["font_size"] = font_size
+        if not isinstance(font_style, _Unset):
+            props["font_style"] = font_style
+        if not isinstance(font_weight, _Unset):
+            props["font_weight"] = font_weight
+        if letter_spacing is not None:
+            props["letter_spacing"] = letter_spacing
+        if line_height is not None:
+            props["line_height"] = line_height
+        if min_lines is not None:
+            props["min_lines"] = min_lines
+        if overflow is not None:
+            props["overflow"] = overflow
+        if soft_wrap is not None:
+            props["soft_wrap"] = soft_wrap
+        if style is not None:
+            props["style"] = style
+        props["text"] = text
+        if not isinstance(text_align, _Unset):
+            props["text_align"] = text_align
+        if not isinstance(text_decoration, _Unset):
+            props["text_decoration"] = text_decoration
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -5232,10 +7966,10 @@ class TextButton(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
-        on_focus: str | None = None,
-        on_hover: str | None = None,
-        on_press: str | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         text: str,
     ) -> None:
         """Construct a registered TextButton.
@@ -5250,7 +7984,7 @@ class TextButton(Component):
             on_press: Native onPress; None uses its default.
             text: Required native text.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
@@ -5277,8 +8011,8 @@ class TextField(Component):
         enabled: bool | None = None,
         label: str | None = None,
         modifier: Modifier | None = None,
-        on_selection_change: str | None = None,
-        on_value_change: str,
+        on_selection_change: ActionTarget | None = None,
+        on_value_change: ActionTarget,
         selection: int | None = None,
         value: str,
     ) -> None:
@@ -5294,7 +8028,7 @@ class TextField(Component):
             selection: Native selection; None uses its default.
             value: Required native value.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         if label is not None:
@@ -5308,6 +8042,193 @@ class TextField(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
+class TimeInput(Component):
+    """Native TimeInput; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TimeInput"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        hour: int | None = None,
+        is24hour: bool | None = None,
+        minute: int | None = None,
+        modifier: Modifier | None = None,
+        on_hour_change: ActionTarget | None = None,
+        on_is24hour_change: ActionTarget | None = None,
+        on_minute_change: ActionTarget | None = None,
+    ) -> None:
+        """Construct a registered TimeInput.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            hour: Native hour; None uses its default.
+            is24hour: Native is24hour; None uses its default.
+            minute: Native minute; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_hour_change: Native onHourChange; None uses its default.
+            on_is24hour_change: Native onIs24hourChange; None uses its default.
+            on_minute_change: Native onMinuteChange; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if hour is not None:
+            props["hour"] = hour
+        if is24hour is not None:
+            props["is24hour"] = is24hour
+        if minute is not None:
+            props["minute"] = minute
+        if on_hour_change is not None:
+            props["on_hour_change"] = on_hour_change
+        if on_is24hour_change is not None:
+            props["on_is24hour_change"] = on_is24hour_change
+        if on_minute_change is not None:
+            props["on_minute_change"] = on_minute_change
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class TimePicker(Component):
+    """Native TimePicker; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TimePicker"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        hour: int | None = None,
+        is24hour: bool | None = None,
+        layout_type: JsonValue | None = None,
+        minute: int | None = None,
+        modifier: Modifier | None = None,
+        on_hour_change: ActionTarget | None = None,
+        on_is24hour_change: ActionTarget | None = None,
+        on_minute_change: ActionTarget | None = None,
+    ) -> None:
+        """Construct a registered TimePicker.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            hour: Native hour; None uses its default.
+            is24hour: Native is24hour; None uses its default.
+            layout_type: Native layoutType; None uses its default.
+            minute: Native minute; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_hour_change: Native onHourChange; None uses its default.
+            on_is24hour_change: Native onIs24hourChange; None uses its default.
+            on_minute_change: Native onMinuteChange; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if hour is not None:
+            props["hour"] = hour
+        if is24hour is not None:
+            props["is24hour"] = is24hour
+        if layout_type is not None:
+            props["layout_type"] = layout_type
+        if minute is not None:
+            props["minute"] = minute
+        if on_hour_change is not None:
+            props["on_hour_change"] = on_hour_change
+        if on_is24hour_change is not None:
+            props["on_is24hour_change"] = on_is24hour_change
+        if on_minute_change is not None:
+            props["on_minute_change"] = on_minute_change
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class TimePickerDialog(Component):
+    """Native TimePickerDialog; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TimePickerDialog"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        container_color: JsonValue | Expression | None = None,
+        modifier: Modifier | None = None,
+        on_dismiss_request: ActionTarget,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        confirm_button: Content | None = None,
+        dismiss_button: Content | None = None,
+        mode_toggle_button: Content | None = None,
+        title: Content | None = None,
+    ) -> None:
+        """Construct a registered TimePickerDialog.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_dismiss_request: Required native onDismissRequest.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            confirm_button: Nodes for the native confirmButton slot.
+            dismiss_button: Nodes for the native dismissButton slot.
+            mode_toggle_button: Nodes for the native modeToggleButton slot.
+            title: Nodes for the native title slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        props["on_dismiss_request"] = on_dismiss_request
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if confirm_button is not None:
+            slotted += slot_nodes(
+                confirm_button,
+                key="confirmButton",
+                slot="confirmButton",
+            )
+        if dismiss_button is not None:
+            slotted += slot_nodes(
+                dismiss_button,
+                key="dismissButton",
+                slot="dismissButton",
+            )
+        if mode_toggle_button is not None:
+            slotted += slot_nodes(
+                mode_toggle_button,
+                key="modeToggleButton",
+                slot="modeToggleButton",
+            )
+        if title is not None:
+            slotted += slot_nodes(title, key="title", slot="title")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
 class TooltipBox(Component):
     """Native TooltipBox; props and defaults follow the component manifest."""
 
@@ -5316,14 +8237,14 @@ class TooltipBox(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         enable_user_input: bool | None = None,
         focusable: bool | None = None,
         has_action: bool | None = None,
         is_persistent: bool | None = None,
         modifier: Modifier | None = None,
-        on_visibility_change: str | None = None,
+        on_visibility_change: ActionTarget | None = None,
         position: _TooltipBoxPosition | None = None,
         visible: bool | None = None,
         children: Content = (),
@@ -5333,6 +8254,7 @@ class TooltipBox(Component):
         """Construct a registered TooltipBox.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             enable_user_input: Native enableUserInput; None uses its default.
             focusable: Native focusable; None uses its default.
@@ -5347,9 +8269,9 @@ class TooltipBox(Component):
             tooltip: Nodes for the native tooltip slot.
 
         Raises:
-            IrValidationError: If slot and children are both set.
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enable_user_input is not None:
             props["enable_user_input"] = enable_user_input
         if focusable is not None:
@@ -5370,7 +8292,11 @@ class TooltipBox(Component):
                     "cannot supply both slot and children", node_id=id
                 )
             children = content_nodes(content, key="content")
-        normalized = content_nodes(children, key="children")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         slotted: tuple[Node, ...] = ()
         if tooltip is not None:
             slotted += slot_nodes(tooltip, key="tooltip", slot="tooltip")
@@ -5409,7 +8335,7 @@ class TopAppBar(Component):
             navigation_icon: Nodes for the native navigationIcon slot.
             title: Nodes for the native title slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if expanded_height is not None:
@@ -5443,7 +8369,10 @@ class TriStateCheckbox(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         state: JsonValue,
     ) -> None:
         """Construct a registered TriStateCheckbox.
@@ -5454,14 +8383,23 @@ class TriStateCheckbox(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             state: Required native state.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if colors is not None:
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["state"] = state
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
@@ -5476,7 +8414,7 @@ class VerticalDivider(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | None = None,
+        color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         thickness: int | float | None = None,
     ) -> None:
@@ -5488,7 +8426,7 @@ class VerticalDivider(Component):
             modifier: Native modifier; None uses its default.
             thickness: Native thickness; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
         if thickness is not None:
@@ -5507,14 +8445,26 @@ class VerticalDragHandle(Component):
         *,
         id: str | None = None,
         modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
     ) -> None:
         """Construct a registered VerticalDragHandle.
 
         Args:
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -5526,7 +8476,7 @@ class WideNavigationRail(Component):
 
     def __init__(
         self,
-        *,
+        *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
@@ -5534,12 +8484,20 @@ class WideNavigationRail(Component):
         """Construct a registered WideNavigationRail.
 
         Args:
+            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
         """
-        props: dict[str, JsonValue] = {}
-        normalized = content_nodes(children, key="children")
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
@@ -5556,7 +8514,10 @@ class WideNavigationRailItem(Component):
         id: str | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_click: str,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
         rail_expanded: bool,
         selected: bool,
         icon: Content | None = None,
@@ -5569,15 +8530,24 @@ class WideNavigationRailItem(Component):
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
             rail_expanded: Required native railExpanded.
             selected: Required native selected.
             icon: Nodes for the native icon slot.
             label: Nodes for the native label slot.
         """
-        props: dict[str, JsonValue] = {}
+        props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
         props["rail_expanded"] = rail_expanded
         props["selected"] = selected
         slotted: tuple[Node, ...] = ()
@@ -5586,3 +8556,782 @@ class WideNavigationRailItem(Component):
         if label is not None:
             slotted += slot_nodes(label, key="label", slot="label")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class CardWithoutOnClick(Card):
+    """Native Card; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "CardWithoutOnClick"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "colors",
+            "content",
+            "elevation",
+            "shape",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered CardWithoutOnClick.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; None uses its default.
+            modifier: Native modifier; None uses its default.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if colors is not None:
+            props["colors"] = colors
+        if elevation is not None:
+            props["elevation"] = elevation
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class CircularProgressIndicatorProgress(CircularProgressIndicator):
+    """Native CircularProgressIndicator;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "CircularProgressIndicatorProgress"
+    required_keywords = frozenset(
+        {
+            "progress",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "color",
+            "gap_size",
+            "progress",
+            "stroke_cap",
+            "stroke_width",
+            "track_color",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        color: JsonValue | Expression | None = None,
+        gap_size: int | float | None = None,
+        modifier: Modifier | None = None,
+        progress: int | float,
+        stroke_cap: JsonValue | None = None,
+        stroke_width: int | float | None = None,
+        track_color: JsonValue | Expression | None = None,
+    ) -> None:
+        """Construct a registered CircularProgressIndicatorProgress.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            color: Native color; None uses its default.
+            gap_size: Native gapSize; None uses its default.
+            modifier: Native modifier; None uses its default.
+            progress: Required native progress.
+            stroke_cap: Native strokeCap; None uses its default.
+            stroke_width: Native strokeWidth; None uses its default.
+            track_color: Native trackColor; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if color is not None:
+            props["color"] = color
+        if gap_size is not None:
+            props["gap_size"] = gap_size
+        props["progress"] = progress
+        if stroke_cap is not None:
+            props["stroke_cap"] = stroke_cap
+        if stroke_width is not None:
+            props["stroke_width"] = stroke_width
+        if track_color is not None:
+            props["track_color"] = track_color
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
+class ElevatedCardWithoutOnClick(ElevatedCard):
+    """Native ElevatedCard; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ElevatedCardWithoutOnClick"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "colors",
+            "content",
+            "elevation",
+            "shape",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered ElevatedCardWithoutOnClick.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; None uses its default.
+            modifier: Native modifier; None uses its default.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if elevation is not None:
+            props["elevation"] = elevation
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class ImageImageVector(Image):
+    """Native Image; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ImageImageVector"
+    required_keywords = frozenset(
+        {
+            "content_description",
+            "image_vector",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "alignment",
+            "content_description",
+            "image_vector",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        alignment: _ImageImageVectorAlignment | None = None,
+        content_description: str | None,
+        image_vector: JsonValue,
+        modifier: Modifier | None = None,
+    ) -> None:
+        """Construct a registered ImageImageVector.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            alignment: Native alignment; None uses its default.
+            content_description: Required native contentDescription.
+            image_vector: Required native imageVector.
+            modifier: Native modifier; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if alignment is not None:
+            props["alignment"] = alignment
+        props["content_description"] = content_description
+        props["image_vector"] = image_vector
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
+class LinearProgressIndicatorWithoutProgress(LinearProgressIndicator):
+    """Native LinearProgressIndicator;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LinearProgressIndicatorWithoutProgress"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "color",
+            "gap_size",
+            "stroke_cap",
+            "track_color",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        color: JsonValue | Expression | None = None,
+        gap_size: int | float | None = None,
+        modifier: Modifier | None = None,
+        stroke_cap: JsonValue | None = None,
+        track_color: JsonValue | Expression | None = None,
+    ) -> None:
+        """Construct a registered LinearProgressIndicatorWithoutProgress.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            color: Native color; None uses its default.
+            gap_size: Native gapSize; None uses its default.
+            modifier: Native modifier; None uses its default.
+            stroke_cap: Native strokeCap; None uses its default.
+            track_color: Native trackColor; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if color is not None:
+            props["color"] = color
+        if gap_size is not None:
+            props["gap_size"] = gap_size
+        if stroke_cap is not None:
+            props["stroke_cap"] = stroke_cap
+        if track_color is not None:
+            props["track_color"] = track_color
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
+class NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType(
+    NavigationSuiteScaffoldLayout
+):
+    """Native NavigationSuiteScaffoldLayout;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "content",
+            "navigation_suite",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        navigation_suite: Content | None = None,
+    ) -> None:
+        """Construct NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+            navigation_suite: Nodes for the native navigationSuite slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if navigation_suite is not None:
+            slotted += slot_nodes(
+                navigation_suite,
+                key="navigationSuite",
+                slot="navigationSuite",
+            )
+        Component.__init__(
+            self, id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
+class OutlinedCardWithoutOnClick(OutlinedCard):
+    """Native OutlinedCard; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "OutlinedCardWithoutOnClick"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "colors",
+            "content",
+            "elevation",
+            "shape",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered OutlinedCardWithoutOnClick.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; None uses its default.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; None uses its default.
+            modifier: Native modifier; None uses its default.
+            shape: Native shape; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if border is not None:
+            props["border"] = border
+        if colors is not None:
+            props["colors"] = colors
+        if elevation is not None:
+            props["elevation"] = elevation
+        if shape is not None:
+            props["shape"] = shape
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class SliderValue(Slider):
+    """Native Slider; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SliderValue"
+    required_keywords = frozenset(
+        {
+            "on_value_change",
+            "value",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "colors",
+            "enabled",
+            "on_focus",
+            "on_hover",
+            "on_press",
+            "on_value_change",
+            "on_value_change_finished",
+            "steps",
+            "value",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        on_value_change: ActionTarget,
+        on_value_change_finished: ActionTarget | None = None,
+        steps: int | None = None,
+        value: int | float,
+    ) -> None:
+        """Construct a registered SliderValue.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            on_value_change: Required native onValueChange.
+            on_value_change_finished: Native onValueChangeFinished; None uses its
+                default.
+            steps: Native steps; None uses its default.
+            value: Required native value.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if enabled is not None:
+            props["enabled"] = enabled
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        props["on_value_change"] = on_value_change
+        if on_value_change_finished is not None:
+            props["on_value_change_finished"] = on_value_change_finished
+        if steps is not None:
+            props["steps"] = steps
+        props["value"] = value
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
+class SurfaceChecked(Surface):
+    """Native Surface; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SurfaceChecked"
+    required_keywords = frozenset(
+        {
+            "checked",
+            "on_checked_change",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "checked",
+            "color",
+            "content",
+            "enabled",
+            "on_checked_change",
+            "on_focus",
+            "on_hover",
+            "on_press",
+            "shadow_elevation",
+            "shape",
+            "tonal_elevation",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        checked: bool,
+        color: JsonValue | Expression | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_checked_change: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered SurfaceChecked.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            checked: Required native checked.
+            color: Native color; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_checked_change: Required native onCheckedChange.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        props["checked"] = checked
+        if color is not None:
+            props["color"] = color
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_checked_change"] = on_checked_change
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class SurfaceOnClick(Surface):
+    """Native Surface; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SurfaceOnClick"
+    required_keywords = frozenset(
+        {
+            "on_click",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "color",
+            "content",
+            "enabled",
+            "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
+            "shadow_elevation",
+            "shape",
+            "tonal_elevation",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | Expression | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered SurfaceOnClick.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            color: Native color; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if color is not None:
+            props["color"] = color
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+class SurfaceSelected(Surface):
+    """Native Surface; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SurfaceSelected"
+    required_keywords = frozenset(
+        {
+            "on_click",
+            "selected",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "border",
+            "color",
+            "content",
+            "enabled",
+            "on_click",
+            "on_focus",
+            "on_hover",
+            "on_press",
+            "selected",
+            "shadow_elevation",
+            "shape",
+            "tonal_elevation",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        color: JsonValue | Expression | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_click: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        selected: bool,
+        shadow_elevation: int | float | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered SurfaceSelected.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            color: Native color; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_click: Required native onClick.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            selected: Required native selected.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if color is not None:
+            props["color"] = color
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_click"] = on_click
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        props["selected"] = selected
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = shadow_elevation
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
+Card.overloads = (CardWithoutOnClick,)
+CircularProgressIndicator.overloads = (CircularProgressIndicatorProgress,)
+ElevatedCard.overloads = (ElevatedCardWithoutOnClick,)
+Image.overloads = (ImageImageVector,)
+LinearProgressIndicator.overloads = (LinearProgressIndicatorWithoutProgress,)
+NavigationSuiteScaffoldLayout.overloads = (
+    NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType,
+)
+OutlinedCard.overloads = (OutlinedCardWithoutOnClick,)
+Slider.overloads = (SliderValue,)
+Surface.overloads = (SurfaceChecked, SurfaceOnClick, SurfaceSelected)

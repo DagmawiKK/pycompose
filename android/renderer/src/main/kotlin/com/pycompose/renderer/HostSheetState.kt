@@ -15,10 +15,12 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import com.pycompose.renderer.generated.driveTo
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
+import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * A sheet's data-only projections, with the explicit anchor taking precedence over [open].
@@ -62,7 +64,7 @@ internal fun rememberHostSheetState(
         remember(state, memory, driveMemory, open) {
             SheetProjection(state, memory, driveMemory, open)
         }
-    DriveSheet(projection, desired)
+    DriveSheet(projection, desired, answered(contract.report) && answered(contract.valueReport))
     ObserveSheet(projection, contract.report, contract.valueReport, observations)
     ObserveDismissal(projection)
     return HostSheetState(state, open.value)
@@ -160,7 +162,7 @@ private class SheetProjection(
             // A save mid-drive re-drives the stated request, not the anchor the
             // native holder happened to reach before the save.
             pending != null -> pending
-            state.currentValue != SheetValue.Hidden -> state.currentValue.wireValue()
+            state.currentValue != SheetValue.Hidden -> state.currentValue.wire
             // Saved during the opening animation: the request must still reconcile.
             else -> lastDesired?.takeIf { it != "hidden" }
         }
@@ -183,9 +185,10 @@ private class SheetProjection(
 @Composable
 private fun DriveSheet(
     projection: SheetProjection,
-    desired: String?,
+    stated: String?,
+    answered: Boolean,
 ) {
-    LaunchedEffect(projection, desired) {
+    OnDesired(projection, stated, answered, keepsStatements = false) { desired ->
         val changed = desired != projection.lastDesired
         val restored = projection.reattach
         if (changed || restored != null) {
@@ -225,7 +228,7 @@ private suspend fun SheetProjection.drive(
     if (desired == "hidden") {
         // Run the native hide, and only then let the composed sheet leave the tree.
         if (visible && (state.currentValue != SheetValue.Hidden || state.isAnimationRunning)) {
-            state.hide()
+            state.driveTo(SheetValue.Hidden)
         }
         present(false)
         return
@@ -262,27 +265,22 @@ private suspend fun SheetProjection.awaitOpening() {
     }.first { it }
 }
 
-/** Move to the requested visible anchor, preferring a native partial anchor. */
+/** Move to the requested visible anchor, or expanded where measurement has no partial one. */
 @OptIn(ExperimentalMaterial3Api::class)
 private suspend fun SheetProjection.reconcile(desired: String) {
-    when (desired) {
-        VISIBLE_REQUEST -> Unit
-        "expanded" ->
-            if (state.currentValue != SheetValue.Expanded) {
-                state.expand()
-            }
-        "partiallyExpanded" ->
-            when {
-                !state.hasPartiallyExpandedState ->
-                    if (state.currentValue != SheetValue.Expanded) {
-                        state.expand()
-                    } else if (settled == SheetValue.Expanded) {
-                        // Re-arm the baseline so the observer reports the
-                        // actual anchor even though it did not move.
-                        settled = SheetValue.PartiallyExpanded
-                    }
-                state.currentValue != SheetValue.PartiallyExpanded -> state.partialExpand()
-            }
+    val target = desired.anchor<SheetValue>() ?: return
+    val reachable =
+        if (target == SheetValue.PartiallyExpanded && !state.hasPartiallyExpandedState) {
+            SheetValue.Expanded
+        } else {
+            target
+        }
+    if (state.currentValue != reachable) {
+        state.driveTo(reachable)
+    } else if (reachable != target && settled == SheetValue.Expanded) {
+        // Re-arm the baseline so the observer reports the actual anchor even
+        // though it did not move.
+        settled = SheetValue.PartiallyExpanded
     }
 }
 
@@ -316,9 +314,9 @@ private fun ObserveSheet(
                     projection.settled = SheetValue.Hidden
                     projection.present(false)
                     valueChannel.value?.let {
-                        sink.value.observe("value", it, SheetValue.Hidden.wireValue())
+                        sink.value.observe("value", it, JsonPrimitive(SheetValue.Hidden.wire))
                     }
-                    openChannel.value?.let { sink.value.observe("open", it, false) }
+                    openChannel.value?.let { sink.value.observe("open", it, JsonPrimitive(false)) }
                     return@collect
                 }
             }
@@ -328,10 +326,10 @@ private fun ObserveSheet(
                 projection.settled = snapshot.anchor
                 projection.present(isOpen)
                 valueChannel.value?.let {
-                    sink.value.observe("value", it, snapshot.anchor.wireValue())
+                    sink.value.observe("value", it, JsonPrimitive(snapshot.anchor.wire))
                 }
                 if (wasOpen != isOpen) {
-                    openChannel.value?.let { sink.value.observe("open", it, isOpen) }
+                    openChannel.value?.let { sink.value.observe("open", it, JsonPrimitive(isOpen)) }
                 }
             }
         }
@@ -355,15 +353,6 @@ private fun ObserveDismissal(projection: SheetProjection) {
             }
     }
 }
-
-/** The native enum's stable lowerCamel wire aliases. */
-@OptIn(ExperimentalMaterial3Api::class)
-private fun SheetValue.wireValue(): String =
-    when (this) {
-        SheetValue.Hidden -> "hidden"
-        SheetValue.PartiallyExpanded -> "partiallyExpanded"
-        SheetValue.Expanded -> "expanded"
-    }
 
 /**
  * One node's native holder and presence gate, consumed by generated adapters.

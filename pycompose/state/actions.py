@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from types import ModuleType
-from typing import Any, cast
+from typing import Any
 
 from pycompose.core.action_binding import BindingSpec, check_payload
 from pycompose.core.node import Node
 from pycompose.core.props import to_camel_case
 from pycompose.errors import IrValidationError, StateError
-from pycompose.state.app_action import CONTAINER, AppAction
+from pycompose.state.app_action import APPLIED, CONTAINER, AppAction
 from pycompose.state.state import State
 
 __all__ = ["ActionHandler", "Actions", "Registry", "actions_for_module"]
@@ -19,18 +19,18 @@ ActionHandler = Callable[[State, Any], State]
 
 
 class Actions:
-    def __init__(self, *definitions: AppAction[Any, Any]) -> None:
+    def __init__(self, *definitions: AppAction[Any]) -> None:
         self._handlers: dict[str, ActionHandler] = {}
         self._definitions = {definition.name: definition for definition in definitions}
         self._container: object | None = None
         self._view: Callable[[Any], Node] | None = None
-        self._contracts: dict[str, AppAction[Any, Any]] = {}
+        self._contracts: dict[str, AppAction[Any]] = {}
         if len(self._definitions) != len(definitions):
             raise StateError("duplicate app action definitions")
         for definition in definitions:
             self._adopt(definition)
 
-    def _adopt(self, definition: AppAction[Any, Any]) -> None:
+    def _adopt(self, definition: AppAction[Any]) -> None:
         """Register one definition under its qualified id and its bare alias.
 
         Dispatch routes through the definition rather than the bare function it
@@ -42,8 +42,10 @@ class Actions:
             definition: The action to register.
         """
         definition.view = self._view
-        self.register(definition.name, cast("ActionHandler", definition))
+        self.register(definition.name, definition.run)
         self._contracts[definition.name] = definition
+        if definition.asynchronous:
+            self.register(f"{definition.name}{APPLIED}", definition.apply)
         self._alias(definition)
 
     @property
@@ -90,7 +92,7 @@ class Actions:
         for definition in self._definitions.values():
             definition.view = view
 
-    def _alias(self, definition: AppAction[Any, Any]) -> None:
+    def _alias(self, definition: AppAction[Any]) -> None:
         """Also register an action under its bare camelCase name.
 
         The qualified id (``main.add_task``) is the stable identity; the alias is
@@ -104,7 +106,7 @@ class Actions:
         _, _, bare = definition.name.rpartition(".")
         alias = to_camel_case(bare)
         if alias and alias not in self._handlers:
-            self.register(alias, cast("ActionHandler", definition))
+            self.register(alias, self._handlers[definition.name])
             self._contracts.setdefault(alias, definition)
 
     def validate_bindings(self, bindings: Mapping[str, BindingSpec]) -> None:
@@ -293,6 +295,39 @@ class Actions:
     def handlers(self) -> Mapping[str, ActionHandler]:
         return self._handlers.copy()
 
+    def declared(
+        self, action_id: str, payload: Mapping[str, object]
+    ) -> Mapping[str, object]:
+        """Keep only the fields the handler for ``action_id`` takes.
+
+        A host event such as a lifecycle callback carries every field its own
+        contract names, and the bridge has already checked them against it. A
+        handler states in its signature the ones it reads, so the rest are not
+        passed to it.
+
+        Args:
+            action_id: Id the event arrived under.
+            payload: The event's fields, wire-named.
+
+        Returns:
+            The fields the handler declares, or the payload unchanged when no
+            annotated handler is registered under that id.
+        """
+        definition = self._contracts.get(action_id)
+        if definition is None:
+            return payload
+        return {
+            name: value for name, value in payload.items() if name in definition.fields
+        }
+
+    def definitions(self) -> tuple[AppAction[Any], ...]:
+        """Return the annotated actions this registry holds.
+
+        Returns:
+            Each definition once, in registration order.
+        """
+        return tuple(self._definitions.values())
+
 
 class Registry(Actions):
     """An action registry that collects its own actions and names them.
@@ -313,22 +348,22 @@ class Registry(Actions):
             ...
 
     The same object is what the session finds, and what a screen binds through
-    (``actions.new_note.bind(id="new")``), so an action cannot be registered in
-    one place and forgotten in the other.
+    (``actions.new_note``), so an action cannot be registered in one place and
+    forgotten in the other.
     """
 
-    def __init__(self, *seed: AppAction[Any, Any]) -> None:
+    def __init__(self, *seed: AppAction[Any]) -> None:
         """Open an empty registry.
 
         Args:
             *seed: Actions to seed it with, if any.
         """
-        self._by_name: dict[str, AppAction[Any, Any]] = {}
+        self._by_name: dict[str, AppAction[Any]] = {}
         super().__init__(*seed)
         for definition in self._definitions.values():
             self._by_name[definition.name.rpartition(".")[2]] = definition
 
-    def __call__(self, function: Callable[..., Any]) -> AppAction[Any, Any]:
+    def __call__(self, function: Callable[..., Any]) -> AppAction[Any]:
         """Define an action and register it.
 
         Args:
@@ -338,11 +373,11 @@ class Registry(Actions):
         Returns:
             The definition, so it can be bound and called directly.
         """
-        definition: AppAction[Any, Any] = AppAction(function)
+        definition: AppAction[Any] = AppAction(function)
         self.add(definition)
         return definition
 
-    def add(self, definition: AppAction[Any, Any]) -> None:
+    def add(self, definition: AppAction[Any]) -> None:
         """Add one action to this registry.
 
         Args:
@@ -377,7 +412,7 @@ class Registry(Actions):
         """
         return tuple(self._by_name)
 
-    def __getattr__(self, name: str) -> AppAction[Any, Any]:
+    def __getattr__(self, name: str) -> AppAction[Any]:
         """Return one of this registry's actions by name.
 
         Args:
@@ -389,7 +424,7 @@ class Registry(Actions):
         Raises:
             AttributeError: If no action of that name was registered.
         """
-        found: AppAction[Any, Any] | None = self.__dict__.get("_by_name", {}).get(name)
+        found: AppAction[Any] | None = self.__dict__.get("_by_name", {}).get(name)
         if found is not None:
             return found
         raise AttributeError(
@@ -444,10 +479,7 @@ def actions_for_module(
         )
     if view is not None:
         actions.install_view(view)
-    elif any(
-        getattr(definition, "shell", None) is not None
-        for definition in actions.handlers().values()
-    ):
+    elif any(definition.shell is not None for definition in actions.definitions()):
         return (
             Actions(),
             "a session-native action needs the app's shell view; this entry "

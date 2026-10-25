@@ -92,14 +92,40 @@ class InteractionTest {
             )
         val sink = ObservationSink(bindings, ActionDispatcher { actions.add(it) }, reports::add)
 
-        sink.observe("value", "app.demo.value.1", 0.5f)
-        sink.observe("firstVisibleIndex", "app.demo.index.1", 3)
+        sink.observe("value", "app.demo.value.1", JsonPrimitive(0.5f))
+        sink.observe("firstVisibleIndex", "app.demo.index.1", JsonPrimitive(3))
 
         assertTrue(reports.isEmpty())
         assertEquals("app.demo.value.1", actions[0].actionId)
         assertEquals(JsonPrimitive(0.5f), actions[0].payload["progress"])
         assertEquals("app.demo.index.1", actions[1].actionId)
         assertEquals(JsonPrimitive(3), actions[1].payload["firstVisibleIndex"])
+    }
+
+    @Test
+    fun eachReportToAnActionTakesTheNextSequenceNumber() {
+        val actions = mutableListOf<Action>()
+        val binding =
+            AppBinding(
+                payload = mapOf("open" to PropertyRule("boolean", required = true)),
+                bound = JsonObject(emptyMap()),
+            )
+        val reports = Reports()
+        val sink =
+            ObservationSink(
+                mapOf("app.demo.a.1" to binding, "app.demo.b.1" to binding),
+                ActionDispatcher { actions.add(it) },
+                {},
+                reports,
+            )
+
+        sink.observe("open", "app.demo.a.1", JsonPrimitive(true))
+        sink.observe("open", "app.demo.a.1", JsonPrimitive(false))
+        sink.observe("open", "app.demo.b.1", JsonPrimitive(true))
+
+        assertEquals(listOf(1L, 2L, 1L), actions.map { it.seq })
+        assertTrue(reports.answered("app.demo.a.1", mapOf("app.demo.a.1" to 2L)))
+        assertTrue(!reports.answered("app.demo.a.1", mapOf("app.demo.a.1" to 1L)))
     }
 
     @Test
@@ -122,7 +148,7 @@ class InteractionTest {
             )
         val sink = ObservationSink(bindings, ActionDispatcher { actions.add(it) }, reports::add)
 
-        sink.observe("value", "app.demo.value.1", 3)
+        sink.observe("value", "app.demo.value.1", JsonPrimitive(3))
 
         assertTrue(actions.isEmpty())
         assertTrue(reports.single().contains("2 integer/number fields"))
@@ -144,7 +170,7 @@ class InteractionTest {
                 reports::add,
             )
 
-        sink.observe("value", "app.demo.index.1", 0.5f)
+        sink.observe("value", "app.demo.index.1", JsonPrimitive(0.5f))
 
         assertTrue(actions.isEmpty())
         assertTrue(reports.single().contains("0 number fields"))

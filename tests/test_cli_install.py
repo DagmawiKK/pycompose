@@ -49,7 +49,7 @@ elif "md5sum" in args:
         print("md5sum: not found", file=sys.stderr)
         raise SystemExit(1)
     if not value:
-        outputs = Path(".pycompose/android/host/build/outputs/apk")
+        outputs = Path("host/build/outputs/apk")
         artifact = outputs / "debug/host-debug.apk"
         if not artifact.is_file():
             artifact = outputs / "release/host-release.apk"
@@ -96,7 +96,7 @@ def signing(tmp_path: Path, project: Path) -> None:
 
 
 def test_install_builds_installs_and_verifies_the_device_copy(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     wrapper(project, _APK)
     result = cli(project, "install", env=tools_env(tools_dir(tmp_path)))
@@ -108,7 +108,7 @@ def test_install_builds_installs_and_verifies_the_device_copy(tmp_path: Path) ->
 
 
 def test_install_launch_reports_the_device_total_time(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     wrapper(project, _APK)
     result = cli(project, "install", "--launch", env=tools_env(tools_dir(tmp_path)))
@@ -118,7 +118,7 @@ def test_install_launch_reports_the_device_total_time(tmp_path: Path) -> None:
 
 
 def test_debug_launches_unless_told_not_to(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     wrapper(project, _APK)
     tools = tools_dir(tmp_path)
@@ -133,7 +133,7 @@ def test_debug_launches_unless_told_not_to(tmp_path: Path) -> None:
 
 
 def test_install_fails_when_the_device_digest_differs(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     wrapper(project, _APK)
     (project / "device-md5.txt").write_text("0" * 32)
@@ -147,7 +147,7 @@ def test_install_fails_when_the_device_digest_differs(tmp_path: Path) -> None:
 def test_install_without_a_device_digest_warns_and_still_installs(
     tmp_path: Path,
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     wrapper(project, _APK)
     (project / "device-md5.txt").write_text("unreported")
@@ -157,7 +157,7 @@ def test_install_without_a_device_digest_warns_and_still_installs(
 
 
 def test_install_without_adb_is_actionable(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     wrapper(project, _APK)
     result = cli(project, "install", env=tools_env(None))
@@ -167,7 +167,7 @@ def test_install_without_adb_is_actionable(tmp_path: Path) -> None:
 
 
 def test_release_install_builds_signed_and_installs(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     signing(tmp_path, project)
     wrapper(project, _RELEASE_APK)
@@ -184,7 +184,7 @@ def test_release_install_builds_signed_and_installs(tmp_path: Path) -> None:
 
 
 def test_release_install_refuses_a_bundle(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     signing(tmp_path, project)
     wrapper(project, _BUNDLE)

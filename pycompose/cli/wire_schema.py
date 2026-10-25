@@ -82,7 +82,7 @@ def _scalars(item: object, rule: dict[str, Any], path: str) -> None:
         and "pattern" in rule
         and re.search(rule["pattern"], item) is None
     ):
-        raise ProjectError("invalid resource reference", path=path)
+        raise ProjectError("value does not match its IR schema pattern", path=path)
 
 
 class WireSchema:
@@ -150,6 +150,12 @@ class WireSchema:
             return rule
         if set(rule) - KEYWORDS:
             raise ProjectError("unsupported generated schema keyword", path=path)
+        tag = rule.get("properties", {}).get("type", {}).get("const")
+        if tag is not None and (
+            not isinstance(value, dict) or value.get("type") != tag
+        ):
+            # A tagged object is told apart from its siblings by its tag alone.
+            return False
         try:
             _scalars(value, rule, path)
             if "anyOf" in rule or "oneOf" in rule:

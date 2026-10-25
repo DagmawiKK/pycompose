@@ -49,7 +49,7 @@ def _with_range() -> dict:
     Returns:
         The parsed catalog with one injected family entry.
     """
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["valueTypes"]["Range"] = json.loads(json.dumps(RANGE_FAMILY))
     return registry
 
@@ -106,7 +106,7 @@ def test_an_operator_family_needs_its_language_level_citation(
 
 
 def test_app_values_include_transitive_dependencies_not_unrelated_factories() -> None:
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     sliced = slice_registry(registry, {"Text"})
     specs = definitions(sliced)
     assert "Sp" in specs
@@ -131,7 +131,7 @@ def test_the_value_specs_literal_is_joined_from_a_flat_list() -> None:
     the compiler's stack before the file type-checks. The pieces are therefore
     one flat list, joined once, and no generated line may end in ``" +``.
     """
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     models = render_models(registry)
     assert ').joinToString("")' in models
     assert '" +\n' not in models
@@ -142,7 +142,7 @@ def test_codegen_rejects_unresolved_value_dependencies(
 ) -> None:
     from pycompose.schema.codegen import main, rules
 
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["valueTypes"]["TextStyle"]["parameters"]["fontSize"]["valueType"] = (
         "StateHandle"
     )
@@ -168,7 +168,7 @@ def test_explicit_value_imports_are_kept_in_app_slice(tmp_path: Path) -> None:
 def test_codegen_refuses_untyped_native_defaults(tmp_path: Path, monkeypatch) -> None:
     from pycompose.schema.codegen import main, rules
 
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     rule = registry["valueTypes"]["buttonElevation"]["parameters"]["defaultElevation"]
     rule.pop("default")
     rule["defaultNative"] = "arbitrary.native.Expression()"
@@ -182,7 +182,7 @@ def test_codegen_refuses_untyped_native_defaults(tmp_path: Path, monkeypatch) ->
 def test_codegen_refuses_a_repeated_schema_version(tmp_path: Path, monkeypatch) -> None:
     from pycompose.schema.codegen import main, rules
 
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["supportedSchemaVersions"].append(registry["schemaVersion"])
     path = tmp_path / "components.json"
     path.write_text(json.dumps(registry))
@@ -194,7 +194,7 @@ def test_codegen_refuses_a_repeated_schema_version(tmp_path: Path, monkeypatch) 
 def test_codegen_refuses_unproven_opt_in_markers(tmp_path: Path, monkeypatch) -> None:
     from pycompose.schema.codegen import main, rules
 
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["valueTypes"]["checkboxColors"]["optIn"] = [
         "androidx.compose.material3.ExperimentalMaterial3Api",
         "androidx.compose.material3.ExperimentalMaterial3Api",
@@ -207,7 +207,7 @@ def test_codegen_refuses_unproven_opt_in_markers(tmp_path: Path, monkeypatch) ->
 
 
 def test_value_runtime_contract_excludes_native_build_metadata() -> None:
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     python = render_python(registry)
     models = render_models(registry)
     assert "androidx.compose" not in python + models
@@ -216,7 +216,7 @@ def test_value_runtime_contract_excludes_native_build_metadata() -> None:
 
 
 def test_approved_value_families_reach_every_generated_artifact() -> None:
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     specs = definitions(registry)
     assert specs["ToggleableState"]["kind"] == "constant"
     assert specs["BorderStroke"]["parameters"]["brush"]["valueType"] == "Brush"
@@ -244,7 +244,7 @@ def test_approved_value_families_reach_every_generated_artifact() -> None:
 
 
 def test_member_vocabularies_keep_each_holders_name() -> None:
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     specs = definitions(registry)
     alignment = specs["Alignment"]
     assert alignment["native"]["propertyOwner"] == "androidx.compose.ui.Alignment"
@@ -267,7 +267,7 @@ def test_codegen_refuses_an_unproven_member_holder(tmp_path: Path, monkeypatch) 
     from pycompose.schema.codegen import main, rules
 
     path = tmp_path / "components.json"
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["valueTypes"]["Alignment"]["native"]["owners"]["TopMost"] = (
         "androidx.compose.ui.AbsoluteAlignment"
     )
@@ -276,7 +276,7 @@ def test_codegen_refuses_an_unproven_member_holder(tmp_path: Path, monkeypatch) 
     with pytest.raises(SystemExit, match=r"owners.TopMost is not a value"):
         main.load_registry()
 
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["valueTypes"]["Alignment"]["native"]["owners"]["TopLeft"] = "not a holder"
     path.write_text(json.dumps(registry))
     with pytest.raises(SystemExit, match=r"owners.TopLeft is not a native holder"):
@@ -284,7 +284,7 @@ def test_codegen_refuses_an_unproven_member_holder(tmp_path: Path, monkeypatch) 
 
 
 def test_generated_kotlin_contract_reports_the_approved_schema_version() -> None:
-    registry = json.loads((ROOT / "schema/components.json").read_text())
+    registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     assert f'const val SCHEMA_VERSION = "{registry["schemaVersion"]}"' in render_models(
         registry
     )

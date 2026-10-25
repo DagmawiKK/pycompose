@@ -1,4 +1,4 @@
-"""Runtime registry types mirroring ``schema/components.json`` (plan 04).
+"""Runtime registry types mirroring ``schema/catalog.lock.json`` (plan 04).
 
 The registry is the single source of truth for which components and
 actions exist and what shape their props/payloads take. These frozen,
@@ -32,7 +32,13 @@ from pycompose.core.registry_elements import (
     ProviderDef,
     SlotRule,
 )
-from pycompose.core.registry_props import InteractionRule, PropDef, StateRule
+from pycompose.core.registry_modifiers import (
+    derived_modifiers,
+    modifiers_mapping,
+    parse_modifiers,
+)
+from pycompose.core.registry_props import InteractionRule, PropDef
+from pycompose.core.registry_state import StateRule
 from pycompose.core.registry_transient import TransientRule
 from pycompose.core.registry_vocabulary import (
     ADAPTERS,
@@ -41,8 +47,6 @@ from pycompose.core.registry_vocabulary import (
     DECODERS,
     INTERACTION_KINDS,
     OWNERS,
-    SCOPE_PATHS,
-    SCOPES,
     SLOT_KINDS,
     STATE_KINDS,
     TRANSIENT_KINDS,
@@ -67,8 +71,6 @@ __all__ = [
     "PropDef",
     "ProviderDef",
     "Registry",
-    "SCOPES",
-    "SCOPE_PATHS",
     "SLOT_KINDS",
     "STATE_KINDS",
     "SlotRule",
@@ -126,7 +128,7 @@ class ActionDef:
         return cls(action_id=action_id, payload=payload)
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the ``components.json`` action shape.
+        """Render back to the catalog lock action shape.
 
         Returns:
             A JSON-ready dict.
@@ -184,28 +186,32 @@ class AbstractComponentRegistry(ABC):
         ...
 
 
-def _value_types(value: object) -> dict[str, Mapping[str, object]]:
-    """Parse the declared structured-value encodings.
+def _named_objects(
+    data: Mapping[str, object], section: str
+) -> dict[str, Mapping[str, object]]:
+    """Parse an optional section of named objects the runtime carries but does not read.
 
     Args:
-        value: The raw ``valueTypes`` section, absent on older schemas.
+        data: The parsed registry JSON.
+        section: The section's key, e.g. ``valueTypes`` or ``holders``.
 
     Returns:
-        Each family's encoding and shape, by name.
+        Each entry's object, by name; empty when the section is absent.
 
     Raises:
         ComponentRegistryError: If the section is present but malformed.
     """
+    value = data.get(section)
     if value is None:
         return {}
     if not isinstance(value, Mapping):
-        raise ComponentRegistryError("'valueTypes' must be an object")
-    families: dict[str, Mapping[str, object]] = {}
+        raise ComponentRegistryError(f"{section!r} must be an object")
+    entries: dict[str, Mapping[str, object]] = {}
     for name, spec in value.items():
         if not isinstance(spec, Mapping):
-            raise ComponentRegistryError(f"valueTypes.{name} must be an object")
-        families[name] = dict(spec)
-    return families
+            raise ComponentRegistryError(f"{section}.{name} must be an object")
+        entries[name] = dict(spec)
+    return entries
 
 
 @dataclass(frozen=True, slots=True)
@@ -222,11 +228,16 @@ class Registry(AbstractComponentRegistry):
         lifecycle: Host-initiated events by name. Kept apart from actions so a
             component can never bind one to a tap.
         modifiers: Ordered modifier operation definitions by wire name.
+        derived_modifiers: Per modifier derived from the pin, the version it
+            entered at and the scopes declaring it (``weight`` on rows and
+            columns). Codegen-only.
         supported_schema_versions: Explicit compatible wire versions, when declared.
         value_types: The declared encodings for structured values, by name.
             Material3 carries thousands of parameters typed ``Color``, ``Dp`` or
             ``Shape``; these say how each family crosses as JSON, so a new
             Compose type costs one entry rather than a new mechanism.
+        holders: Each native state holder's derived drive table, by class.
+            Host codegen reads it; the Python runtime only carries it.
     """
 
     schema_version: str
@@ -238,19 +249,31 @@ class Registry(AbstractComponentRegistry):
     modifiers: Mapping[str, Mapping[str, PropDef]] = dataclass_field(
         default_factory=dict
     )
+    derived_modifiers: Mapping[str, Mapping[str, object]] = dataclass_field(
+        default_factory=dict
+    )
     supported_schema_versions: tuple[str, ...] = ()
     value_types: Mapping[str, Mapping[str, object]] = dataclass_field(
         default_factory=dict
+    )
+    holders: Mapping[str, Mapping[str, object]] = dataclass_field(default_factory=dict)
+    _own: dict[str, ComponentSpec] = dataclass_field(
+        default_factory=dict, init=False, repr=False, compare=False
+    )
+    _added: set[str] = dataclass_field(
+        default_factory=set, init=False, repr=False, compare=False
     )
 
     def __post_init__(self) -> None:
         object.__setattr__(
             self, "value_types", MappingProxyType(dict(self.value_types))
         )
+        object.__setattr__(self, "holders", MappingProxyType(dict(self.holders)))
         object.__setattr__(
             self, "supported_schema_versions", tuple(self.supported_schema_versions)
         )
-        object.__setattr__(self, "components", MappingProxyType(dict(self.components)))
+        object.__setattr__(self, "_own", dict(self.components))
+        object.__setattr__(self, "components", MappingProxyType(self._own))
         object.__setattr__(self, "actions", MappingProxyType(dict(self.actions)))
         object.__setattr__(self, "effects", MappingProxyType(dict(self.effects)))
         object.__setattr__(self, "lifecycle", MappingProxyType(dict(self.lifecycle)))
@@ -265,9 +288,28 @@ class Registry(AbstractComponentRegistry):
             ),
         )
 
+    def extend(self, components: Mapping[str, Mapping[str, object]]) -> None:
+        """Add the components an app's own libraries bring (plan 31 §16.3).
+
+        An app's generated package registers its lock slice on import, before
+        anything is composed; a debug reload registers it again, replacing what
+        it added. The catalog's own names never change.
+
+        Args:
+            components: Component entries by name, as the lock carries them.
+
+        Raises:
+            ComponentRegistryError: If a name is one of the catalog's own.
+        """
+        for name, body in components.items():
+            if name in self._own and name not in self._added:
+                raise ComponentRegistryError(f"component {name!r} is the catalog's own")
+            self._own[name] = ComponentSpec.from_mapping(name, body)
+            self._added.add(name)
+
     @classmethod
     def from_mapping(cls, data: Mapping[str, object]) -> Registry:
-        """Parse a :class:`Registry` from raw ``components.json`` data.
+        """Parse a :class:`Registry` from raw the catalog lock data.
 
         Args:
             data: The parsed registry JSON.
@@ -324,13 +366,15 @@ class Registry(AbstractComponentRegistry):
             actions=actions,
             effects=effects,
             lifecycle=lifecycle,
-            modifiers=_parse_modifiers(data.get("modifiers", {})),
+            modifiers=parse_modifiers(data.get("modifiers", {})),
+            derived_modifiers=derived_modifiers(data.get("modifiers", {})),
             supported_schema_versions=tuple(supported),
-            value_types=_value_types(data.get("valueTypes")),
+            value_types=_named_objects(data, "valueTypes"),
+            holders=_named_objects(data, "holders"),
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the ``components.json`` shape.
+        """Render back to the catalog lock shape.
 
         Returns:
             A JSON-ready dict matching the registry file.
@@ -355,16 +399,17 @@ class Registry(AbstractComponentRegistry):
             },
         }
         if self.modifiers:
-            result["modifiers"] = {
-                name: {"props": {key: prop.to_mapping() for key, prop in props.items()}}
-                for name, props in self.modifiers.items()
-            }
+            result["modifiers"] = modifiers_mapping(
+                self.modifiers, self.derived_modifiers
+            )
         if self.supported_schema_versions:
             result["supportedSchemaVersions"] = list(self.supported_schema_versions)
-        if self.value_types:
-            result["valueTypes"] = {
-                name: dict(spec) for name, spec in self.value_types.items()
-            }
+        for section, entries in (
+            ("valueTypes", self.value_types),
+            ("holders", self.holders),
+        ):
+            if entries:
+                result[section] = {name: dict(spec) for name, spec in entries.items()}
         return result
 
     def component(self, name: str) -> ComponentDef:
@@ -440,24 +485,3 @@ def _contracts(data: Mapping[str, object], field: str) -> dict[str, ActionDef]:
             raise ComponentRegistryError(f"{field} {name!r} must be an object")
         result[name] = ActionDef.from_mapping(name, body)
     return result
-
-
-def _parse_modifiers(raw: object) -> Mapping[str, Mapping[str, PropDef]]:
-    if not isinstance(raw, Mapping):
-        raise ComponentRegistryError("registry 'modifiers' must be an object")
-    modifiers: dict[str, Mapping[str, PropDef]] = {}
-    for name, body in raw.items():
-        if not isinstance(name, str) or not isinstance(body, Mapping):
-            raise ComponentRegistryError("invalid modifier definition")
-        raw_props = body.get("props")
-        if not isinstance(raw_props, Mapping):
-            raise ComponentRegistryError(
-                "modifier 'props' must be an object", modifier=name
-            )
-        parsed: dict[str, PropDef] = {}
-        for prop_name, prop in raw_props.items():
-            if not isinstance(prop_name, str) or not isinstance(prop, Mapping):
-                raise ComponentRegistryError("invalid modifier prop", modifier=name)
-            parsed[prop_name] = PropDef.from_mapping(prop, where=f"{name}.{prop_name}")
-        modifiers[name] = parsed
-    return modifiers

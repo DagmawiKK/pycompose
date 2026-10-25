@@ -11,8 +11,8 @@ from pathlib import Path
 import pytest
 from test_entry_candidates import catalog, modifier, plan, synthetic
 
-from tools.schema.candidate_props import CandidateError
-from tools.schema.entry_candidates import derive, select
+from pycompose.compiler.candidate_props import CandidateError
+from pycompose.compiler.entry_candidates import derive, select
 
 
 @pytest.mark.parametrize(

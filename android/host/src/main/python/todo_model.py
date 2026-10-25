@@ -8,7 +8,7 @@ these; nothing here can touch the host.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, Literal, TypedDict, cast
+from typing import Any, Literal, cast
 
 from pycompose.state import State
 from pycompose.utils.json_canonical import thaw_json
@@ -36,42 +36,6 @@ INITIAL: Mapping[str, Any] = {
     "filter": "all",
     "summary": "1 active, 1 done",
 }
-
-
-class DraftPayload(TypedDict):
-    value: str
-
-
-class AddPayload(TypedDict):
-    title: str
-
-
-class TogglePayload(TypedDict):
-    task_id: int
-    done: bool
-
-
-class RemovePayload(TypedDict):
-    task_id: int
-
-
-class FilterPayload(TypedDict):
-    value: Filter
-
-
-class ResumePayload(TypedDict):
-    pass
-
-
-class RoutePayload(TypedDict):
-    route: str
-
-
-class ConfigPayload(TypedDict):
-    orientation: Literal["portrait", "landscape"]
-    dark_mode: bool
-    locale: str
-    density: float
 
 
 def model(state: State) -> dict[str, Any]:

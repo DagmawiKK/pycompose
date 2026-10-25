@@ -5,8 +5,10 @@ node and prop the emitter offers traces to a registry entry.
 """
 
 import json
+import re
 from typing import Any
 
+from pycompose.core.action_binding import BINDING_PATTERN
 from pycompose.schema.codegen.rules import (
     SLOT_NAME,
     die,
@@ -41,6 +43,17 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
         "definitions": {
             "Node": _node_schema(sorted(component_defs)),
             "ModifierOperation": _modifier_schema(registry, action_ids),
+            # Its shape only; the closed vocabulary, types and limits are the
+            # validators' (pycompose/core/expressions.py, Expressions.kt).
+            "Expression": {
+                "type": "object",
+                "required": ["type", "node"],
+                "properties": {
+                    "type": {"const": "expression"},
+                    "node": {"type": "object"},
+                },
+                "additionalProperties": False,
+            },
             **component_defs,
             **json_definitions(registry),
         },
@@ -101,7 +114,7 @@ def _modifier_schema(
         props = modifier["props"]
         if version is not None and any(
             version_key(p.get("since", version)) > version_key(version)
-            for p in props.values()
+            for p in (modifier, *props.values())
         ):
             continue
         scoped = {
@@ -189,6 +202,20 @@ def _component_schema(
     return {"type": "object", "properties": node_properties}
 
 
+def _tagged(prop: dict[str, Any], value: dict[str, Any]) -> dict[str, Any]:
+    """A value-typed prop's schema: its family's tagged object, or either form."""
+    from pycompose.schema.codegen.values import parameter_schema
+
+    tagged = parameter_schema({**prop, "type": "value", "nullable": False})
+    if prop["type"] == "value":
+        return tagged
+    forms = [value, tagged]
+    if prop["type"] == "color":
+        # A colour may be an expression over holder streams (plan 31 §6).
+        forms.append({"$ref": "#/definitions/Expression"})
+    return {"anyOf": forms}
+
+
 def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
     from pycompose.schema.codegen.values import parameter_schema
 
@@ -225,7 +252,10 @@ def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
     elif ptype == "enum":
         value = {"enum": sorted(prop["values"])}
     elif ptype == "actionId":
-        value = {"enum": action_ids}
+        # A registry action, or an app binding; which schemas may carry the
+        # latter is the validator's call, not the wire's shape.
+        names = "|".join([*map(re.escape, action_ids), BINDING_PATTERN])
+        value = {"type": "string", "pattern": f"^(?:{names})" + r"(?![\s\S])"}
     elif ptype == "modifier":
         value = {
             "type": "object",
@@ -244,6 +274,5 @@ def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
         if bound in prop:
             value[bound] = prop[bound]
     if "valueType" in prop:
-        tagged = parameter_schema({**prop, "type": "value", "nullable": False})
-        value = tagged if ptype == "value" else {"anyOf": [value, tagged]}
+        value = _tagged(prop, value)
     return {"anyOf": [value, {"type": "null"}]} if prop.get("nullable") else value

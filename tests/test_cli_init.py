@@ -13,6 +13,9 @@ import pytest
 from pycompose.ir.generated_validators import SCHEMA_VERSION
 
 NATIVE = Path(".pycompose/android")
+OWNED = Path(".")
+"""An app-owned (``--native``) project's Android root: a build never regenerates
+it, so plumbing tests can stand a controlled wrapper in for Gradle."""
 
 
 def cli(

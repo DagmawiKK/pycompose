@@ -15,6 +15,7 @@ from uuid import uuid4
 
 from pycompose import async_task
 from pycompose.bridge.api import BridgeSurface
+from pycompose.bridge.handshake import answer, offered_components
 from pycompose.core.context import AppContext, carried, context
 from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
@@ -96,7 +97,12 @@ class RuntimeSession:
         self._check_injection(actions, container)
         actions.install_container(container)
         state = app.build(route=route, restore=restore)
-        surface = BridgeSurface(Store(state), actions, debug=self._debug)
+        surface = BridgeSurface(
+            Store(state),
+            actions,
+            debug=self._debug,
+            host_components=_host_components,
+        )
         if surface.expose_latest_snapshot() is None:
             raise BridgeError("app build produced no valid snapshot")
         return surface
@@ -142,6 +148,31 @@ class RuntimeSession:
         """
         self._require_worker()
         return self._surface.expose_latest_snapshot() or ""
+
+    def envelope(self, surface: str, base_serial: int) -> str:
+        """Return the latest snapshot as a patch against the host's base, or whole.
+
+        Args:
+            surface: The surface being pulled.
+            base_serial: The serial of the snapshot the host holds; -1 for none.
+
+        Returns:
+            The envelope JSON, or empty before any valid snapshot.
+        """
+        self._require_worker()
+        return self._surface.expose_envelope(base_serial, surface)
+
+    def window(self, surface: str, key: str, first: int, last: int) -> None:
+        """Compose the window of a lazy container the host now shows.
+
+        Args:
+            surface: The surface showing the container.
+            key: The container's window key.
+            first: The first item index wanted.
+            last: The last item index wanted.
+        """
+        self._require_worker()
+        self._surface.request_window(key, first, last, surface)
 
     def error(self) -> str:
         """Return a debug diagnostic without leaking Python exceptions or objects.
@@ -225,6 +256,33 @@ def _user_modules(directory: Path) -> dict[str, ModuleType]:
 
 
 _session: RuntimeSession | None = None
+_host_components: frozenset[str] | None = None
+"""What the host's handshake said it renders, for every session it starts."""
+
+
+def handshake(offer: str) -> str:
+    """Answer the host's handshake before any session starts.
+
+    Args:
+        offer: The host's protocol and offered capabilities, as JSON.
+
+    Returns:
+        This side's protocol and offered capabilities, as JSON.
+    """
+    global _host_components  # noqa: PLW0603 -- one host per Python process
+    reply = answer(offer)
+    _host_components = offered_components(offer)
+    return reply
+
+
+def use_source(path: str) -> None:
+    """Import the app from ``path`` first: a dev client's bundle (plan 31 §18.8).
+
+    Args:
+        path: The app's Python directory, as the dev server served it.
+    """
+    if path not in sys.path:
+        sys.path.insert(0, path)
 
 
 def start(
@@ -308,6 +366,36 @@ def fetch_latest_snapshot() -> str:
         Snapshot JSON, or an empty string before initialization.
     """
     return _session.snapshot() if _session is not None else ""
+
+
+def fetch_latest(surface: str, base_serial: int) -> str:
+    """Pull the latest snapshot as a patch against the host's base, or whole.
+
+    Args:
+        surface: The surface being pulled.
+        base_serial: The serial of the snapshot the host holds; -1 for none.
+
+    Returns:
+        The envelope JSON, or an empty string before initialization.
+    """
+    return _session.envelope(surface, base_serial) if _session is not None else ""
+
+
+def request_window(surface: str, key: str, first: int, last: int) -> None:
+    """Ask the session to compose a window of one lazy container.
+
+    Args:
+        surface: The surface showing the container.
+        key: The container's window key.
+        first: The first item index wanted.
+        last: The last item index wanted.
+
+    Raises:
+        BridgeError: If the host has not initialized the app session.
+    """
+    if _session is None:
+        raise BridgeError("app session not started")
+    _session.window(surface, key, first, last)
 
 
 def fetch_latest_error() -> str:

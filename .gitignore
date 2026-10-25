@@ -41,3 +41,10 @@ local.properties
 # resolved classpath, never a checked-in source of truth -- that was the whole
 # point of reading bytecode instead of a published current.txt.
 android/build/compose-api/
+
+# Package copies assembled from their one source by tools/template/sync.py
+# (the build backend runs it for every wheel, sdist and editable install).
+/pycompose/templates/android/
+/pycompose/templates/extract/
+/pycompose/schema/catalog.lock.json
+/pycompose/schema/ir.schema.json

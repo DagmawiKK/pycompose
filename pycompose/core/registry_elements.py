@@ -16,7 +16,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import cast
 
-from pycompose.core.registry_vocabulary import CONSUMERS, SCOPES, SLOT_KINDS
+from pycompose.core.registry_vocabulary import CONSUMERS, SLOT_KINDS
 from pycompose.errors import ComponentRegistryError
 
 
@@ -80,7 +80,7 @@ class ContentSlot:
         """Render as a plain JSON object.
 
         Returns:
-            The slot as it appears in ``components.json``.
+            The slot as it appears in the catalog lock.
         """
         result: dict[str, object] = {"composable": self.composable}
         if self.parameter is not None:
@@ -129,7 +129,7 @@ class ProviderDef:
         return cls(native=native, returns=returns)
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the ``components.json`` provider shape.
+        """Render back to the catalog lock provider shape.
 
         Returns:
             A JSON-ready dict.
@@ -150,6 +150,8 @@ class ChildrenRule:
         provides: Composition scope the children are composed under, when the
             pinned content lambda carries one. Codegen-only: the renderer hands
             the receiver down so a scoped child composes under its provider.
+        key: Keyed content's key prop: the children are the subtree drawn for
+            its current value. Codegen-only.
     """
 
     allowed: bool
@@ -158,6 +160,7 @@ class ChildrenRule:
     native: str | None = None
     consume: str | None = None
     provides: str | None = None
+    key: str | None = None
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> ChildrenRule:
@@ -193,21 +196,23 @@ class ChildrenRule:
                 f"{where}: 'consume' must be one of {', '.join(CONSUMERS)}"
             )
         provides = data.get("provides")
-        if provides is not None and provides not in SCOPES:
-            raise ComponentRegistryError(
-                f"{where}: 'provides' must be one of {', '.join(SCOPES)}"
-            )
+        if provides is not None and (not isinstance(provides, str) or not provides):
+            raise ComponentRegistryError(f"{where}: 'provides' must name a scope")
+        key = data.get("key")
+        if key is not None and (not isinstance(key, str) or not key):
+            raise ComponentRegistryError(f"{where}: 'key' must name a prop")
         return cls(
             allowed=allowed,
             kind=kind,
             min=minimum,
             native=native,
             consume=cast("str | None", consume),
-            provides=cast("str | None", provides),
+            provides=provides,
+            key=key,
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the ``components.json`` children shape.
+        """Render back to the catalog lock children shape.
 
         Returns:
             A JSON-ready dict.
@@ -223,6 +228,8 @@ class ChildrenRule:
             out["consume"] = self.consume
         if self.provides is not None:
             out["provides"] = self.provides
+        if self.key is not None:
+            out["key"] = self.key
         return out
 
 
@@ -287,20 +294,18 @@ class SlotRule:
                 f"{where}: 'consume' must be one of {', '.join(CONSUMERS)}"
             )
         provides = data.get("provides")
-        if provides is not None and provides not in SCOPES:
-            raise ComponentRegistryError(
-                f"{where}: 'provides' must be one of {', '.join(SCOPES)}"
-            )
+        if provides is not None and (not isinstance(provides, str) or not provides):
+            raise ComponentRegistryError(f"{where}: 'provides' must name a scope")
         return cls(
             native=native,
             kind=cast("str", kind),
             nullable=nullable,
             consume=cast("str | None", consume),
-            provides=cast("str | None", provides),
+            provides=provides,
         )
 
     def to_mapping(self) -> dict[str, object]:
-        """Render back to the ``components.json`` slot shape.
+        """Render back to the catalog lock slot shape.
 
         Returns:
             A JSON-ready dict.

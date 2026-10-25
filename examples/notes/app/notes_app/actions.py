@@ -10,61 +10,26 @@ Navigation is *requested* rather than performed — an action returns a
 ``on_route_changed`` — which keeps the boundary one-directional and means Python
 never learns what a route means on the device.
 
-Every control binds its note's id, so one handler serves every row.
+Each handler is a plain function: its parameters after ``session`` are the
+fields a control binds or an event supplies, and its keyword-only parameters
+are what the container provides. Every row binds its note's id with
+``with_args``, so one handler serves every row.
 """
 
 from __future__ import annotations
 
-from typing import Literal, TypedDict
-
 from notes_app.domain import Notes
-from notes_app.state import LIST_ROUTE, Session, detail_route, note_in
-from notes_app.view_model import editing_note, showing_list
+from notes_app.state import (
+    LIST_ROUTE,
+    Session,
+    detail_route,
+    editing_note,
+    note_in,
+    showing_list,
+)
 from pycompose import Registry
 from pycompose.core.effect import Effect
 from pycompose.state import ShellResponse, respond
-
-
-class NoteId(TypedDict):
-    note_id: int
-
-
-class Edit(TypedDict):
-    note_id: int
-    value: str
-
-
-class Caret(TypedDict):
-    note_id: int
-    value: int
-
-
-class Route(TypedDict):
-    route: str
-
-
-class About(TypedDict):
-    open: bool
-
-
-class Toggle(TypedDict):
-    value: bool
-
-
-class Listing(TypedDict):
-    value: str
-
-
-class Nothing(TypedDict):
-    pass
-
-
-class Config(TypedDict):
-    orientation: Literal["portrait", "landscape"]
-    dark_mode: bool
-    locale: str
-    density: float
-
 
 actions = Registry()
 
@@ -72,7 +37,6 @@ actions = Registry()
 @actions
 def new_note(
     session: Session,
-    payload: Nothing,
     *,
     notes: Notes,
 ) -> Session | ShellResponse:
@@ -80,7 +44,6 @@ def new_note(
 
     Args:
         session: The session shell before the tap.
-        payload: Empty; this command takes no event fields.
         notes: What the app can do with notes.
 
     Returns:
@@ -97,7 +60,7 @@ def new_note(
 @actions
 def open_note(
     session: Session,
-    payload: NoteId,
+    note_id: int,
     *,
     notes: Notes,
 ) -> Session | ShellResponse:
@@ -105,7 +68,7 @@ def open_note(
 
     Args:
         session: The session shell before the tap.
-        payload: Note id bound by the row that was tapped.
+        note_id: The note bound by the row that was tapped.
         notes: What the app can do with notes.
 
     Returns:
@@ -114,7 +77,6 @@ def open_note(
         as on_route_changed, so there is exactly one source of truth for what
         is showing.
     """
-    note_id = payload["note_id"]
     if notes.get(note_id) is None:
         # The row names a note that no longer exists. Staying put beats
         # navigating to a destination the view-model would bounce back from.
@@ -123,7 +85,7 @@ def open_note(
 
 
 @actions
-def on_route_changed(session: Session, payload: Route) -> Session:
+def on_route_changed(session: Session, route: str) -> Session:
     """Render the screen the host asked for.
 
     The host owns the route string and hands it back as an ordinary inbound
@@ -132,13 +94,12 @@ def on_route_changed(session: Session, payload: Route) -> Session:
 
     Args:
         session: The session shell before the route change.
-        payload: The destination the host is now showing.
+        route: The destination the host is now showing.
 
     Returns:
         The shell for that route, or the unchanged one when it is not a
         destination this app knows.
     """
-    route = payload["route"]
     if route != LIST_ROUTE and note_in(route) is None:
         # An unknown route is not a screen. Staying put beats rendering nothing.
         return session
@@ -148,7 +109,8 @@ def on_route_changed(session: Session, payload: Route) -> Session:
 @actions
 def set_title(
     session: Session,
-    payload: Edit,
+    note_id: int,
+    value: str,
     *,
     notes: Notes,
 ) -> Session:
@@ -156,20 +118,21 @@ def set_title(
 
     Args:
         session: The session shell before the keystroke.
-        payload: Bound note id, plus event-supplied field text.
+        note_id: The note bound by the field.
+        value: The field's text, supplied by the event.
         notes: What the app can do with notes.
 
     Returns:
         The unchanged shell; the note itself was retitled in the repository.
     """
-    if not _is_editing(session, payload["note_id"], notes):
+    if not _is_editing(session, note_id, notes):
         return session
-    notes.rename(payload["note_id"], payload["value"])
+    notes.rename(note_id, value)
     return session
 
 
 @actions
-def set_title_caret(session: Session, payload: Caret) -> Session:
+def set_title_caret(session: Session, value: int) -> Session:
     """Record where the caret sits in the title.
 
     The field is controlled, so this is not a nicety: without a caret the
@@ -177,32 +140,33 @@ def set_title_caret(session: Session, payload: Caret) -> Session:
 
     Args:
         session: The session shell before the caret moved.
-        payload: Note id bound by the field that owns the caret.
+        value: Where the caret sits, supplied by the event.
 
     Returns:
         The shell with the caret where it was left.
     """
-    return session.evolve(title_caret=int(payload["value"]))
+    return session.evolve(title_caret=int(value))
 
 
 @actions
-def set_body_caret(session: Session, payload: Caret) -> Session:
+def set_body_caret(session: Session, value: int) -> Session:
     """Record where the caret sits in the body.
 
     Args:
         session: The session shell before the caret moved.
-        payload: Note id bound by the field that owns the caret.
+        value: Where the caret sits, supplied by the event.
 
     Returns:
         The shell with the caret where it was left.
     """
-    return session.evolve(body_caret=int(payload["value"]))
+    return session.evolve(body_caret=int(value))
 
 
 @actions
 def set_body(
     session: Session,
-    payload: Edit,
+    note_id: int,
+    value: str,
     *,
     notes: Notes,
 ) -> Session:
@@ -210,15 +174,16 @@ def set_body(
 
     Args:
         session: The session shell before the keystroke.
-        payload: Bound note id, plus event-supplied field text.
+        note_id: The note bound by the field.
+        value: The field's text, supplied by the event.
         notes: What the app can do with notes.
 
     Returns:
         The unchanged shell; the note's text was replaced in the repository.
     """
-    if not _is_editing(session, payload["note_id"], notes):
+    if not _is_editing(session, note_id, notes):
         return session
-    notes.retext(payload["note_id"], payload["value"])
+    notes.retext(note_id, value)
     return session
 
 
@@ -243,7 +208,7 @@ def _is_editing(session: Session, note_id: int, notes: Notes) -> bool:
 @actions
 def delete_note(
     session: Session,
-    payload: NoteId,
+    note_id: int,
     *,
     notes: Notes,
 ) -> Session | ShellResponse:
@@ -251,16 +216,16 @@ def delete_note(
 
     Args:
         session: The session shell before the tap.
-        payload: Note id bound by the control that was tapped.
+        note_id: The note bound by the control that was tapped.
         notes: What the app can do with notes.
 
     Returns:
         The unchanged shell when the note is already gone, else a request to
         return to the list.
     """
-    if notes.get(payload["note_id"]) is None:
+    if notes.get(note_id) is None:
         return session
-    notes.delete(payload["note_id"])
+    notes.delete(note_id)
     return respond(
         session,
         Effect("haptic"),
@@ -269,12 +234,11 @@ def delete_note(
 
 
 @actions
-def go_back(session: Session, payload: Nothing) -> Session | ShellResponse:
+def go_back(session: Session) -> Session | ShellResponse:
     """Return to the list from the editor.
 
     Args:
         session: The session shell before the tap.
-        payload: Empty; this command takes no event fields.
 
     Returns:
         The unchanged shell, carrying a navigate effect for the list.
@@ -283,7 +247,7 @@ def go_back(session: Session, payload: Nothing) -> Session | ShellResponse:
 
 
 @actions
-def set_about(session: Session, payload: About) -> Session:
+def set_about(session: Session, open: bool) -> Session:
     """Show or hide the about sheet.
 
     The sheet's own ``onOpenChange`` reports what it settled on through this
@@ -293,16 +257,16 @@ def set_about(session: Session, payload: About) -> Session:
 
     Args:
         session: The session shell before the change.
-        payload: The desired visibility the control or the sheet stated.
+        open: The visibility the control or the sheet stated.
 
     Returns:
         The shell with the sheet's visibility assigned.
     """
-    return session.evolve(about_open=payload["open"])
+    return session.evolve(about_open=open)
 
 
 @actions
-def set_previews(session: Session, payload: Toggle) -> Session:
+def set_previews(session: Session, value: bool) -> Session:
     """Show or hide the line of body text under each row's title.
 
     The switch reports the state it settled on, so the handler assigns what it
@@ -310,16 +274,16 @@ def set_previews(session: Session, payload: Toggle) -> Session:
 
     Args:
         session: The session shell before the flip.
-        payload: The value the switch is now showing.
+        value: The value the switch is now showing.
 
     Returns:
         The shell showing or hiding every row's preview.
     """
-    return session.evolve(previews=payload["value"])
+    return session.evolve(previews=value)
 
 
 @actions
-def set_listing(session: Session, payload: Listing) -> Session:
+def set_listing(session: Session, value: str) -> Session:
     """Show every note, or only the ones carrying text.
 
     Each bar item bakes the filter it stands for into its own binding, so the
@@ -329,18 +293,17 @@ def set_listing(session: Session, payload: Listing) -> Session:
 
     Args:
         session: The session shell before the tap.
-        payload: The filter baked into the item that was tapped.
+        value: The filter baked into the item that was tapped.
 
     Returns:
         The shell listing under that filter.
     """
-    return session.evolve(listing=payload["value"])
+    return session.evolve(listing=value)
 
 
 @actions
 def on_back_requested(
     session: Session,
-    payload: Nothing,
     *,
     notes: Notes,
 ) -> Session | ShellResponse:
@@ -348,7 +311,6 @@ def on_back_requested(
 
     Args:
         session: The session shell before the gesture.
-        payload: Empty; the host sends nothing extra.
         notes: What the app can do with notes.
 
     Returns:
@@ -361,14 +323,17 @@ def on_back_requested(
 
 
 @actions
-def on_config_changed(session: Session, payload: Config) -> Session:
+def on_config_changed(session: Session, dark_mode: bool) -> Session:
     """Repaint when the device's appearance changes.
+
+    The host reports orientation, locale and density too; this app reads only
+    the one fact its palette depends on.
 
     Args:
         session: The session shell before the configuration changed.
-        payload: Orientation, dark mode, locale and density, from the host.
+        dark_mode: Whether the device is in dark mode.
 
     Returns:
         The shell in the palette matching the new appearance.
     """
-    return session.evolve(dark=payload["dark_mode"])
+    return session.evolve(dark=dark_mode)

@@ -18,14 +18,15 @@ from pycompose.schema.codegen.adapter_helpers import (
     RESOLVER_OWNER,
     RESOLVER_RETURN,
     SCALAR_KOTLIN,
-    STATE_ATTACH_GATES,
-    STATE_CALLS,
     STATE_CONSTRUCTOR_PROPS,
-    TRANSIENT_CALLS,
     _camel,
     _Fragments,
+    attach_gate,
     qualify,
+    simple,
+    state_call,
 )
+from pycompose.schema.codegen.derived_families import properties_locals
 from pycompose.schema.codegen.values import resolver_call
 
 
@@ -34,7 +35,7 @@ def _provided(expression: str, wire: str | None, target: str) -> str | None:
 
     ``wire`` is the Kotlin type the generator resolved the prop into, or None
     when that type is a family resolver's contract: the compiler checks the
-    lambda against the pinned parameter and check_upstream.py checks ``target``
+    lambda against the pinned parameter and composegen's check verifies ``target``
     against the pin, so no coercion is invented there.
 
     Args:
@@ -142,20 +143,6 @@ def _decoded(
 
     resolver = qualify(RESOLVER_OWNER.get(decoder, "PropResolver"))
 
-    if decoder.startswith("resource"):
-        # A resource reference is a single wire string naming a kind and a name
-        # ("@drawable/ic_note"), so it goes through the resolver method that
-        # takes the whole reference rather than one taking a bare name. An
-        # absent resolver means the app declared no resources at all.
-        # decoder "resourceImage" -> ResourceResolver.image(reference). The
-        # name is lowerCamel on both sides; lowercasing the whole thing would
-        # have produced `resources?.Image(...)` and a compiler error.
-        method = decoder[len("resource") :][0].lower() + decoder[len("resource") + 1 :]
-        # Every resource accessor returns a Result, and a bad reference must not
-        # escape into Compose -- ADR-0005's degrade-don't-throw rule.
-        call = f"resources?.{method}({wire}).getOrNull()"
-        return f"val {value}: {returns} = {call}", f"{prop_name} = {value}"
-
     if decoder == "color" and "valueType" in spec:
         # The wire carries either a tagged value (the app built a Color) or a
         # legacy string, exactly as the hand-written helper read it. Tagged
@@ -163,7 +150,10 @@ def _decoded(
         tagged = resolver_call(spec["valueType"], "wire")
         return (
             f"val {value}: {returns} = when (val wire = {wire}) {{\n"
-            f"                    is JsonObject -> {tagged}.getOrDefault({fallback})\n"
+            # An expression over holder streams is evaluated here, each frame
+            # its streams move; any other tagged object is a colour value.
+            "                    is JsonObject -> context.expressionColor(wire) "
+            f"?: {tagged}.getOrDefault({fallback})\n"
             "                    is JsonPrimitive -> "
             f"{resolver}.color(wire.content).getOrDefault({fallback})\n"
             f"                    else -> {fallback}\n"
@@ -199,8 +189,13 @@ def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:
         The argument, or None when the callback shape is one this cannot render.
     """
     payload = spec.get("payload")
+    # An optional callback's action id is nullable: a call the app did not bind
+    # reaches nobody, and the native default behaviour stays in charge.
+    action = f"model.props.{prop_name}" if spec.get("required") else "it"
+    bound = "" if spec.get("required") else f"model.props.{prop_name}?.let {{ "
+    close = "" if spec.get("required") else " }"
     if not payload:
-        return f"{prop_name} = {{ context.actions.dispatch(model.props.{prop_name}) }}"
+        return f"{prop_name} = {{ {bound}context.actions.dispatch({action}){close} }}"
     if len(payload) != 1:
         return None
     field_name, kind = payload[0]["name"], payload[0]["type"]
@@ -208,7 +203,7 @@ def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:
         return None
     return (
         f"{prop_name} = {{ {field_name} -> "
-        f"context.event(model.props.{prop_name}, JsonPrimitive({field_name})) }}"
+        f"{bound}context.event({action}, JsonPrimitive({field_name})){close} }}"
     )
 
 
@@ -231,16 +226,19 @@ def _interaction(interaction: dict[str, Any]) -> str:
         f'"{kind}" to model.props.{_camel(observations[kind])}'
         for kind in sorted(observations)
     )
+    # Nothing observing yields no source; a component whose parameter is
+    # non-null then gets the one it would have remembered itself.
     return (
         "val interactionSourceValue = context.interactionSource("
-        f"model.id, mapOf({entries}))"
+        f"model.id, mapOf({entries})) ?: androidx.compose.runtime.remember "
+        "{ androidx.compose.foundation.interaction.MutableInteractionSource() }"
     )
 
 
 def _state(
     state: dict[str, Any], props: dict[str, Any]
-) -> tuple[str, list[str], str | None]:
-    """Render the local that fetches one component's host-owned state holder.
+) -> tuple[list[str], list[str], str | None]:
+    """Render the locals that fetch one component's host-owned state holder.
 
     The holder is the renderer's, remembered per node id; the desired value and
     the report channel are ordinary props, so the app keeps naming its own
@@ -253,18 +251,20 @@ def _state(
         props: The component's declared props, by wire name.
 
     Returns:
-        The Kotlin local declaration, the native arguments consuming it, and the
+        The Kotlin locals, the native arguments consuming the holder, and the
         expression gating the call for a family that must be composed
         conditionally, or None when the component is always composed.
     """
     native = state["native"]
+    if state["kind"] == "properties":
+        return properties_locals(state), [f"{native} = {native}Value"], None
     held = f"{native}Value"
     value = _camel(state["value"])
     report = _camel(state["report"])
     gated = state["kind"] in GATED_STATES
     # An attach family fills no parameter: its holder rides the modifier the
     # composer rewrites, and the component is composed unconditionally.
-    attached = state["kind"] in STATE_ATTACH_GATES
+    attached = attach_gate(state, props) is not None
     arguments = (
         []
         if attached
@@ -284,8 +284,10 @@ def _state(
         # answered with nothing rather than with a second channel.
         arguments.append(f"{dismiss} = {{}}")
     return (
-        f"val {held} = context.{STATE_CALLS[state['kind']]}("
-        f"model.props.{value}, model.props.{report}{extras})",
+        [
+            f"val {held} = context.{state_call(state['kind'])}("
+            f"model.props.{value}, model.props.{report}{extras})"
+        ],
         arguments,
         f"{held}.visible" if gated else None,
     )
@@ -403,7 +405,7 @@ def _transient(transient: dict[str, Any], props: dict[str, Any]) -> str:
         for name in sorted(props)
         if name != "modifier"
     )
-    call = TRANSIENT_CALLS[transient["kind"]]
+    call = transient["kind"]
     return f"val {transient['native']}Value = context.{call}(model.id, {entries})"
 
 
@@ -427,12 +429,18 @@ def _slot_body(
     Returns:
         The lambda body, then its parameter name when the slot consumes a scope.
     """
-    if kind == "items":
-        listed = f"{nodes}.unslotted()" if name is None else f'{nodes}.inSlot("{name}")'
+    if kind == "items" and name is None:
+        # The primary children may be a window of a longer list (ADR-0043).
+        read = (
+            f"windowedItems(context, {nodes}.unslotted(), "
+            "model.props.itemCount, model.props.itemOffset)"
+        )
+    elif kind == "items":
+        listed = f'{nodes}.inSlot("{name}")'
         read = f"items({listed}, key = {{ it.id }}) {{ context.node(it) }}"
     elif name is None:
         read = (
-            f"context.childrenIn{provides}(this, {nodes})"
+            f"context.childrenIn(this, {nodes})"
             if provides is not None and consume is None
             else f"context.children({nodes})"
         )
@@ -471,7 +479,7 @@ def _named_slot(slot_name: str, slot: dict[str, Any]) -> str:
         # that same receiver to scoped children.  A non-null parameter still
         # needs a lambda when the format is empty; the empty lambda preserves
         # the native default.
-        call = f'context.slotIn{provides}(model.children, "{slot_name}")'
+        call = f'context.slotIn<{simple(provides)}>(model.children, "{slot_name}")'
         if slot.get("nullable"):
             return f"{native} = {call}"
         return f"{native} = {call} ?: {{}}"

@@ -25,10 +25,6 @@ class Nothing(TypedDict):
     pass
 
 
-class NoteId(TypedDict):
-    note_id: int
-
-
 class Container:
     """A stand-in for an app's container."""
 
@@ -75,23 +71,23 @@ def _state() -> State:
 
 
 def test_an_action_may_take_a_keyword_only_container() -> None:
-    def handler(state: State, payload: Nothing, *, container: Container) -> State:
+    def handler(state: State, *, container: Container) -> State:
         return state
 
     assert action(handler).injected == ("container",)
 
 
 def test_an_action_may_take_nothing_extra() -> None:
-    def handler(state: State, payload: Nothing) -> State:
+    def handler(state: State) -> State:
         return state
 
     assert action(handler).injected == ()
 
 
-def test_a_third_positional_parameter_is_refused() -> None:
-    """Positional injection would let a misplaced argument pass unnoticed."""
+def test_a_dependency_asked_for_positionally_is_refused() -> None:
+    """A plain parameter is a payload field; a dependency must be keyword-only."""
 
-    def handler(state: State, payload: Nothing, container: Container) -> State:
+    def handler(state: State, container: Container) -> State:
         return state
 
     with pytest.raises(StateError, match="keyword-only"):
@@ -101,7 +97,7 @@ def test_a_third_positional_parameter_is_refused() -> None:
 def test_an_action_may_ask_for_anything_the_container_carries() -> None:
     """Asking for a use case beats asking for the object that holds it."""
 
-    def handler(state: State, payload: Nothing, *, notes: Container) -> State:
+    def handler(state: State, *, notes: Container) -> State:
         return state
 
     assert action(handler).injected == ("notes",)
@@ -110,7 +106,7 @@ def test_an_action_may_ask_for_anything_the_container_carries() -> None:
 def test_a_dependency_the_container_lacks_is_refused_at_startup() -> None:
     """Not silently None -- the session names what it could not find."""
 
-    def handler(state: State, payload: Nothing, *, absent: Container) -> State:
+    def handler(state: State, *, absent: Container) -> State:
         return state
 
     definition = action(handler)
@@ -123,7 +119,7 @@ def test_a_dependency_the_container_lacks_is_refused_at_startup() -> None:
 def test_the_injection_set_is_decided_once_not_per_dispatch() -> None:
     """Dispatch reflects on nothing, so the signature is read exactly once."""
 
-    def handler(state: State, payload: Nothing, *, container: Container) -> State:
+    def handler(state: State, *, container: Container) -> State:
         return state
 
     definition = action(handler)
@@ -140,11 +136,11 @@ def test_an_action_is_callable_so_a_test_needs_no_runtime() -> None:
     """This is what makes a unit test two lines instead of a harness."""
 
     @action
-    def noop(state: State, payload: Nothing, *, container: Container) -> State:
+    def noop(state: State, *, container: Container) -> State:
         return state
 
     supplied = Container("fake")
-    assert noop(_state(), {}, container=supplied) is not None
+    assert noop(_state(), container=supplied) is not None
 
 
 def test_the_app_s_actions_run_without_a_bridge(notes: Any) -> None:
@@ -177,11 +173,11 @@ def test_the_app_s_actions_run_without_a_bridge(notes: Any) -> None:
 
 def test_the_registry_reports_what_its_actions_want() -> None:
     @action
-    def wants(state: State, payload: Nothing, *, container: Container) -> State:
+    def wants(state: State, *, container: Container) -> State:
         return state
 
     @action
-    def does_not(state: State, payload: Nothing) -> State:
+    def does_not(state: State) -> State:
         return state
 
     assert Actions(wants, does_not).injected == ("container",)
@@ -195,7 +191,7 @@ def test_an_action_without_a_container_is_refused_at_dispatch() -> None:
     """Reached only outside a session; the session catches this at startup."""
 
     @action
-    def wants(state: State, payload: Nothing, *, container: Container) -> State:
+    def wants(state: State, *, container: Container) -> State:
         return state
 
     registry = Actions(wants)
@@ -207,7 +203,7 @@ def test_an_installed_container_is_supplied_on_dispatch() -> None:
     seen: list[Any] = []
 
     @action
-    def wants(state: State, payload: Nothing, *, container: Container) -> State:
+    def wants(state: State, *, container: Container) -> State:
         seen.append(container)
         return state
 
@@ -240,7 +236,7 @@ def test_a_session_refuses_an_app_whose_actions_want_a_container_it_declares_non
         "    pass\n"
         "\n"
         "@action\n"
-        "def wants(state: State, payload: Nothing, *, container: object) -> State:\n"
+        "def wants(state: State, *, container: object) -> State:\n"
         "    return state\n"
         "\n"
         "actions = Actions(wants)\n"

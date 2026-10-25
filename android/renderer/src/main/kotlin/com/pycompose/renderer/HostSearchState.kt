@@ -6,12 +6,10 @@ import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.staticCompositionLocalOf
+import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * The native state one search owner shares with every surface below it.
@@ -46,10 +44,7 @@ val LocalHostSearchState = staticCompositionLocalOf<HostSearchState?> { null }
  * The host-owned expansion state for one search node, reconciled to the app's desired value.
  *
  * A search bar expands from a tap, a focus change or the keyboard, and collapses
- * from a dismissal gesture; the native state owns both animations. The holder
- * therefore drives only a *change* of the app's desired value and reports each
- * native transition, treating the report as the new baseline so the app's echo
- * of it cannot re-drive the animation.
+ * from a dismissal gesture; the native state owns both animations.
  *
  * @param expanded Desired expansion; null leaves expansion to native gestures.
  * @param report Action id expansion changes report to; null reports none.
@@ -60,7 +55,7 @@ val LocalHostSearchState = staticCompositionLocalOf<HostSearchState?> { null }
 internal fun rememberHostSearchBarState(
     expanded: Boolean?,
     report: String?,
-    observation: (String, String, Boolean) -> Unit,
+    observation: Observation,
 ): SearchBarState {
     // Seeding from the first composition only, rather than from a changing
     // remember key, keeps the state alive when the app flips the value: the
@@ -70,28 +65,16 @@ internal fun rememberHostSearchBarState(
             if (expanded == true) SearchBarValue.Expanded else SearchBarValue.Collapsed
         }
     val state = rememberSearchBarState(initialValue = initial)
-    val lastDesired = remember(state) { mutableStateOf(expanded) }
-    val settled = remember(state) { Settled(state.currentValue) }
-    val channel = rememberUpdatedState(report)
-    LaunchedEffect(state, expanded) {
-        if (expanded != lastDesired.value) {
-            lastDesired.value = expanded
-            when (expanded) {
-                true -> state.animateToExpanded()
-                false -> state.animateToCollapsed()
-                null -> Unit
-            }
-        }
-    }
-    LaunchedEffect(state) {
-        snapshotFlow { state.currentValue }.collect { value ->
-            if (value != settled.value) {
-                settled.value = value
-                val now = value == SearchBarValue.Expanded
-                lastDesired.value = now
-                channel.value?.let { observation("expanded", it, now) }
-            }
-        }
-    }
+    Reconcile(
+        state,
+        expanded,
+        remember(state) { mutableStateOf(expanded) },
+        settled = { state.currentValue == SearchBarValue.Expanded },
+        report =
+            report?.let { id ->
+                { value -> observation("expanded", id, JsonPrimitive(value)) }
+            },
+        answered = answered(report),
+    ) { if (it) state.animateToExpanded() else state.animateToCollapsed() }
     return state
 }

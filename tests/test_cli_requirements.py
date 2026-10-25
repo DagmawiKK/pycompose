@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 from test_cli_build import wrapper
-from test_cli_init import NATIVE, cli
+from test_cli_init import OWNED, cli
 
 REQUIREMENTS_WRAPPER = """import os, zipfile
 from pathlib import Path
@@ -32,33 +32,33 @@ def build_with_requirements(project: Path, requirements: list[str]) -> None:
 def test_build_passes_requirements_as_data_without_editing_gradle(
     tmp_path: Path,
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     requirements = [
         "requests[socks]==2.32.3",
         'numpy==1.26.2; python_version >= "3.12"',
     ]
     build_with_requirements(project, requirements)
-    gradle = project / NATIVE / "host/build.gradle.kts"
+    gradle = project / OWNED / "host/build.gradle.kts"
     before = gradle.read_bytes()
 
     result = cli(project, "build")
 
     assert result.returncode == 0, result.stderr
-    passed = json.loads((project / NATIVE / "requirements.txt.value").read_text())
+    passed = json.loads((project / OWNED / "requirements.txt.value").read_text())
     assert passed == requirements
     assert gradle.read_bytes() == before
 
 
 def test_a_project_declaring_no_requirements_passes_none(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     wrapper(project, "import json\n" + REQUIREMENTS_WRAPPER)
 
     result = cli(project, "build")
 
     assert result.returncode == 0, result.stderr
-    assert json.loads((project / NATIVE / "requirements.txt.value").read_text()) == []
+    assert json.loads((project / OWNED / "requirements.txt.value").read_text()) == []
 
 
 @pytest.mark.parametrize(
@@ -79,7 +79,7 @@ def test_a_project_declaring_no_requirements_passes_none(tmp_path: Path) -> None
 def test_invalid_requirement_values_fail_before_gradle(
     tmp_path: Path, value: str
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     config = project / "pycompose.toml"
     config.write_text(
@@ -92,7 +92,7 @@ def test_invalid_requirement_values_fail_before_gradle(
     assert result.returncode == 2
     assert "python.requirements" in result.stderr
     assert "Traceback" not in result.stderr
-    assert not (project / NATIVE / "launched").exists()
+    assert not (project / OWNED / "launched").exists()
 
 
 @pytest.mark.parametrize(
@@ -112,7 +112,7 @@ def test_invalid_requirement_values_fail_before_gradle(
 def test_only_named_package_specifiers_are_accepted(
     tmp_path: Path, requirement: str
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     config = project / "pycompose.toml"
     config.write_text(
@@ -127,7 +127,7 @@ def test_only_named_package_specifiers_are_accepted(
     assert result.returncode == 2
     assert "python.requirements" in result.stderr
     assert "Traceback" not in result.stderr
-    assert not (project / NATIVE / "launched").exists()
+    assert not (project / OWNED / "launched").exists()
 
 
 def pin_template(project: Path, version: str | None) -> None:
@@ -152,7 +152,7 @@ def pin_template(project: Path, version: str | None) -> None:
 def test_requirements_need_a_scaffold_that_installs_them(
     tmp_path: Path, version: str | None
 ) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     build_with_requirements(project, ["numpy==1.26.2"])
     pin_template(project, version)
@@ -163,11 +163,11 @@ def test_requirements_need_a_scaffold_that_installs_them(
     assert "python.requirements" in result.stderr
     assert "0.4.0" in result.stderr
     assert "Traceback" not in result.stderr
-    assert not (project / NATIVE / "requirements.txt.value").exists()
+    assert not (project / OWNED / "requirements.txt.value").exists()
 
 
 def test_older_scaffolds_without_requirements_still_build(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo").returncode == 0
+    assert cli(tmp_path, "init", "demo", "--native").returncode == 0
     project = tmp_path / "demo"
     wrapper(project, "import json\n" + REQUIREMENTS_WRAPPER)
     pin_template(project, "0.3.0")
@@ -175,4 +175,4 @@ def test_older_scaffolds_without_requirements_still_build(tmp_path: Path) -> Non
     result = cli(project, "build")
 
     assert result.returncode == 0, result.stderr
-    assert json.loads((project / NATIVE / "requirements.txt.value").read_text()) == []
+    assert json.loads((project / OWNED / "requirements.txt.value").read_text()) == []

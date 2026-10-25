@@ -253,7 +253,7 @@ def _load_with(
     from pycompose.schema.codegen import main, rules
 
     registry = json.loads(
-        (Path(__file__).resolve().parents[1] / "schema/components.json").read_text()
+        (Path(__file__).resolve().parents[1] / "schema/catalog.lock.json").read_text()
     )
     mutate(registry)
     path = tmp_path / "components.json"
@@ -283,7 +283,7 @@ def _slot(registry: dict[str, Any], component: str, name: str) -> dict[str, Any]
             lambda registry: _slot(registry, "Scaffold", "topBar").update(
                 kind="canvas"
             ),
-            "must be one of content, items",
+            "must be content or items",
         ),
         (
             lambda registry: _slot(registry, "Scaffold", "topBar").update(

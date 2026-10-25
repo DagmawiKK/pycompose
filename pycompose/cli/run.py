@@ -6,6 +6,7 @@ import re
 import subprocess
 import threading
 from contextlib import suppress
+from pathlib import Path
 
 from pycompose.cli.build import build_project
 from pycompose.cli.console import notice, ok
@@ -14,13 +15,23 @@ from pycompose.cli.device import adb, adb_command, select_device
 from pycompose.cli.project import Project, ProjectError
 
 
-def run_project(project: Project, *, device: str | None = None, port: int = 0) -> None:
+def run_project(
+    project: Project,
+    *,
+    device: str | None = None,
+    port: int = 0,
+    dev_client: bool = False,
+) -> None:
     """Build a debug APK, install and launch it, and serve until interrupted.
+
+    With ``dev_client`` the prebuilt dev client is installed instead, and runs
+    the app the dev server serves: no Gradle build of the app at all.
 
     Args:
         project: Project containing the Android scaffold and app configuration.
         device: ADB serial; automatic selection requires exactly one ready device.
         port: Desktop loopback dev-server port; zero selects an available port.
+        dev_client: Run the app on the prebuilt dev client.
 
     Raises:
         ProjectError: If app configuration, device selection or deployment fails.
@@ -33,7 +44,14 @@ def run_project(project: Project, *, device: str | None = None, port: int = 0) -
         raise ProjectError("app.application_id must be an Android package name")
     executable = adb()
     serial = select_device(executable, device)
-    artifacts = build_project(project)
+    if dev_client:
+        from pycompose.cli.dev_client import APPLICATION_ID
+        from pycompose.cli.dev_client import dev_client as client
+
+        app_id = APPLICATION_ID
+        artifacts: tuple[Path, ...] = (client(),)
+    else:
+        artifacts = build_project(project)
     if len(artifacts) != 1:
         raise ProjectError("run requires a single universal debug APK")
     with DevServer(project, port=port) as server:
@@ -62,6 +80,9 @@ def run_project(project: Project, *, device: str | None = None, port: int = 0) -
                 "--es",
                 "pycompose.dev.token",
                 server.token,
+                "--es",
+                "pycompose.dev.source",
+                str(project.table("python").get("source_dir", "app")),
             )
             notice("Watching Python and resources. Drawables/fonts require a rebuild.")
             notice("Native hot reload and the overlay require debug host integration.")

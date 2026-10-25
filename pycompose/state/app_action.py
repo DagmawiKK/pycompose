@@ -2,20 +2,21 @@
 
 from __future__ import annotations
 
+import hashlib
 import inspect
-from collections.abc import Callable
+import json
+from collections.abc import Callable, Mapping
+from types import UnionType
 from typing import (
     Any,
     Generic,
     Literal,
-    NotRequired,
-    Required,
     TypeVar,
+    Union,
     cast,
     get_args,
     get_origin,
     get_type_hints,
-    is_typeddict,
 )
 
 from pycompose.core.action_binding import ActionBinding, BindingSpec
@@ -26,99 +27,173 @@ from pycompose.core.registry_types import PropDef
 from pycompose.errors import StateError
 from pycompose.state.app_state import AppState
 from pycompose.state.state import State
+from pycompose.utils.json_canonical import canonical_json
 
 S = TypeVar("S", bound=State)
-P = TypeVar("P")
 
 CONTAINER = "container"
 """The one parameter an action may ask the session to supply."""
 
+APPLIED = ":applied"
+"""Suffix of the id under which an async action's changes come back."""
 
-class AppAction(Generic[S, P]):
-    """An annotated transition and its data-only binding factory."""
+AsyncRunner = Callable[
+    ["AppAction[Any]", AppState, Mapping[str, Any], Mapping[str, Any]], None
+]
+"""Starts an async action off the worker; installed by ``pycompose.async_task``."""
+
+_runner: list[AsyncRunner] = []
+
+
+def install_async_runner(runner: AsyncRunner) -> None:
+    """Install what starts async actions off the worker.
+
+    Args:
+        runner: Starts one async action with its shell, fields and dependencies.
+    """
+    _runner[:] = [runner]
+
+
+class AppAction(Generic[S]):
+    """An annotated transition and its data-only binding factory.
+
+    A handler is a plain function: its first parameter is the snapshot or the
+    app shell, each further plain parameter is one payload field typed by its
+    annotation and optional when it has a default, and each keyword-only
+    parameter names a dependency the session supplies. The signature is the
+    whole contract; nothing is declared twice.
+    """
 
     def __init__(self, function: Callable[..., S]) -> None:
         self.function = function
         self.name = f"{function.__module__}.{function.__name__}"
-        hints = get_type_hints(function)
-        signature = inspect.signature(function)
-        parameters = list(signature.parameters)
-        if len(parameters) < 2:
-            raise StateError("action must accept State and one TypedDict payload")
-        first = hints.get(parameters[0])
+        hints = get_type_hints(function, include_extras=True)
+        parameters = list(inspect.signature(function).parameters.values())
+        if not parameters:
+            raise StateError("action must accept the State or its app shell first")
+        first = hints.get(parameters[0].name)
         if first is not None and inspect.isclass(first) and issubclass(first, AppState):
             # Session-native: the handler's first parameter is the app shell,
             # decoded from the snapshot, rather than the snapshot itself.
             self.shell: type[AppState] | None = first
-        elif parameters[0] == "session":
+        elif parameters[0].name == "session":
             raise StateError(
                 "a session-first action must annotate its shell type",
-                parameter=parameters[0],
+                parameter=parameters[0].name,
             )
         else:
             self.shell = None
         self.view: Callable[[Any], Node] | None = None
-        payload = hints.get(parameters[1])
-        if payload is None or not is_typeddict(payload):
-            raise StateError("action payload must be annotated with a TypedDict")
-        self.injected = self._injected(signature, parameters)
+        self.asynchronous = inspect.iscoroutinefunction(
+            function
+        ) or inspect.isasyncgenfunction(function)
+        if self.asynchronous and self.shell is None:
+            raise StateError(
+                "an async action must take the app shell first", action_id=self.name
+            )
+        self.injected = tuple(
+            parameter.name
+            for parameter in parameters[1:]
+            if parameter.kind is inspect.Parameter.KEYWORD_ONLY
+        )
         self.aliases: dict[str, str] = {}
         self.fields: dict[str, PropDef] = {}
-        for name, annotation in get_type_hints(payload, include_extras=True).items():
-            wire_name = to_camel_case(name)
+        for parameter in parameters[1:]:
+            if parameter.kind is inspect.Parameter.KEYWORD_ONLY:
+                continue
+            if parameter.kind is not inspect.Parameter.POSITIONAL_OR_KEYWORD:
+                raise StateError(
+                    "action fields are plain named parameters", parameter=parameter.name
+                )
+            declared = hints.get(parameter.name)
+            if declared is None:
+                raise StateError("action field needs a type", parameter=parameter.name)
+            wire_name = to_camel_case(parameter.name)
             if wire_name in self.aliases:
-                raise StateError("action payload names collide", prop=name)
-            self.aliases[wire_name] = name
-            required = name in payload.__required_keys__
-            declared: object = annotation
-            if get_origin(declared) in {NotRequired, Required}:
-                required = get_origin(declared) is Required
-                declared = get_args(declared)[0]
+                raise StateError("action field names collide", prop=parameter.name)
+            self.aliases[wire_name] = parameter.name
+            required = parameter.default is inspect.Parameter.empty
             self.fields[wire_name] = _field(declared, required)
 
-    def _injected(
-        self, signature: inspect.Signature, parameters: list[str]
-    ) -> tuple[str, ...]:
-        """Return the names this action wants supplied at dispatch.
-
-        Decided once, here, so that dispatch itself reflects on nothing. Names
-        are resolved on the app's own container, never by annotation type: a
-        resolver would build a graph whose wiring is only discoverable by running
-        it, which is the trade this design deliberately declines. ``container``
-        asks for the whole graph; any other name asks for one of its parts.
-
-        Args:
-            signature: The action's own signature.
-            parameters: Its parameter names, in order.
-
-        Returns:
-            The names to supply, empty for an action that wants nothing.
-
-        Raises:
-            StateError: If an extra parameter is not keyword-only.
-        """
-        extra = parameters[2:]
-        for name in extra:
-            if signature.parameters[name].kind is not inspect.Parameter.KEYWORD_ONLY:
-                raise StateError(
-                    "an injected dependency must be keyword-only so a typo "
-                    "cannot pass silently",
-                    parameter=name,
-                )
-        return tuple(extra)
-
-    def __call__(self, state: State, payload: P, **injected: Any) -> State:
-        """Run the transition directly, without going through the runtime.
+    def __call__(self, state: State, *args: Any, **kwargs: Any) -> State:
+        """Run the transition directly, as the function it decorates.
 
         This is what makes a test a two-liner: the action is called as if it
-        were the function it decorates, and nothing about the host is involved.
-        A session-native action runs the same way: its shell comes off the
-        snapshot, and the shell it returns becomes the next one, version on.
+        were the function, with its fields and dependencies as arguments, and
+        nothing about the host is involved. A session-native action runs the
+        same way: its shell comes off the snapshot, and the shell it returns
+        becomes the next one, version on.
 
         Args:
             state: Snapshot before the transition.
-            payload: The bound and event fields, merged.
+            *args: Field values, in the handler's order.
+            **kwargs: Field values and dependencies, by name.
+
+        Returns:
+            The handler's next State.
+        """
+        return self._transition(
+            state, lambda target: self.function(target, *args, **kwargs)
+        )
+
+    def run(self, state: State, payload: Mapping[str, Any], **injected: Any) -> State:
+        """Run the transition for one dispatched payload.
+
+        An async action starts off the worker and leaves the snapshot as it is;
+        each state it produces comes back later as the fields it changed.
+
+        Args:
+            state: Snapshot before the transition.
+            payload: The bound and event fields, merged, by Python name.
             **injected: Whatever this action declared it wanted.
+
+        Returns:
+            The handler's next State.
+
+        Raises:
+            StateError: If an async action runs where nothing can start it.
+        """
+        if self.asynchronous:
+            if not _runner or not isinstance(state.app, AppState):
+                raise StateError(
+                    "an async action runs only inside a session", action_id=self.name
+                )
+            _runner[0](self, state.app, payload, injected)
+            return state
+        return self._transition(
+            state, lambda target: self.function(target, **payload, **injected)
+        )
+
+    def apply(self, state: State, payload: Mapping[str, Any]) -> State:
+        """Apply the fields an async run of this action changed.
+
+        They land on the session as it is now, not as it was when the run
+        started, so a change the user made meanwhile to another field stands.
+
+        Args:
+            state: Snapshot when the changes arrive.
+            payload: ``changes``: the changed fields, as canonical JSON.
+
+        Returns:
+            The next State, with those fields replaced.
+
+        Raises:
+            StateError: If the snapshot carries no shell to apply them to.
+        """
+        shell = state.app
+        if not isinstance(shell, AppState):
+            raise StateError("async changes arrived with no shell", action_id=self.name)
+        codec = type(shell).codec
+        changes = json.loads(str(payload["changes"]))
+        updated = codec.decode({**codec.encode(shell), **changes})
+        return self._transition(state, lambda _: updated)
+
+    def _transition(self, state: State, call: Callable[[Any], Any]) -> State:
+        """Run ``call`` on the snapshot, or on its shell for a session action.
+
+        Args:
+            state: Snapshot before the transition.
+            call: Invokes the handler on its first argument.
 
         Returns:
             The handler's next State.
@@ -129,7 +204,7 @@ class AppAction(Generic[S, P]):
                 respond, or no view was installed to rebuild its screen.
         """
         if self.shell is None:
-            return self.function(state, payload, **injected)
+            return cast("State", call(state))
         shell_type = self.shell
         shell = state.app
         if not isinstance(shell, shell_type):
@@ -138,7 +213,7 @@ class AppAction(Generic[S, P]):
                 action_id=self.name,
                 app=None if shell is None else type(shell).__name__,
             )
-        result: Any = self.function(cast("Any", shell), payload, **injected)
+        result: Any = call(shell)
         effects: tuple[Effect, ...]
         if isinstance(result, ShellResponse):
             if not isinstance(result.shell, shell_type):
@@ -169,23 +244,55 @@ class AppAction(Generic[S, P]):
             min_library_version=state.min_library_version,
         )
 
-    def bind(self, *, id: str, **values: Any) -> ActionBinding:
-        """Declare a stable binding, leaving event-supplied fields unbound.
+    def with_args(self, **values: Any) -> ActionBinding:
+        """Bind some fields now, leaving the rest for the event to supply.
+
+        The binding's id derives from the handler and the bound values, so two
+        controls bound alike share one binding and two bound differently never
+        collide, with nothing for the app to name.
 
         Args:
-            id: Stable instance key, such as task_42.
-            **values: Fixed Python-named payload values, validated immediately.
+            **values: Fixed field values by Python name, validated immediately.
 
         Returns:
             A string-compatible immutable declaration for native action props.
+
+        Raises:
+            StateError: If a value names no field of this action.
         """
+        unknown = set(values) - set(self.aliases.values())
+        if unknown:
+            raise StateError(
+                "with_args names fields the action does not take",
+                action_id=self.name,
+                fields=",".join(sorted(unknown)),
+            )
         bound = {to_camel_case(key): value for key, value in values.items()}
-        return ActionBinding(
-            f"app.{self.name}.{id}", BindingSpec(self.name, self.fields, bound)
-        )
+        key = f"app.{self.name}"
+        if bound:
+            digest = hashlib.sha256(canonical_json(bound).encode()).hexdigest()
+            key = f"{key}.{digest[:12]}"
+        return ActionBinding(key, BindingSpec(self.name, self.fields, bound))
+
+    def binding(self) -> ActionBinding:
+        """Return this action bound to nothing, as a control passed it directly.
+
+        Returns:
+            The binding every event field of which the event supplies.
+        """
+        return self.with_args()
 
 
 def _field(annotation: object, required: bool) -> PropDef:
+    # ``int | None``: a report that may carry null (a cleared date selection).
+    args = get_args(annotation)
+    if get_origin(annotation) in {Union, UnionType} and type(None) in args:
+        rest = [arg for arg in args if arg is not type(None)]
+        if len(rest) == 1:
+            inner = _field(rest[0], required)
+            return PropDef(
+                type=inner.type, values=inner.values, required=required, nullable=True
+            )
     types: dict[object, str] = {
         str: "string",
         bool: "boolean",
@@ -200,19 +307,21 @@ def _field(annotation: object, required: bool) -> PropDef:
     kind = types.get(annotation)
     if kind is None:
         raise StateError(
-            "unsupported action payload annotation", annotation=str(annotation)
+            "unsupported action field type; a dependency the session supplies "
+            "must be keyword-only",
+            annotation=str(annotation),
         )
     return PropDef(type=kind, required=required)
 
 
-def action(function: Callable[..., S]) -> AppAction[S, P]:
+def action(function: Callable[..., S]) -> AppAction[S]:
     """Define a typed Python transition without modifying the native manifest.
 
     Args:
-        function: Pure State/payload transition with a TypedDict payload annotation.
+        function: Pure transition whose signature declares its payload fields.
 
     Returns:
-        A definition whose bind method creates data-only native references.
+        A definition a control takes directly or through ``with_args``.
     """
     return AppAction(function)
 

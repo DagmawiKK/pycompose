@@ -12,7 +12,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.core.registry_types import CONSUMERS, SCOPES, SLOT_KINDS
+from pycompose.core.registry_types import CONSUMERS, SLOT_KINDS
+from pycompose.schema.codegen.state_families import STATE_FAMILIES, property_props
 
 SCALAR_KOTLIN = {
     "string": "String",
@@ -95,24 +96,22 @@ with no ``decode`` is refused, because guessing which family its values belong t
 is how an adapter silently renders the wrong alignment.
 """
 
-STATE_CALLS = {
-    "drawer": "drawerState",
-    "sheet": "sheetState",
-    "slider": "sliderState",
-    "scroll": "scrollState",
-    "lazyList": "lazyListState",
-    "tooltip": "tooltipState",
-    "textInput": "textInputState",
-    "search": "searchState",
-    "swipe": "swipeState",
-}
-"""The renderer method each state family's host holder comes from.
 
-The family decides the create/drive/report logic; the schema decides which
-component has one, which native parameter it fills, and which props carry the
-desired value and report settled changes. Every member of the vocabulary must
-appear here, or codegen has no holder to hand the component.
-"""
+def state_call(kind: str) -> str:
+    """Name the renderer method a state family's host holder comes from.
+
+    The family decides the create/drive/report logic; the schema decides which
+    component has one. A family the renderer does not implement fails the
+    generated adapters' compile proof.
+
+    Args:
+        kind: A ``STATE_KINDS`` member.
+
+    Returns:
+        ``<kind>State``, e.g. ``drawerState``.
+    """
+    return f"{kind}State"
+
 
 GATED_STATES = frozenset({"sheet"})
 """State families whose native component must be composed conditionally.
@@ -126,11 +125,7 @@ itself.
 """
 
 STATE_CONSTRUCTOR_PROPS = {
-    "sheet": ("value", "onValueChange", "skipPartiallyExpanded"),
-    "slider": ("valueRange", "steps"),
-    "tooltip": ("isPersistent",),
-    "textInput": ("selectionStart", "selectionEnd", "revision"),
-    "search": ("text", "selectionStart", "selectionEnd", "revision", "onEdit"),
+    kind: tuple(family.held) for kind, family in STATE_FAMILIES.items() if family.held
 }
 """Props each family's holder needs at construction, beyond its primary projection.
 
@@ -145,22 +140,30 @@ component.
 """
 
 STATE_ATTACH_GATES = {"scroll": "scrollable"}
-"""Props gating a family whose holder rides the call's modifier.
+"""Props gating a family whose holder may ride the call's modifier.
 
 ``Column`` has no scroll parameter -- scrolling attaches through its modifier,
-so the state cannot fill a native parameter. The holder exists whenever the
-schema declares one, and the boolean prop named here decides whether the
-adapter attaches it to the modifier the call receives.
+so the state cannot fill a native parameter. Its entry declares the boolean
+prop named here, which decides whether the adapter attaches the holder to the
+modifier the call receives. An entry without that prop (``ExposedDropdownMenu``
+takes a ``ScrollState``) passes the holder as its native parameter.
 """
 
-TRANSIENT_CALLS = {"snackbar": "snackbar"}
-"""The renderer method each transient family's request comes from.
 
-The family decides the remember/fulfil/report logic exactly as a state's
-``STATE_CALLS`` entry does; the schema decides which component asks for one.
-Every member of the vocabulary must appear here, or codegen has no renderer
-method to call.
-"""
+def attach_gate(state: dict[str, Any] | None, props: dict[str, Any]) -> str | None:
+    """The prop gating a holder that rides the modifier, or None when it does not.
+
+    Args:
+        state: The component's ``state`` entry, if any.
+        props: The component's props.
+
+    Returns:
+        The gate prop's wire name.
+    """
+    if state is None:
+        return None
+    gate = STATE_ATTACH_GATES.get(state.get("kind", ""))
+    return gate if gate in props else None
 
 
 def qualify(source: str) -> str:
@@ -208,9 +211,7 @@ def _declared_slots(entry: dict[str, Any]) -> bool:
     if any(slot.get("host") for slot in entry.get("slots", {}).values()):
         return False
     children = entry.get("children", {})
-    scoped = children.get("provides") in {None, *SCOPES} and not (
-        "provides" in children and children.get("consume") is not None
-    )
+    scoped = not ("provides" in children and children.get("consume") is not None)
     return (
         children.get("kind") in {None, *SLOT_KINDS}
         and children.get("consume") in {None, *CONSUMERS}
@@ -218,7 +219,6 @@ def _declared_slots(entry: dict[str, Any]) -> bool:
         and all(
             slot.get("kind", "content") in SLOT_KINDS
             and slot.get("consume") in {None, *CONSUMERS}
-            and slot.get("provides") in {None, *SCOPES}
             and not (slot.get("provides") and slot.get("consume"))
             and not (slot.get("provides") and slot.get("kind", "content") != "content")
             for slot in entry.get("slots", {}).values()
@@ -239,13 +239,15 @@ def _held_props(entry: dict[str, Any]) -> set[str]:
     state = entry.get("state")
     if not isinstance(state, dict):
         return set()
+    if state.get("kind") == "properties":
+        return set(property_props(state))
     held = {
         name for key in ("value", "report") if isinstance(name := state.get(key), str)
     }
     kind = state.get("kind")
     if isinstance(kind, str):
         held.update(STATE_CONSTRUCTOR_PROPS.get(kind, ()))
-        gate = STATE_ATTACH_GATES.get(kind)
+        gate = attach_gate(state, entry.get("props", {}))
         if gate is not None:
             held.add(gate)
     return held
@@ -274,6 +276,10 @@ def _mechanical_prop(spec: dict[str, Any]) -> bool:
     # with some default to fall back to can be rendered at all.
     if spec.get("type") == "dp" and _dp_renderable(spec):
         return True
+    if spec.get("type") == "resource":
+        # A resource loads off the Compose thread with its own diagnostics, so
+        # only a wrapper (Text's, Image's) renders one; see WRAPPERS.
+        return False
     # Decodable types need a named resolver; without one they cannot be
     # rendered at all rather than rendered wrongly.
     return spec.get("type") in DECODED and bool(spec.get("decode"))
@@ -360,6 +366,7 @@ class _Fragments:
         self.arguments: list[str] = []
         self.trailing: list[str] = []
         self.trailing_parameter: str | None = None
+        self.gates: list[str] = []
 
     def add(self, fragment: tuple[str, str] | None) -> bool:
         """Append one prop's rendering.
@@ -389,6 +396,11 @@ class _Fragments:
         if body:
             self.trailing.append(body)
             self.trailing_parameter = parameter or self.trailing_parameter
+
+
+def simple(scope: str) -> str:
+    """A scope's class as the adapters spell it: imported, so by simple name."""
+    return scope.rsplit(".", 1)[-1]
 
 
 def native_name(name: str, entry: dict[str, Any]) -> str:
@@ -444,7 +456,7 @@ def _dp_renderable(spec: dict[str, Any]) -> bool:
 
 
 def scalar_wire(prop_name: str, spec: dict[str, Any]) -> str:
-    """Read one scalar from the model, narrowing an Int-native wire value.
+    """Read one scalar from the model, narrowing an Int- or Float-native value.
 
     Args:
         prop_name: The camelCase Kotlin property name.
@@ -454,6 +466,7 @@ def scalar_wire(prop_name: str, spec: dict[str, Any]) -> str:
         Kotlin source for the value Compose receives.
     """
     wire = f"model.props.{prop_name}"
-    if spec.get("nativeType") == "Int":
-        wire += "?.toInt()" if spec.get("nullable") else ".toInt()"
+    narrow = {"Int": "toInt()", "Float": "toFloat()"}.get(spec.get("nativeType", ""))
+    if narrow:
+        wire += f"?.{narrow}" if spec.get("nullable") else f".{narrow}"
     return wire

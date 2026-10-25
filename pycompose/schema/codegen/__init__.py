@@ -1,13 +1,13 @@
-"""Per-app and library codegen from ``schema/components.json``.
+"""Per-app and library codegen from ``schema/catalog.lock.json``.
 
     python -m pycompose.schema.codegen            # the library's artifacts
     python -m pycompose.schema.codegen --app DIR  # only what DIR uses
 
 This lives inside the package rather than in ``tools/`` because ADR-0014 needs
 an installed ``pycompose`` to generate an app's component slice, and a wheel does
-not ship ``tools/``. The ``tools/schema`` scripts that need the network --
-``classpath_dump.py``, ``propose.py``, ``check_upstream.py`` -- stay outside, since
-nothing an app builds calls them.
+not ship ``tools/``. The component compiler that reads the pinned evidence
+ships beside it in :mod:`pycompose.compiler`, since ``pycompose add`` runs it
+for an app's own libraries.
 
 Importing this package is not part of running an app. It is build-time code that
 happens to ship in the same distribution.

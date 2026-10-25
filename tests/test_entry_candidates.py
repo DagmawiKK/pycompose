@@ -23,14 +23,13 @@ from test_classpath_dump import (
     write_inventory,
 )
 
-from tools.schema.candidate_props import CandidateError
-from tools.schema.classpath_dump import Inventory, inventory
-from tools.schema.component_binding import identity, spell
-from tools.schema.entry_candidates import (
+from pycompose.compiler.candidate_props import CandidateError
+from pycompose.compiler.classpath_dump import Inventory, inventory
+from pycompose.compiler.component_binding import identity, spell
+from pycompose.compiler.entry_candidates import (
     check_fresh,
     derive,
     dumps,
-    review_manifest,
     select,
     stage,
     verify,
@@ -194,13 +193,16 @@ def test_a_plan_derives_props_slots_children_and_defaults(tmp_path: Path) -> Non
     assert entry["children"] == {
         "allowed": True,
         "kind": "content",
-        "provides": "RowScope",
+        "provides": "androidx.compose.foundation.layout.RowScope",
     }
     assert entry["slots"] == {
         "label": {"native": "label"},
         "leadingIcon": {"native": "leadingIcon", "nullable": True},
     }
-    assert "content: app content children in RowScope" in item.review
+    assert (
+        "content: app content children in androidx.compose.foundation.layout.RowScope"
+        in item.review
+    )
     assert "label: required native slot; absence renders an empty lambda" in item.review
 
 
@@ -506,9 +508,6 @@ def test_the_derivation_is_deterministic(tmp_path: Path) -> None:
         {"category": "test", "stability": "stable"},
     )
     assert dumps(first.entry) == dumps(second.entry)
-    assert review_manifest({"bom": "b", "compiler": "c"}, [first]) == review_manifest(
-        {"bom": "b", "compiler": "c"}, [second]
-    )
     assert first.entry["source"] == recorded
 
 
@@ -516,10 +515,10 @@ def test_a_held_out_compatible_binding_derives_and_verifies() -> None:
     """A component the catalog does not carry still derives and verifies clean."""
     if os.environ.get("PYCOMPOSE_NATIVE_API_TESTS") != "1":
         pytest.skip("native CI runs the pinned artifact extraction")
-    from tools.schema.classpath_dump import source_defaults
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import source_defaults
+    from pycompose.compiler.components import propose_components
 
-    approved = json.loads((ROOT / "schema/components.json").read_text())
+    approved = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     found = inventory(DUMP)
     plans = propose_components(found, source_defaults(DUMP), approved)
     plan_record, pin = select(plans, found, "SmallFloatingActionButton")
@@ -535,16 +534,23 @@ def test_a_held_out_compatible_binding_derives_and_verifies() -> None:
 def test_the_approved_pilot_entries_equal_their_derivation() -> None:
     if os.environ.get("PYCOMPOSE_NATIVE_API_TESTS") != "1":
         pytest.skip("native CI runs the pinned artifact extraction")
-    from tools.schema.classpath_dump import source_defaults
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import source_defaults
+    from pycompose.compiler.components import propose_components
+    from pycompose.compiler.rules import reshape
 
-    approved = json.loads((ROOT / "schema/components.json").read_text())
+    approved = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     found = inventory(DUMP)
     plans = propose_components(found, source_defaults(DUMP), approved)
     review_input = {"category": "test", "stability": "stable"}
     for name in ("AssistChip", "ElevatedAssistChip", "Badge"):
         plan_record, pin = select(plans, found, name)
-        entry = derive(plan_record, pin, approved, review_input).entry
+        # The compiler's rules run after derivation (interaction reports here).
+        entry = reshape(
+            name,
+            derive(plan_record, pin, approved, review_input).entry,
+            {},
+            plan_record,
+        )
         derived = {
             key: value
             for key, value in entry.items()

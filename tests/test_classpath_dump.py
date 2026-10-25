@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pytest
 
+from pycompose.compiler.classpath_dump import SOURCE_PATTERNS
+
 DUMP = Path("android/build/compose-api")
 ARTIFACT = "androidx.compose.material3:material3-android:1.4.0"
 ROOT = Path(__file__).resolve().parents[1]
@@ -79,12 +81,7 @@ def write_inventory(directory: Path, records: list[dict], **changes):
                 path.relative_to("android").as_posix(): hashlib.sha256(
                     path.read_bytes()
                 ).hexdigest()
-                for pattern in (
-                    "*.gradle.kts",
-                    "*/build.gradle.kts",
-                    "gradle/libs.versions.toml",
-                    "gradle.properties",
-                )
+                for pattern in SOURCE_PATTERNS
                 for path in Path("android").glob(pattern)
             },
         },
@@ -154,7 +151,7 @@ def test_dump_extracts_exact_public_signatures_and_receivers(native_document) ->
         and d["owner"] == "androidx.compose.material3.ButtonColors"
         for d in document["declarations"]
     )
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     assert len(inventory(DUMP).ui) == len(public)
     assert document["bytecodeAudit"]["unmatchedTargetMethods"] == []
@@ -178,7 +175,7 @@ def test_dump_extracts_exact_public_signatures_and_receivers(native_document) ->
 
 
 def test_pinned_overloads_slots_and_scopes_survive_reading(native_document) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     found = inventory(DUMP)
     assert len(found.ui) == sum(
@@ -193,7 +190,8 @@ def test_pinned_overloads_slots_and_scopes_survive_reading(native_document) -> N
     basic = [
         d
         for d in found.declarations
-        if d.name == "BasicText" and d.disposition == "support"
+        # Foundation is a component group (compose-closure.json).
+        if d.name == "BasicText" and d.disposition == "ui"
     ]
     assert len(basic) == 2
     assert all("minLines" in {p.name for p in d.parameters} for d in basic)
@@ -207,7 +205,7 @@ def test_pinned_overloads_slots_and_scopes_survive_reading(native_document) -> N
     animation = [
         d
         for d in found.declarations
-        if d.name == "AnimatedVisibility" and d.disposition == "support"
+        if d.name == "AnimatedVisibility" and d.disposition == "ui"
     ]
     assert any(
         d.receiver and d.receiver.classifier.endswith("RowScope") for d in animation
@@ -258,7 +256,7 @@ def test_native_inventory_is_byte_stable(native_document) -> None:
 
 
 def test_inventory_retains_all_overloads_and_function_semantics(tmp_path: Path) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     unit = type_doc("kotlin/Unit")
     records = [
@@ -332,7 +330,7 @@ def test_inventory_retains_all_overloads_and_function_semantics(tmp_path: Path) 
 def test_inventory_refuses_untrusted_or_incomplete_input(
     tmp_path: Path, defect: str
 ) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     document = write_inventory(
         tmp_path,
@@ -357,7 +355,8 @@ def test_inventory_refuses_untrusted_or_incomplete_input(
     elif defect == "classes":
         document["classes"] = []
     elif defect == "stale":
-        document["provenance"]["sourceHashes"]["dump-compose-api.gradle.kts"] = "0" * 64
+        hashes = document["provenance"]["sourceHashes"]
+        hashes["compose-extract/src/main/kotlin/Inventory.kt"] = "0" * 64
     else:
         coordinate = ARTIFACT.replace("1.4.0", "1.5.0")
         document["artifacts"][0]["coordinate"] = coordinate
@@ -370,7 +369,7 @@ def test_inventory_refuses_untrusted_or_incomplete_input(
 def test_inventory_preserves_recursive_types_and_distinguishes_builders(
     tmp_path: Path,
 ) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     unit = type_doc("kotlin/Unit")
     extension = ("kotlin/ExtensionFunctionType",)
@@ -414,7 +413,7 @@ def test_inventory_preserves_recursive_types_and_distinguishes_builders(
 def test_gap_report_is_a_capability_worklist_not_a_support_claim(
     tmp_path: Path,
 ) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     write_inventory(
         tmp_path,
@@ -445,7 +444,7 @@ def test_gap_report_is_a_capability_worklist_not_a_support_claim(
 
 
 def test_unread_referenced_support_blocks_the_inventory(tmp_path: Path) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     support = declaration(
         name="operation",
@@ -467,7 +466,7 @@ def test_unread_referenced_support_blocks_the_inventory(tmp_path: Path) -> None:
 def test_unmatched_public_accessor_is_not_treated_as_inaccessible(
     tmp_path: Path,
 ) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     public_getter = {
         "name": "getMonth",
@@ -500,7 +499,7 @@ def test_unmatched_public_accessor_is_not_treated_as_inaccessible(
 
 
 def test_vararg_can_be_omitted_without_a_default_expression(tmp_path: Path) -> None:
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.classpath_dump import inventory
 
     string = type_doc("kotlin/String")
     locales = parameter("locales", type_doc("kotlin/Array", string)) | {

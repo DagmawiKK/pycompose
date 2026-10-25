@@ -11,15 +11,17 @@ the entire candidate even when component policy would otherwise discard it.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 
-from pycompose.core.action_binding import ActionBinding, read_bindings
+from pycompose.core.action_binding import ActionBinding, BindingSpec, read_bindings
 from pycompose.core.node import Node
 from pycompose.core.registry_types import PropDef
 from pycompose.core.resources import valid_resource
+from pycompose.core.reuse import Reuse
 from pycompose.core.values import validate_bounds, validate_number, validate_value
 from pycompose.errors import ComponentRegistryError, IrValidationError
 from pycompose.ir.data import DATA_SCHEMA, read_data
+from pycompose.ir.echoes import ECHOES_SCHEMA, read_echoes
 from pycompose.ir.effects import EFFECTS_SCHEMA, read_effects
 from pycompose.ir.generated_validators import (
     MIN_LIBRARY_VERSION,
@@ -27,7 +29,9 @@ from pycompose.ir.generated_validators import (
     REGISTRY,
     SCHEMA_VERSION,
 )
+from pycompose.ir.host import current_host
 from pycompose.ir.model import IRRoot
+from pycompose.ir.streams import stream_problems
 from pycompose.ir.validator_walk import _Validation
 from pycompose.schema.version import require_version
 from pycompose.utils.json_canonical import check_json
@@ -42,14 +46,21 @@ __all__ = [
 ]
 
 
+_LONG = range(-(2**63), 2**63)
+"""The integers a host can hold: a Kotlin Long."""
+
+
+def _is_long(value: object) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value in _LONG
+
+
 _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     "string": lambda value, _: isinstance(value, str),
     "resource": lambda value, prop: valid_resource(value, prop.values),
     "color": lambda value, _: isinstance(value, str),
     "boolean": lambda value, _: isinstance(value, bool),
-    "integer": lambda value, _: isinstance(value, int) and not isinstance(value, bool),
-    "durationMs": lambda value, _: isinstance(value, int)
-    and not isinstance(value, bool),
+    "integer": lambda value, _: _is_long(value),
+    "durationMs": lambda value, _: _is_long(value),
     "number": lambda value, _: isinstance(value, int | float)
     and not isinstance(value, bool),
     "dp": lambda value, _: _is_native_float(value),
@@ -187,10 +198,12 @@ class ValidationResult:
     Attributes:
         snapshot: Safe snapshot, or None when no root can be rendered.
         issues: Failures encountered in stable traversal order.
+        bindings: The snapshot's validated app bindings by id, parsed once here.
     """
 
     snapshot: IRRoot | None
     issues: tuple[ValidationIssue, ...] = ()
+    bindings: Mapping[str, BindingSpec] = field(default_factory=dict)
 
 
 def _section_ok(
@@ -229,7 +242,9 @@ def _section_ok(
     return True
 
 
-def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
+def validate_ir(
+    snapshot: IRRoot, *, debug: bool = True, reuse: Reuse | None = None
+) -> ValidationResult:
     """Validate a snapshot against the generated component registry.
 
     Debug failures raise IrValidationError with node/prop context. Version
@@ -240,6 +255,8 @@ def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
     Args:
         snapshot: Candidate full snapshot.
         debug: Raise on invalid IR instead of returning degradation diagnostics.
+        reuse: The session's subtrees that were clean last pass, skipped when
+            they recur; None validates every node.
 
     Returns:
         The validated snapshot and deterministic diagnostics.
@@ -252,7 +269,11 @@ def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
         supported=REGISTRY.supported_schema_versions or (SCHEMA_VERSION,),
     )
     require_version(snapshot.version, minimum=MIN_LIBRARY_VERSION, field="version")
-    validation = _Validation(debug, snapshot.schema_version)
+    validation = _Validation(debug, snapshot.schema_version, host=current_host())
+    if reuse is not None:
+        reuse.validated.start()
+        reuse.bindings.start()
+        validation.memo = reuse.validated
     metadata = snapshot.metadata
     if metadata is not None:
         try:
@@ -261,7 +282,7 @@ def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
             validation.report("invalid metadata", snapshot.root)
             metadata = None
     try:
-        bindings = read_bindings(metadata)
+        bindings = read_bindings(metadata, reuse.bindings if reuse else None)
     except (IrValidationError, ComponentRegistryError):
         validation.report("invalid app action bindings", snapshot.root)
         return ValidationResult(None, tuple(validation.issues))
@@ -289,16 +310,31 @@ def validate_ir(snapshot: IRRoot, *, debug: bool = True) -> ValidationResult:
         "app data requires newer schema",
         DATA_SCHEMA,
         snapshot.root,
+    ) or not _section_ok(
+        validation,
+        metadata,
+        read_echoes,
+        None,
+        "invalid echoes",
+        "echoes require newer schema",
+        ECHOES_SCHEMA,
+        snapshot.root,
     ):
         return ValidationResult(None, tuple(validation.issues))
     validation.action_ids = frozenset(bindings)
     root = validation.node(snapshot.root)
+    if root is not None:
+        # An expression may read a holder anywhere in the snapshot.
+        for node, prop, message in stream_problems(root):
+            validation.report(message, node, prop)
     safe: IRRoot | None = snapshot
     if root is None:
         safe = None
     elif root is not snapshot.root or metadata is not snapshot.metadata:
         safe = replace(snapshot, root=root, metadata=metadata)
-    return ValidationResult(snapshot=safe, issues=tuple(validation.issues))
+    return ValidationResult(
+        snapshot=safe, issues=tuple(validation.issues), bindings=bindings
+    )
 
 
 def validate_component(node: Node) -> None:

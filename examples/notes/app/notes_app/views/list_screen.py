@@ -23,133 +23,96 @@ from m3 import (
 )
 from m3.values import Dp, PaddingValues, materialIcon
 
+from notes_app.actions import (
+    delete_note,
+    new_note,
+    open_note,
+    set_about,
+    set_listing,
+    set_previews,
+)
 from notes_app.domain.models import Note
 from notes_app.domain.usecases import carrying_text, count_line, filled_share
 from notes_app.state import ALL_FILTER, TEXT_FILTER, Session
 from notes_app.theme import Theme
-from pycompose import Registry, composable
+from pycompose import composable
 from pycompose.core import Node
 
 
 @composable
-def list_screen(
-    *,
-    notes: list[Note],
-    session: Session,
-    actions: Registry,
-) -> Node:
+def list_screen(*, notes: list[Note], session: Session) -> Node:
     """Render the whole list screen.
 
     Args:
         notes: The notes to render, newest first.
         session: The session shell, for the palette and the controls' own state.
-        actions: The registry this screen binds its controls to. Callers omit
-            it; the app context supplies it, as Compose supplies
-            ``LocalConfiguration.current``.
 
     Returns:
         A Scaffold declaration listing every note.
     """
     theme = Theme.of(session)
     listed = carrying_text(notes) if session.listing == TEXT_FILTER else notes
-    rows: list[Node] = [
-        note_row(
-            id=f"row_{note.id}",
-            note=note,
-            session=session,
-            theme=theme,
-            actions=actions,
+    # The list is data: the host asks for the window it shows, so a thousand
+    # notes cost what is on screen.
+    body: Node = (
+        LazyColumn(
+            items=listed,
+            key=lambda note: f"row_{note.id}",
+            item=lambda note: note_row(
+                note=note, previews=session.previews, theme=theme
+            ),
+            modifier=Modifier().fill_max_width(),
         )
-        for note in listed
-    ]
-    if not rows:
-        rows = [
-            Text(
-                id="empty",
-                text="No notes yet." if not notes else "No notes with text yet.",
-                style="bodyMedium",
-                color=theme.muted,
-            )
-        ]
+        if listed
+        else Text(
+            text="No notes yet." if not notes else "No notes with text yet.",
+            style="bodyMedium",
+            color=theme.muted,
+        )
+    )
     return Scaffold(
-        id="screen",
         container_color=theme.background,
-        floating_action_button=[
-            new_note_button(id="new_button", theme=theme, actions=actions),
-        ],
-        bottom_bar=[listing_bar(id="listing", session=session, actions=actions)],
+        floating_action_button=[new_note_button(theme=theme)],
+        bottom_bar=[listing_bar(session=session)],
         content=Column(
-            id="body",
             modifier=Modifier().padding(20).fill_max_width(),
             children=[
-                Text(
-                    id="title",
-                    text="Notes",
-                    style="titleLarge",
-                    color=theme.on_surface,
-                ),
-                Text(
-                    id="count",
-                    text=count_line(listed),
-                    style="bodySmall",
-                    color=theme.muted,
-                ),
-                Spacer(id="gap_previews", modifier=Modifier().size(8)),
-                previews_row(
-                    id="previews_row", session=session, theme=theme, actions=actions
-                ),
-                Spacer(id="gap_about", modifier=Modifier().size(8)),
+                Text(text="Notes", style="titleLarge", color=theme.on_surface),
+                Text(text=count_line(listed), style="bodySmall", color=theme.muted),
+                Spacer(modifier=Modifier().size(8)),
+                previews_row(session=session, theme=theme),
+                Spacer(modifier=Modifier().size(8)),
                 TextButton(
-                    id="about",
-                    text="How this works",
-                    on_click=actions.set_about.bind(id="about", open=True),
+                    text="How this works", on_click=set_about.with_args(open=True)
                 ),
-                Spacer(id="gap_rule", modifier=Modifier().size(8)),
-                HorizontalDivider(
-                    id="rule",
-                    thickness=1,
-                    color=theme.muted,
-                ),
-                Spacer(id="gap_list", modifier=Modifier().size(12)),
-                LazyColumn(
-                    id="notes",
-                    items=rows,
-                    modifier=Modifier().fill_max_width(),
-                ),
-                about_sheet(
-                    id="about_sheet",
-                    session=session,
-                    theme=theme,
-                    actions=actions,
-                    notes=notes,
-                ),
+                Spacer(modifier=Modifier().size(8)),
+                HorizontalDivider(thickness=1, color=theme.muted),
+                Spacer(modifier=Modifier().size(12)),
+                body,
+                about_sheet(session=session, theme=theme, notes=notes),
             ],
         ),
     )
 
 
 @composable
-def new_note_button(*, theme: Theme, actions: Registry) -> Node:
+def new_note_button(*, theme: Theme) -> Node:
     """Render the screen's one accented command.
 
     A floating action button is Material's shape for "create", and the icon
-    inside it is the whole label. The id the binding carries is the command,
-    not the control's position, so the host never learns which button this is.
+    inside it is the whole label.
 
     Args:
         theme: Colours to paint with.
-        actions: The registry this screen binds its controls to.
 
     Returns:
         The FloatingActionButton declaration.
     """
     return FloatingActionButton(
-        id="new",
-        on_click=actions.new_note.bind(id="new"),
+        on_click=new_note,
         container_color=theme.primary,
         children=[
             Icon(
-                id="new_icon",
                 image_vector=materialIcon(name="Filled.Add"),
                 content_description="New note",
                 tint=theme.background,
@@ -159,44 +122,33 @@ def new_note_button(*, theme: Theme, actions: Registry) -> Node:
 
 
 @composable
-def previews_row(*, session: Session, theme: Theme, actions: Registry) -> Node:
+def previews_row(*, session: Session, theme: Theme) -> Node:
     """Render the switch that decides whether rows show a line of body text.
 
     The switch owns its checked state on the native side and reports what it
     settled on; Python states the desired value in the snapshot. The label tells
-    VoiceOver users what the switch is for, since a bare switch reads as nothing.
+    screen readers what the switch is for, since a bare switch reads as nothing.
 
     Args:
         session: The session shell, which holds whether previews are shown.
         theme: Colours to paint with.
-        actions: The registry this screen binds its controls to.
 
     Returns:
         A Row pairing the label with the Switch.
     """
     return Row(
-        id="previews",
         vertical_alignment="center",
         children=[
-            Text(
-                id="previews_label",
-                text="Show note previews",
-                style="bodyMedium",
-                color=theme.muted,
-            ),
-            Spacer(id="gap_previews_switch", modifier=Modifier().size(8)),
-            Switch(
-                id="previews_switch",
-                checked=session.previews,
-                on_checked_change=actions.set_previews.bind(id="previews"),
-            ),
-            Spacer(id="gap_previews_close", modifier=Modifier().size(8)),
+            Text(text="Show note previews", style="bodyMedium", color=theme.muted),
+            Spacer(modifier=Modifier().size(8)),
+            Switch(checked=session.previews, on_checked_change=set_previews),
+            Spacer(modifier=Modifier().size(8)),
         ],
     )
 
 
 @composable
-def listing_bar(*, session: Session, actions: Registry) -> Node:
+def listing_bar(*, session: Session) -> Node:
     """Render the bar that filters the list.
 
     Each item names the filter it stands for in the binding, so one transition
@@ -206,97 +158,75 @@ def listing_bar(*, session: Session, actions: Registry) -> Node:
 
     Args:
         session: The session shell, which holds the filter in force.
-        actions: The registry this screen binds its controls to.
 
     Returns:
         The NavigationBar declaration.
     """
     return NavigationBar(
-        id="listing_bar",
         children=[
             NavigationBarItem(
-                id="listing_all",
                 selected=session.listing == ALL_FILTER,
-                on_click=actions.set_listing.bind(id="listing_all", value=ALL_FILTER),
+                on_click=set_listing.with_args(value=ALL_FILTER),
                 icon=[
                     Icon(
-                        id="listing_all_icon",
                         image_vector=materialIcon(name="Filled.Home"),
                         content_description=None,
                     )
                 ],
-                label=[Text(id="listing_all_label", text="All notes")],
+                label=[Text(text="All notes")],
             ),
             NavigationBarItem(
-                id="listing_text",
                 selected=session.listing == TEXT_FILTER,
-                on_click=actions.set_listing.bind(id="listing_text", value=TEXT_FILTER),
+                on_click=set_listing.with_args(value=TEXT_FILTER),
                 icon=[
                     Icon(
-                        id="listing_text_icon",
                         image_vector=materialIcon(name="Filled.Edit"),
                         content_description=None,
                     )
                 ],
-                label=[Text(id="listing_text_label", text="With text")],
+                label=[Text(text="With text")],
             ),
         ],
     )
 
 
 @composable
-def about_sheet(
-    *,
-    session: Session,
-    theme: Theme,
-    actions: Registry,
-    notes: list[Note],
-) -> Node:
+def about_sheet(*, session: Session, theme: Theme, notes: list[Note]) -> Node:
     """Render the sheet explaining what the app is and how it is built.
 
     Args:
         session: The session shell, which holds whether the sheet is open.
         theme: Colours to paint with.
-        actions: The registry this screen binds its controls to.
         notes: The notes the bar inside the sheet measures.
 
     Returns:
         The ModalBottomSheet declaration.
     """
     return ModalBottomSheet(
-        id="about_sheet",
         open=session.about_open,
-        on_open_change=actions.set_about.bind(id="about_sheet"),
+        on_open_change=set_about,
         children=[
             Column(
-                id="about_body",
                 modifier=Modifier().padding(20).fill_max_width(),
                 children=[
                     Row(
-                        id="about_heading",
                         vertical_alignment="center",
                         children=[
                             Icon(
-                                id="about_icon",
                                 image_vector=materialIcon(name="Filled.Info"),
                                 content_description="About this app",
                                 tint=theme.primary,
                             ),
-                            Spacer(
-                                id="gap_about_heading",
-                                modifier=Modifier().size(8),
-                            ),
+                            Spacer(modifier=Modifier().size(8)),
                             Text(
-                                id="about_title",
                                 text="How this works",
                                 style="titleMedium",
                                 color=theme.on_surface,
                             ),
                         ],
                     ),
-                    Spacer(id="gap_about_text", modifier=Modifier().size(8)),
+                    Spacer(modifier=Modifier().size(8)),
                     Text(
-                        id="about_text",
                         text=(
                             "Every control here is native Material 3. "
                             "Python states whether this sheet is open; "
@@ -306,14 +236,10 @@ def about_sheet(
                         style="bodyMedium",
                         color=theme.muted,
                     ),
-                    Spacer(id="gap_about_bar", modifier=Modifier().size(12)),
-                    LinearProgressIndicator(
-                        id="about_progress",
-                        progress=filled_share(notes),
-                    ),
-                    Spacer(id="gap_about_note", modifier=Modifier().size(8)),
+                    Spacer(modifier=Modifier().size(12)),
+                    LinearProgressIndicator(progress=filled_share(notes)),
+                    Spacer(modifier=Modifier().size(8)),
                     Text(
-                        id="about_progress_note",
                         text=(
                             "That bar is Python state too: the share of "
                             "your notes that have a body. The value is "
@@ -323,12 +249,8 @@ def about_sheet(
                         style="bodySmall",
                         color=theme.muted,
                     ),
-                    Spacer(id="gap_about_close", modifier=Modifier().size(12)),
-                    TextButton(
-                        id="about_close",
-                        text="Got it",
-                        on_click=actions.set_about.bind(id="about_close", open=False),
-                    ),
+                    Spacer(modifier=Modifier().size(12)),
+                    TextButton(text="Got it", on_click=set_about.with_args(open=False)),
                 ],
             ),
         ],
@@ -336,13 +258,7 @@ def about_sheet(
 
 
 @composable
-def note_row(
-    *,
-    note: Note,
-    session: Session,
-    theme: Theme,
-    actions: Registry,
-) -> Node:
+def note_row(*, note: Note, previews: bool, theme: Theme) -> Node:
     """Render one row: the note's title and preview, plus its delete control.
 
     The card itself opens the note, which is what a user expects from a list,
@@ -353,51 +269,28 @@ def note_row(
 
     Args:
         note: The note this row shows.
-        session: The session shell, for whether previews are shown.
+        previews: Whether the row shows the note's preview line.
         theme: Colours to paint with.
-        actions: The registry this screen binds its controls to.
 
     Returns:
         A clickable Card carrying this note's bindings.
     """
     caption: list[Node] = [
-        Text(
-            id="title",
-            text=note.label,
-            style="titleMedium",
-            color=theme.on_surface,
-        )
+        Text(text=note.label, style="titleMedium", color=theme.on_surface)
     ]
-    if session.previews:
-        caption.append(
-            Text(
-                id="preview",
-                text=note.preview(),
-                style="bodySmall",
-                color=theme.muted,
-            )
-        )
+    if previews:
+        caption.append(Text(text=note.preview(), style="bodySmall", color=theme.muted))
     return Card(
-        id="row",
-        on_click=actions.open_note.bind(id=f"n{note.id}", note_id=note.id),
+        on_click=open_note.with_args(note_id=note.id),
         modifier=Modifier().padding(PaddingValues(bottom=Dp(8))).fill_max_width(),
         children=[
             Row(
-                id="row",
                 vertical_alignment="center",
                 modifier=Modifier().padding(10),
                 children=[
-                    Column(
-                        id="text",
-                        modifier=Modifier().fill_max_width(0.75),
-                        children=caption,
-                    ),
+                    Column(modifier=Modifier().fill_max_width(0.75), children=caption),
                     TextButton(
-                        id="delete",
-                        text="Delete",
-                        on_click=actions.delete_note.bind(
-                            id=f"n{note.id}", note_id=note.id
-                        ),
+                        text="Delete", on_click=delete_note.with_args(note_id=note.id)
                     ),
                 ],
             )

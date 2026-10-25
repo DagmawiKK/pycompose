@@ -22,8 +22,15 @@ def assert_calls_resolve_to_recorded_identities(report, classes: Path) -> None:
     optional argument out can let Kotlin bind a same-named sibling. The
     compiler's own choice is readable from the bytecode, so it is compared
     against the recorded JVM name and declared arguments rather than inferred.
+    An inline declaration compiles into its body and leaves no call to read;
+    for those, compiling with every argument named is the proof there is.
     """
     assert classes.is_dir(), f"no compiled facades in {classes}"
+    inline = {
+        (d["owner"], d["jvm"]["name"], d["jvm"]["descriptor"])
+        for d in json.loads((DUMP / "inventory.json").read_text())["declarations"]
+        if d.get("inline")
+    }
     targets = set()
     for path in sorted(classes.glob("*.class")):
         dumped = subprocess.run(
@@ -41,6 +48,9 @@ def assert_calls_resolve_to_recorded_identities(report, classes: Path) -> None:
     for plan in report["candidates"]:
         if plan["status"] != "call-plan":
             continue
+        source = plan["source"]
+        if (source["owner"], source["jvmName"], source["descriptor"]) in inline:
+            continue
         owner = (
             f"{plan['source']['owner'].replace('.', '/')}.{plan['source']['jvmName']}"
         )
@@ -54,23 +64,23 @@ def assert_calls_resolve_to_recorded_identities(report, classes: Path) -> None:
 
 
 def test_pinned_ui_defaults_cover_every_exact_overload(native_document):
-    from tools.schema.classpath_dump import inventory, source_defaults
+    from pycompose.compiler.classpath_dump import inventory, source_defaults
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
     defaults = source_defaults(DUMP)
-    assert len(found.ui) == 187
+    assert len(found.ui) == 248
     assert all((s.owner, s.jvm_name, s.jvm_descriptor) in defaults for s in found.ui)
 
 
 def test_pinned_unconstructible_types_and_enum_vocabularies(native_document) -> None:
-    from tools.schema.classpath_dump import inventory, source_defaults
-    from tools.schema.propose import bind
+    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose.compiler.propose import bind
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
     found = inventory(DUMP)
     evidence = source_defaults(DUMP)
-    schema = json.loads(Path("schema/components.json").read_text())
+    schema = json.loads(Path("schema/catalog.lock.json").read_text())
     empty = {"schemaVersion": "1.12.0", "valueTypes": {}}
     # Painter is an abstract class: its bytecode constructor proves nothing an
     # app can call, so it can never become a value family.
@@ -82,31 +92,36 @@ def test_pinned_unconstructible_types_and_enum_vocabularies(native_document) -> 
 
 
 def test_pinned_denominator_separates_components_from_styling_hooks(native_document):
-    from tools.schema.classpath_dump import inventory, source_defaults
-    from tools.schema.components import propose_components
+    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose.compiler.components import propose_components
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
     report = propose_components(
         inventory(DUMP),
         source_defaults(DUMP),
-        json.loads(Path("schema/components.json").read_text()),
+        json.loads(Path("schema/catalog.lock.json").read_text()),
     )
     component_coverage = report["coverage"]["components"]
     hook_coverage = report["coverage"]["hooks"]
     # Pin-derived denominators describe the committed dump (bom 2026.09.00) and
     # move only when the pinned evidence moves, never with catalog policy.
-    assert component_coverage["names"] == 118
-    assert component_coverage["overloads"] == 159
-    assert hook_coverage["names"] == 20
-    assert hook_coverage["overloads"] == 28
+    assert component_coverage["names"] == 159
+    assert component_coverage["overloads"] == 218
+    assert hook_coverage["names"] == 22
+    assert hook_coverage["overloads"] == 30
     # The callPlan/blocked split follows the protocols the catalog has activated,
     # so it must stay a decomposition rather than a memorized count.
     assert (
         component_coverage["callPlan"] + component_coverage["blocked"]
         == component_coverage["overloads"]
     )
-    assert hook_coverage["callPlan"] == 0
-    assert hook_coverage["blocked"] == hook_coverage["overloads"]
+    # A member of an object (SearchBarDefaults.InputField) is called through
+    # the object, so a styling hook can be a call plan; the split stays a
+    # decomposition like the components'.
+    assert (
+        hook_coverage["callPlan"] + hook_coverage["blocked"]
+        == hook_coverage["overloads"]
+    )
     hooks = {c["name"] for c in report["candidates"] if c["surface"] == "hook"}
     assert {"Thumb", "Container", "Indicator", "InputField"} <= hooks
     # The approved value families closed their own gaps, and nothing else.
@@ -132,11 +147,11 @@ def test_the_shipped_catalog_carries_no_unexplained_prop(native_document) -> Non
     has to be listed there too; otherwise the gate stays red for a reason the
     schema alone does not show.
     """
-    from tools.schema.check_upstream import compare
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.check import compare
+    from pycompose.compiler.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
-    registry = json.loads(Path("schema/components.json").read_text())
+    registry = json.loads(Path("schema/catalog.lock.json").read_text())
     assert compare(registry, inventory(DUMP)) == []
 
 
@@ -148,14 +163,14 @@ def test_the_drift_check_re_derives_a_package_and_a_provider(native_document) ->
     all, so a stale one has to fail here rather than become a coercion nobody
     checked.
     """
-    from tools.schema.check_upstream import compare
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.check import compare
+    from pycompose.compiler.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
 
     def edited(**changes) -> dict:
-        registry = json.loads(Path("schema/components.json").read_text())
+        registry = json.loads(Path("schema/catalog.lock.json").read_text())
         entry = registry["components"]["LinearProgressIndicator"]
         for key, value in changes.items():
             provider = entry["props"]["progress"]["provider"]
@@ -190,14 +205,14 @@ def test_the_drift_check_re_derives_receivers_and_provided_scopes(
     scope the pin never hands down -- fails here rather than becoming a call
     that cannot compile.
     """
-    from tools.schema.check_upstream import compare
-    from tools.schema.classpath_dump import inventory
+    from pycompose.compiler.check import compare
+    from pycompose.compiler.classpath_dump import inventory
 
     assert native_document["provenance"]["compiler"] == "2.4.21"
     found = inventory(DUMP)
 
     def edited(name: str, **changes) -> dict:
-        registry = json.loads(Path("schema/components.json").read_text())
+        registry = json.loads(Path("schema/catalog.lock.json").read_text())
         entry = registry["components"][name]
         for key, value in changes.items():
             if key == "provides":

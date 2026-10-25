@@ -8,7 +8,7 @@ and slots. Importing :mod:`.rules` for ``die`` and shared constants is fine;
 import math
 from typing import Any
 
-from pycompose.core.registry_types import CONSUMERS, SCOPES, SLOT_KINDS
+from pycompose.core.registry_types import CONSUMERS, SLOT_KINDS
 from pycompose.schema.codegen.rules import (
     DOTTED_NAME,
     NATIVE_PARAMETER,
@@ -22,12 +22,15 @@ from pycompose.schema.codegen.rules import (
 PROVIDER_KEYS = frozenset({"native", "returns"})
 
 
-def _validate_children(name: str, children: dict[str, Any]) -> None:
+def _validate_children(
+    name: str, children: dict[str, Any], props: dict[str, Any]
+) -> None:
     """Check a component's children declaration and the scope it provides.
 
     Args:
         name: Component name, for error messages.
         children: The component's raw ``children`` object.
+        props: The component's props, one of which keyed children name.
     """
     if not isinstance(children.get("allowed"), bool):
         die(f"component {name!r} needs children.allowed as a boolean")
@@ -36,6 +39,11 @@ def _validate_children(name: str, children: dict[str, Any]) -> None:
             f"component {name!r} children.kind must be one of "
             + ", ".join(sorted(SLOT_KINDS))
         )
+    key = props.get(children.get("key", ""), {})
+    if (children.get("kind") == "keyed") != ("key" in children) or (
+        "key" in children and (key.get("type"), key.get("required")) != ("string", True)
+    ):
+        die(f"component {name!r} keyed children need a 'key' naming a required string")
     if "min" in children and not isinstance(children["min"], int):
         die(f"component {name!r} children.min must be an integer")
     natively = children.get("native")
@@ -51,25 +59,30 @@ def _validate_children(name: str, children: dict[str, Any]) -> None:
     provides = children.get("provides")
     if provides is None:
         return
-    if provides not in SCOPES:
-        die(
-            f"component {name!r} children.provides must be one of "
-            + ", ".join(sorted(SCOPES))
-        )
+    if not _receiver_class(provides):
+        die(f"component {name!r} children.provides must name a receiver class")
     if children.get("consume") is not None:
         die(f"component {name!r} children cannot consume and provide a scope")
-    if children.get("kind", "content") != "content":
+    if children.get("kind", "content") not in {"content", "keyed"}:
         die(f"component {name!r} children.provides needs the content kind")
 
 
-def _validate_scope(name: str, comp: dict[str, Any]) -> None:
-    """Check a component's declared receiver against the scope vocabulary.
+def _receiver_class(value: object) -> bool:
+    """Whether a scope is spelled as the dotted receiver class adapters import."""
+    return (
+        isinstance(value, str)
+        and "." in value
+        and DOTTED_NAME.fullmatch(value) is not None
+    )
 
-    A component the pin declares as an extension on a composition scope cannot
-    be looked up like a plain one: its receiver exists only inside the parent
-    lambda that provides it, so the adapter registers through the matching
-    scoped method. The vocabulary is closed, and the fact itself is re-derived
-    from the pinned inventory by ``check_upstream``.
+
+def _validate_scope(name: str, comp: dict[str, Any]) -> None:
+    """Check a component's declared receiver names a scope.
+
+    A component the pin declares inside a composition scope cannot be looked up
+    like a plain one: its receiver exists only inside the parent lambda that
+    provides it, so the adapter registers as scoped to that receiver class.
+    The fact itself is re-derived from the pinned inventory by the compiler.
 
     Args:
         name: Component name, for error messages.
@@ -78,8 +91,8 @@ def _validate_scope(name: str, comp: dict[str, Any]) -> None:
     scope = comp.get("scope")
     if scope is None:
         return
-    if scope not in SCOPES:
-        die(f"component {name!r} scope must be one of " + ", ".join(sorted(SCOPES)))
+    if not _receiver_class(scope):
+        die(f"component {name!r} scope must name a receiver class")
 
 
 def _validate_slots(
@@ -155,8 +168,8 @@ def _validate_slot(
     natives.add(native)
     if not isinstance(slot.get("nullable", False), bool):
         die(f"{where}: 'nullable' must be a boolean")
-    if slot.get("kind", "content") not in SLOT_KINDS:
-        die(f"{where}: 'kind' must be one of " + ", ".join(sorted(SLOT_KINDS)))
+    if slot.get("kind", "content") not in set(SLOT_KINDS) - {"keyed"}:
+        die(f"{where}: 'kind' must be content or items")
     if slot.get("consume") not in {None, *CONSUMERS}:
         die(f"{where}: 'consume' must be one of " + ", ".join(sorted(CONSUMERS)))
     if slot.get("nullable", False) and slot.get("consume") is not None:
@@ -179,8 +192,8 @@ def _validate_slot_provides(where: str, slot: dict[str, Any]) -> None:
     provides = slot.get("provides")
     if provides is None:
         return
-    if provides not in SCOPES:
-        die(f"{where}: 'provides' must be one of " + ", ".join(sorted(SCOPES)))
+    if not _receiver_class(provides):
+        die(f"{where}: 'provides' must name a receiver class")
     if slot.get("consume") is not None:
         # Consuming a scope and providing one would need two nested lambdas;
         # the renderer has no such shape.
@@ -191,7 +204,9 @@ def _validate_slot_provides(where: str, slot: dict[str, Any]) -> None:
         die(f"{where}: 'provides' needs the content kind")
 
 
-def _validate_prop(name: str, prop_name: str, prop: dict[str, Any]) -> None:
+def _validate_prop(
+    name: str, prop_name: str, prop: dict[str, Any], *, held: bool = False
+) -> None:
     if not isinstance(prop, dict):
         die(f"prop {name}.{prop_name} must be an object")
     ptype = prop.get("type")
@@ -227,7 +242,7 @@ def _validate_prop(name: str, prop_name: str, prop: dict[str, Any]) -> None:
     _validate_defaults(name, prop_name, prop, ptype)
     if "provider" in prop:
         _validate_provider(name, prop_name, prop)
-    _validate_nullable(name, prop_name, prop)
+    _validate_nullable(name, prop_name, prop, held=held)
 
 
 def _validate_defaults(
@@ -263,7 +278,9 @@ def _validate_defaults(
         )
 
 
-def _validate_nullable(name: str, prop_name: str, prop: dict[str, Any]) -> None:
+def _validate_nullable(
+    name: str, prop_name: str, prop: dict[str, Any], *, held: bool
+) -> None:
     """Check which of the two nullable shapes a prop may have.
 
     They are not the same shape. A *required* nullable prop has no omission: the
@@ -272,13 +289,16 @@ def _validate_nullable(name: str, prop_name: str, prop: dict[str, Any]) -> None:
     undecoded scalar, where ``None`` is a ``null``. An *optional* nullable prop
     is the ``OptionalValue`` form, where absence and an explicit null are two
     facts, and the generated adapter implements that for a value family
-    (``Button.elevation``). Every other combination would either be passed where
-    it does not fit or dropped silently, so it is refused here.
+    (``Button.elevation``). A held scalar never reaches a native parameter: its
+    holder reads the ``OptionalValue`` (``DatePicker.selectedDateMillis``). Every
+    other combination would either be passed where it does not fit or dropped
+    silently, so it is refused here.
 
     Args:
         name: Component name, for error messages.
         prop_name: The prop's schema name.
         prop: Its raw schema entry.
+        held: Whether a state holder consumes it instead of the native call.
     """
     if not prop.get("nullable"):
         return
@@ -290,7 +310,7 @@ def _validate_nullable(name: str, prop_name: str, prop: dict[str, Any]) -> None:
                 f"prop {name}.{prop_name}: a required nullable prop is passed "
                 "through, so it must be an undecoded scalar"
             )
-    elif prop["type"] != "value":
+    elif prop["type"] != "value" and not (held and prop["type"] in SCALAR_KOTLIN):
         die(
             f"prop {name}.{prop_name}: an optional nullable prop needs the "
             "value family's absent/null distinction"
@@ -305,7 +325,7 @@ def _validate_provider(name: str, prop_name: str, prop: dict[str, Any]) -> None:
     prop stays required because an absent value would need a call-site branch
     between two overload shapes, which the plan rejects (ADR-0016 decision 22).
     ``returns`` is the pinned lambda's return type: the generator needs it to
-    coerce the wire value, and check_upstream.py re-derives it from the pin.
+    coerce the wire value, and composegen's check re-derives it from the pin.
 
     Args:
         name: Component name, for error messages.

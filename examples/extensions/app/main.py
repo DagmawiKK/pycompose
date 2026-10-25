@@ -29,25 +29,12 @@ class Session(AppState):
     taps: int = 0
 
 
-class Nothing(TypedDict):
-    pass
-
-
 class Page(TypedDict):
     body: str
     page: int
     request_id: int
     endpoint: str
     http_status: int
-
-
-class Endpoint(TypedDict):
-    endpoint: Literal["/posts", "/comments", "/albums", "/photos", "/todos", "/users"]
-
-
-class Failure(TypedDict):
-    error: str
-    request_id: int
 
 
 def container() -> SimpleNamespace:
@@ -107,45 +94,61 @@ def _load(connection: sqlite3.Connection, page: int, endpoint: str) -> str:
 
 
 @actions
-def failed(session: Session, payload: Failure) -> Session:
-    if payload["request_id"] != session.request_id:
+def failed(session: Session, error: str, request_id: int) -> Session:
+    if request_id != session.request_id:
         return session
-    return session.evolve(status=f"Retry available: {payload['error']}")
+    return session.evolve(status=f"Retry available: {error}")
 
 
 @actions
-def cached(session: Session, payload: Page) -> Session:
-    if payload["request_id"] != session.request_id:
+def cached(
+    session: Session,
+    body: str,
+    page: int,
+    request_id: int,
+    endpoint: str,
+    http_status: int,
+) -> Session:
+    if request_id != session.request_id:
         return session
-    rows = _rows(payload["body"], payload["endpoint"])
-    label = "name" if payload["endpoint"] in {"/comments", "/users"} else "title"
-    origin = (
-        f"HTTP {payload['http_status']}; SQLite saved"
-        if payload["http_status"]
-        else "SQLite cache"
-    )
+    rows = _rows(body, endpoint)
+    label = "name" if endpoint in {"/comments", "/users"} else "title"
+    origin = f"HTTP {http_status}; SQLite saved" if http_status else "SQLite cache"
     return session.evolve(
-        page=payload["page"],
+        page=page,
         preview="\n".join(row[label][:100] for row in rows) or "No cached items",
         status=f"{origin}: {len(rows)} items",
     )
 
 
 @actions
-def received(session: Session, payload: Page, *, cache: Any) -> Session:
-    if payload["request_id"] != session.request_id:
+def received(
+    session: Session,
+    body: str,
+    page: int,
+    request_id: int,
+    endpoint: str,
+    http_status: int,
+    *,
+    cache: Any,
+) -> Session:
+    if request_id != session.request_id:
         return session
     try:
         cache.submit(
-            lambda connection: _save(
-                connection, payload["body"], payload["page"], payload["endpoint"]
-            ),
+            lambda connection: _save(connection, body, page, endpoint),
             success=cached,
             failure=failed,
-            encode=lambda body: {**payload, "body": body},
+            encode=lambda saved: {
+                "body": saved,
+                "page": page,
+                "request_id": request_id,
+                "endpoint": endpoint,
+                "http_status": http_status,
+            },
             error=lambda exc: {
                 "error": type(exc).__name__,
-                "request_id": payload["request_id"],
+                "request_id": request_id,
             },
             key="page",
             policy="latest",
@@ -187,9 +190,12 @@ def _fetch(session: Session, page: int, http: Any) -> Session:
 
 
 @actions
-def choose_endpoint(session: Session, payload: Endpoint) -> Session:
+def choose_endpoint(
+    session: Session,
+    endpoint: Literal["/posts", "/comments", "/albums", "/photos", "/todos", "/users"],
+) -> Session:
     return session.evolve(
-        endpoint=payload["endpoint"],
+        endpoint=endpoint,
         page=0,
         request_id=session.request_id + 1,
         preview="No page loaded",
@@ -198,17 +204,17 @@ def choose_endpoint(session: Session, payload: Endpoint) -> Session:
 
 
 @actions
-def refresh(session: Session, payload: Nothing, *, http: Any) -> Session:
+def refresh(session: Session, *, http: Any) -> Session:
     return _fetch(session, 0, http)
 
 
 @actions
-def next_page(session: Session, payload: Nothing, *, http: Any) -> Session:
+def next_page(session: Session, *, http: Any) -> Session:
     return _fetch(session, session.page + 1, http)
 
 
 @actions
-def load_cache(session: Session, payload: Nothing, *, cache: Any) -> Session:
+def load_cache(session: Session, *, cache: Any) -> Session:
     generation = session.request_id + 1
     try:
         cache.submit(
@@ -234,7 +240,7 @@ def load_cache(session: Session, payload: Nothing, *, cache: Any) -> Session:
 
 
 @actions
-def tap(session: Session, payload: Nothing) -> Session:
+def tap(session: Session) -> Session:
     return session.evolve(taps=session.taps + 1)
 
 
@@ -250,8 +256,7 @@ def view(session: Session) -> Column:
                         Button(
                             id=f"select_{endpoint[1:]}",
                             text=endpoint,
-                            on_click=actions.choose_endpoint.bind(
-                                id=f"select_{endpoint[1:]}",
+                            on_click=actions.choose_endpoint.with_args(
                                 endpoint=endpoint,
                             ),
                         )
@@ -265,22 +270,22 @@ def view(session: Session) -> Column:
             Text(id="preview", text=session.preview),
             Button(
                 id="refresh",
-                on_click=actions.refresh.bind(id="refresh"),
+                on_click=actions.refresh.binding(),
                 text="Refresh",
             ),
             Button(
                 id="next",
-                on_click=actions.next_page.bind(id="next"),
+                on_click=actions.next_page.binding(),
                 text="Next page",
             ),
             Button(
                 id="cache",
-                on_click=actions.load_cache.bind(id="cache"),
+                on_click=actions.load_cache.binding(),
                 text="Load cache",
             ),
             Button(
                 id="tap",
-                on_click=actions.tap.bind(id="tap"),
+                on_click=actions.tap.binding(),
                 text=f"Tap UI: {session.taps}",
             ),
         ],

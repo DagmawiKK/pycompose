@@ -9,7 +9,18 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.traversalIndex
 import com.pycompose.ir.IrParser
+import com.pycompose.renderer.generated.ScopedModifiers
 import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -60,6 +71,7 @@ class ModifierBuilder(
                 val enabled = checkNotNull(it["enabled"]?.jsonPrimitive?.booleanOrNull)
                 Modifier.clickable(enabled = enabled) { actions.dispatch(actionId) }
             },
+            "semantics" to { semantics(it) },
             "background" to
                 { Modifier.background(ValueResolver.brush(it.getValue("brush")).getOrThrow()) },
             "windowInsetsPadding" to
@@ -70,8 +82,18 @@ class ModifierBuilder(
                 },
         )
 
+    /**
+     * The modifier [program] describes, or why it cannot apply.
+     *
+     * @param program The node's wire modifier, or null for none.
+     * @param scope The receiver the node's parent lambda carries, which the
+     *   operations a scope declares (`weight`, `menuAnchor`) apply on.
+     */
     @Composable
-    fun build(program: JsonObject?): Result<Modifier> {
+    fun build(
+        program: JsonObject?,
+        scope: Any? = null,
+    ): Result<Modifier> {
         if (program == null) return Result.success(Modifier)
         val prepared =
             runCatching {
@@ -89,15 +111,50 @@ class ModifierBuilder(
             }
         return prepared.fold(
             onSuccess = { sequence ->
-                val modifier =
-                    sequence.fold(Modifier as Modifier) { modifier, operation ->
-                        modifier.then(operations.getValue(operation.string("type"))(operation))
+                sequence.fold(Result.success<Modifier>(Modifier)) { built, operation ->
+                    val modifier = built.getOrNull() ?: return@fold built
+                    val type = operation.string("type")
+                    val hand = operations[type]
+                    val applied =
+                        if (hand !=
+                            null
+                        ) {
+                            hand(operation)
+                        } else {
+                            ScopedModifiers.apply(type, scope, operation)
+                        }
+                    if (applied == null) {
+                        Result.failure(IllegalStateException("$type needs a parent declaring it"))
+                    } else {
+                        Result.success(modifier.then(applied))
                     }
-                Result.success(modifier)
+                }
             },
             onFailure = { Result.failure(it) },
         )
     }
+
+    /** Accessibility semantics the native component does not carry itself (plan 31 §16.6). */
+    private fun semantics(operation: JsonObject): Modifier {
+        val description = operation.optional("contentDescription")
+        val state = operation.optional("stateDescription")
+        val role = operation.optional("role")?.let { checkNotNull(ROLES[it]) }
+        val live = operation.optional("liveRegion")?.let { checkNotNull(LIVE_REGIONS[it]) }
+        val tag = operation.optional("testTag")
+        val heading = operation["heading"]?.jsonPrimitive?.booleanOrNull == true
+        val index = operation["traversalIndex"]?.jsonPrimitive?.doubleOrNull
+        return Modifier.semantics {
+            description?.let { contentDescription = it }
+            state?.let { stateDescription = it }
+            role?.let { this.role = it }
+            live?.let { liveRegion = it }
+            tag?.let { testTag = it }
+            if (heading) heading()
+            index?.let { traversalIndex = it.toFloat() }
+        }
+    }
+
+    private fun JsonObject.optional(key: String): String? = if (key in this) string(key) else null
 
     private fun JsonObject.number(key: String): Double =
         checkNotNull(this[key]?.jsonPrimitive?.doubleOrNull)
@@ -124,3 +181,22 @@ class ModifierBuilder(
         return value.content
     }
 }
+
+private val ROLES =
+    mapOf(
+        "button" to Role.Button,
+        "checkbox" to Role.Checkbox,
+        "switch" to Role.Switch,
+        "radioButton" to Role.RadioButton,
+        "tab" to Role.Tab,
+        "image" to Role.Image,
+        "dropdownList" to Role.DropdownList,
+        "valuePicker" to Role.ValuePicker,
+        "carousel" to Role.Carousel,
+    )
+
+private val LIVE_REGIONS =
+    mapOf(
+        "polite" to LiveRegionMode.Polite,
+        "assertive" to LiveRegionMode.Assertive,
+    )

@@ -5,7 +5,7 @@ explicit iterator stack costs O(depth); error paths are materialized only on
 failure. Consumers own their policy and post-order reconstruction.
 """
 
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 
 from pycompose.core.node import Node
 from pycompose.errors import IrValidationError
@@ -15,11 +15,15 @@ class NodeCycleError(IrValidationError):
     """A node graph contains an ancestor cycle, not merely a shared subtree."""
 
 
-def walk_nodes(root: Node) -> Iterator[tuple[Node, bool]]:
+def walk_nodes(
+    root: Node, prune: Callable[[Node], bool] | None = None
+) -> Iterator[tuple[Node, bool]]:
     """Visit each occurrence on entry (True) and exit (False), in child order.
 
     Args:
         root: Node whose descendants are visited.
+        prune: Asked on entry; a node it accepts is entered and exited without
+            visiting its descendants, for a pass that already has its result.
 
     Yields:
         tuple[Node, bool]: The node and whether this visit enters its subtree.
@@ -39,7 +43,8 @@ def walk_nodes(root: Node) -> Iterator[tuple[Node, bool]]:
                 path=(*(parent.id for parent, _ in stack), node.id),
             )
         active.add(id(node))
-        stack.append((node, iter(node.children)))
+        pruned = prune is not None and prune(node)
+        stack.append((node, iter(() if pruned else node.children)))
         yield node, True
         while stack:
             parent, children = stack[-1]
