@@ -113,6 +113,15 @@ class ChaquopyBridge(
             .toString()
     }
 
+    override fun fetchLastPass(): String {
+        requireWorker()
+        return Python
+            .getInstance()
+            .getModule(MODULE)
+            .callAttr("fetch_last_pass")
+            .toString()
+    }
+
     override fun reload(
         route: String,
         restore: String,

@@ -214,10 +214,40 @@ def generate(
     holders, refused = derive_holders(found, source_drives(directory), lock)
     report.errors.extend(refused)
     lock["holders"] = holders
+    if LOCK.is_file():
+        carried(lock, json.loads(LOCK.read_text(encoding="utf-8")))
     # What policy keeps -- held entries, value families -- still answers to the pin.
     report.errors.extend(compare(lock, found))
     report.errors.extend(compare_values(lock, found, source_defaults(directory)))
     return {key: lock[key] for key in ORDER if key in lock}, report
+
+
+VERSIONED = ("components", "modifiers", "valueTypes")
+"""Sections whose entries say the schema version they entered at."""
+
+
+def carried(lock: dict[str, Any], previous: dict[str, Any]) -> None:
+    """Keep each entry's ``since`` from the committed lock.
+
+    A derived entry is stamped with the current schema version, which is right
+    only the first time: re-stamped at the next bump, every older envelope
+    would stop accepting it. The version an entry entered at is history the
+    pin cannot answer, so the committed lock is where it is read from. An entry
+    the lock already has without one is the first schema's, and stays so.
+
+    Args:
+        lock: The lock being generated, changed in place.
+        previous: The committed lock.
+    """
+    for section in VERSIONED:
+        known = previous.get(section, {})
+        for name, entry in lock.get(section, {}).items():
+            if "since" not in entry or name not in known:
+                continue
+            if "since" in known[name]:
+                entry["since"] = known[name]["since"]
+            else:
+                del entry["since"]
 
 
 def derived_families(

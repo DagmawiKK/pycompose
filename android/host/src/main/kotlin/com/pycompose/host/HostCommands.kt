@@ -8,6 +8,7 @@ import kotlinx.serialization.json.JsonPrimitive
 internal data class Queued(
     val command: Command,
     val cookie: Int,
+    val queuedAt: Long = System.nanoTime(),
 )
 
 internal sealed interface Command {

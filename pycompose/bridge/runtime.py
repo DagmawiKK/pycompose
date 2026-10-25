@@ -183,6 +183,15 @@ class RuntimeSession:
         self._require_worker()
         return self._error or self._surface.expose_latest_error()
 
+    def last_pass(self) -> str:
+        """Return the last action pass's time by phase.
+
+        Returns:
+            JSON milliseconds by phase.
+        """
+        self._require_worker()
+        return self._surface.expose_last_pass()
+
     def reload(self, route: str, restore: str = "") -> bool:
         """Re-import app modules and build on this worker, retaining last-good IR.
 
@@ -413,6 +422,15 @@ def fetch_latest_error() -> str:
         async_task.last_error(),
     ]
     return " / ".join(part for part in parts if part)
+
+
+def fetch_last_pass() -> str:
+    """Pull the last action pass's time by phase, for the host's pass log.
+
+    Returns:
+        JSON milliseconds by phase, or an empty object before a session.
+    """
+    return _session.last_pass() if _session is not None else "{}"
 
 
 def reload(route: str, restore: str = "") -> bool:

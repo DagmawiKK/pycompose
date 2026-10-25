@@ -29,12 +29,14 @@ import kotlinx.serialization.json.JsonObject
  * @param epoch Host-local generation, retained on rotation and advanced on Python restart.
  * @param traces The spans of the commands that produced it, closed by the frame that shows it.
  * @param serial The serial the app published it under; actions taken on it name it.
+ * @param timing Its pass's time by stage, logged when its frame is drawn; null unless timed.
  */
 data class SessionSnapshot(
     val ir: ValidatedIr,
     val epoch: Long,
     val traces: List<Int> = emptyList(),
     val serial: Long = SnapshotStream.NONE,
+    val timing: PassTiming? = null,
 )
 
 /**
@@ -51,6 +53,7 @@ class PyComposeViewModel(
     private val savedState: SavedStateHandle,
     dispatcher: CoroutineDispatcher,
     initialConfig: JsonObject? = null,
+    private val timePasses: Boolean = false,
 ) : ViewModel() {
     /** Set by the activity; when attached, any queued effects are immediately drained. */
     var effectRunner: EffectRunner? = null
@@ -95,7 +98,7 @@ class PyComposeViewModel(
         val saved = restore
         scope.launch {
             try {
-                perform(listOf(ActionTrace.begin())) {
+                perform(listOf(ActionTrace.begin()), System.nanoTime()) {
                     bridge.start(restored, saved)
                     // Facts Python cannot observe itself (appearance, size, locale) must
                     // reach it before the first pull: the pull is the frame the user
@@ -113,7 +116,9 @@ class PyComposeViewModel(
                         coalesce(
                             listOf(first) + generateSequence { commands.tryReceive().getOrNull() },
                         )
-                    perform(batch.map { it.cookie }) { batch.map { run(it.command) }.any { it } }
+                    perform(batch.map { it.cookie }, batch.minOf { it.queuedAt }) {
+                        batch.map { run(it.command) }.any { it }
+                    }
                 }
             } finally {
                 // Cancellation runs this synchronous teardown on the owning worker.
@@ -250,17 +255,39 @@ class PyComposeViewModel(
     @Suppress("TooGenericExceptionCaught")
     private fun perform(
         cookies: List<Int>,
+        queuedAt: Long,
         operation: () -> Boolean,
     ) {
         var shown = false
         try {
+            val started = System.nanoTime()
             // A batch none of which reached Python has nothing new to pull.
             if (!ActionTrace.stage("pycompose.python", operation)) return
+            val ran = System.nanoTime()
+            // Fetched between stages, so the log's own call is counted in none of them.
+            val phases = if (timePasses) bridge.fetchLastPass() else ""
+            val resumed = System.nanoTime()
             val envelope =
                 ActionTrace.stage("pycompose.pull") {
                     bridge.fetchLatest(stream.surface, stream.serial)
                 }
+            val pulled = System.nanoTime()
             val result = ActionTrace.stage("pycompose.apply") { stream.accept(envelope) }
+            val applied = System.nanoTime()
+            val timing =
+                if (timePasses) {
+                    PassTiming(
+                        queue = PassTiming.millis(started - queuedAt),
+                        python = PassTiming.millis(ran - started),
+                        pull = PassTiming.millis(pulled - resumed),
+                        apply = PassTiming.millis(applied - pulled),
+                        phases = phases,
+                        commands = cookies.size,
+                        appliedAt = applied,
+                    )
+                } else {
+                    null
+                }
             result
                 .onSuccess { candidate ->
                     // Effects belong to the snapshot that carried them: a repeat
@@ -269,7 +296,7 @@ class PyComposeViewModel(
                     val changed = candidate.snapshot != previous?.ir?.snapshot
                     if (changed || previous?.epoch != epoch) {
                         mutableSnapshot.value =
-                            SessionSnapshot(candidate, epoch, cookies, stream.serial)
+                            SessionSnapshot(candidate, epoch, cookies, stream.serial, timing)
                         shown = true
                     }
                     mutableError.value = bridge.fetchLatestError()

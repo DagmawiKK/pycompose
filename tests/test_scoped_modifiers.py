@@ -102,3 +102,23 @@ def test_scoped_operations_chain_like_the_hand_written_ones() -> None:
 def test_an_alignment_outside_its_scope_vocabulary_is_rejected() -> None:
     with pytest.raises(IrValidationError):
         Modifier().row_align("centerHorizontally")  # type: ignore[arg-type]
+
+
+def test_an_entry_keeps_the_version_it_entered_at() -> None:
+    from pycompose.compiler.lock import carried
+
+    stamped = {"since": "1.24.0"}
+    lock = {
+        "components": {
+            "Old": dict(stamped),
+            "New": dict(stamped),
+            "Text": dict(stamped),
+        },
+        "valueTypes": {},
+    }
+    carried(lock, {"components": {"Old": {"since": "1.22.0"}, "Text": {}}})
+    # Re-stamped at a bump, 1.22 envelopes would stop accepting Old.
+    assert lock["components"]["Old"] == {"since": "1.22.0"}
+    assert lock["components"]["New"] == {"since": "1.24.0"}
+    # The first schema's components carry none, and keep carrying none.
+    assert lock["components"]["Text"] == {}

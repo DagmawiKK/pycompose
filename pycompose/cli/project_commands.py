@@ -91,6 +91,20 @@ def dev_client_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def bench_command(args: argparse.Namespace) -> int:
+    from pycompose.cli.bench import bench
+
+    count, summary = bench(device=args.device, keys=args.keys, interval=args.interval)
+    console.line(f"{count} passes for {args.keys} keystrokes (ms)")
+    console.line(f"{'stage':<10}{'p50':>9}{'p95':>9}{'max':>9}")
+    for stage, values in summary.items():
+        console.line(
+            f"{stage:<10}"
+            + "".join(f"{values[key]:>9.1f}" for key in ("p50", "p95", "max"))
+        )
+    return 0
+
+
 def setup_command(_args: argparse.Namespace) -> int:
     setup()
     console.ok("Toolchain installed; pycompose doctor checks it")

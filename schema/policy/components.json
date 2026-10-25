@@ -73,7 +73,6 @@
       "identity": "androidx.compose.foundation:foundation-layout-android androidx.compose.foundation.layout.BoxKt.Box(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
-      "since": null,
       "props": {
         "propagateMinConstraints": null,
         "contentAlignment": {
@@ -108,7 +107,6 @@
       ]
     },
     "patch": {
-      "since": null,
       "props": {
         "border": null,
         "contentPadding": null,
@@ -127,9 +125,6 @@
       "category": "layout",
       "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.CardKt.Card(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
-    },
-    "patch": {
-      "since": "1.22.0"
     }
   },
   "CenterAlignedTopAppBar": {
@@ -144,7 +139,6 @@
       "stability": "stable"
     },
     "patch": {
-      "since": "1.3.0",
       "props": {
         "colors": null
       }
@@ -158,7 +152,6 @@
     },
     "patch": {
       "optIn": null,
-      "since": "1.22.0",
       "props": {
         "gapSize": null
       }
@@ -170,7 +163,6 @@
       "stability": "stable"
     },
     "patch": {
-      "since": null,
       "props": {
         "horizontalAlignment": {
           "values": [
@@ -226,9 +218,6 @@
       "category": "layout",
       "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.NavigationDrawerKt.DismissibleDrawerSheet-afqeVBk(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
-    },
-    "patch": {
-      "since": "1.22.0"
     }
   },
   "DismissibleNavigationDrawer": {
@@ -237,7 +226,6 @@
       "stability": "stable"
     },
     "patch": {
-      "since": "1.18.0",
       "children": {
         "kind": "content"
       },
@@ -365,7 +353,6 @@
       ]
     },
     "patch": {
-      "since": "1.3.0",
       "props": {
         "colors": null,
         "elevation": null,
@@ -379,7 +366,6 @@
       "stability": "stable"
     },
     "patch": {
-      "since": "1.22.0",
       "children": {
         "kind": "content"
       }
@@ -443,9 +429,6 @@
     "decision": {
       "category": "layout",
       "stability": "stable"
-    },
-    "patch": {
-      "since": "1.22.0"
     }
   },
   "Icon": {
@@ -455,7 +438,6 @@
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.IconKt.Icon-ww6aTOc(Landroidx/compose/ui/graphics/vector/ImageVector;Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
-      "since": "1.21.0",
       "props": {
         "tint": {
           "fallback": "androidx.compose.material3.LocalContentColor.current"
@@ -469,7 +451,6 @@
       "stability": "stable"
     },
     "patch": {
-      "since": "1.22.0",
       "props": {
         "shape": null
       },
@@ -491,7 +472,6 @@
       "identity": "androidx.compose.foundation:foundation-android androidx.compose.foundation.ImageKt.Image(Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
-      "since": "1.1.0",
       "props": {
         "alignment": null,
         "painter": null,
@@ -539,7 +519,6 @@
       "stability": "stable"
     },
     "patch": {
-      "since": null,
       "props": {
         "horizontalAlignment": null,
         "reverseLayout": null,
@@ -586,7 +565,6 @@
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.ProgressIndicatorKt.LinearProgressIndicator-GJbTh5U(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;JJIFLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
-      "since": "1.20.0",
       "props": {
         "gapSize": null,
         "strokeCap": null,
@@ -620,7 +598,6 @@
       "stability": "experimental"
     },
     "patch": {
-      "since": "1.19.0",
       "props": {
         "containerColor": null,
         "onDismissRequest": null,
@@ -655,9 +632,6 @@
       "category": "layout",
       "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.NavigationDrawerKt.ModalDrawerSheet-afqeVBk(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
-    },
-    "patch": {
-      "since": "1.22.0"
     }
   },
   "ModalNavigationDrawer": {
@@ -666,7 +640,6 @@
       "stability": "stable"
     },
     "patch": {
-      "since": "1.18.0",
       "children": {
         "kind": "content"
       },
@@ -712,18 +685,12 @@
     "decision": {
       "category": "layout",
       "stability": "stable"
-    },
-    "patch": {
-      "since": "1.22.0"
     }
   },
   "NavigationBarItem": {
     "decision": {
       "category": "layout",
       "stability": "stable"
-    },
-    "patch": {
-      "since": "1.22.0"
     }
   },
   "NavigationDrawerItem": {
@@ -868,9 +835,6 @@
     "decision": {
       "category": "input",
       "stability": "stable"
-    },
-    "patch": {
-      "since": "1.22.0"
     }
   },
   "RichTooltip": {
@@ -937,7 +901,6 @@
       "stability": "stable"
     },
     "patch": {
-      "since": null,
       "props": {
         "verticalAlignment": {
           "values": [
@@ -959,7 +922,6 @@
       "stability": "stable"
     },
     "patch": {
-      "since": null,
       "props": {
         "contentWindowInsets": null,
         "floatingActionButtonPosition": null,
@@ -1113,9 +1075,6 @@
     "decision": {
       "category": "layout",
       "stability": "stable"
-    },
-    "patch": {
-      "since": null
     }
   },
   "StatefulSearchBar": {
@@ -1190,9 +1149,6 @@
     "decision": {
       "category": "input",
       "stability": "stable"
-    },
-    "patch": {
-      "since": "1.22.0"
     }
   },
   "Tab": {
@@ -1209,7 +1165,6 @@
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.TextKt.Text-Nvy7gAk(Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/foundation/text/TextAutoSize;JLandroidx/compose/ui/text/font/FontStyle;Landroidx/compose/ui/text/font/FontWeight;Landroidx/compose/ui/text/font/FontFamily;JLandroidx/compose/ui/text/style/TextDecoration;Landroidx/compose/ui/text/style/TextAlign;JIZIILkotlin/jvm/functions/Function1;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;III)V"
     },
     "patch": {
-      "since": null,
       "props": {
         "fontFamily": null,
         "fontSize": null,
@@ -1279,7 +1234,6 @@
       ]
     },
     "patch": {
-      "since": "1.3.0",
       "props": {
         "border": null,
         "colors": null,
@@ -1300,7 +1254,6 @@
       "observe": false
     },
     "patch": {
-      "since": null,
       "source": null,
       "slots": null,
       "props": {
@@ -1364,9 +1317,6 @@
     "decision": {
       "category": "layout",
       "stability": "stable"
-    },
-    "patch": {
-      "since": "1.22.0"
     }
   },
   "VerticalDragHandle": {
