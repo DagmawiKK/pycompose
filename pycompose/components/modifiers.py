@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from functools import partial
-from typing import Any, Concatenate, Generic, ParamSpec, cast
+from typing import Any, cast
 
+from pycompose.components.modifier_operation import _Operation
+from pycompose.components.scoped_modifiers import ScopedOperations
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.ir.validator import validate_modifier
@@ -16,30 +17,13 @@ from pycompose.values import Dp, PaddingValues
 
 _PADDING_SIDES = ("start", "top", "end", "bottom")
 
-P = ParamSpec("P")
-
-
-class _Operation(Generic[P]):
-    """A modifier operation callable on a chain or on the class itself.
-
-    ``Modifier.padding(20)`` starts a chain as Compose's ``Modifier.padding``
-    does, and ``Modifier().padding(20)`` continues an existing one; both are
-    the same operation.
-    """
-
-    def __init__(self, function: Callable[Concatenate[Modifier, P], Modifier]) -> None:
-        self.function = function
-        self.__doc__ = function.__doc__
-
-    def __get__(
-        self, instance: Modifier | None, owner: type[Modifier]
-    ) -> Callable[P, Modifier]:
-        return partial(self.function, owner() if instance is None else instance)
-
 
 @dataclass(frozen=True, slots=True)
-class Modifier:
+class Modifier(ScopedOperations):
     """An immutable sequence: order and repeated operations affect layout.
+
+    Operations a composition scope declares (``weight``, ``menu_anchor``) come
+    from :class:`ScopedOperations`, generated from the pin.
 
     Attributes:
         values: Frozen modifier wire object with ordered operations.

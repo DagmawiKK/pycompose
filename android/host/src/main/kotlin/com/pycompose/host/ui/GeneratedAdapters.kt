@@ -127,10 +127,13 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.WideNavigationRail
 import androidx.compose.material3.WideNavigationRailItem
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pycompose.ir.generated.AlertDialog as AlertDialogNode
@@ -210,9 +213,11 @@ import com.pycompose.ir.generated.NavigationBarItem as NavigationBarItemNode
 import com.pycompose.ir.generated.NavigationDrawerItem as NavigationDrawerItemNode
 import com.pycompose.ir.generated.NavigationRail as NavigationRailNode
 import com.pycompose.ir.generated.NavigationRailItem as NavigationRailItemNode
+import com.pycompose.ir.generated.NavigationSuite as NavigationSuiteNode
 import com.pycompose.ir.generated.NavigationSuiteItem as NavigationSuiteItemNode
 import com.pycompose.ir.generated.NavigationSuiteScaffold as NavigationSuiteScaffoldNode
 import com.pycompose.ir.generated.NavigationSuiteScaffoldLayout as NavigationSuiteScaffoldLayoutNode
+import com.pycompose.ir.generated.NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType as NavigationSuiteScaffoldLayoutWithoutNavigationSuiteTypeNode
 import com.pycompose.ir.generated.OutlinedButton as OutlinedButtonNode
 import com.pycompose.ir.generated.OutlinedCard as OutlinedCardNode
 import com.pycompose.ir.generated.OutlinedCardWithoutOnClick as OutlinedCardWithoutOnClickNode
@@ -264,6 +269,7 @@ import com.pycompose.ir.generated.VerticalDivider as VerticalDividerNode
 import com.pycompose.ir.generated.VerticalDragHandle as VerticalDragHandleNode
 import com.pycompose.ir.generated.WideNavigationRail as WideNavigationRailNode
 import com.pycompose.ir.generated.WideNavigationRailItem as WideNavigationRailItemNode
+import com.pycompose.renderer.Reseed
 import com.pycompose.renderer.Wanted
 import com.pycompose.renderer.attachTo
 import com.pycompose.renderer.drawerState
@@ -697,9 +703,11 @@ object GeneratedAdapters {
                 val model = node as DatePickerNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.datePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.DatePickerDefaults.colors()
+                val stateDisplayedMonthMillis = model.props.displayedMonthMillis?.let { Wanted(it) }
+                val stateSelectedDateMillis = model.props.selectedDateMillis.wanted { it.long }
                 val stateValue = androidx.compose.material3.rememberDatePickerState()
-                context.reconcileProperty(stateValue, "displayedMonthMillis", model.props.displayedMonthMillis?.let { Wanted(it) }, model.props.onDisplayedMonthMillisChange, { stateValue.displayedMonthMillis }, { stateValue.displayedMonthMillis = it }) { JsonPrimitive(it) }
-                context.reconcileProperty(stateValue, "selectedDateMillis", model.props.selectedDateMillis.wanted { it.long }, model.props.onSelectedDateMillisChange, { stateValue.selectedDateMillis }, { stateValue.selectedDateMillis = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "displayedMonthMillis", stateDisplayedMonthMillis, model.props.onDisplayedMonthMillisChange, { stateValue.displayedMonthMillis }, { stateValue.displayedMonthMillis = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "selectedDateMillis", stateSelectedDateMillis, model.props.onSelectedDateMillisChange, { stateValue.selectedDateMillis }, { stateValue.selectedDateMillis = it }) { JsonPrimitive(it) }
                 DatePicker(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1711,6 +1719,16 @@ object GeneratedAdapters {
                     label = context.slot(model.children, "label"),
                 )
             }
+            .register("NavigationSuite") { node, modifier, context ->
+                val model = node as NavigationSuiteNode
+                val navigationSuiteTypeValue = com.pycompose.renderer.generated.ValueResolver.navigationSuiteType(model.props.navigationSuiteType).getOrThrow()
+                NavigationSuite(
+                    modifier = modifier,
+                    navigationSuiteType = navigationSuiteTypeValue,
+                    primaryActionContent = { context.slot(model.children, "primaryActionContent")?.invoke() },
+                    content = { context.children(model.children) },
+                )
+            }
             .register("NavigationSuiteItem") { node, modifier, context ->
                 val model = node as NavigationSuiteItemNode
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
@@ -1736,6 +1754,18 @@ object GeneratedAdapters {
             }
             .register("NavigationSuiteScaffoldLayout") { node, modifier, context ->
                 val model = node as NavigationSuiteScaffoldLayoutNode
+                val navigationSuiteTypeValue = com.pycompose.renderer.generated.ValueResolver.navigationSuiteType(model.props.navigationSuiteType).getOrThrow()
+                Box(modifier = modifier) {
+                NavigationSuiteScaffoldLayout(
+                    navigationSuiteType = navigationSuiteTypeValue,
+                    navigationSuite = { context.slot(model.children, "navigationSuite")?.invoke() },
+                    primaryActionContent = { context.slot(model.children, "primaryActionContent")?.invoke() },
+                    content = { context.children(model.children) },
+                )
+                }
+            }
+            .register("NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType") { node, modifier, context ->
+                val model = node as NavigationSuiteScaffoldLayoutWithoutNavigationSuiteTypeNode
                 Box(modifier = modifier) {
                 NavigationSuiteScaffoldLayout(
                     navigationSuite = { context.slot(model.children, "navigationSuite")?.invoke() },
@@ -1852,6 +1882,8 @@ object GeneratedAdapters {
                 val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.OutlinedTextFieldDefaults.shape
+                val textObfuscationModeWire = model.props.textObfuscationMode
+                val textObfuscationModeValue = if (textObfuscationModeWire != null) com.pycompose.renderer.generated.ValueResolver.textObfuscationMode(textObfuscationModeWire).getOrThrow() else androidx.compose.foundation.text.input.TextObfuscationMode.Companion.RevealLastTyped
                 val textStyleWire = model.props.textStyle
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
@@ -1863,6 +1895,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     isError = model.props.isError,
                     shape = shapeValue,
+                    textObfuscationMode = textObfuscationModeValue,
                     textStyle = textStyleValue,
                     interactionSource = interactionSourceValue,
                     state = stateValue,
@@ -2119,6 +2152,8 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.textFieldColors(colorsWire).getOrThrow() else androidx.compose.material3.TextFieldDefaults.colors()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.TextFieldDefaults.shape
+                val textObfuscationModeWire = model.props.textObfuscationMode
+                val textObfuscationModeValue = if (textObfuscationModeWire != null) com.pycompose.renderer.generated.ValueResolver.textObfuscationMode(textObfuscationModeWire).getOrThrow() else androidx.compose.foundation.text.input.TextObfuscationMode.Companion.RevealLastTyped
                 val textStyleWire = model.props.textStyle
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
@@ -2129,6 +2164,7 @@ object GeneratedAdapters {
                     enabled = model.props.enabled,
                     isError = model.props.isError,
                     shape = shapeValue,
+                    textObfuscationMode = textObfuscationModeValue,
                     textStyle = textStyleValue,
                     interactionSource = interactionSourceValue,
                     state = stateValue,
@@ -2177,6 +2213,8 @@ object GeneratedAdapters {
             }
             .register("ShortNavigationBar") { node, modifier, context ->
                 val model = node as ShortNavigationBarNode
+                val arrangementWire = model.props.arrangement
+                val arrangementValue = if (arrangementWire != null) com.pycompose.renderer.generated.ValueResolver.shortNavigationBarArrangement(arrangementWire).getOrThrow() else androidx.compose.material3.ShortNavigationBarDefaults.arrangement
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.containerColor)
                     is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.containerColor)
@@ -2191,6 +2229,7 @@ object GeneratedAdapters {
                 val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.ShortNavigationBarDefaults.windowInsets
                 ShortNavigationBar(
                     modifier = modifier,
+                    arrangement = arrangementValue,
                     containerColor = containerColorValue,
                     contentColor = contentColorValue,
                     windowInsets = windowInsetsValue,
@@ -2199,10 +2238,13 @@ object GeneratedAdapters {
             }
             .register("ShortNavigationBarItem") { node, modifier, context ->
                 val model = node as ShortNavigationBarItemNode
+                val iconPositionWire = model.props.iconPosition
+                val iconPositionValue = if (iconPositionWire != null) com.pycompose.renderer.generated.ValueResolver.navigationItemIconPosition(iconPositionWire).getOrThrow() else androidx.compose.material3.NavigationItemIconPosition.Companion.Top
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 ShortNavigationBarItem(
                     modifier = modifier,
                     enabled = model.props.enabled,
+                    iconPosition = iconPositionValue,
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
                     interactionSource = interactionSourceValue,
@@ -2626,10 +2668,14 @@ object GeneratedAdapters {
                 val model = node as TimeInputNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.timePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.TimePickerDefaults.colors()
-                val stateValue = androidx.compose.material3.rememberTimePickerState()
-                context.reconcileProperty(stateValue, "hour", model.props.hour?.let { Wanted(it.toInt()) }, model.props.onHourChange, { stateValue.hour }, { stateValue.hour = it }) { JsonPrimitive(it) }
-                context.reconcileProperty(stateValue, "is24hour", model.props.is24hour?.let { Wanted(it) }, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
-                context.reconcileProperty(stateValue, "minute", model.props.minute?.let { Wanted(it.toInt()) }, model.props.onMinuteChange, { stateValue.minute }, { stateValue.minute = it }) { JsonPrimitive(it) }
+                val stateHour = model.props.hour?.let { Wanted(it.toInt()) }
+                val stateIs24hour = model.props.is24hour?.let { Wanted(it) }
+                val stateMinute = model.props.minute?.let { Wanted(it.toInt()) }
+                val stateSeeds = remember { Reseed<androidx.compose.material3.TimePickerState>() }
+                val stateValue = key(stateSeeds.generation) { androidx.compose.material3.rememberTimePickerState(initialHour = stateHour?.value ?: stateSeeds.previous?.hour ?: 0, initialMinute = stateMinute?.value ?: stateSeeds.previous?.minute ?: 0) }
+                context.reconcileProperty(stateValue, "hour", stateHour, model.props.onHourChange, { stateValue.hour }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "is24hour", stateIs24hour, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "minute", stateMinute, model.props.onMinuteChange, { stateValue.minute }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
                 TimeInput(
                     modifier = modifier,
                     colors = colorsValue,
@@ -2642,10 +2688,14 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.timePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.TimePickerDefaults.colors()
                 val layoutTypeWire = model.props.layoutType
                 val layoutTypeValue = if (layoutTypeWire != null) com.pycompose.renderer.generated.ValueResolver.timePickerLayoutType(layoutTypeWire).getOrThrow() else androidx.compose.material3.TimePickerDefaults.layoutType()
-                val stateValue = androidx.compose.material3.rememberTimePickerState()
-                context.reconcileProperty(stateValue, "hour", model.props.hour?.let { Wanted(it.toInt()) }, model.props.onHourChange, { stateValue.hour }, { stateValue.hour = it }) { JsonPrimitive(it) }
-                context.reconcileProperty(stateValue, "is24hour", model.props.is24hour?.let { Wanted(it) }, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
-                context.reconcileProperty(stateValue, "minute", model.props.minute?.let { Wanted(it.toInt()) }, model.props.onMinuteChange, { stateValue.minute }, { stateValue.minute = it }) { JsonPrimitive(it) }
+                val stateHour = model.props.hour?.let { Wanted(it.toInt()) }
+                val stateIs24hour = model.props.is24hour?.let { Wanted(it) }
+                val stateMinute = model.props.minute?.let { Wanted(it.toInt()) }
+                val stateSeeds = remember { Reseed<androidx.compose.material3.TimePickerState>() }
+                val stateValue = key(stateSeeds.generation) { androidx.compose.material3.rememberTimePickerState(initialHour = stateHour?.value ?: stateSeeds.previous?.hour ?: 0, initialMinute = stateMinute?.value ?: stateSeeds.previous?.minute ?: 0) }
+                context.reconcileProperty(stateValue, "hour", stateHour, model.props.onHourChange, { stateValue.hour }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "is24hour", stateIs24hour, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "minute", stateMinute, model.props.onMinuteChange, { stateValue.minute }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
                 TimePicker(
                     modifier = modifier,
                     colors = colorsValue,

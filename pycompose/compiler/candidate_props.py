@@ -115,7 +115,7 @@ def wire_shape(
             props[parameter] = {"type": "string", "required": True}
             children["key"] = parameter
             continue
-        prop = _prop(name, parameter, spec, families, review)
+        prop = wire_prop(name, parameter, spec, families, review)
         if prop is not None:
             props[parameter] = prop
     props = dict(sorted(props.items()))
@@ -123,7 +123,7 @@ def wire_shape(
     return props, children, dict(sorted(slots.items())), review
 
 
-def _prop(
+def wire_prop(
     name: str,
     parameter: str,
     spec: dict[str, Any],

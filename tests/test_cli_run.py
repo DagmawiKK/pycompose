@@ -163,11 +163,15 @@ if sys.argv[1:] == ["devices"]:
 """
     )
     adb.chmod(0o755)
+    # The SDK's adb wins over PATH: an exported ANDROID_HOME would reach a real
+    # device instead of the fixture.
     env = {
         **os.environ,
         "PYTHONPATH": str(Path(__file__).parents[1]),
         "PATH": str(tools),
         "PYCOMPOSE_HOME": str(home),
+        "ANDROID_HOME": "",
+        "ANDROID_SDK_ROOT": "",
     }
     process = subprocess.Popen(
         [sys.executable, "-m", "pycompose.cli", "run", "--dev-client"],

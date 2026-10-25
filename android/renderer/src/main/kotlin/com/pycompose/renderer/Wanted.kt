@@ -1,8 +1,11 @@
 package com.pycompose.renderer
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.pycompose.ir.OptionalValue
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -37,7 +40,10 @@ fun <V> OptionalValue.wanted(decode: (JsonPrimitive) -> V): Wanted<V?>? =
  * @param desired The app's desired value; null states nothing.
  * @param report Action id settled values report to; null reports none.
  * @param read Reads the property.
- * @param write Writes the property.
+ * @param write Writes the property, or re-creates a seeded holder at it.
+ * @param seeded Whether the holder was created at the desired value (see
+ *   [Reseed]), which then counts as driven: a re-created holder must not
+ *   re-create itself again.
  * @param wire Spells a value on the wire.
  */
 @Suppress("LongParameterList")
@@ -49,12 +55,13 @@ fun <V> RenderContext.reconcileProperty(
     report: String?,
     read: () -> V,
     write: (V) -> Unit,
+    seeded: Boolean = false,
     wire: (V) -> JsonElement,
 ) {
     Reconcile(
         state,
         desired,
-        remember(state, name) { mutableStateOf<Wanted<V>?>(null) },
+        remember(state, name) { mutableStateOf(if (seeded) desired else null) },
         settled = { Wanted(read()) },
         report =
             report?.let { id ->
@@ -72,4 +79,28 @@ fun <V> RenderContext.reconcileProperty(
             },
         answered = answered(report),
     ) { write(it.value) }
+}
+
+/**
+ * A holder re-created through its factory whenever a seeded property is driven.
+ *
+ * The factory sets what a property's setter does not: `TimePickerState.hour`
+ * moves the number, but only `rememberTimePickerState(initialHour)` places the
+ * dial's hand. The adapter composes the factory under [generation], seeding
+ * each property the app leaves unstated from [previous].
+ */
+class Reseed<H : Any> {
+    /** Bumped on every drive; the adapter keys the factory call to it. */
+    var generation by mutableIntStateOf(0)
+        private set
+
+    /** The holder the current one replaced, or null for the first. */
+    var previous: H? = null
+        private set
+
+    /** Replace [holder] with a new one created at the app's desired values. */
+    fun from(holder: H) {
+        previous = holder
+        generation++
+    }
 }

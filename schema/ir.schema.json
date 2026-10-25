@@ -5696,6 +5696,49 @@
       },
       "type": "object"
     },
+    "C_NavigationSuite": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "primaryActionContent"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "navigationSuiteType": {
+              "$ref": "#/definitions/Family_NavigationSuiteType"
+            }
+          },
+          "required": [
+            "navigationSuiteType"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationSuite"
+        }
+      },
+      "type": "object"
+    },
     "C_NavigationSuiteItem": {
       "properties": {
         "children": {
@@ -5810,6 +5853,50 @@
             "properties": {
               "slot": {
                 "enum": [
+                  "navigationSuite",
+                  "primaryActionContent"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "navigationSuiteType": {
+              "$ref": "#/definitions/Family_NavigationSuiteType"
+            }
+          },
+          "required": [
+            "navigationSuiteType"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationSuiteScaffoldLayout"
+        }
+      },
+      "type": "object"
+    },
+    "C_NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
                   "navigationSuite"
                 ]
               }
@@ -5835,7 +5922,7 @@
           "type": "object"
         },
         "type": {
-          "const": "NavigationSuiteScaffoldLayout"
+          "const": "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"
         }
       },
       "type": "object"
@@ -6220,6 +6307,9 @@
             },
             "text": {
               "type": "string"
+            },
+            "textObfuscationMode": {
+              "$ref": "#/definitions/Family_TextObfuscationMode"
             },
             "textStyle": {
               "$ref": "#/definitions/Family_TextStyle"
@@ -7556,6 +7646,9 @@
             "text": {
               "type": "string"
             },
+            "textObfuscationMode": {
+              "$ref": "#/definitions/Family_TextObfuscationMode"
+            },
             "textStyle": {
               "$ref": "#/definitions/Family_TextStyle"
             }
@@ -7719,6 +7812,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "arrangement": {
+              "$ref": "#/definitions/Family_ShortNavigationBarArrangement"
+            },
             "containerColor": {
               "anyOf": [
                 {
@@ -7792,6 +7888,9 @@
             "enabled": {
               "default": true,
               "type": "boolean"
+            },
+            "iconPosition": {
+              "$ref": "#/definitions/Family_NavigationItemIconPosition"
             },
             "modifier": {
               "properties": {
@@ -10210,6 +10309,13 @@
         }
       ]
     },
+    "Family_AndroidExternalSurfaceZOrder": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_AndroidExternalSurfaceZOrder"
+        }
+      ]
+    },
     "Family_AnnotatedString": {
       "oneOf": [
         {
@@ -10364,10 +10470,24 @@
         }
       ]
     },
+    "Family_ExposedDropdownMenuAnchorType": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_ExposedDropdownMenuAnchorType"
+        }
+      ]
+    },
     "Family_FabPosition": {
       "oneOf": [
         {
           "$ref": "#/definitions/Value_FabPosition"
+        }
+      ]
+    },
+    "Family_FilterQuality": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_FilterQuality"
         }
       ]
     },
@@ -10458,6 +10578,20 @@
         }
       ]
     },
+    "Family_NavigationItemIconPosition": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_NavigationItemIconPosition"
+        }
+      ]
+    },
+    "Family_NavigationSuiteType": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_NavigationSuiteType"
+        }
+      ]
+    },
     "Family_Offset": {
       "oneOf": [
         {
@@ -10539,6 +10673,13 @@
         }
       ]
     },
+    "Family_ShortNavigationBarArrangement": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_ShortNavigationBarArrangement"
+        }
+      ]
+    },
     "Family_Size": {
       "oneOf": [
         {
@@ -10594,6 +10735,13 @@
         }
       ]
     },
+    "Family_TextObfuscationMode": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_TextObfuscationMode"
+        }
+      ]
+    },
     "Family_TextOverflow": {
       "oneOf": [
         {
@@ -10625,6 +10773,13 @@
       "oneOf": [
         {
           "$ref": "#/definitions/Value_timePickerColors"
+        }
+      ]
+    },
+    "Family_TimePickerDisplayMode": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_TimePickerDisplayMode"
         }
       ]
     },
@@ -10670,6 +10825,34 @@
         {
           "additionalProperties": false,
           "properties": {
+            "type": {
+              "const": "alignByBaseline"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "label": {
+              "default": "animateEnterExit",
+              "type": "string"
+            },
+            "type": {
+              "const": "animateEnterExit"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "brush": {
               "$ref": "#/definitions/Family_Brush"
             },
@@ -10680,6 +10863,38 @@
           "required": [
             "type",
             "brush"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "alignment": {
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomLeft",
+                "bottomRight",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerLeft",
+                "centerRight",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topLeft",
+                "topRight",
+                "topStart"
+              ]
+            },
+            "type": {
+              "const": "boxAlign"
+            }
+          },
+          "required": [
+            "type",
+            "alignment"
           ],
           "type": "object"
         },
@@ -10734,6 +10949,60 @@
         {
           "additionalProperties": false,
           "properties": {
+            "alignment": {
+              "enum": [
+                "centerHorizontally",
+                "end",
+                "left",
+                "right",
+                "start"
+              ]
+            },
+            "type": {
+              "const": "columnAlign"
+            }
+          },
+          "required": [
+            "type",
+            "alignment"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "default": 1.0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxColumnWidth"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "default": 1.0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxRowHeight"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "fraction": {
               "maximum": 1,
               "minimum": 0,
@@ -10746,6 +11015,74 @@
           "required": [
             "type",
             "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "$ref": "#/definitions/Family_BorderStroke"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "type": {
+              "const": "maskBorder"
+            }
+          },
+          "required": [
+            "type",
+            "border",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "type": {
+              "const": "maskClip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "matchParentSize"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "menuAnchorType": {
+              "$ref": "#/definitions/Family_ExposedDropdownMenuAnchorType"
+            },
+            "type": {
+              "const": "menuAnchor"
+            }
+          },
+          "required": [
+            "type",
+            "menuAnchorType"
           ],
           "type": "object"
         },
@@ -10800,6 +11137,42 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "renderInSharedTransitionScopeOverlay"
+            },
+            "zIndexInOverlay": {
+              "default": 0.0,
+              "type": "number"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "alignment": {
+              "enum": [
+                "bottom",
+                "centerVertically",
+                "top"
+              ]
+            },
+            "type": {
+              "const": "rowAlign"
+            }
+          },
+          "required": [
+            "type",
+            "alignment"
           ],
           "type": "object"
         },
@@ -10942,6 +11315,72 @@
             "type",
             "height",
             "width"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "skipToLookaheadPosition"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "skipToLookaheadSize"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "matchContentSize": {
+              "default": false,
+              "type": "boolean"
+            },
+            "selectedTabIndex": {
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "type": {
+              "const": "tabIndicatorOffset"
+            }
+          },
+          "required": [
+            "type",
+            "selectedTabIndex"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fill": {
+              "default": true,
+              "type": "boolean"
+            },
+            "type": {
+              "const": "weight"
+            },
+            "weight": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "type",
+            "weight"
           ],
           "type": "object"
         },
@@ -11208,6 +11647,9 @@
               "$ref": "#/definitions/C_NavigationRailItem"
             },
             {
+              "$ref": "#/definitions/C_NavigationSuite"
+            },
+            {
               "$ref": "#/definitions/C_NavigationSuiteItem"
             },
             {
@@ -11215,6 +11657,9 @@
             },
             {
               "$ref": "#/definitions/C_NavigationSuiteScaffoldLayout"
+            },
+            {
+              "$ref": "#/definitions/C_NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"
             },
             {
               "$ref": "#/definitions/C_OutlinedButton"
@@ -33063,6 +33508,34 @@
         {
           "additionalProperties": false,
           "properties": {
+            "type": {
+              "const": "alignByBaseline"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "label": {
+              "default": "animateEnterExit",
+              "type": "string"
+            },
+            "type": {
+              "const": "animateEnterExit"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "brush": {
               "$ref": "#/definitions/Family_Brush"
             },
@@ -33073,6 +33546,38 @@
           "required": [
             "type",
             "brush"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "alignment": {
+              "enum": [
+                "bottomCenter",
+                "bottomEnd",
+                "bottomLeft",
+                "bottomRight",
+                "bottomStart",
+                "center",
+                "centerEnd",
+                "centerLeft",
+                "centerRight",
+                "centerStart",
+                "topCenter",
+                "topEnd",
+                "topLeft",
+                "topRight",
+                "topStart"
+              ]
+            },
+            "type": {
+              "const": "boxAlign"
+            }
+          },
+          "required": [
+            "type",
+            "alignment"
           ],
           "type": "object"
         },
@@ -33127,6 +33632,60 @@
         {
           "additionalProperties": false,
           "properties": {
+            "alignment": {
+              "enum": [
+                "centerHorizontally",
+                "end",
+                "left",
+                "right",
+                "start"
+              ]
+            },
+            "type": {
+              "const": "columnAlign"
+            }
+          },
+          "required": [
+            "type",
+            "alignment"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "default": 1.0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxColumnWidth"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fraction": {
+              "default": 1.0,
+              "type": "number"
+            },
+            "type": {
+              "const": "fillMaxRowHeight"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "fraction": {
               "maximum": 1,
               "minimum": 0,
@@ -33139,6 +33698,74 @@
           "required": [
             "type",
             "fraction"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "border": {
+              "$ref": "#/definitions/Family_BorderStroke"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "type": {
+              "const": "maskBorder"
+            }
+          },
+          "required": [
+            "type",
+            "border",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "type": {
+              "const": "maskClip"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "matchParentSize"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "menuAnchorType": {
+              "$ref": "#/definitions/Family_ExposedDropdownMenuAnchorType"
+            },
+            "type": {
+              "const": "menuAnchor"
+            }
+          },
+          "required": [
+            "type",
+            "menuAnchorType"
           ],
           "type": "object"
         },
@@ -33193,6 +33820,42 @@
           "required": [
             "type",
             "value"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "renderInSharedTransitionScopeOverlay"
+            },
+            "zIndexInOverlay": {
+              "default": 0.0,
+              "type": "number"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "alignment": {
+              "enum": [
+                "bottom",
+                "centerVertically",
+                "top"
+              ]
+            },
+            "type": {
+              "const": "rowAlign"
+            }
+          },
+          "required": [
+            "type",
+            "alignment"
           ],
           "type": "object"
         },
@@ -33335,6 +33998,72 @@
             "type",
             "height",
             "width"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "skipToLookaheadPosition"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "skipToLookaheadSize"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "matchContentSize": {
+              "default": false,
+              "type": "boolean"
+            },
+            "selectedTabIndex": {
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            "type": {
+              "const": "tabIndicatorOffset"
+            }
+          },
+          "required": [
+            "type",
+            "selectedTabIndex"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fill": {
+              "default": true,
+              "type": "boolean"
+            },
+            "type": {
+              "const": "weight"
+            },
+            "weight": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "type",
+            "weight"
           ],
           "type": "object"
         },
@@ -33816,6 +34545,49 @@
       },
       "type": "object"
     },
+    "V_1_23_0_NavigationSuite": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "primaryActionContent"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "navigationSuiteType": {
+              "$ref": "#/definitions/Family_NavigationSuiteType"
+            }
+          },
+          "required": [
+            "navigationSuiteType"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationSuite"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_NavigationSuiteItem": {
       "properties": {
         "children": {
@@ -33930,6 +34702,50 @@
             "properties": {
               "slot": {
                 "enum": [
+                  "navigationSuite",
+                  "primaryActionContent"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "navigationSuiteType": {
+              "$ref": "#/definitions/Family_NavigationSuiteType"
+            }
+          },
+          "required": [
+            "navigationSuiteType"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "NavigationSuiteScaffoldLayout"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
                   "navigationSuite"
                 ]
               }
@@ -33955,7 +34771,7 @@
           "type": "object"
         },
         "type": {
-          "const": "NavigationSuiteScaffoldLayout"
+          "const": "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"
         }
       },
       "type": "object"
@@ -34205,6 +35021,9 @@
               "$ref": "#/definitions/V_1_23_0_NavigationRailItem"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_NavigationSuite"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_NavigationSuiteItem"
             },
             {
@@ -34212,6 +35031,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_NavigationSuiteScaffoldLayout"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"
             },
             {
               "$ref": "#/definitions/V_1_23_0_OutlinedButton"
@@ -34805,6 +35627,9 @@
             },
             "text": {
               "type": "string"
+            },
+            "textObfuscationMode": {
+              "$ref": "#/definitions/Family_TextObfuscationMode"
             },
             "textStyle": {
               "$ref": "#/definitions/Family_TextStyle"
@@ -36141,6 +36966,9 @@
             "text": {
               "type": "string"
             },
+            "textObfuscationMode": {
+              "$ref": "#/definitions/Family_TextObfuscationMode"
+            },
             "textStyle": {
               "$ref": "#/definitions/Family_TextStyle"
             }
@@ -36304,6 +37132,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "arrangement": {
+              "$ref": "#/definitions/Family_ShortNavigationBarArrangement"
+            },
             "containerColor": {
               "anyOf": [
                 {
@@ -36377,6 +37208,9 @@
             "enabled": {
               "default": true,
               "type": "boolean"
+            },
+            "iconPosition": {
+              "$ref": "#/definitions/Family_NavigationItemIconPosition"
             },
             "modifier": {
               "properties": {
@@ -45960,6 +46794,27 @@
       ],
       "type": "object"
     },
+    "Value_AndroidExternalSurfaceZOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Behind",
+            "MediaOverlay",
+            "OnTop"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "AndroidExternalSurfaceZOrder"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
     "Value_AnnotatedString": {
       "additionalProperties": false,
       "properties": {
@@ -46182,6 +47037,27 @@
       ],
       "type": "object"
     },
+    "Value_ExposedDropdownMenuAnchorType": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "PrimaryEditable",
+            "PrimaryNotEditable",
+            "SecondaryEditable"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "ExposedDropdownMenuAnchorType"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
     "Value_FabPosition": {
       "additionalProperties": false,
       "properties": {
@@ -46196,6 +47072,28 @@
         },
         "type": {
           "const": "FabPosition"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_FilterQuality": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "High",
+            "Low",
+            "Medium",
+            "None"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "FilterQuality"
         }
       },
       "required": [
@@ -46262,6 +47160,52 @@
       "required": [
         "type",
         "weight"
+      ],
+      "type": "object"
+    },
+    "Value_NavigationItemIconPosition": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Start",
+            "Top"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "NavigationItemIconPosition"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_NavigationSuiteType": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "NavigationBar",
+            "NavigationDrawer",
+            "NavigationRail",
+            "None",
+            "ShortNavigationBarCompact",
+            "ShortNavigationBarMedium",
+            "WideNavigationRailCollapsed",
+            "WideNavigationRailExpanded"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "NavigationSuiteType"
+        }
+      },
+      "required": [
+        "type",
+        "name"
       ],
       "type": "object"
     },
@@ -46476,6 +47420,26 @@
       ],
       "type": "object"
     },
+    "Value_ShortNavigationBarArrangement": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Centered",
+            "EqualWeight"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "ShortNavigationBarArrangement"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
     "Value_Size": {
       "additionalProperties": false,
       "properties": {
@@ -46646,6 +47610,28 @@
         },
         "type": {
           "const": "TextDecoration"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_TextObfuscationMode": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Hidden",
+            "RevealLastTyped",
+            "System",
+            "Visible"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "TextObfuscationMode"
         }
       },
       "required": [
@@ -46843,6 +47829,26 @@
         },
         "type": {
           "const": "ThemeTypography"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_TimePickerDisplayMode": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Input",
+            "Picker"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "TimePickerDisplayMode"
         }
       },
       "required": [

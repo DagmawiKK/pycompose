@@ -499,6 +499,12 @@ private fun NavigationRailItemPreview() {
     Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "NavigationRailItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "NavigationSuite", showBackground = true)
+@Composable
+private fun NavigationSuitePreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.primaryActionContent", "props": {"text": "primaryActionContent"}, "slot": "primaryActionContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuite"}, "type": "Text"}], "id": "preview", "props": {"navigationSuiteType": {"name": "NavigationBar", "type": "NavigationSuiteType"}}, "type": "NavigationSuite"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "NavigationSuiteItem", showBackground = true)
 @Composable
 private fun NavigationSuiteItemPreview() {
@@ -514,7 +520,13 @@ private fun NavigationSuiteScaffoldPreview() {
 @Preview(name = "NavigationSuiteScaffoldLayout", showBackground = true)
 @Composable
 private fun NavigationSuiteScaffoldLayoutPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.navigationSuite", "props": {"text": "navigationSuite"}, "slot": "navigationSuite", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffoldLayout"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationSuiteScaffoldLayout"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.navigationSuite", "props": {"text": "navigationSuite"}, "slot": "navigationSuite", "type": "Text"}, {"id": "preview.primaryActionContent", "props": {"text": "primaryActionContent"}, "slot": "primaryActionContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffoldLayout"}, "type": "Text"}], "id": "preview", "props": {"navigationSuiteType": {"name": "NavigationBar", "type": "NavigationSuiteType"}}, "type": "NavigationSuiteScaffoldLayout"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType", showBackground = true)
+@Composable
+private fun NavigationSuiteScaffoldLayoutWithoutNavigationSuiteTypePreview() {
+    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.navigationSuite", "props": {"text": "navigationSuite"}, "slot": "navigationSuite", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "OutlinedButton", showBackground = true)

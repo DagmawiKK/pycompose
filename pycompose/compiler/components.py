@@ -135,13 +135,26 @@ def _host_filled(
     return None
 
 
-def _parameter(
+def bind_parameter(
     parameter: Parameter,
     families: dict[str, str],
     defaults: dict[str, Any],
     holders: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
-    """Attach the compiler-resolved default an optional parameter binds to."""
+    """Decide how one native parameter reaches the wire, with its default.
+
+    Args:
+        parameter: The pinned parameter.
+        families: Approved value families, by the classifier they bind.
+        defaults: The declaration's compiler-resolved defaults, by parameter.
+        holders: Holders the pin derives a family for (``property_holders``).
+
+    Returns:
+        The parameter's rule.
+
+    Raises:
+        ValueError: The parameter has no wire policy, or an unusable default.
+    """
     rule = _binding_rule(parameter, families, defaults, holders)
     if rule["policy"] in {"modifier", "holder", "transient", "hostValue"}:
         # The host supplies both: the wire never carries their defaults.
@@ -226,7 +239,7 @@ def _plan(
         )
     for parameter in source.parameters:
         try:
-            rule = _parameter(parameter, families, defaults, holders or {})
+            rule = bind_parameter(parameter, families, defaults, holders or {})
         except ValueError as exc:
             rule = {"policy": "blocked" if parameter.required else "omit"}
             gaps.append(
@@ -362,7 +375,7 @@ def propose_components(
     scopes = slot_scopes(found.declarations)
     providers = scope_providers((d for d in found.declarations if d.composable), scopes)
     objects = frozenset(c.classifier for c in found.classes if c.class_kind == "OBJECT")
-    holders = property_holders(found)
+    holders = property_holders(found, defaults)
     candidates = [
         _plan(
             source,

@@ -72,11 +72,40 @@ def _factory(found: Inventory, classifier: str) -> Declaration | None:
     return factories[0]
 
 
-def property_holders(found: Inventory) -> dict[str, dict[str, Any]]:
+def _seed(
+    factory: Declaration, prop: Declaration, defaults: dict[str, Any]
+) -> dict[str, Any] | None:
+    """The factory parameter a property's holder is created at, if any.
+
+    ``rememberTimePickerState(initialHour = 5)`` creates a holder whose dial
+    stands at five; setting ``hour`` later moves the number but not the hand.
+    A parameter named after the property, or ``initial`` and its name, of the
+    property's type seeds it; only a literal default is one the host can fall
+    back on when the app states nothing, and only a non-null property can tell
+    "states nothing" from "clears".
+    """
+    if prop.return_type.nullable:
+        return None
+    names = {prop.name, "initial" + prop.name[:1].upper() + prop.name[1:]}
+    for parameter in factory.parameters:
+        default = defaults.get(parameter.name) or {}
+        if (
+            parameter.name in names
+            and parameter.type.classifier == prop.return_type.classifier
+            and default.get("kind") == "literal"
+        ):
+            return {"parameter": parameter.name, "default": default["value"]}
+    return None
+
+
+def property_holders(
+    found: Inventory, defaults: dict[tuple[str, str, str], dict[str, Any]]
+) -> dict[str, dict[str, Any]]:
     """Every holder class whose family the pin implies, by slash classifier.
 
     Args:
         found: The pinned inventory.
+        defaults: Compiler-resolved defaults by JVM identity, for the seeds.
 
     Returns:
         Per holder: its class, its factory, and its properties' wire specs.
@@ -95,6 +124,9 @@ def property_holders(found: Inventory) -> dict[str, dict[str, Any]]:
         factory = _factory(found, classifier)
         if factory is None or not all(_settable(d) for d in members):
             continue
+        own = defaults.get(
+            (factory.owner, factory.jvm_name or "", factory.jvm_descriptor or ""), {}
+        )
         holders[classifier] = {
             "holder": classifier.replace("/", "."),
             "factory": f"{factory.package}.{factory.name}",
@@ -103,6 +135,7 @@ def property_holders(found: Inventory) -> dict[str, dict[str, Any]]:
                     "type": WIRE[d.return_type.classifier][0],
                     "nativeType": WIRE[d.return_type.classifier][1],
                     **({"nullable": True} if d.return_type.nullable else {}),
+                    **({"seed": seed} if (seed := _seed(factory, d, own)) else {}),
                 }
                 for d in sorted(members, key=lambda d: d.name)
             },

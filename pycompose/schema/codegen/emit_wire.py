@@ -114,7 +114,7 @@ def _modifier_schema(
         props = modifier["props"]
         if version is not None and any(
             version_key(p.get("since", version)) > version_key(version)
-            for p in props.values()
+            for p in (modifier, *props.values())
         ):
             continue
         scoped = {

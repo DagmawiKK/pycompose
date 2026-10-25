@@ -19,6 +19,7 @@ import kotlinx.serialization.json.JsonElement
 import com.pycompose.ir.generated.AlignmentValue
 import com.pycompose.ir.generated.AlignmentHorizontalValue
 import com.pycompose.ir.generated.AlignmentVerticalValue
+import com.pycompose.ir.generated.AndroidExternalSurfaceZOrderValue
 import com.pycompose.ir.generated.AnnotatedStringValue
 import com.pycompose.ir.generated.BorderStrokeValue
 import com.pycompose.ir.generated.BrushValue
@@ -35,7 +36,9 @@ import com.pycompose.ir.generated.DisplayModeValue
 import com.pycompose.ir.generated.DpValue
 import com.pycompose.ir.generated.DpOffsetValue
 import com.pycompose.ir.generated.DpSizeValue
+import com.pycompose.ir.generated.ExposedDropdownMenuAnchorTypeValue
 import com.pycompose.ir.generated.FabPositionValue
+import com.pycompose.ir.generated.FilterQualityValue
 import com.pycompose.ir.generated.FloatingActionButtonElevationValue
 import com.pycompose.ir.generated.FontFamilyValue
 import com.pycompose.ir.generated.FontStyleValue
@@ -45,6 +48,8 @@ import com.pycompose.ir.generated.IconToggleButtonColorsValue
 import com.pycompose.ir.generated.ImageVectorValue
 import com.pycompose.ir.generated.MenuItemColorsValue
 import com.pycompose.ir.generated.NavigationBarItemColorsValue
+import com.pycompose.ir.generated.NavigationItemIconPositionValue
+import com.pycompose.ir.generated.NavigationSuiteTypeValue
 import com.pycompose.ir.generated.OffsetValue
 import com.pycompose.ir.generated.PaddingValuesValue
 import com.pycompose.ir.generated.RadioButtonColorsValue
@@ -54,6 +59,7 @@ import com.pycompose.ir.generated.SegmentedButtonColorsValue
 import com.pycompose.ir.generated.SelectableChipColorsValue
 import com.pycompose.ir.generated.SelectableChipElevationValue
 import com.pycompose.ir.generated.ShapeValue
+import com.pycompose.ir.generated.ShortNavigationBarArrangementValue
 import com.pycompose.ir.generated.SizeValue
 import com.pycompose.ir.generated.SliderColorsValue
 import com.pycompose.ir.generated.StrokeCapValue
@@ -61,10 +67,12 @@ import com.pycompose.ir.generated.SwitchColorsValue
 import com.pycompose.ir.generated.TextAlignValue
 import com.pycompose.ir.generated.TextDecorationValue
 import com.pycompose.ir.generated.TextFieldColorsValue
+import com.pycompose.ir.generated.TextObfuscationModeValue
 import com.pycompose.ir.generated.TextOverflowValue
 import com.pycompose.ir.generated.TextStyleValue
 import com.pycompose.ir.generated.TextUnitValue
 import com.pycompose.ir.generated.TimePickerColorsValue
+import com.pycompose.ir.generated.TimePickerDisplayModeValue
 import com.pycompose.ir.generated.TimePickerLayoutTypeValue
 import com.pycompose.ir.generated.ToggleableStateValue
 import com.pycompose.ir.generated.TopAppBarColorsValue
@@ -73,6 +81,7 @@ import com.pycompose.ir.generated.ValueContract
 import com.pycompose.ir.generated.WireAlignment
 import com.pycompose.ir.generated.WireAlignmentHorizontal
 import com.pycompose.ir.generated.WireAlignmentVertical
+import com.pycompose.ir.generated.WireAndroidExternalSurfaceZOrder
 import com.pycompose.ir.generated.WireAnnotatedString
 import com.pycompose.ir.generated.WireBorderStroke
 import com.pycompose.ir.generated.WireColor
@@ -82,25 +91,32 @@ import com.pycompose.ir.generated.WireDp
 import com.pycompose.ir.generated.WireDpOffset
 import com.pycompose.ir.generated.WireDpSize
 import com.pycompose.ir.generated.WireEm
+import com.pycompose.ir.generated.WireExposedDropdownMenuAnchorType
 import com.pycompose.ir.generated.WireFabPosition
+import com.pycompose.ir.generated.WireFilterQuality
 import com.pycompose.ir.generated.WireFontFamily
 import com.pycompose.ir.generated.WireFontStyle
 import com.pycompose.ir.generated.WireFontWeight
+import com.pycompose.ir.generated.WireNavigationItemIconPosition
+import com.pycompose.ir.generated.WireNavigationSuiteType
 import com.pycompose.ir.generated.WireOffset
 import com.pycompose.ir.generated.WirePaddingValues
 import com.pycompose.ir.generated.WireRange
 import com.pycompose.ir.generated.WireRoundedCornerShape
+import com.pycompose.ir.generated.WireShortNavigationBarArrangement
 import com.pycompose.ir.generated.WireSize
 import com.pycompose.ir.generated.WireSolidColor
 import com.pycompose.ir.generated.WireSp
 import com.pycompose.ir.generated.WireStrokeCap
 import com.pycompose.ir.generated.WireTextAlign
 import com.pycompose.ir.generated.WireTextDecoration
+import com.pycompose.ir.generated.WireTextObfuscationMode
 import com.pycompose.ir.generated.WireTextOverflow
 import com.pycompose.ir.generated.WireTextStyle
 import com.pycompose.ir.generated.WireThemeColor
 import com.pycompose.ir.generated.WireThemeShape
 import com.pycompose.ir.generated.WireThemeTypography
+import com.pycompose.ir.generated.WireTimePickerDisplayMode
 import com.pycompose.ir.generated.WireTimePickerLayoutType
 import com.pycompose.ir.generated.WireToggleableState
 import com.pycompose.ir.generated.WireWindowInsets
@@ -226,6 +242,25 @@ object ValueResolver {
                     "Bottom" -> androidx.compose.ui.Alignment.Bottom
                     "CenterVertically" -> androidx.compose.ui.Alignment.CenterVertically
                     "Top" -> androidx.compose.ui.Alignment.Top
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun androidExternalSurfaceZOrder(value: JsonElement): Result<androidx.compose.foundation.AndroidExternalSurfaceZOrder> {
+        val parsed = runCatching { ValueContract.readAndroidExternalSurfaceZOrder(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(androidExternalSurfaceZOrder(parsed))
+    }
+
+    @Composable
+    fun androidExternalSurfaceZOrder(value: AndroidExternalSurfaceZOrderValue): androidx.compose.foundation.AndroidExternalSurfaceZOrder =
+        when (value) {
+            is WireAndroidExternalSurfaceZOrder -> {
+                when (value.name) {
+                    "Behind" -> androidx.compose.foundation.AndroidExternalSurfaceZOrder.Behind
+                    "MediaOverlay" -> androidx.compose.foundation.AndroidExternalSurfaceZOrder.MediaOverlay
+                    "OnTop" -> androidx.compose.foundation.AndroidExternalSurfaceZOrder.OnTop
                     else -> error("Unknown native constant")
                 }
             }
@@ -704,6 +739,25 @@ object ValueResolver {
         }
 
     @Composable
+    fun exposedDropdownMenuAnchorType(value: JsonElement): Result<androidx.compose.material3.ExposedDropdownMenuAnchorType> {
+        val parsed = runCatching { ValueContract.readExposedDropdownMenuAnchorType(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(exposedDropdownMenuAnchorType(parsed))
+    }
+
+    @Composable
+    fun exposedDropdownMenuAnchorType(value: ExposedDropdownMenuAnchorTypeValue): androidx.compose.material3.ExposedDropdownMenuAnchorType =
+        when (value) {
+            is WireExposedDropdownMenuAnchorType -> {
+                when (value.name) {
+                    "PrimaryEditable" -> androidx.compose.material3.ExposedDropdownMenuAnchorType.PrimaryEditable
+                    "PrimaryNotEditable" -> androidx.compose.material3.ExposedDropdownMenuAnchorType.PrimaryNotEditable
+                    "SecondaryEditable" -> androidx.compose.material3.ExposedDropdownMenuAnchorType.SecondaryEditable
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
     fun fabPosition(value: JsonElement): Result<androidx.compose.material3.FabPosition> {
         val parsed = runCatching { ValueContract.readFabPosition(value) }.getOrElse { return Result.failure(it) }
         return Result.success(fabPosition(parsed))
@@ -718,6 +772,26 @@ object ValueResolver {
                     "End" -> androidx.compose.material3.FabPosition.End
                     "EndOverlay" -> androidx.compose.material3.FabPosition.EndOverlay
                     "Start" -> androidx.compose.material3.FabPosition.Start
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun filterQuality(value: JsonElement): Result<androidx.compose.ui.graphics.FilterQuality> {
+        val parsed = runCatching { ValueContract.readFilterQuality(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(filterQuality(parsed))
+    }
+
+    @Composable
+    fun filterQuality(value: FilterQualityValue): androidx.compose.ui.graphics.FilterQuality =
+        when (value) {
+            is WireFilterQuality -> {
+                when (value.name) {
+                    "High" -> androidx.compose.ui.graphics.FilterQuality.High
+                    "Low" -> androidx.compose.ui.graphics.FilterQuality.Low
+                    "Medium" -> androidx.compose.ui.graphics.FilterQuality.Medium
+                    "None" -> androidx.compose.ui.graphics.FilterQuality.None
                     else -> error("Unknown native constant")
                 }
             }
@@ -1202,6 +1276,48 @@ object ValueResolver {
         }
 
     @Composable
+    fun navigationItemIconPosition(value: JsonElement): Result<androidx.compose.material3.NavigationItemIconPosition> {
+        val parsed = runCatching { ValueContract.readNavigationItemIconPosition(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(navigationItemIconPosition(parsed))
+    }
+
+    @Composable
+    fun navigationItemIconPosition(value: NavigationItemIconPositionValue): androidx.compose.material3.NavigationItemIconPosition =
+        when (value) {
+            is WireNavigationItemIconPosition -> {
+                when (value.name) {
+                    "Start" -> androidx.compose.material3.NavigationItemIconPosition.Start
+                    "Top" -> androidx.compose.material3.NavigationItemIconPosition.Top
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun navigationSuiteType(value: JsonElement): Result<androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType> {
+        val parsed = runCatching { ValueContract.readNavigationSuiteType(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(navigationSuiteType(parsed))
+    }
+
+    @Composable
+    fun navigationSuiteType(value: NavigationSuiteTypeValue): androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType =
+        when (value) {
+            is WireNavigationSuiteType -> {
+                when (value.name) {
+                    "NavigationBar" -> androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.NavigationBar
+                    "NavigationDrawer" -> androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.NavigationDrawer
+                    "NavigationRail" -> androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.NavigationRail
+                    "None" -> androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.None
+                    "ShortNavigationBarCompact" -> androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.ShortNavigationBarCompact
+                    "ShortNavigationBarMedium" -> androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.ShortNavigationBarMedium
+                    "WideNavigationRailCollapsed" -> androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.WideNavigationRailCollapsed
+                    "WideNavigationRailExpanded" -> androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.WideNavigationRailExpanded
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
     fun offset(value: JsonElement): Result<androidx.compose.ui.geometry.Offset> {
         val parsed = runCatching { ValueContract.readOffset(value) }.getOrElse { return Result.failure(it) }
         return Result.success(offset(parsed))
@@ -1446,6 +1562,24 @@ object ValueResolver {
         }
 
     @Composable
+    fun shortNavigationBarArrangement(value: JsonElement): Result<androidx.compose.material3.ShortNavigationBarArrangement> {
+        val parsed = runCatching { ValueContract.readShortNavigationBarArrangement(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(shortNavigationBarArrangement(parsed))
+    }
+
+    @Composable
+    fun shortNavigationBarArrangement(value: ShortNavigationBarArrangementValue): androidx.compose.material3.ShortNavigationBarArrangement =
+        when (value) {
+            is WireShortNavigationBarArrangement -> {
+                when (value.name) {
+                    "Centered" -> androidx.compose.material3.ShortNavigationBarArrangement.Centered
+                    "EqualWeight" -> androidx.compose.material3.ShortNavigationBarArrangement.EqualWeight
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
     fun size(value: JsonElement): Result<androidx.compose.ui.geometry.Size> {
         val parsed = runCatching { ValueContract.readSize(value) }.getOrElse { return Result.failure(it) }
         return Result.success(size(parsed))
@@ -1679,6 +1813,26 @@ object ValueResolver {
         }
 
     @Composable
+    fun textObfuscationMode(value: JsonElement): Result<androidx.compose.foundation.text.input.TextObfuscationMode> {
+        val parsed = runCatching { ValueContract.readTextObfuscationMode(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(textObfuscationMode(parsed))
+    }
+
+    @Composable
+    fun textObfuscationMode(value: TextObfuscationModeValue): androidx.compose.foundation.text.input.TextObfuscationMode =
+        when (value) {
+            is WireTextObfuscationMode -> {
+                when (value.name) {
+                    "Hidden" -> androidx.compose.foundation.text.input.TextObfuscationMode.Hidden
+                    "RevealLastTyped" -> androidx.compose.foundation.text.input.TextObfuscationMode.RevealLastTyped
+                    "System" -> androidx.compose.foundation.text.input.TextObfuscationMode.System
+                    "Visible" -> androidx.compose.foundation.text.input.TextObfuscationMode.Visible
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
     fun textOverflow(value: JsonElement): Result<androidx.compose.ui.text.style.TextOverflow> {
         val parsed = runCatching { ValueContract.readTextOverflow(value) }.getOrElse { return Result.failure(it) }
         return Result.success(textOverflow(parsed))
@@ -1784,6 +1938,24 @@ object ValueResolver {
                     timeSelectorSelectedContentColor = if ("timeSelectorSelectedContentColor" in value.supplied) value.timeSelectorSelectedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     timeSelectorUnselectedContentColor = if ("timeSelectorUnselectedContentColor" in value.supplied) value.timeSelectorUnselectedContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
+            }
+        }
+
+    @Composable
+    fun timePickerDisplayMode(value: JsonElement): Result<androidx.compose.material3.TimePickerDisplayMode> {
+        val parsed = runCatching { ValueContract.readTimePickerDisplayMode(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(timePickerDisplayMode(parsed))
+    }
+
+    @Composable
+    fun timePickerDisplayMode(value: TimePickerDisplayModeValue): androidx.compose.material3.TimePickerDisplayMode =
+        when (value) {
+            is WireTimePickerDisplayMode -> {
+                when (value.name) {
+                    "Input" -> androidx.compose.material3.TimePickerDisplayMode.Input
+                    "Picker" -> androidx.compose.material3.TimePickerDisplayMode.Picker
+                    else -> error("Unknown native constant")
+                }
             }
         }
 

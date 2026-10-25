@@ -5044,6 +5044,37 @@
         "onHover"
       ]
     },
+    "NavigationSuite": {
+      "package": "androidx.compose.material3.adaptive.navigationsuite",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-adaptive-navigation-suite-android:1.4.0",
+        "descriptor": "(Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/material3/adaptive/navigationsuite/NavigationSuiteColors;Landroidx/compose/foundation/layout/Arrangement$Vertical;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "NavigationSuite-ST6eI8U",
+        "name": "NavigationSuite",
+        "owner": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt"
+      },
+      "props": {
+        "navigationSuiteType": {
+          "type": "value",
+          "valueType": "NavigationSuiteType",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "slots": {
+        "primaryActionContent": {
+          "native": "primaryActionContent"
+        }
+      }
+    },
     "NavigationSuiteItem": {
       "package": "androidx.compose.material3.adaptive.navigationsuite",
       "category": "navigation",
@@ -5166,6 +5197,41 @@
       "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.material3:material3-adaptive-navigation-suite-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Ljava/lang/String;Landroidx/compose/material3/adaptive/navigationsuite/NavigationSuiteScaffoldState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Alignment$Horizontal;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "NavigationSuiteScaffoldLayout-7VEDjxc",
+        "name": "NavigationSuiteScaffoldLayout",
+        "owner": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt"
+      },
+      "props": {
+        "navigationSuiteType": {
+          "type": "value",
+          "valueType": "NavigationSuiteType",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "boxed": true,
+      "slots": {
+        "navigationSuite": {
+          "native": "navigationSuite"
+        },
+        "primaryActionContent": {
+          "native": "primaryActionContent"
+        }
+      }
+    },
+    "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType": {
+      "package": "androidx.compose.material3.adaptive.navigationsuite",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-adaptive-navigation-suite-android:1.4.0",
         "descriptor": "(Lkotlin/jvm/functions/Function2;Ljava/lang/String;Landroidx/compose/material3/adaptive/navigationsuite/NavigationSuiteScaffoldState;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
         "jvmName": "NavigationSuiteScaffoldLayout-koyC03U",
         "name": "NavigationSuiteScaffoldLayout",
@@ -5184,7 +5250,8 @@
         "navigationSuite": {
           "native": "navigationSuite"
         }
-      }
+      },
+      "overloadOf": "NavigationSuiteScaffoldLayout"
     },
     "OutlinedButton": {
       "package": "androidx.compose.material3",
@@ -5611,6 +5678,11 @@
           "type": "value",
           "valueType": "Shape",
           "nativeDefault": "androidx.compose.material3.OutlinedTextFieldDefaults.shape"
+        },
+        "textObfuscationMode": {
+          "type": "value",
+          "valueType": "TextObfuscationMode",
+          "nativeDefault": "androidx.compose.foundation.text.input.TextObfuscationMode.Companion.RevealLastTyped"
         },
         "textStyle": {
           "type": "value",
@@ -6751,6 +6823,11 @@
           "valueType": "Shape",
           "nativeDefault": "androidx.compose.material3.TextFieldDefaults.shape"
         },
+        "textObfuscationMode": {
+          "type": "value",
+          "valueType": "TextObfuscationMode",
+          "nativeDefault": "androidx.compose.foundation.text.input.TextObfuscationMode.Companion.RevealLastTyped"
+        },
         "textStyle": {
           "type": "value",
           "valueType": "TextStyle",
@@ -7043,6 +7120,11 @@
         "owner": "androidx.compose.material3.ShortNavigationBarKt"
       },
       "props": {
+        "arrangement": {
+          "type": "value",
+          "valueType": "ShortNavigationBarArrangement",
+          "nativeDefault": "androidx.compose.material3.ShortNavigationBarDefaults.arrangement"
+        },
         "containerColor": {
           "type": "color",
           "valueType": "Color",
@@ -7084,6 +7166,11 @@
         "enabled": {
           "type": "boolean",
           "default": true
+        },
+        "iconPosition": {
+          "type": "value",
+          "valueType": "NavigationItemIconPosition",
+          "nativeDefault": "androidx.compose.material3.NavigationItemIconPosition.Companion.Top"
         },
         "onClick": {
           "type": "actionId",
@@ -9011,7 +9098,11 @@
         "properties": {
           "hour": {
             "type": "integer",
-            "nativeType": "Int"
+            "nativeType": "Int",
+            "seed": {
+              "parameter": "initialHour",
+              "default": 0
+            }
           },
           "is24hour": {
             "type": "boolean",
@@ -9019,7 +9110,11 @@
           },
           "minute": {
             "type": "integer",
-            "nativeType": "Int"
+            "nativeType": "Int",
+            "seed": {
+              "parameter": "initialMinute",
+              "default": 0
+            }
           }
         }
       },
@@ -9109,7 +9204,11 @@
         "properties": {
           "hour": {
             "type": "integer",
-            "nativeType": "Int"
+            "nativeType": "Int",
+            "seed": {
+              "parameter": "initialHour",
+              "default": 0
+            }
           },
           "is24hour": {
             "type": "boolean",
@@ -9117,7 +9216,11 @@
           },
           "minute": {
             "type": "integer",
-            "nativeType": "Int"
+            "nativeType": "Int",
+            "seed": {
+              "parameter": "initialMinute",
+              "default": 0
+            }
           }
         }
       },
@@ -9720,6 +9823,426 @@
           "type": "number"
         }
       }
+    },
+    "boxAlign": {
+      "since": "1.23.0",
+      "props": {
+        "alignment": {
+          "type": "enum",
+          "values": [
+            "bottomCenter",
+            "bottomEnd",
+            "bottomLeft",
+            "bottomRight",
+            "bottomStart",
+            "center",
+            "centerEnd",
+            "centerLeft",
+            "centerRight",
+            "centerStart",
+            "topCenter",
+            "topEnd",
+            "topLeft",
+            "topRight",
+            "topStart"
+          ],
+          "decode": "alignment",
+          "required": true
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.foundation.layout.BoxScope",
+          "native": "align",
+          "source": {
+            "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+            "owner": "androidx.compose.foundation.layout.BoxScope",
+            "name": "align",
+            "jvmName": "align",
+            "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
+    },
+    "columnAlign": {
+      "since": "1.23.0",
+      "props": {
+        "alignment": {
+          "type": "enum",
+          "values": [
+            "centerHorizontally",
+            "end",
+            "left",
+            "right",
+            "start"
+          ],
+          "decode": "horizontal",
+          "required": true
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.foundation.layout.ColumnScope",
+          "native": "align",
+          "source": {
+            "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+            "owner": "androidx.compose.foundation.layout.ColumnScope",
+            "name": "align",
+            "jvmName": "align",
+            "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment$Horizontal;)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
+    },
+    "rowAlign": {
+      "since": "1.23.0",
+      "props": {
+        "alignment": {
+          "type": "enum",
+          "values": [
+            "bottom",
+            "centerVertically",
+            "top"
+          ],
+          "decode": "vertical",
+          "required": true
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.foundation.layout.RowScope",
+          "native": "align",
+          "source": {
+            "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+            "owner": "androidx.compose.foundation.layout.RowScope",
+            "name": "align",
+            "jvmName": "align",
+            "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment$Vertical;)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
+    },
+    "alignByBaseline": {
+      "since": "1.23.0",
+      "props": {},
+      "scoped": [
+        {
+          "scope": "androidx.compose.foundation.layout.RowScope",
+          "native": "alignByBaseline",
+          "source": {
+            "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+            "owner": "androidx.compose.foundation.layout.RowScope",
+            "name": "alignByBaseline",
+            "jvmName": "alignByBaseline",
+            "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
+    },
+    "animateEnterExit": {
+      "since": "1.23.0",
+      "props": {
+        "label": {
+          "type": "string",
+          "default": "animateEnterExit"
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.animation.AnimatedVisibilityScope",
+          "native": "animateEnterExit",
+          "source": {
+            "artifact": "androidx.compose.animation:animation-android:1.12.1",
+            "owner": "androidx.compose.animation.AnimatedVisibilityScope",
+            "name": "animateEnterExit",
+            "jvmName": "animateEnterExit",
+            "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/animation/EnterTransition;Landroidx/compose/animation/ExitTransition;Ljava/lang/String;)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
+    },
+    "fillMaxColumnWidth": {
+      "since": "1.23.0",
+      "props": {
+        "fraction": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 1.0
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.foundation.layout.FlowColumnScope",
+          "native": "fillMaxColumnWidth",
+          "source": {
+            "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+            "owner": "androidx.compose.foundation.layout.FlowColumnScope",
+            "name": "fillMaxColumnWidth",
+            "jvmName": "fillMaxColumnWidth",
+            "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+          },
+          "optIn": [
+            "androidx.compose.foundation.layout.ExperimentalLayoutApi"
+          ]
+        }
+      ]
+    },
+    "fillMaxRowHeight": {
+      "since": "1.23.0",
+      "props": {
+        "fraction": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 1.0
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.foundation.layout.FlowRowScope",
+          "native": "fillMaxRowHeight",
+          "source": {
+            "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+            "owner": "androidx.compose.foundation.layout.FlowRowScope",
+            "name": "fillMaxRowHeight",
+            "jvmName": "fillMaxRowHeight",
+            "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+          },
+          "optIn": [
+            "androidx.compose.foundation.layout.ExperimentalLayoutApi"
+          ]
+        }
+      ]
+    },
+    "maskBorder": {
+      "since": "1.23.0",
+      "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "required": true
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.material3.carousel.CarouselItemScope",
+          "native": "maskBorder",
+          "source": {
+            "artifact": "androidx.compose.material3:material3-android:1.4.0",
+            "owner": "androidx.compose.material3.carousel.CarouselItemScope",
+            "name": "maskBorder",
+            "jvmName": "maskBorder",
+            "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;"
+          },
+          "optIn": [
+            "androidx.compose.material3.ExperimentalMaterial3Api"
+          ]
+        }
+      ]
+    },
+    "maskClip": {
+      "since": "1.23.0",
+      "props": {
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "required": true
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.material3.carousel.CarouselItemScope",
+          "native": "maskClip",
+          "source": {
+            "artifact": "androidx.compose.material3:material3-android:1.4.0",
+            "owner": "androidx.compose.material3.carousel.CarouselItemScope",
+            "name": "maskClip",
+            "jvmName": "maskClip",
+            "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;"
+          },
+          "optIn": [
+            "androidx.compose.material3.ExperimentalMaterial3Api"
+          ]
+        }
+      ]
+    },
+    "matchParentSize": {
+      "since": "1.23.0",
+      "props": {},
+      "scoped": [
+        {
+          "scope": "androidx.compose.foundation.layout.BoxScope",
+          "native": "matchParentSize",
+          "source": {
+            "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+            "owner": "androidx.compose.foundation.layout.BoxScope",
+            "name": "matchParentSize",
+            "jvmName": "matchParentSize",
+            "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
+    },
+    "menuAnchor": {
+      "since": "1.23.0",
+      "props": {
+        "menuAnchorType": {
+          "type": "value",
+          "valueType": "ExposedDropdownMenuAnchorType",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.material3.ExposedDropdownMenuBoxScope",
+          "native": "menuAnchor",
+          "source": {
+            "artifact": "androidx.compose.material3:material3-android:1.4.0",
+            "owner": "androidx.compose.material3.ExposedDropdownMenuBoxScope",
+            "name": "menuAnchor",
+            "jvmName": "menuAnchor-2Hz36ac",
+            "descriptor": "(Landroidx/compose/ui/Modifier;Ljava/lang/String;Z)Landroidx/compose/ui/Modifier;"
+          },
+          "optIn": [
+            "androidx.compose.material3.ExperimentalMaterial3Api"
+          ],
+          "parameters": {
+            "menuAnchorType": "type"
+          }
+        }
+      ]
+    },
+    "renderInSharedTransitionScopeOverlay": {
+      "since": "1.23.0",
+      "props": {
+        "zIndexInOverlay": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 0.0
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.animation.SharedTransitionScope",
+          "native": "renderInSharedTransitionScopeOverlay",
+          "source": {
+            "artifact": "androidx.compose.animation:animation-android:1.12.1",
+            "owner": "androidx.compose.animation.SharedTransitionScope",
+            "name": "renderInSharedTransitionScopeOverlay",
+            "jvmName": "renderInSharedTransitionScopeOverlay",
+            "descriptor": "(Landroidx/compose/ui/Modifier;FLkotlin/jvm/functions/Function0;)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
+    },
+    "skipToLookaheadPosition": {
+      "since": "1.23.0",
+      "props": {},
+      "scoped": [
+        {
+          "scope": "androidx.compose.animation.SharedTransitionScope",
+          "native": "skipToLookaheadPosition",
+          "source": {
+            "artifact": "androidx.compose.animation:animation-android:1.12.1",
+            "owner": "androidx.compose.animation.SharedTransitionScope",
+            "name": "skipToLookaheadPosition",
+            "jvmName": "skipToLookaheadPosition",
+            "descriptor": "(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
+    },
+    "skipToLookaheadSize": {
+      "since": "1.23.0",
+      "props": {},
+      "scoped": [
+        {
+          "scope": "androidx.compose.animation.SharedTransitionScope",
+          "native": "skipToLookaheadSize",
+          "source": {
+            "artifact": "androidx.compose.animation:animation-android:1.12.1",
+            "owner": "androidx.compose.animation.SharedTransitionScope",
+            "name": "skipToLookaheadSize",
+            "jvmName": "skipToLookaheadSize",
+            "descriptor": "(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
+    },
+    "tabIndicatorOffset": {
+      "since": "1.23.0",
+      "props": {
+        "selectedTabIndex": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "required": true
+        },
+        "matchContentSize": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.material3.TabIndicatorScope",
+          "native": "tabIndicatorOffset",
+          "source": {
+            "artifact": "androidx.compose.material3:material3-android:1.4.0",
+            "owner": "androidx.compose.material3.TabIndicatorScope",
+            "name": "tabIndicatorOffset",
+            "jvmName": "tabIndicatorOffset",
+            "descriptor": "(Landroidx/compose/ui/Modifier;IZ)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
+    },
+    "weight": {
+      "since": "1.23.0",
+      "props": {
+        "weight": {
+          "type": "number",
+          "nativeType": "Float",
+          "required": true
+        },
+        "fill": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "scoped": [
+        {
+          "scope": "androidx.compose.foundation.layout.ColumnScope",
+          "native": "weight",
+          "source": {
+            "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+            "owner": "androidx.compose.foundation.layout.ColumnScope",
+            "name": "weight",
+            "jvmName": "weight",
+            "descriptor": "(Landroidx/compose/ui/Modifier;FZ)Landroidx/compose/ui/Modifier;"
+          }
+        },
+        {
+          "scope": "androidx.compose.foundation.layout.RowScope",
+          "native": "weight",
+          "source": {
+            "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+            "owner": "androidx.compose.foundation.layout.RowScope",
+            "name": "weight",
+            "jvmName": "weight",
+            "descriptor": "(Landroidx/compose/ui/Modifier;FZ)Landroidx/compose/ui/Modifier;"
+          }
+        }
+      ]
     }
   },
   "actions": {
@@ -16067,6 +16590,210 @@
           "androidx.compose.material.icons.sharp",
           "androidx.compose.material.icons.twotone"
         ]
+      }
+    },
+    "AndroidExternalSurfaceZOrder": {
+      "family": "AndroidExternalSurfaceZOrder",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.foundation.AndroidExternalSurfaceZOrder",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/foundation/AndroidExternalSurfaceZOrder$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Behind",
+            "MediaOverlay",
+            "OnTop"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.foundation.AndroidExternalSurfaceZOrder"
+      }
+    },
+    "TextObfuscationMode": {
+      "family": "TextObfuscationMode",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.foundation.text.input.TextObfuscationMode",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/foundation/text/input/TextObfuscationMode$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Hidden",
+            "RevealLastTyped",
+            "System",
+            "Visible"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.foundation.text.input.TextObfuscationMode"
+      }
+    },
+    "ExposedDropdownMenuAnchorType": {
+      "family": "ExposedDropdownMenuAnchorType",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.ExposedDropdownMenuAnchorType",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/material3/ExposedDropdownMenuAnchorType$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "PrimaryEditable",
+            "PrimaryNotEditable",
+            "SecondaryEditable"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.ExposedDropdownMenuAnchorType"
+      }
+    },
+    "NavigationItemIconPosition": {
+      "family": "NavigationItemIconPosition",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.NavigationItemIconPosition",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/material3/NavigationItemIconPosition$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Start",
+            "Top"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.NavigationItemIconPosition"
+      }
+    },
+    "ShortNavigationBarArrangement": {
+      "family": "ShortNavigationBarArrangement",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.ShortNavigationBarArrangement",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/material3/ShortNavigationBarArrangement$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Centered",
+            "EqualWeight"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.ShortNavigationBarArrangement"
+      }
+    },
+    "TimePickerDisplayMode": {
+      "family": "TimePickerDisplayMode",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.TimePickerDisplayMode",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/material3/TimePickerDisplayMode$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Input",
+            "Picker"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.TimePickerDisplayMode"
+      }
+    },
+    "NavigationSuiteType": {
+      "family": "NavigationSuiteType",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/material3/adaptive/navigationsuite/NavigationSuiteType$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "NavigationBar",
+            "NavigationDrawer",
+            "NavigationRail",
+            "None",
+            "ShortNavigationBarCompact",
+            "ShortNavigationBarMedium",
+            "WideNavigationRailCollapsed",
+            "WideNavigationRailExpanded"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType"
+      }
+    },
+    "FilterQuality": {
+      "family": "FilterQuality",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.graphics.FilterQuality",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/ui/graphics/FilterQuality$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "High",
+            "Low",
+            "Medium",
+            "None"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.graphics.FilterQuality"
       }
     }
   },

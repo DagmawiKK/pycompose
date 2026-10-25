@@ -118,6 +118,9 @@ def build_app(
     from pycompose.schema.codegen.emit_modules import render_python_exports
     from pycompose.schema.codegen.emit_python import render_python_components
     from pycompose.schema.codegen.holders_kotlin import render_holder_drives
+    from pycompose.schema.codegen.scoped_modifiers_kotlin import (
+        render_scoped_modifiers,
+    )
     from pycompose.schema.codegen.values import render_python
     from pycompose.schema.codegen.values_kotlin import (
         render_models,
@@ -172,6 +175,9 @@ def build_app(
             registry
         ),
         native / _ADAPTERS_RELATIVE: render_generated_adapters(sliced),
+        native / _VALUES_RELATIVE.with_name("ScopedModifiers.kt"): (
+            render_scoped_modifiers(sliced)
+        ),
     }
     if kotlin:
         artifacts.update(kotlin_artifacts)
@@ -256,6 +262,12 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     from pycompose.schema.codegen.emit_python import render_python_components
     from pycompose.schema.codegen.emit_wire import render_ir_schema
     from pycompose.schema.codegen.holders_kotlin import render_holder_drives
+    from pycompose.schema.codegen.scoped_modifiers_kotlin import (
+        render_scoped_modifiers,
+    )
+    from pycompose.schema.codegen.scoped_modifiers_python import (
+        render_scoped_operations,
+    )
     from pycompose.schema.codegen.values import render_python as render_values
     from pycompose.schema.codegen.values_kotlin import (
         render_models,
@@ -276,6 +288,12 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     }
     artifacts[KOTLIN_ADAPTERS_PATH] = render_generated_adapters(registry)
     artifacts[ROOT / KOTLIN_DRIVES_RELATIVE] = render_holder_drives(registry)
+    artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("ScopedModifiers.kt")] = (
+        render_scoped_modifiers(registry)
+    )
+    artifacts[ROOT / "pycompose/components/scoped_modifiers.py"] = (
+        render_scoped_operations(registry)
+    )
     return artifacts
 
 

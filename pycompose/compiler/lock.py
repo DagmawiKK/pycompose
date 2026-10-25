@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from pycompose.compiler.candidate_props import CandidateError
+from pycompose.compiler.candidate_props import CandidateError, family_index
 from pycompose.compiler.check import compare, compare_values
 from pycompose.compiler.classpath_dump import (
     ANDROID,
@@ -26,11 +26,14 @@ from pycompose.compiler.classpath_dump import (
 )
 from pycompose.compiler.component_binding import spell, stamped
 from pycompose.compiler.components import propose_components
+from pycompose.compiler.constant_families import constant_families
 from pycompose.compiler.entry_candidates import derive, select
 from pycompose.compiler.holders import derive as derive_holders
 from pycompose.compiler.overloads import extras
 from pycompose.compiler.policy import Policy, merge, redundant
+from pycompose.compiler.propose import value_families
 from pycompose.compiler.rules import SHAPES, reshape
+from pycompose.compiler.scoped_modifiers import scoped_declarations, scoped_modifiers
 
 ROOT = Path(__file__).resolve().parents[2]
 LOCK = ROOT / "schema/catalog.lock.json"
@@ -66,6 +69,9 @@ class Report:
         promoted: Components no policy names, exposed because they derive.
         refused: Components no policy names that do not derive, with the reason.
         coverage: Per artifact group, component overloads by outcome.
+        modifiers: Scope-declared modifiers derived from the pin.
+        families: Constant families derived from the pin.
+        refused_modifiers: Scope-declared modifiers that do not derive, with why.
     """
 
     derived: dict[str, int] = field(default_factory=dict)
@@ -76,6 +82,9 @@ class Report:
     promoted: list[str] = field(default_factory=list)
     refused: dict[str, str] = field(default_factory=dict)
     coverage: dict[str, dict[str, int]] = field(default_factory=dict)
+    modifiers: list[str] = field(default_factory=list)
+    families: list[str] = field(default_factory=list)
+    refused_modifiers: dict[str, str] = field(default_factory=dict)
 
 
 def promotable(
@@ -182,13 +191,26 @@ def generate(
         The lock document, and the run's report.
     """
     found = inventory(directory)
+    defaults = source_defaults(directory)
     sections = _stamped_values(policy.sections, found)
-    plans = propose_components(found, source_defaults(directory), sections)
+    derived = derived_families(found, sections)
+    sections["valueTypes"] = {**sections["valueTypes"], **derived}
+    plans = propose_components(found, defaults, sections)
     closure = json.loads((ANDROID / "compose-closure.json").read_text(encoding="utf-8"))
     components, report = compile_components(
         policy.components, plans, found, sections, closure
     )
     lock = {**sections, "components": dict(sorted(components.items()))}
+    modifiers, report.refused_modifiers = scoped_modifiers(
+        found,
+        value_families(sections),
+        family_index(sections),
+        defaults,
+        frozenset(sections["modifiers"]),
+        sections["schemaVersion"],
+    )
+    lock["modifiers"] = {**sections["modifiers"], **modifiers}
+    report.modifiers, report.families = sorted(modifiers), sorted(derived)
     holders, refused = derive_holders(found, source_drives(directory), lock)
     report.errors.extend(refused)
     lock["holders"] = holders
@@ -196,6 +218,34 @@ def generate(
     report.errors.extend(compare(lock, found))
     report.errors.extend(compare_values(lock, found, source_defaults(directory)))
     return {key: lock[key] for key in ORDER if key in lock}, report
+
+
+def derived_families(
+    found: Inventory, sections: dict[str, Any]
+) -> dict[str, dict[str, Any]]:
+    """The constant families planned declarations need and policy lacks.
+
+    Args:
+        found: The pinned inventory.
+        sections: The policy sections, whose value families are approved.
+
+    Returns:
+        Each derived family's entry, by family name.
+    """
+    taken = set(sections["valueTypes"])
+    types = {
+        parameter.type.classifier
+        for declaration in (*found.ui, *scoped_declarations(found))
+        for parameter in declaration.parameters
+    }
+    known = {spec.get("kotlinType") for spec in sections["valueTypes"].values()}
+    return {
+        name: family
+        for name, family in constant_families(
+            found, types, known, sections["schemaVersion"]
+        ).items()
+        if name not in taken
+    }
 
 
 def compile_components(

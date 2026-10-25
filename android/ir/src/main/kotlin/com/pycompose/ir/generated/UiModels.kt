@@ -1794,6 +1794,24 @@ data class NavigationRailItem(
 }
 
 @Serializable
+data class NavigationSuiteProps(
+    override val `modifier`: JsonObject? = null,
+    val `navigationSuiteType`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("NavigationSuite")
+data class NavigationSuite(
+    override val id: String,
+    override val props: NavigationSuiteProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "NavigationSuite"
+}
+
+@Serializable
 data class NavigationSuiteItemProps(
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
@@ -1836,6 +1854,7 @@ data class NavigationSuiteScaffold(
 @Serializable
 data class NavigationSuiteScaffoldLayoutProps(
     override val `modifier`: JsonObject? = null,
+    val `navigationSuiteType`: JsonElement,
 ) : UiProps
 
 @Serializable
@@ -1848,6 +1867,23 @@ data class NavigationSuiteScaffoldLayout(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "NavigationSuiteScaffoldLayout"
+}
+
+@Serializable
+data class NavigationSuiteScaffoldLayoutWithoutNavigationSuiteTypeProps(
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType")
+data class NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType(
+    override val id: String,
+    override val props: NavigationSuiteScaffoldLayoutWithoutNavigationSuiteTypeProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"
 }
 
 @Serializable
@@ -1987,6 +2023,7 @@ data class OutlinedSecureTextFieldProps(
     val `selectionStart`: Long,
     val `shape`: JsonElement? = null,
     val `text`: String,
+    val `textObfuscationMode`: JsonElement? = null,
     val `textStyle`: JsonElement? = null,
 ) : UiProps
 
@@ -2362,6 +2399,7 @@ data class SecureTextFieldProps(
     val `selectionStart`: Long,
     val `shape`: JsonElement? = null,
     val `text`: String,
+    val `textObfuscationMode`: JsonElement? = null,
     val `textStyle`: JsonElement? = null,
 ) : UiProps
 
@@ -2439,6 +2477,7 @@ data class SharedTransitionLayout(
 
 @Serializable
 data class ShortNavigationBarProps(
+    val `arrangement`: JsonElement? = null,
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
@@ -2460,6 +2499,7 @@ data class ShortNavigationBar(
 @Serializable
 data class ShortNavigationBarItemProps(
     val `enabled`: Boolean = true,
+    val `iconPosition`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
     val `onFocus`: String? = null,

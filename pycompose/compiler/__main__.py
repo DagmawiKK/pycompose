@@ -77,6 +77,21 @@ def render(report: Report) -> str:
         "## Overloads not exposed, by reason",
         "",
         *(f"- {name}: {reason}" for name, reason in sorted(report.skipped.items())),
+        "",
+        "## Scope modifiers derived from the pin",
+        "",
+        *(f"- {name}" for name in report.modifiers),
+        "",
+        "## Scope modifiers refused, by reason",
+        "",
+        *(
+            f"- {name}: {reason}"
+            for name, reason in sorted(report.refused_modifiers.items())
+        ),
+        "",
+        "## Constant families derived from the pin",
+        "",
+        *(f"- {name}" for name in report.families),
     ]
     return "\n".join(lines) + "\n"
 

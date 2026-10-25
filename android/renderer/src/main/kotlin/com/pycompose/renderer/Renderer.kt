@@ -258,6 +258,7 @@ class Renderer(
     @Composable internal fun Node(
         node: UiNode,
         context: RenderContext,
+        scope: Any? = null,
     ) {
         val adapter = registry[node.componentType]
         if (adapter == null) {
@@ -274,7 +275,7 @@ class Renderer(
             if (debug) BasicText("Unsupported: ${node.componentType}")
             return
         }
-        val modifier = modifierFor(node) ?: return
+        val modifier = modifierFor(node, scope) ?: return
         adapter(node, modifier, context)
     }
 
@@ -282,7 +283,8 @@ class Renderer(
      * Compose one child of a content lambda carrying [scope], through its scoped adapter.
      *
      * A child whose adapter needs another receiver, or none, composes as it
-     * would anywhere; a scoped one whose receiver is missing is reported there.
+     * would anywhere, still wearing [scope]'s modifiers; a scoped one whose
+     * receiver is missing is reported there.
      */
     @Composable internal fun ScopedNode(
         node: UiNode,
@@ -291,17 +293,20 @@ class Renderer(
     ) {
         val adapter = registry.scoped(node.componentType)
         if (adapter == null || !adapter.scope.isInstance(scope)) {
-            Node(node, context)
+            Node(node, context, scope)
             return
         }
-        val modifier = modifierFor(node) ?: return
+        val modifier = modifierFor(node, scope) ?: return
         adapter.renderIn(scope, node, modifier, context)
     }
 
     /** Build one node's modifier, reporting once when the wire carries a bad one. */
     @Composable
-    private fun modifierFor(node: UiNode): Modifier? {
-        val result = modifiers.build(node.props.modifier)
+    private fun modifierFor(
+        node: UiNode,
+        scope: Any?,
+    ): Modifier? {
+        val result = modifiers.build(node.props.modifier, scope)
         val modifier = result.getOrNull()
         if (modifier == null) {
             remember(node.id, node.props) {

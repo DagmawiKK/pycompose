@@ -1130,6 +1130,16 @@ object IrContract {
                 "selected" to PropertyRule("boolean", required = true),
             ),
         ),
+        "NavigationSuite" to ComponentRule(
+            slots = setOf("primaryActionContent"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "navigationSuiteType" to PropertyRule("value", required = true, valueType = "NavigationSuiteType"),
+            ),
+        ),
         "NavigationSuiteItem" to ComponentRule(
             slots = setOf("badge", "icon", "label"),
             childrenAllowed = false,
@@ -1155,6 +1165,16 @@ object IrContract {
             ),
         ),
         "NavigationSuiteScaffoldLayout" to ComponentRule(
+            slots = setOf("navigationSuite", "primaryActionContent"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "navigationSuiteType" to PropertyRule("value", required = true, valueType = "NavigationSuiteType"),
+            ),
+        ),
+        "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType" to ComponentRule(
             slots = setOf("navigationSuite"),
             childrenAllowed = true,
             minimumChildren = 0,
@@ -1264,6 +1284,7 @@ object IrContract {
                 "selectionStart" to PropertyRule("integer", required = true, minimum = 0.0, maximum = 2147483647.0),
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
                 "text" to PropertyRule("string", required = true),
+                "textObfuscationMode" to PropertyRule("value", required = false, valueType = "TextObfuscationMode"),
                 "textStyle" to PropertyRule("value", required = false, valueType = "TextStyle"),
             ),
         ),
@@ -1503,6 +1524,7 @@ object IrContract {
                 "selectionStart" to PropertyRule("integer", required = true, minimum = 0.0, maximum = 2147483647.0),
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
                 "text" to PropertyRule("string", required = true),
+                "textObfuscationMode" to PropertyRule("value", required = false, valueType = "TextObfuscationMode"),
                 "textStyle" to PropertyRule("value", required = false, valueType = "TextStyle"),
             ),
         ),
@@ -1548,6 +1570,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "arrangement" to PropertyRule("value", required = false, valueType = "ShortNavigationBarArrangement"),
                 "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
                 "contentColor" to PropertyRule("color", required = false, valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -1561,6 +1584,7 @@ object IrContract {
             since = "1.23.0",
             props = mapOf(
                 "enabled" to PropertyRule("boolean", required = false),
+                "iconPosition" to PropertyRule("value", required = false, valueType = "NavigationItemIconPosition"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
                 "onFocus" to PropertyRule("actionId", required = false),
@@ -2068,8 +2092,16 @@ object IrContract {
         ),
     )
     val modifiers: Map<String, Map<String, PropertyRule>> = mapOf(
+        "alignByBaseline" to mapOf(
+        ),
+        "animateEnterExit" to mapOf(
+                "label" to PropertyRule("string", required = false),
+        ),
         "background" to mapOf(
                 "brush" to PropertyRule("value", required = true, since = "1.11.0", valueType = "Brush"),
+        ),
+        "boxAlign" to mapOf(
+                "alignment" to PropertyRule("enum", required = true, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
         ),
         "clickable" to mapOf(
                 "enabled" to PropertyRule("boolean", required = true),
@@ -2078,11 +2110,39 @@ object IrContract {
         "clip" to mapOf(
                 "shape" to PropertyRule("enum", required = true, values = setOf("rectangle", "circle", "rounded"), valueType = "Shape"),
         ),
+        "columnAlign" to mapOf(
+                "alignment" to PropertyRule("enum", required = true, values = setOf("centerHorizontally", "end", "left", "right", "start")),
+        ),
+        "fillMaxColumnWidth" to mapOf(
+                "fraction" to PropertyRule("number", required = false),
+        ),
+        "fillMaxRowHeight" to mapOf(
+                "fraction" to PropertyRule("number", required = false),
+        ),
         "fillMaxWidth" to mapOf(
                 "fraction" to PropertyRule("number", required = true, minimum = 0.0, maximum = 1.0),
         ),
+        "maskBorder" to mapOf(
+                "border" to PropertyRule("value", required = true, valueType = "BorderStroke"),
+                "shape" to PropertyRule("value", required = true, valueType = "Shape"),
+        ),
+        "maskClip" to mapOf(
+                "shape" to PropertyRule("value", required = true, valueType = "Shape"),
+        ),
+        "matchParentSize" to mapOf(
+        ),
+        "menuAnchor" to mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "menuAnchorType" to PropertyRule("value", required = true, valueType = "ExposedDropdownMenuAnchorType"),
+        ),
         "padding" to mapOf(
                 "value" to PropertyRule("dp", required = true, valueType = "PaddingValues", minimum = 0.0),
+        ),
+        "renderInSharedTransitionScopeOverlay" to mapOf(
+                "zIndexInOverlay" to PropertyRule("number", required = false),
+        ),
+        "rowAlign" to mapOf(
+                "alignment" to PropertyRule("enum", required = true, values = setOf("bottom", "centerVertically", "top")),
         ),
         "semantics" to mapOf(
                 "contentDescription" to PropertyRule("string", required = false),
@@ -2096,6 +2156,18 @@ object IrContract {
         "size" to mapOf(
                 "height" to PropertyRule("dp", required = true, valueType = "Dp", minimum = 0.0),
                 "width" to PropertyRule("dp", required = true, valueType = "Dp", minimum = 0.0),
+        ),
+        "skipToLookaheadPosition" to mapOf(
+        ),
+        "skipToLookaheadSize" to mapOf(
+        ),
+        "tabIndicatorOffset" to mapOf(
+                "matchContentSize" to PropertyRule("boolean", required = false),
+                "selectedTabIndex" to PropertyRule("integer", required = true, minimum = -2147483648.0, maximum = 2147483647.0),
+        ),
+        "weight" to mapOf(
+                "fill" to PropertyRule("boolean", required = false),
+                "weight" to PropertyRule("number", required = true),
         ),
         "windowInsetsPadding" to mapOf(
                 "insets" to PropertyRule("value", required = true, since = "1.11.0", valueType = "WindowInsets"),

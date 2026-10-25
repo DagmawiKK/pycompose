@@ -20,6 +20,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.traversalIndex
 import com.pycompose.ir.IrParser
+import com.pycompose.renderer.generated.ScopedModifiers
 import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -81,8 +82,18 @@ class ModifierBuilder(
                 },
         )
 
+    /**
+     * The modifier [program] describes, or why it cannot apply.
+     *
+     * @param program The node's wire modifier, or null for none.
+     * @param scope The receiver the node's parent lambda carries, which the
+     *   operations a scope declares (`weight`, `menuAnchor`) apply on.
+     */
     @Composable
-    fun build(program: JsonObject?): Result<Modifier> {
+    fun build(
+        program: JsonObject?,
+        scope: Any? = null,
+    ): Result<Modifier> {
         if (program == null) return Result.success(Modifier)
         val prepared =
             runCatching {
@@ -100,11 +111,24 @@ class ModifierBuilder(
             }
         return prepared.fold(
             onSuccess = { sequence ->
-                val modifier =
-                    sequence.fold(Modifier as Modifier) { modifier, operation ->
-                        modifier.then(operations.getValue(operation.string("type"))(operation))
+                sequence.fold(Result.success<Modifier>(Modifier)) { built, operation ->
+                    val modifier = built.getOrNull() ?: return@fold built
+                    val type = operation.string("type")
+                    val hand = operations[type]
+                    val applied =
+                        if (hand !=
+                            null
+                        ) {
+                            hand(operation)
+                        } else {
+                            ScopedModifiers.apply(type, scope, operation)
+                        }
+                    if (applied == null) {
+                        Result.failure(IllegalStateException("$type needs a parent declaring it"))
+                    } else {
+                        Result.success(modifier.then(applied))
                     }
-                Result.success(modifier)
+                }
             },
             onFailure = { Result.failure(it) },
         )

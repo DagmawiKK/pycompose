@@ -22,6 +22,7 @@ import com.pycompose.ir.generated.CardColorsValue
 import com.pycompose.ir.generated.CardElevationValue
 import com.pycompose.ir.generated.ColorValue
 import com.pycompose.ir.generated.DpValue
+import com.pycompose.ir.generated.ExposedDropdownMenuAnchorTypeValue
 import com.pycompose.ir.generated.FloatingActionButtonElevationValue
 import com.pycompose.ir.generated.FontFamilyValue
 import com.pycompose.ir.generated.FontWeightValue
@@ -43,6 +44,7 @@ import com.pycompose.ir.generated.WireColor
 import com.pycompose.ir.generated.WireCutCornerShape
 import com.pycompose.ir.generated.WireDp
 import com.pycompose.ir.generated.WireEm
+import com.pycompose.ir.generated.WireExposedDropdownMenuAnchorType
 import com.pycompose.ir.generated.WireFontFamily
 import com.pycompose.ir.generated.WireFontWeight
 import com.pycompose.ir.generated.WireOffset
@@ -283,6 +285,25 @@ object ValueResolver {
                 androidx.compose.ui.unit.Dp(
                     value = value.value.toFloat(),
                 )
+            }
+        }
+
+    @Composable
+    fun exposedDropdownMenuAnchorType(value: JsonElement): Result<androidx.compose.material3.ExposedDropdownMenuAnchorType> {
+        val parsed = runCatching { ValueContract.readExposedDropdownMenuAnchorType(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(exposedDropdownMenuAnchorType(parsed))
+    }
+
+    @Composable
+    fun exposedDropdownMenuAnchorType(value: ExposedDropdownMenuAnchorTypeValue): androidx.compose.material3.ExposedDropdownMenuAnchorType =
+        when (value) {
+            is WireExposedDropdownMenuAnchorType -> {
+                when (value.name) {
+                    "PrimaryEditable" -> androidx.compose.material3.ExposedDropdownMenuAnchorType.PrimaryEditable
+                    "PrimaryNotEditable" -> androidx.compose.material3.ExposedDropdownMenuAnchorType.PrimaryNotEditable
+                    "SecondaryEditable" -> androidx.compose.material3.ExposedDropdownMenuAnchorType.SecondaryEditable
+                    else -> error("Unknown native constant")
+                }
             }
         }
 

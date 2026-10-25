@@ -32,6 +32,11 @@ from pycompose.core.registry_elements import (
     ProviderDef,
     SlotRule,
 )
+from pycompose.core.registry_modifiers import (
+    derived_modifiers,
+    modifiers_mapping,
+    parse_modifiers,
+)
 from pycompose.core.registry_props import InteractionRule, PropDef
 from pycompose.core.registry_state import StateRule
 from pycompose.core.registry_transient import TransientRule
@@ -223,6 +228,9 @@ class Registry(AbstractComponentRegistry):
         lifecycle: Host-initiated events by name. Kept apart from actions so a
             component can never bind one to a tap.
         modifiers: Ordered modifier operation definitions by wire name.
+        derived_modifiers: Per modifier derived from the pin, the version it
+            entered at and the scopes declaring it (``weight`` on rows and
+            columns). Codegen-only.
         supported_schema_versions: Explicit compatible wire versions, when declared.
         value_types: The declared encodings for structured values, by name.
             Material3 carries thousands of parameters typed ``Color``, ``Dp`` or
@@ -239,6 +247,9 @@ class Registry(AbstractComponentRegistry):
     effects: Mapping[str, ActionDef]
     lifecycle: Mapping[str, ActionDef]
     modifiers: Mapping[str, Mapping[str, PropDef]] = dataclass_field(
+        default_factory=dict
+    )
+    derived_modifiers: Mapping[str, Mapping[str, object]] = dataclass_field(
         default_factory=dict
     )
     supported_schema_versions: tuple[str, ...] = ()
@@ -355,7 +366,8 @@ class Registry(AbstractComponentRegistry):
             actions=actions,
             effects=effects,
             lifecycle=lifecycle,
-            modifiers=_parse_modifiers(data.get("modifiers", {})),
+            modifiers=parse_modifiers(data.get("modifiers", {})),
+            derived_modifiers=derived_modifiers(data.get("modifiers", {})),
             supported_schema_versions=tuple(supported),
             value_types=_named_objects(data, "valueTypes"),
             holders=_named_objects(data, "holders"),
@@ -387,10 +399,9 @@ class Registry(AbstractComponentRegistry):
             },
         }
         if self.modifiers:
-            result["modifiers"] = {
-                name: {"props": {key: prop.to_mapping() for key, prop in props.items()}}
-                for name, props in self.modifiers.items()
-            }
+            result["modifiers"] = modifiers_mapping(
+                self.modifiers, self.derived_modifiers
+            )
         if self.supported_schema_versions:
             result["supportedSchemaVersions"] = list(self.supported_schema_versions)
         for section, entries in (
@@ -474,24 +485,3 @@ def _contracts(data: Mapping[str, object], field: str) -> dict[str, ActionDef]:
             raise ComponentRegistryError(f"{field} {name!r} must be an object")
         result[name] = ActionDef.from_mapping(name, body)
     return result
-
-
-def _parse_modifiers(raw: object) -> Mapping[str, Mapping[str, PropDef]]:
-    if not isinstance(raw, Mapping):
-        raise ComponentRegistryError("registry 'modifiers' must be an object")
-    modifiers: dict[str, Mapping[str, PropDef]] = {}
-    for name, body in raw.items():
-        if not isinstance(name, str) or not isinstance(body, Mapping):
-            raise ComponentRegistryError("invalid modifier definition")
-        raw_props = body.get("props")
-        if not isinstance(raw_props, Mapping):
-            raise ComponentRegistryError(
-                "modifier 'props' must be an object", modifier=name
-            )
-        parsed: dict[str, PropDef] = {}
-        for prop_name, prop in raw_props.items():
-            if not isinstance(prop_name, str) or not isinstance(prop, Mapping):
-                raise ComponentRegistryError("invalid modifier prop", modifier=name)
-            parsed[prop_name] = PropDef.from_mapping(prop, where=f"{name}.{prop_name}")
-        modifiers[name] = parsed
-    return modifiers

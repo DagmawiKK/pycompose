@@ -97,9 +97,11 @@ __all__ = [
     "NavigationDrawerItem",
     "NavigationRail",
     "NavigationRailItem",
+    "NavigationSuite",
     "NavigationSuiteItem",
     "NavigationSuiteScaffold",
     "NavigationSuiteScaffoldLayout",
+    "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType",
     "OutlinedButton",
     "OutlinedCard",
     "OutlinedCardWithoutOnClick",
@@ -4845,6 +4847,53 @@ class NavigationRailItem(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class NavigationSuite(Component):
+    """Native NavigationSuite; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationSuite"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        navigation_suite_type: JsonValue,
+        children: Content = (),
+        primary_action_content: Content | None = None,
+    ) -> None:
+        """Construct a registered NavigationSuite.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            navigation_suite_type: Required native navigationSuiteType.
+            children: Ordered child nodes with stable keys.
+            primary_action_content: Nodes for the native primaryActionContent slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["navigation_suite_type"] = navigation_suite_type
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if primary_action_content is not None:
+            slotted += slot_nodes(
+                primary_action_content,
+                key="primaryActionContent",
+                slot="primaryActionContent",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
 class NavigationSuiteItem(Component):
     """Native NavigationSuiteItem; props and defaults follow the component manifest."""
 
@@ -4955,20 +5004,35 @@ class NavigationSuiteScaffold(Component):
         )
 
 
-class NavigationSuiteScaffoldLayout(Component):
+class _NavigationSuiteScaffoldLayout(Component):
     """Native NavigationSuiteScaffoldLayout;
     props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "NavigationSuiteScaffoldLayout"
+    required_keywords = frozenset(
+        {
+            "navigation_suite_type",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "content",
+            "navigation_suite",
+            "navigation_suite_type",
+            "primary_action_content",
+        }
+    )
 
     def __init__(
         self,
         *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
+        navigation_suite_type: JsonValue,
         children: Content = (),
         navigation_suite: Content | None = None,
+        primary_action_content: Content | None = None,
     ) -> None:
         """Construct a registered NavigationSuiteScaffoldLayout.
 
@@ -4976,13 +5040,16 @@ class NavigationSuiteScaffoldLayout(Component):
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
+            navigation_suite_type: Required native navigationSuiteType.
             children: Ordered child nodes with stable keys.
             navigation_suite: Nodes for the native navigationSuite slot.
+            primary_action_content: Nodes for the native primaryActionContent slot.
 
         Raises:
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        props["navigation_suite_type"] = navigation_suite_type
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -4995,9 +5062,53 @@ class NavigationSuiteScaffoldLayout(Component):
                 key="navigationSuite",
                 slot="navigationSuite",
             )
+        if primary_action_content is not None:
+            slotted += slot_nodes(
+                primary_action_content,
+                key="primaryActionContent",
+                slot="primaryActionContent",
+            )
         super().__init__(
             id=id, children=normalized + slotted, modifier=modifier, **props
         )
+
+
+class NavigationSuiteScaffoldLayout(_NavigationSuiteScaffoldLayout):
+    """Native NavigationSuiteScaffoldLayout; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        navigation_suite_type: JsonValue,
+        children: Content = (),
+        navigation_suite: Content | None = None,
+        primary_action_content: Content | None = None,
+    ) -> NavigationSuiteScaffoldLayout: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        navigation_suite: Content | None = None,
+    ) -> NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class OutlinedButton(Component):
@@ -5363,6 +5474,7 @@ class OutlinedSecureTextField(Component):
         selection_start: int,
         shape: JsonValue | None = None,
         text: str,
+        text_obfuscation_mode: JsonValue | None = None,
         text_style: JsonValue | None = None,
         label: Content | None = None,
         leading_icon: Content | None = None,
@@ -5390,6 +5502,8 @@ class OutlinedSecureTextField(Component):
             selection_start: Required native selectionStart.
             shape: Native shape; None uses its default.
             text: Required native text.
+            text_obfuscation_mode: Native textObfuscationMode; None uses its
+                default.
             text_style: Native textStyle; None uses its default.
             label: Nodes for the native label slot.
             leading_icon: Nodes for the native leadingIcon slot.
@@ -5421,6 +5535,8 @@ class OutlinedSecureTextField(Component):
         if shape is not None:
             props["shape"] = shape
         props["text"] = text
+        if text_obfuscation_mode is not None:
+            props["text_obfuscation_mode"] = text_obfuscation_mode
         if text_style is not None:
             props["text_style"] = text_style
         slotted: tuple[Node, ...] = ()
@@ -6394,6 +6510,7 @@ class SecureTextField(Component):
         selection_start: int,
         shape: JsonValue | None = None,
         text: str,
+        text_obfuscation_mode: JsonValue | None = None,
         text_style: JsonValue | None = None,
         label: Content | None = None,
         leading_icon: Content | None = None,
@@ -6420,6 +6537,8 @@ class SecureTextField(Component):
             selection_start: Required native selectionStart.
             shape: Native shape; None uses its default.
             text: Required native text.
+            text_obfuscation_mode: Native textObfuscationMode; None uses its
+                default.
             text_style: Native textStyle; None uses its default.
             label: Nodes for the native label slot.
             leading_icon: Nodes for the native leadingIcon slot.
@@ -6449,6 +6568,8 @@ class SecureTextField(Component):
         if shape is not None:
             props["shape"] = shape
         props["text"] = text
+        if text_obfuscation_mode is not None:
+            props["text_obfuscation_mode"] = text_obfuscation_mode
         if text_style is not None:
             props["text_style"] = text_style
         slotted: tuple[Node, ...] = ()
@@ -6622,6 +6743,7 @@ class ShortNavigationBar(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        arrangement: JsonValue | None = None,
         container_color: JsonValue | Expression | None = None,
         content_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
@@ -6633,6 +6755,7 @@ class ShortNavigationBar(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            arrangement: Native arrangement; None uses its default.
             container_color: Native containerColor; None uses its default.
             content_color: Native contentColor; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -6643,6 +6766,8 @@ class ShortNavigationBar(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if arrangement is not None:
+            props["arrangement"] = arrangement
         if container_color is not None:
             props["container_color"] = container_color
         if content_color is not None:
@@ -6669,6 +6794,7 @@ class ShortNavigationBarItem(Component):
         *,
         id: str | None = None,
         enabled: bool | None = None,
+        icon_position: JsonValue | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
         on_focus: ActionTarget | None = None,
@@ -6683,6 +6809,7 @@ class ShortNavigationBarItem(Component):
         Args:
             id: Stable instance key; None derives the node's path id.
             enabled: Native enabled; None uses its default.
+            icon_position: Native iconPosition; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
             on_focus: Native onFocus; None uses its default.
@@ -6695,6 +6822,8 @@ class ShortNavigationBarItem(Component):
         props: dict[str, PropValue] = {}
         if enabled is not None:
             props["enabled"] = enabled
+        if icon_position is not None:
+            props["icon_position"] = icon_position
         props["on_click"] = on_click
         if on_focus is not None:
             props["on_focus"] = on_focus
@@ -8712,6 +8841,60 @@ class LinearProgressIndicatorWithoutProgress(LinearProgressIndicator):
         Component.__init__(self, id=id, children=(), modifier=modifier, **props)
 
 
+class NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType(
+    NavigationSuiteScaffoldLayout
+):
+    """Native NavigationSuiteScaffoldLayout;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "content",
+            "navigation_suite",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        navigation_suite: Content | None = None,
+    ) -> None:
+        """Construct NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+            navigation_suite: Nodes for the native navigationSuite slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if navigation_suite is not None:
+            slotted += slot_nodes(
+                navigation_suite,
+                key="navigationSuite",
+                slot="navigationSuite",
+            )
+        Component.__init__(
+            self, id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
 class OutlinedCardWithoutOnClick(OutlinedCard):
     """Native OutlinedCard; props and defaults follow the component manifest."""
 
@@ -9146,6 +9329,9 @@ CircularProgressIndicator.overloads = (CircularProgressIndicatorProgress,)
 ElevatedCard.overloads = (ElevatedCardWithoutOnClick,)
 Image.overloads = (ImageImageVector,)
 LinearProgressIndicator.overloads = (LinearProgressIndicatorWithoutProgress,)
+NavigationSuiteScaffoldLayout.overloads = (
+    NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType,
+)
 OutlinedCard.overloads = (OutlinedCardWithoutOnClick,)
 Slider.overloads = (SliderValue,)
 Surface.overloads = (SurfaceChecked, SurfaceOnClick, SurfaceSelected)

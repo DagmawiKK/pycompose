@@ -357,9 +357,21 @@ tasks.register("dumpComposeDefaults") {
                 val constructed = record["name"] == "<init>" && requested.contains(owner)
                 val receiver = (record["dispatchReceiver"] as? Map<*, *>)?.get("classifier")
                 val drive = record["suspend"] == true && receiver in holders
+                // A modifier a scope declares (RowScope.weight): one a child in it can wear.
+                val extended = (record["receiver"] as? Map<*, *>)?.get("classifier")
+                val scoped = extended == "androidx/compose/ui/Modifier" && receiver != null
+                // A holder's remember... factory: the defaults a seeded holder falls back on.
+                val factory = record["category"] == "composable-factory"
                 record["disposition"] == "ui" ||
                     supported &&
-                    (named || constructed || drive || identities.contains(identity))
+                    (
+                        named ||
+                            constructed ||
+                            drive ||
+                            scoped ||
+                            factory ||
+                            identities.contains(identity)
+                    )
             }
         check(targets.isNotEmpty()) { "No matching public declarations" }
 

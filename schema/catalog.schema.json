@@ -21,7 +21,7 @@
     },
     "modifiers": {
       "type": "object",
-      "additionalProperties": { "$ref": "#/$defs/propsHolder" }
+      "additionalProperties": { "$ref": "#/$defs/modifier" }
     },
     "actions": {
       "type": "object",
@@ -139,14 +139,36 @@
         "returns": { "type": "string" }
       }
     },
-    "propsHolder": {
+    "modifier": {
       "type": "object",
+      "description": "A modifier operation; one a composition scope declares (RowScope.weight) names each scope it applies in.",
       "required": ["props"],
       "additionalProperties": false,
       "properties": {
+        "since": { "$ref": "#/$defs/semver" },
         "props": {
           "type": "object",
           "additionalProperties": { "$ref": "#/$defs/prop" }
+        },
+        "scoped": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["scope", "native", "source"],
+            "additionalProperties": false,
+            "properties": {
+              "scope": { "$ref": "#/$defs/dottedName" },
+              "native": { "$ref": "#/$defs/identifier" },
+              "source": { "type": "object" },
+              "optIn": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/dottedName" } },
+              "parameters": {
+                "type": "object",
+                "description": "A wire prop whose native parameter is named otherwise, by wire name.",
+                "additionalProperties": { "$ref": "#/$defs/identifier" }
+              }
+            }
+          }
         }
       }
     },
@@ -252,7 +274,17 @@
             "properties": {
               "type": { "type": "string" },
               "nativeType": { "type": "string" },
-              "nullable": { "const": true }
+              "nullable": { "const": true },
+              "seed": {
+                "type": "object",
+                "description": "The factory parameter the holder is created at, and its literal default.",
+                "required": ["parameter", "default"],
+                "additionalProperties": false,
+                "properties": {
+                  "parameter": { "$ref": "#/$defs/identifier" },
+                  "default": {}
+                }
+              }
             }
           }
         }

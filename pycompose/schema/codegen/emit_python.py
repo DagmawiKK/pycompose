@@ -13,6 +13,11 @@ from pycompose.schema.codegen.literals import (
     python_adjacent_statements,
 )
 from pycompose.schema.codegen.overloads import groups, keywords, python_name
+from pycompose.schema.codegen.python_layout import (
+    class_docstring,
+    class_header,
+    overloads_line,
+)
 
 
 def render_python_components(
@@ -113,8 +118,7 @@ def render_python_components(
         else:
             lines.extend(_python_constructor(name, spec, base=primary or "Component"))
     for name, overloads in sorted(overloaded.items()):
-        listed = ", ".join(overloads) + ("," if len(overloads) == 1 else "")
-        lines.append(f"{name}.overloads = ({listed})")
+        lines.append(overloads_line(name, overloads))
     return "\n".join(lines).rstrip() + "\n"
 
 
@@ -154,24 +158,6 @@ def _native_name(name: str, spec: dict[str, Any]) -> str:
     return name
 
 
-def _python_class_docstring(native: str) -> list[str]:
-    """Render the generated class docstring, wrapped when the summary is long.
-
-    Args:
-        native: The native callable the schema entry binds.
-
-    Returns:
-        The docstring's source lines.
-    """
-    summary = f"Native {native}; props and defaults follow the component manifest."
-    if len(f'    """{summary}"""') <= 88:
-        return [f'    """{summary}"""']
-    return [
-        f'    """Native {native};',
-        '    props and defaults follow the component manifest."""',
-    ]
-
-
 def _python_constructor(
     name: str,
     spec: dict[str, Any],
@@ -181,9 +167,10 @@ def _python_constructor(
 ) -> list[str]:
     props = spec["props"]
     alias = spec["children"].get("kind")
+    header, summary = class_header(class_name or name, base, name)
     lines = [
-        f"class {class_name or name}({base}):",
-        *_python_class_docstring(_native_name(name, spec)),
+        header,
+        *class_docstring(_native_name(name, spec)),
         "",
         "    __slots__ = ()",
         f'    component_type = "{name}"',
@@ -204,7 +191,7 @@ def _python_constructor(
     lines.extend(
         [
             "    ) -> None:",
-            f'        """Construct a registered {name}.',
+            f'        """{summary}',
             "",
             "        Args:",
             *(

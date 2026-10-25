@@ -369,6 +369,13 @@ def propose_vocabulary(
         )
     if name in ICONS:
         return propose_icons(found, ICONS[name], approved, since=since)
+    source = approved.get("source") or {}
+    if approved.get("kind") == "constant" and "members" in source:
+        # A family read off its own holder's members, derived from the pin
+        # (``constant_families``) rather than named in the tables above.
+        return propose_members(
+            found, source["owner"], approved, since=since, opt_ins=index
+        )
     return None
 
 
