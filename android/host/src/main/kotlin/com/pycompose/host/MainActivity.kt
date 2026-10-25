@@ -194,5 +194,6 @@ class MainActivity : ComponentActivity() {
             createSavedStateHandle(),
             (application as PyComposeApplication).pythonWorker,
             initialConfig = configurationPayload(),
+            timePasses = BuildConfig.DEBUG,
         )
 }

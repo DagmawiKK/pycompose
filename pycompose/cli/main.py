@@ -6,6 +6,7 @@ import argparse
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 from pycompose.cli import console, project_commands
 from pycompose.cli.build import build_project
@@ -37,6 +38,7 @@ _MENU = (
     ("explain", "Say which config keys produced a generated Android file"),
     ("setup", "Install the pinned JDK and Android SDK"),
     ("dev-client", "Build the prebuilt dev client once for this PyCompose"),
+    ("bench", "Type into the running app and report each pass stage's time"),
     ("migrate", "Move an app-owned Android project to a generated one"),
     ("sync", "Sync named resources into the Android host"),
     ("doctor", "Report Android toolchain and schema compatibility"),
@@ -64,18 +66,7 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Expose Android sources at the project root",
     )
-    run = commands.add_parser(
-        "run", help="Build, install, launch, and watch a debug app"
-    )
-    run.add_argument("--device", help="ADB serial number")
-    run.add_argument(
-        "--port", type=int, default=0, help="Loopback server port (default: automatic)"
-    )
-    run.add_argument(
-        "--dev-client",
-        action="store_true",
-        help="Run on the prebuilt dev client: no Gradle build of the app",
-    )
+    _device_parsers(commands)
     build = commands.add_parser(
         "build", help="Package an Android app through its Gradle wrapper"
     )
@@ -164,6 +155,30 @@ def _parser() -> argparse.ArgumentParser:
         "action", choices=("plan", "evidence"), nargs="?", default="plan"
     )
     return parser
+
+
+def _device_parsers(commands: argparse._SubParsersAction[Any]) -> None:
+    """Add the commands that drive an app running on a device."""
+    run = commands.add_parser(
+        "run", help="Build, install, launch, and watch a debug app"
+    )
+    run.add_argument("--device", help="ADB serial number")
+    run.add_argument(
+        "--port", type=int, default=0, help="Loopback server port (default: automatic)"
+    )
+    run.add_argument(
+        "--dev-client",
+        action="store_true",
+        help="Run on the prebuilt dev client: no Gradle build of the app",
+    )
+    bench = commands.add_parser(
+        "bench", help="Type into the running app and report each pass stage's time"
+    )
+    bench.add_argument("--device", help="ADB serial number")
+    bench.add_argument("--keys", type=int, default=30, help="keystrokes to send")
+    bench.add_argument(
+        "--interval", type=float, default=0.15, help="seconds between keystrokes"
+    )
 
 
 def _validate(args: argparse.Namespace) -> int:
@@ -396,6 +411,7 @@ def main(argv: list[str] | None = None) -> int:
         "explain": project_commands.explain_command,
         "setup": project_commands.setup_command,
         "dev-client": project_commands.dev_client_command,
+        "bench": project_commands.bench_command,
         "migrate": project_commands.migrate_command,
         "sync": _sync,
         "validate": _validate,

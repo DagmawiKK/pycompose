@@ -457,3 +457,22 @@ def test_a_pass_over_budget_is_reported_in_debug(
     bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
 
     assert "over the 0 ms budget" in caplog.text
+
+
+def test_the_last_pass_reports_its_time_by_phase() -> None:
+    store = Store(State(root=Node(id="title", type="Text", props=Props({"text": "0"}))))
+    actions = Actions()
+
+    def increment(state: State, payload: dict[str, int]) -> State:
+        text = str(payload["by"])
+        return replace(
+            state, root=Node(id="title", type="Text", props=Props({"text": text}))
+        )
+
+    actions.register("increment", increment)
+    bridge = BridgeSurface(store, actions)
+    bridge.accept_action('{"actionId":"increment","payload":{"by":1}}')
+    phases = json.loads(bridge.expose_last_pass())
+    # What the host's pass log splits its Python stage into.
+    assert set(phases) == {"handler", "view", "validate", "serialize"}
+    assert all(spent >= 0 for spent in phases.values())

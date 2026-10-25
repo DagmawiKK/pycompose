@@ -35,6 +35,9 @@ interface BridgeSurface {
 
     fun fetchLatestError(): String
 
+    /** The last action pass's time by phase, as JSON milliseconds; empty when untimed. */
+    fun fetchLastPass(): String = "{}"
+
     /** True only when a new valid Python session replaced the previous one. */
     fun reload(
         route: String,

@@ -1,5 +1,6 @@
 package com.pycompose.host
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.withFrameNanos
@@ -41,6 +42,7 @@ internal object ActionTrace {
         LaunchedEffect(session) {
             try {
                 withFrameNanos { }
+                session.timing?.let { Log.i(PassTiming.TAG, it.line(System.nanoTime())) }
             } finally {
                 session.traces.forEach(::end)
             }

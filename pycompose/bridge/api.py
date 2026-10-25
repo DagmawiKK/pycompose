@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import itertools
+import json
 import logging
 import time
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
 from threading import current_thread
 
 from pycompose import async_task  # noqa: F401 -- installs the async action runner
@@ -91,6 +93,7 @@ class BridgeSurface:
         # Each snapshot a host may still hold, with the bindings it carried.
         self._published: list[tuple[int, IRRoot, dict[str, BindingSpec]]] = []
         self._latest_error = ""
+        self._pass: dict[str, float] = {}
         self._bindings: dict[str, BindingSpec] = {}
         # The latest report sequence number answered, per action (plan 31 §17).
         self._echoes: dict[str, int] = {}
@@ -137,11 +140,12 @@ class BridgeSurface:
     ) -> tuple[IRRoot, str, dict[str, BindingSpec]] | None:
         echoes = self._echoes if at_least(self._schema_version, ECHOES_SCHEMA) else None
         with hosted(self._host):
-            with windows(self._windows):
+            with windows(self._windows), self._timed("view"):
                 emitted = emit_ir(
                     state, self._schema_version, self._reuse, echoes=echoes
                 )
-            result = validate_ir(emitted, debug=self._debug, reuse=self._reuse)
+            with self._timed("validate"):
+                result = validate_ir(emitted, debug=self._debug, reuse=self._reuse)
         if self._debug:
             for reason in self._reuse.expansion.reasons:
                 LOGGER.debug("Rebuilt %s", reason)
@@ -154,7 +158,19 @@ class BridgeSurface:
             return None
         bindings = dict(result.bindings)
         self._actions.validate_bindings(bindings)
-        return result.snapshot, to_json(result.snapshot, self._reuse), bindings
+        with self._timed("serialize"):
+            text = to_json(result.snapshot, self._reuse)
+        return result.snapshot, text, bindings
+
+    @contextmanager
+    def _timed(self, phase: str) -> Iterator[None]:
+        """Add the time spent inside to this pass's ``phase``, in milliseconds."""
+        started = time.perf_counter()
+        try:
+            yield
+        finally:
+            spent = (time.perf_counter() - started) * 1000
+            self._pass[phase] = self._pass.get(phase, 0.0) + spent
 
     def _publish(
         self, root: IRRoot, text: str, bindings: dict[str, BindingSpec]
@@ -195,6 +211,7 @@ class BridgeSurface:
             return
         self._processing = True
         self._latest_error = ""
+        self._pass = {}
         started = time.perf_counter()
         current = self._store.value
         echoed = False
@@ -223,7 +240,7 @@ class BridgeSurface:
                 # nobody opted into is idle, not a fault worth a diagnostic.
                 LOGGER.debug("lifecycle event has no handler: %s", action.action_id)
                 return
-            with self._deliveries.active():
+            with self._deliveries.active(), self._timed("handler"):
                 next_state = (
                     self._actions.dispatch_binding(
                         action.binding, current, action.payload
@@ -388,6 +405,15 @@ class BridgeSurface:
                 return envelope.decode("utf-8")
         full = full_bytes(latest, serial=serial, surface=surface, reuse=self._reuse)
         return full.decode("utf-8")
+
+    def expose_last_pass(self) -> str:
+        """Return the last action pass's time by phase, for the host's pass log.
+
+        Returns:
+            JSON milliseconds by phase: handler, view, validate, serialize.
+        """
+        self._require_worker()
+        return json.dumps({k: round(v, 2) for k, v in self._pass.items()})
 
     def expose_latest_error(self) -> str:
         """Return the latest worker diagnostic as plain data.
