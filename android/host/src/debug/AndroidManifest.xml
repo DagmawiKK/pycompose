@@ -1,0 +1,9 @@
+<!--
+    Debug builds pull the app from the dev server (`pycompose run`) over
+    `adb reverse`: plain HTTP to the device's own loopback. A release build
+    carries neither the permission nor the exception.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:networkSecurityConfig="@xml/dev_server_network" />
+</manifest>

@@ -254,7 +254,7 @@ def _artifacts(project: Project, kind: str, variant: str) -> tuple[Path, ...]:
     return tuple(result)
 
 
-def _codegen(project: Project) -> None:
+def codegen(project: Project, *, kotlin: bool = True) -> None:
     """Regenerate the app's component slice before Gradle runs (ADR-0014).
 
     Bound to the build because a slice that is regenerated on demand is never
@@ -269,6 +269,7 @@ def _codegen(project: Project) -> None:
 
     Args:
         project: The project being built.
+        kotlin: Also write the Kotlin half, which only a Gradle build compiles.
 
     Raises:
         ProjectError: If the slice cannot be generated.
@@ -287,7 +288,15 @@ def _codegen(project: Project) -> None:
     if not uses_generated_slice(directory):
         return
     app_lock = project.root / APP_LOCK
-    if build_app(directory, android_root=project.android_root, app_lock=app_lock) != 0:
+    if (
+        build_app(
+            directory,
+            android_root=project.android_root,
+            app_lock=app_lock,
+            kotlin=kotlin,
+        )
+        != 0
+    ):
         raise ProjectError("component slice generation failed", path=directory)
 
 
@@ -387,7 +396,7 @@ def prepare(project: Project) -> tuple[Path, dict[str, str]]:
     stage_extensions(project, env)
     if not generated(project):
         sync_resources(project)
-    _codegen(project)
+    codegen(project)
     return wrapper, env
 
 

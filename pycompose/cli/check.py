@@ -233,7 +233,13 @@ def app_problems(project: Project) -> list[Problem]:
         The failure, if composing or validating failed.
     """
     from pycompose.bridge.runtime import RuntimeSession
+    from pycompose.cli.build import codegen
 
+    # The app's generated package is what the build would generate from it.
+    try:
+        codegen(project, kotlin=False)
+    except ProjectError as exc:
+        return [Problem("app", str(exc), "fix the component the message names")]
     python = project.table("python")
     source = project_path(project.root, str(python.get("source_dir", "app")))
     entrypoint = str(python.get("entrypoint", "main:app"))

@@ -38,11 +38,21 @@ class AppReloader:
         self._path = str(self.directory)
         if not self.directory.is_dir():
             raise ProjectError("Python source directory is missing", path=directory)
-        if self._module.split(".")[0] in sys.modules:
-            raise ProjectError(
-                "entrypoint conflicts with an already imported module",
-                module=self._module,
-            )
+        # A module of a name the app defines, imported from elsewhere (another
+        # app's generated ``m3``), would be found before the app's own: set it
+        # aside for the session, as ``fresh_imports`` does, and restore it after.
+        names = {
+            path.stem
+            for path in self.directory.iterdir()
+            if path.suffix == ".py" or path.is_dir()
+        }
+        self._hidden = {
+            name: module
+            for name, module in sys.modules.items()
+            if name.split(".")[0] in names
+        }
+        for name in self._hidden:
+            del sys.modules[name]
         sys.path.insert(0, self._path)
 
     def _modules(self) -> list[ModuleType]:
@@ -165,3 +175,4 @@ class AppReloader:
             sys.modules.pop(module.__name__, None)
         if self._path in sys.path:
             sys.path.remove(self._path)
+        sys.modules.update(self._hidden)

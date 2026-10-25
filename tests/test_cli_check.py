@@ -123,3 +123,22 @@ def test_every_schema_key_is_exercised_by_a_golden_config() -> None:
     assert config_problems(golden) == []
     used = {f"{table}.{key}" for table, values in golden.items() for key in values}
     assert _keys(schema) == used
+
+
+def test_a_component_the_build_would_generate_checks_clean(tmp_path: Path) -> None:
+    from test_cli_init import cli
+
+    assert cli(tmp_path, "init", "demo").returncode == 0
+    main = tmp_path / "demo" / "app" / "main.py"
+    main.write_text(
+        main.read_text()
+        .replace(
+            "from m3 import Text", "from m3 import Column, HorizontalDivider, Text"
+        )
+        .replace(
+            'return Text(id="greeting", text="Hello PyCompose")',
+            'return Column(children=[Text(text="Hello"), HorizontalDivider()])',
+        )
+        .replace("-> Text:", "-> Column:")
+    )
+    assert check(tmp_path / "demo", today=date(2026, 10, 24)) == []

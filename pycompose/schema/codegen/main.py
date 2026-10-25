@@ -68,6 +68,7 @@ def build_app(
     android_root: Path | None = None,
     check: bool = False,
     app_lock: Path | None = None,
+    kotlin: bool = True,
 ) -> int:
     """Generate an app's component slice, or verify it (ADR-0014).
 
@@ -89,6 +90,8 @@ def build_app(
         check: Report drift instead of writing.
         app_lock: The app's lock slice (``compose.lock.json``), whose components
             join the library's; None or a missing file adds none.
+        kotlin: Also write the Kotlin half. The dev server writes only the
+            Python package: the dev client carries the whole catalog.
 
     Returns:
         Process exit code: 0 clean, 1 on drift or an unresolvable app.
@@ -122,7 +125,7 @@ def build_app(
     )
 
     native = python_root if android_root is None else android_root
-    for root in (python_root, native):
+    for root in (python_root, native) if kotlin else (python_root,):
         if not root.is_dir():
             print(f"gen.py: not a directory: {root}", file=sys.stderr)
             return 1
@@ -158,6 +161,8 @@ def build_app(
         ),
         python_root / package / "__init__.py": render_python_exports(sliced, package),
         python_root / package / "values.py": render_python(sliced),
+    }
+    kotlin_artifacts = {
         native / _IR_RELATIVE / "UiModels.kt": render_kotlin_models(sliced),
         native / _IR_RELATIVE / "IrContract.kt": render_kotlin_registry(sliced),
         native / _IR_RELATIVE / "ValueModels.kt": render_models(sliced),
@@ -168,6 +173,8 @@ def build_app(
         ),
         native / _ADAPTERS_RELATIVE: render_generated_adapters(sliced),
     }
+    if kotlin:
+        artifacts.update(kotlin_artifacts)
 
     if check:
         drifted = [

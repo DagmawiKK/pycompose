@@ -16,6 +16,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from types import TracebackType
 from typing import Self
 
+from pycompose.cli.build import codegen
 from pycompose.cli.project import (
     Project,
     ProjectError,
@@ -81,6 +82,10 @@ class DevServer:
             current = self._files(app)
             if current == self._seen:
                 return
+            # The app's generated package follows its source, so a component
+            # used for the first time imports without a Gradle build.
+            codegen(self._project, kotlin=False)
+            current = self._files(app)
             previous = self._seen or {}
             self._seen = current
             resource_files(self._project)

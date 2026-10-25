@@ -243,3 +243,63 @@ def test_the_preview_resolves_the_modules_actions_for_a_context_reaching_screen(
         reloader.close()
 
     assert snapshot["root"]["props"]["text"] == "tapped:0"
+
+
+COUNTER = """
+from m3 import Button, Column, Text
+from pycompose import Registry
+from pycompose.state import App, AppState
+
+
+class Session(AppState):
+    count: int = 0
+
+
+actions = Registry()
+
+
+@actions
+def increment(session: Session) -> Session:
+    return session.evolve(count=session.count + 1)
+
+
+def view(session: Session) -> Column:
+    return Column(
+        children=[Text(text="Counted"), Button(text="Tap", on_click=increment)]
+    )
+
+
+app = App(state=Session, view=view)
+"""
+
+
+def test_a_component_used_for_the_first_time_reloads_without_a_build(
+    tmp_path: Path,
+) -> None:
+    # Found on an emulator: the dev client runs the whole catalog, but the app's
+    # generated package only had the scaffold's Text, so Button failed to import.
+    assert cli(tmp_path, "init", "demo").returncode == 0
+    project = tmp_path / "demo"
+    with DevServer(load_project(project)) as server:
+        initial = session(server)
+        (project / "app" / "main.py").write_text(COUNTER)
+        reloaded = wait_for(server, lambda data: data["revision"] > initial["revision"])
+        assert reloaded["diagnostics"]["lastError"] is None
+        assert '"Button"' in reloaded["snapshot"]
+
+
+def test_another_apps_module_of_the_same_name_never_stands_in(tmp_path: Path) -> None:
+    import sys
+    import types
+
+    assert cli(tmp_path, "init", "demo").returncode == 0
+    project = tmp_path / "demo"
+    (project / "app" / "main.py").write_text(COUNTER)
+    stale = types.ModuleType("m3")  # an earlier app's package, with no Button
+    sys.modules["m3"] = stale
+    try:
+        with DevServer(load_project(project)) as server:
+            assert session(server)["diagnostics"]["lastError"] is None
+        assert sys.modules["m3"] is stale
+    finally:
+        sys.modules.pop("m3", None)
