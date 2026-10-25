@@ -112,6 +112,43 @@ class RoundNineComponentsTest {
     }
 
     @Test
+    fun theKeyOnScreenTakesItsNewSubtreeAndItsNewBindings() {
+        // Found on an emulator: a page kept its first subtree and first bindings,
+        // so Python's updates never showed and a later binding was unknown.
+        val first =
+            parse(
+                """
+                {"version":"0.1.0","schemaVersion":"1.23.0","root":{
+                  "id":"page","type":"AnimatedContent","props":{"targetState":"time"},"children":[
+                    {"id":"page.text","type":"Text","props":{"text":"First"}}]}}
+                """.trimIndent(),
+            )
+        val second =
+            parse(
+                """
+                {"version":"0.1.0","schemaVersion":"1.23.0",
+                 "metadata":{"actionBindings":{"app.page.note":{"handlerId":"page.note",
+                   "payload":{"value":{"required":true,"type":"string"}},"bound":{}}}},
+                 "root":{
+                  "id":"page","type":"AnimatedContent","props":{"targetState":"time"},"children":[
+                    {"id":"page.field","type":"TextField","props":{
+                      "value":"","label":"Second","onValueChange":"app.page.note"}}]}}
+                """.trimIndent(),
+            )
+        val actions = mutableListOf<Action>()
+        var shown by mutableStateOf(first)
+        val renderer = renderer(actions)
+        compose.setContent { PyComposeTheme { renderer.Render(shown) } }
+        compose.onNodeWithText("First").assertExists()
+
+        shown = second
+        compose.waitForIdle()
+        compose.onNodeWithText("Second").performTextInput("a")
+        compose.waitUntil(5000) { actions.any { it.actionId == "app.page.note" } }
+        assertEquals("""{"value":"a"}""", actions.last().payload.toString())
+    }
+
+    @Test
     fun theStandaloneSearchFieldDispatchesItsRequiredCallbacks() {
         val source =
             """

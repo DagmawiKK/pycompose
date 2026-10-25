@@ -6,11 +6,13 @@ import hashlib
 import inspect
 import json
 from collections.abc import Callable, Mapping
+from types import UnionType
 from typing import (
     Any,
     Generic,
     Literal,
     TypeVar,
+    Union,
     cast,
     get_args,
     get_origin,
@@ -282,6 +284,15 @@ class AppAction(Generic[S]):
 
 
 def _field(annotation: object, required: bool) -> PropDef:
+    # ``int | None``: a report that may carry null (a cleared date selection).
+    args = get_args(annotation)
+    if get_origin(annotation) in {Union, UnionType} and type(None) in args:
+        rest = [arg for arg in args if arg is not type(None)]
+        if len(rest) == 1:
+            inner = _field(rest[0], required)
+            return PropDef(
+                type=inner.type, values=inner.values, required=required, nullable=True
+            )
     types: dict[object, str] = {
         str: "string",
         bool: "boolean",

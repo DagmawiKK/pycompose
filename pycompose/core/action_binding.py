@@ -41,6 +41,8 @@ def check_payload(
                 raise IrValidationError("missing app payload field", prop=name)
             continue
         value = values[name]
+        if value is None and rule.nullable:
+            continue
         predicates = {
             "string": isinstance(value, str),
             "boolean": isinstance(value, bool),
@@ -182,7 +184,7 @@ def _read_binding(key: object, frozen: object) -> BindingSpec:
         if (
             not isinstance(name, str)
             or not isinstance(rule, Mapping)
-            or set(rule) - {"type", "required", "values"}
+            or set(rule) - {"type", "required", "values", "nullable"}
         ):
             raise IrValidationError("invalid app payload schema")
         prop = PropDef.from_mapping(rule, where=name)

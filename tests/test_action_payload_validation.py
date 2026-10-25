@@ -133,3 +133,28 @@ def test_fixed_binding_fields_are_preserved_and_cannot_be_overridden() -> None:
     assert actions.dispatch_binding(binding.spec, state, {}).version == 4
     with pytest.raises(IrValidationError, match="unknown app payload fields"):
         actions.dispatch_binding(binding.spec, state, {"resultText": "replacement"})
+
+
+@action
+def pick_date(state: State, selected_date_millis: int | None) -> State:
+    return replace(state, version=selected_date_millis or 0)
+
+
+def test_a_nullable_field_takes_null_but_not_another_type() -> None:
+    # A derived DatePicker reports a cleared selection as null (ADR-0058).
+    from pycompose.core.action_binding import read_bindings
+
+    actions = Actions(pick_date)
+    state = State(root=Node(id="root", type="Text"))
+    assert (
+        actions.dispatch("pickDate", state, {"selectedDateMillis": None}).version == 0
+    )
+    assert actions.dispatch("pickDate", state, {"selectedDateMillis": 7}).version == 7
+    with pytest.raises(IrValidationError, match="invalid app payload field"):
+        actions.dispatch("pickDate", state, {"selectedDateMillis": "soon"})
+
+    binding = pick_date.binding()
+    wire = binding.spec.to_wire()
+    assert wire["payload"]["selectedDateMillis"]["nullable"] is True
+    parsed = read_bindings({"actionBindings": {str(binding): wire}})
+    assert parsed[str(binding)].payload["selectedDateMillis"].nullable

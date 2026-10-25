@@ -49,7 +49,7 @@ object AppBindings {
     }
 
     private fun rule(definition: JsonObject): PropertyRule {
-        require(definition.keys.all { it in setOf("type", "required", "values") })
+        require(definition.keys.all { it in setOf("type", "required", "values", "nullable") })
         val type = WireValidator.string(definition["type"], "payload.type")
         require(type in payloadTypes) { "Unsupported payload type" }
         val required =
@@ -65,7 +65,13 @@ object AppBindings {
                         .toSet()
                 }.orEmpty()
         require(type != "enum" || values.isNotEmpty()) { "Empty payload enum" }
-        return PropertyRule(type, required, values)
+        // A report that may carry null: a derived family's cleared property.
+        val nullable =
+            definition["nullable"]?.let {
+                require(!it.jsonPrimitive.isString)
+                checkNotNull(it.jsonPrimitive.booleanOrNull)
+            } ?: false
+        return PropertyRule(type, required, values, nullable = nullable)
     }
 
     /** Host-created event data must satisfy the currently published binding contract. */

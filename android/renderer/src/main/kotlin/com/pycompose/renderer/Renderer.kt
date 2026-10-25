@@ -152,8 +152,8 @@ class RenderContext internal constructor(
         current: String,
         nodes: List<UiNode>,
     ): KeyedContent {
-        val keyed = remember(id) { KeyedContent(this) }
-        keyed.show(current, nodes)
+        val keyed = remember(id) { KeyedContent() }
+        keyed.show(current, this, nodes)
         return keyed
     }
 
