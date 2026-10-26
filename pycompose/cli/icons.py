@@ -16,7 +16,10 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from xml.etree import ElementTree
+from xml.etree.ElementTree import Element
+
+from defusedxml import ElementTree
+from defusedxml.common import DefusedXmlException
 
 from pycompose.cli.project import Project, ProjectError, project_path
 
@@ -86,7 +89,7 @@ def icon_files(project: Project) -> dict[str, bytes]:
 def _parse(path: Path) -> tuple[tuple[float, float, float, float], list[_Path]]:
     try:
         root = ElementTree.parse(path).getroot()
-    except ElementTree.ParseError as exc:
+    except (ElementTree.ParseError, DefusedXmlException) as exc:
         raise ProjectError("app.icon is not valid SVG", reason=str(exc)) from exc
     if root.tag != f"{_SVG}svg":
         raise ProjectError("app.icon must be an <svg> document")
@@ -102,9 +105,7 @@ def _parse(path: Path) -> tuple[tuple[float, float, float, float], list[_Path]]:
     return (box[0], box[1], box[2], box[3]), paths
 
 
-def _walk(
-    node: ElementTree.Element, inherited: dict[str, str], out: list[_Path]
-) -> None:
+def _walk(node: Element, inherited: dict[str, str], out: list[_Path]) -> None:
     for child in node:
         tag = child.tag.removeprefix(_SVG)
         if tag in {"title", "desc", "metadata", "defs"} and not len(child):
@@ -135,7 +136,7 @@ _GEOMETRY = {
 }
 
 
-def _geometry(tag: str, node: ElementTree.Element) -> str:
+def _geometry(tag: str, node: Element) -> str:
     def number(name: str) -> float:
         return float(node.get(name, "0"))
 

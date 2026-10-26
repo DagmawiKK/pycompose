@@ -66,6 +66,12 @@ repos:
         entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/template/sync.py; fi; exec python tools/template/sync.py'
         files: ^(android/|schema/|pycompose/templates/overlay/|tools/template/)
         pass_filenames: false
+      - id: bandit
+        name: bandit (security findings, medium and above)
+        language: system
+        entry: bash -c 'if [ -x .venv/bin/bandit ]; then exec .venv/bin/bandit -ll -q -r pycompose; fi; exec bandit -ll -q -r pycompose'
+        files: ^pycompose/.*\.py$
+        pass_filenames: false
       - id: actionlint
         name: actionlint (workflow files)
         language: system

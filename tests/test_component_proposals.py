@@ -234,6 +234,8 @@ def test_the_drift_check_re_derives_receivers_and_provided_scopes(
         "NavigationBar: children.provides 'ColumnScope' is not the pinned "
         "content lambda's receiver"
     ]
+    # Scopes are named by their full receiver class, as the lock declares them.
     assert compare(edited("Row", provides=None), found) == [
-        "Row: pinned content composes under RowScope; declare children.provides"
+        "Row: pinned content composes under "
+        "androidx.compose.foundation.layout.RowScope; declare children.provides"
     ]

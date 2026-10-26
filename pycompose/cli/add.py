@@ -15,14 +15,16 @@ import json
 import re
 import shutil
 import tempfile
-import urllib.request
 from collections.abc import Iterator
 from contextlib import contextmanager
 from importlib.resources import as_file, files
 from pathlib import Path
 from typing import Any
-from xml.etree import ElementTree
 
+from defusedxml import ElementTree
+from defusedxml.common import DefusedXmlException
+
+from pycompose.cli.https import open_https
 from pycompose.cli.project import Project, ProjectError
 from pycompose.cli.render import render
 from pycompose.cli.validate import validate_file
@@ -225,9 +227,9 @@ def _published(group: str, artifact: str) -> list[str]:
     path = f"{group.replace('.', '/')}/{artifact}/maven-metadata.xml"
     for repository in REPOSITORIES:
         try:
-            with urllib.request.urlopen(f"{repository}/{path}", timeout=30) as response:
+            with open_https(f"{repository}/{path}", timeout=30) as response:
                 metadata = ElementTree.fromstring(response.read())
-        except OSError:
+        except (OSError, ElementTree.ParseError, DefusedXmlException):
             continue
         versions = [
             node.text
