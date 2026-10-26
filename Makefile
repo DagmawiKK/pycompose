@@ -26,6 +26,7 @@ codegen:
 codegen-check:
 	python tools/schema/gen.py --check
 	cd android && ./gradlew dumpComposeApi dumpComposeDefaults
+	PYCOMPOSE_NATIVE_API_TESTS=1 pytest -q tests/test_classpath_dump.py tests/test_component_proposals.py tests/test_composegen.py
 	python -m pycompose.compiler generate --check
 
 test:

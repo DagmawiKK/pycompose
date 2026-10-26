@@ -82,7 +82,7 @@ jobs:
           if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
             base="$(git rev-parse HEAD^)"
           fi
-          python -m tools.composegen diff --base "$base"
+          python -m pycompose.compiler diff --base "$base"
       - name: Package asset assembly (template, extractor, lock copies)
         run: pytest -q tests/test_template_parity.py
       - name: Schema + golden tests
@@ -178,7 +178,7 @@ jobs:
         run: |
           pytest -q tests/test_classpath_dump.py tests/test_component_proposals.py tests/test_composegen.py
           python -m pycompose.compiler.classpath_dump --report android/build/compose-api/capabilities.json
-          python -m tools.composegen generate --check
+          python -m pycompose.compiler generate --check
       - name: Upload reports
         if: failure()
         uses: actions/upload-artifact@v4

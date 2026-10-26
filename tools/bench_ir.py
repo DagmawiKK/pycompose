@@ -34,7 +34,13 @@ import pyperf
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from pycompose.core import Node, Props
-from pycompose.core.reuse import Reuse
+
+# CI runs this same script against the base commit too: one from before
+# session reuse has no ``reuse_pipeline`` to measure, and skips that phase.
+try:
+    from pycompose.core.reuse import Reuse
+except ImportError:
+    Reuse = None  # type: ignore[assignment,misc]
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.ir.model import IRRoot
 from pycompose.ir.patch import diff_nodes, patch_bytes
@@ -167,8 +173,7 @@ def operations(size: int, shape: str) -> dict[str, Callable[[], object]]:
     edited = validate_ir(emit_ir(edited_state, "1.0.0"), debug=False)
     assert edited.snapshot is not None
     ops = diff_nodes(safe.root, edited.snapshot.root)
-    reuse, turn = Reuse(), [0]
-    return {
+    phases: dict[str, Callable[[], object]] = {
         "total": lambda: pipeline(build_state(size, shape)),
         "pipeline": lambda: pipeline(state),
         "construction": lambda: build_state(size, shape),
@@ -180,8 +185,13 @@ def operations(size: int, shape: str) -> dict[str, Callable[[], object]]:
             edited.snapshot, ops, base_serial=1, serial=2, surface="main"
         ),
         "patch_pipeline": lambda: patch_pipeline(edited_state, safe),
-        "reuse_pipeline": lambda: reuse_pipeline((state, edited_state), reuse, turn),
     }
+    if Reuse is not None:
+        reuse, turn = Reuse(), [0]
+        phases["reuse_pipeline"] = lambda: reuse_pipeline(
+            (state, edited_state), reuse, turn
+        )
+    return phases
 
 
 def memory_report(path: str) -> None:
