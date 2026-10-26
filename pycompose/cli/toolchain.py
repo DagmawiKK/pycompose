@@ -18,13 +18,13 @@ import shutil
 import subprocess
 import tarfile
 import tomllib
-import urllib.request
 import zipfile
 from dataclasses import dataclass
 from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
+from pycompose.cli.https import open_https
 from pycompose.cli.project import ProjectError
 
 HOME = Path(os.environ.get("PYCOMPOSE_HOME", "~/.pycompose")).expanduser() / "toolchain"
@@ -237,7 +237,7 @@ def _install(url: str, algorithm: str, digest: str, target: Path) -> None:
     download = target.with_name(target.name + ".download")
     download.parent.mkdir(parents=True, exist_ok=True)
     with (
-        urllib.request.urlopen(url, timeout=600) as response,
+        open_https(url, timeout=600) as response,
         download.open("wb") as out,
     ):
         shutil.copyfileobj(response, out)
@@ -265,18 +265,17 @@ def unpack(archive: Path, target: Path) -> None:
     shutil.rmtree(staging, ignore_errors=True)
     staging.mkdir(parents=True)
     if archive.name.endswith(".zip"):
-        with zipfile.ZipFile(archive) as bundle:
-            names = bundle.namelist()
-            _confined(staging, names)
-            bundle.extractall(staging)
-            for info in bundle.infolist():
+        with zipfile.ZipFile(archive) as zipped:
+            # ZipFile also drops absolute and ".." parts of each member.
+            zipped.extractall(staging, members=_confined(staging, zipped.namelist()))
+            for info in zipped.infolist():
                 mode = info.external_attr >> 16
                 if mode & 0o111:
                     (staging / info.filename).chmod(mode & 0o777)
     else:
-        with tarfile.open(archive) as bundle:
-            _confined(staging, bundle.getnames())
-            bundle.extractall(staging, filter="data")
+        with tarfile.open(archive) as tarred:
+            _confined(staging, tarred.getnames())
+            tarred.extractall(staging, filter="data")
     tops = list(staging.iterdir())
     top = tops[0] if len(tops) == 1 and tops[0].is_dir() else staging
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -284,7 +283,9 @@ def unpack(archive: Path, target: Path) -> None:
     shutil.rmtree(staging, ignore_errors=True)
 
 
-def _confined(root: Path, names: list[str]) -> None:
+def _confined(root: Path, names: list[str]) -> list[str]:
+    """The members, once each is known to land inside ``root``."""
     for name in names:
         if not (root / name).resolve().is_relative_to(root.resolve()):
             raise ProjectError("archive member escapes its directory", member=name)
+    return names
