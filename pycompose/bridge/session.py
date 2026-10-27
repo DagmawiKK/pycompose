@@ -10,7 +10,6 @@ from pathlib import Path
 from threading import current_thread
 from types import ModuleType
 from typing import Any
-from uuid import uuid4
 
 from pycompose.bridge.api import BridgeSurface
 from pycompose.core.context import AppContext, carried, context
@@ -45,7 +44,13 @@ class RuntimeSession:
     """
 
     def __init__(
-        self, entrypoint: str, route: str, *, debug: bool, restore: str = ""
+        self,
+        entrypoint: str,
+        route: str,
+        *,
+        debug: bool,
+        restore: str = "",
+        identity: str = "session",
     ) -> None:
         if (
             re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*:[A-Za-z_]\w*", entrypoint)
@@ -57,7 +62,7 @@ class RuntimeSession:
         self._worker = current_thread()
         self._error = ""
         self._container: object | None = None
-        self.identity = uuid4().hex
+        self.identity = identity
         self._surface = self._build(route, restore)
 
     def _require_worker(self) -> None:

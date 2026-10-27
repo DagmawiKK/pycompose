@@ -112,7 +112,11 @@ def start(
         _session.close()
     install_paths(files_dir, cache_dir)
     async_task.use_loop(_loop_thread().loop)
-    _session = RuntimeSession(entrypoint, route, debug=debug, restore=restore)
+    # The host compares this to reject a teardown aimed at an older session.
+    identity = f"{_loop_thread().scheduler.random().getrandbits(64):016x}"
+    _session = RuntimeSession(
+        entrypoint, route, debug=debug, restore=restore, identity=identity
+    )
     return _session.identity
 
 
