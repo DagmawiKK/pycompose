@@ -91,7 +91,7 @@ XML to touch:
 | --- | --- |
 | `app/` | the app's Python source (entrypoint `main:app` by default) |
 | `resources/` | strings, drawables, fonts — synced into the host |
-| `pycompose.toml` | identity, version, Python requirements, permissions, signing, extensions |
+| `pycompose.toml` | identity, version, Python requirements, theme, permissions, signing, extensions |
 | `.pycompose/` | the Android project, generated from the app on every build; ignored by git |
 
 `pycompose prebuild` shows what the generated project would change, and

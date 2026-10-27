@@ -120,8 +120,9 @@ app can work around.
 - **Per-instance bindings.** Every row and field targets the right note.
 - **One-shot effects.** Creating a note asks for `haptic` and `navigate`; the
   host runs them once, in order, only for a snapshot that actually changed.
-- **Theming from a host-reported fact.** `onConfigChanged` carries dark mode,
-  which a Python process cannot observe on its own, and the palette follows.
+- **An app theme.** `[theme]` in `pycompose.toml` names the colours in
+  `theme.json` (Material Theme Builder's export format). Views paint with theme
+  roles such as `ThemeColor("onSurfaceVariant")`, so dark mode needs no code.
 - **Degrading rather than crashing.** A corrupt save, a detail route naming a
   deleted note, a keystroke for a note you already left — all handled, none fatal.
 

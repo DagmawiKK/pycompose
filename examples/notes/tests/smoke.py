@@ -73,16 +73,6 @@ def main_() -> None:
     host.lifecycle("onBackRequested")
     show("system back", host, effects(host.snapshot()))
 
-    host.lifecycle(
-        "onConfigChanged",
-        darkMode=True,
-        orientation="portrait",
-        locale="en-US",
-        density=2.0,
-    )
-    background = host.snapshot()["root"]["props"]["containerColor"]
-    print(f"{'switch to dark mode':<34} background={background}")
-
     # The half-typed-text case: kill the process mid-sentence.
     host.tap("open_note", {"note_id": 1})
     host.tap("set_title", value="Half-typed")

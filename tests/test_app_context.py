@@ -154,7 +154,7 @@ def test_only_actions_that_reach_storage_still_declare_a_dependency() -> None:
 
     definitions = sys.modules["notes_app.actions"]
     mutates = {"new_note", "open_note", "set_title", "set_body", "delete_note"}
-    renders_only = {"go_back", "set_about", "on_route_changed", "on_config_changed"}
+    renders_only = {"go_back", "set_about", "on_route_changed"}
 
     for name in sorted(mutates | renders_only):
         handler = getattr(definitions, name)

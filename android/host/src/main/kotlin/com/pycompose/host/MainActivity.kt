@@ -1,10 +1,12 @@
 package com.pycompose.host
 
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -36,6 +38,7 @@ import com.pycompose.host.bridge.ChaquopyBridge
 import com.pycompose.host.bridge.DevSource
 import com.pycompose.host.resources.AndroidResources
 import com.pycompose.host.resources.ResourceResolver
+import com.pycompose.host.ui.AppTheme
 import com.pycompose.host.ui.BuiltinComponents
 import com.pycompose.host.ui.PyComposeTheme
 import com.pycompose.ir.Lifecycle
@@ -58,7 +61,7 @@ class MainActivity : ComponentActivity() {
                 this,
                 model::navigate,
             ) { message -> Log.w("PyCompose", message) }
-        enableEdgeToEdge()
+        edgeToEdge()
         followDevServer()
         onBackPressedDispatcher.addCallback(
             this,
@@ -130,6 +133,18 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
+    /** Draw behind the system bars, with icons matching the theme's dark mode. */
+    private fun edgeToEdge() {
+        val dark = AppTheme.darkMode ?: return enableEdgeToEdge()
+        val bars =
+            if (dark) {
+                SystemBarStyle.dark(Color.TRANSPARENT)
+            } else {
+                SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+            }
+        enableEdgeToEdge(bars, bars)
+    }
+
     /**
      * Report the current configuration; it is the one fact Python cannot observe
      * itself. The initial report rides the ViewModel's first pull instead, so the
@@ -143,7 +158,7 @@ class MainActivity : ComponentActivity() {
                 Lifecycle.orientation(
                     configuration.orientation == Configuration.ORIENTATION_LANDSCAPE,
                 ),
-            darkMode = night == Configuration.UI_MODE_NIGHT_YES,
+            darkMode = AppTheme.darkMode ?: (night == Configuration.UI_MODE_NIGHT_YES),
             locale = configuration.locales[0].toLanguageTag(),
             density = configuration.densityDpi / 160.0,
         )

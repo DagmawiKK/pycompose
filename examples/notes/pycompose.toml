@@ -15,6 +15,10 @@ requirements = []
 [resources]
 path = "resources"
 
+# The colours theme roles resolve to; the rest keep Material's defaults.
+[theme]
+colors = "theme.json"
+
 [signing]
 keystore = ""
 key_alias = ""

@@ -1,8 +1,9 @@
 """Composables. They describe UI and nothing else.
 
-Every function here takes its model, its theme and its handlers as arguments and
-returns a node declaration. No view reads global state, performs IO, or decides
-what a tap means.
+Every function here takes its model and its handlers as arguments and returns a
+node declaration. No view reads global state, performs IO, or decides what a tap
+means. Colours are roles of the app's Material theme (``[theme]`` in
+``pycompose.toml``), so dark mode is the theme's job, not the view's.
 """
 
 from notes_app.views.editor_screen import editor_screen

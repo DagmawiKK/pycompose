@@ -51,9 +51,11 @@ def test_an_emptied_store_stays_empty_rather_than_reseeding(
     assert titles_of(Host(app, repo=disk, restore=saved)) == []
 
 
-def test_dark_mode_recolours_the_screen(app: ModuleType) -> None:
+def test_dark_mode_is_the_themes_job_not_the_snapshots(app: ModuleType) -> None:
+    """Colours are theme roles, so a change of appearance changes no snapshot."""
     host = Host(app)
-    assert host.snapshot()["root"]["props"]["containerColor"] == "#FBF9F7"
+    before = host.snapshot()
+    assert "containerColor" not in before["root"]["props"]
     host.lifecycle(
         "onConfigChanged",
         darkMode=True,
@@ -61,22 +63,7 @@ def test_dark_mode_recolours_the_screen(app: ModuleType) -> None:
         locale="en-US",
         density=2.0,
     )
-    assert host.snapshot()["root"]["props"]["containerColor"] == "#101416"
-
-
-def test_the_appearance_survives_process_death(app: ModuleType) -> None:
-    host = Host(app)
-    host.lifecycle(
-        "onConfigChanged",
-        darkMode=True,
-        orientation="portrait",
-        locale="en-US",
-        density=2.0,
-    )
-    saved = json.dumps(data(host.snapshot()))
-    assert Host(app, restore=saved).snapshot()["root"]["props"]["containerColor"] == (
-        "#101416"
-    )
+    assert host.snapshot()["root"] == before["root"]
 
 
 def test_only_the_shell_crosses_the_boundary(app: ModuleType) -> None:
@@ -93,7 +80,6 @@ def test_only_the_shell_crosses_the_boundary(app: ModuleType) -> None:
 
     assert set(published) == {
         "route",
-        "dark",
         "titleCaret",
         "bodyCaret",
         "aboutOpen",
@@ -138,7 +124,6 @@ def test_ten_thousand_notes_survive_a_restart_without_the_bundle_complaining(
         assert held_of(host, 9_999).title == "Note 9999"
         assert set(published) == {
             "route",
-            "dark",
             "titleCaret",
             "bodyCaret",
             "aboutOpen",

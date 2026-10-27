@@ -320,20 +320,3 @@ def on_back_requested(
     if showing_list(session, notes.list()):
         return respond(session, Effect("finish"))
     return respond(session, Effect("navigate", {"route": LIST_ROUTE}))
-
-
-@actions
-def on_config_changed(session: Session, dark_mode: bool) -> Session:
-    """Repaint when the device's appearance changes.
-
-    The host reports orientation, locale and density too; this app reads only
-    the one fact its palette depends on.
-
-    Args:
-        session: The session shell before the configuration changed.
-        dark_mode: Whether the device is in dark mode.
-
-    Returns:
-        The shell in the palette matching the new appearance.
-    """
-    return session.evolve(dark=dark_mode)

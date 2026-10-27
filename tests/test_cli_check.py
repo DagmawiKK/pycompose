@@ -82,6 +82,22 @@ requirements = ["attrs==24.2.0"]
 [resources]
 path = "resources"
 
+[theme]
+colors = "theme.json"
+dynamic = false
+dark = "system"
+
+[theme.fonts]
+display = "fraunces"
+body = "inter"
+
+[theme.shapes]
+extra_small = 4
+small = 8
+medium = 12
+large = 16
+extra_large = 28
+
 [signing]
 keystore = "release.jks"
 key_alias = "upload"
@@ -111,6 +127,21 @@ def _keys(schema: dict, prefix: str = "") -> set[str]:
     return found
 
 
+def _used(config: dict, prefix: str = "") -> set[str]:
+    found = set()
+    for name, value in config.items():
+        path = f"{prefix}.{name}".lstrip(".")
+        found |= _used(value, path) if isinstance(value, dict) else {path}
+    return found
+
+
+def test_a_boolean_key_must_be_true_or_false() -> None:
+    problems = config_problems({"theme": {"dynamic": "yes"}})
+    assert ("theme.dynamic", "must be a boolean") in {
+        (problem.where, problem.message) for problem in problems
+    }
+
+
 def test_every_schema_key_is_exercised_by_a_golden_config() -> None:
     import json
     import tomllib
@@ -121,8 +152,7 @@ def test_every_schema_key_is_exercised_by_a_golden_config() -> None:
     )
     golden = tomllib.loads(GOLDEN)
     assert config_problems(golden) == []
-    used = {f"{table}.{key}" for table, values in golden.items() for key in values}
-    assert _keys(schema) == used
+    assert _keys(schema) == _used(golden)
 
 
 def test_a_component_the_build_would_generate_checks_clean(tmp_path: Path) -> None:

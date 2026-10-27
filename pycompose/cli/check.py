@@ -97,9 +97,16 @@ def config_problems(config: dict[str, Any]) -> list[Problem]:
 
 
 def _validate(value: Any, schema: dict[str, Any], key: str) -> Iterator[Problem]:
-    kind = schema.get("type")
+    kind = str(schema.get("type", ""))
     types = {"object": dict, "array": list, "string": str, "integer": int}
-    if kind and not (isinstance(value, types[kind]) and not isinstance(value, bool)):
+    # bool is an int subclass, so a boolean is its own case, never an integer.
+    if kind == "boolean":
+        matches = isinstance(value, bool)
+    else:
+        matches = not kind or (
+            isinstance(value, types[kind]) and not isinstance(value, bool)
+        )
+    if not matches:
         article = "an" if kind[0] in "aeiou" else "a"
         yield Problem(
             key or "pycompose.toml", f"must be {article} {kind}", _fix(schema)

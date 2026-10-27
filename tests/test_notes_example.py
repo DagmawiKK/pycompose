@@ -334,7 +334,7 @@ def test_a_detail_route_naming_a_deleted_note_falls_back_to_the_list(
 
 
 def test_the_host_route_wins_over_the_route_in_the_save(app: ModuleType) -> None:
-    saved = json.dumps({"route": "notes", "dark": False})
+    saved = json.dumps({"route": "notes", "previews": False})
     assert (
         data(Host(app, route="note:1", restore=saved).snapshot())["route"] == "note:1"
     )
@@ -358,8 +358,8 @@ def test_the_editor_bar_is_an_icon_button_beside_a_rule(app: ModuleType) -> None
     """The way back is a glyph, and the rule is a component, not a box.
 
     An icon button has no text of its own, so its icon carries the label a
-    screen reader reads; the divider is the host's to draw, with the app saying
-    only which colour it wants.
+    screen reader reads; the divider is the host's to draw, in the theme's own
+    colour.
     """
     host = Host(app)
     host.tap("open_note", {"note_id": 2})
@@ -369,7 +369,7 @@ def test_the_editor_bar_is_an_icon_button_beside_a_rule(app: ModuleType) -> None
         (icon["contentDescription"], icon["imageVector"]["name"])
         for icon in nodes(snapshot, "Icon")
     ] == [("Back to notes", "AutoMirrored.Filled.ArrowBack")]
-    assert [rule["color"] for rule in nodes(snapshot, "VerticalDivider")] == ["#6C7779"]
+    assert [rule.get("color") for rule in nodes(snapshot, "VerticalDivider")] == [None]
 
 
 def test_each_row_deletes_only_its_own_note(app: ModuleType) -> None:
@@ -441,7 +441,7 @@ def test_half_typed_text_survives_process_death(app: ModuleType) -> None:
         "[]",
         '"a string"',
         '{"route": 7}',
-        '{"route": "notes", "dark": "maybe"}',
+        '{"route": "notes", "previews": "maybe"}',
         '{"route": "notes", "surprise": 1}',
     ],
 )
@@ -462,5 +462,5 @@ def test_a_shell_with_one_bad_field_is_refused_whole_rather_than_half_applied(
     its neighbours applied, so a restore silently produced a state the user never
     had. The codec either accepts the save exactly as written or refuses it.
     """
-    saved = json.dumps({"route": "note:4", "dark": "not a boolean"})
+    saved = json.dumps({"route": "note:4", "previews": "not a boolean"})
     assert titles_of(Host(app, restore=saved)) == ["Try it", "Welcome"]

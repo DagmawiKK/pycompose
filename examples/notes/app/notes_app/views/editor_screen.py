@@ -27,7 +27,6 @@ from notes_app.actions import (
 )
 from notes_app.domain.models import Note
 from notes_app.state import Session
-from notes_app.theme import Theme
 from pycompose import composable
 from pycompose.core import Node
 
@@ -41,14 +40,12 @@ def editor_screen(*, note: Note, session: Session) -> Node:
 
     Args:
         note: The note being edited.
-        session: The session shell, for the palette and the carets.
+        session: The session shell, for the carets.
 
     Returns:
         A Scaffold declaration holding the note's title and body fields.
     """
-    theme = Theme.of(session)
     return Scaffold(
-        container_color=theme.background,
         top_bar=Row(
             vertical_alignment="center",
             children=[
@@ -60,16 +57,14 @@ def editor_screen(*, note: Note, session: Session) -> Node:
                                 name="AutoMirrored.Filled.ArrowBack"
                             ),
                             content_description="Back to notes",
-                            tint=theme.on_surface,
                         )
                     ],
                 ),
-                VerticalDivider(color=theme.muted, modifier=Modifier().size(1, 24)),
+                VerticalDivider(modifier=Modifier().size(1, 24)),
                 Spacer(modifier=Modifier().size(8)),
                 Text(
                     text=note.label,
                     style="titleMedium",
-                    color=theme.on_surface,
                     modifier=Modifier().fill_max_width(0.7),
                 ),
             ],

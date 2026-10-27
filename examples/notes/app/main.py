@@ -14,7 +14,6 @@ Layout, bottom to top:
   ``Protocol``.
 * ``notes_app/container.py`` -- the app's long-lived objects, built once.
 * ``notes_app/state.py`` -- ``Session``, the shell that survives process death.
-* ``notes_app/theme.py`` -- the palette, chosen from a host-reported fact.
 * ``notes_app/handlers.py`` -- the action references screens bind to.
 * ``notes_app/views/`` -- composables, which describe UI and nothing else.
 * ``notes_app/view_model.py`` -- shell plus repository become one screen.

@@ -7,7 +7,6 @@ Material 3 component the Android host renders.
 Layers, each importing only the ones above it in this list:
 
 * :mod:`notes_app.state` -- the app's data, declared with ``AppState``.
-* :mod:`notes_app.theme` -- the palette.
 * :mod:`notes_app.handlers` -- the controls' action references.
 * :mod:`notes_app.views` -- composables, describing UI and nothing else.
 * :mod:`notes_app.view_model` -- declared state becomes one snapshot.
