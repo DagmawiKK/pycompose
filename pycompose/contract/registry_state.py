@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
-from pycompose.core.registry_vocabulary import STATE_KINDS
+from pycompose.contract.registry_vocabulary import STATE_KINDS
 from pycompose.errors import ComponentRegistryError
 
 

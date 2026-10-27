@@ -269,7 +269,7 @@ def test_the_codegen_refuses_an_unproven_component_opt_in(
 
 def test_the_runtime_registry_round_trips_a_components_opt_in() -> None:
     """The registry type keeps the markers a schema reader can trust."""
-    from pycompose.core.registry_types import ComponentSpec
+    from pycompose.contract.registry_types import ComponentSpec
     from pycompose.errors import ComponentRegistryError
 
     declaration = {

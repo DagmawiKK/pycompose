@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from pycompose.core.registry_props import PropDef
+from pycompose.contract.registry_props import PropDef
 from pycompose.errors import ComponentRegistryError
 
 

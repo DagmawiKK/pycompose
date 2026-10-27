@@ -91,7 +91,7 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["cli", "compiler", "testing", "m3", "composition", "components", "bridge", "integrations", "extensions", "async_task", "repository", "ir", "state", "schema", "core", "utils"]
+layers = ["cli", "compiler", "testing", "m3", "composition", "components", "bridge", "integrations", "extensions", "async_task", "repository", "ir", "state", "schema", "core", "contract", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
 
@@ -115,7 +115,7 @@ explanation = "Python bridge surface is Chaquopy-agnostic; the host implements t
 [[tool.importlinter.contracts]]
 name = "Runtime packages never import CLI or templates"
 type = "forbidden"
-source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
+source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state",
                   "pycompose.ir", "pycompose.bridge", "pycompose.components",
                    "pycompose.utils", "pycompose.testing", "pycompose.m3", "pycompose.composition", "pycompose.async_task",
                     "pycompose.repository", "pycompose.extensions", "pycompose.integrations"]
@@ -132,7 +132,7 @@ explanation = "State + Store stay minimal and purpose-free."
 [[tool.importlinter.contracts]]
 name = "Runtime never imports testing helpers or fixtures"
 type = "forbidden"
-source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
+source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state",
                    "pycompose.ir", "pycompose.bridge", "pycompose.components",
                    "pycompose.utils", "pycompose.m3", "pycompose.composition", "pycompose.async_task",
                     "pycompose.repository", "pycompose.extensions", "pycompose.integrations"]

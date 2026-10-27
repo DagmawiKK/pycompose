@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import json
 
-from pycompose.core.registry_types import Registry
+from pycompose.contract.registry_types import Registry
 
 __all__ = [
     "KNOWN_ACTION_IDS",

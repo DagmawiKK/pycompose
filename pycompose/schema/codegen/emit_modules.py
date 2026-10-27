@@ -114,7 +114,7 @@ def render_validators(registry: dict[str, Any]) -> str:
         '"""Generated component, prop, children and action validation tables."""\n\n'
         "from __future__ import annotations\n\n"
         "import json\n\n"
-        "from pycompose.core.registry_types import Registry\n\n"
+        "from pycompose.contract.registry_types import Registry\n\n"
         '__all__ = [\n    "KNOWN_ACTION_IDS",\n    "MIN_LIBRARY_VERSION",\n'
         '    "MIN_SCHEMA_VERSION",\n    "REGISTRY",\n    "SCHEMA_VERSION",\n]\n\n'
         f"SCHEMA_VERSION: str = {json.dumps(registry['schemaVersion'])}\n"

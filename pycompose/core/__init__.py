@@ -2,6 +2,15 @@
 
 from __future__ import annotations
 
+from pycompose.contract.registry_types import (
+    AbstractComponentRegistry,
+    ActionDef,
+    ChildrenRule,
+    ComponentDef,
+    ComponentSpec,
+    PropDef,
+    Registry,
+)
 from pycompose.core.ids import ROOT_ID, IdRegistry, child_id, id_path, make_path_id
 from pycompose.core.node import Node, Props
 from pycompose.core.props import (
@@ -10,15 +19,6 @@ from pycompose.core.props import (
     props_from_kwargs,
     to_camel_case,
     to_snake_case,
-)
-from pycompose.core.registry_types import (
-    AbstractComponentRegistry,
-    ActionDef,
-    ChildrenRule,
-    ComponentDef,
-    ComponentSpec,
-    PropDef,
-    Registry,
 )
 
 __all__ = [

@@ -25,22 +25,22 @@ from dataclasses import dataclass
 from dataclasses import field as dataclass_field
 from types import MappingProxyType
 
-from pycompose.core.registry_component import ComponentDef, ComponentSpec
-from pycompose.core.registry_elements import (
+from pycompose.contract.registry_component import ComponentDef, ComponentSpec
+from pycompose.contract.registry_elements import (
     ChildrenRule,
     ContentSlot,
     ProviderDef,
     SlotRule,
 )
-from pycompose.core.registry_modifiers import (
+from pycompose.contract.registry_modifiers import (
     derived_modifiers,
     modifiers_mapping,
     parse_modifiers,
 )
-from pycompose.core.registry_props import InteractionRule, PropDef
-from pycompose.core.registry_state import StateRule
-from pycompose.core.registry_transient import TransientRule
-from pycompose.core.registry_vocabulary import (
+from pycompose.contract.registry_props import InteractionRule, PropDef
+from pycompose.contract.registry_state import StateRule
+from pycompose.contract.registry_transient import TransientRule
+from pycompose.contract.registry_vocabulary import (
     ADAPTERS,
     CONSUMERS,
     DECODED_TYPES,

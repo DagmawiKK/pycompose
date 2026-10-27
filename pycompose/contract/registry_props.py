@@ -15,16 +15,20 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import cast
 
-from pycompose.core.props import JsonValue
-from pycompose.core.registry_elements import ContentSlot, ProviderDef
-from pycompose.core.registry_vocabulary import (
+from pycompose.contract.registry_elements import ContentSlot, ProviderDef
+from pycompose.contract.registry_vocabulary import (
     DECODED_TYPES,
     DECODERS,
     INTERACTION_KINDS,
     OWNERS,
 )
 from pycompose.errors import ComponentRegistryError
-from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
+from pycompose.utils.json_canonical import (
+    FrozenJsonValue,
+    JsonValue,
+    freeze_json,
+    thaw_json,
+)
 
 
 @dataclass(frozen=True, slots=True)

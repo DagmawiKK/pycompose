@@ -18,7 +18,10 @@ import copy
 from typing import Any
 
 from pycompose.compiler.candidate_props import CandidateError
-from pycompose.core.registry_vocabulary import INTERACTION_KINDS, INTERACTION_REPORTS
+from pycompose.contract.registry_vocabulary import (
+    INTERACTION_KINDS,
+    INTERACTION_REPORTS,
+)
 from pycompose.schema.codegen.state_families import (
     STATE_FAMILIES,
     TRANSIENT_FAMILIES,

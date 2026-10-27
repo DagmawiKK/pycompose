@@ -8,7 +8,7 @@ wire stays expressible and the host never double-counts.
 import re
 from typing import Any, cast
 
-from pycompose.core.registry_types import (
+from pycompose.contract.registry_types import (
     INTERACTION_KINDS,
     STATE_KINDS,
     TRANSIENT_KINDS,

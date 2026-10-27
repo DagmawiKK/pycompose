@@ -2,8 +2,8 @@
 
 import pytest
 
+from pycompose.contract.registry_elements import SlotRule
 from pycompose.core.node import Node
-from pycompose.core.registry_elements import SlotRule
 from pycompose.errors import ComponentRegistryError, IrValidationError
 from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.ir.generated_validators import REGISTRY

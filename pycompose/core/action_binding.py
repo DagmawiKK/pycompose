@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import TYPE_CHECKING, cast
 
-from pycompose.core.registry_types import PropDef
+from pycompose.contract.registry_types import PropDef
 from pycompose.errors import IrValidationError
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
 

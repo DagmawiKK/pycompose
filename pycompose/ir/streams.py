@@ -12,9 +12,9 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from pycompose.contract.registry_vocabulary import STATE_STREAMS
 from pycompose.core.expressions import validate_expression
 from pycompose.core.node import Node, Props
-from pycompose.core.registry_vocabulary import STATE_STREAMS
 from pycompose.errors import IrValidationError
 from pycompose.utils.json_canonical import freeze_json, thaw_json
 

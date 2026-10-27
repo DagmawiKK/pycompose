@@ -15,11 +15,11 @@ from dataclasses import field as dataclass_field
 from types import MappingProxyType
 from typing import Protocol, cast
 
-from pycompose.core.registry_elements import ChildrenRule, SlotRule
-from pycompose.core.registry_props import InteractionRule, PropDef
-from pycompose.core.registry_state import StateRule
-from pycompose.core.registry_transient import TransientRule
-from pycompose.core.registry_vocabulary import ADAPTERS, WRAPPERS
+from pycompose.contract.registry_elements import ChildrenRule, SlotRule
+from pycompose.contract.registry_props import InteractionRule, PropDef
+from pycompose.contract.registry_state import StateRule
+from pycompose.contract.registry_transient import TransientRule
+from pycompose.contract.registry_vocabulary import ADAPTERS, WRAPPERS
 from pycompose.errors import ComponentRegistryError
 
 

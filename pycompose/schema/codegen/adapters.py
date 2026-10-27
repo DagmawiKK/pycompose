@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.core.registry_vocabulary import STATE_STREAMS
+from pycompose.contract.registry_vocabulary import STATE_STREAMS
 from pycompose.schema.codegen.adapter_calls import (
     _callback,
     _decoded,

@@ -11,7 +11,7 @@ import pytest
 from pycompose.cli import add
 from pycompose.cli.project import Project, ProjectError
 from pycompose.compiler.app import ORIGIN, AppLibraryError, layered_closure
-from pycompose.core.registry_types import ComponentRegistryError, Registry
+from pycompose.contract.registry_types import ComponentRegistryError, Registry
 from pycompose.ir.generated_validators import REGISTRY
 from pycompose.schema.codegen.app_slice import app_components, with_app_lock
 from pycompose.schema.codegen.emit_python import render_python_components

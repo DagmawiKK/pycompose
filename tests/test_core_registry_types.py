@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from pycompose.core.registry_types import ComponentDef, Registry
+from pycompose.contract.registry_types import ComponentDef, Registry
 from pycompose.errors import ComponentRegistryError
 
 ROOT = Path(__file__).resolve().parents[1]

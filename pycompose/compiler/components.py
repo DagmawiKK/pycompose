@@ -37,7 +37,7 @@ from pycompose.compiler.slots import (
     slot_rule,
     slot_scopes,
 )
-from pycompose.core.registry_vocabulary import (
+from pycompose.contract.registry_vocabulary import (
     HOST_VALUES,
     RESOURCE_TYPES,
     STATE_HOLDERS,

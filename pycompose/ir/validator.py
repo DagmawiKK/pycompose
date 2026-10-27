@@ -13,9 +13,9 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field, replace
 
+from pycompose.contract.registry_types import PropDef
 from pycompose.core.action_binding import ActionBinding, BindingSpec, read_bindings
 from pycompose.core.node import Node
-from pycompose.core.registry_types import PropDef
 from pycompose.core.resources import valid_resource
 from pycompose.core.reuse import Reuse
 from pycompose.core.values import validate_bounds, validate_number, validate_value

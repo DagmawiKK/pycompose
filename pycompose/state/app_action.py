@@ -19,11 +19,11 @@ from typing import (
     get_type_hints,
 )
 
+from pycompose.contract.registry_types import PropDef
 from pycompose.core.action_binding import ActionBinding, BindingSpec
 from pycompose.core.effect import Effect
 from pycompose.core.node import Node
 from pycompose.core.props import to_camel_case
-from pycompose.core.registry_types import PropDef
 from pycompose.errors import StateError
 from pycompose.state.app_state import AppState
 from pycompose.state.state import State

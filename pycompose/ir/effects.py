@@ -5,10 +5,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import cast
 
+from pycompose.contract.registry_types import PropDef
 from pycompose.core.action_binding import check_payload
 from pycompose.core.effect import Effect
 from pycompose.core.props import JsonValue
-from pycompose.core.registry_types import PropDef
 from pycompose.errors import IrValidationError
 from pycompose.ir.generated_validators import REGISTRY
 from pycompose.utils.json_canonical import FrozenJsonValue

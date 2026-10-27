@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.core.registry_types import CONSUMERS, SLOT_KINDS
+from pycompose.contract.registry_types import CONSUMERS, SLOT_KINDS
 from pycompose.schema.codegen.state_families import STATE_FAMILIES, property_props
 
 SCALAR_KOTLIN = {

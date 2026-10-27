@@ -191,7 +191,7 @@ def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> Non
 
 def test_every_state_kind_is_a_vocabulary_member() -> None:
     """The declaration never invents a kind the host cannot create and drive."""
-    from pycompose.core.registry_types import STATE_KINDS
+    from pycompose.contract.registry_types import STATE_KINDS
 
     for name, entry in sorted(components().items()):
         state = entry.get("state")
@@ -221,7 +221,7 @@ def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:
 
 def test_every_family_table_names_known_state_kinds() -> None:
     """A gate, attach or constructor decision for an unknown family is a typo."""
-    from pycompose.core.registry_types import STATE_KINDS
+    from pycompose.contract.registry_types import STATE_KINDS
     from pycompose.schema.codegen.adapters import (
         GATED_STATES,
         STATE_ATTACH_GATES,
@@ -507,7 +507,7 @@ def test_the_codegen_refuses_a_second_reported_field(
 
 def test_the_runtime_registry_round_trips_the_state() -> None:
     """The registry type keeps the declaration a schema reader can trust."""
-    from pycompose.core.registry_types import ComponentSpec
+    from pycompose.contract.registry_types import ComponentSpec
     from pycompose.errors import ComponentRegistryError
 
     state = {
