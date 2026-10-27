@@ -12,9 +12,9 @@ import json
 import re
 from typing import Any
 
+from pycompose.codegen.defaults import render_default
+from pycompose.codegen.values import resolver_call
 from pycompose.core.values import FLOAT_MAX, FLOAT_MIN
-from pycompose.schema.codegen.defaults import render_default
-from pycompose.schema.codegen.values import resolver_call
 
 _IDENTIFIER = re.compile(r"[A-Za-z_]\w*")
 _READERS = {

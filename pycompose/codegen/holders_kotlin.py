@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from pycompose.schema.codegen.literals import GENERATED_NOTICE
+from pycompose.codegen.literals import GENERATED_NOTICE
 
 
 def render_holder_drives(registry: dict[str, Any]) -> str:

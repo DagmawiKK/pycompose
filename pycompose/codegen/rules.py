@@ -12,7 +12,7 @@ from typing import Any, NoReturn, cast
 
 from pycompose.contract.registry_rules import with_rules
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[2]
 
 PACKAGED_CATALOG = ROOT / "pycompose" / "contract" / "catalog.lock.json"
 """The catalog as shipped in the wheel, for an app with no repo checkout."""
@@ -113,7 +113,7 @@ def _validate_registry(registry: dict[str, Any]) -> None:
         die("'components' must be a non-empty object")
     for name, comp in sorted(components.items()):
         _validate_component(name, comp)
-    from pycompose.schema.codegen.overloads import validate as validate_overloads
+    from pycompose.codegen.overloads import validate as validate_overloads
 
     validate_overloads(components, die)
     _validate_versions(registry)
@@ -122,7 +122,7 @@ def _validate_registry(registry: dict[str, Any]) -> None:
     if not isinstance(actions, dict):
         die("'actions' must be an object")
     for action_id, action in sorted(actions.items()):
-        from pycompose.schema.codegen.prop_rules import _validate_action
+        from pycompose.codegen.prop_rules import _validate_action
 
         _validate_action(action_id, action)
     _validate_action_refs(registry)
@@ -136,18 +136,18 @@ def _validate_registry(registry: dict[str, Any]) -> None:
             modifier.get("props"), dict
         ):
             die(f"modifier {name!r} needs a props object")
-        from pycompose.schema.codegen.prop_rules import _validate_prop
+        from pycompose.codegen.prop_rules import _validate_prop
 
         for prop_name, prop in sorted(modifier["props"].items()):
             _validate_prop(name, prop_name, prop)
-    from pycompose.schema.codegen.values import validate_definitions
+    from pycompose.codegen.values import validate_definitions
 
     validate_definitions(registry)
 
 
 def _validate_effects(effects: object) -> None:
     """Validate the declared effect kinds and their payload contracts."""
-    from pycompose.schema.codegen.prop_rules import _validate_action
+    from pycompose.codegen.prop_rules import _validate_action
 
     if not isinstance(effects, dict):
         die("'effects' must be an object")
@@ -159,7 +159,7 @@ def _validate_effects(effects: object) -> None:
 
 def _validate_lifecycle(lifecycle: object) -> None:
     """Validate host-initiated lifecycle events and their payload contracts."""
-    from pycompose.schema.codegen.prop_rules import _validate_action
+    from pycompose.codegen.prop_rules import _validate_action
 
     if not isinstance(lifecycle, dict):
         die("'lifecycle' must be an object")
@@ -242,14 +242,14 @@ def _validate_opt_in(name: str, comp: dict[str, Any]) -> None:
 def _validate_component(name: str, comp: dict[str, Any]) -> None:
     if not isinstance(comp, dict):
         die(f"component {name!r} must be an object")
-    from pycompose.schema.codegen.prop_rules import (
+    from pycompose.codegen.prop_rules import (
         _validate_children,
         _validate_prop,
         _validate_scope,
         _validate_slots,
     )
-    from pycompose.schema.codegen.state_families import property_props
-    from pycompose.schema.codegen.state_rules import (
+    from pycompose.codegen.state_families import property_props
+    from pycompose.codegen.state_rules import (
         _validate_interaction,
         _validate_state,
         _validate_transient,

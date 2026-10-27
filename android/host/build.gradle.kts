@@ -108,6 +108,7 @@ val stageRuntime by tasks.registering(Sync::class) {
         // imports them, so they are excluded as directories, never by module list.
         exclude(
             "pycompose/cli/**",
+            "pycompose/codegen/**",
             "pycompose/compiler/**",
             "pycompose/templates/**",
             "pycompose/testing/**",

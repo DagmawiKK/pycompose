@@ -1,1 +1,1 @@
-"""pycompose.schema — registry loading and schema version helpers."""
+"""pycompose.schema — the published JSON schemas: pycompose.toml and the IR wire."""

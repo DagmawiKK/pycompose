@@ -10,10 +10,10 @@ import keyword
 import re
 from typing import Any
 
-from pycompose.schema.codegen.literals import (
+from pycompose.codegen.literals import (
     GENERATED_NOTICE,
 )
-from pycompose.schema.codegen.rules import die
+from pycompose.codegen.rules import die
 
 
 def render_payloads(registry: dict[str, Any]) -> str:

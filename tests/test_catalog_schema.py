@@ -15,7 +15,7 @@ from typing import Any
 import jsonschema
 import pytest
 
-from pycompose.schema.codegen import rules
+from pycompose.codegen import rules
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "schema" / "catalog.lock.json"

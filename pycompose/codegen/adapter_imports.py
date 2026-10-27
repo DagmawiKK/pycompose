@@ -10,9 +10,9 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any
 
+from pycompose.codegen.adapter_helpers import attach_gate, state_call
+from pycompose.codegen.derived_families import property_imports
 from pycompose.contract.registry_vocabulary import STATE_STREAMS
-from pycompose.schema.codegen.adapter_helpers import attach_gate, state_call
-from pycompose.schema.codegen.derived_families import property_imports
 
 
 def extra_imports(entry: dict[str, Any]) -> set[str]:

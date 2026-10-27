@@ -10,11 +10,11 @@ import pytest
 
 from pycompose.cli import add
 from pycompose.cli.project import Project, ProjectError
+from pycompose.codegen.app_slice import app_components, with_app_lock
+from pycompose.codegen.emit_python import render_python_components
 from pycompose.compiler.app import ORIGIN, AppLibraryError, layered_closure
 from pycompose.contract.catalog import REGISTRY
 from pycompose.contract.registry_types import ComponentRegistryError, Registry
-from pycompose.schema.codegen.app_slice import app_components, with_app_lock
-from pycompose.schema.codegen.emit_python import render_python_components
 
 DEFAULT = {
     "groups": {"androidx.compose.ui": {"status": "extracted", "domain": "ui"}},

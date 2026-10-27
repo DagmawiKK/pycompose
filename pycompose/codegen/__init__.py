@@ -1,7 +1,7 @@
 """Per-app and library codegen from ``schema/catalog.lock.json``.
 
-    python -m pycompose.schema.codegen            # the library's artifacts
-    python -m pycompose.schema.codegen --app DIR  # only what DIR uses
+    python -m pycompose.codegen            # the library's artifacts
+    python -m pycompose.codegen --app DIR  # only what DIR uses
 
 This lives inside the package rather than in ``tools/`` because ADR-0014 needs
 an installed ``pycompose`` to generate an app's component slice, and a wheel does
@@ -15,12 +15,12 @@ happens to ship in the same distribution.
 
 from __future__ import annotations
 
-from pycompose.schema.codegen import main
-from pycompose.schema.codegen.main import build_app
-from pycompose.schema.codegen.main import main as run
+from pycompose.codegen import main
+from pycompose.codegen.main import build_app
+from pycompose.codegen.main import main as run
 
 # `main` stays the submodule and is not shadowed by a function of the same
-# name: `from pycompose.schema.codegen import main` must give the module, or
+# name: `from pycompose.codegen import main` must give the module, or
 # every caller reaching for a module-level constant gets a function instead.
 # The entry point is therefore `run`.
 

@@ -28,6 +28,8 @@ from pycompose.cli.https import open_https
 from pycompose.cli.project import Project, ProjectError
 from pycompose.cli.render import render
 from pycompose.cli.validate import validate_file
+from pycompose.codegen.app_slice import APP_LOCK
+from pycompose.codegen.rules import SCHEMA_PATH
 from pycompose.compiler.app import (
     APP_POLICY,
     AppLibraryError,
@@ -39,8 +41,6 @@ from pycompose.compiler.lock import Report, dumps
 from pycompose.compiler.samples import sample
 from pycompose.contract.catalog import REGISTRY
 from pycompose.errors import IrValidationError
-from pycompose.schema.codegen.app_slice import APP_LOCK
-from pycompose.schema.codegen.rules import SCHEMA_PATH
 
 REPOSITORIES = (
     "https://dl.google.com/android/maven2",

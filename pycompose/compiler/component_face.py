@@ -18,14 +18,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from pycompose.compiler.classpath_dump import Declaration
-from pycompose.compiler.propose_lookup import source_name
-from pycompose.schema.codegen.adapter_helpers import (
+from pycompose.codegen.adapter_helpers import (
     STATE_ATTACH_GATES,
     STATE_CONSTRUCTOR_PROPS,
     _camel,
 )
-from pycompose.schema.codegen.state_families import property_props
+from pycompose.codegen.state_families import property_props
+from pycompose.compiler.classpath_dump import Declaration
+from pycompose.compiler.propose_lookup import source_name
 
 MODIFIER = "androidx.compose.ui.Modifier"
 INTERACTION_SOURCE = "androidx.compose.foundation.interaction.MutableInteractionSource"

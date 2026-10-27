@@ -8,25 +8,25 @@ wire stays expressible and the host never double-counts.
 import re
 from typing import Any, cast
 
-from pycompose.contract.registry_types import (
-    INTERACTION_KINDS,
-    STATE_KINDS,
-    TRANSIENT_KINDS,
-)
-from pycompose.schema.codegen.adapter_helpers import (
+from pycompose.codegen.adapter_helpers import (
     STATE_ATTACH_GATES,
     STATE_CONSTRUCTOR_PROPS,
 )
-from pycompose.schema.codegen.derived_families import validate_properties
-from pycompose.schema.codegen.rules import (
+from pycompose.codegen.derived_families import validate_properties
+from pycompose.codegen.rules import (
     NATIVE_PARAMETER,
     die,
 )
-from pycompose.schema.codegen.state_anchors import (
+from pycompose.codegen.state_anchors import (
     SHEET_VALUES,
     SWIPE_VALUES,
     validate_anchor,
     validate_optional_field,
+)
+from pycompose.contract.registry_types import (
+    INTERACTION_KINDS,
+    STATE_KINDS,
+    TRANSIENT_KINDS,
 )
 
 INTERACTION_KEYS = frozenset({"native", "observations"})

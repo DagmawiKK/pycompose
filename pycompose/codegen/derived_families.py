@@ -11,10 +11,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.schema.codegen.adapter_helpers import _camel
-from pycompose.schema.codegen.literals import kotlin_string
-from pycompose.schema.codegen.rules import DOTTED_NAME, die
-from pycompose.schema.codegen.state_families import property_props, report_name
+from pycompose.codegen.adapter_helpers import _camel
+from pycompose.codegen.literals import kotlin_string
+from pycompose.codegen.rules import DOTTED_NAME, die
+from pycompose.codegen.state_families import property_props, report_name
 
 DECODE = {
     "integer": "long",

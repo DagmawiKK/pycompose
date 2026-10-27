@@ -10,8 +10,8 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from pycompose.schema.codegen.literals import GENERATED_NOTICE
-from pycompose.schema.codegen.overloads import python_name
+from pycompose.codegen.literals import GENERATED_NOTICE
+from pycompose.codegen.overloads import python_name
 
 TYPES = {
     "number": "int | float",

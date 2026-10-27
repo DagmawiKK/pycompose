@@ -73,7 +73,7 @@ def _keys(expression: dict[str, Any], expected: set[str]) -> None:
 
 def _literal(value: Any, classifier: str) -> str:
     """Render a literal of the declared type, or refuse. Never widen or narrow types."""
-    from pycompose.schema.codegen.literals import kotlin_string
+    from pycompose.codegen.literals import kotlin_string
 
     if value is None:
         return "null"

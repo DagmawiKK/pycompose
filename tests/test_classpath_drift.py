@@ -131,13 +131,13 @@ def test_unused_pinned_constructor_is_generated_decoded_and_renders(
     native_document,
     tmp_path: Path,
 ) -> None:
-    from pycompose.compiler.classpath_dump import inventory
-    from pycompose.compiler.propose import propose_value
-    from pycompose.schema.codegen.values import render_python
-    from pycompose.schema.codegen.values_kotlin import (
+    from pycompose.codegen.values import render_python
+    from pycompose.codegen.values_kotlin import (
         render_models,
         render_native,
     )
+    from pycompose.compiler.classpath_dump import inventory
+    from pycompose.compiler.propose import propose_value
 
     assert native_document["bytecodeAudit"]["unmatchedTargetMethods"] == []
     source = next(

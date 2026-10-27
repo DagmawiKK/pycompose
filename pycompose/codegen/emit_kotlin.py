@@ -7,8 +7,8 @@ GeneratedAdapters so every approved component gets performance-tuned wiring.
 import re
 from typing import Any
 
-from pycompose.schema.codegen.literals import GENERATED_NOTICE, kotlin_string
-from pycompose.schema.codegen.rules import die, supported, version_key
+from pycompose.codegen.literals import GENERATED_NOTICE, kotlin_string
+from pycompose.codegen.rules import die, supported, version_key
 
 
 def _kt_field(name: str) -> str:
@@ -87,7 +87,7 @@ def render_generated_adapters(registry: dict[str, Any]) -> str:
     Returns:
         The generated Kotlin source.
     """
-    from pycompose.schema.codegen.adapters import render_file
+    from pycompose.codegen.adapters import render_file
 
     return render_file(registry)
 

@@ -116,7 +116,7 @@ def discover(app: Path, catalog: dict[str, Any]) -> set[str]:
 
 def discover_values(app: Path, catalog: dict[str, Any]) -> set[str]:
     """Return explicitly referenced approved value constructors, excluding output."""
-    from pycompose.schema.codegen.values import definitions
+    from pycompose.codegen.values import definitions
 
     return _discover_names(app, set(definitions(catalog)))
 
@@ -211,7 +211,7 @@ def slice_registry(
     narrowed["components"] = {
         name: entry for name, entry in components.items() if name in reached
     }
-    from pycompose.schema.codegen.values import dependency_closure
+    from pycompose.codegen.values import dependency_closure
 
     narrowed["valueTypes"] = dependency_closure(narrowed, values)
     return narrowed

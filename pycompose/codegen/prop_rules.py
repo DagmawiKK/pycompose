@@ -8,8 +8,7 @@ and slots. Importing :mod:`.rules` for ``die`` and shared constants is fine;
 import math
 from typing import Any
 
-from pycompose.contract.registry_types import CONSUMERS, SLOT_KINDS
-from pycompose.schema.codegen.rules import (
+from pycompose.codegen.rules import (
     DOTTED_NAME,
     NATIVE_PARAMETER,
     PROP_TYPE_VOCABULARY,
@@ -18,6 +17,7 @@ from pycompose.schema.codegen.rules import (
     SLOT_NAME,
     die,
 )
+from pycompose.contract.registry_types import CONSUMERS, SLOT_KINDS
 
 PROVIDER_KEYS = frozenset({"native", "returns"})
 
@@ -302,7 +302,7 @@ def _validate_nullable(
     """
     if not prop.get("nullable"):
         return
-    from pycompose.schema.codegen.adapters import SCALAR_KOTLIN
+    from pycompose.codegen.adapters import SCALAR_KOTLIN
 
     if prop.get("required"):
         if prop["type"] not in SCALAR_KOTLIN or "decode" in prop:

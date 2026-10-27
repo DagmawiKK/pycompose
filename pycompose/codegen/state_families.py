@@ -16,7 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from pycompose.schema.codegen.state_anchors import SHEET_VALUES, SWIPE_VALUES
+from pycompose.codegen.state_anchors import SHEET_VALUES, SWIPE_VALUES
 
 _INT = 2**31 - 1
 _SELECTION: dict[str, dict[str, Any]] = {

@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.schema.codegen.defaults import render_default
-from pycompose.schema.codegen.values import (
+from pycompose.codegen.defaults import render_default
+from pycompose.codegen.values import (
     _runtime_contract,
     definitions,
     method_name,
@@ -51,7 +51,7 @@ def _native_type(spec: dict[str, Any]) -> str:
 
 def render_models(registry: dict[str, Any]) -> str:
     """Generate pure JVM sealed wire models and typed readers."""
-    from pycompose.schema.codegen.literals import (
+    from pycompose.codegen.literals import (
         GENERATED_NOTICE,
         kotlin_joined_statements,
         kotlin_string,
@@ -191,7 +191,7 @@ def vocabulary_imports(specs: dict[str, dict[str, Any]]) -> set[str]:
 
 def render_native(registry: dict[str, Any]) -> str:
     """Generate native calls from approved factory descriptions."""
-    from pycompose.schema.codegen.literals import GENERATED_NOTICE
+    from pycompose.codegen.literals import GENERATED_NOTICE
 
     specs = definitions(registry)
     families = sorted({s["family"] for s in specs.values()})

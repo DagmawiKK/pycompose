@@ -1,19 +1,19 @@
 """Python emission: the m3 component classes a Compose host composes.
 
 The whole-file renderers -- runtime tables and the package exports -- live in
-:mod:`pycompose.schema.codegen.emit_modules`.
+:mod:`pycompose.codegen.emit_modules`.
 """
 
 import json
 import textwrap
 from typing import Any
 
-from pycompose.schema.codegen.literals import (
+from pycompose.codegen.literals import (
     GENERATED_NOTICE,
     python_adjacent_statements,
 )
-from pycompose.schema.codegen.overloads import groups, keywords, python_name
-from pycompose.schema.codegen.python_layout import (
+from pycompose.codegen.overloads import groups, keywords, python_name
+from pycompose.codegen.python_layout import (
     class_docstring,
     class_header,
     overloads_line,

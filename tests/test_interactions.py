@@ -20,10 +20,10 @@ from typing import Any
 
 import pytest
 
+from pycompose.codegen.adapters import render
 from pycompose.core.node import Node
 from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.m3 import Button
-from pycompose.schema.codegen.adapters import render
 from pycompose.state import State
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
@@ -147,7 +147,7 @@ def _load_with(
         monkeypatch: Pytest monkeypatch fixture.
         mutate: Applies the change to the loaded registry.
     """
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     mutate(registry)

@@ -10,9 +10,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.schema.codegen.literals import GENERATED_NOTICE, kotlin_string
-from pycompose.schema.codegen.rules import die
-from pycompose.schema.codegen.values import resolver_call
+from pycompose.codegen.literals import GENERATED_NOTICE, kotlin_string
+from pycompose.codegen.rules import die
+from pycompose.codegen.values import resolver_call
 
 READS = {
     "number": "double",

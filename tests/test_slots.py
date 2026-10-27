@@ -250,7 +250,7 @@ def _load_with(
     """
     import json
 
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(
         (Path(__file__).resolve().parents[1] / "schema/catalog.lock.json").read_text()
@@ -354,7 +354,7 @@ def test_a_slot_bearing_component_carries_its_children() -> None:
     sees it, so the declared slot is the fact that decides, not
     ``children.allowed``.
     """
-    from pycompose.schema.codegen.emit_kotlin import render_kotlin_models
+    from pycompose.codegen.emit_kotlin import render_kotlin_models
 
     models = render_kotlin_models(
         {

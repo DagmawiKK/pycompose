@@ -8,20 +8,20 @@ import json
 import re
 from typing import Any
 
-from pycompose.core.action_binding import BINDING_PATTERN
-from pycompose.schema.codegen.rules import (
+from pycompose.codegen.rules import (
     SLOT_NAME,
     die,
     supported,
     version_key,
 )
+from pycompose.core.action_binding import BINDING_PATTERN
 
 JSON_SCHEMA_DRAFT = "http://json-schema.org/draft-07/schema#"
 
 
 def render_ir_schema(registry: dict[str, Any]) -> str:
     """Render the derived JSON Schema for canonical IR snapshots."""
-    from pycompose.schema.codegen.values import json_definitions
+    from pycompose.codegen.values import json_definitions
 
     components = registry["components"]
     action_ids = sorted(registry.get("actions", {}))
@@ -204,7 +204,7 @@ def _component_schema(
 
 def _tagged(prop: dict[str, Any], value: dict[str, Any]) -> dict[str, Any]:
     """A value-typed prop's schema: its family's tagged object, or either form."""
-    from pycompose.schema.codegen.values import parameter_schema
+    from pycompose.codegen.values import parameter_schema
 
     tagged = parameter_schema({**prop, "type": "value", "nullable": False})
     if prop["type"] == "value":
@@ -217,7 +217,7 @@ def _tagged(prop: dict[str, Any], value: dict[str, Any]) -> dict[str, Any]:
 
 
 def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
-    from pycompose.schema.codegen.values import parameter_schema
+    from pycompose.codegen.values import parameter_schema
 
     ptype = prop["type"]
     basic = {

@@ -11,7 +11,7 @@ from test_generated_adapters import (
     components,
 )
 
-from pycompose.schema.codegen.adapters import (
+from pycompose.codegen.adapters import (
     composables,
     render,
 )
@@ -98,7 +98,7 @@ def test_a_nullable_slot_keeps_compose_default() -> None:
 
 def test_a_consumed_scope_is_applied_by_the_adapter() -> None:
     """Scaffold hands PaddingValues down; the app must not apply it twice."""
-    from pycompose.schema.codegen.adapters import extra_imports
+    from pycompose.codegen.adapters import extra_imports
 
     entry = components()["Scaffold"]
     block = render("Scaffold", entry)
@@ -110,7 +110,7 @@ def test_a_consumed_scope_is_applied_by_the_adapter() -> None:
 
 def test_a_lazy_slot_lists_children_as_a_keyed_window() -> None:
     """LazyColumn's content is a window of keyed items the host asks for."""
-    from pycompose.schema.codegen.adapters import extra_imports
+    from pycompose.codegen.adapters import extra_imports
 
     entry = components()["LazyColumn"]
     block = render("LazyColumn", entry)
@@ -126,7 +126,7 @@ def test_a_lazy_slot_lists_children_as_a_keyed_window() -> None:
 
 def test_a_named_items_slot_lists_its_own_nodes() -> None:
     """A lazy slot lists the slot's children, not the primary ones."""
-    from pycompose.schema.codegen.adapters import extra_imports
+    from pycompose.codegen.adapters import extra_imports
 
     entry = components()["Column"]
     entry["slots"] = {"header": {"native": "header", "kind": "items"}}
@@ -185,7 +185,7 @@ def test_a_scoped_named_slot_hands_its_receiver_to_its_children() -> None:
 
 def test_the_adapters_import_every_receiver_they_name() -> None:
     """A scope is its receiver class, so the file imports it, whatever library."""
-    from pycompose.schema.codegen.adapters import render_file
+    from pycompose.codegen.adapters import render_file
 
     source = render_file(json.loads(SCHEMA_PATH.read_text()))
     for scope in (
@@ -270,7 +270,7 @@ def test_the_schema_refuses_a_scope_it_cannot_wire(
     message: str,
 ) -> None:
     """A scope names its receiver class on both ends, so a typo fails at codegen."""
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     registry["components"][component].update(change)

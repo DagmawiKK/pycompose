@@ -6,11 +6,11 @@ import json
 
 import pytest
 
+from pycompose.codegen.scoped_modifiers_kotlin import render_scoped_modifiers
 from pycompose.compiler.lock import LOCK
 from pycompose.compiler.scoped_modifiers import _named, modifier_props
 from pycompose.components.modifiers import Modifier
 from pycompose.errors import IrValidationError
-from pycompose.schema.codegen.scoped_modifiers_kotlin import render_scoped_modifiers
 from pycompose.values import ExposedDropdownMenuAnchorType
 
 MENU = "androidx.compose.material3.ExposedDropdownMenuBoxScope"

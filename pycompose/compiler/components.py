@@ -15,6 +15,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
+from pycompose.codegen.defaults import render_default
 from pycompose.compiler.classpath_dump import (
     DUMP_DIR,
     Declaration,
@@ -43,7 +44,6 @@ from pycompose.contract.registry_vocabulary import (
     STATE_HOLDERS,
     TRANSIENT_HOLDERS,
 )
-from pycompose.schema.codegen.defaults import render_default
 
 HOLDER_KINDS = {holder: kind for kind, holder in STATE_HOLDERS.items()}
 TRANSIENT_BY_HOLDER = {holder: kind for kind, holder in TRANSIENT_HOLDERS.items()}

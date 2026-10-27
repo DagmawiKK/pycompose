@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from pycompose.schema.codegen.rules import die
+from pycompose.codegen.rules import die
 
 SWIPE_VALUES = ("settled", "startToEnd", "endToStart")
 SHEET_VALUES = ("hidden", "partiallyExpanded", "expanded")

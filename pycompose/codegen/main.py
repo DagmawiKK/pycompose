@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from pycompose.schema.codegen.rules import (
+from pycompose.codegen.rules import (
     PACKAGED_CATALOG,
     SCHEMA_PATH,
     load_registry,
@@ -32,7 +32,7 @@ __all__ = [
     "main",
 ]
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[2]
 
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
 PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
@@ -95,7 +95,7 @@ def build_app(
     Returns:
         Process exit code: 0 clean, 1 on drift or an unresolvable app.
     """
-    from pycompose.schema.codegen.app_slice import (
+    from pycompose.codegen.app_slice import (
         _ADAPTERS_RELATIVE,
         _IR_RELATIVE,
         _VALUES_RELATIVE,
@@ -109,19 +109,19 @@ def build_app(
         slice_registry,
         with_app_lock,
     )
-    from pycompose.schema.codegen.emit_kotlin import (
+    from pycompose.codegen.emit_kotlin import (
         render_generated_adapters,
         render_kotlin_models,
         render_kotlin_registry,
     )
-    from pycompose.schema.codegen.emit_modules import render_python_exports
-    from pycompose.schema.codegen.emit_python import render_python_components
-    from pycompose.schema.codegen.holders_kotlin import render_holder_drives
-    from pycompose.schema.codegen.scoped_modifiers_kotlin import (
+    from pycompose.codegen.emit_modules import render_python_exports
+    from pycompose.codegen.emit_python import render_python_components
+    from pycompose.codegen.holders_kotlin import render_holder_drives
+    from pycompose.codegen.scoped_modifiers_kotlin import (
         render_scoped_modifiers,
     )
-    from pycompose.schema.codegen.values import render_python
-    from pycompose.schema.codegen.values_kotlin import (
+    from pycompose.codegen.values import render_python
+    from pycompose.codegen.values_kotlin import (
         render_models,
         render_native,
     )
@@ -225,7 +225,7 @@ def _slicing_problem(registry: dict[str, Any], used: set[str], app: Path) -> str
     Returns:
         The problem to report, or None.
     """
-    from pycompose.schema.codegen.app_slice import FLOOR_COMPONENTS
+    from pycompose.codegen.app_slice import FLOOR_COMPONENTS
 
     if not used:
         return f"{app} references no components; nothing to generate"
@@ -248,26 +248,26 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         Artifact paths keyed to their full rendered content; the template
         mirror is added by :func:`_mirror_template` on top of this mapping.
     """
-    from pycompose.schema.codegen.emit_kotlin import (
+    from pycompose.codegen.emit_kotlin import (
         render_generated_adapters,
         render_kotlin_models,
         render_kotlin_registry,
     )
-    from pycompose.schema.codegen.emit_modules import (
+    from pycompose.codegen.emit_modules import (
         render_payloads,
         render_python_exports,
     )
-    from pycompose.schema.codegen.emit_python import render_python_components
-    from pycompose.schema.codegen.emit_wire import render_ir_schema
-    from pycompose.schema.codegen.holders_kotlin import render_holder_drives
-    from pycompose.schema.codegen.scoped_modifiers_kotlin import (
+    from pycompose.codegen.emit_python import render_python_components
+    from pycompose.codegen.emit_wire import render_ir_schema
+    from pycompose.codegen.holders_kotlin import render_holder_drives
+    from pycompose.codegen.scoped_modifiers_kotlin import (
         render_scoped_modifiers,
     )
-    from pycompose.schema.codegen.scoped_modifiers_python import (
+    from pycompose.codegen.scoped_modifiers_python import (
         render_scoped_operations,
     )
-    from pycompose.schema.codegen.values import render_python as render_values
-    from pycompose.schema.codegen.values_kotlin import (
+    from pycompose.codegen.values import render_python as render_values
+    from pycompose.codegen.values_kotlin import (
         render_models,
         render_native,
     )

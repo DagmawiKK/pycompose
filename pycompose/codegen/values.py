@@ -7,16 +7,16 @@ import keyword
 import textwrap
 from typing import Any
 
+from pycompose.codegen.defaults import render_default
 from pycompose.core.props import to_snake_case
 from pycompose.core.values import FLOAT_MAX, FLOAT_MIN
-from pycompose.schema.codegen.defaults import render_default
 
 KINDS = {"scalar", "record", "factory", "constant", "reference", "operator"}
 
 
 def validate_definitions(registry: dict[str, Any]) -> None:
     """Fail generation on unresolved families or unimplemented behavior policies."""
-    from pycompose.schema.codegen.rules import die, require_semver
+    from pycompose.codegen.rules import die, require_semver
 
     specs = definitions(registry)
     families = {s["family"] for s in specs.values()}
@@ -62,7 +62,7 @@ def _validate_operator(name: str, spec: dict[str, Any]) -> None:
         name: The value constructor name.
         spec: Its schema entry.
     """
-    from pycompose.schema.codegen.rules import die
+    from pycompose.codegen.rules import die
 
     if spec.get("kind") != "operator":
         return
@@ -76,7 +76,7 @@ def _validate_operator(name: str, spec: dict[str, Any]) -> None:
 
 def _validate_holders(name: str, spec: dict[str, Any]) -> None:
     """Fail generation when a constant's native holders are not exact."""
-    from pycompose.schema.codegen.rules import die
+    from pycompose.codegen.rules import die
 
     native = spec.get("native") or {}
     packages = native.get("imports")
@@ -109,7 +109,7 @@ def _validate_holders(name: str, spec: dict[str, Any]) -> None:
 
 def _validate_default(name: str, field: str, rule: dict[str, Any]) -> None:
     """Every optional parameter needs a default; only typed evidence is accepted."""
-    from pycompose.schema.codegen.rules import die
+    from pycompose.codegen.rules import die
 
     if "default" in rule:
         try:
@@ -121,7 +121,7 @@ def _validate_default(name: str, field: str, rule: dict[str, Any]) -> None:
 
 
 def _validate_rule(rule: dict[str, Any], families: set[str]) -> None:
-    from pycompose.schema.codegen.rules import die
+    from pycompose.codegen.rules import die
 
     kind = rule["type"]
     if kind == "value":
@@ -246,7 +246,7 @@ def resolver_call(family: str, source: str) -> str:
 
 def render_python(registry: dict[str, Any]) -> str:
     """Generate JSON-only constructors; no native values live in Python."""
-    from pycompose.schema.codegen.literals import (
+    from pycompose.codegen.literals import (
         GENERATED_NOTICE,
         python_adjacent_statements,
     )

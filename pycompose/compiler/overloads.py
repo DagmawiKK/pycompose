@@ -19,10 +19,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.codegen.adapter_helpers import is_mechanical
+from pycompose.codegen.overloads import ambiguous, keywords
 from pycompose.compiler.candidate_props import CandidateError
 from pycompose.compiler.component_binding import spell
-from pycompose.schema.codegen.adapter_helpers import is_mechanical
-from pycompose.schema.codegen.overloads import ambiguous, keywords
 
 
 def _pascal(name: str) -> str:

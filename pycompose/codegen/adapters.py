@@ -24,8 +24,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.contract.registry_vocabulary import STATE_STREAMS
-from pycompose.schema.codegen.adapter_calls import (
+from pycompose.codegen.adapter_calls import (
     _callback,
     _decoded,
     _interaction,
@@ -37,7 +36,7 @@ from pycompose.schema.codegen.adapter_calls import (
     _state,
     _transient,
 )
-from pycompose.schema.codegen.adapter_helpers import (
+from pycompose.codegen.adapter_helpers import (
     DECODED,
     GATED_STATES,
     KOTLIN_TYPES,
@@ -57,8 +56,9 @@ from pycompose.schema.codegen.adapter_helpers import (
     scalar_wire,
     simple,
 )
-from pycompose.schema.codegen.adapter_imports import extra_imports
-from pycompose.schema.codegen.state_families import property_props
+from pycompose.codegen.adapter_imports import extra_imports
+from pycompose.codegen.state_families import property_props
+from pycompose.contract.registry_vocabulary import STATE_STREAMS
 
 __all__ = [
     "DECODED",

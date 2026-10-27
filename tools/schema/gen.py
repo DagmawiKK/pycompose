@@ -2,7 +2,7 @@
 
 Kept as a script because ``Makefile``, CI and the pre-commit hooks all invoke
 ``python tools/schema/gen.py``. The code moved to
-``pycompose/schema/codegen/main.py`` because an installed ``pycompose`` has to be
+``pycompose/codegen/main.py`` because an installed ``pycompose`` has to be
 able to generate an app's component slice (ADR-0014), and a wheel does not ship
 ``tools/``.
 
@@ -19,7 +19,7 @@ from pathlib import Path
 if __package__ in (None, ""):  # pragma: no cover - only when run as a script
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from pycompose.schema.codegen.main import main
+from pycompose.codegen.main import main
 
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -26,7 +26,7 @@ from pycompose.cli.project import (
 from pycompose.cli.requirements import validate_requirements
 from pycompose.cli.sync import sync_resources
 from pycompose.cli.toolchain import jdk_home, test_jdk
-from pycompose.schema.codegen.app_slice import APP_LOCK
+from pycompose.codegen.app_slice import APP_LOCK
 
 SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
 
@@ -121,7 +121,7 @@ def _own_slice(directory: Path) -> str:
     Returns:
         ``"true"`` or ``"false"``.
     """
-    from pycompose.schema.codegen.app_slice import uses_generated_slice
+    from pycompose.codegen.app_slice import uses_generated_slice
 
     return "true" if uses_generated_slice(directory) else "false"
 
@@ -275,8 +275,8 @@ def codegen(project: Project, *, kotlin: bool = True) -> None:
         ProjectError: If the slice cannot be generated.
     """
     from pycompose.cli.add import sync_libraries
-    from pycompose.schema.codegen.app_slice import APP_LOCK, uses_generated_slice
-    from pycompose.schema.codegen.main import build_app
+    from pycompose.codegen.app_slice import APP_LOCK, uses_generated_slice
+    from pycompose.codegen.main import build_app
 
     python = project.table("python")
     source = python.get("source_dir", "app")

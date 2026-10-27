@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.schema.codegen.adapter_helpers import (
+from pycompose.codegen.adapter_helpers import (
     GATED_STATES,
     NUMERIC_CONVERSIONS,
     NUMERIC_KOTLIN,
@@ -26,8 +26,8 @@ from pycompose.schema.codegen.adapter_helpers import (
     simple,
     state_call,
 )
-from pycompose.schema.codegen.derived_families import properties_locals
-from pycompose.schema.codegen.values import resolver_call
+from pycompose.codegen.derived_families import properties_locals
+from pycompose.codegen.values import resolver_call
 
 
 def _provided(expression: str, wire: str | None, target: str) -> str | None:

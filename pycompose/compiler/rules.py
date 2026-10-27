@@ -17,15 +17,15 @@ from __future__ import annotations
 import copy
 from typing import Any
 
+from pycompose.codegen.state_families import (
+    STATE_FAMILIES,
+    TRANSIENT_FAMILIES,
+    property_props,
+)
 from pycompose.compiler.candidate_props import CandidateError
 from pycompose.contract.registry_vocabulary import (
     INTERACTION_KINDS,
     INTERACTION_REPORTS,
-)
-from pycompose.schema.codegen.state_families import (
-    STATE_FAMILIES,
-    TRANSIENT_FAMILIES,
-    property_props,
 )
 
 INTERACTION_SOURCE = "androidx/compose/foundation/interaction/MutableInteractionSource"

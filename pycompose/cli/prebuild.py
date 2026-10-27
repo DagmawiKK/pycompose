@@ -28,7 +28,7 @@ from pycompose.cli.plugins import AndroidModel, manifest_with, run_plugins
 from pycompose.cli.project import Project, ProjectError, project_path
 from pycompose.cli.resources import resource_files
 from pycompose.cli.theme import theme_files
-from pycompose.schema.codegen.app_slice import APP_LOCK
+from pycompose.codegen.app_slice import APP_LOCK
 
 GENERATED = ".pycompose/android"
 """Where a generated project lives, relative to the app root."""
