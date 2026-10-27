@@ -15,7 +15,7 @@ from typing import Any, TypedDict
 import pytest
 
 from pycompose import Registry
-from pycompose.bridge.runtime import RuntimeSession
+from pycompose.bridge.session import RuntimeSession
 from pycompose.errors import BridgeError, StateError
 from pycompose.state import State
 

@@ -239,7 +239,7 @@ def app_problems(project: Project) -> list[Problem]:
     Returns:
         The failure, if composing or validating failed.
     """
-    from pycompose.bridge.runtime import RuntimeSession
+    from pycompose.bridge.session import RuntimeSession
     from pycompose.cli.build import codegen
 
     # The app's generated package is what the build would generate from it.

@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from pycompose.bridge.runtime import RuntimeSession
+from pycompose.bridge.session import RuntimeSession
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.repository import use_root
 

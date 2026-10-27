@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from pycompose.bridge.runtime import RuntimeSession
+from pycompose.bridge.session import RuntimeSession
 from pycompose.errors import BridgeError, StateError
 
 
@@ -273,3 +273,28 @@ actions.register("increment",
         assert json.loads(session.envelope("main", patch["serial"]))["kind"] == "full"
     finally:
         sys.modules.pop("pull_app", None)
+
+
+def test_runtime_calls_and_async_actions_share_the_loop_thread(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from pycompose import async_task
+    from pycompose.bridge import runtime
+
+    (tmp_path / "loop_app.py").write_text("""import threading
+from pycompose.m3 import Text
+from pycompose.state import App, State
+def view(restore):
+    return State(root=Text(id="text", text=threading.current_thread().name))
+app = App(view=view)
+""")
+    monkeypatch.syspath_prepend(str(tmp_path))
+    try:
+        runtime.start("loop_app:app", "home", False)
+        rendered = json.loads(runtime.fetch_latest_snapshot())
+        assert rendered["root"]["props"]["text"] == "pycompose-loop"
+        assert async_task._event_loop() is runtime._loop_thread().loop
+        assert runtime.heartbeat() < 5
+    finally:
+        runtime.close()
+        sys.modules.pop("loop_app", None)

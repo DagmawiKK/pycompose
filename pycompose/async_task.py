@@ -343,11 +343,12 @@ def shutdown() -> None:
     threads from the previous build running.
     """
     global _executor, _sink, _error
-    global _admission, _loop  # noqa: PLW0603 -- clear the session's sinks and loop
+    global _admission, _loop, _shared  # noqa: PLW0603 -- clear the session's sinks and loops
     with _lock:
         pool, _executor, _sink, _error = _executor, None, None, ""
         _admission = None
         loop, _loop = _loop, None
+        _shared = None
         running = list(_running.values())
         _running.clear()
     for future in running:
@@ -365,14 +366,32 @@ _running: dict[str, Future[None]] = {}
 """The current run of each async action, cancelled when a newer one starts."""
 
 
+_shared: asyncio.AbstractEventLoop | None = None
+"""The session's own loop, when the runtime provides one; it is never stopped here."""
+
+
+def use_loop(loop: asyncio.AbstractEventLoop | None) -> None:
+    """Run async actions on the session's loop instead of a private thread.
+
+    Args:
+        loop: The loop the session's state lives on, or None to stop using it.
+    """
+    global _shared  # noqa: PLW0603 -- installed by the runtime at session start
+    with _lock:
+        _shared = loop
+
+
 def _event_loop() -> asyncio.AbstractEventLoop:
-    """Return the loop async actions run on, starting it on first use.
+    """Return the loop async actions run on.
 
     Returns:
-        A loop running on its own daemon thread.
+        The session's loop when the runtime installed one; otherwise a private
+        loop on its own daemon thread, started on first use.
     """
     global _loop  # noqa: PLW0603 -- one loop per session, started lazily
     with _lock:
+        if _shared is not None:
+            return _shared
         if _loop is None:
             _loop = asyncio.new_event_loop()
             threading.Thread(target=_loop.run_forever, daemon=True).start()

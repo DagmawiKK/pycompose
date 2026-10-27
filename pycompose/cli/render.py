@@ -99,7 +99,7 @@ def first_screen(project: Project) -> str:
     Raises:
         ProjectError: If the app published no snapshot.
     """
-    from pycompose.bridge.runtime import RuntimeSession
+    from pycompose.bridge.session import RuntimeSession
 
     python = project.table("python")
     source = project_path(project.root, str(python.get("source_dir", "app")))

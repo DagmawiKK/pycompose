@@ -29,7 +29,7 @@ from typing import Any, Self
 
 import pycompose
 from pycompose.bridge.imports import fresh_imports
-from pycompose.bridge.runtime import RuntimeSession
+from pycompose.bridge.session import RuntimeSession
 from pycompose.extensions.environment import install as install_paths
 from pycompose.repository import documents_at
 

@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from pycompose import async_task
-from pycompose.bridge.runtime import RuntimeSession
+from pycompose.bridge.session import RuntimeSession
 from pycompose.errors import StateError
 
 SOURCE = """from types import SimpleNamespace

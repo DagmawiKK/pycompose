@@ -98,9 +98,9 @@ def test_the_bridge_announces_each_substitution_once(
 def test_the_runtime_keeps_the_hosts_list_for_the_sessions_it_starts(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from pycompose.bridge import runtime
+    from pycompose.bridge import runtime, session
 
-    monkeypatch.setattr(runtime, "_host_components", None)
+    monkeypatch.setattr(session, "_host_components", None)
     offer = {"protocol": 1, "capabilities": [], "components": ["Text"]}
     runtime.handshake(json.dumps(offer))
-    assert runtime._host_components == {"Text"}
+    assert session._host_components == {"Text"}
