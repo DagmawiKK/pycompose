@@ -13,7 +13,14 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field, replace
 
+from pycompose.contract.catalog import (
+    MIN_LIBRARY_VERSION,
+    MIN_SCHEMA_VERSION,
+    REGISTRY,
+    SCHEMA_VERSION,
+)
 from pycompose.contract.registry_types import PropDef
+from pycompose.contract.version import require_version
 from pycompose.core.action_binding import ActionBinding, BindingSpec, read_bindings
 from pycompose.core.node import Node
 from pycompose.core.resources import valid_resource
@@ -23,17 +30,10 @@ from pycompose.errors import ComponentRegistryError, IrValidationError
 from pycompose.ir.data import DATA_SCHEMA, read_data
 from pycompose.ir.echoes import ECHOES_SCHEMA, read_echoes
 from pycompose.ir.effects import EFFECTS_SCHEMA, read_effects
-from pycompose.ir.generated_validators import (
-    MIN_LIBRARY_VERSION,
-    MIN_SCHEMA_VERSION,
-    REGISTRY,
-    SCHEMA_VERSION,
-)
 from pycompose.ir.host import current_host
 from pycompose.ir.model import IRRoot
 from pycompose.ir.streams import stream_problems
 from pycompose.ir.validator_walk import _Validation
-from pycompose.schema.version import require_version
 from pycompose.utils.json_canonical import check_json
 
 __all__ = [

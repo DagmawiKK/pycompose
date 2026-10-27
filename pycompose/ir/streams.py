@@ -96,7 +96,7 @@ def stream_problems(root: Node) -> list[tuple[Node, str, str]]:
         (node, prop, message) for each stream naming no node, or a node whose
         state family does not expose it.
     """
-    from pycompose.ir.generated_validators import REGISTRY
+    from pycompose.contract.catalog import REGISTRY
 
     nodes: dict[str, Node] = {}
     pending = [root]

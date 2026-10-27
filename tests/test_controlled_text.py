@@ -21,7 +21,7 @@ from typing import Any
 import pytest
 
 from pycompose import AppContext, install_context
-from pycompose.ir.generated_validators import SCHEMA_VERSION
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.m3 import TextField
 
 APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"

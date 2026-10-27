@@ -10,9 +10,9 @@ import pytest
 
 from pycompose.bridge import BridgeSurface
 from pycompose.bridge.types import IncrementPayload, SubmitPayload
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core import Node, Props
 from pycompose.errors import SchemaError
-from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.state import Actions, State, Store
 from pycompose.utils.json_canonical import FrozenJsonValue
 

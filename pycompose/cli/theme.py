@@ -22,13 +22,12 @@ template ships this file as generated from an empty ``[theme]``.
 
 from __future__ import annotations
 
-import json
 import re
 from functools import cache
-from importlib.resources import files
 
 from pycompose.cli.project import Project, ProjectError, project_path, read_json
 from pycompose.cli.resources import MAIN, RESOURCE_NAME
+from pycompose.contract.catalog import lock
 
 PATH = f"{MAIN}/kotlin/com/pycompose/host/ui/AppTheme.kt"
 """Where the generated theme lives, relative to the Android project."""
@@ -48,10 +47,7 @@ _IGNORED_ROLES = frozenset({"shadow"})
 @cache
 def _roles() -> frozenset[str]:
     """The colour roles of the pinned ColorScheme, as the catalog lists them."""
-    lock = json.loads(
-        files("pycompose").joinpath("schema", "catalog.lock.json").read_text("utf-8")
-    )
-    name = lock["valueTypes"]["ThemeColor"]["parameters"]["name"]
+    name = lock()["valueTypes"]["ThemeColor"]["parameters"]["name"]
     return frozenset(name["values"])
 
 

@@ -27,10 +27,10 @@ if __package__ in {None, ""}:
 
 from pycompose import action
 from pycompose.cli.validate import validate_file
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.effect import Effect
 from pycompose.errors import PyComposeError
 from pycompose.ir import emit_ir, to_json
-from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.m3 import Button, Column, Modifier, Scaffold, Switch, Text, TextField
 from pycompose.state import State
 

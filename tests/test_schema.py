@@ -13,7 +13,6 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 COMPONENTS_PATH = ROOT / "schema" / "catalog.lock.json"
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
-VALIDATORS_PATH = ROOT / "pycompose" / "ir" / "generated_validators.py"
 PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
 
 PROP_TYPE_VOCABULARY = {
@@ -33,7 +32,7 @@ PROP_TYPE_VOCABULARY = {
 
 
 def _registry() -> dict:
-    from pycompose.schema.codegen.rules import with_rules
+    from pycompose.contract.registry_rules import with_rules
 
     return with_rules(json.loads(COMPONENTS_PATH.read_text(encoding="utf-8")))
 
@@ -98,8 +97,10 @@ def test_ir_schema_is_fresh() -> None:
     ).read_bytes() == IR_SCHEMA_PATH.read_bytes()
 
 
-def test_generated_validators_are_fresh() -> None:
-    assert VALIDATORS_PATH.read_text(encoding="utf-8") == _expected("render_validators")
+def test_the_runtime_catalog_is_the_committed_lock() -> None:
+    from pycompose.contract.catalog import lock
+
+    assert lock() == json.loads(COMPONENTS_PATH.read_text(encoding="utf-8"))
 
 
 def test_generated_action_payloads_are_fresh() -> None:
@@ -107,7 +108,7 @@ def test_generated_action_payloads_are_fresh() -> None:
 
 
 def test_generated_tables_match_the_full_registry() -> None:
-    from pycompose.ir.generated_validators import REGISTRY
+    from pycompose.contract.catalog import REGISTRY
 
     assert REGISTRY.to_mapping() == _registry()
 

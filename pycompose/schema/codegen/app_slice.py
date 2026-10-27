@@ -28,7 +28,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from pycompose.schema.codegen.rules import with_rules
+from pycompose.contract.registry_rules import with_rules
 
 APP_PACKAGE = "m3"
 """The app-side generated package, mirroring ``pycompose.m3``."""

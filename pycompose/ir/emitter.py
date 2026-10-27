@@ -11,6 +11,12 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import cast
 
+from pycompose.contract.catalog import (
+    MIN_SCHEMA_VERSION,
+    REGISTRY,
+    SCHEMA_VERSION,
+)
+from pycompose.contract.version import require_version
 from pycompose.core.expansion import expand_nodes
 from pycompose.core.ids import Handles, IdRegistry, sibling_keys
 from pycompose.core.node import Node
@@ -21,14 +27,8 @@ from pycompose.errors import IrValidationError
 from pycompose.ir.bindings import lower_props, record
 from pycompose.ir.data import lower_data
 from pycompose.ir.effects import lower_effects
-from pycompose.ir.generated_validators import (
-    MIN_SCHEMA_VERSION,
-    REGISTRY,
-    SCHEMA_VERSION,
-)
 from pycompose.ir.model import IRRoot
 from pycompose.ir.streams import is_expression, resolve_streams
-from pycompose.schema.version import require_version
 from pycompose.state.state import State
 
 __all__ = ["emit_ir"]

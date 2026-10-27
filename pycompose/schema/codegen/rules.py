@@ -10,9 +10,11 @@ import re
 from pathlib import Path
 from typing import Any, NoReturn, cast
 
+from pycompose.contract.registry_rules import with_rules
+
 ROOT = Path(__file__).resolve().parents[3]
 
-PACKAGED_CATALOG = ROOT / "pycompose" / "schema" / "catalog.lock.json"
+PACKAGED_CATALOG = ROOT / "pycompose" / "contract" / "catalog.lock.json"
 """The catalog as shipped in the wheel, for an app with no repo checkout."""
 
 SCHEMA_PATH = ROOT / "schema/catalog.lock.json"
@@ -91,37 +93,6 @@ def load_registry() -> dict[str, Any]:
         die(f"invalid JSON in {SCHEMA_PATH}: {exc}")
     with_rules(registry)
     _validate_registry(registry)
-    return registry
-
-
-WINDOW_PROPS: dict[str, dict[str, Any]] = {
-    "itemCount": {"type": "integer", "minimum": 0, "maximum": 2147483647},
-    "itemOffset": {"type": "integer", "minimum": 0, "maximum": 2147483647},
-    "window": {"type": "string"},
-}
-"""What a lazy container states so the host can ask for a window of it (ADR-0043)."""
-
-
-def with_rules(registry: dict[str, Any]) -> dict[str, Any]:
-    """Apply the catalog's rules: every lazy container gets windowing's props.
-
-    A lazy container states how many items it has, the index of the first one
-    it composed, and the key the host asks for windows by. These are protocol,
-    not native parameters, so they are marked as such and no adapter passes
-    them on and no Python signature offers them.
-
-    Args:
-        registry: The catalog, extended in place.
-
-    Returns:
-        The same catalog, for chaining.
-    """
-    for entry in registry.get("components", {}).values():
-        if entry.get("children", {}).get("kind") == "items":
-            for name, prop in WINDOW_PROPS.items():
-                entry.setdefault("props", {}).setdefault(
-                    name, {**prop, "protocol": "window"}
-                )
     return registry
 
 

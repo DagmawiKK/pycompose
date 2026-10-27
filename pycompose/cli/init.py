@@ -9,8 +9,8 @@ from importlib.resources import files
 from importlib.resources.abc import Traversable
 from pathlib import Path
 
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.errors import PyComposeError
-from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.version import __version__
 
 

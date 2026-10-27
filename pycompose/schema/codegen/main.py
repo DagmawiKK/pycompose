@@ -35,7 +35,6 @@ __all__ = [
 ROOT = Path(__file__).resolve().parents[3]
 
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
-VALIDATORS_PATH = ROOT / "pycompose" / "ir" / "generated_validators.py"
 PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
 KOTLIN_ADAPTERS_PATH = (
     ROOT / "android/host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
@@ -257,7 +256,6 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     from pycompose.schema.codegen.emit_modules import (
         render_payloads,
         render_python_exports,
-        render_validators,
     )
     from pycompose.schema.codegen.emit_python import render_python_components
     from pycompose.schema.codegen.emit_wire import render_ir_schema
@@ -276,7 +274,6 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
 
     artifacts = {
         IR_SCHEMA_PATH: render_ir_schema(registry),
-        VALIDATORS_PATH: render_validators(registry),
         PAYLOADS_PATH: render_payloads(registry),
         KOTLIN_MODELS_PATH: render_kotlin_models(registry),
         KOTLIN_REGISTRY_PATH: render_kotlin_registry(registry),
@@ -299,10 +296,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description=(
-            "Regenerate schema/ir.schema.json and "
-            "pycompose/ir/generated_validators.py."
-        )
+        description=("Regenerate the artifacts derived from schema/catalog.lock.json.")
     )
     parser.add_argument(
         "--check",

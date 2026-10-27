@@ -24,7 +24,7 @@ from pycompose.cli.config import change
 from pycompose.cli.init import init_project
 from pycompose.cli.project import ProjectError, load_project
 from pycompose.cli.toolchain import HOME
-from pycompose.ir.generated_validators import REGISTRY
+from pycompose.contract.catalog import REGISTRY
 from pycompose.version import __version__
 
 APPLICATION_ID = "com.pycompose.devclient"

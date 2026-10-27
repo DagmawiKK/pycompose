@@ -9,9 +9,9 @@ import pytest
 
 from pycompose.bridge.handshake import offered_components
 from pycompose.components import Column, Fallback, Text
+from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.errors import BridgeError, IrValidationError
 from pycompose.ir import emit_ir, validate_ir
-from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
 from pycompose.ir.host import Host, hosted
 from pycompose.m3 import HorizontalDivider
 from pycompose.state import State

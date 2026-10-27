@@ -12,8 +12,8 @@ from typing import Any
 import pytest
 
 from pycompose.bridge import BridgeSurface
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.props import to_camel_case
-from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.state import Store
 
 DEMO = (

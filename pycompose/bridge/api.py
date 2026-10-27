@@ -12,6 +12,8 @@ from threading import current_thread
 
 from pycompose import async_task  # noqa: F401 -- installs the async action runner
 from pycompose.bridge.types import MAIN_SURFACE, decode_action
+from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
+from pycompose.contract.version import at_least
 from pycompose.core.action_binding import BindingSpec
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.core.ids import Handles
@@ -21,11 +23,9 @@ from pycompose.errors import BridgeError, SchemaError
 from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
 from pycompose.ir.echoes import ECHOES_SCHEMA
-from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
 from pycompose.ir.host import Host, hosted
 from pycompose.ir.model import IRRoot
 from pycompose.ir.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
-from pycompose.schema.version import at_least
 from pycompose.state import Actions, State, Store
 
 LOGGER = logging.getLogger(__name__)

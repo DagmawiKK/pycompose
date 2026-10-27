@@ -6,12 +6,23 @@ import re
 
 from pycompose.errors import SchemaError
 
-__all__ = ["at_least", "require_version"]
+__all__ = ["at_least", "require_version", "version_parts"]
 
 _VERSION = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
 
 
-def _parts(value: str) -> tuple[int, ...]:
+def version_parts(value: str) -> tuple[int, ...]:
+    """Return a version's numeric parts, for ordering.
+
+    Args:
+        value: A MAJOR.MINOR.PATCH version.
+
+    Returns:
+        Its three numbers.
+
+    Raises:
+        SchemaError: If the version is not MAJOR.MINOR.PATCH.
+    """
     if not isinstance(value, str) or _VERSION.fullmatch(value) is None:
         raise SchemaError("version must be MAJOR.MINOR.PATCH", version=value)
     return tuple(int(part) for part in value.split("."))
@@ -27,7 +38,7 @@ def at_least(value: str, since: str) -> bool:
     Returns:
         ``True`` when ``value`` carries the feature.
     """
-    return _parts(value) >= _parts(since)
+    return version_parts(value) >= version_parts(since)
 
 
 def require_version(
@@ -50,17 +61,17 @@ def require_version(
     Raises:
         SchemaError: If a version is malformed or outside the supported range.
     """
-    candidate = _parts(version)
+    candidate = version_parts(version)
     if supported is not None and version not in supported:
         raise SchemaError("unsupported schema version", field=field, version=version)
-    if candidate < _parts(minimum):
+    if candidate < version_parts(minimum):
         raise SchemaError(
             "version below supported minimum",
             field=field,
             version=version,
             minimum=minimum,
         )
-    if maximum is not None and candidate > _parts(maximum):
+    if maximum is not None and candidate > version_parts(maximum):
         raise SchemaError(
             "version above supported maximum",
             field=field,

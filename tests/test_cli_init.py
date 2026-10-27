@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from pycompose.ir.generated_validators import SCHEMA_VERSION
+from pycompose.contract.catalog import SCHEMA_VERSION
 
 NATIVE = Path(".pycompose/android")
 OWNED = Path(".")

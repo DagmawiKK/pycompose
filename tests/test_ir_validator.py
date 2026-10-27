@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import pytest
 
+from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node, Props
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError, SchemaError
 from pycompose.ir import IRRoot, emit_ir, to_json_bytes, validate_ir
-from pycompose.ir.generated_validators import REGISTRY
 from pycompose.state import State
 
 

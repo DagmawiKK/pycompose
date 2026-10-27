@@ -21,9 +21,9 @@ from typing import Any
 
 import pytest
 
+from pycompose.contract.catalog import REGISTRY
 from pycompose.core.node import Node
 from pycompose.ir import emit_ir, to_dict, validate_ir
-from pycompose.ir.generated_validators import REGISTRY
 from pycompose.ir.validator import validate_prop
 from pycompose.m3 import ModalBottomSheet, ModalNavigationDrawer, Text
 from pycompose.schema.codegen.state_anchors import SWIPE_VALUES

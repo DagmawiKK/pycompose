@@ -24,10 +24,10 @@ from pycompose.components import (
     TextField,
 )
 from pycompose.components.base import Component
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
-from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.state import State
 from pycompose.testing.helpers import component_screen, read_golden
 

@@ -8,10 +8,10 @@ from dataclasses import dataclass
 from typing import cast
 
 from pycompose.bridge.generated_payloads import IncrementPayload, SubmitPayload
+from pycompose.contract.catalog import REGISTRY
 from pycompose.contract.registry_types import PropDef
 from pycompose.core.action_binding import BindingSpec, check_payload
 from pycompose.errors import BridgeError, IrValidationError
-from pycompose.ir.generated_validators import REGISTRY
 from pycompose.ir.validator import validate_prop
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
 

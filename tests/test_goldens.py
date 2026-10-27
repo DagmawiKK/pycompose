@@ -19,9 +19,9 @@ from pycompose.components import (
     Text,
     TextField,
 )
+from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
-from pycompose.ir.generated_validators import REGISTRY
 from pycompose.state import State
 from pycompose.testing.helpers import component_screen, golden_names, read_golden
 from pycompose.utils.json_canonical import canonical_json_bytes

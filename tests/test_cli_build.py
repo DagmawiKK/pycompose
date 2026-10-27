@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from test_cli_init import OWNED, cli
 
-from pycompose.ir.generated_validators import SCHEMA_VERSION
+from pycompose.contract.catalog import SCHEMA_VERSION
 
 
 def wrapper(project: Path, body: str) -> None:

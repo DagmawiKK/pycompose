@@ -80,7 +80,7 @@ def render_python_components(
         )
         lines.insert(
             lines.index("from pycompose.errors import IrValidationError") + 1,
-            "from pycompose.ir.generated_validators import REGISTRY",
+            "from pycompose.contract.catalog import REGISTRY",
         )
         lines.extend(
             [

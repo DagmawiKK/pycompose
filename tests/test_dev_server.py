@@ -15,7 +15,7 @@ from test_cli_init import cli
 
 from pycompose.cli.dev_server import DevServer
 from pycompose.cli.project import load_project
-from pycompose.ir.generated_validators import SCHEMA_VERSION
+from pycompose.contract.catalog import SCHEMA_VERSION
 
 
 def session(server: DevServer) -> dict[str, Any]:

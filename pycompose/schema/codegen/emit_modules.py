@@ -12,9 +12,8 @@ from typing import Any
 
 from pycompose.schema.codegen.literals import (
     GENERATED_NOTICE,
-    python_adjacent_statements,
 )
-from pycompose.schema.codegen.rules import die, supported, version_key
+from pycompose.schema.codegen.rules import die
 
 
 def render_payloads(registry: dict[str, Any]) -> str:
@@ -93,38 +92,6 @@ def render_payloads(registry: dict[str, Any]) -> str:
         + "\n\n\n".join(declarations)
         + "\n"
     )
-
-
-def render_validators(registry: dict[str, Any]) -> str:
-    """Render typed runtime tables directly from the SSOT registry."""
-    action_ids = sorted(registry.get("actions", {}))
-    ids = [json.dumps(action_id) for action_id in action_ids]
-    if len(ids) == 1:
-        action_tuple = f"({ids[0]},)"
-    elif ids:
-        action_tuple = "(" + ", ".join(ids) + ")"
-    else:
-        action_tuple = "()"
-    raw = json.dumps(registry, sort_keys=True, separators=(",", ":"))
-    # Adjacent literals embed the entire registry without a runtime file read.
-    literals = "\n".join(python_adjacent_statements(raw))
-    minimum_schema = min(supported(registry), key=version_key)
-    body = (
-        f"# {GENERATED_NOTICE}\n"
-        '"""Generated component, prop, children and action validation tables."""\n\n'
-        "from __future__ import annotations\n\n"
-        "import json\n\n"
-        "from pycompose.contract.registry_types import Registry\n\n"
-        '__all__ = [\n    "KNOWN_ACTION_IDS",\n    "MIN_LIBRARY_VERSION",\n'
-        '    "MIN_SCHEMA_VERSION",\n    "REGISTRY",\n    "SCHEMA_VERSION",\n]\n\n'
-        f"SCHEMA_VERSION: str = {json.dumps(registry['schemaVersion'])}\n"
-        f"MIN_SCHEMA_VERSION: str = {json.dumps(minimum_schema)}\n"
-        f"MIN_LIBRARY_VERSION: str = {json.dumps(registry['minLibraryVersion'])}\n"
-        f"KNOWN_ACTION_IDS: tuple[str, ...] = {action_tuple}\n"
-        f"REGISTRY: Registry = Registry.from_mapping(\n    json.loads(\n{literals}\n"
-        "    )\n)\n"
-    )
-    return body
 
 
 def render_python_exports(

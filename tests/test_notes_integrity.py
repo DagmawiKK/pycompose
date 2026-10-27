@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from pycompose.bridge.runtime import RuntimeSession
-from pycompose.ir.generated_validators import SCHEMA_VERSION
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.repository import use_root
 
 if TYPE_CHECKING:

@@ -432,7 +432,7 @@ def main() -> None:
     protected = {
         args.schema.resolve(),
         (root / "schema/catalog.lock.json").resolve(),
-        (root / "pycompose/schema/catalog.lock.json").resolve(),
+        (root / "pycompose/contract/catalog.lock.json").resolve(),
     }
     if args.out and args.out.resolve() in protected:
         parser.error("a proposal cannot overwrite an approved schema")

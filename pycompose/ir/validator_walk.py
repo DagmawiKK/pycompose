@@ -16,12 +16,12 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 from typing import cast
 
+from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.contract.registry_types import ComponentDef
 from pycompose.core.node import Node, Props
 from pycompose.core.reuse import SubtreeMemo
 from pycompose.core.traversal import NodeCycleError, walk_nodes
 from pycompose.errors import IrValidationError
-from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
 from pycompose.ir.host import Host
 from pycompose.utils.json_canonical import FrozenJsonValue, check_json
 

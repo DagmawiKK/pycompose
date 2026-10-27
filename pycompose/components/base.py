@@ -8,13 +8,13 @@ from types import CodeType
 from typing import Any, ClassVar, NoReturn, cast
 
 from pycompose.components.modifiers import Modifier
+from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node, Props
 from pycompose.core.expressions import Expression
 from pycompose.core.ids import call_location, call_site
 from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
 from pycompose.core.values import _Unset
 from pycompose.errors import IrValidationError
-from pycompose.ir.generated_validators import REGISTRY
 from pycompose.ir.validator import validate_component
 from pycompose.state.app_action import AppAction
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json

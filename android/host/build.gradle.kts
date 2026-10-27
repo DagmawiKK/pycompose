@@ -102,7 +102,8 @@ val integrationModules =
 
 val stageRuntime by tasks.registering(Sync::class) {
     from(providers.gradleProperty("pycomposeRuntimeDir").getOrElse(rootProject.file("..").path)) {
-        include("pycompose/**/*.py", "pycompose/py.typed")
+        // The catalog the runtime validates against ships as data beside its loader.
+        include("pycompose/**/*.py", "pycompose/py.typed", "pycompose/contract/catalog.lock.json")
         // Planning, evidence and project tooling are CLI-tier: nothing on a device
         // imports them, so they are excluded as directories, never by module list.
         exclude(

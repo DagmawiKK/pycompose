@@ -12,8 +12,8 @@ from pathlib import Path
 
 from pycompose.cli.project import check_project_versions, load_project
 from pycompose.cli.toolchain import android_sdk, jdk_home
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.errors import PyComposeError
-from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.version import __version__
 
 

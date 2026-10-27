@@ -7,14 +7,14 @@ import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
-from pycompose.errors import PyComposeError
-from pycompose.ir.generated_validators import (
+from pycompose.contract.catalog import (
     MIN_LIBRARY_VERSION,
     MIN_SCHEMA_VERSION,
     REGISTRY,
     SCHEMA_VERSION,
 )
-from pycompose.schema.version import require_version
+from pycompose.contract.version import require_version
+from pycompose.errors import PyComposeError
 from pycompose.version import __version__
 
 

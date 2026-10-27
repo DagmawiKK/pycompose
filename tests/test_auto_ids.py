@@ -6,10 +6,10 @@ import pytest
 
 from pycompose import action, composable
 from pycompose.components import Button, Column, Modifier, Text
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.node import Node
 from pycompose.errors import IrError, IrValidationError
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
-from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.state import State
 
 
