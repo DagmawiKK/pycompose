@@ -48,3 +48,7 @@ android/build/compose-api/
 /pycompose/templates/extract/
 /pycompose/contract/catalog.lock.json
 /pycompose/schema/ir.schema.json
+
+# The example's component slice is build output, as for any app.
+/examples/notes/app/m3/
+/examples/notes/app/.pycompose/
