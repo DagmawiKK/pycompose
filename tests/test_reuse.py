@@ -1,13 +1,16 @@
 """Publishing with a session's reuse is byte-for-byte a fresh publish."""
 
+import json
+
 import pytest
 
 from pycompose import composable
 from pycompose.core.node import Node, Props
 from pycompose.core.reuse import Reuse
+from pycompose.core.windows import windows
 from pycompose.errors import IrError
 from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.m3 import Column, Text
+from pycompose.m3 import Column, LazyColumn, Text
 from pycompose.state import State
 
 
@@ -47,6 +50,34 @@ def test_a_reused_publish_matches_a_fresh_one_at_every_step() -> None:
     reuse = Reuse()
     for state in SEQUENCE:
         assert _publish(state, reuse) == _publish(state, None)
+
+
+@composable
+def listing(*, title: str):
+    return Column(
+        id="listing",
+        children=(
+            Text(id="title", text=title),
+            LazyColumn(
+                id="rows",
+                items=range(1_000),
+                key=lambda n: f"n{n}",
+                item=lambda n: row(id=f"r{n}", label=str(n), extra=False),
+            ),
+        ),
+    )
+
+
+def test_a_reused_publish_follows_a_window_inside_a_composable() -> None:
+    state = State(root=listing(id="screen", title="Rows"))
+    reuse = Reuse()
+    first_pass = json.loads(_publish(state, reuse))
+    key = first_pass["root"]["children"][1]["props"]["window"]
+    for first in (0, 400, 400, 900, 0):
+        with windows({key: (first, first + 9)}):
+            reused = _publish(state, reuse)
+            assert reused == _publish(state, None)
+            assert f'"itemOffset":{first}' in reused
 
 
 def test_release_mode_drops_the_same_invalid_nodes_with_reuse() -> None:

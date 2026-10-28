@@ -6,21 +6,38 @@ import json
 
 import pytest
 
+from pycompose import composable
 from pycompose.bridge import BridgeSurface
 from pycompose.core.windows import DEFAULT_WINDOW, MAX_WINDOW
 from pycompose.errors import IrValidationError
-from pycompose.m3 import LazyColumn, Text
+from pycompose.m3 import Column, LazyColumn, Text
 from pycompose.state import Actions, State, Store
 
 ROWS = list(range(10_000))
 
 
-def rows() -> State:
-    return State(
-        root=LazyColumn(
-            items=ROWS, key=lambda n: f"n{n}", item=lambda n: Text(text=f"row {n}")
-        )
+def listed() -> LazyColumn:
+    return LazyColumn(
+        items=ROWS, key=lambda n: f"n{n}", item=lambda n: Text(text=f"row {n}")
     )
+
+
+def rows() -> State:
+    return State(root=listed())
+
+
+@composable
+def titled(*, title: str):
+    return Column(children=[Text(text=title), listed()])
+
+
+BUILDS: list[str] = []
+
+
+@composable
+def header(*, title: str):
+    BUILDS.append(title)
+    return Text(text=title)
 
 
 def root(bridge: BridgeSurface) -> dict[str, object]:
@@ -59,6 +76,37 @@ def test_a_window_is_clamped_to_the_items_and_the_maximum() -> None:
     assert len(root(bridge)["children"]) == 5  # type: ignore[arg-type]
     bridge.request_window(key, 0, 9_999)
     assert len(root(bridge)["children"]) == MAX_WINDOW  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("debug", [False, True])
+def test_a_list_inside_a_composable_follows_each_requested_window(
+    debug: bool,
+) -> None:
+    bridge = BridgeSurface(
+        Store(State(root=titled(id="screen", title="Rows"))), Actions(), debug=debug
+    )
+    key = str(root(bridge)["children"][1]["props"]["window"])  # type: ignore[index]
+
+    # More requests than the debug memo re-checks between, so a replayed window
+    # would also surface as a reuse failure.
+    for first in range(100, 1_300, 100):
+        bridge.request_window(key, first, first + 9)
+        node = root(bridge)["children"][1]  # type: ignore[index]
+        assert node["props"]["itemOffset"] == first
+        assert texts(node)[0] == f"row {first}"
+    assert bridge.expose_latest_error() == ""
+
+
+def test_a_composable_beside_a_windowed_list_is_still_reused() -> None:
+    BUILDS.clear()
+    state = State(root=Column(children=[header(id="header", title="Rows"), listed()]))
+    bridge = BridgeSurface(Store(state), Actions(), debug=False)
+    key = str(root(bridge)["children"][1]["props"]["window"])  # type: ignore[index]
+
+    for first in (100, 200, 300):
+        bridge.request_window(key, first, first + 9)
+
+    assert BUILDS == ["Rows"]
 
 
 def test_a_windowed_list_needs_a_key() -> None:
