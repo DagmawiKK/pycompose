@@ -196,7 +196,7 @@ def patch_bytes(
 
     Metadata (intent contracts, effects, echoes, app data) belongs to the
     snapshot that carried it, so every envelope states it (ADR-0018 decision 3),
-    except app data equal to the base's: that is not sent again but named in
+    except a section equal to the base's: that is not sent again but named in
     ``keep``, for the host to carry over. Effects belong to one transition and
     always travel whole.
 
@@ -206,7 +206,7 @@ def patch_bytes(
         base_serial: The serial the host declared it still holds.
         serial: The serial this content is published under.
         surface: The surface the snapshot renders on.
-        base: The snapshot the host holds, so unchanged app data is kept
+        base: The snapshot the host holds, so unchanged sections are kept
             rather than sent; None sends the metadata whole.
 
     Returns:
@@ -214,11 +214,14 @@ def patch_bytes(
     """
     metadata: Mapping[str, object] | None = root.metadata
     keep: list[str] = []
-    if base is not None:
-        held = (base.metadata or {}).get("data")
-        if metadata is not None and held is not None and metadata.get("data") == held:
-            metadata = {k: v for k, v in metadata.items() if k != "data"} or None
-            keep.append("data")
+    if base is not None and metadata is not None:
+        held = base.metadata or {}
+        keep = sorted(
+            name
+            for name, value in metadata.items()
+            if name != "effects" and name in held and held[name] == value
+        )
+        metadata = {k: v for k, v in metadata.items() if k not in keep} or None
     output = bytearray(b'{"baseSerial":')
     output.extend(str(base_serial).encode())
     if keep:
