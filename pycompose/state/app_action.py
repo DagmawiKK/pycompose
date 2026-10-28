@@ -113,7 +113,7 @@ class AppAction(Generic[S]):
                 raise StateError("action field names collide", prop=parameter.name)
             self.aliases[wire_name] = parameter.name
             required = parameter.default is inspect.Parameter.empty
-            self.fields[wire_name] = _field(declared, required)
+            self.fields[wire_name] = payload_field(declared, required)
 
     def __call__(self, state: State, *args: Any, **kwargs: Any) -> State:
         """Run the transition directly, as the function it decorates.
@@ -283,13 +283,26 @@ class AppAction(Generic[S]):
         return self.with_args()
 
 
-def _field(annotation: object, required: bool) -> PropDef:
+def payload_field(annotation: object, required: bool) -> PropDef:
+    """Return the payload definition a handler or intent field declares.
+
+    Args:
+        annotation: The field's type: a scalar, a string ``Literal`` or an
+            optional one.
+        required: Whether an event must supply it.
+
+    Returns:
+        Its definition.
+
+    Raises:
+        StateError: If the type is outside the payload vocabulary.
+    """
     # ``int | None``: a report that may carry null (a cleared date selection).
     args = get_args(annotation)
     if get_origin(annotation) in {Union, UnionType} and type(None) in args:
         rest = [arg for arg in args if arg is not type(None)]
         if len(rest) == 1:
-            inner = _field(rest[0], required)
+            inner = payload_field(rest[0], required)
             return PropDef(
                 type=inner.type, values=inner.values, required=required, nullable=True
             )

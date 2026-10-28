@@ -7,6 +7,7 @@ from difflib import get_close_matches
 from types import CodeType
 from typing import Any, ClassVar, NoReturn, cast
 
+from pycompose.app.intents import Intent
 from pycompose.components.modifiers import Modifier
 from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node, Props
@@ -19,11 +20,11 @@ from pycompose.ir.validator import validate_component
 from pycompose.state.app_action import AppAction
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
 
-ActionTarget = str | AppAction[Any]
+ActionTarget = str | AppAction[Any] | Intent | type[Intent]
 """What an action prop takes: an app action, a binding of one, or a registry id."""
 
 
-PropValue = JsonValue | AppAction[Any] | Expression
+PropValue = JsonValue | AppAction[Any] | Intent | type[Intent] | Expression
 """What a component prop takes before construction makes it wire data."""
 
 
@@ -151,14 +152,7 @@ class Component(Node):
                 )
         # A control may take an app action itself; it binds nothing of its own.
         # An expression is wire data from here on; emission resolves its keys.
-        values = {
-            name: value.binding()
-            if isinstance(value, AppAction)
-            else value.to_wire()
-            if isinstance(value, Expression)
-            else value
-            for name, value in props.items()
-        }
+        values = {name: _lower_action(value) for name, value in props.items()}
         wire = cast(
             "dict[str, JsonValue | FrozenJsonValue]", props_from_kwargs(**values)
         )
@@ -215,3 +209,26 @@ def _refuse(error: IrValidationError, node: Component) -> NoReturn:
         if close:
             context["did_you_mean"] = close[0]
     raise IrValidationError(error.args[0] if error.args else "", **context) from None
+
+
+def _lower_action(value: object) -> JsonValue:
+    """Turn an action a control takes into wire data or a binding.
+
+    An app action or an intent class binds nothing of its own; an intent
+    instance binds every field. An expression is wire data from here on.
+
+    Args:
+        value: A prop value as the app passed it.
+
+    Returns:
+        The value the node holds.
+    """
+    if isinstance(value, AppAction):
+        return value.binding()
+    if isinstance(value, Intent):
+        return value.to_binding()
+    if isinstance(value, type) and issubclass(value, Intent):
+        return value.bind()
+    if isinstance(value, Expression):
+        return cast("JsonValue", value.to_wire())
+    return cast("JsonValue", value)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib
+import logging
 import re
 import sys
 from contextlib import suppress
@@ -11,6 +12,8 @@ from threading import current_thread
 from types import ModuleType
 from typing import Any
 
+from pycompose.app.app import App as ViewApp
+from pycompose.app.session import ScreenSession
 from pycompose.bridge.api import BridgeSurface
 from pycompose.core.context import AppContext, carried, context
 from pycompose.core.context import install as install_context
@@ -18,6 +21,8 @@ from pycompose.errors import BridgeError
 from pycompose.state import Actions, App, Store, actions_for_module
 
 __all__ = ["RuntimeSession"]
+
+LOGGER = logging.getLogger(__name__)
 
 _host_components: frozenset[str] | None = None
 """What the host's handshake said it renders, for every session it starts."""
@@ -69,7 +74,7 @@ class RuntimeSession:
         if current_thread() is not self._worker:
             raise BridgeError("runtime calls must run on the owning worker")
 
-    def _resolve_container(self, app: App[Any]) -> object | None:
+    def _resolve_container(self, app: App[Any] | ViewApp) -> object | None:
         """Adopt the entry object's container factory once, then retain it.
 
         Args:
@@ -88,6 +93,8 @@ class RuntimeSession:
     def _build(self, route: str, restore: str = "") -> BridgeSurface:
         module = importlib.import_module(self._module)
         app = getattr(module, self._export, None)
+        if isinstance(app, ViewApp):
+            return self._build_view(app, restore)
         if not isinstance(app, App):
             raise BridgeError(
                 "entrypoint must name the module's App export",
@@ -122,6 +129,36 @@ class RuntimeSession:
         if surface.expose_latest_snapshot() is None:
             raise BridgeError("app build produced no valid snapshot")
         return surface
+
+    def _build_view(self, app: ViewApp, restore: str) -> BridgeSurface:
+        """Start an app built from view models on its start destination.
+
+        Args:
+            app: The app.
+            restore: Saved state the host handed back, or empty.
+
+        Returns:
+            The surface serving the destination's view model.
+
+        Raises:
+            BridgeError: If the first snapshot is invalid.
+        """
+        screen = ScreenSession(
+            app, self._resolve_container(app), restore, report=self._report_task
+        )
+        surface = BridgeSurface(
+            Store(screen.snapshot_state(None)),
+            screen,
+            debug=self._debug,
+            host_components=_host_components,
+        )
+        if surface.expose_latest_snapshot() is None:
+            raise BridgeError("app build produced no valid snapshot")
+        return surface
+
+    def _report_task(self, scope: str, error: BaseException) -> None:
+        self._error = f"{scope}: {error}"
+        LOGGER.warning("Task in %s failed: %s", scope, error, exc_info=error)
 
     def _check_injection(self, actions: Actions, container: object | None) -> None:
         """Fail at startup when an action wants a container the app never declared.
