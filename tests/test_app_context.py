@@ -7,7 +7,6 @@ that it stays out of everything else.
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -120,69 +119,3 @@ def test_a_composable_needs_no_context_when_none_is_installed() -> None:
         return Text(id="t", text=label)
 
     assert expand(screen(id="s")) is not None
-
-
-# ---------------------------------------------------------------------------
-# The real app, which is where the boilerplate went
-# ---------------------------------------------------------------------------
-
-
-def test_the_notes_screens_take_no_registry() -> None:
-    """Controls bind the handlers themselves, so nothing threads a registry."""
-    sys.path.insert(0, str(APP))
-    try:
-        from notes_app.view_model import screen
-        from notes_app.views import editor_screen, list_screen
-    finally:
-        sys.path.remove(str(APP))
-
-    import inspect
-
-    for function in (screen, list_screen, editor_screen):
-        assert "actions" not in inspect.signature(function).parameters
-
-
-def test_only_actions_that_reach_storage_still_declare_a_dependency() -> None:
-    """Flipping a sheet open does not need the repository, and no longer says so."""
-    import inspect
-
-    sys.path.insert(0, str(APP))
-    try:
-        import notes_app.actions  # noqa: F401 -- registers the package
-    finally:
-        sys.path.remove(str(APP))
-
-    definitions = sys.modules["notes_app.actions"]
-    mutates = {"new_note", "open_note", "set_title", "set_body", "delete_note"}
-    renders_only = {"go_back", "set_about", "on_route_changed"}
-
-    for name in sorted(mutates | renders_only):
-        handler = getattr(definitions, name)
-        function = getattr(handler, "function", handler)
-        wants = "notes" in inspect.signature(function).parameters
-        assert wants is (name in mutates), name
-
-
-def test_the_app_still_renders_with_a_context_installed() -> None:
-    from pycompose.bridge import BridgeSurface
-    from pycompose.state import Store
-
-    sys.path.insert(0, str(APP))
-    try:
-        import main
-        from notes_app.container import AppContainer
-        from notes_app.data.notes_repo import MemoryNotesRepo
-        from notes_app.domain import Notes
-    finally:
-        sys.path.remove(str(APP))
-
-    supplied = AppContainer(Notes(MemoryNotesRepo([])))
-    main.actions.install_container(supplied)
-    main.actions.install_view(main.app.session_view)
-    install_context(
-        AppContext(actions=main.actions, container=supplied, notes=supplied.notes)
-    )
-    surface = BridgeSurface(
-        Store(main.app.build(route="notes", restore="")), main.actions
-    )
-    assert surface.expose_latest_snapshot() is not None

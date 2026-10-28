@@ -250,41 +250,6 @@ def test_an_app_with_no_actions_at_all_still_starts(generated: Any) -> None:
 
 
 # ---------------------------------------------------------------------------
-# The real app, after the change
-# ---------------------------------------------------------------------------
-
-
-def test_the_notes_app_declares_each_action_exactly_once() -> None:
-    """No listing anywhere: the decorator is the registration."""
-    sys.path.insert(0, str(APP))
-    try:
-        import notes_app.actions  # noqa: F401 - registers the package
-
-        # The package re-exports the registry under the name `actions`, which
-        # shadows the submodule of the same name; sys.modules is the way in.
-        module = sys.modules["notes_app.actions"]
-    finally:
-        sys.path.remove(str(APP))
-
-    source = (APP / "notes_app" / "actions.py").read_text()
-    declared = len(
-        [
-            line
-            for line in source.splitlines()
-            if line.startswith(("@action", "@actions"))
-        ]
-    )
-    assert declared == len(module.actions.names())
-    assert len(module.actions.names()) == 13
-
-
-def test_the_notes_app_has_no_handler_dataclass_left() -> None:
-    """The cycle-breaker module existed only to be a second list of actions."""
-    assert not (APP / "notes_app" / "handlers.py").exists()
-    assert "Handlers" not in (APP / "notes_app" / "view_model.py").read_text()
-
-
-# ---------------------------------------------------------------------------
 # Names a registry already uses
 # ---------------------------------------------------------------------------
 

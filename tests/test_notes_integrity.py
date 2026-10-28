@@ -11,9 +11,13 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from pycompose.app.intents import intent_class
+from pycompose.app.navigation import route_key
 from pycompose.bridge.session import RuntimeSession
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.repository import use_root
+from pycompose.runtime.loop import LoopThread
+from pycompose.testing.driver import AppDriver
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -28,6 +32,7 @@ from notes_support import (
     live_intents,
     load_notes_app,
     nodes,
+    stack,
     titles_of,
 )
 
@@ -38,18 +43,43 @@ def app() -> ModuleType:
     return load_notes_app()
 
 
+def editor(note_id: int) -> str:
+    """Return the key the host keeps for one note's editor.
+
+    Args:
+        note_id: The note.
+
+    Returns:
+        The route's canonical JSON.
+    """
+    from notes_app.routes import EditorRoute
+
+    return route_key(EditorRoute(note_id=note_id))
+
+
+def saved(host: Host) -> str:
+    """Return the bytes the host would keep for process death.
+
+    Args:
+        host: The running host.
+
+    Returns:
+        The whole published stack, as JSON.
+    """
+    return json.dumps(host.snapshot()["metadata"]["data"])
+
+
 def test_an_emptied_store_stays_empty_rather_than_reseeding(
     app: ModuleType,
 ) -> None:
     """Deleting everything is a decision, not a state the app recovers from."""
     disk = a_store()
     host = Host(app, repo=disk)
-    host.tap("delete_note", {"note_id": 1})
-    host.tap("delete_note", {"note_id": 2})
+    host.tap("DeleteNote", {"note_id": 1})
+    host.tap("DeleteNote", {"note_id": 2})
     assert host.titles == []
 
-    saved = json.dumps(data(host.snapshot()))
-    assert titles_of(Host(app, repo=disk, restore=saved)) == []
+    assert titles_of(Host(app, repo=disk, restore=saved(host))) == []
 
 
 def test_dark_mode_is_the_themes_job_not_the_snapshots(app: ModuleType) -> None:
@@ -67,27 +97,18 @@ def test_dark_mode_is_the_themes_job_not_the_snapshots(app: ModuleType) -> None:
     assert host.snapshot()["root"] == before["root"]
 
 
-def test_only_the_shell_crosses_the_boundary(app: ModuleType) -> None:
-    """The whole point of Phase 3: the Bundle carries the shell and nothing else.
+def test_the_notes_never_cross_the_boundary(app: ModuleType) -> None:
+    """The Bundle carries the screens' small state and nothing else.
 
     Anything the host saves has to fit in a transaction buffer measured in
-    kilobytes. Publishing the notes here would mean one more note could break
-    process death for every user, so the published data stays a shell and the
-    notes stay in the repository -- visible in the row count, absent from the
-    bytes the host keeps.
+    kilobytes. Saving the notes would mean one more note could break process
+    death for every user, so they are loaded fields: visible in the row count,
+    absent from the bytes the host keeps.
     """
     host = Host(app, repo=a_store([(n, f"Note {n}") for n in range(50)]))
-    published = data(host.snapshot())
 
-    assert set(published) == {
-        "route",
-        "titleCaret",
-        "bodyCaret",
-        "aboutOpen",
-        "previews",
-        "listing",
-    }
-    assert len(json.dumps(published)) < 200
+    assert set(data(host.snapshot())) == {"aboutOpen", "previews", "listing"}
+    assert len(saved(host)) < 200
     # Fifty rows render; none of them are in what the host saves.
     assert "Note 49" in [props["text"] for props in nodes(host.snapshot(), "Text")]
     assert len(host.repo.load()) == 50
@@ -99,14 +120,9 @@ def test_ten_thousand_notes_survive_a_restart_without_the_bundle_complaining(
 ) -> None:
     """Phase 3's acceptance bar, against the real file-backed store.
 
-    Before this seam every note travelled through ``SavedStateHandle``. Ten
-    thousand of them do not fit in a Bundle, and the exception that says so
-    names nothing useful -- so the notes went to disk and the shell stayed.
-
-    Opened on the editor rather than the list, and that is not a dodge: the list
-    expands every row into the snapshot, which has its own ceiling. Removing the
-    Bundle limit moved the wall rather than abolishing it, and pagination is
-    what the list still needs before ten thousand rows can be shown.
+    Ten thousand notes do not fit in a Bundle, and the exception that says so
+    names nothing useful -- so the notes live on disk and the saved stack holds
+    only what each screen needs to come back.
     """
     from notes_app.data.notes_repo import FileNotesRepo
     from notes_app.domain.models import Note
@@ -119,51 +135,44 @@ def test_ten_thousand_notes_survive_a_restart_without_the_bundle_complaining(
             [Note(index, f"Note {index}", "x" * 200) for index in range(10_000)]
         )
 
-        host = Host(app, route="note:1", repo=FileNotesRepo())
-        published = data(host.snapshot())
+        host = Host(app, route=editor(1), repo=FileNotesRepo())
         assert len(host.repo.load()) == 10_000
         assert held_of(host, 9_999).title == "Note 9999"
-        assert set(published) == {
-            "route",
-            "titleCaret",
-            "bodyCaret",
-            "aboutOpen",
-            "previews",
-            "listing",
-        }
-        assert len(json.dumps(published)) < 200
+        assert set(data(host.snapshot())) == {"noteId", "titleCaret", "bodyCaret"}
+        assert len(saved(host)) < 400
         # The file, meanwhile, is megabytes -- which is exactly why it is there.
         assert (tmp_path / "notes.json").stat().st_size > 1_000_000
 
         # A second process, reading the same files.
-        restarted = Host(app, route="note:1", repo=FileNotesRepo())
+        restarted = Host(
+            app, route=editor(1), restore=saved(host), repo=FileNotesRepo()
+        )
+        assert stack(restarted.snapshot()) == ["NotesRoute", "EditorRoute"]
         assert len(restarted.repo.load()) == 10_000
     finally:
         use_root(Path.cwd())
 
 
-def test_the_shell_is_restorable_on_its_own(app: ModuleType) -> None:
+def test_the_saved_stack_is_restorable_on_its_own(app: ModuleType) -> None:
     host = Host(app)
-    published = data(host.snapshot())
-    host.lifecycle("onRouteChanged", route="note:2")
-    published = data(host.snapshot())
+    host.tap("SetPreviews", value=False)
+    host.tap("OpenNote", {"note_id": 2})
 
-    # Restoring only the shell is enough to come back on the same screen; the
-    # notes come back from the app's own data.
-    rebuilt = Host(
-        app,
-        route=published["route"],
-        restore=json.dumps(published),
+    # The saved stack is enough to come back on the same screens; the notes
+    # come back from the app's own data.
+    rebuilt = Host(app, route=editor(2), restore=saved(host))
+    assert stack(rebuilt.snapshot()) == ["NotesRoute", "EditorRoute"]
+    assert (
+        rebuilt.snapshot()["metadata"]["data"]["stack"][0]["state"]["previews"] is False
     )
-    assert data(rebuilt.snapshot())["route"] == "note:2"
     assert titles_of(rebuilt) == host.titles
 
 
 def test_every_snapshot_is_a_valid_canonical_ir(app: ModuleType) -> None:
     host = Host(app)
-    host.tap("new_note")
-    host.tap("set_title", value="Check")
-    host.tap("go_back")
+    host.tap("NewNote")
+    host.tap("SetTitle", value="Check")
+    host.tap("LeaveEditor")
     snapshot = host.snapshot()
     assert snapshot["schemaVersion"] == SCHEMA_VERSION
     assert "metadata" in snapshot
@@ -172,76 +181,40 @@ def test_every_snapshot_is_a_valid_canonical_ir(app: ModuleType) -> None:
 
 def test_an_action_cannot_reach_a_note_it_was_not_bound_to(app: ModuleType) -> None:
     host = Host(app)
-    host.tap("open_note", {"note_id": 1})
-    before = host.snapshot()
+    host.tap("OpenNote", {"note_id": 1})
 
     # note_id is a bound value, so an event may not supply one: the editor's own
     # binding must not be steerable at another note from outside.
-    host._bridge.accept_action(
-        json.dumps(
-            {
-                **host.intent_for("set_title", None),
-                "payload": {"noteId": 2, "value": "hijack"},
-            }
-        )
-    )
+    host.tap("SetTitle", noteId=2, value="hijack")
     assert host.error != ""
-    assert data(host.snapshot()) == data(before)
+    assert host.titles == ["Try it", "Welcome"]
+
+    # A field drawn for another note is harmless rather than destructive.
+    host.tap("LeaveEditor")
+    host.tap("OpenNote", {"note_id": 2})
+    stale = {"intent": host.intent_for("SetTitle", None)["intent"]}
+    host.lifecycle(stale["intent"], noteId=1, value="hijack")
+    assert held_of(host, 1).title == "Welcome"
 
 
-def test_every_published_intent_names_a_registered_handler(app: ModuleType) -> None:
+def test_every_published_intent_names_a_defined_intent(app: ModuleType) -> None:
     snapshot = Host(app).snapshot()
     contracts = (snapshot.get("metadata") or {})["intents"]
-    registered = set(app.actions.handlers())
     assert contracts
     for intent in live_intents(snapshot):
-        assert intent["intent"] in registered, intent
+        assert intent_class(intent["intent"]) is not None, intent
         assert intent["intent"] in contracts, intent
 
 
-def test_the_runtime_starts_this_app_and_its_actions_work() -> None:
-    """Drive the app through the real session entry point the host calls.
-
-    This is the one that matters most and is easiest to get wrong: the runtime
-    discovers an app's registry by the module-level name ``actions``. Export it
-    under any other spelling and the registry comes up empty, every published
-    binding fails validation, and the app starts to a blank screen.
-    """
-    sys.path.insert(0, str(APP))
-    # The real session builds the app's real container, so storage has to point
-    # somewhere a test may write rather than at the repository working directory.
-    scratch = Path(tempfile.mkdtemp())
-    use_root(scratch)
-    try:
-        session = RuntimeSession("main:app", "notes", debug=True)
-    finally:
-        sys.path.remove(str(APP))
-        sys.modules.pop("main", None)
-        use_root(Path.cwd())
-    assert session.error() == ""
-    snapshot = json.loads(session.snapshot())
-    assert snapshot["root"]["type"] == "Scaffold"
-
-    session.accept_action(
-        json.dumps(
-            {
-                **next(
-                    intent
-                    for intent in live_intents(snapshot)
-                    if intent["intent"].endswith(".new_note")
-                ),
-                "payload": {},
-            }
-        )
-    )
-    assert session.error() == ""
-    # Navigation is requested, then the host echoes the destination back.
-    assert json.loads(session.snapshot())["metadata"]["data"]["route"] == "notes"
-    session.accept_action(
-        json.dumps({"intent": "onRouteChanged", "payload": {"route": "note:3"}})
-    )
-    assert session.error() == ""
-    assert json.loads(session.snapshot())["metadata"]["data"]["route"] == "note:3"
+def test_the_runtime_starts_this_app_and_its_intents_work() -> None:
+    """Drive the app through the real session entry point the host calls."""
+    with AppDriver(APP.parent) as driver:
+        assert driver.snapshot()["root"]["type"] == "Scaffold"
+        driver.click(type="FloatingActionButton")
+        assert stack(driver.snapshot()) == ["NotesRoute", "EditorRoute"]
+        driver.lifecycle("onBackRequested")
+        assert stack(driver.snapshot()) == ["NotesRoute"]
+        assert driver.failures == []
 
 
 def test_the_app_survives_a_hot_reload_of_a_module_inside_its_package() -> None:
@@ -257,39 +230,44 @@ def test_the_app_survives_a_hot_reload_of_a_module_inside_its_package() -> None:
     # may write. Otherwise this would leave a notes.json in the repository.
     use_root(Path(tempfile.mkdtemp()))
     FileNotesRepo().store([Note(*held) for held in SEEDED])
+    failures: list[str] = []
+    loop = LoopThread(lambda scope, error: failures.append(f"{scope}: {error}"))
     try:
-        session = RuntimeSession("main:app", "notes", debug=True)
-        assert "Notes" in [
-            props["text"] for props in nodes(json.loads(session.snapshot()), "Text")
-        ]
+        session = loop.call(lambda: RuntimeSession("main:app", "", debug=True))
+
+        def texts() -> list[str]:
+            snapshot = json.loads(loop.call(session.snapshot))
+            return [props["text"] for props in nodes(snapshot, "Text")]
+
+        assert "Notes" in texts()
 
         # A different length on purpose. A same-length edit restores to a file
         # whose mtime and size match what Python cached before the test, and it
         # will go on using the stale bytecode -- which would make this test pass
         # for entirely the wrong reason.
         screen.write_text(original.replace('text="Notes"', 'text="Reloaded heading"'))
-        session.reload("notes")
+        loop.call(session.reload, "")
 
-        assert session.error() == ""
-        assert "Reloaded heading" in [
-            props["text"] for props in nodes(json.loads(session.snapshot()), "Text")
-        ]
+        assert loop.call(session.error) == ""
+        assert "Reloaded heading" in texts()
 
-        # The registry has to come back too, or every control is inert.
-        session.accept_action(
-            json.dumps(
-                {
-                    **next(
-                        intent
-                        for intent in live_intents(json.loads(session.snapshot()))
-                        if intent["intent"].endswith(".new_note")
-                    ),
-                    "payload": {},
-                }
-            )
+        # The intents have to resolve too, or every control is inert.
+        intent = next(
+            intent
+            for intent in live_intents(json.loads(loop.call(session.snapshot)))
+            if intent["intent"].endswith(".NewNote")
         )
-        assert session.error() == ""
+        loop.call(session.accept_action, json.dumps({**intent, "payload": {}}))
+        assert loop.call(session.error) == ""
+        assert "Title" in [
+            props.get("label")
+            for props in nodes(json.loads(loop.call(session.snapshot)), "TextField")
+        ]
+        loop.call(session.close)
+        assert failures == []
     finally:
+        loop.stop()
         screen.write_text(original)
         shutil.rmtree(cached, ignore_errors=True)
         sys.path.remove(str(APP))
+        use_root(Path.cwd())

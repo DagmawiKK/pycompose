@@ -23,40 +23,41 @@ from m3 import (
 )
 from m3.values import Dp, PaddingValues, ThemeColor, materialIcon
 
-from notes_app.actions import (
-    delete_note,
-    new_note,
-    open_note,
-    set_about,
-    set_listing,
-    set_previews,
-)
 from notes_app.domain.models import Note
 from notes_app.domain.usecases import carrying_text, count_line, filled_share
-from notes_app.state import ALL_FILTER, TEXT_FILTER, Session
+from notes_app.view_models import (
+    ALL_FILTER,
+    TEXT_FILTER,
+    DeleteNote,
+    ListState,
+    NewNote,
+    OpenNote,
+    SetAbout,
+    SetListing,
+    SetPreviews,
+)
 from pycompose import composable
 from pycompose.core import Node
 
 
-@composable
-def list_screen(*, notes: list[Note], session: Session) -> Node:
+def list_screen(state: ListState) -> Node:
     """Render the whole list screen.
 
     Args:
-        notes: The notes to render, newest first.
-        session: The session shell, for the palette and the controls' own state.
+        state: The list's state.
 
     Returns:
         A Scaffold declaration listing every note.
     """
-    listed = carrying_text(notes) if session.listing == TEXT_FILTER else notes
+    notes = list(state.notes)
+    listed = carrying_text(notes) if state.listing == TEXT_FILTER else notes
     # The list is data: the host asks for the window it shows, so a thousand
     # notes cost what is on screen.
     body: Node = (
         LazyColumn(
             items=listed,
             key=lambda note: f"row_{note.id}",
-            item=lambda note: note_row(note=note, previews=session.previews),
+            item=lambda note: note_row(note=note, previews=state.previews),
             modifier=Modifier().fill_max_width(),
         )
         if listed
@@ -68,7 +69,7 @@ def list_screen(*, notes: list[Note], session: Session) -> Node:
     )
     return Scaffold(
         floating_action_button=[new_note_button()],
-        bottom_bar=[listing_bar(session=session)],
+        bottom_bar=[listing_bar(listing=state.listing)],
         content=Column(
             modifier=Modifier().padding(20).fill_max_width(),
             children=[
@@ -79,16 +80,14 @@ def list_screen(*, notes: list[Note], session: Session) -> Node:
                     color=ThemeColor("onSurfaceVariant"),
                 ),
                 Spacer(modifier=Modifier().size(8)),
-                previews_row(session=session),
+                previews_row(previews=state.previews),
                 Spacer(modifier=Modifier().size(8)),
-                TextButton(
-                    text="How this works", on_click=set_about.with_args(open=True)
-                ),
+                TextButton(text="How this works", on_click=SetAbout(open=True)),
                 Spacer(modifier=Modifier().size(8)),
                 HorizontalDivider(thickness=1),
                 Spacer(modifier=Modifier().size(12)),
                 body,
-                about_sheet(session=session, notes=notes),
+                about_sheet(open=state.about_open, notes=notes),
             ],
         ),
     )
@@ -105,7 +104,7 @@ def new_note_button() -> Node:
         The FloatingActionButton declaration.
     """
     return FloatingActionButton(
-        on_click=new_note,
+        on_click=NewNote(),
         container_color=ThemeColor("primary"),
         children=[
             Icon(
@@ -118,7 +117,7 @@ def new_note_button() -> Node:
 
 
 @composable
-def previews_row(*, session: Session) -> Node:
+def previews_row(*, previews: bool) -> Node:
     """Render the switch that decides whether rows show a line of body text.
 
     The switch owns its checked state on the native side and reports what it
@@ -126,7 +125,7 @@ def previews_row(*, session: Session) -> Node:
     screen readers what the switch is for, since a bare switch reads as nothing.
 
     Args:
-        session: The session shell, which holds whether previews are shown.
+        previews: Whether previews are shown.
 
     Returns:
         A Row pairing the label with the Switch.
@@ -140,23 +139,23 @@ def previews_row(*, session: Session) -> Node:
                 color=ThemeColor("onSurfaceVariant"),
             ),
             Spacer(modifier=Modifier().size(8)),
-            Switch(checked=session.previews, on_checked_change=set_previews),
+            Switch(checked=previews, on_checked_change=SetPreviews),
             Spacer(modifier=Modifier().size(8)),
         ],
     )
 
 
 @composable
-def listing_bar(*, session: Session) -> Node:
+def listing_bar(*, listing: str) -> Node:
     """Render the bar that filters the list.
 
     Each item names the filter it stands for in the binding, so one transition
-    serves both items and the selected item is the session's choice read back.
+    serves both items and the selected item is the state's choice read back.
     The icons sit in the item's own slot, so the host composes them where the
     bar puts them; the labels below them are the whole name of each filter.
 
     Args:
-        session: The session shell, which holds the filter in force.
+        listing: The filter in force.
 
     Returns:
         The NavigationBar declaration.
@@ -164,8 +163,8 @@ def listing_bar(*, session: Session) -> Node:
     return NavigationBar(
         children=[
             NavigationBarItem(
-                selected=session.listing == ALL_FILTER,
-                on_click=set_listing.with_args(value=ALL_FILTER),
+                selected=listing == ALL_FILTER,
+                on_click=SetListing(value=ALL_FILTER),
                 icon=[
                     Icon(
                         image_vector=materialIcon(name="Filled.Home"),
@@ -175,8 +174,8 @@ def listing_bar(*, session: Session) -> Node:
                 label=[Text(text="All notes")],
             ),
             NavigationBarItem(
-                selected=session.listing == TEXT_FILTER,
-                on_click=set_listing.with_args(value=TEXT_FILTER),
+                selected=listing == TEXT_FILTER,
+                on_click=SetListing(value=TEXT_FILTER),
                 icon=[
                     Icon(
                         image_vector=materialIcon(name="Filled.Edit"),
@@ -190,19 +189,19 @@ def listing_bar(*, session: Session) -> Node:
 
 
 @composable
-def about_sheet(*, session: Session, notes: list[Note]) -> Node:
+def about_sheet(*, open: bool, notes: list[Note]) -> Node:
     """Render the sheet explaining what the app is and how it is built.
 
     Args:
-        session: The session shell, which holds whether the sheet is open.
+        open: Whether the sheet is open.
         notes: The notes the bar inside the sheet measures.
 
     Returns:
         The ModalBottomSheet declaration.
     """
     return ModalBottomSheet(
-        open=session.about_open,
-        on_open_change=set_about,
+        open=open,
+        on_open_change=SetAbout,
         children=[
             Column(
                 modifier=Modifier().padding(20).fill_max_width(),
@@ -247,7 +246,7 @@ def about_sheet(*, session: Session, notes: list[Note]) -> Node:
                         color=ThemeColor("onSurfaceVariant"),
                     ),
                     Spacer(modifier=Modifier().size(12)),
-                    TextButton(text="Got it", on_click=set_about.with_args(open=False)),
+                    TextButton(text="Got it", on_click=SetAbout(open=False)),
                 ],
             ),
         ],
@@ -261,7 +260,7 @@ def note_row(*, note: Note, previews: bool) -> Node:
     The card itself opens the note, which is what a user expects from a list,
     and the delete control sits inside it with its own binding: Compose gives
     the innermost clickable the tap. The binding carries the note's id, so one
-    Python transition serves every row on screen without the host ever holding
+    view model intent serves every row on screen without the host ever holding
     a handler.
 
     Args:
@@ -281,7 +280,7 @@ def note_row(*, note: Note, previews: bool) -> Node:
             )
         )
     return Card(
-        on_click=open_note.with_args(note_id=note.id),
+        on_click=OpenNote(note_id=note.id),
         modifier=Modifier().padding(PaddingValues(bottom=Dp(8))).fill_max_width(),
         children=[
             Row(
@@ -289,9 +288,7 @@ def note_row(*, note: Note, previews: bool) -> Node:
                 modifier=Modifier().padding(10),
                 children=[
                     Column(modifier=Modifier().fill_max_width(0.75), children=caption),
-                    TextButton(
-                        text="Delete", on_click=delete_note.with_args(note_id=note.id)
-                    ),
+                    TextButton(text="Delete", on_click=DeleteNote(note_id=note.id)),
                 ],
             )
         ],

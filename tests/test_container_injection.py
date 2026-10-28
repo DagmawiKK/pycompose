@@ -13,12 +13,10 @@ from typing import Any, TypedDict
 
 import pytest
 
-from pycompose import AppContext, action, install_context
+from pycompose import action
 from pycompose.bridge.session import RuntimeSession
 from pycompose.errors import BridgeError, StateError
 from pycompose.state import Actions, State
-
-APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"
 
 
 class Nothing(TypedDict):
@@ -30,28 +28,6 @@ class Container:
 
     def __init__(self, tag: str = "real") -> None:
         self.tag = tag
-
-
-@pytest.fixture(scope="module")
-def notes(request: pytest.FixtureRequest) -> Any:
-    """Import the Notes app the way the on-device worker does.
-
-    Leaving ``main`` in ``sys.modules`` would break the dev-server tests, whose
-    entrypoint loader refuses a name something else already imported -- so the
-    import is undone on the way out, not just the path entry.
-
-    Args:
-        request: The fixture request, used to schedule the teardown.
-
-    Returns:
-        The app entrypoint module.
-    """
-    sys.path.insert(0, str(APP))
-    request.addfinalizer(lambda: sys.modules.pop("main", None))
-    request.addfinalizer(lambda: sys.path.remove(str(APP)))
-    import main
-
-    return main
 
 
 def _state() -> State:
@@ -143,29 +119,6 @@ def test_an_action_is_callable_so_a_test_needs_no_runtime() -> None:
     assert noop(_state(), container=supplied) is not None
 
 
-def test_the_app_s_actions_run_without_a_bridge(notes: Any) -> None:
-    """The claim from the design: no mocks, no reflection, no session."""
-    from notes_app.container import AppContainer
-    from notes_app.data.notes_repo import MemoryNotesRepo
-    from notes_app.domain import Notes
-    from notes_app.domain.models import Note
-
-    # A session installs all of this. This test stands in for one, and must
-    # do it before build: a composable reached during the first render resolves
-    # its registry from the context.
-    supplied = AppContainer(Notes(MemoryNotesRepo([Note(1, "Only")])))
-    notes.actions.install_container(supplied)
-    notes.actions.install_view(notes.app.session_view)
-    install_context(
-        AppContext(actions=notes.actions, container=supplied, notes=supplied.notes)
-    )
-    start = notes.app.build(route="notes", restore="")
-
-    # Call the decorated action itself, the way a developer would in a test.
-    delete = notes.actions._contracts["notes_app.actions.delete_note"]
-    delete(start, {"note_id": 1}, notes=supplied.notes)
-
-
 # ---------------------------------------------------------------------------
 # The registry
 # ---------------------------------------------------------------------------
@@ -255,22 +208,3 @@ def test_a_session_refuses_an_app_whose_actions_want_a_container_it_declares_non
         sys.path.remove(str(tmp_path))
         for name in [n for n in sys.modules if n.startswith("unwired")]:
             del sys.modules[name]
-
-
-def test_the_notes_app_starts_with_its_container_installed(notes: Any) -> None:
-    """The real app, through the real session, declares and receives one."""
-    import tempfile
-
-    from pycompose.repository import use_root
-
-    scratch = Path(tempfile.mkdtemp())
-    use_root(scratch)
-    try:
-        session = RuntimeSession("main:app", "notes", debug=True)
-        assert session.error() == ""
-        container = notes.app.container()
-        # What the session installed, reached the way an action reaches it.
-        assert container.notes.list() == []
-        assert notes.actions.injected == ("notes",)
-    finally:
-        use_root(Path.cwd())

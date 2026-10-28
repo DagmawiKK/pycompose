@@ -17,58 +17,44 @@ from m3 import (
 )
 from m3.values import materialIcon
 
-from notes_app.actions import (
-    delete_note,
-    go_back,
-    set_body,
-    set_body_caret,
-    set_title,
-    set_title_caret,
+from notes_app.view_models import (
+    EditorState,
+    LeaveEditor,
+    RemoveNote,
+    SetBody,
+    SetBodyCaret,
+    SetTitle,
+    SetTitleCaret,
 )
-from notes_app.domain.models import Note
-from notes_app.state import Session
 from pycompose import composable
 from pycompose.core import Node
 
 
-@composable
-def editor_screen(*, note: Note, session: Session) -> Node:
+def editor_screen(state: EditorState) -> Node:
     """Render the editor for one note.
 
-    Both fields bind the same note id, so a keystroke resolves to the note being
-    edited without the view knowing anything about which note that is.
+    Both fields bind the note's id, so a keystroke from a field drawn for
+    another note cannot write into this one.
 
     Args:
-        note: The note being edited.
-        session: The session shell, for the carets.
+        state: The editor's state.
 
     Returns:
-        A Scaffold declaration holding the note's title and body fields.
+        A Scaffold declaration holding the note's title and body fields, or
+        word that the note is gone.
     """
+    note = state.note
+    if note is None:
+        # Restored onto a note deleted since; the back button still leaves.
+        return Scaffold(
+            top_bar=back_bar(title="Note deleted"),
+            content=Column(
+                modifier=Modifier().padding(20).fill_max_width(),
+                children=[Text(text="This note no longer exists.")],
+            ),
+        )
     return Scaffold(
-        top_bar=Row(
-            vertical_alignment="center",
-            children=[
-                IconButton(
-                    on_click=go_back,
-                    children=[
-                        Icon(
-                            image_vector=materialIcon(
-                                name="AutoMirrored.Filled.ArrowBack"
-                            ),
-                            content_description="Back to notes",
-                        )
-                    ],
-                ),
-                VerticalDivider(modifier=Modifier().size(1, 24)),
-                Spacer(modifier=Modifier().size(8)),
-                Text(
-                    text=note.label,
-                    style="titleMedium",
-                    modifier=Modifier().fill_max_width(0.7),
-                ),
-            ],
-        ),
+        top_bar=back_bar(title=note.label),
         content=Column(
             modifier=Modifier().padding(20).fill_max_width(),
             children=[
@@ -76,25 +62,58 @@ def editor_screen(*, note: Note, session: Session) -> Node:
                 TextField(
                     value=note.title,
                     label="Title",
-                    selection=session.title_caret,
-                    on_value_change=set_title.with_args(note_id=note.id),
-                    on_selection_change=set_title_caret,
+                    selection=state.title_caret,
+                    on_value_change=SetTitle.bind(note_id=note.id),
+                    on_selection_change=SetTitleCaret,
                     modifier=Modifier().fill_max_width(),
                 ),
                 Spacer(modifier=Modifier().size(12)),
                 TextField(
                     value=note.body,
                     label="Note",
-                    selection=session.body_caret,
-                    on_value_change=set_body.with_args(note_id=note.id),
-                    on_selection_change=set_body_caret,
+                    selection=state.body_caret,
+                    on_value_change=SetBody.bind(note_id=note.id),
+                    on_selection_change=SetBodyCaret,
                     modifier=Modifier().fill_max_width(),
                 ),
                 Spacer(modifier=Modifier().size(24)),
                 TextButton(
                     text="Delete note",
-                    on_click=delete_note.with_args(note_id=note.id),
+                    on_click=RemoveNote(note_id=note.id),
                 ),
             ],
         ),
+    )
+
+
+@composable
+def back_bar(*, title: str) -> Node:
+    """Render the bar holding the way back and the screen's title.
+
+    Args:
+        title: What the bar names.
+
+    Returns:
+        A Row declaration.
+    """
+    return Row(
+        vertical_alignment="center",
+        children=[
+            IconButton(
+                on_click=LeaveEditor(),
+                children=[
+                    Icon(
+                        image_vector=materialIcon(name="AutoMirrored.Filled.ArrowBack"),
+                        content_description="Back to notes",
+                    )
+                ],
+            ),
+            VerticalDivider(modifier=Modifier().size(1, 24)),
+            Spacer(modifier=Modifier().size(8)),
+            Text(
+                text=title,
+                style="titleMedium",
+                modifier=Modifier().fill_max_width(0.7),
+            ),
+        ],
     )

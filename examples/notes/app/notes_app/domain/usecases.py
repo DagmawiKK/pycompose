@@ -95,13 +95,24 @@ class Notes:
     something else.
     """
 
-    def __init__(self, notes: NotesRepo) -> None:
+    def __init__(
+        self,
+        notes: NotesRepo,
+        changed: Callable[[list[Note]], None] = lambda _notes: None,
+    ) -> None:
         """Bind the use cases to a repository.
 
         Args:
             notes: Where the notes are kept.
+            changed: Told every note, newest first, after each change, so a
+                screen that shows them can follow storage.
         """
         self._notes = notes
+        self._changed = changed
+
+    def _store(self, notes: list[Note]) -> None:
+        self._notes.store(notes)
+        self._changed(self.list())
 
     def list(self) -> list[Note]:
         """Return every note, newest first.
@@ -138,7 +149,7 @@ class Notes:
         """
         held = self._notes.load()
         next_id = self._notes.highest_id() + 1
-        self._notes.store([Note(next_id, title, body), *held])
+        self._store([Note(next_id, title, body), *held])
         return next_id
 
     def rename(self, note_id: int, title: str) -> None:
@@ -190,4 +201,4 @@ class Notes:
             if replacement is not None:
                 rewritten.append(replacement)
         if touched:
-            self._notes.store(rewritten)
+            self._store(rewritten)

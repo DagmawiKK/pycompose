@@ -19,7 +19,7 @@ def app() -> ModuleType:
 def keyframe(app: ModuleType, count: int) -> int:
     notes = [(n, f"Note {n}", "body") for n in range(1, count + 1)]
     host = Host(app, repo=a_store(notes))
-    return len(host._bridge.expose_envelope(-1).encode())
+    return len(host.envelope().encode())
 
 
 def test_a_whole_snapshot_stays_the_same_size_at_any_list_length(

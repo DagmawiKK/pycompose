@@ -240,14 +240,16 @@ def test_the_domain_offers_exactly_what_the_actions_call(domain: object) -> None
     }
 
 
-def test_an_action_names_a_use_case_and_never_a_repository() -> None:
+def test_a_view_model_names_a_use_case_and_never_a_repository() -> None:
     """The direction Clean Architecture insists on, asserted on the source.
 
-    A controller holding a repository is assembling the use case's own
-    dependency on every call. That is dependency passing, not injection, and it
-    is what this refactor removed.
+    A view model holding a repository would assemble the use case's own
+    dependency itself. That is dependency passing, not injection.
     """
-    source = (APP / "notes_app" / "actions.py").read_text()
+    source = "".join(
+        path.read_text(encoding="utf-8")
+        for path in (APP / "notes_app" / "view_models").glob("*.py")
+    )
     assert "NotesRepo" not in source
     assert "notes_repo" not in source
     assert "notes: Notes" in source
