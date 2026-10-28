@@ -15,8 +15,10 @@ from __future__ import annotations
 import types
 from dataclasses import MISSING, fields
 from typing import (
+    Annotated,
     Any,
     Literal,
+    TypeVar,
     Union,
     get_args,
     get_origin,
@@ -25,6 +27,26 @@ from typing import (
 
 from pycompose.core.props import to_camel_case
 from pycompose.errors import StateError
+
+T = TypeVar("T")
+
+
+class _LoadedMarker:
+    """Marks a field filled by the app at run time and never saved."""
+
+    def __repr__(self) -> str:
+        return "Loaded"
+
+
+LOADED = _LoadedMarker()
+
+Loaded = Annotated[T, LOADED]
+"""A field the app refills from its data, so it is never saved for process death.
+
+``notes: Loaded[tuple[Note, ...]] = ()`` keeps a screen's data out of the saved
+state, which the platform caps at a few hundred kilobytes; the view model fills it
+again from its repository. A loaded field needs a default for that reason.
+"""
 
 _PRIMITIVES: dict[Any, tuple[type, ...]] = {
     bool: (bool,),
@@ -68,6 +90,7 @@ class _Field:
         annotation: The declared type.
         optional: Whether the field may be None.
         default: Whether the field may be absent entirely.
+        loaded: Whether the app refills the field, so it is never saved.
     """
 
     name: str
@@ -75,8 +98,9 @@ class _Field:
     annotation: Any
     optional: bool
     default: bool
+    loaded: bool
 
-    __slots__ = ("annotation", "default", "name", "optional", "wire")
+    __slots__ = ("annotation", "default", "loaded", "name", "optional", "wire")
 
     def __init__(
         self,
@@ -84,6 +108,7 @@ class _Field:
         annotation: Any,
         optional: bool,
         default: bool,
+        loaded: bool = False,
     ) -> None:
         """Describe one field.
 
@@ -92,12 +117,14 @@ class _Field:
             annotation: The declared type.
             optional: Whether the field may be None.
             default: Whether the field may be absent entirely.
+            loaded: Whether the app refills the field, so it is never saved.
         """
         self.name = name
         self.wire = to_camel_case(name)
         self.annotation = annotation
         self.optional = optional
         self.default = default
+        self.loaded = loaded
 
 
 def _describe(cls: type) -> tuple[_Field, ...]:
@@ -113,22 +140,31 @@ def _describe(cls: type) -> tuple[_Field, ...]:
         StateError: If an annotation names a type this codec cannot carry.
     """
     try:
-        hints = get_type_hints(cls)
+        hints = get_type_hints(cls, include_extras=True)
     except Exception as exc:
         raise StateError(f"{cls.__name__} has unresolvable type hints") from exc
 
     described: list[_Field] = []
     for field in fields(cls):
         annotation = hints.get(field.name, field.type)
+        loaded = False
+        if get_origin(annotation) is Annotated:
+            loaded = any(extra is LOADED for extra in annotation.__metadata__)
+            annotation = get_args(annotation)[0]
         annotation, optional = _unwrap_optional(annotation)
         _require_supported(cls, field.name, annotation)
+        default = field.default is not MISSING or field.default_factory is not MISSING
+        if loaded and not default:
+            raise StateError(
+                f"{cls.__name__}.{field.name} is loaded and needs a default"
+            )
         described.append(
             _Field(
                 name=field.name,
                 annotation=annotation,
                 optional=optional or _is_optional(field.type),
-                default=field.default is not MISSING
-                or field.default_factory is not MISSING,
+                default=default,
+                loaded=loaded,
             )
         )
     return tuple(described)

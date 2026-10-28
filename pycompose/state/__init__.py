@@ -11,6 +11,7 @@ from pycompose.state.actions import (
 from pycompose.state.app import App
 from pycompose.state.app_action import ShellResponse, respond
 from pycompose.state.app_state import AppState
+from pycompose.state.app_state_types import Loaded
 from pycompose.state.state import State, Store
 
 __all__ = [
@@ -18,6 +19,7 @@ __all__ = [
     "Actions",
     "App",
     "AppState",
+    "Loaded",
     "Registry",
     "ShellResponse",
     "State",
