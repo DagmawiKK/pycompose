@@ -29,11 +29,10 @@ def _state(labels: list[str], *, extra: bool = False, title: str = "Rows") -> St
     )
 
 
-def _publish(state: State, reuse: Reuse | None, *, debug: bool = True) -> str:
+def _publish(state: State, reuse: Reuse | None) -> str:
     """Publish in a session, or fresh, with ids replaced by readable paths."""
     reuse = reuse or readable_reuse()
-    result = validate_ir(emit_ir(state, "1.0.0", reuse), debug=debug, reuse=reuse)
-    assert result.snapshot is not None
+    result = validate_ir(emit_ir(state, "1.0.0", reuse), reuse=reuse)
     return json.dumps(rename(json.loads(to_json(result.snapshot, reuse)), reuse))
 
 
@@ -52,28 +51,6 @@ def test_a_reused_publish_matches_a_fresh_one_at_every_step() -> None:
     reuse = readable_reuse()
     for state in SEQUENCE:
         assert _publish(state, reuse) == _publish(state, None)
-
-
-def test_release_mode_drops_the_same_invalid_nodes_with_reuse() -> None:
-    invalid = Node(id="bad", type="Unknown", props=Props({}))
-
-    def state(title: str) -> State:
-        return State(
-            root=Column(
-                id="screen",
-                children=(
-                    Text(id="title", text=title),
-                    row(id="r", label="a", extra=False),
-                    invalid,
-                ),
-            )
-        )
-
-    reuse = readable_reuse()
-    for title in ("one", "two", "two"):
-        assert _publish(state(title), reuse, debug=False) == _publish(
-            state(title), None, debug=False
-        )
 
 
 def test_a_duplicate_id_across_reused_subtrees_is_still_refused() -> None:

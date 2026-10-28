@@ -11,13 +11,12 @@ from pycompose.ir.serializer import (
     to_json,
     to_json_bytes,
 )
-from pycompose.ir.validator import ValidationIssue, ValidationResult, validate_ir
+from pycompose.ir.validator import ValidationResult, validate_ir
 
 __all__ = [
     "Action",
     "ActionQueue",
     "IRRoot",
-    "ValidationIssue",
     "ValidationResult",
     "emit_ir",
     "node_to_dict",

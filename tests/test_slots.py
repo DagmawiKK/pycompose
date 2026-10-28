@@ -134,17 +134,13 @@ def test_a_root_cannot_fill_a_slot() -> None:
 
 
 def test_a_slotted_child_still_needs_a_declared_slot_on_the_wire() -> None:
-    """A release snapshot drops the subtree rather than the frame."""
     column = Node(
         id="body",
         type="Column",
         children=(text_node("line", slot="topBar"),),
     )
-    candidate = emit_ir(State(root=column), "1.0.0")
-    result = validate_ir(candidate, debug=False)
-    assert result.snapshot is not None
-    assert [child.type for child in result.snapshot.root.children] == []
-    assert any("unknown slot" in issue.message for issue in result.issues)
+    with pytest.raises(IrValidationError, match="unknown slot"):
+        validate_ir(emit_ir(State(root=column), "1.0.0"))
 
 
 def test_tooltip_content_fills_the_box_slot_and_reaches_the_wire() -> None:

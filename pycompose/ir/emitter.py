@@ -31,6 +31,7 @@ from pycompose.ir.effects import lower_effects
 from pycompose.ir.model import IRRoot
 from pycompose.ir.streams import is_expression, resolve_streams
 from pycompose.state.state import State
+from pycompose.utils.json_canonical import FrozenJsonValue
 
 __all__ = ["emit_ir"]
 
@@ -81,7 +82,7 @@ def emit_ir(
     bindings = (
         cast("Mapping[str, JsonValue]", {"intents": contracts}) if contracts else None
     )
-    metadata: Mapping[str, JsonValue] | None = None
+    merged: dict[str, object] = {}
     # Intent contracts, effect requests and app data share one metadata object;
     # their keys never collide, so a merge preserves both declaration orders.
     for member in (
@@ -93,8 +94,9 @@ def emit_ir(
         else None,
     ):
         if member is not None:
-            metadata = {**(metadata or {}), **member}
-    return IRRoot(root=root, schema_version=schema_version, metadata=metadata)
+            merged.update(member)
+    metadata = cast("Mapping[str, JsonValue | FrozenJsonValue]", merged)
+    return IRRoot(root=root, schema_version=schema_version, metadata=metadata or None)
 
 
 @dataclass(frozen=True, slots=True)

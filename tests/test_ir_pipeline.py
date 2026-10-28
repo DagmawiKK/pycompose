@@ -81,7 +81,6 @@ def test_valid_snapshot_is_preserved_by_identity() -> None:
     )
     result = validate_ir(snapshot)
     assert result.snapshot is snapshot
-    assert result.issues == ()
 
 
 def test_validation_preserves_two_thousand_level_snapshot_without_recursion() -> None:
@@ -127,30 +126,6 @@ def test_two_thousand_level_pipeline_serializes_without_recursion() -> None:
     assert to_json(candidate).encode("utf-8") == encoded
 
 
-def test_release_rebuilds_only_degraded_branches_and_keeps_frozen_props() -> None:
-    keep = Node(id="keep", type="Text", props=Props({"text": "keep"}))
-    original_props = Props(
-        {"text": "fix", "style": "bad", "modifier": {"padding": [4]}}
-    )
-    fix = Node(id="fix", type="Text", props=original_props)
-    branch = Node(id="branch", type="Column", children=(fix,))
-    snapshot = IRRoot(
-        root=Node(id="root", type="Column", children=(keep, branch)),
-        schema_version="1.0.0",
-        metadata={"route": "home"},
-    )
-    result = validate_ir(snapshot, debug=False)
-    assert result.snapshot is not None
-    assert result.snapshot.root is not snapshot.root
-    assert result.snapshot.root.children[0] is keep
-    changed = result.snapshot.root.children[1]
-    assert changed is not branch
-    assert changed.children[0].props["modifier"] is original_props["modifier"]
-    assert result.snapshot.metadata is snapshot.metadata
-    assert result.issues[0].path == ("root", "branch", "fix")
-    assert "style" in fix.props
-
-
 def test_shared_subtrees_are_not_cycles_and_get_unique_emitted_ids() -> None:
     shared = Node(id="item", type="Text", props=Props({"text": "shared"}))
     state = State(
@@ -173,7 +148,7 @@ def test_shared_subtrees_are_not_cycles_and_get_unique_emitted_ids() -> None:
 
 
 @pytest.mark.parametrize("component", ["Column", "Unknown", "Spacer"])
-def test_cycles_reject_the_whole_candidate_even_inside_a_dropped_subtree(
+def test_cycles_reject_the_whole_candidate(
     component: str,
 ) -> None:
     cyclic = Node(id="cycle", type=component)
@@ -184,10 +159,6 @@ def test_cycles_reject_the_whole_candidate_even_inside_a_dropped_subtree(
     )
     with pytest.raises(IrValidationError):
         validate_ir(snapshot)
-    result = validate_ir(snapshot, debug=False)
-    assert result.snapshot is None
-    assert result.issues[-1].message == "cyclic node graph"
-    assert result.issues[-1].path == ("root", "cycle", "cycle")
     with pytest.raises(IrValidationError, match="cyclic"):
         emit_ir(State(root=snapshot.root), "1.0.0")
     with pytest.raises(IrValidationError, match="cyclic"):
@@ -297,7 +268,3 @@ def test_string_subclasses_cannot_hide_invalid_utf8_values_or_keys() -> None:
         )
         with pytest.raises(IrValidationError, match="invalid prop value"):
             validate_ir(snapshot)
-        result = validate_ir(snapshot, debug=False)
-        assert result.snapshot is not None
-        assert "modifier" not in result.snapshot.root.props
-        assert b'"props":{}' in to_json_bytes(result.snapshot)

@@ -11,7 +11,7 @@ the entire candidate even when component policy would otherwise discard it.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 
 from pycompose.contract.catalog import (
     MIN_LIBRARY_VERSION,
@@ -37,7 +37,6 @@ from pycompose.ir.validator_walk import _Validation
 from pycompose.utils.json_canonical import check_json
 
 __all__ = [
-    "ValidationIssue",
     "ValidationResult",
     "validate_component",
     "validate_ir",
@@ -179,36 +178,15 @@ def validate_modifier(value: object, *, intents: Intents | None = None) -> None:
 
 
 @dataclass(frozen=True, slots=True)
-class ValidationIssue:
-    """A deterministic diagnostic the boundary may log or display.
-
-    Attributes:
-        message: Human-readable validation failure.
-        node_id: Offending node id.
-        node_type: Offending component name.
-        path: Node path in the snapshot.
-        prop: Offending prop, when applicable.
-    """
-
-    message: str
-    node_id: str
-    node_type: str
-    path: tuple[str, ...]
-    prop: str | None = None
-
-
-@dataclass(frozen=True, slots=True)
 class ValidationResult:
-    """Validated IR plus release degradation diagnostics.
+    """A snapshot that passed validation, and what validation read from it.
 
     Attributes:
-        snapshot: Safe snapshot, or None when no root can be rendered.
-        issues: Failures encountered in stable traversal order.
+        snapshot: The snapshot, unchanged.
         intents: The snapshot's intent contracts by handler id, parsed once here.
     """
 
-    snapshot: IRRoot | None
-    issues: tuple[ValidationIssue, ...] = ()
+    snapshot: IRRoot
     intents: Intents = field(default_factory=dict)
 
 
@@ -221,11 +199,11 @@ def _section_ok(
     stale: str,
     since: str | None,
     root: Node,
-) -> bool:
+) -> None:
     """Check one metadata section is well formed and this schema can carry it.
 
     Args:
-        validation: Collector for any diagnostic raised here.
+        validation: Raises any diagnostic found here.
         metadata: Snapshot metadata, or None when the snapshot carries none.
         read: Section reader from this module.
         absent: The exact object the reader returns when nothing was published.
@@ -233,40 +211,31 @@ def _section_ok(
         stale: Diagnostic for a section this schema cannot carry.
         since: First schema exposing the section, or None when ungated.
         root: Node attributed in any diagnostic.
-
-    Returns:
-        False when the snapshot must not be published at all.
     """
     try:
         value = read(metadata)
     except (IrValidationError, ComponentRegistryError):
         validation.report(invalid, root)
-        return False
     if value is not absent and since is not None and not validation.available(since):
         validation.report(stale, root)
-        return False
-    return True
 
 
-def validate_ir(
-    snapshot: IRRoot, *, debug: bool = True, reuse: Reuse | None = None
-) -> ValidationResult:
-    """Validate a snapshot against the generated component registry.
+def validate_ir(snapshot: IRRoot, *, reuse: Reuse | None = None) -> ValidationResult:
+    """Validate a snapshot against the generated component registry, fail-closed.
 
-    Debug failures raise IrValidationError with node/prop context. Version
-    incompatibility propagates SchemaError in either mode; never emit a snapshot
-    using a contract the runtime cannot validate. Release mode drops invalid
-    subtrees and ignores unknown/invalid optional props, returning diagnostics.
+    Python validates in debug and tests; in release the host's typed parse is
+    the one check, and an invalid snapshot is refused whole on either side, so
+    the last good one stays on screen. The first invalid node, prop or metadata
+    section raises IrValidationError with its context; a version this runtime
+    cannot validate raises SchemaError.
 
     Args:
         snapshot: Candidate full snapshot.
-        debug: Raise on invalid IR instead of returning degradation diagnostics.
         reuse: The session's subtrees that were clean last pass, skipped when
             they recur; None validates every node.
 
     Returns:
-        The validated snapshot and deterministic diagnostics.
-
+        The snapshot and the intent contracts it states.
     """
     require_version(
         snapshot.schema_version,
@@ -275,7 +244,7 @@ def validate_ir(
         supported=REGISTRY.supported_schema_versions or (SCHEMA_VERSION,),
     )
     require_version(snapshot.version, minimum=MIN_LIBRARY_VERSION, field="version")
-    validation = _Validation(debug, snapshot.schema_version, host=current_host())
+    validation = _Validation(snapshot.schema_version, host=current_host())
     if reuse is not None:
         reuse.validated.start()
         validation.memo = reuse.validated
@@ -285,61 +254,45 @@ def validate_ir(
             check_json(metadata)
         except (IrValidationError, TypeError, ValueError):
             validation.report("invalid metadata", snapshot.root)
-            metadata = None
     try:
         intents = read_intents(metadata)
     except (IrValidationError, ComponentRegistryError):
         validation.report("invalid intent contracts", snapshot.root)
-        return ValidationResult(None, tuple(validation.issues))
     if intents and not validation.available("1.2.0"):
         validation.report("app actions require newer schema", snapshot.root)
-        return ValidationResult(None, tuple(validation.issues))
-    # Effects and app data are checked for publishability, not read back here.
-    if not _section_ok(
-        validation,
-        metadata,
-        read_effects,
-        (),
-        "invalid snapshot effects",
-        "effects require newer schema",
-        EFFECTS_SCHEMA,
-        snapshot.root,
+    # Effects, app data and echoes are checked for publishability, not read back.
+    for read, absent, invalid, stale, since in (
+        (
+            read_effects,
+            (),
+            "invalid snapshot effects",
+            "effects require newer schema",
+            EFFECTS_SCHEMA,
+        ),
+        (
+            read_data,
+            None,
+            "invalid app data",
+            "app data requires newer schema",
+            DATA_SCHEMA,
+        ),
+        (
+            read_echoes,
+            None,
+            "invalid echoes",
+            "echoes require newer schema",
+            ECHOES_SCHEMA,
+        ),
     ):
-        return ValidationResult(None, tuple(validation.issues))
-    if not _section_ok(
-        validation,
-        metadata,
-        read_data,
-        None,
-        "invalid app data",
-        "app data requires newer schema",
-        DATA_SCHEMA,
-        snapshot.root,
-    ) or not _section_ok(
-        validation,
-        metadata,
-        read_echoes,
-        None,
-        "invalid echoes",
-        "echoes require newer schema",
-        ECHOES_SCHEMA,
-        snapshot.root,
-    ):
-        return ValidationResult(None, tuple(validation.issues))
+        _section_ok(
+            validation, metadata, read, absent, invalid, stale, since, snapshot.root
+        )
     validation.intents = intents
-    root = validation.node(snapshot.root)
-    if root is not None:
-        # An expression may read a holder anywhere in the snapshot.
-        for node, prop, message in stream_problems(root):
-            validation.report(message, node, prop)
-    safe: IRRoot | None = snapshot
-    if root is None:
-        safe = None
-    elif root is not snapshot.root or metadata is not snapshot.metadata:
-        safe = replace(snapshot, root=root, metadata=metadata)
-    return ValidationResult(
-        snapshot=safe, issues=tuple(validation.issues), intents=intents
-    )
+    validation.node(snapshot.root)
+    # An expression may read a holder anywhere in the snapshot.
+    for node, prop, message in stream_problems(snapshot.root):
+        validation.report(message, node, prop)
+    return ValidationResult(snapshot=snapshot, intents=intents)
 
 
 def validate_component(node: Node) -> None:
@@ -352,10 +305,8 @@ def validate_component(node: Node) -> None:
     Args:
         node: Candidate component node.
     """
-    validation = _Validation(debug=True, derived_ids=True)
+    validation = _Validation(derived_ids=True)
     frame = validation.prepare(node)
-    if frame is None:
-        return
     unslotted = sum(1 for child in node.children if child.slot is None)
     if unslotted < frame.minimum:
         validation.report("too few children", node)

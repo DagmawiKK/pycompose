@@ -15,7 +15,7 @@ from pycompose.bridge.types import MAIN_SURFACE, decode_action
 from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.contract.registry_types import PropDef
 from pycompose.contract.version import at_least
-from pycompose.core.action_binding import BindingSpec
+from pycompose.core.action_binding import BindingSpec, read_intents
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.core.ids import Handles
 from pycompose.core.reuse import Reuse
@@ -146,10 +146,9 @@ class BridgeSurface:
             handles=Handles(readable=debug),
         )
         try:
-            published = self._snapshot(store.value)
-            if published is not None:
-                self._intents = frozenset(published[2])
-                self._publish(published[0], published[1])
+            root, text, intents = self._snapshot(store.value)
+            self._intents = frozenset(intents)
+            self._publish(root, text)
         except SchemaError:
             raise
         except Exception as exc:
@@ -176,7 +175,7 @@ class BridgeSurface:
 
     def _snapshot(
         self, state: State
-    ) -> tuple[IRRoot, str, dict[str, Mapping[str, PropDef]]] | None:
+    ) -> tuple[IRRoot, str, dict[str, Mapping[str, PropDef]]]:
         echoes = self._echoes if at_least(self._schema_version, ECHOES_SCHEMA) else None
         with hosted(self._host):
             with windows(self._windows), self._timed("view"):
@@ -184,22 +183,24 @@ class BridgeSurface:
                     state, self._schema_version, self._reuse, echoes=echoes
                 )
             with self._timed("validate"):
-                result = validate_ir(emitted, debug=self._debug, reuse=self._reuse)
+                # Debug checks here and refuses an invalid snapshot; release
+                # leaves the one check to the host's typed parse, which refuses
+                # it the same way, keeping the last good snapshot on screen.
+                intents = (
+                    dict(validate_ir(emitted, reuse=self._reuse).intents)
+                    if self._debug
+                    else dict(read_intents(emitted.metadata))
+                )
         if self._debug:
             for reason in self._reuse.expansion.reasons:
                 LOGGER.debug("Rebuilt %s", reason)
             for missing in sorted(self._host.substituted - self._announced):
                 LOGGER.warning("The host has no %s; showing its fallback", missing)
             self._announced |= self._host.substituted
-        for issue in result.issues:
-            LOGGER.warning("IR validation: %s", issue)
-        if result.snapshot is None:
-            return None
-        intents = dict(result.intents)
         self._session.validate_intents(intents)
         with self._timed("serialize"):
-            text = to_json(result.snapshot, self._reuse)
-        return result.snapshot, text, intents
+            text = to_json(emitted, self._reuse)
+        return emitted, text, intents
 
     @contextmanager
     def _timed(self, phase: str) -> Iterator[None]:
@@ -271,8 +272,8 @@ class BridgeSurface:
                 )
             if _unchanged(next_state, current) and not echoed:
                 return
-            if self._publish_state(next_state):
-                echoed = False
+            self._publish_state(next_state)
+            echoed = False
         except Exception as exc:
             self._report("Action ignored", exc)
         finally:
@@ -288,22 +289,16 @@ class BridgeSurface:
                     PASS_BUDGET * 1000,
                 )
 
-    def _publish_state(self, state: State) -> bool:
-        """Publish ``state`` and make it the store's; False when it is invalid.
+    def _publish_state(self, state: State) -> None:
+        """Publish ``state`` and make it the store's; an invalid one raises first.
 
         Args:
             state: The state to render.
-
-        Returns:
-            Whether a snapshot was published.
         """
-        published = self._snapshot(state)
-        if published is None:
-            return False
+        root, text, intents = self._snapshot(state)
         self._store.mutate(lambda _state: state)
-        self._intents = frozenset(published[2])
-        self._publish(published[0], published[1])
-        return True
+        self._intents = frozenset(intents)
+        self._publish(root, text)
 
     def _republish(self, state: State) -> None:
         """Publish the unchanged ``state`` again so it carries the latest echoes.

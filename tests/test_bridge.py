@@ -205,7 +205,20 @@ def test_handler_failure_preserves_state_and_allows_the_next_action(
     )
 
 
-@pytest.mark.parametrize("debug", [True, False])
+def test_release_leaves_the_check_to_the_hosts_parse() -> None:
+    """Release publishes what it emitted; the host's typed parse refuses it."""
+    store = Store(State(root=Node(id="value", type="Text", props={"text": "old"})))
+    actions = Handlers()
+    actions.register(
+        "increment",
+        lambda state, _payload: replace(state, root=Node(id="value", type="Missing")),
+    )
+    bridge = BridgeSurface(store, actions, debug=False)
+    bridge.accept_action('{"intent":"increment"}')
+    assert '"type":"Missing"' in (bridge.expose_latest_snapshot() or "")
+
+
+@pytest.mark.parametrize("debug", [True])
 def test_invalid_next_snapshot_never_commits_partial_state(debug: bool) -> None:
     original = State(root=Node(id="value", type="Text", props={"text": "old"}))
     store = Store(original)
@@ -291,8 +304,8 @@ def test_version_mismatch_fails_at_bridge_configuration(debug: bool) -> None:
         )
 
 
-@pytest.mark.parametrize("debug", [True, False])
-def test_invalid_initial_snapshot_is_unavailable_and_logged(
+@pytest.mark.parametrize("debug", [True])
+def test_invalid_initial_snapshot_is_unavailable_and_logged_in_debug(
     debug: bool, caplog: pytest.LogCaptureFixture
 ) -> None:
     bridge = BridgeSurface(

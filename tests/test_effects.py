@@ -98,7 +98,7 @@ def test_effects_require_their_schema(version: str) -> None:
         {"effects": [{"kind": "toast", "payload": {}, "extra": 1}]},
     ],
 )
-def test_malformed_metadata_is_rejected_or_degraded(metadata: dict) -> None:
+def test_malformed_metadata_is_rejected(metadata: dict) -> None:
     base = emit_ir(State(root=Text(id="text", text="hi")), "1.4.0")
     broken = IRRoot(
         root=base.root,
@@ -108,4 +108,3 @@ def test_malformed_metadata_is_rejected_or_degraded(metadata: dict) -> None:
     )
     with pytest.raises(IrValidationError, match="effect"):
         validate_ir(broken)
-    assert validate_ir(broken, debug=False).snapshot is None
