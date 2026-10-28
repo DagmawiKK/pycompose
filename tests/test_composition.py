@@ -153,8 +153,10 @@ def test_composable_detaches_mutable_prop_containers() -> None:
 def test_invalid_output_does_not_replace_the_last_good_bridge_snapshot() -> None:
     from dataclasses import replace
 
+    from handlers import Handlers
+
     from pycompose.bridge import BridgeSurface
-    from pycompose.state import Actions, Store
+    from pycompose.state import Store
 
     @composable
     def broken():
@@ -162,7 +164,7 @@ def test_invalid_output_does_not_replace_the_last_good_bridge_snapshot() -> None
 
     initial = State(root=Text(id="message", text="Hello"))
     store = Store(initial)
-    actions = Actions()
+    actions = Handlers()
     actions.register(
         "increment", lambda state, _: replace(state, root=broken(id="broken"))
     )

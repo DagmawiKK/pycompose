@@ -1,4 +1,4 @@
-"""The back stack: a view model per screen, served to the bridge as its registry."""
+"""The back stack: a view model per screen, the session the bridge serves."""
 
 from __future__ import annotations
 
@@ -23,13 +23,12 @@ from pycompose.app.navigation import (
 from pycompose.app.viewmodel import ViewModel, ViewModelHost, hosting
 from pycompose.contract.catalog import REGISTRY
 from pycompose.contract.registry_types import PropDef
-from pycompose.core.action_binding import BindingSpec
+from pycompose.core.action_binding import BindingSpec, check_payload
 from pycompose.core.effect import Effect
 from pycompose.core.props import JsonValue
 from pycompose.errors import StateError
 from pycompose.runtime import signal
 from pycompose.runtime.scope import Report, Scope
-from pycompose.state.actions import Actions
 from pycompose.state.state import State
 
 __all__ = ["REFRESH", "NavigationSession"]
@@ -57,8 +56,8 @@ class _Entry:
     view_model: ViewModel[Any]
 
 
-class NavigationSession(Actions):
-    """The app's back stack, behind the registry interface the bridge calls.
+class NavigationSession:
+    """The app's back stack, behind the interface the bridge calls.
 
     The top entry's view model receives intents and lifecycle events, and its
     screen draws the snapshot. Pushing builds a view model from its destination;
@@ -83,7 +82,6 @@ class NavigationSession(Actions):
         report: Report,
         signal: Callable[[], None] = _post_refresh,
     ) -> None:
-        super().__init__()
         self._app = app
         self._container = container
         self._signal = signal
@@ -233,6 +231,19 @@ class NavigationSession(Actions):
             effects=tuple(effects),
         )
 
+    def validate_intents(self, intents: Mapping[str, Mapping[str, PropDef]]) -> None:
+        """Check that every intent a snapshot states is one this app defines.
+
+        Args:
+            intents: Each stated intent's payload contract, by wire name.
+
+        Raises:
+            StateError: If an intent is undefined or its contract differs.
+        """
+        for name, payload in intents.items():
+            if self.contract(name) != dict(payload):
+                raise StateError("undefined or mismatched intent", intent=name)
+
     def contract(self, action_id: str) -> Mapping[str, PropDef] | None:
         """Return the fields of the intent class a wire name names.
 
@@ -290,7 +301,10 @@ class NavigationSession(Actions):
         cls = intent_class(spec.handler_id)
         if cls is None:
             raise StateError("unknown intent", intent=spec.handler_id)
-        intent = cls.codec.decode({**spec.bound, **payload})
+        check_payload(payload, spec.event_fields)
+        complete = {**spec.bound, **payload}
+        check_payload(complete, spec.payload)
+        intent = cls.codec.decode(complete)
         self._dispatching = True
         try:
             self.top.on_intent(intent)

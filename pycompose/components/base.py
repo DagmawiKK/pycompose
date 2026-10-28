@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from difflib import get_close_matches
 from types import CodeType
-from typing import Any, ClassVar, NoReturn, cast
+from typing import Any, ClassVar, NoReturn, TypeAlias, cast
 
 from pycompose.app.intents import Intent
 from pycompose.components.modifiers import Modifier
@@ -17,14 +17,14 @@ from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
 from pycompose.core.values import _Unset
 from pycompose.errors import IrValidationError
 from pycompose.ir.validator import validate_component
-from pycompose.state.app_action import AppAction
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
 
-ActionTarget = str | AppAction[Any] | Intent | type[Intent]
-"""What an action prop takes: an app action, a binding of one, or a registry id."""
+ActionTarget = str | Intent | type[Intent]
+"""What an action prop takes: an intent, an intent class, or a registry action id."""
 
 
-PropValue = JsonValue | AppAction[Any] | Intent | type[Intent] | Expression
+# A string alias: the JSON alias is itself a string, and cannot take ``|``.
+PropValue: TypeAlias = "JsonValue | Intent | type[Intent] | Expression"  # noqa: UP040
 """What a component prop takes before construction makes it wire data."""
 
 
@@ -214,8 +214,8 @@ def _refuse(error: IrValidationError, node: Component) -> NoReturn:
 def _lower_action(value: object) -> JsonValue:
     """Turn an action a control takes into wire data or a binding.
 
-    An app action or an intent class binds nothing of its own; an intent
-    instance binds every field. An expression is wire data from here on.
+    An intent class binds nothing of its own; an intent instance binds every
+    field. An expression is wire data from here on.
 
     Args:
         value: A prop value as the app passed it.
@@ -223,8 +223,6 @@ def _lower_action(value: object) -> JsonValue:
     Returns:
         The value the node holds.
     """
-    if isinstance(value, AppAction):
-        return value.binding()
     if isinstance(value, Intent):
         return value.to_binding()
     if isinstance(value, type) and issubclass(value, Intent):

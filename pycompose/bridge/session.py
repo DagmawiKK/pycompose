@@ -1,4 +1,4 @@
-"""One app session on the loop thread: the app module, its actions and its Store."""
+"""One app session on the loop thread: the app module, its back stack and its Store."""
 
 from __future__ import annotations
 
@@ -11,16 +11,14 @@ from contextlib import suppress
 from pathlib import Path
 from threading import current_thread
 from types import ModuleType
-from typing import Any, Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable
 
-from pycompose.app.app import App as ViewApp
+from pycompose.app.app import App
 from pycompose.app.session import NavigationSession
 from pycompose.bridge.api import BridgeSurface
-from pycompose.core.context import AppContext, carried, context, has_context
-from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
 from pycompose.runtime.loop import LoopThread
-from pycompose.state import Actions, App, Store, actions_for_module
+from pycompose.state import Store
 
 __all__ = ["RuntimeSession", "compose_once"]
 
@@ -49,11 +47,10 @@ def offer_components(components: frozenset[str] | None) -> None:
 class RuntimeSession:
     """Worker-owned app lifetime, with transactional debug rebuilds.
 
-    The session finds the entry module's ``App`` export and runs it: the app
-    owns the shell, the view and the container factory, and the session calls
-    that factory exactly once, retaining the result across debug reloads.
-    Repositories and other long-lived objects therefore live for the session
-    rather than for one import of the app module.
+    The session finds the entry module's ``App`` export and runs it on its back
+    stack. It calls the app's container factory exactly once and keeps the
+    result across debug reloads, so repositories and other long-lived objects
+    live for the session rather than for one import of the app module.
     """
 
     def __init__(
@@ -83,7 +80,7 @@ class RuntimeSession:
         if current_thread() is not self._worker:
             raise BridgeError("runtime calls must run on the owning worker")
 
-    def _resolve_container(self, app: App[Any] | ViewApp) -> object | None:
+    def _resolve_container(self, app: App) -> object | None:
         """Adopt the entry object's container factory once, then retain it.
 
         Args:
@@ -103,45 +100,15 @@ class RuntimeSession:
         module = importlib.import_module(self._module)
         app = getattr(module, self._export, None)
         self._navigation = None
-        if isinstance(app, ViewApp):
-            return self._build_view(app, route, restore)
         if not isinstance(app, App):
             raise BridgeError(
-                "entrypoint must name the module's App export",
+                "entrypoint must name the module's pycompose.app.App export",
                 entrypoint=f"{self._module}:{self._export}",
             )
-        container = self._resolve_container(app)
-        actions, problem = actions_for_module(module, app.session_view)
-        if problem is not None:
-            raise BridgeError(problem)
-        # Before `app.build`, because a composable reached during the first
-        # render resolves its registry from this. The module is already
-        # imported, so both halves of the context exist by now.
-        # The context carries the registry plus whatever the app's own container
-        # holds, so a render function reaches a use case the same way Compose
-        # reaches anything else: by name, from the ambient.
-        install_context(
-            AppContext(
-                actions=actions,
-                container=container,
-                **carried(container),
-            )
-        )
-        self._check_injection(actions, container)
-        actions.install_container(container)
-        state = app.build(route=route, restore=restore)
-        surface = BridgeSurface(
-            Store(state),
-            actions,
-            debug=self._debug,
-            host_components=_host_components,
-        )
-        if surface.expose_latest_snapshot() is None:
-            raise BridgeError("app build produced no valid snapshot")
-        return surface
+        return self._build_view(app, route, restore)
 
-    def _build_view(self, app: ViewApp, route: str, restore: str) -> BridgeSurface:
-        """Start an app built from view models on its start destination.
+    def _build_view(self, app: App, route: str, restore: str) -> BridgeSurface:
+        """Start the app on its start destination, or its restored stack.
 
         Args:
             app: The app.
@@ -178,30 +145,6 @@ class RuntimeSession:
     def _report_task(self, scope: str, error: BaseException) -> None:
         self._error = f"{scope}: {error}"
         LOGGER.warning("Task in %s failed: %s", scope, error, exc_info=error)
-
-    def _check_injection(self, actions: Actions, container: object | None) -> None:
-        """Fail at startup when an action wants a container the app never declared.
-
-        Every handler's signature is known before the first frame is drawn, so
-        this is the whole of the check a compiler would do for a framework: a
-        missing binding is reported now, with the id of the action that asked,
-        rather than as an ``AttributeError`` on whichever control a user happens
-        to tap first.
-
-        Args:
-            actions: The app's registry, freshly built or reloaded.
-            container: The session container, or None when none was declared.
-
-        Raises:
-            BridgeError: If any action declares an injected parameter and no
-                container was declared.
-        """
-        wanted = actions.injected
-        if wanted and container is None:
-            raise BridgeError(
-                "app actions ask for a container but the entrypoint declares none",
-                injects=",".join(wanted),
-            )
 
     def accept_action(self, source: str) -> None:
         """Validate and run one native action before the host pulls a snapshot.
@@ -269,16 +212,14 @@ class RuntimeSession:
 
         Only modules beside the app entrypoint are evicted, never the runtime.
         This hook does not download source files; dev delivery invokes it after
-        updated source has been staged on the device. An app built from view
-        models is rebuilt from its live back stack, its container kept; the old
-        view models are cleared only once the new ones are built, so a failed
-        reload changes nothing.
+        updated source has been staged on the device. The app is rebuilt from
+        its live back stack, its container kept; the old view models are
+        cleared only once the new ones are built, so a failed reload changes
+        nothing.
 
         Args:
-            route: Minimal route to supply when rebuilding the app; an app built
-                from view models uses its live stack's top instead.
-            restore: Saved app data to hand back to the rebuilt app; an app built
-                from view models uses its live stack instead.
+            route: The route to open when no stack is live yet.
+            restore: Saved state to restore when no stack is live yet.
 
         Returns:
             Whether a new valid app session replaced the previous one.
@@ -296,8 +237,6 @@ class RuntimeSession:
         if "." in self._module:
             directory = directory.parent
         previous = _user_modules(directory)
-        # An app built from view models runs with no context installed.
-        previous_context = context() if has_context() else None
         previous_navigation = self._navigation
         if previous_navigation is not None:
             # The live stack is newer than anything the host saved: every view
@@ -317,12 +256,11 @@ class RuntimeSession:
             for name in _user_modules(directory):
                 del sys.modules[name]
             sys.modules.update(previous)
-            install_context(previous_context)
             self._navigation = previous_navigation
             self._error = str(exc)
             return False
         else:
-            self._surface.close(successor=candidate)
+            self._surface.close()
             self._surface = candidate
             self._error = ""
             return True

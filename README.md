@@ -2,8 +2,8 @@
 
 Write Android app UIs in Python; they render as native Jetpack Compose
 **Material 3**. Python declares the tree and owns the state; a Kotlin host draws
-it. The two sides exchange only data — a canonical JSON snapshot one way, action
-ids and payloads the other — never objects, callbacks, or reflection.
+it. The two sides exchange only data — a canonical JSON snapshot one way,
+intents and their fields the other — never objects, callbacks, or reflection.
 
 > Early development. The contract, the component compiler, the CLI and about 130
 > Material 3 and foundation components work end to end, including hot reload, a
@@ -12,17 +12,17 @@ ids and payloads the other — never objects, callbacks, or reflection.
 ## How it works
 
 ```
-tap → action id + payload → Python handler → new snapshot → host renders
+tap → intent + fields → view model → new state → screen(state) → host renders
 ```
 
 - **Pure IR.** Every change produces one canonical, `schemaVersion`ed JSON
   snapshot; the host validates it against sealed Kotlin models and renders.
-- **Python owns state.** Frozen `State`/`AppState` values; one full snapshot per
-  change; stable node ids keep identity across renders.
+- **Python owns state.** Each screen's view model holds a frozen `AppState`;
+  one full snapshot per change; stable node ids keep identity across renders.
 - **Pull-first.** The host sends an action, then asks for the latest snapshot.
   Python never pushes and never learns device details.
-- **One worker.** A single Python thread; Compose's main thread never runs
-  Python.
+- **One loop thread.** Python state lives on one event-loop thread; blocking
+  and CPU work go to pools. Compose's main thread never runs Python.
 - **Derived from Compose itself.** A compiler reads the pinned Compose libraries
   and derives each component's props, slots and defaults, the value types they
   take, the state holders behind controlled components, and the modifiers a
@@ -100,111 +100,117 @@ XML to touch:
 An app is one `App` in the entry module. Here is a counter, in full:
 
 ```python
-"""A counter: state, one action, one view."""
+"""A counter: one view model, one intent, one screen."""
 
 from m3 import Button, Column, Modifier, Text
-from pycompose import Registry
+from pycompose.app import App, Destination, Intent, ViewModel
 from pycompose.core import Node
-from pycompose.state import App, AppState
+from pycompose.state import AppState
 
 
-class Session(AppState):
-    """What this app remembers across process death."""
+class Counter(AppState):
+    """What the screen shows; saved across process death."""
 
     count: int = 0
 
 
-actions = Registry()
-
-
-@actions
-def increment(session: Session) -> Session:
+class Increment(Intent):
     """Add one to the count."""
-    return session.evolve(count=session.count + 1)
 
 
-def view(session: Session) -> Node:
+class CounterViewModel(ViewModel[Counter]):
+    def __init__(self) -> None:
+        super().__init__(Counter())
+
+    def on_intent(self, intent: Intent) -> None:
+        if isinstance(intent, Increment):
+            self.state = self.state.evolve(count=self.state.count + 1)
+
+
+def screen(state: Counter) -> Node:
     """Draw the count and the button that moves it."""
     return Column(
         modifier=Modifier().padding(24),
         children=[
-            Text(text=f"Tapped {session.count} times"),
-            Button(text="Tap me", on_click=increment),
+            Text(text=f"Tapped {state.count} times"),
+            Button(text="Tap me", on_click=Increment()),
         ],
     )
 
 
-app = App(state=Session, view=view)
+app = App(start=Destination(lambda _container, _route: CounterViewModel(), screen))
 ```
 
 App code imports `m3`; the build generates that package from the components the
 source references, so an app ships what it uses and nothing else.
 
-A complete two-screen app — persistence, navigation, effects, theming — lives
-in `examples/notes`.
+A complete two-screen app — persistence, navigation, a repository, theming —
+lives in `examples/notes`.
 
 ## What an app declares
 
-**`App`** — the entry object the session discovers. It takes the shell seed, the
-view, an optional container factory, and the name of the shell field mirroring
-the host's route.
+**`App`** — the entry object the session discovers. It takes where the app
+starts, a `Destination` per route, an optional container factory (Google's
+manual dependency injection: built once per session and handed to each view
+model's factory), and the routes the host may open from outside.
 
-**`AppState`** — the shell that survives process death: route, draft text,
-appearance. Subclasses are frozen dataclasses; their codec is derived from the
-annotations, and unreadable or foreign saved bytes fall back to the seed, so a
-corrupt save starts clean instead of crashing.
+**`ViewModel`** — one screen's state and behaviour. Its state is an `AppState`:
+a frozen dataclass whose codec is derived from its annotations. The state is
+saved for process death, except fields marked `Loaded[...]`, which the view
+model refills from its repository; an unreadable save starts clean instead of
+crashing.
 
-**Actions** — a handler is a plain function, and its signature is its whole
-contract. The first parameter is the shell; each further parameter is a field a
-control binds or an event supplies, typed by its annotation and optional when
-it has a default. A control takes the handler itself, or binds some fields now
-with `with_args`:
+**Intents** — what a control asks its screen to do. An intent is a typed
+dataclass; a control takes an instance (every field bound), the class (every
+field supplied by the event), or `Intent.bind(...)` (some of each):
 
 ```python
-@actions
-def open_note(session: Session, note_id: int) -> Session:
-    ...
+class OpenNote(Intent):
+    note_id: int
 
 
-Button(text="Open", on_click=open_note.with_args(note_id=7))
+Card(on_click=OpenNote(note_id=7), ...)
+TextField(value=note.title, on_value_change=SetTitle.bind(note_id=note.id))
 ```
 
-Keyword-only parameters are resolved from the app's container by name. The
-runtime discovers the registry by the module-level name `actions` (lowercase).
+State a target rather than a change (`SetExpanded(id, True)`, not `Toggle(id)`),
+so a duplicate or a stale tap still does the right thing.
 
-An `async def` handler runs off the worker; an async generator yields each
-state as it goes, which is a loading state for free. What each state changed
-comes back and lands on the session as it is then, and a newer run of the
-same handler cancels the one it supersedes.
+**Routes** — a `Route` is a typed destination, such as `EditorRoute(note_id=4)`.
+A view model calls `self.navigate(Push(route))`, `Replace(route)` or `Pop()`;
+Python owns the back stack, and every entry's state is saved, so process death
+restores the whole stack.
 
 **Identity** — a node needs no `id`. One declared without one is keyed by the
 line of code that declares it, so a conditional before it never shifts its
-identity. Only things declared in a loop that carry an action, and composables
+identity. Only things declared in a loop that carry an intent, and composables
 called in a loop, need an `id` to survive a reorder.
 
-**Effects** — a handler returns the next shell, or `respond(shell, *effects)` to
-ask the host for something one-shot: `navigate`, `finish`, `haptic`, `toast`,
-`openUrl`. Effects run once, in order, only for a snapshot that changed.
+**Effects** — `self.emit(...)` asks the host for something one-shot: `Toast`,
+`Haptic`, `OpenUrl`. Effects run at most once, in order; anything that must
+happen belongs in state instead.
 
-**Lifecycle** — inbound host events reach Python as actions too: `onResume`,
-`onPause`, `onBackRequested`, `onRouteChanged` (route payload), and
-`onConfigChanged` (orientation, dark mode, locale, density).
+**Lifecycle** — `on_back` (return True to keep the screen), `on_resume` and
+`on_pause` reach the view model on top.
 
-**Repositories and background work** — `pycompose.repository` stores documents
-atomically on disk, outside the saved-state budget. `pycompose.async_task.run`
-hands blocking work to a bounded executor and delivers the result back as an
-ordinary action, so the worker never freezes behind a request.
+**Background work** — `self.launch(coroutine)` runs work until it ends or the
+view model is cleared, and returns its task, so a newer request can cancel the
+one it supersedes. Blocking calls go to a pool with
+`await to_thread("io", fn, *args)` and computation with
+`await to_thread("cpu", fn, *args)`; the screen stays live meanwhile.
+`pycompose.repository` stores documents atomically on disk, outside the
+saved-state budget.
 
 **Controlled components** — a component whose native state lives in a holder
 (a picker, a slider, a drawer, a sheet, a tooltip) takes the value as a prop
-and reports changes through an `on_<value>_change` action:
+and reports changes through an `on_<value>_change` intent:
 
 ```python
 TimePicker(
-    hour=session.hour,
-    minute=session.minute,
-    on_hour_change=set_hour,
-    on_minute_change=set_minute,
+    hour=state.hour,
+    minute=state.minute,
+    on_hour_change=SetHour,
+    on_minute_change=SetMinute,
 )
 ```
 

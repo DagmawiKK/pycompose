@@ -78,13 +78,15 @@ def test_the_handshake_lists_what_the_host_renders() -> None:
 def test_the_bridge_announces_each_substitution_once(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
+    from handlers import Handlers
+
     from pycompose.bridge.api import BridgeSurface
-    from pycompose.state import Actions, Store
+    from pycompose.state import Store
 
     with caplog.at_level(logging.WARNING):
         surface = BridgeSurface(
             Store(State(root=_screen())),
-            Actions(),
+            Handlers(),
             host_components=EVERYTHING - {"HorizontalDivider"},
         )
     snapshot = json.loads(surface.expose_latest_snapshot() or "{}")

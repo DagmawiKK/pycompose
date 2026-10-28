@@ -55,6 +55,10 @@ class App:
     container: Callable[[], object] | None = None
     deep_links: frozenset[type[Route]] = frozenset()
 
+    def __post_init__(self) -> None:
+        if self.container is not None and not callable(self.container):
+            raise StateError("an app's container must be a zero-argument callable")
+
     def route(self) -> Route:
         """Return the route the app starts on.
 

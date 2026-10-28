@@ -13,7 +13,7 @@
    }
   ],
   "intents": {
-   "__main__.edit": {
+   "__main__.Edit": {
     "payload": {
      "value": {
       "required": true,
@@ -21,7 +21,7 @@
      }
     }
    },
-   "__main__.flip": {
+   "__main__.Flip": {
     "payload": {
      "value": {
       "required": true,
@@ -36,18 +36,18 @@
    {
     "children": {
      "0": {
-      "id": "root.base:64:284.base:71:208",
+      "id": "root.base:64:264.base:71:208",
       "props": {
        "checked": true,
        "onCheckedChange": {
         "fields": {},
-        "intent": "__main__.flip"
+        "intent": "__main__.Flip"
        }
       },
       "type": "Switch"
      }
     },
-    "id": "root.base:64:284",
+    "id": "root.base:64:264",
     "props": {
      "modifier": {
       "operations": [

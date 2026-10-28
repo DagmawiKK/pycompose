@@ -79,9 +79,6 @@ ignore = ["PLR0913", "PLR2004"]
 "pycompose/codegen/**" = ["TID251"]
 "tests/**" = ["TID251"]
 "tools/**" = ["TID251"]
-# These predate the scheduler; they go when actions give way to view models.
-"pycompose/async_task.py" = ["TID251"]
-"pycompose/extensions/**" = ["TID251"]
 # Handlers here exist to be introspected, not run. An unused parameter is the
 # point: it is what proves the signature is parsed and nothing else is.
 "tests/test_auto_ids.py" = ["ARG001"]
@@ -112,7 +109,7 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["cli", "compiler", "codegen", "testing", "m3", "composition", "components", "bridge", "app", "extensions", "async_task", "runtime", "repository", "ir", "state", "schema", "core", "contract", "utils"]
+layers = ["cli", "compiler", "codegen", "testing", "m3", "composition", "components", "bridge", "app", "extensions", "runtime", "repository", "ir", "state", "schema", "core", "contract", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
 
@@ -130,7 +127,7 @@ name = "Runtime packages never import CLI or templates"
 type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
                   "pycompose.ir", "pycompose.bridge", "pycompose.components",
-                   "pycompose.utils", "pycompose.testing", "pycompose.m3", "pycompose.composition", "pycompose.async_task",
+                   "pycompose.utils", "pycompose.testing", "pycompose.m3", "pycompose.composition",
                     "pycompose.repository", "pycompose.extensions"]
 forbidden_modules = ["pycompose.cli", "pycompose.templates", "pycompose.codegen", "pycompose.compiler"]
 explanation = "CLI, codegen, compiler and template assets are desktop concerns, never runtime deps."
@@ -147,7 +144,7 @@ name = "Runtime never imports testing helpers or fixtures"
 type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
                    "pycompose.ir", "pycompose.bridge", "pycompose.components",
-                   "pycompose.utils", "pycompose.m3", "pycompose.composition", "pycompose.async_task",
+                   "pycompose.utils", "pycompose.m3", "pycompose.composition",
                     "pycompose.repository", "pycompose.extensions"]
 forbidden_modules = ["pycompose.testing"]
 explanation = "Testing consumes runtime public APIs; runtime stays independent of test data."

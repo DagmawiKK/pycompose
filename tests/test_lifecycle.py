@@ -1,82 +1,55 @@
-"""Host lifecycle events: delivery shape, contract gating and the bare-name alias."""
+"""Host lifecycle events at the bridge: delivery, contract gating, idleness."""
 
 from __future__ import annotations
 
 import json
 import logging
+from collections.abc import Mapping
 
 import pytest
+from handlers import Handlers
 
-from pycompose import action
 from pycompose.bridge import BridgeSurface
 from pycompose.errors import IrValidationError
 from pycompose.ir import emit_ir
 from pycompose.m3 import Button, Text
-from pycompose.state import Actions, State, Store
+from pycompose.state import State, Store
 
-seen: list[str] = []
-
-
-@action
-def on_resume(state: State) -> State:
-    """A resumed app decides for itself whether anything needs reloading."""
-    seen.append("resume")
-    return replace_root(state, "resumed")
+CONFIG = {
+    "orientation": "landscape",
+    "darkMode": True,
+    "locale": "fr-FR",
+    "density": 3.0,
+}
 
 
-@action
-def on_config_changed(
-    state: State, orientation: str, dark_mode: bool, locale: str, density: float
-) -> State:
-    """Only UI-affecting facts belong here; the host sends what Python cannot see."""
-    appearance = "dark" if dark_mode else "light"
-    seen.append(f"{orientation}/{locale}/{density}/{appearance}")
-    return replace_root(state, locale)
+def shows(text: str) -> State:
+    return State(root=Text(id="text", text=text))
 
 
-def replace_root(state: State, text: str) -> State:
-    return State(root=Text(id="text", text=text), version=state.version + 1)
+def handling(name: str, seen: list[Mapping[str, object]]) -> Handlers:
+    handlers = Handlers()
+
+    def handle(_state: State, payload: Mapping[str, object]) -> State:
+        seen.append(payload)
+        return shows(name)
+
+    handlers.register(name, handle)
+    return handlers
 
 
-def test_app_actions_are_addressable_by_qualified_and_bare_names() -> None:
-    registry = Actions(on_resume, on_config_changed)
-    handlers = registry.handlers()
-    assert on_resume.name in handlers
-    assert on_config_changed.name in handlers
-    assert "onResume" in handlers
-    assert "onConfigChanged" in handlers
-    # The alias never displaces an existing registration.
-    assert handlers["onResume"] is handlers[on_resume.name]
-    assert handlers["onConfigChanged"] is handlers[on_config_changed.name]
+def text(bridge: BridgeSurface) -> str:
+    return json.loads(bridge.expose_latest_snapshot() or "{}")["root"]["props"]["text"]
 
 
 def test_lifecycle_events_reach_python_through_the_ordinary_action_queue() -> None:
-    store = Store(State(root=Text(id="text", text="home")))
-    bridge = BridgeSurface(store, Actions(on_resume, on_config_changed))
-    seen.clear()
+    seen: list[Mapping[str, object]] = []
+    bridge = BridgeSurface(Store(shows("home")), handling("onConfigChanged", seen))
 
-    bridge.accept_action(json.dumps({"intent": "onResume", "payload": {}}))
-    assert json.loads(bridge.expose_latest_snapshot() or "{}")["root"]["props"][
-        "text"
-    ] == ("resumed")
+    bridge.accept_action(json.dumps({"intent": "onConfigChanged", "payload": CONFIG}))
 
-    bridge.accept_action(
-        json.dumps(
-            {
-                "intent": "onConfigChanged",
-                "payload": {
-                    "orientation": "landscape",
-                    "darkMode": True,
-                    "locale": "fr-FR",
-                    "density": 3.0,
-                },
-            }
-        )
-    )
-    assert json.loads(bridge.expose_latest_snapshot() or "{}")["root"]["props"][
-        "text"
-    ] == ("fr-FR")
-    assert seen == ["resume", "landscape/fr-FR/3.0/dark"]
+    assert text(bridge) == "onConfigChanged"
+    assert seen == [CONFIG]
     assert bridge.expose_latest_error() == ""
 
 
@@ -84,35 +57,22 @@ def test_an_unhandled_lifecycle_event_is_idle_not_a_diagnostic(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """The host sends every lifecycle fact; ignoring one is the app's choice."""
-    store = Store(State(root=Text(id="text", text="home")))
-    bridge = BridgeSurface(store, Actions(on_resume))
+    bridge = BridgeSurface(Store(shows("home")), handling("onResume", []))
     before = bridge.expose_latest_snapshot()
 
     with caplog.at_level(logging.DEBUG):
         bridge.accept_action(
-            json.dumps(
-                {
-                    "intent": "onConfigChanged",
-                    "payload": {
-                        "orientation": "landscape",
-                        "darkMode": True,
-                        "locale": "fr-FR",
-                        "density": 3.0,
-                    },
-                }
-            )
+            json.dumps({"intent": "onConfigChanged", "payload": CONFIG})
         )
 
     assert bridge.expose_latest_snapshot() == before
     assert bridge.expose_latest_error() == ""
-    assert [
-        record.levelno for record in caplog.records if record.levelno >= logging.WARNING
-    ] == []
+    assert [r.levelno for r in caplog.records if r.levelno >= logging.WARNING] == []
 
 
 def test_an_unhandled_catalog_action_is_still_a_diagnostic() -> None:
     """A control wired to an action nobody handles remains a wiring fault."""
-    bridge = BridgeSurface(Store(State(root=Text(id="text", text="home"))), Actions())
+    bridge = BridgeSurface(Store(shows("home")), Handlers())
 
     bridge.accept_action('{"intent":"increment","payload":{"by":1}}')
 
@@ -124,88 +84,25 @@ def test_an_unhandled_catalog_action_is_still_a_diagnostic() -> None:
     [
         {"orientation": "landscape"},
         {"orientation": "landscape", "darkMode": True, "locale": "fr-FR"},
-        {
-            "orientation": "sideways",
-            "darkMode": True,
-            "locale": "fr-FR",
-            "density": 3.0,
-        },
-        {
-            "orientation": "landscape",
-            "darkMode": "yes",
-            "locale": "fr-FR",
-            "density": 3.0,
-        },
+        {**CONFIG, "orientation": "sideways"},
+        {**CONFIG, "darkMode": "yes"},
     ],
 )
 def test_an_ill_formed_lifecycle_payload_leaves_state_untouched(
     payload: dict[str, object],
 ) -> None:
-    state = State(root=Text(id="text", text="home"))
-    bridge = BridgeSurface(Store(state), Actions(on_config_changed))
+    seen: list[Mapping[str, object]] = []
+    bridge = BridgeSurface(Store(shows("home")), handling("onConfigChanged", seen))
     before = bridge.expose_latest_snapshot()
+
     bridge.accept_action(json.dumps({"intent": "onConfigChanged", "payload": payload}))
+
     assert bridge.expose_latest_snapshot() == before
     assert bridge.expose_latest_error()
-
-
-def test_handlers_receive_python_names_never_the_wire_spelling() -> None:
-    assert on_config_changed.aliases == {
-        "orientation": "orientation",
-        "darkMode": "dark_mode",
-        "locale": "locale",
-        "density": "density",
-    }
-    seen.clear()
-    store = Store(State(root=Text(id="text", text="home")))
-    bridge = BridgeSurface(store, Actions(on_config_changed))
-    bridge.accept_action(
-        json.dumps(
-            {
-                "intent": "onConfigChanged",
-                "payload": {
-                    "orientation": "portrait",
-                    "darkMode": False,
-                    "locale": "en-GB",
-                    "density": 2.0,
-                },
-            }
-        )
-    )
-    # The handler read payload["locale"], never the camelCase wire spelling.
-    assert seen == ["portrait/en-GB/2.0/light"]
+    assert seen == []
 
 
 def test_lifecycle_is_not_a_ui_action_so_components_cannot_bind_it() -> None:
     with pytest.raises(IrValidationError, match="invalid prop"):
         Button(id="x", text="Go", on_click="onResume")
-    assert emit_ir(State(root=Text(id="t", text="ok")), "1.4.0").metadata is None
-
-
-def test_a_handler_receives_only_the_host_fields_it_declares() -> None:
-    received: list[str] = []
-
-    @action
-    def on_config_changed(state: State, locale: str) -> State:
-        received.append(locale)
-        return state
-
-    bridge = BridgeSurface(
-        Store(State(root=Text(id="text", text="home"))), Actions(on_config_changed)
-    )
-    bridge.accept_action(
-        json.dumps(
-            {
-                "intent": "onConfigChanged",
-                "payload": {
-                    "orientation": "portrait",
-                    "darkMode": False,
-                    "locale": "en-GB",
-                    "density": 2.0,
-                },
-            }
-        )
-    )
-
-    assert received == ["en-GB"]
-    assert bridge.expose_latest_error() == ""
+    assert emit_ir(shows("ok"), "1.4.0").metadata is None

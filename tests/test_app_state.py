@@ -319,10 +319,11 @@ def test_a_subclass_never_inherits_its_parentscodec() -> None:
 
 
 def test_store_round_trips_a_typed_state_through_a_real_snapshot() -> None:
-    from pycompose.bridge import BridgeSurface
-    from pycompose.state import Actions
+    from handlers import Handlers
 
-    bridge = BridgeSurface(Store(_state(count=1)), Actions())
+    from pycompose.bridge import BridgeSurface
+
+    bridge = BridgeSurface(Store(_state(count=1)), Handlers())
     assert bridge.expose_latest_snapshot() is not None
     assert bridge.expose_latest_error() == ""
     rebuilt = Filter.codec.decode(

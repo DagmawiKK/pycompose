@@ -13,7 +13,7 @@
    }
   ],
   "intents": {
-   "__main__.edit": {
+   "__main__.Edit": {
     "payload": {
      "value": {
       "required": true,
@@ -21,7 +21,7 @@
      }
     }
    },
-   "__main__.flip": {
+   "__main__.Flip": {
     "payload": {
      "value": {
       "required": true,
@@ -36,19 +36,19 @@
    {
     "children": [
      {
-      "id": "root.base:64:284.base:67:140",
+      "id": "root.base:64:264.base:67:140",
       "props": {
        "text": "Body"
       },
       "type": "Text"
      },
      {
-      "id": "root.base:64:284.base:68:176",
+      "id": "root.base:64:264.base:68:176",
       "props": {
        "label": "Name",
        "onValueChange": {
         "fields": {},
-        "intent": "__main__.edit"
+        "intent": "__main__.Edit"
        },
        "selection": 9223372036854775808,
        "value": "draft"
@@ -56,31 +56,31 @@
       "type": "TextField"
      },
      {
-      "id": "root.base:64:284.base:71:208",
+      "id": "root.base:64:264.base:71:208",
       "props": {
        "checked": true,
        "onCheckedChange": {
         "fields": {},
-        "intent": "__main__.flip"
+        "intent": "__main__.Flip"
        }
       },
       "type": "Switch"
      },
      {
-      "id": "root.base:64:284.base:72:272",
+      "id": "root.base:64:264.base:72:252",
       "props": {
        "onClick": {
         "fields": {
          "value": true
         },
-        "intent": "__main__.flip"
+        "intent": "__main__.Flip"
        },
        "text": "Go"
       },
       "type": "Button"
      }
     ],
-    "id": "root.base:64:284",
+    "id": "root.base:64:264",
     "props": {
      "modifier": {
       "operations": [

@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from pycompose import action, composable
+from pycompose import composable
+from pycompose.app import Intent
 from pycompose.components import Button, Column, Modifier, Text
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.node import Node
@@ -13,17 +14,11 @@ from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
 
 
-@action
-def bump(state: State) -> State:
-    """Return the snapshot unchanged.
+class Bump(Intent):
+    """A tap that binds nothing."""
 
-    Args:
-        state: Snapshot before the tap.
 
-    Returns:
-        The same snapshot.
-    """
-    return state
+bump = Bump()
 
 
 def ids_of(node: Node) -> list[str]:

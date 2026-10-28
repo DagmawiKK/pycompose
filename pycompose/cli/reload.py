@@ -10,20 +10,15 @@ import sys
 from pathlib import Path
 from types import ModuleType
 
-from pycompose.app.app import App as ViewApp
+from pycompose.app.app import App
 from pycompose.bridge.session import compose_once
 from pycompose.cli.project import Project, ProjectError, project_path
-from pycompose.core.context import AppContext, carried
-from pycompose.core.context import install as install_context
-from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.state import App, actions_for_module
 
 
 class AppReloader:
     """Reload only user modules and produce a diagnostic full IR snapshot."""
 
-    def __init__(self, project: Project, schema: str) -> None:
-        self._schema = schema
+    def __init__(self, project: Project) -> None:
         config = project.table("python")
         directory = config.get("source_dir", "app")
         entrypoint = config.get("entrypoint", "main:app")
@@ -144,39 +139,17 @@ class AppReloader:
         module = importlib.import_module(self._module)
         self._modules()
         app = getattr(module, self._function, None)
-        if isinstance(app, ViewApp):
-            # Composed as a device session composes it: its start screen, with
-            # a container of its own, on a loop thread that ends with it.
-            snapshot, error = compose_once(f"{self._module}:{self._function}")
-            if not snapshot:
-                raise ProjectError("app did not produce a valid snapshot", error=error)
-            return snapshot
         if not isinstance(app, App):
             raise ProjectError(
-                "entrypoint must name the module's App export",
+                "entrypoint must name the module's pycompose.app.App export",
                 entrypoint=f"{self._module}:{self._function}",
             )
-        # The preview stands in for a session: the container is built fresh on
-        # every snapshot, so an edited repository shows up, and the context is
-        # installed, so a first render reaches a use case exactly as it will on
-        # the device. The registry is the module's own -- a screen that names
-        # an action from the context resolves it in the preview as on device.
-        container = app.container() if app.container is not None else None
-        actions, problem = actions_for_module(module, app.session_view)
-        if problem is not None:
-            raise ProjectError(problem)
-        install_context(
-            AppContext(
-                actions=actions,
-                container=container,
-                **carried(container),
-            )
-        )
-        state = app.build(route="", restore="")
-        result = validate_ir(emit_ir(state, self._schema), debug=True)
-        if result.snapshot is None:
-            raise ProjectError("app did not produce a valid snapshot")
-        return to_json(result.snapshot)
+        # Composed as a device session composes it: its start screen, with a
+        # container of its own, on a loop thread that ends with it.
+        snapshot, error = compose_once(f"{self._module}:{self._function}")
+        if not snapshot:
+            raise ProjectError("app did not produce a valid snapshot", error=error)
+        return snapshot
 
     def close(self) -> None:
         """Remove session-owned user modules and restore the import path."""

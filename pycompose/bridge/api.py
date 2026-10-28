@@ -9,24 +9,24 @@ import time
 from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from threading import current_thread
+from typing import Protocol
 
-from pycompose import async_task  # noqa: F401 -- installs the async action runner
 from pycompose.bridge.types import MAIN_SURFACE, decode_action
 from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.contract.registry_types import PropDef
 from pycompose.contract.version import at_least
+from pycompose.core.action_binding import BindingSpec
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.core.ids import Handles
 from pycompose.core.reuse import Reuse
 from pycompose.core.windows import windows
 from pycompose.errors import BridgeError, SchemaError
-from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
 from pycompose.ir.echoes import ECHOES_SCHEMA, echo_key
 from pycompose.ir.host import Host, hosted
 from pycompose.ir.model import IRRoot
 from pycompose.ir.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
-from pycompose.state import Actions, State, Store
+from pycompose.state import State, Store
 
 LOGGER = logging.getLogger(__name__)
 
@@ -44,6 +44,36 @@ MAX_PATCH_OPS = 64
 
 _SERIALS = itertools.count(1)
 """Process-wide, so a serial never names another session's snapshot."""
+
+
+class AppSession(Protocol):
+    """What the bridge asks of the app it serves: the back stack's interface."""
+
+    def validate_intents(
+        self, intents: Mapping[str, Mapping[str, PropDef]]
+    ) -> None: ...  # pragma: no cover - protocol declaration
+
+    def contract(
+        self, action_id: str
+    ) -> Mapping[str, PropDef] | None: ...  # pragma: no cover - protocol declaration
+
+    def __contains__(
+        self, action_id: object
+    ) -> bool: ...  # pragma: no cover - protocol declaration
+
+    def declared(
+        self, action_id: str, payload: Mapping[str, object]
+    ) -> Mapping[str, object]: ...  # pragma: no cover - protocol declaration
+
+    def dispatch(
+        self, action_id: str, state: State, payload: Mapping[str, object]
+    ) -> State: ...  # pragma: no cover - protocol declaration
+
+    def dispatch_binding(
+        self, spec: BindingSpec, state: State, payload: Mapping[str, object]
+    ) -> State: ...  # pragma: no cover - protocol declaration
+
+    def close(self) -> None: ...  # pragma: no cover - protocol declaration
 
 
 def _echo_target(key: str) -> str:
@@ -68,17 +98,17 @@ class BridgeSurface:
     def __init__(
         self,
         store: Store,
-        actions: Actions,
+        session: AppSession,
         *,
         schema_version: str = SCHEMA_VERSION,
         debug: bool = True,
         host_components: frozenset[str] | None = None,
     ) -> None:
-        """Bind the app state and handlers, and emit the initial snapshot.
+        """Bind the app state and session, and emit the initial snapshot.
 
         Args:
             store: Python-owned state store.
-            actions: Registered pure transition handlers.
+            session: The app's back stack, which handles every action.
             schema_version: Wire schema version required by this host.
             debug: Strict IR validation and loud failure logging.
             host_components: The component types the host's handshake offered;
@@ -88,7 +118,8 @@ class BridgeSurface:
             SchemaError: If the configured schema or library version is incompatible.
         """
         self._store = store
-        self._actions = actions
+        self._session = session
+        self._closed = False
         self._schema_version = schema_version
         self._debug = debug
         self._host = Host(host_components, schema_version)
@@ -106,7 +137,6 @@ class BridgeSurface:
         self._echoes: dict[str, int] = {}
         # The window the host last asked for, per lazy container key.
         self._windows: dict[str, tuple[int, int]] = {}
-        self._deliveries = Dispatcher()
         # Debug re-expands a sample of reused composables to catch impure ones,
         # and names nodes by readable paths; release names them compactly.
         self._reuse = Reuse(
@@ -164,7 +194,7 @@ class BridgeSurface:
         if result.snapshot is None:
             return None
         intents = dict(result.intents)
-        self._actions.validate_intents(intents)
+        self._session.validate_intents(intents)
         with self._timed("serialize"):
             text = to_json(result.snapshot, self._reuse)
         return result.snapshot, text, intents
@@ -204,15 +234,12 @@ class BridgeSurface:
         current = self._store.value
         echoed = False
         try:
-            if self._deliveries.closed:
-                return
-            admitted = self._deliveries.resolve(action_json)
-            if admitted is None:
+            if self._closed:
                 return
             action = decode_action(
-                admitted,
-                contracts=self._actions.contract,
-                handlers=self._actions,
+                action_json,
+                contracts=self._session.contract,
+                handlers=self._session,
             )
             if action.seq is not None:
                 # Answered even when the handler changes nothing or fails: the
@@ -221,20 +248,20 @@ class BridgeSurface:
                 echoed = True
             if (
                 action.action_id in REGISTRY.lifecycle
-                and action.action_id not in self._actions
+                and action.action_id not in self._session
             ):
                 # The host reports every lifecycle fact unconditionally, so
                 # whether one has a handler is the app's choice; an event
                 # nobody opted into is idle, not a fault worth a diagnostic.
                 LOGGER.debug("lifecycle event has no handler: %s", action.action_id)
                 return
-            with self._deliveries.active(), self._timed("handler"):
+            with self._timed("handler"):
                 next_state = (
-                    self._actions.dispatch_binding(
+                    self._session.dispatch_binding(
                         action.binding, current, action.payload
                     )
                     if action.binding is not None
-                    else self._actions.dispatch(
+                    else self._session.dispatch(
                         action.action_id,
                         current,
                         self._host_fields(action.action_id, action.payload),
@@ -307,7 +334,7 @@ class BridgeSurface:
             payload unchanged for an app handler addressed by name.
         """
         if action_id in REGISTRY.lifecycle or action_id in REGISTRY.actions:
-            return self._actions.declared(action_id, payload)
+            return self._session.declared(action_id, payload)
         return payload
 
     def request_window(
@@ -411,16 +438,10 @@ class BridgeSurface:
             Error text, or an empty string for a successful transition.
         """
         self._require_worker()
-        return self._latest_error or self._deliveries.diagnostic
+        return self._latest_error
 
-    def close(self, *, successor: BridgeSurface | None = None) -> None:
-        """Retire completion registrations and clean up or transfer used resources.
-
-        Args:
-            successor: Replacement after successful reload, or None on shutdown.
-        """
+    def close(self) -> None:
+        """End the session: its view models are cleared and later actions ignored."""
         self._require_worker()
-        self._actions.close()
-        self._deliveries.retire(
-            successor._deliveries if successor is not None else None
-        )
+        self._closed = True
+        self._session.close()

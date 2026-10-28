@@ -5,12 +5,13 @@ from __future__ import annotations
 import json
 
 import pytest
+from handlers import Handlers
 
 from pycompose.bridge import BridgeSurface
 from pycompose.core.windows import DEFAULT_WINDOW, MAX_WINDOW
 from pycompose.errors import IrValidationError
 from pycompose.m3 import LazyColumn, Text
-from pycompose.state import Actions, State, Store
+from pycompose.state import State, Store
 
 ROWS = list(range(10_000))
 
@@ -32,7 +33,7 @@ def texts(node: dict[str, object]) -> list[str]:
 
 
 def test_a_list_of_ten_thousand_composes_only_its_first_window() -> None:
-    node = root(BridgeSurface(Store(rows()), Actions()))
+    node = root(BridgeSurface(Store(rows()), Handlers()))
 
     assert node["props"]["itemCount"] == 10_000  # type: ignore[index]
     assert node["props"]["itemOffset"] == 0  # type: ignore[index]
@@ -40,7 +41,7 @@ def test_a_list_of_ten_thousand_composes_only_its_first_window() -> None:
 
 
 def test_a_requested_window_is_composed_keyed_by_each_item() -> None:
-    bridge = BridgeSurface(Store(rows()), Actions())
+    bridge = BridgeSurface(Store(rows()), Handlers())
     key = root(bridge)["props"]["window"]  # type: ignore[index]
 
     bridge.request_window(str(key), 5_000, 5_009)
@@ -52,7 +53,7 @@ def test_a_requested_window_is_composed_keyed_by_each_item() -> None:
 
 
 def test_a_window_is_clamped_to_the_items_and_the_maximum() -> None:
-    bridge = BridgeSurface(Store(rows()), Actions())
+    bridge = BridgeSurface(Store(rows()), Handlers())
     key = str(root(bridge)["props"]["window"])  # type: ignore[index]
 
     bridge.request_window(key, 9_995, 20_000)

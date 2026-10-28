@@ -1,344 +1,207 @@
 """On-device module lifecycle through the pure-data Python runtime seam."""
 
+from __future__ import annotations
+
 import json
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
 
-from pycompose.bridge.session import RuntimeSession
+from pycompose.bridge import runtime
 from pycompose.errors import BridgeError, StateError
 
+SOURCE = """
+import threading
+import device_helper
+from pycompose.app import App, Destination, Intent, ViewModel
+from pycompose.m3 import Button, Column, Text
+from pycompose.state import AppState
 
-def test_runtime_build_action_reload_and_bad_reload_retains_snapshot(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+BUILT = []
+
+
+class Counter(AppState):
+    n: int = 0
+    thread: str = ""
+
+
+class Bump(Intent):
+    pass
+
+
+class Container:
+    def __init__(self):
+        BUILT.append(self)
+
+
+class CounterViewModel(ViewModel[Counter]):
+    def __init__(self, container):
+        super().__init__(Counter(thread=threading.current_thread().name))
+        self.container = container
+
+    def on_intent(self, intent):
+        self.state = self.state.evolve(n=self.state.n + 1)
+
+
+def screen(state):
+    return Column(children=[
+        Text(id="text", text=f"{LABEL}:{device_helper.label}:{state.n}"),
+        Button(id="bump", text="+", on_click=Bump()),
+    ])
+
+
+app = App(
+    start=Destination(lambda container, _route: CounterViewModel(container), screen),
+    container=Container,
+)
+"""
+
+
+@pytest.fixture
+def device(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]:
+    (tmp_path / "device_helper.py").write_text('label = "helper"\n')
     module = tmp_path / "device_app.py"
-    module.write_text("""from pycompose.m3 import Text
-from pycompose.state import Actions, App, AppState, State
-class Shell(AppState):
-    route: str = "home"
-actions = Actions()
-def view(shell):
-    return Text(id="text", text=shell.route)
-app = App(state=Shell, view=view, route="route")
-actions.register("increment",
-    lambda state, _: State(root=Text(id="text", text="changed")))
-""")
+    module.write_text('LABEL = "first"\n' + SOURCE)
     monkeypatch.syspath_prepend(str(tmp_path))
-    try:
-        session = RuntimeSession("device_app:app", "restored", debug=True)
-        assert json.loads(session.snapshot())["root"]["props"]["text"] == "restored"
-        session.accept_action('{"intent":"increment","payload":{}}')
-        assert json.loads(session.snapshot())["root"]["props"]["text"] == "changed"
-        module.write_text("""from pycompose.m3 import Text
-from pycompose.state import App, AppState
-class Shell(AppState):
-    route: str = "home"
-def view(shell):
-    return Text(id="text", text="reloaded")
-app = App(state=Shell, view=view, route="route")
-""")
-        assert session.reload("restored") is True
-        assert json.loads(session.snapshot())["root"]["props"]["text"] == "reloaded"
-        previous = session.snapshot()
-        module.write_text('raise RuntimeError("broken app")\n')
-        assert session.reload("restored") is False
-        assert session.snapshot() == previous
-        assert "broken app" in session.error()
-    finally:
-        sys.modules.pop("device_app", None)
+    yield module
+    runtime.close()
+    for name in ("device_app", "device_helper"):
+        sys.modules.pop(name, None)
 
 
-def test_saved_bytes_reach_the_view_and_survive_a_debug_reload(
+def snapshot() -> dict:
+    return json.loads(runtime.fetch_latest_snapshot())
+
+
+def text() -> str:
+    return snapshot()["root"]["children"][0]["props"]["text"]
+
+
+def bump() -> None:
+    target = snapshot()["root"]["children"][1]["props"]["onClick"]
+    runtime.accept_action(json.dumps({**target, "payload": {}}))
+
+
+def test_build_intent_reload_and_a_bad_reload_that_keeps_the_snapshot(
+    device: Path,
+) -> None:
+    runtime.start("device_app:app", "", True)
+    assert text() == "first:helper:0"
+    bump()
+    assert text() == "first:helper:1"
+
+    device.write_text('LABEL = "reloaded"\n' + SOURCE)
+    assert runtime.reload("", "") is True
+    assert text() == "reloaded:helper:1"
+
+    previous = runtime.fetch_latest_snapshot()
+    device.write_text('raise RuntimeError("broken app")\n')
+    assert runtime.reload("", "") is False
+    assert runtime.fetch_latest_snapshot() == previous
+    assert "broken app" in runtime.fetch_latest_error()
+
+
+def test_the_container_is_built_once_and_kept_across_reloads(device: Path) -> None:
+    runtime.start("device_app:app", "", True)
+    built = sys.modules["device_app"].BUILT
+    assert len(built) == 1
+
+    device.write_text('raise RuntimeError("broken app")\n')
+    runtime.reload("", "")
+    device.write_text('LABEL = "recovered"\n' + SOURCE)
+    assert runtime.reload("", "") is True
+
+    # The fresh module's factory never ran: the session kept its container.
+    assert sys.modules["device_app"].BUILT == []
+    assert len(built) == 1
+
+
+def test_a_failed_reload_restores_the_app_module_graph(device: Path) -> None:
+    runtime.start("device_app:app", "", True)
+    (device.parent / "device_helper.py").write_text('label = "failed candidate"\n')
+    device.write_text('import device_helper\nraise RuntimeError("broken")\n')
+    assert runtime.reload("", "") is False
+
+    bump()
+    assert text() == "first:helper:1"
+
+
+def test_a_reloaded_session_answers_an_old_serial_with_the_whole_snapshot(
+    device: Path,
+) -> None:
+    runtime.start("device_app:app", "", True)
+    first = json.loads(runtime.fetch_latest("main", -1))
+    assert first["kind"] == "full"
+    bump()
+    patch = json.loads(runtime.fetch_latest("main", first["serial"]))
+    assert (patch["kind"], patch["baseSerial"]) == ("patch", first["serial"])
+
+    device.write_text('LABEL = "reloaded"\n' + SOURCE)
+    assert runtime.reload("", "") is True
+    assert json.loads(runtime.fetch_latest("main", patch["serial"]))["kind"] == "full"
+
+
+@pytest.mark.usefixtures("device")
+def test_view_models_are_built_on_the_loop_thread() -> None:
+    runtime.start("device_app:app", "", False)
+    assert snapshot()["metadata"]["data"]["stack"][0]["state"]["thread"] == (
+        "pycompose-loop"
+    )
+    assert runtime.heartbeat() < 5
+
+
+@pytest.mark.usefixtures("device")
+def test_a_recorded_debug_session_replays_to_the_same_snapshots() -> None:
+    runtime.start("device_app:app", "", True)
+    for _ in range(3):
+        bump()
+    log = runtime.fetch_input_log()
+    assert [json.loads(line)["call"] for line in log.splitlines()] == [
+        "start",
+        "accept_action",
+        "accept_action",
+        "accept_action",
+    ]
+    runtime.close()
+    sys.modules.pop("device_app", None)
+    assert runtime.replay(log) is None
+
+    lines = log.splitlines()
+    tampered = json.loads(lines[2])
+    tampered["snapshot"] = "0" * 16
+    lines[2] = json.dumps(tampered)
+    runtime.close()
+    sys.modules.pop("device_app", None)
+    assert runtime.replay("\n".join(lines)) == 2
+
+
+def test_a_container_that_is_not_callable_is_refused() -> None:
+    from pycompose.app import App, Destination
+
+    with pytest.raises(StateError, match="zero-argument callable"):
+        App(start=Destination(lambda _c, _r: None, lambda _s: None), container=object())  # type: ignore[arg-type,return-value]
+
+
+def test_an_entrypoint_that_names_no_app_fails_closed(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    module = tmp_path / "restore_app.py"
-    module.write_text("""from pycompose.m3 import Text
-from pycompose.state import App, State
-def view(restore):
-    return State(root=Text(id="text", text=restore or "fresh"), data={"seen": restore})
-app = App(view=view)
-""")
-    monkeypatch.syspath_prepend(str(tmp_path))
-    try:
-        saved = '{"tasks":[{"id":1}]}'
-        session = RuntimeSession("restore_app:app", "home", debug=True, restore=saved)
-        assert json.loads(session.snapshot())["root"]["props"]["text"] == saved
-        session.reload("home", restore=saved)
-        assert json.loads(session.snapshot())["root"]["props"]["text"] == saved
-    finally:
-        sys.modules.pop("restore_app", None)
+    from pycompose.bridge.session import RuntimeSession
 
-
-def test_an_app_that_ignores_the_saved_bytes_still_starts(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    module = tmp_path / "plain_app.py"
-    module.write_text("""from pycompose.m3 import Text
-from pycompose.state import App, State
-def view(restore):
-    return State(root=Text(id="text", text="home"))
-app = App(view=view)
-""")
-    monkeypatch.syspath_prepend(str(tmp_path))
-    try:
-        session = RuntimeSession("plain_app:app", "home", debug=True, restore="{}")
-        assert json.loads(session.snapshot())["root"]["props"]["text"] == "home"
-    finally:
-        sys.modules.pop("plain_app", None)
-
-
-def test_session_calls_the_container_factory_once_and_keeps_it_across_reloads(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    module = tmp_path / "container_app.py"
-    module.write_text("""from pycompose import context
-from pycompose.m3 import Text
-from pycompose.state import App, State
-class Container:
-    def __init__(self):
-        self.label = "first"
-built = []
-def container():
-    made = Container()
-    built.append(made)
-    return made
-def view(restore):
-    return State(root=Text(id="text", text=context().container.label))
-app = App(view=view, container=container)
-""")
-    monkeypatch.syspath_prepend(str(tmp_path))
-    try:
-        session = RuntimeSession("container_app:app", "home", debug=True)
-        app_module = sys.modules["container_app"]
-        shared = app_module.built[0]
-        assert len(app_module.built) == 1  # only the factory ran, once
-        module.write_text("""from pycompose import context
-from pycompose.m3 import Text
-from pycompose.state import App, State
-class Container:
-    def __init__(self):
-        self.label = "second"
-built = []
-def container():
-    made = Container()
-    built.append(made)
-    return made
-def view(restore):
-    context().container.label = "reloaded"
-    return State(root=Text(id="text", text=context().container.label))
-app = App(view=view, container=container)
-""")
-        session.reload("home")
-        assert json.loads(session.snapshot())["root"]["props"]["text"] == "reloaded"
-        reloaded = sys.modules["container_app"]
-        # The fresh module's factory was never called: the session retained
-        # the container built before the reload.
-        assert reloaded.built == []
-        assert shared.label == "reloaded"
-    finally:
-        sys.modules.pop("container_app", None)
-
-
-def test_a_failed_reload_keeps_the_original_container(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    module = tmp_path / "rollback_container_app.py"
-    module.write_text("""from pycompose import context
-from pycompose.m3 import Text
-from pycompose.state import App, State
-calls = []
-def container():
-    return object()
-def view(restore):
-    calls.append(context().container)
-    return State(root=Text(id="text", text="original"))
-app = App(view=view, container=container)
-""")
-    monkeypatch.syspath_prepend(str(tmp_path))
-    try:
-        session = RuntimeSession("rollback_container_app:app", "home", debug=True)
-        sys.modules["rollback_container_app"].calls.clear()
-        module.write_text('raise RuntimeError("broken app")\n')
-        session.reload("home")
-        assert "broken app" in session.error()
-        module.write_text("""from pycompose import context
-from pycompose.m3 import Text
-from pycompose.state import App, State
-calls = []
-def container():
-    return object()
-def view(restore):
-    calls.append(context().container)
-    return State(root=Text(id="text", text="recovered"))
-app = App(view=view, container=container)
-""")
-        session.reload("home")
-        assert json.loads(session.snapshot())["root"]["props"]["text"] == "recovered"
-        assert len(sys.modules["rollback_container_app"].calls) == 1
-    finally:
-        sys.modules.pop("rollback_container_app", None)
-
-
-def test_a_non_callable_container_declaration_fails_closed(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    module = tmp_path / "bad_container_app.py"
-    module.write_text("""from pycompose.m3 import Text
-from pycompose.state import App, State
-def view(restore):
-    return State(root=Text(id="text", text="hi"))
-app = App(view=view, container=object())
-""")
-    monkeypatch.syspath_prepend(str(tmp_path))
-    try:
-        with pytest.raises(StateError, match="zero-argument callable"):
-            RuntimeSession("bad_container_app:app", "home", debug=True)
-    finally:
-        sys.modules.pop("bad_container_app", None)
-
-
-def test_entrypoint_that_names_no_app_export_fails_closed(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    module = tmp_path / "no_export_app.py"
-    module.write_text('label = "not an app"\n')
+    (tmp_path / "no_export_app.py").write_text('label = "not an app"\n')
     monkeypatch.syspath_prepend(str(tmp_path))
     try:
         with pytest.raises(BridgeError, match="App export"):
-            RuntimeSession("no_export_app:build", "home", debug=True)
+            RuntimeSession("no_export_app:label", "home", debug=True)
     finally:
         sys.modules.pop("no_export_app", None)
 
 
-def test_failed_reload_restores_the_app_module_graph(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    helper = tmp_path / "device_helper.py"
-    helper.write_text('label = "original"\n')
-    app = tmp_path / "rollback_app.py"
-    app.write_text("""from pycompose.m3 import Text
-from pycompose.state import Actions, App, State
-import device_helper
-actions = Actions()
-def view(restore):
-    return State(root=Text(id="text", text=device_helper.label))
-app = App(view=view)
-def increment(state, payload):
-    import device_helper
-    return State(root=Text(id="text", text=device_helper.label))
-actions.register("increment", increment)
-""")
-    monkeypatch.syspath_prepend(str(tmp_path))
-    try:
-        session = RuntimeSession("rollback_app:app", "home", debug=True)
-        helper.write_text('label = "failed candidate"\n')
-        app.write_text('import device_helper\nraise RuntimeError("broken")\n')
-        session.reload("home")
-        session.accept_action('{"intent":"increment","payload":{}}')
-        assert json.loads(session.snapshot())["root"]["props"]["text"] == "original"
-    finally:
-        sys.modules.pop("rollback_app", None)
-        sys.modules.pop("device_helper", None)
-
-
-def test_a_reloaded_session_answers_an_old_serial_with_the_whole_snapshot(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    module = tmp_path / "pull_app.py"
-    source = """from pycompose.m3 import Text
-from pycompose.state import Actions, App, AppState, State
-class Shell(AppState):
-    route: str = "home"
-actions = Actions()
-def view(shell):
-    return Text(id="text", text=%r)
-app = App(state=Shell, view=view, route="route")
-actions.register("increment",
-    lambda state, _: State(root=Text(id="text", text="changed")))
-"""
-    module.write_text(source % "first")
-    monkeypatch.syspath_prepend(str(tmp_path))
-    try:
-        session = RuntimeSession("pull_app:app", "home", debug=True)
-        first = json.loads(session.envelope("main", -1))
-        assert first["kind"] == "full"
-        session.accept_action('{"intent":"increment","payload":{}}')
-        patch = json.loads(session.envelope("main", first["serial"]))
-        assert (patch["kind"], patch["baseSerial"]) == ("patch", first["serial"])
-
-        module.write_text(source % "reloaded")
-        assert session.reload("home") is True
-        assert json.loads(session.envelope("main", patch["serial"]))["kind"] == "full"
-    finally:
-        sys.modules.pop("pull_app", None)
-
-
-def test_runtime_calls_and_async_actions_share_the_loop_thread(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    from pycompose import async_task
-    from pycompose.bridge import runtime
-
-    (tmp_path / "loop_app.py").write_text("""import threading
-from pycompose.m3 import Text
-from pycompose.state import App, State
-def view(restore):
-    return State(root=Text(id="text", text=threading.current_thread().name))
-app = App(view=view)
-""")
-    monkeypatch.syspath_prepend(str(tmp_path))
-    try:
-        runtime.start("loop_app:app", "home", False)
-        rendered = json.loads(runtime.fetch_latest_snapshot())
-        assert rendered["root"]["props"]["text"] == "pycompose-loop"
-        assert async_task._event_loop() is runtime._loop_thread().loop
-        assert runtime.heartbeat() < 5
-    finally:
-        runtime.close()
-        sys.modules.pop("loop_app", None)
-
-
-def test_a_recorded_debug_session_replays_to_the_same_snapshots(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    from pycompose.bridge import runtime
-
-    (tmp_path / "replay_app.py").write_text("""from pycompose.m3 import Text
-from pycompose.state import Actions, App, State
-actions = Actions()
-def view(restore):
-    return State(root=Text(id="text", text="0"), data={"n": 0})
-def increment(state, payload):
-    n = state.data["n"] + 1
-    return State(root=Text(id="text", text=str(n)), data={"n": n})
-actions.register("increment", increment)
-app = App(view=view)
-""")
-    monkeypatch.syspath_prepend(str(tmp_path))
-    try:
-        runtime.start("replay_app:app", "home", True)
-        for _ in range(3):
-            runtime.accept_action('{"intent":"increment","payload":{}}')
-        log = runtime.fetch_input_log()
-        assert [json.loads(line)["call"] for line in log.splitlines()] == [
-            "start",
-            "accept_action",
-            "accept_action",
-            "accept_action",
-        ]
-        runtime.close()
-        sys.modules.pop("replay_app", None)
-        assert runtime.replay(log) is None
-
-        lines = log.splitlines()
-        tampered = json.loads(lines[2])
-        tampered["snapshot"] = "0" * 16
-        lines[2] = json.dumps(tampered)
-        runtime.close()
-        sys.modules.pop("replay_app", None)
-        assert runtime.replay("\n".join(lines)) == 2
-    finally:
-        runtime.close()
-        sys.modules.pop("replay_app", None)
+def test_the_removed_app_model_names_its_replacement() -> None:
+    with pytest.raises(ImportError, match=r"pycompose\.app\.App"):
+        from pycompose.state import App  # noqa: F401
+    with pytest.raises(ImportError, match="Intent"):
+        from pycompose import action  # noqa: F401
+    with pytest.raises(ImportError, match="to_thread"):
+        from pycompose.extensions import Resource  # noqa: F401

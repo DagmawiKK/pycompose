@@ -7,19 +7,20 @@ from dataclasses import replace
 from threading import Thread
 
 import pytest
+from handlers import Handlers
 
 from pycompose.bridge import BridgeSurface
 from pycompose.bridge.types import IncrementPayload, SubmitPayload
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core import Node, Props
 from pycompose.errors import SchemaError
-from pycompose.state import Actions, State, Store
+from pycompose.state import State, Store
 from pycompose.utils.json_canonical import FrozenJsonValue
 
 
 def test_action_handler_publishes_the_next_canonical_snapshot() -> None:
     store = Store(State(root=Node(id="title", type="Text", props=Props({"text": "0"}))))
-    actions = Actions()
+    actions = Handlers()
 
     def increment(state: State, payload: dict[str, int]) -> State:
         return replace(
@@ -47,7 +48,7 @@ def test_action_handler_publishes_the_next_canonical_snapshot() -> None:
 
 def test_fifo_actions_apply_payload_defaults_and_preserve_order() -> None:
     store = Store(State(root=Node(id="value", type="Text", props={"text": "start"})))
-    actions = Actions()
+    actions = Handlers()
     calls: list[object] = []
 
     def append(state: State, payload: Mapping[str, FrozenJsonValue]) -> State:
@@ -102,7 +103,7 @@ def test_bad_actions_are_ignored_with_debug_or_release_diagnostics(
     store = Store(
         State(root=Node(id="value", type="Text", props={"text": "unchanged"}))
     )
-    actions = Actions()
+    actions = Handlers()
     calls: list[str] = []
 
     def handler(state: State, _payload: object) -> State:
@@ -125,7 +126,7 @@ def test_bad_actions_are_ignored_with_debug_or_release_diagnostics(
 def test_no_op_preserves_snapshot_identity_and_store() -> None:
     original = State(root=Node(id="value", type="Text", props={"text": "unchanged"}))
     store = Store(original)
-    actions = Actions()
+    actions = Handlers()
     actions.register("increment", lambda state, _payload: replace(state))
     bridge = BridgeSurface(store, actions)
     before = bridge.expose_latest_snapshot()
@@ -139,7 +140,7 @@ def test_actions_from_another_thread_are_not_dispatched(
 ) -> None:
     store = Store(State(root=Node(id="value", type="Text", props={"text": "start"})))
     calls: list[str] = []
-    actions = Actions()
+    actions = Handlers()
 
     def handler(state: State, _payload: object) -> State:
         calls.append("called")
@@ -158,7 +159,7 @@ def test_registry_generated_payload_contracts_work_through_the_bridge() -> None:
     increment: IncrementPayload = {}
     submit: SubmitPayload = {"email": "ada@example.com"}
     seen: list[object] = []
-    actions = Actions()
+    actions = Handlers()
 
     def handler(state: State, payload: object) -> State:
         seen.append(payload)
@@ -180,7 +181,7 @@ def test_handler_failure_preserves_state_and_allows_the_next_action(
 ) -> None:
     original = State(root=Node(id="value", type="Text", props={"text": "old"}))
     store = Store(original)
-    actions = Actions()
+    actions = Handlers()
 
     def fail(_state: State, _payload: object) -> State:
         raise RuntimeError("handler failed")
@@ -208,7 +209,7 @@ def test_handler_failure_preserves_state_and_allows_the_next_action(
 def test_invalid_next_snapshot_never_commits_partial_state(debug: bool) -> None:
     original = State(root=Node(id="value", type="Text", props={"text": "old"}))
     store = Store(original)
-    actions = Actions()
+    actions = Handlers()
     actions.register(
         "increment",
         lambda state, _payload: replace(state, root=Node(id="value", type="Missing")),
@@ -223,7 +224,7 @@ def test_invalid_next_snapshot_never_commits_partial_state(debug: bool) -> None:
 def test_reentrant_action_is_rejected_without_disturbing_the_outer_transition(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    actions = Actions()
+    actions = Handlers()
     calls: list[str] = []
     store = Store(State(root=Node(id="value", type="Text", props={"text": "old"})))
 
@@ -245,7 +246,7 @@ def test_reentrant_action_is_rejected_without_disturbing_the_outer_transition(
 
 
 def test_handler_payload_is_immutable() -> None:
-    actions = Actions()
+    actions = Handlers()
     seen: list[Mapping[str, FrozenJsonValue]] = []
 
     def handler(state: State, payload: Mapping[str, FrozenJsonValue]) -> State:
@@ -270,7 +271,7 @@ def test_deep_snapshot_transition_is_not_limited_by_state_equality() -> None:
         return node
 
     store = Store(State(root=nested("old")))
-    actions = Actions()
+    actions = Handlers()
     actions.register(
         "increment", lambda state, _payload: replace(state, root=nested("next"))
     )
@@ -284,7 +285,7 @@ def test_version_mismatch_fails_at_bridge_configuration(debug: bool) -> None:
     with pytest.raises(SchemaError):
         BridgeSurface(
             Store(State(root=Node(id="text", type="Text", props={"text": "hi"}))),
-            Actions(),
+            Handlers(),
             schema_version="2.0.0",
             debug=debug,
         )
@@ -295,7 +296,7 @@ def test_invalid_initial_snapshot_is_unavailable_and_logged(
     debug: bool, caplog: pytest.LogCaptureFixture
 ) -> None:
     bridge = BridgeSurface(
-        Store(State(root=Node(id="text", type="Missing"))), Actions(), debug=debug
+        Store(State(root=Node(id="text", type="Missing"))), Handlers(), debug=debug
     )
     assert bridge.expose_latest_snapshot() is None
     assert caplog.records
@@ -334,7 +335,7 @@ def _counter_bridge(*, debug: bool = True) -> BridgeSurface:
             id="screen", type="Column", props=Props({}), children=(title, row(text))
         )
 
-    actions = Actions()
+    actions = Handlers()
     actions.register(
         "increment",
         lambda state, payload: replace(state, root=screen(str(payload["by"]))),
@@ -400,7 +401,7 @@ def test_a_report_that_changes_nothing_is_still_echoed() -> None:
 
 
 def test_a_report_whose_handler_fails_is_still_echoed() -> None:
-    actions = Actions()
+    actions = Handlers()
 
     def fail(_state: State, _payload: object) -> State:
         raise RuntimeError("refused")
@@ -459,7 +460,7 @@ def test_a_pass_over_budget_is_reported_in_debug(
 
 def test_the_last_pass_reports_its_time_by_phase() -> None:
     store = Store(State(root=Node(id="title", type="Text", props=Props({"text": "0"}))))
-    actions = Actions()
+    actions = Handlers()
 
     def increment(state: State, payload: dict[str, int]) -> State:
         text = str(payload["by"])

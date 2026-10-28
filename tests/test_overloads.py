@@ -6,7 +6,7 @@ from typing import Any, NoReturn
 
 import pytest
 
-from pycompose import action
+from pycompose.app import Intent
 from pycompose.codegen.overloads import ambiguous, keywords, validate
 from pycompose.state import State
 
@@ -84,11 +84,10 @@ def test_the_keywords_a_call_passes_choose_the_overload() -> None:
     from pycompose.ir import emit_ir, to_json
     from pycompose.m3 import Card, CardWithoutOnClick, Text
 
-    @action
-    def open_note(state: State) -> State:
-        return state
+    class OpenNote(Intent):
+        pass
 
-    clickable = Card(Text(text="Open"), on_click=open_note)
+    clickable = Card(Text(text="Open"), on_click=OpenNote())
     plain = Card(Text(text="Static"))
     assert type(clickable) is Card
     assert type(plain) is CardWithoutOnClick

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import Any, cast
+from typing import cast
 
 from pycompose.app.intents import Intent
 from pycompose.components.modifier_operation import _Operation
@@ -12,7 +12,6 @@ from pycompose.components.scoped_modifiers import ScopedOperations
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.ir.validator import validate_modifier
-from pycompose.state.app_action import AppAction
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
 from pycompose.values import Dp, PaddingValues
 
@@ -188,24 +187,21 @@ class Modifier(ScopedOperations):
     @_Operation
     def clickable(
         self,
-        on_click: str | AppAction[Any] | Intent | type[Intent],
+        on_click: str | Intent | type[Intent],
         *,
         enabled: bool = True,
     ) -> Modifier:
         """Append an action reference, never a Python callback.
 
         Args:
-            on_click: An intent or intent class, an app action or a binding of
-                one, or a registered action id.
+            on_click: An intent or intent class, or a registered action id.
             enabled: Whether clicks are enabled.
 
         Returns:
             A new modifier.
         """
         target: JsonValue = cast("JsonValue", on_click)
-        if isinstance(on_click, AppAction):
-            target = on_click.binding()
-        elif isinstance(on_click, Intent):
+        if isinstance(on_click, Intent):
             target = on_click.to_binding()
         elif isinstance(on_click, type) and issubclass(on_click, Intent):
             target = on_click.bind()

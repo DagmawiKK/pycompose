@@ -1,29 +1,29 @@
-"""pycompose.state — frozen State, typed app state, mutable Store, actions."""
+"""pycompose.state — frozen State, typed app state, and the mutable Store."""
 
 from __future__ import annotations
 
-from pycompose.state.actions import (
-    ActionHandler,
-    Actions,
-    Registry,
-    actions_for_module,
-)
-from pycompose.state.app import App
-from pycompose.state.app_action import ShellResponse, respond
+from typing import Any
+
 from pycompose.state.app_state import AppState
 from pycompose.state.app_state_types import Loaded
 from pycompose.state.state import State, Store
 
-__all__ = [
-    "ActionHandler",
-    "Actions",
-    "App",
-    "AppState",
-    "Loaded",
-    "Registry",
-    "ShellResponse",
-    "State",
-    "Store",
-    "actions_for_module",
-    "respond",
-]
+__all__ = ["AppState", "Loaded", "State", "Store"]
+
+_VIEW_MODEL = "define an Intent and handle it in a ViewModel (pycompose.app)"
+REMOVED = {
+    "App": "use pycompose.app.App, built from destinations and view models",
+    "Actions": _VIEW_MODEL,
+    "ActionHandler": _VIEW_MODEL,
+    "Registry": _VIEW_MODEL,
+    "ShellResponse": "emit effects from a ViewModel with emit()",
+    "respond": "emit effects from a ViewModel with emit()",
+    "actions_for_module": _VIEW_MODEL,
+}
+"""Names this package no longer has, and what replaced each."""
+
+
+def __getattr__(name: str) -> Any:
+    if name in REMOVED:
+        raise ImportError(f"pycompose.state.{name} was removed: {REMOVED[name]}")
+    raise AttributeError(f"module 'pycompose.state' has no attribute {name!r}")

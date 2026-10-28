@@ -25,7 +25,7 @@ from typing import Any
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from pycompose import action
+from pycompose.app import Intent
 from pycompose.cli.validate import validate_file
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.effect import Effect
@@ -40,16 +40,16 @@ CORPUS = ROOT / "android/ir/src/test/resources/corpus"
 Mutation = Callable[[dict[str, Any]], None]
 
 
-@action
-def edit(state: State, value: str) -> State:  # noqa: ARG001
-    """Stand in for a text field's handler; the corpus is never dispatched."""
-    return state
+class Edit(Intent):
+    """Stands in for a text field's intent; the corpus is never dispatched."""
+
+    value: str
 
 
-@action
-def flip(state: State, value: bool) -> State:  # noqa: ARG001
-    """Stand in for a switch's handler; the corpus is never dispatched."""
-    return state
+class Flip(Intent):
+    """Stands in for a switch's intent; the corpus is never dispatched."""
+
+    value: bool
 
 
 def base() -> dict[str, Any]:
@@ -66,10 +66,10 @@ def base() -> dict[str, Any]:
                 children=[
                     Text(text="Body"),
                     TextField(
-                        value="draft", label="Name", selection=2, on_value_change=edit
+                        value="draft", label="Name", selection=2, on_value_change=Edit
                     ),
-                    Switch(checked=True, on_checked_change=flip),
-                    Button(text="Go", on_click=flip.with_args(value=True)),
+                    Switch(checked=True, on_checked_change=Flip),
+                    Button(text="Go", on_click=Flip(value=True)),
                 ],
             ),
         ),

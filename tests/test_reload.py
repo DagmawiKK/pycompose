@@ -185,13 +185,12 @@ def test_the_desktop_preview_reloads_an_app_built_from_view_models(
 ) -> None:
     from pycompose.cli.project import load_project
     from pycompose.cli.reload import AppReloader
-    from pycompose.contract.catalog import SCHEMA_VERSION
 
     (tmp_path / "pycompose.toml").write_text(
         '[app]\nname = "Reload"\napplication_id = "com.example.reload"\n'
         '[python]\nentrypoint = "reload_app.main:app"\nsource_dir = "app"\n'
     )
-    reloader = AppReloader(load_project(tmp_path), SCHEMA_VERSION)
+    reloader = AppReloader(load_project(tmp_path))
     try:
         first = json.loads(reloader.snapshot())
         source.write_text('LABEL = "v2 edited"\n' + APP)

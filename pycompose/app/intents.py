@@ -12,13 +12,22 @@ import hashlib
 import re
 from collections.abc import Mapping
 from dataclasses import MISSING, fields
-from typing import Any, ClassVar, cast, get_type_hints
+from types import UnionType
+from typing import (
+    Any,
+    ClassVar,
+    Literal,
+    Union,
+    cast,
+    get_args,
+    get_origin,
+    get_type_hints,
+)
 
 from pycompose.contract.registry_types import PropDef
 from pycompose.core.action_binding import ActionBinding, BindingSpec
 from pycompose.core.props import to_camel_case
 from pycompose.errors import StateError
-from pycompose.state.app_action import payload_field
 from pycompose.state.app_state import AppState
 from pycompose.utils.json_canonical import canonical_json
 
@@ -97,6 +106,46 @@ class Intent(AppState):
         """
         values = {f.name: getattr(self, f.name) for f in fields(cast("Any", self))}
         return type(self).bind(**values)
+
+
+def payload_field(annotation: object, required: bool) -> PropDef:
+    """Return the payload definition an intent field declares.
+
+    Args:
+        annotation: The field's type: a scalar, a string ``Literal`` or an
+            optional one.
+        required: Whether an event must supply it.
+
+    Returns:
+        Its definition.
+
+    Raises:
+        StateError: If the type is outside the payload vocabulary.
+    """
+    # ``int | None``: a report that may carry null (a cleared date selection).
+    args = get_args(annotation)
+    if get_origin(annotation) in {Union, UnionType} and type(None) in args:
+        rest = [arg for arg in args if arg is not type(None)]
+        if len(rest) == 1:
+            inner = payload_field(rest[0], required)
+            return PropDef(
+                type=inner.type, values=inner.values, required=required, nullable=True
+            )
+    types: dict[object, str] = {
+        str: "string",
+        bool: "boolean",
+        int: "integer",
+        float: "number",
+    }
+    if get_origin(annotation) is Literal:
+        values = get_args(annotation)
+        if not values or not all(isinstance(value, str) for value in values):
+            raise StateError("intent Literal values must be strings")
+        return PropDef(type="enum", values=values, required=required)
+    kind = types.get(annotation)
+    if kind is None:
+        raise StateError("unsupported intent field type", annotation=str(annotation))
+    return PropDef(type=kind, required=required)
 
 
 def intent_name(cls: type) -> str:

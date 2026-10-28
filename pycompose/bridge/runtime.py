@@ -8,11 +8,9 @@ import sys
 from collections.abc import Callable
 from typing import ParamSpec, TypeVar, cast
 
-from pycompose import async_task
 from pycompose.bridge.handshake import answer, offered_components
 from pycompose.bridge.inputs import InputLog, digest
 from pycompose.bridge.session import RuntimeSession, offer_components
-from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
 from pycompose.extensions.environment import install as install_paths
 from pycompose.runtime import signal
@@ -164,7 +162,6 @@ def start(
     if _session is not None:
         _session.close()
     install_paths(files_dir, cache_dir)
-    async_task.use_loop(_loop_thread().loop)
     # The host compares this to reject a teardown aimed at an older session.
     identity = f"{_loop_thread().scheduler.random().getrandbits(64):016x}"
     _session = RuntimeSession(
@@ -187,24 +184,18 @@ def close(identity: str = "") -> None:
     if _session is not None:
         _session.close()
         _session = None
-    async_task.shutdown()
     signal.install(None)
     install_paths()
-    install_context(None)
 
 
 def install_async_sink(sink: object, admission: object = None) -> None:
-    """Register where background results are delivered on this worker.
+    """Register where the app's refresh signal goes.
 
     Args:
-        sink: A callable taking an action id and its canonical payload text, or
-            None to stop delivering.
+        sink: A callable taking an event id and its JSON payload, or None to
+            stop sending.
         admission: Optional thread-safe native queue admission returning a boolean.
     """
-    async_task.install_sink(
-        cast("Callable[[str, str], None]", sink),
-        admission=cast("Callable[[str, str], bool] | None", admission),
-    )
     signal.install(
         cast("Callable[[str, str], None] | None", sink),
         cast("Callable[[str, str], bool] | None", admission),
@@ -274,16 +265,15 @@ def request_window(surface: str, key: str, first: int, last: int) -> None:
 def fetch_latest_error() -> str:
     """Pull data-only debug diagnostics.
 
-    Background work records its failures here too, so one surface shows the app
-    everything that has gone wrong rather than only what went wrong on the
-    worker.
+    Launched work records its failures here too, so one surface shows
+    everything that has gone wrong rather than only what went wrong in an
+    action.
 
     Returns:
         Diagnostic text or an empty string.
     """
     parts = [
         _session.error() if _session is not None else "",
-        async_task.last_error(),
         _failure,
     ]
     return " / ".join(part for part in parts if part)
