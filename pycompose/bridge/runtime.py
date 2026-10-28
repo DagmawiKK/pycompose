@@ -10,6 +10,7 @@ from typing import ParamSpec, TypeVar, cast
 
 from pycompose import async_task
 from pycompose.bridge.handshake import answer, offered_components
+from pycompose.bridge.inputs import InputLog, digest
 from pycompose.bridge.session import RuntimeSession, offer_components
 from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
@@ -49,6 +50,55 @@ def _on_loop(work: Callable[P, T]) -> Callable[P, T]:
     return run
 
 
+_log: InputLog | None = None
+"""The debug session's input log, or None when not recording."""
+
+RECORDED = frozenset({"start", "close", "accept_action", "request_window", "reload"})
+"""The calls that change what a session shows; the rest only read it."""
+
+
+def _recorded(work: Callable[P, T]) -> Callable[P, T]:
+    """Record ``work``'s call and the snapshot it leaves, while a log is open."""
+
+    @functools.wraps(work)
+    def run(*args: P.args, **kwargs: P.kwargs) -> T:
+        result = work(*args, **kwargs)
+        if _log is not None:
+            snapshot = _session.snapshot() if _session is not None else ""
+            _log.add(work.__name__, tuple(args), dict(kwargs), snapshot)
+        return result
+
+    return run
+
+
+@_on_loop
+def fetch_input_log() -> str:
+    """Return the debug session's inputs as JSON lines, for replay.
+
+    Returns:
+        The log, or an empty string when the session is not recording.
+    """
+    return _log.dumps() if _log is not None else ""
+
+
+def replay(text: str) -> int | None:
+    """Re-run a recorded input log and check each snapshot against the record.
+
+    Args:
+        text: A log returned by :func:`fetch_input_log`.
+
+    Returns:
+        The index of the first input whose snapshot differs, or None when
+        every snapshot matches.
+    """
+    calls = {name: globals()[name] for name in RECORDED}
+    for index, entry in enumerate(InputLog.loads(text)):
+        calls[entry.call](*entry.args, **entry.kwargs)
+        if digest(fetch_latest_snapshot()) != entry.snapshot:
+            return index
+    return None
+
+
 def heartbeat() -> float:
     """Return seconds since the loop thread last proved it was running.
 
@@ -86,6 +136,7 @@ def use_source(path: str) -> None:
 
 
 @_on_loop
+@_recorded
 def start(
     entrypoint: str,
     route: str,
@@ -107,7 +158,8 @@ def start(
     Returns:
         A data-only session identity used to reject obsolete host teardown.
     """
-    global _session  # noqa: PLW0603 -- one worker-owned session per Python process
+    global _session, _log  # noqa: PLW0603 -- one worker-owned session per Python process
+    _log = InputLog() if debug else None
     if _session is not None:
         _session.close()
     install_paths(files_dir, cache_dir)
@@ -121,6 +173,7 @@ def start(
 
 
 @_on_loop
+@_recorded
 def close(identity: str = "") -> None:
     """Retire an app on its worker without closing a replacement host's session.
 
@@ -153,6 +206,7 @@ def install_async_sink(sink: object, admission: object = None) -> None:
 
 
 @_on_loop
+@_recorded
 def accept_action(source: str) -> None:
     """Forward one data-only action to the Python-owned session.
 
@@ -192,6 +246,7 @@ def fetch_latest(surface: str, base_serial: int) -> str:
 
 
 @_on_loop
+@_recorded
 def request_window(surface: str, key: str, first: int, last: int) -> None:
     """Ask the session to compose a window of one lazy container.
 
@@ -239,6 +294,7 @@ def fetch_last_pass() -> str:
 
 
 @_on_loop
+@_recorded
 def reload(route: str, restore: str = "") -> bool:
     """Invoke the debug rebuild hook on the Python worker.
 

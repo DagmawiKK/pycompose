@@ -298,3 +298,47 @@ app = App(view=view)
     finally:
         runtime.close()
         sys.modules.pop("loop_app", None)
+
+
+def test_a_recorded_debug_session_replays_to_the_same_snapshots(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from pycompose.bridge import runtime
+
+    (tmp_path / "replay_app.py").write_text("""from pycompose.m3 import Text
+from pycompose.state import Actions, App, State
+actions = Actions()
+def view(restore):
+    return State(root=Text(id="text", text="0"), data={"n": 0})
+def increment(state, payload):
+    n = state.data["n"] + 1
+    return State(root=Text(id="text", text=str(n)), data={"n": n})
+actions.register("increment", increment)
+app = App(view=view)
+""")
+    monkeypatch.syspath_prepend(str(tmp_path))
+    try:
+        runtime.start("replay_app:app", "home", True)
+        for _ in range(3):
+            runtime.accept_action('{"actionId":"increment","payload":{}}')
+        log = runtime.fetch_input_log()
+        assert [json.loads(line)["call"] for line in log.splitlines()] == [
+            "start",
+            "accept_action",
+            "accept_action",
+            "accept_action",
+        ]
+        runtime.close()
+        sys.modules.pop("replay_app", None)
+        assert runtime.replay(log) is None
+
+        lines = log.splitlines()
+        tampered = json.loads(lines[2])
+        tampered["snapshot"] = "0" * 16
+        lines[2] = json.dumps(tampered)
+        runtime.close()
+        sys.modules.pop("replay_app", None)
+        assert runtime.replay("\n".join(lines)) == 2
+    finally:
+        runtime.close()
+        sys.modules.pop("replay_app", None)
