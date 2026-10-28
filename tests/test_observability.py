@@ -135,11 +135,12 @@ def test_every_pass_exports_a_span_and_counts(observed: object) -> None:
         ("trace-bump", "Bump", False),
         ("trace-crash", "Crash", True),
     ]
-    assert set(spans[0].phases) == {"handler", "view", "validate", "serialize"}
+    # An action's span is its handler; drawing happens once, at the pull.
+    assert set(spans[0].phases) == {"handler"}
     counters = json.loads(runtime.fetch_counters())
     assert counters["passes"] == 2
     assert counters["failedActions"] == 1
     assert counters["supervisedFailures"] == 1
     assert counters["published"] >= 2
-    assert set(counters["phaseMs"]) == {"handler", "view", "validate", "serialize"}
+    assert set(counters["phaseMs"]) == {"handler"}
     assert counters["loopIdleSeconds"] < 5

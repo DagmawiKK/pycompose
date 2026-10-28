@@ -303,21 +303,25 @@ class NavigationSession:
 
     def dispatch_binding(
         self, spec: BindingSpec, state: State, payload: Mapping[str, object]
-    ) -> State:
-        """Run one intent on the top screen's view model and draw the result.
+    ) -> bool:
+        """Run one intent on the top screen's view model.
+
+        Nothing is drawn here: the bridge draws once, when the host pulls, however
+        many actions the host ran before it did.
 
         Args:
             spec: The intent's class name, contract and bound fields.
-            state: The snapshot state before.
+            state: The last published state; the back stack keeps its own.
             payload: The event's own fields.
 
         Returns:
-            The next snapshot state.
+            True: an intent may change anything on screen.
 
         Raises:
             StateError: If the intent cannot be built from its fields.
             Exception: Whatever the view model's handler raised, once reported.
         """
+        del state
         cls = intent_class(spec.handler_id)
         if cls is None:
             raise StateError("unknown intent", intent=spec.handler_id)
@@ -334,22 +338,23 @@ class NavigationSession:
             raise
         finally:
             self._dispatching = False
-        return self.snapshot_state(state)
+        return True
 
-    def dispatch(self, action_id: str, state: State, payload: Any = None) -> State:
+    def dispatch(self, action_id: str, state: State, payload: Any = None) -> bool:
         """Handle the refresh signal and the host's lifecycle events.
 
         Args:
             action_id: The event's id.
-            state: The snapshot state before.
+            state: The last published state; the back stack keeps its own.
             payload: The event's fields.
 
         Returns:
-            The next snapshot state.
+            True: an event may change anything on screen.
 
         Raises:
             StateError: For an event this session does not handle.
         """
+        del state
         self._dispatching = True
         try:
             if action_id == REFRESH:
@@ -367,4 +372,4 @@ class NavigationSession:
                 raise StateError("unknown action", action_id=action_id)
         finally:
             self._dispatching = False
-        return self.snapshot_state(state)
+        return True

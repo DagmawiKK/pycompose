@@ -264,14 +264,15 @@ class PyComposeViewModel(
             // A batch none of which reached Python has nothing new to pull.
             if (!ActionTrace.stage("pycompose.python", operation)) return
             val ran = System.nanoTime()
-            // Fetched between stages, so the log's own call is counted in none of them.
-            val phases = if (timePasses) bridge.fetchLastPass() else ""
-            val resumed = System.nanoTime()
+            // Python draws the snapshot once, when it is pulled, for every command.
             val envelope =
                 ActionTrace.stage("pycompose.pull") {
                     bridge.fetchLatest(stream.surface, stream.serial)
                 }
             val pulled = System.nanoTime()
+            // Fetched between stages, so the log's own call is counted in none of them.
+            val phases = if (timePasses) bridge.fetchLastPass() else ""
+            val resumed = System.nanoTime()
             val result = ActionTrace.stage("pycompose.apply") { stream.accept(envelope) }
             val applied = System.nanoTime()
             val timing =
@@ -279,8 +280,8 @@ class PyComposeViewModel(
                     PassTiming(
                         queue = PassTiming.millis(started - queuedAt),
                         python = PassTiming.millis(ran - started),
-                        pull = PassTiming.millis(pulled - resumed),
-                        apply = PassTiming.millis(applied - pulled),
+                        pull = PassTiming.millis(pulled - ran),
+                        apply = PassTiming.millis(applied - resumed),
                         phases = phases,
                         commands = cookies.size,
                         appliedAt = applied,

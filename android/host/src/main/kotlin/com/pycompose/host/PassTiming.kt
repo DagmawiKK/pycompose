@@ -11,7 +11,8 @@ import kotlinx.serialization.json.jsonObject
  *
  * @param queue From the oldest command's arrival to the pass starting on the worker.
  * @param python Running the commands: the host's action check, then the Python pass.
- * @param pull Fetching the snapshot, which Python diffs against the host's.
+ * @param pull Fetching the snapshot: Python draws it, once for every command, and
+ *   diffs it against the host's.
  * @param apply Parsing and validating it on the host.
  * @param phases Python's own split of [python], as JSON milliseconds by phase.
  * @param commands Commands the pass ran, after coalescing.

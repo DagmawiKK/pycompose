@@ -74,7 +74,9 @@ def _notes_pass_times(keystrokes: int) -> list[float]:
         for n in range(keystrokes):
             started = time.perf_counter()
             text = "x" * (n % 40)
+            # A pass is what the host does: run the action, then pull.
             bridge.accept_action(json.dumps({**title, "payload": {"value": text}}))
+            bridge.expose_envelope(-1)
             times.append((time.perf_counter() - started) * 1000)
         return times
 

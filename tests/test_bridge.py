@@ -499,13 +499,16 @@ def test_the_last_pass_reports_its_time_by_phase() -> None:
 
     actions.register("increment", increment)
     bridge = BridgeSurface(store, actions)
+    json.loads(bridge.expose_last_pass())  # forget the first snapshot's
     bridge.accept_action('{"intent":"increment","payload":{"by":1}}')
     bridge.accept_action('{"intent":"increment","payload":{"by":2}}')
+    bridge.expose_envelope(-1)
     phases = json.loads(bridge.expose_last_pass())
-    # What the host's pass log splits its Python stage into, summed over every
-    # action the host ran before it read them.
+    # What the host's pass log splits Python's work into: every action the
+    # host ran, then the one snapshot drawn for all of them when it pulled.
     assert set(phases) == {
         "handler",
+        "compose",
         "view",
         "validate",
         "serialize",
@@ -513,5 +516,27 @@ def test_the_last_pass_reports_its_time_by_phase() -> None:
         "actions",
     }
     assert phases["actions"] == 2
-    assert phases["accept"] >= phases["handler"] + phases["view"]
+    assert phases["accept"] >= phases["handler"]
     assert json.loads(bridge.expose_last_pass()) == {}
+
+
+def test_actions_before_a_pull_are_drawn_once() -> None:
+    """A text field reports its text and its caret; the host pulls once."""
+    store = Store(State(root=Node(id="title", type="Text", props=Props({"text": "0"}))))
+    actions = Handlers()
+    actions.register(
+        "increment",
+        lambda state, payload: replace(
+            state,
+            root=Node(
+                id="title", type="Text", props=Props({"text": str(payload["by"])})
+            ),
+        ),
+    )
+    bridge = BridgeSurface(store, actions)
+    published = bridge.counters()["published"]
+    bridge.accept_action('{"intent":"increment","payload":{"by":1}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":2}}')
+    assert bridge.counters()["published"] == published
+    assert json.loads(bridge.expose_envelope(-1))["root"]["props"]["text"] == "2"
+    assert bridge.counters()["published"] == published + 1
