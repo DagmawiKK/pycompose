@@ -25,7 +25,7 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
     components = registry["components"]
     action_ids = sorted(registry.get("actions", {}))
     component_defs = {
-        f"C_{name}": _component_schema(name, comp, action_ids)
+        f"C_{name}": _component_schema(name, comp)
         for name, comp in sorted(components.items())
     }
     ir_schema: dict[str, Any] = {
@@ -40,8 +40,9 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
             "root": {"$ref": "#/definitions/Node"},
         },
         "definitions": {
+            "Action": action_schema(action_ids),
             "Node": _node_schema(sorted(component_defs)),
-            "ModifierOperation": _modifier_schema(registry, action_ids),
+            "ModifierOperation": _modifier_schema(registry),
             # Its shape only; the closed vocabulary, types and limits are the
             # validators' (pycompose/core/expressions.py, Expressions.kt).
             "Expression": {
@@ -62,7 +63,7 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
     for version in supported(registry):
         prefix = "V_" + version.replace(".", "_") + "_"
         ir_schema["definitions"][prefix + "ModifierOperation"] = _modifier_schema(
-            registry, action_ids, version
+            registry, version
         )
         available = {}
         for name, spec in components.items():
@@ -80,7 +81,7 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
                     if version_key(prop.get("since", version)) <= version_key(version)
                 },
             }
-            schema = _component_schema(name, scoped, action_ids)
+            schema = _component_schema(name, scoped)
             if "modifier" in scoped["props"]:
                 schema["properties"]["props"]["properties"]["modifier"]["properties"][
                     "operations"
@@ -106,7 +107,7 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
 
 
 def _modifier_schema(
-    registry: dict[str, Any], actions: list[str], version: str | None = None
+    registry: dict[str, Any], version: str | None = None
 ) -> dict[str, Any]:
     variants: list[Any] = []
     for name, modifier in sorted(registry.get("modifiers", {}).items()):
@@ -136,7 +137,7 @@ def _modifier_schema(
                 ],
                 "properties": {
                     "type": {"const": name},
-                    **{k: _prop_schema(p, actions) for k, p in scoped.items()},
+                    **{k: _prop_schema(p) for k, p in scoped.items()},
                 },
             }
         )
@@ -163,15 +164,11 @@ def _node_schema(component_refs: list[str]) -> dict[str, Any]:
     }
 
 
-def _component_schema(
-    name: str, comp: dict[str, Any], action_ids: list[str]
-) -> dict[str, Any]:
+def _component_schema(name: str, comp: dict[str, Any]) -> dict[str, Any]:
     props = sorted(comp["props"].items())
     props_schema = {
         "type": "object",
-        "properties": {
-            prop_name: _prop_schema(prop, action_ids) for prop_name, prop in props
-        },
+        "properties": {prop_name: _prop_schema(prop) for prop_name, prop in props},
         "additionalProperties": False,
     }
     required = [prop_name for prop_name, prop in props if prop.get("required")]
@@ -244,7 +241,7 @@ def action_schema(action_ids: list[str]) -> dict[str, Any]:
     return {"oneOf": [registry, intent]}
 
 
-def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
+def _prop_schema(prop: dict[str, Any]) -> dict[str, Any]:
     from pycompose.codegen.values import parameter_schema
 
     ptype = prop["type"]
@@ -280,7 +277,8 @@ def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
     elif ptype == "enum":
         value = {"enum": sorted(prop["values"])}
     elif ptype == "actionId":
-        value = action_schema(action_ids)
+        # One shape for every action prop, stated once under definitions.
+        value = {"$ref": "#/definitions/Action"}
     elif ptype == "modifier":
         value = {
             "type": "object",
