@@ -88,6 +88,7 @@ class NavigationSession:
         self._dispatching = False
         self._pending = False
         self._effects: list[Effect] = []
+        self._report = report
         self._scope = Scope("navigation", report)
         self._host = ViewModelHost(report, self._changed, self._navigate)
         self.entries: list[_Entry] = []
@@ -297,6 +298,7 @@ class NavigationSession:
 
         Raises:
             StateError: If the intent cannot be built from its fields.
+            Exception: Whatever the view model's handler raised, once reported.
         """
         cls = intent_class(spec.handler_id)
         if cls is None:
@@ -308,6 +310,10 @@ class NavigationSession:
         self._dispatching = True
         try:
             self.top.on_intent(intent)
+        except Exception as exc:
+            # Supervised like launched work: reported, then refused as a pass.
+            self._report(f"intent {cls.__qualname__}", exc)
+            raise
         finally:
             self._dispatching = False
         return self.snapshot_state(state)

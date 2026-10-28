@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from typing import Any, Generic, TypeVar
 
 from pycompose.app.navigation import Route
+from pycompose.app.observe import Failure, Span
 from pycompose.app.viewmodel import ViewModel
 from pycompose.core.node import Node
 from pycompose.errors import StateError
@@ -48,12 +49,20 @@ class App:
             None for an app with none.
         deep_links: Route classes the host may open from outside the app; any
             other route it names is ignored.
+        on_error: Receives every supervised failure -- a view model's work or
+            an intent's handler -- with the trace id of the input behind it,
+            for a crash service. It runs on the loop thread; a failure in it is
+            logged and goes no further.
+        exporter: Receives one span per pass, for a tracing backend; none is
+            shipped. It runs on the loop thread, so it should hand off quickly.
     """
 
     start: Route | Destination[Any]
     destinations: Mapping[type[Route], Destination[Any]] = field(default_factory=dict)
     container: Callable[[], object] | None = None
     deep_links: frozenset[type[Route]] = frozenset()
+    on_error: Callable[[Failure], None] | None = None
+    exporter: Callable[[Span], None] | None = None
 
     def __post_init__(self) -> None:
         if self.container is not None and not callable(self.container):

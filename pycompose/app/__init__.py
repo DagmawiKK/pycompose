@@ -11,12 +11,14 @@ from pycompose.app.effects import Finish, Haptic, Navigate, OpenUrl, Toast, Type
 from pycompose.app.flow import StateFlow
 from pycompose.app.intents import Intent
 from pycompose.app.navigation import Pop, Push, Replace, Route
+from pycompose.app.observe import Failure, Span
 from pycompose.app.viewmodel import ViewModel
 from pycompose.runtime.scheduler import to_thread
 
 __all__ = [
     "App",
     "Destination",
+    "Failure",
     "Finish",
     "Haptic",
     "Home",
@@ -27,6 +29,7 @@ __all__ = [
     "Push",
     "Replace",
     "Route",
+    "Span",
     "StateFlow",
     "Toast",
     "TypedEffect",

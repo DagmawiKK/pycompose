@@ -6,12 +6,14 @@ import itertools
 import json
 import logging
 import time
-from collections.abc import Iterator, Mapping
+from collections.abc import Callable, Iterator, Mapping
 from contextlib import contextmanager
 from threading import current_thread
 from typing import Protocol
 
-from pycompose.bridge.types import MAIN_SURFACE, decode_action
+from pycompose.app.observe import Span
+from pycompose.bridge.stats import PassStats
+from pycompose.bridge.types import MAIN_SURFACE, Action, decode_action
 from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.contract.registry_types import PropDef
 from pycompose.contract.version import at_least
@@ -26,6 +28,7 @@ from pycompose.ir.echoes import ECHOES_SCHEMA, echo_key
 from pycompose.ir.host import Host, hosted
 from pycompose.ir.model import IRRoot
 from pycompose.ir.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
+from pycompose.runtime.trace import tracing
 from pycompose.state import State, Store
 
 LOGGER = logging.getLogger(__name__)
@@ -106,6 +109,7 @@ class BridgeSurface:
         schema_version: str = SCHEMA_VERSION,
         debug: bool = True,
         host_components: frozenset[str] | None = None,
+        on_pass: Callable[[Span], None] | None = None,
     ) -> None:
         """Bind the app state and session, and emit the initial snapshot.
 
@@ -116,6 +120,7 @@ class BridgeSurface:
             debug: Strict IR validation and loud failure logging.
             host_components: The component types the host's handshake offered;
                 None when it listed none.
+            on_pass: Receives one span per action pass, in release as in debug.
 
         Raises:
             SchemaError: If the configured schema or library version is incompatible.
@@ -123,6 +128,7 @@ class BridgeSurface:
         self._store = store
         self._session = session
         self._closed = False
+        self._stats = PassStats(on_pass)
         self._schema_version = schema_version
         self._debug = debug
         self._host = Host(host_components, schema_version)
@@ -215,6 +221,7 @@ class BridgeSurface:
     def _publish(self, root: IRRoot, text: str) -> None:
         if text == self._latest:
             return
+        self._stats.counts["published"] += 1
         self._latest = text
         entry = (next(_SERIALS), root)
         self._published = [*self._published[1 - WINDOW :], entry]
@@ -236,6 +243,7 @@ class BridgeSurface:
         started = time.perf_counter()
         current = self._store.value
         echoed = False
+        name, trace, failed = "", None, False
         try:
             if self._closed:
                 return
@@ -244,43 +252,24 @@ class BridgeSurface:
                 contracts=self._session.contract,
                 handlers=self._session,
             )
+            name, trace = action.action_id, action.trace
             if action.seq is not None:
                 # Answered even when the handler changes nothing or fails: the
                 # host waits for this echo before it drives the holder again.
                 self._echoes[echo_key(action.target)] = action.seq
                 echoed = True
-            if (
-                action.action_id in REGISTRY.lifecycle
-                and action.action_id not in self._session
-            ):
-                # The host reports every lifecycle fact unconditionally, so
-                # whether one has a handler is the app's choice; an event
-                # nobody opted into is idle, not a fault worth a diagnostic.
-                LOGGER.debug("lifecycle event has no handler: %s", action.action_id)
-                return
-            with self._timed("handler"):
-                next_state = (
-                    self._session.dispatch_binding(
-                        action.binding, current, action.payload
-                    )
-                    if action.binding is not None
-                    else self._session.dispatch(
-                        action.action_id,
-                        current,
-                        self._host_fields(action.action_id, action.payload),
-                    )
-                )
-            if _unchanged(next_state, current) and not echoed:
-                return
-            self._publish_state(next_state)
-            echoed = False
+            with tracing(trace):
+                if self._apply(action, current, echoed=echoed):
+                    echoed = False
         except Exception as exc:
+            failed = True
             self._report("Action ignored", exc)
         finally:
             if echoed:
                 self._republish(current)
             self._processing = False
             elapsed = time.perf_counter() - started
+            self._stats.record(name, trace, elapsed * 1000, self._pass, failed=failed)
             if self._debug and elapsed > PASS_BUDGET:
                 LOGGER.warning(
                     "Action pass took %.0f ms, over the %.0f ms budget; every tap "
@@ -288,6 +277,50 @@ class BridgeSurface:
                     elapsed * 1000,
                     PASS_BUDGET * 1000,
                 )
+
+    def _apply(self, action: Action, current: State, *, echoed: bool) -> bool:
+        """Run one decoded action and publish what it changed.
+
+        Args:
+            action: The decoded action.
+            current: The state before it.
+            echoed: Whether the action carries an echo still to publish.
+
+        Returns:
+            Whether a snapshot was published, echo included.
+        """
+        if (
+            action.action_id in REGISTRY.lifecycle
+            and action.action_id not in self._session
+        ):
+            # The host reports every lifecycle fact unconditionally, so
+            # whether one has a handler is the app's choice; an event
+            # nobody opted into is idle, not a fault worth a diagnostic.
+            LOGGER.debug("lifecycle event has no handler: %s", action.action_id)
+            return False
+        with self._timed("handler"):
+            next_state = (
+                self._session.dispatch_binding(action.binding, current, action.payload)
+                if action.binding is not None
+                else self._session.dispatch(
+                    action.action_id,
+                    current,
+                    self._host_fields(action.action_id, action.payload),
+                )
+            )
+        if _unchanged(next_state, current) and not echoed:
+            return False
+        self._publish_state(next_state)
+        return True
+
+    def counters(self) -> dict[str, object]:
+        """Return release-safe counts of passes, publications and failures.
+
+        Returns:
+            Counts, the longest pass and total milliseconds by phase.
+        """
+        self._require_worker()
+        return self._stats.snapshot()
 
     def _publish_state(self, state: State) -> None:
         """Publish ``state`` and make it the store's; an invalid one raises first.

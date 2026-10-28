@@ -14,10 +14,12 @@ from types import ModuleType
 from typing import Protocol, runtime_checkable
 
 from pycompose.app.app import App
+from pycompose.app.observe import Failure
 from pycompose.app.session import NavigationSession
 from pycompose.bridge.api import BridgeSurface
 from pycompose.errors import BridgeError
 from pycompose.runtime.loop import LoopThread
+from pycompose.runtime.trace import current_trace
 from pycompose.state import Store
 
 __all__ = ["RuntimeSession", "compose_once"]
@@ -73,6 +75,8 @@ class RuntimeSession:
         self._error = ""
         self._container: object | None = None
         self._navigation: NavigationSession | None = None
+        self._app: App | None = None
+        self._failures = 0
         self.identity = identity
         self._surface = self._build(route, restore)
 
@@ -121,6 +125,7 @@ class RuntimeSession:
         Raises:
             BridgeError: If the first snapshot is invalid.
         """
+        self._app = app
         screen = NavigationSession(
             app, self._resolve_container(app), route, restore, report=self._report_task
         )
@@ -131,6 +136,7 @@ class RuntimeSession:
                 screen,
                 debug=self._debug,
                 host_components=_host_components,
+                on_pass=app.exporter,
             )
             if surface.expose_latest_snapshot() is None:
                 raise BridgeError("app build produced no valid snapshot")
@@ -143,8 +149,15 @@ class RuntimeSession:
         return surface
 
     def _report_task(self, scope: str, error: BaseException) -> None:
+        self._failures += 1
         self._error = f"{scope}: {error}"
         LOGGER.warning("Task in %s failed: %s", scope, error, exc_info=error)
+        hook = self._app.on_error if self._app is not None else None
+        if hook is not None:
+            try:
+                hook(Failure(scope, error, current_trace()))
+            except Exception:  # the hook never takes the session down with it
+                LOGGER.exception("on_error failed")
 
     def accept_action(self, source: str) -> None:
         """Validate and run one native action before the host pulls a snapshot.
@@ -197,6 +210,15 @@ class RuntimeSession:
         """
         self._require_worker()
         return self._error or self._surface.expose_latest_error()
+
+    def counters(self) -> dict[str, object]:
+        """Return release-safe counts for the host's diagnostics.
+
+        Returns:
+            The surface's pass counts plus supervised failures.
+        """
+        self._require_worker()
+        return {**self._surface.counters(), "supervisedFailures": self._failures}
 
     def node_paths(self) -> dict[str, str]:
         """Return each node name's readable path, kept only in debug.

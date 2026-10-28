@@ -281,6 +281,18 @@ def fetch_latest_error() -> str:
 
 
 @_on_loop
+def fetch_counters() -> str:
+    """Pull release-safe counters: passes, publications, failures, phase time.
+
+    Returns:
+        JSON counters, with the seconds since the loop last ran; an object
+        holding only that before a session starts.
+    """
+    counters = _session.counters() if _session is not None else {}
+    return json.dumps({**counters, "loopIdleSeconds": round(heartbeat(), 3)})
+
+
+@_on_loop
 def fetch_node_paths() -> str:
     """Pull each node name's readable path, for debug diagnostics.
 

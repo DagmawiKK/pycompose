@@ -51,6 +51,7 @@ class Action:
         seq: The host's sequence number for a settled value it reported, which
             the snapshot echoes so the host can tell a stale answer from a
             current one; None for actions that report nothing.
+        trace: The host's trace id for this input, or None.
     """
 
     action_id: str
@@ -58,6 +59,7 @@ class Action:
     binding: BindingSpec | None = None
     app_handler: bool = False
     seq: int | None = None
+    trace: str | None = None
 
     @property
     def target(self) -> object:
@@ -196,6 +198,7 @@ def decode_action(
     """
     raw = _envelope(action_json)
     seq = cast("int | None", raw.get("seq"))
+    trace = cast("str | None", raw.get("trace"))
     action_id = raw.get("intent")
     if not isinstance(action_id, str) or not action_id:
         raise BridgeError("intent must name a handler or a registry action")
@@ -207,14 +210,14 @@ def decode_action(
     if action_id in REGISTRY.actions or action_id in REGISTRY.lifecycle:
         if fields:
             raise BridgeError("registry actions bind no fields", action_id=action_id)
-        return Action(action_id, payload, seq=seq)
+        return Action(action_id, payload, seq=seq, trace=trace)
     contract = contracts(action_id) if contracts is not None else None
     if contract is None:
         if fields or action_id not in (handlers or ()):
             raise BridgeError("unknown action", action_id=action_id)
-        return Action(action_id, payload, app_handler=True, seq=seq)
+        return Action(action_id, payload, app_handler=True, seq=seq, trace=trace)
     try:
         binding = BindingSpec(action_id, contract, fields)
-        return Action(action_id, payload, binding, seq=seq)
+        return Action(action_id, payload, binding, seq=seq, trace=trace)
     except IrValidationError as exc:
         raise BridgeError("invalid app action payload", action_id=action_id) from exc
