@@ -39,11 +39,18 @@ REFRESH = "pycompose.refresh"
 """The data-free signal that state changed outside an intent: publish again."""
 
 
-def _post_refresh() -> None:
-    if not signal.post(REFRESH):
+def _post_refresh() -> bool:
+    """Ask the host to pull; False when no host took the signal."""
+    try:
+        delivered = signal.post(REFRESH)
+    except Exception:  # a broken sink must not fail the work that changed state
+        LOGGER.warning("the host's refresh signal failed", exc_info=True)
+        return False
+    if not delivered:
         # No host is listening, as in a test driving the bridge directly; the
         # next action publishes the change instead.
         LOGGER.debug("state changed with no host listening")
+    return delivered
 
 
 @dataclass
@@ -71,6 +78,7 @@ class NavigationSession:
         restore: The saved state the host handed back, or empty.
         report: Receives each supervised task's failure.
         signal: Tells the host to pull again; posts a refresh by default.
+            Returns False when no host took it, so the next change tries again.
     """
 
     def __init__(
@@ -80,7 +88,7 @@ class NavigationSession:
         route: str,
         restore: str,
         report: Report,
-        signal: Callable[[], None] = _post_refresh,
+        signal: Callable[[], bool | None] = _post_refresh,
     ) -> None:
         self._app = app
         self._container = container
@@ -180,8 +188,9 @@ class NavigationSession:
     def _changed(self) -> None:
         if self._dispatching or self._pending:
             return
-        self._pending = True
-        self._signal()
+        # Pending until the refresh arrives; a signal nobody took leaves the next
+        # change free to try again.
+        self._pending = self._signal() is not False
 
     def _take_effects(self) -> None:
         """Queue what every view model emitted, so effects keep the order emitted."""

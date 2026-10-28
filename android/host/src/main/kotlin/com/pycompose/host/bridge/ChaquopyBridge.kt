@@ -57,12 +57,45 @@ class ChaquopyBridge(
                     application.cacheDir.absolutePath,
                 ).toString()
         initialized = true
-        // Background work needs somewhere to send its results before the app can
-        // use it. Registered here, on the worker, so it is never half-installed.
+        // Python's refresh signal needs somewhere to go before the app can use it.
+        // Registered here, on the worker, so it is never half-installed.
         Python
             .getInstance()
             .getModule(MODULE)
-            .callAttr("install_async_sink", asyncSink, outcomeAdmission)
+            .callAttr("install_async_sink", Sink(asyncSink), outcomeAdmission?.let(::Admission))
+    }
+
+    /**
+     * Python calls a Java object as a function only when it implements exactly one
+     * functional interface. A Kotlin lambda implements two (`Function2` and a Kotlin
+     * marker), so each is handed over wrapped in a class implementing just one.
+     */
+    fun interface HostCall {
+        fun call(
+            event: String,
+            payload: String,
+        ): Boolean
+    }
+
+    private class Sink(
+        private val deliver: (String, String) -> Unit,
+    ) : HostCall {
+        override fun call(
+            event: String,
+            payload: String,
+        ): Boolean {
+            deliver(event, payload)
+            return true
+        }
+    }
+
+    private class Admission(
+        private val offer: (String, String) -> Boolean,
+    ) : HostCall {
+        override fun call(
+            event: String,
+            payload: String,
+        ): Boolean = offer(event, payload)
     }
 
     override fun acceptAction(action: String) {

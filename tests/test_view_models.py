@@ -252,3 +252,23 @@ def test_a_state_flow_gives_each_collector_the_latest_value() -> None:
 
     # Conflated: the collector saw the start and the latest, never a backlog.
     assert asyncio.run(run()) == [0, 3]
+
+
+def test_a_refresh_signal_that_fails_is_tried_again(counter: str) -> None:
+    """A sink that raises or refuses never fails the work that changed state."""
+    attempts: list[str] = []
+
+    def broken(event: str, _payload: str) -> None:
+        attempts.append(event)
+        raise TypeError("the host's object cannot be called")
+
+    signal.install(broken)
+    runtime.start(counter, "home", True)
+    _tap(_snapshot(), "load")
+    runtime._loop_thread().call(lambda: None)
+    runtime._loop_thread().call(lambda: None)
+    # Both changes tried: the failed first signal did not leave one pending.
+    assert attempts == ["pycompose.refresh", "pycompose.refresh"]
+    assert runtime.fetch_latest_error() == ""
+    runtime.accept_action(json.dumps({"intent": "pycompose.refresh", "payload": {}}))
+    assert _text(_snapshot(), "label") == "loaded:2"
