@@ -152,6 +152,50 @@ jobs:
           name: ir-performance
           path: reports/ir-performance/
 
+  slo-gate:
+    name: 7 · Pass-time SLO gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Measure the base commit and the change on this runner
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+        run: |
+          base="${PR_BASE:-$PUSH_BASE}"
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            base="$(git rev-parse HEAD^)"
+          fi
+          git worktree add --detach "$RUNNER_TEMP/slo-base" "$base"
+          cp tools/slo.py "$RUNNER_TEMP/slo-base/tools/slo.py"
+          mkdir -p reports/slo
+          # A base older than the view model runtime cannot run this
+          # measurement; then there is nothing to compare against.
+          if (cd "$RUNNER_TEMP/slo-base" && pip install -q -e . && python tools/slo.py measure -o "$GITHUB_WORKSPACE/reports/slo/before.json"); then
+            echo "measured=true" >> "$GITHUB_ENV"
+          else
+            echo "::notice::the base commit predates the SLO measurement; gate skipped"
+          fi
+          pip install -q -e .
+          python tools/slo.py measure -o reports/slo/after.json
+      - name: Fail on a regression over 20%
+        if: env.measured == 'true'
+        run: python tools/slo.py check reports/slo/before.json reports/slo/after.json
+      - name: Upload measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: slo
+          path: reports/slo/
+
   kotlin-lint-test-archunit:
     name: 3 · Kotlin lint · tests · ArchUnit
     runs-on: ubuntu-latest
