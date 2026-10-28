@@ -7,6 +7,6 @@ preview has somewhere to point that never touches disk.
 
 from __future__ import annotations
 
-from notes_app.data.notes_repo import FileNotesRepo, MemoryNotesRepo
+from notes_app.data.notes_repo import MemoryNotesRepo, SqliteNotesRepo
 
-__all__ = ["FileNotesRepo", "MemoryNotesRepo"]
+__all__ = ["MemoryNotesRepo", "SqliteNotesRepo"]

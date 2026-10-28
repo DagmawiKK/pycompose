@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import atexit
 import json
 import sys
@@ -9,6 +10,7 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from pycompose.app import to_thread
 from pycompose.app.session import REFRESH, NavigationSession
 from pycompose.bridge import BridgeSurface
 from pycompose.core.props import to_camel_case
@@ -153,6 +155,14 @@ class Host:
             self.ran += effects(self.snapshot())
             _loop().call(lambda: None)
 
+    def settle_storage(self) -> None:
+        """Wait until every write the app asked storage for has run."""
+
+        async def drained() -> None:
+            await to_thread("storage", lambda: None)
+
+        asyncio.run_coroutine_threadsafe(drained(), _loop().loop).result(timeout=10)
+
     def envelope(self) -> str:
         """Return the whole snapshot envelope the host would pull first.
 
@@ -168,10 +178,7 @@ class Host:
         Returns:
             Every stored title.
         """
-        return [
-            held.title
-            for held in sorted(self.repo.load(), key=lambda n: n.id, reverse=True)
-        ]
+        return [held.title for held in self.container.notes.list()]
 
     def title_of(self, note_id: int) -> str:
         """Return one note's stored title.
@@ -185,7 +192,7 @@ class Host:
         Raises:
             AssertionError: If no such note is held.
         """
-        for held in self.repo.load():
+        for held in self.container.notes.list():
             if held.id == note_id:
                 return held.title
         raise AssertionError(f"no held note with id {note_id}")
@@ -366,7 +373,7 @@ def held_of(host: Any, note_id: int) -> Any:
     Raises:
         AssertionError: If no such note is held.
     """
-    for held in host.repo.load():
+    for held in host.container.notes.list():
         if held.id == note_id:
             return held
     raise AssertionError(f"no held note {note_id}")

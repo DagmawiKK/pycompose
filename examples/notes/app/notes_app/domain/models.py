@@ -78,7 +78,8 @@ class NotesRepo(Protocol):
     """What the domain needs from storage, and nothing more.
 
     Structural, so an in-memory implementation in a test satisfies it exactly as
-    well as the file-backed one the app ships with.
+    well as the database the app ships with. A write changes one note, so its
+    cost never grows with how many notes are held.
     """
 
     def highest_id(self) -> int:
@@ -102,10 +103,30 @@ class NotesRepo(Protocol):
         """
         ...  # pragma: no cover - protocol declaration
 
-    def store(self, notes: list[Note]) -> None:
-        """Replace everything held.
+    def insert(self, note: Note) -> None:
+        """Keep one new note.
 
         Args:
-            notes: The notes to keep.
+            note: The note, with the identity it took.
         """
+        ...  # pragma: no cover - protocol declaration
+
+    def update(self, note: Note) -> None:
+        """Replace one note.
+
+        Args:
+            note: The note as it is now.
+        """
+        ...  # pragma: no cover - protocol declaration
+
+    def delete(self, note_id: int) -> None:
+        """Drop one note.
+
+        Args:
+            note_id: The note to remove.
+        """
+        ...  # pragma: no cover - protocol declaration
+
+    def close(self) -> None:
+        """Release storage once the writes already asked for are done."""
         ...  # pragma: no cover - protocol declaration

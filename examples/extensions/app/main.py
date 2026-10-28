@@ -31,8 +31,8 @@ class Container:
 
     def __init__(self) -> None:
         self.http = httpx.Client(base_url=BASE_URL, timeout=10.0, **HTTP_OPTIONS)
-        # Used from the I/O pool one call at a time; the view model's lock
-        # serialises them, so SQLite's own thread check is not needed.
+        # Opened here, then used only on the session's storage thread, one call
+        # at a time and in order, so SQLite's own thread check is not needed.
         self.cache = sqlite3.connect(
             paths().files / "pages.sqlite3", timeout=5.0, check_same_thread=False
         )
@@ -141,7 +141,6 @@ class PagesViewModel(ViewModel[Pages]):
         super().__init__(Pages())
         self._http = container.http
         self._cache = container.cache
-        self._database = asyncio.Lock()
         self._job: asyncio.Task[None] | None = None
 
     def on_intent(self, intent: Intent) -> None:
@@ -168,8 +167,7 @@ class PagesViewModel(ViewModel[Pages]):
         self._job = self.launch(work)
 
     async def _sql(self, work: Any, *args: object) -> Any:
-        async with self._database:
-            return await to_thread("io", work, self._cache, *args)
+        return await to_thread("storage", work, self._cache, *args)
 
     async def _fetch(self, page: int) -> None:
         endpoint = self.state.endpoint

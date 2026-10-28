@@ -1,122 +1,141 @@
 """The data layer: how notes are actually kept.
 
-The domain says what it needs from storage. This is where that is answered — on
-disk, as JSON, through the library's ``Document``. Swapping it for something
-else means writing one class with three methods; nothing above this line changes.
+The domain says what it needs from storage. This is where that is answered: a
+SQLite database in the app's own storage, one row per note. A change writes one
+row, so typing into a note costs the same with ten notes as with ten thousand,
+and a write is durable when it commits.
+
+SQLite connections belong to the thread that opened them, so every statement
+runs on the session's one storage thread, in the order it was asked for. The
+loop never waits on the disk: a write is queued and the caller moves on.
 """
 
 from __future__ import annotations
 
+import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 from notes_app.domain.models import Note
-from pycompose.repository import Document
+from pycompose.app import to_thread
+from pycompose.repository import root
 
-SEQUENCE = "notes.seq"
+SCHEMA = (
+    "CREATE TABLE IF NOT EXISTS notes ("
+    "id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, body TEXT NOT NULL)"
+)
 
 
-def _sequence_for(path: Path) -> Path:
-    """Return the file remembering the largest identity ever issued.
+class SqliteNotesRepo:
+    """Notes kept in SQLite in the app's storage.
+
+    ``AUTOINCREMENT`` remembers the largest identity ever issued, deletions
+    included, so an identity is never handed out twice.
 
     Args:
-        path: Where the notes themselves are kept.
-
-    Returns:
-        The path of the counter that sits beside them.
-    """
-    return path.with_name(SEQUENCE)
-
-
-class FileNotesRepo:
-    """Notes kept as a JSON document in the app's own storage.
-
-    A counter sits beside the document recording the largest identity ever
-    issued. Recomputing it from what is held would let a deleted identity be
-    handed out again, and a control still bound to it would then edit whatever
-    replaced the note.
+        path: The database file, or None for ``notes.db`` in the app's storage.
     """
 
-    def __init__(self, document: Document[Note] | None = None) -> None:
-        """Open the store.
-
-        Args:
-            document: The document to use, or None for the default.
-        """
-        self._document = (
-            document if document is not None else Document("notes.json", Note)
+    def __init__(self, path: Path | None = None) -> None:
+        self.path = path if path is not None else root() / "notes.db"
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self._connection: sqlite3.Connection | None = None
+        # Read once as the session starts, on whatever thread builds the
+        # container; from here on only the storage thread touches the file.
+        with closing(sqlite3.connect(self.path)) as db:
+            db.execute("PRAGMA journal_mode=WAL")
+            db.execute(SCHEMA)
+            db.commit()
+            self._notes = [
+                Note(*row) for row in db.execute("SELECT id, title, body FROM notes")
+            ]
+            mark = db.execute(
+                "SELECT seq FROM sqlite_sequence WHERE name = 'notes'"
+            ).fetchone()
+        self._mark: int = max(
+            int(mark[0]) if mark else 0, *(n.id for n in self._notes), 0
         )
-        self._sequence = _sequence_for(self._document.path)
-
-    @property
-    def path(self) -> Path:
-        """Return where the notes are kept.
-
-        Returns:
-            The file path.
-        """
-        return self._document.path
 
     def highest_id(self) -> int:
         """Return the largest identity ever issued, including deleted ones.
 
         Returns:
-            The remembered mark, or the largest held when nothing was recorded.
+            The mark as the session started.
         """
-        try:
-            recorded = int(self._sequence.read_text(encoding="utf-8").strip())
-        except (FileNotFoundError, ValueError):
-            recorded = 0
-        return max(recorded, self._largest_held())
+        return self._mark
 
     def load(self) -> list[Note]:
-        """Return every note held.
+        """Return every note as the session started.
 
         Returns:
             The stored notes.
         """
-        return self._document.load()
+        return list(self._notes)
 
-    def store(self, notes: list[Note]) -> None:
-        """Replace everything held, and remember the high-water mark.
+    def insert(self, note: Note) -> None:
+        """Queue one new note's row.
 
         Args:
-            notes: The notes to keep.
+            note: The note, with the identity it took.
         """
-        # Read the mark before the write: afterwards the highest held would
-        # already equal the incoming one, and deleting the last note would walk
-        # the counter backwards.
-        mark = max(self.highest_id(), max((note.id for note in notes), default=0))
-        self._document.save(notes)
-        try:
-            self._sequence.parent.mkdir(parents=True, exist_ok=True)
-            self._sequence.write_text(str(mark), encoding="utf-8")
-        except OSError:  # a lost counter is recoverable; the notes are not
-            pass
+        self._write(
+            "INSERT INTO notes (id, title, body) VALUES (?, ?, ?)",
+            (note.id, note.title, note.body),
+        )
 
-    def _largest_held(self) -> int:
-        """Return the largest identity currently stored.
+    def update(self, note: Note) -> None:
+        """Queue one note's row being rewritten.
 
-        Returns:
-            The largest held id, or zero when nothing is held.
+        Args:
+            note: The note as it is now.
         """
-        return max((note.id for note in self._document.load()), default=0)
+        self._write(
+            "UPDATE notes SET title = ?, body = ? WHERE id = ?",
+            (note.title, note.body, note.id),
+        )
+
+    def delete(self, note_id: int) -> None:
+        """Queue one note's row being removed.
+
+        Args:
+            note_id: The note to remove.
+        """
+        self._write("DELETE FROM notes WHERE id = ?", (note_id,))
+
+    def close(self) -> None:
+        """Close the connection once every queued write is done."""
+        to_thread("storage", self._close)
+
+    def _write(self, statement: str, parameters: tuple[object, ...]) -> None:
+        to_thread("storage", self._execute, statement, parameters)
+
+    def _execute(self, statement: str, parameters: tuple[object, ...]) -> None:
+        if self._connection is None:
+            self._connection = sqlite3.connect(self.path)
+            # Durable at each commit without a sync per write: WAL's default.
+            self._connection.execute("PRAGMA synchronous=NORMAL")
+        with self._connection:
+            self._connection.execute(statement, parameters)
+
+    def _close(self) -> None:
+        if self._connection is not None:
+            self._connection.close()
+            self._connection = None
 
 
 class MemoryNotesRepo:
     """Notes kept for the life of the session.
 
     The point of the ``Protocol`` is that this is a complete substitute for the
-    file-backed one: a test can exercise every use case without touching disk.
+    SQLite one: a test can exercise every use case without touching disk.
+
+    Args:
+        notes: What to start with, or None for empty.
     """
 
     def __init__(self, notes: list[Note] | None = None) -> None:
-        """Open the store.
-
-        Args:
-            notes: What to start with, or None for empty.
-        """
-        self._notes = list(notes or [])
-        self._mark = max((note.id for note in self._notes), default=0)
+        self._notes = {note.id: note for note in notes or []}
+        self._mark = max(self._notes, default=0)
 
     def highest_id(self) -> int:
         """Return the largest identity ever issued, including deleted ones.
@@ -132,13 +151,32 @@ class MemoryNotesRepo:
         Returns:
             A copy, so a caller cannot mutate the store by accident.
         """
-        return list(self._notes)
+        return list(self._notes.values())
 
-    def store(self, notes: list[Note]) -> None:
-        """Replace everything held, remembering the mark it leaves behind.
+    def insert(self, note: Note) -> None:
+        """Keep one new note.
 
         Args:
-            notes: The notes to keep.
+            note: The note, with the identity it took.
         """
-        self._notes = list(notes)
-        self._mark = max(self._mark, max((note.id for note in notes), default=0))
+        self._notes[note.id] = note
+        self._mark = max(self._mark, note.id)
+
+    def update(self, note: Note) -> None:
+        """Replace one note.
+
+        Args:
+            note: The note as it is now.
+        """
+        self._notes[note.id] = note
+
+    def delete(self, note_id: int) -> None:
+        """Drop one note.
+
+        Args:
+            note_id: The note to remove.
+        """
+        self._notes.pop(note_id, None)
+
+    def close(self) -> None:
+        """Nothing to release: the notes live only in memory."""

@@ -93,15 +93,36 @@ def store() -> Any:
             """
             return list(self.notes)
 
-        def store(self, notes: list[Note]) -> None:
-            """Replace everything held.
+        def insert(self, note: Note) -> None:
+            """Keep one new note.
 
             Args:
-                notes: The notes to keep.
+                note: The note, with the identity it took.
             """
-            self.notes = list(notes)
+            self.notes.append(note)
             self.writes += 1
-            self.mark = max(self.mark, max((note.id for note in notes), default=0))
+            self.mark = max(self.mark, note.id)
+
+        def update(self, note: Note) -> None:
+            """Replace one note.
+
+            Args:
+                note: The note as it is now.
+            """
+            self.notes = [note if held.id == note.id else held for held in self.notes]
+            self.writes += 1
+
+        def delete(self, note_id: int) -> None:
+            """Drop one note.
+
+            Args:
+                note_id: The note to remove.
+            """
+            self.notes = [held for held in self.notes if held.id != note_id]
+            self.writes += 1
+
+        def close(self) -> None:
+            """Nothing to release."""
 
     return Store()
 
@@ -129,10 +150,12 @@ def notes(store: Any) -> Any:
 # ---------------------------------------------------------------------------
 
 
-def test_notes_are_listed_newest_first(notes: Any, store: Any) -> None:
+def test_notes_are_listed_newest_first(store: Any) -> None:
+    from notes_app.domain import Notes
     from notes_app.domain.models import Note
 
-    store.store([Note(1, "Older"), Note(3, "Newest"), Note(2, "Middle")])
+    store.notes = [Note(1, "Older"), Note(3, "Newest"), Note(2, "Middle")]
+    notes = Notes(store)
     assert [note.title for note in notes.list()] == ["Newest", "Middle", "Older"]
 
 
@@ -174,16 +197,19 @@ def test_ids_are_never_reused_after_a_deletion(notes: Any) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_renaming_and_retexting_change_only_what_was_asked(
-    notes: Any, store: Any
-) -> None:
+def test_renaming_and_retexting_change_only_what_was_asked(store: Any) -> None:
+    from notes_app.domain import Notes
     from notes_app.domain.models import Note
 
-    store.store([Note(1, "Before", "text")])
+    store.notes = [Note(1, "Before", "text"), Note(2, "Other", "kept")]
+    notes = Notes(store)
     notes.rename(1, "After")
     notes.retext(1, "other")
 
-    assert store.load() == [Note(1, "After", "other")]
+    assert notes.get(1) == Note(1, "After", "other")
+    # Storage is told about the one note that changed, once per change.
+    assert store.load() == [Note(1, "After", "other"), Note(2, "Other", "kept")]
+    assert store.writes == 2
 
 
 def test_the_note_is_immutable_rather_than_edited_in_place() -> None:
@@ -194,12 +220,13 @@ def test_the_note_is_immutable_rather_than_edited_in_place() -> None:
     assert original.title == "Before"
 
 
-def test_editing_something_that_is_gone_does_nothing(notes: Any, store: Any) -> None:
+def test_editing_something_that_is_gone_does_nothing(store: Any) -> None:
     """A control can outlive the note it was bound to; that must be harmless."""
+    from notes_app.domain import Notes
     from notes_app.domain.models import Note
 
-    store.store([Note(1, "Untouched")])
-    store.writes = 0  # forget the setup, so the assertion means something
+    store.notes = [Note(1, "Untouched")]
+    notes = Notes(store)
     notes.rename(99, "Wrong")
     notes.retext(99, "Wrong")
     notes.delete(99)
@@ -265,7 +292,7 @@ def test_only_the_wiring_names_a_backend() -> None:
     hits = sorted(
         path.relative_to(APP).as_posix()
         for path in (APP / "notes_app").rglob("*.py")
-        if "FileNotesRepo" in path.read_text(encoding="utf-8")
+        if "SqliteNotesRepo" in path.read_text(encoding="utf-8")
     )
     assert hits == [
         "notes_app/container.py",
@@ -291,29 +318,48 @@ def test_the_boundary_is_real_not_aspirational() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_the_shipped_backends_satisfy_the_protocol_structurally() -> None:
-    """No base class, no registration: the shape is the contract."""
-    from notes_app.data.notes_repo import FileNotesRepo, MemoryNotesRepo
-    from notes_app.domain.models import NotesRepo
-
-    for implementation in (FileNotesRepo, MemoryNotesRepo):
-        assert isinstance(implementation(), NotesRepo)
-
-
-def test_the_file_backend_remembers_the_mark_across_a_deletion(
+def test_the_shipped_backends_satisfy_the_protocol_structurally(
     tmp_path: Path,
 ) -> None:
-    """Recomputing the mark from what is held would hand the identity out twice."""
-    from notes_app.data.notes_repo import FileNotesRepo
+    """No base class, no registration: the shape is the contract."""
+    from notes_app.data.notes_repo import MemoryNotesRepo, SqliteNotesRepo
+    from notes_app.domain.models import NotesRepo
+
+    assert isinstance(MemoryNotesRepo(), NotesRepo)
+    assert isinstance(SqliteNotesRepo(tmp_path / "notes.db"), NotesRepo)
+
+
+def test_the_database_writes_one_row_per_change_and_never_reuses_an_id(
+    tmp_path: Path,
+) -> None:
+    """What a session wrote is what the next one reads, deletions remembered."""
+    from notes_app.data.notes_repo import SqliteNotesRepo
     from notes_app.domain import Notes
     from notes_app.domain.models import Note
 
-    from pycompose.repository import Document
+    from pycompose.testing.simulator import Simulator
 
-    repo = FileNotesRepo(Document("notes.json", Note, directory=tmp_path))
-    notes = Notes(repo)
-    notes.create("First")
-    notes.delete(1)
+    path = tmp_path / "notes.db"
+    sim = Simulator()
 
-    assert repo.highest_id() == 1
-    assert notes.create("Second") == 2
+    async def first_session() -> None:
+        notes = Notes(SqliteNotesRepo(path))
+        notes.create("First")
+        notes.create("Second")
+        notes.rename(2, "Renamed")
+        notes.delete(1)
+
+    sim.run(first_session())
+    sim.settle()
+    sim.close()
+
+    repo = SqliteNotesRepo(path)
+    assert repo.load() == [Note(2, "Renamed", "")]
+    assert repo.highest_id() == 2
+
+    async def second_session() -> int:
+        return Notes(repo).create("Third")
+
+    sim = Simulator()
+    assert sim.run(second_session()) == 3
+    sim.close()

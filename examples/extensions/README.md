@@ -1,8 +1,9 @@
 # HTTPX and SQLite app
 
 HTTPX and SQLite are ordinary Python libraries here, not framework special
-cases. The view model runs every blocking call off the loop with
-`to_thread("io", …)`; a lock keeps the SQLite connection to one call at a time.
+cases. The view model runs HTTP off the loop with `to_thread("io", …)`, and SQLite
+with `to_thread("storage", …)`: one thread, so the connection serves one call at
+a time, in order.
 App code owns its schema, pagination, and cache policy.
 
 From an installed checkout:

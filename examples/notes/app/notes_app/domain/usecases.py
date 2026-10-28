@@ -89,10 +89,12 @@ def carrying_text(notes: list[Note]) -> list[Note]:
 class Notes:
     """Everything the app can do with notes, with the storage already bound.
 
-    Callers hold one of these and never a repository. The storage
-    backend is named in exactly one place in the app -- the wiring in
-    ``container.py`` -- and a test swaps it by constructing this with
-    something else.
+    Callers hold one of these and never a repository. The storage backend is
+    named in exactly one place in the app -- the wiring in ``container.py`` --
+    and a test swaps it by constructing this with something else.
+
+    The notes are read once and held here, the one source of truth for the
+    session: a change updates them at once and hands storage one note to write.
     """
 
     def __init__(
@@ -100,19 +102,17 @@ class Notes:
         notes: NotesRepo,
         changed: Callable[[list[Note]], None] = lambda _notes: None,
     ) -> None:
-        """Bind the use cases to a repository.
+        """Bind the use cases to a repository and read what it holds.
 
         Args:
             notes: Where the notes are kept.
             changed: Told every note, newest first, after each change, so a
-                screen that shows them can follow storage.
+                screen that shows them can follow them.
         """
-        self._notes = notes
+        self._repo = notes
         self._changed = changed
-
-    def _store(self, notes: list[Note]) -> None:
-        self._notes.store(notes)
-        self._changed(self.list())
+        self._held = {note.id: note for note in notes.load()}
+        self._highest = max(notes.highest_id(), max(self._held, default=0))
 
     def list(self) -> list[Note]:
         """Return every note, newest first.
@@ -120,7 +120,7 @@ class Notes:
         Returns:
             The notes to render.
         """
-        return newest_first(self._notes.load())
+        return newest_first(list(self._held.values()))
 
     def get(self, note_id: int) -> Note | None:
         """Return one note, when it is still there.
@@ -131,7 +131,7 @@ class Notes:
         Returns:
             The note, or None if it has been deleted.
         """
-        return next((note for note in self._notes.load() if note.id == note_id), None)
+        return self._held.get(note_id)
 
     def create(self, title: str = "", body: str = "") -> int:
         """Create a note and return the id it took.
@@ -147,10 +147,12 @@ class Notes:
         Returns:
             The new note's id.
         """
-        held = self._notes.load()
-        next_id = self._notes.highest_id() + 1
-        self._store([Note(next_id, title, body), *held])
-        return next_id
+        self._highest += 1
+        note = Note(self._highest, title, body)
+        self._held[note.id] = note
+        self._repo.insert(note)
+        self._changed(self.list())
+        return note.id
 
     def rename(self, note_id: int, title: str) -> None:
         """Change one note's title, if it still exists.
@@ -173,32 +175,27 @@ class Notes:
     def delete(self, note_id: int) -> None:
         """Delete one note, if it still exists.
 
-        Args:
-            note_id: Identity to remove.
-        """
-        self._rewrite(note_id, lambda _note: None)
-
-    def _rewrite(self, note_id: int, change: Callable[[Note], Note | None]) -> None:
-        """Replace one note, or drop it, leaving the rest untouched.
-
         A note that is not there is not an error: a control can outlive the note
         it was bound to, and acting on a stale id must do nothing rather than
         damage whatever now holds that id.
 
         Args:
-            note_id: Identity to change.
-            change: Callable producing the note, or None to remove it.
+            note_id: Identity to remove.
         """
-        held = self._notes.load()
-        rewritten = []
-        touched = False
-        for note in held:
-            if note.id != note_id:
-                rewritten.append(note)
-                continue
-            touched = True
-            replacement = change(note)
-            if replacement is not None:
-                rewritten.append(replacement)
-        if touched:
-            self._store(rewritten)
+        if self._held.pop(note_id, None) is not None:
+            self._repo.delete(note_id)
+            self._changed(self.list())
+
+    def _rewrite(self, note_id: int, change: Callable[[Note], Note]) -> None:
+        """Replace one note, if it still exists.
+
+        Args:
+            note_id: Identity to change.
+            change: Callable producing the note's new value.
+        """
+        note = self._held.get(note_id)
+        if note is None:
+            return
+        self._held[note_id] = change(note)
+        self._repo.update(self._held[note_id])
+        self._changed(self.list())

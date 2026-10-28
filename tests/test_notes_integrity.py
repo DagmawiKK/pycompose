@@ -111,46 +111,50 @@ def test_the_notes_never_cross_the_boundary(app: ModuleType) -> None:
     assert len(saved(host)) < 200
     # Fifty rows render; none of them are in what the host saves.
     assert "Note 49" in [props["text"] for props in nodes(host.snapshot(), "Text")]
-    assert len(host.repo.load()) == 50
+    assert len(host.container.notes.list()) == 50
 
 
 def test_ten_thousand_notes_survive_a_restart_without_the_bundle_complaining(
     app: ModuleType,
     tmp_path: Path,
 ) -> None:
-    """Phase 3's acceptance bar, against the real file-backed store.
+    """Ten thousand notes in the real database, and a restart that reads them.
 
     Ten thousand notes do not fit in a Bundle, and the exception that says so
-    names nothing useful -- so the notes live on disk and the saved stack holds
-    only what each screen needs to come back.
+    names nothing useful -- so the notes live in SQLite and the saved stack holds
+    only what each screen needs to come back. Typing writes one row, whatever
+    the count.
     """
-    from notes_app.data.notes_repo import FileNotesRepo
-    from notes_app.domain.models import Note
+    import sqlite3
 
-    use_root(tmp_path)
-    try:
-        # Seed the store directly: ten thousand taps through the bridge would be
-        # a test of the bridge, not of the seam this is about.
-        FileNotesRepo().store(
-            [Note(index, f"Note {index}", "x" * 200) for index in range(10_000)]
+    from notes_app.data.notes_repo import SqliteNotesRepo
+
+    path = tmp_path / "notes.db"
+    # Seed the database directly: ten thousand taps through the bridge would be
+    # a test of the bridge, not of the storage this is about.
+    SqliteNotesRepo(path)
+    with sqlite3.connect(path) as db:
+        db.executemany(
+            "INSERT INTO notes (id, title, body) VALUES (?, ?, ?)",
+            [(index, f"Note {index}", "x" * 200) for index in range(1, 10_001)],
         )
 
-        host = Host(app, route=editor(1), repo=FileNotesRepo())
-        assert len(host.repo.load()) == 10_000
-        assert held_of(host, 9_999).title == "Note 9999"
-        assert set(data(host.snapshot())) == {"noteId", "titleCaret", "bodyCaret"}
-        assert len(saved(host)) < 400
-        # The file, meanwhile, is megabytes -- which is exactly why it is there.
-        assert (tmp_path / "notes.json").stat().st_size > 1_000_000
+    host = Host(app, route=editor(1), repo=SqliteNotesRepo(path))
+    assert len(host.container.notes.list()) == 10_000
+    assert held_of(host, 9_999).title == "Note 9999"
+    assert set(data(host.snapshot())) == {"noteId", "titleCaret", "bodyCaret"}
+    assert len(saved(host)) < 400
 
-        # A second process, reading the same files.
-        restarted = Host(
-            app, route=editor(1), restore=saved(host), repo=FileNotesRepo()
-        )
-        assert stack(restarted.snapshot()) == ["NotesRoute", "EditorRoute"]
-        assert len(restarted.repo.load()) == 10_000
-    finally:
-        use_root(Path.cwd())
+    host.tap("SetTitle", value="Edited")
+    host.settle_storage()
+
+    # A second process, reading the same database.
+    restarted = Host(
+        app, route=editor(1), restore=saved(host), repo=SqliteNotesRepo(path)
+    )
+    assert stack(restarted.snapshot()) == ["NotesRoute", "EditorRoute"]
+    assert len(restarted.container.notes.list()) == 10_000
+    assert held_of(restarted, 1).title == "Edited"
 
 
 def test_the_saved_stack_is_restorable_on_its_own(app: ModuleType) -> None:
@@ -219,17 +223,19 @@ def test_the_runtime_starts_this_app_and_its_intents_work() -> None:
 
 def test_the_app_survives_a_hot_reload_of_a_module_inside_its_package() -> None:
     """A reload must re-import the whole package, not just the entrypoint."""
-    from notes_app.data.notes_repo import FileNotesRepo
-    from notes_app.domain.models import Note
+    import sqlite3
+
+    from notes_app.data.notes_repo import SqliteNotesRepo
 
     sys.path.insert(0, str(APP))
     screen = APP / "notes_app" / "views" / "list_screen.py"
     original = screen.read_text()
     cached = APP / "notes_app" / "__pycache__"
     # The session builds the real container, so point storage somewhere a test
-    # may write. Otherwise this would leave a notes.json in the repository.
+    # may write. Otherwise this would leave a notes.db in the repository.
     use_root(Path(tempfile.mkdtemp()))
-    FileNotesRepo().store([Note(*held) for held in SEEDED])
+    with sqlite3.connect(SqliteNotesRepo().path) as db:
+        db.executemany("INSERT INTO notes (id, title, body) VALUES (?, ?, ?)", SEEDED)
     failures: list[str] = []
     loop = LoopThread(lambda scope, error: failures.append(f"{scope}: {error}"))
     try:
@@ -271,3 +277,7 @@ def test_the_app_survives_a_hot_reload_of_a_module_inside_its_package() -> None:
         shutil.rmtree(cached, ignore_errors=True)
         sys.path.remove(str(APP))
         use_root(Path.cwd())
+        # The reload imported the edited screen; no later test may see it.
+        for name, module in list(sys.modules.items()):
+            if str(getattr(module, "__file__", "") or "").startswith(str(APP)):
+                del sys.modules[name]
