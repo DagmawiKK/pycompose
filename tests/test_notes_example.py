@@ -481,3 +481,17 @@ def test_a_save_with_one_bad_field_is_refused_whole_rather_than_half_applied(
     host = Host(app, restore=saved)
     assert data(host.snapshot())["previews"] is True
     assert titles_of(host) == ["Try it", "Welcome"]
+
+
+def test_typing_in_the_editor_sends_no_refresh_for_the_list_below(
+    app: ModuleType,
+) -> None:
+    """The list reloads its notes as they change, but saves none of them."""
+    host = Host(app)
+    host.tap("OpenNote", {"note_id": 1})
+    signals: list[int] = []
+    host.session._signal = lambda: signals.append(1)
+    host.tap("SetTitle", value="Renamed")
+    assert signals == []
+    host.tap("LeaveEditor")
+    assert "Renamed" in texts(host)

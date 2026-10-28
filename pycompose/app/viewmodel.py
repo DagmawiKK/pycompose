@@ -30,13 +30,13 @@ class ViewModelHost:
 
     Attributes:
         report: Receives each supervised task's failure.
-        changed: Called when state changes outside an intent, so the session
-            publishes it.
+        changed: Called with the view model whose state changed, or None for
+            an emitted effect, so the session can publish it.
         navigate: Applies one change to the back stack.
     """
 
     report: Report
-    changed: Callable[[], None]
+    changed: Callable[[ViewModel[Any] | None], None]
     navigate: Callable[[NavOp], None]
 
 
@@ -99,7 +99,7 @@ class ViewModel(Generic[S]):
             )
         self._state = state
         if self._host is not None:
-            self._host.changed()
+            self._host.changed(self)
 
     def emit(self, effect: TypedEffect) -> None:
         """Ask the host for a one-shot effect with the next snapshot.
@@ -109,7 +109,7 @@ class ViewModel(Generic[S]):
         """
         self._effects.append(effect.effect())
         if self._host is not None:
-            self._host.changed()
+            self._host.changed(None)
 
     def launch(self, work: Coroutine[Any, Any, T]) -> asyncio.Task[T]:
         """Run ``work`` until it ends, is cancelled, or this view model is cleared.

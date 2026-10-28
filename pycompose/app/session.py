@@ -53,6 +53,13 @@ def _post_refresh() -> bool:
     return delivered
 
 
+def _saved(model: ViewModel[Any] | None) -> JsonValue:
+    """A view model's state as the saved stack carries it."""
+    if model is None:
+        return None
+    return cast("JsonValue", type(model.state).codec.encode(model.state))
+
+
 @dataclass
 class _Entry:
     """One screen on the back stack."""
@@ -61,6 +68,8 @@ class _Entry:
     key: str
     destination: Destination[Any]
     view_model: ViewModel[Any]
+    saved: JsonValue = None
+    """The saved state last published, to tell when a screen below changed it."""
 
 
 class NavigationSession:
@@ -165,15 +174,10 @@ class NavigationSession:
         return json.dumps(self._stack())
 
     def _stack(self) -> dict[str, JsonValue]:
-        stack = [
-            {
-                "route": json.loads(entry.key),
-                "state": type(entry.view_model.state).codec.encode(
-                    entry.view_model.state
-                ),
-            }
-            for entry in self.entries
-        ]
+        stack = []
+        for entry in self.entries:
+            entry.saved = _saved(entry.view_model)
+            stack.append({"route": json.loads(entry.key), "state": entry.saved})
         return {"stack": cast("list[JsonValue]", stack)}
 
     @property
@@ -185,8 +189,13 @@ class NavigationSession:
         """
         return self.entries[-1].view_model
 
-    def _changed(self) -> None:
+    def _changed(self, model: ViewModel[Any] | None = None) -> None:
         if self._dispatching or self._pending:
+            return
+        below = next((e for e in self.entries[:-1] if e.view_model is model), None)
+        if below is not None and _saved(model) == below.saved:
+            # A screen out of sight changed only what it reloads, never saves:
+            # nothing on screen or in the saved stack differs, so no pass.
             return
         # Pending until the refresh arrives; a signal nobody took leaves the next
         # change free to try again.
