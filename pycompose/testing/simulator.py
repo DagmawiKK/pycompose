@@ -99,11 +99,17 @@ class Simulator:
     def __init__(self, seed: int = 0) -> None:
         self.loop = SimulatedLoop()
         self.failures: list[tuple[str, BaseException]] = []
+        self.loop.set_exception_handler(
+            lambda _loop, context: self.failures.append(
+                ("loop", context.get("exception") or RuntimeError(context["message"]))
+            )
+        )
         inline = InlineExecutor()
         self.scheduler = Scheduler(
             self.loop,
             io=inline,
             cpu=inline,
+            storage=inline,
             rng=random.Random(seed),
             report=lambda scope, error: self.failures.append((scope, error)),
         )

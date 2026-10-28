@@ -17,6 +17,11 @@ objects cross, and the boundary stays where ADR-0001 put it.
 
     notes = Document("notes.json", Note)     # a dataclass, stored as JSON
 
+Loading and saving read and write the whole file, and they block. On a
+session's loop, call them through ``to_thread("storage", ...)``, so the screen
+never waits on the disk and saves run one at a time, in order. For many records
+that change one at a time, SQLite on that same thread writes one row per change.
+
 Writes are atomic: a document is written to a temporary file and renamed over the
 old one, so a process killed mid-write leaves the previous version intact rather
 than half a file. A document that is unreadable anyway — corrupted, truncated,

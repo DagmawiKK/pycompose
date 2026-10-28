@@ -8,7 +8,7 @@ import random
 import weakref
 from collections.abc import Callable
 from concurrent.futures import Executor, ThreadPoolExecutor
-from typing import Literal, TypeVar
+from typing import Any, Literal, TypeVar, cast
 
 from pycompose.errors import StateError
 from pycompose.runtime.scope import Report, Scope
@@ -16,7 +16,7 @@ from pycompose.runtime.scope import Report, Scope
 __all__ = ["Scheduler", "ThreadKind", "to_thread"]
 
 T = TypeVar("T")
-ThreadKind = Literal["io", "cpu"]
+ThreadKind = Literal["io", "cpu", "storage"]
 
 _SCHEDULERS: weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, Scheduler] = (
     weakref.WeakKeyDictionary()
@@ -37,6 +37,8 @@ class Scheduler:
             without async support).
         cpu: Runs computation. A single thread, so computation never queues
             up behind the GIL in front of the loop.
+        storage: One thread for resources that belong to a single thread, such
+            as a SQLite connection; its calls run one at a time, in order.
         rng: The session's only source of randomness.
         report: Receives every supervised failure, with its scope's name.
     """
@@ -47,11 +49,16 @@ class Scheduler:
         *,
         io: Executor,
         cpu: Executor,
+        storage: Executor,
         rng: random.Random,
         report: Report,
     ) -> None:
         self.loop = loop
-        self._executors: dict[ThreadKind, Executor] = {"io": io, "cpu": cpu}
+        self._executors: dict[ThreadKind, Executor] = {
+            "io": io,
+            "cpu": cpu,
+            "storage": storage,
+        }
         self._random = rng
         self._report = report
         _SCHEDULERS[loop] = self
@@ -74,6 +81,7 @@ class Scheduler:
             loop,
             io=ThreadPoolExecutor(io_workers, thread_name_prefix="pycompose-io"),
             cpu=ThreadPoolExecutor(1, thread_name_prefix="pycompose-cpu"),
+            storage=ThreadPoolExecutor(1, thread_name_prefix="pycompose-storage"),
             rng=random.Random(),
             report=report,
         )
@@ -105,52 +113,91 @@ class Scheduler:
         """
         return Scope(name, self._report)
 
+    def submit(
+        self, kind: ThreadKind, work: Callable[..., T], *args: object
+    ) -> asyncio.Future[T]:
+        """Queue ``work`` on the pool for ``kind`` now; await the result if wanted.
+
+        The call is queued here, not when someone awaits it, and cancelling a
+        waiter never unqueues it: a write that was asked for always happens, in
+        the order asked on a one-thread pool. A failure nobody waits for any
+        more reaches the session's report.
+
+        Args:
+            kind: ``"io"``, ``"cpu"`` or ``"storage"``.
+            work: The callable to run off the loop.
+            *args: Its arguments.
+
+        Returns:
+            A future of what ``work`` returned.
+        """
+        job = self.loop.run_in_executor(
+            self._executors[kind], functools.partial(work, *args)
+        )
+        waiter = asyncio.shield(job)
+
+        def abandoned(outer: asyncio.Future[T]) -> None:
+            if outer.cancelled():
+                job.add_done_callback(self._report_failure)
+
+        waiter.add_done_callback(abandoned)
+        return waiter
+
+    def _report_failure(self, job: asyncio.Future[Any]) -> None:
+        if not job.cancelled() and job.exception() is not None:
+            self._report("thread", cast("BaseException", job.exception()))
+
     async def to_thread(
         self, kind: ThreadKind, work: Callable[..., T], *args: object
     ) -> T:
         """Run ``work`` on the pool for ``kind`` and resume on the loop with its result.
 
-        Cancelling the awaiting task discards the result; the call itself runs
-        to completion, because a thread cannot be stopped.
-
         Args:
-            kind: ``"io"`` for waiting, ``"cpu"`` for computing.
+            kind: ``"io"``, ``"cpu"`` or ``"storage"``.
             work: The callable to run off the loop.
             *args: Its arguments.
 
         Returns:
             What ``work`` returned.
         """
-        return await self.loop.run_in_executor(
-            self._executors[kind], functools.partial(work, *args)
-        )
+        return await self.submit(kind, work, *args)
 
     def close(self) -> None:
-        """Stop both pools, dropping work that has not started."""
-        for executor in self._executors.values():
-            executor.shutdown(wait=False, cancel_futures=True)
+        """Stop the pools; the storage thread first finishes what was queued."""
+        for kind, executor in self._executors.items():
+            # Queued storage calls are writes that were asked for: finish them.
+            executor.shutdown(wait=kind == "storage", cancel_futures=kind != "storage")
 
 
-async def to_thread(kind: ThreadKind, work: Callable[..., T], *args: object) -> T:
+def to_thread(
+    kind: ThreadKind, work: Callable[..., T], *args: object
+) -> asyncio.Future[T]:
     """Run ``work`` off the loop on the session's pool for ``kind``.
 
-    ``"io"`` is for calls that mostly wait, such as a blocking HTTP client or a
-    database; ``"cpu"`` is for computation, on one thread so it never queues
-    in front of the loop. Cancelling the awaiting task discards the result; the
-    call itself runs to completion, because a thread cannot be stopped.
+    ``"io"`` is for calls that mostly wait, such as a blocking HTTP client;
+    ``"cpu"`` is for computation, on one thread so it never queues in front of
+    the loop; ``"storage"`` is one thread for a resource that belongs to a
+    single thread, such as a SQLite connection, so its calls run in order.
+
+    The call is queued at once, whether or not anyone awaits it, and runs even
+    if the awaiting task is cancelled: a write that was asked for happens.
+    Await the result to use it; a failure nobody waits for reaches ``on_error``.
 
     Args:
-        kind: ``"io"`` or ``"cpu"``.
+        kind: ``"io"``, ``"cpu"`` or ``"storage"``.
         work: The callable to run.
         *args: Its arguments.
 
     Returns:
-        What ``work`` returned.
+        A future of what ``work`` returned.
 
     Raises:
         StateError: Outside a session's loop.
     """
-    scheduler = _SCHEDULERS.get(asyncio.get_running_loop())
+    try:
+        scheduler = _SCHEDULERS.get(asyncio.get_running_loop())
+    except RuntimeError:
+        scheduler = None
     if scheduler is None:
         raise StateError("to_thread runs only on a session's loop")
-    return await scheduler.to_thread(kind, work, *args)
+    return scheduler.submit(kind, work, *args)

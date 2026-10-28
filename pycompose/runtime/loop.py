@@ -38,6 +38,7 @@ class LoopThread:
     def __init__(self, report: Report, *, name: str = "pycompose-loop") -> None:
         self.loop = asyncio.new_event_loop()
         self.scheduler = Scheduler.real(self.loop, report)
+        self._report = report
         self._beat = time.monotonic()
         self._ready = threading.Event()
         self._thread = threading.Thread(target=self._run, name=name, daemon=True)
@@ -46,6 +47,13 @@ class LoopThread:
 
     def _run(self) -> None:
         asyncio.set_event_loop(self.loop)
+        # What asyncio cannot hand to anyone -- a failure nobody awaited -- is
+        # supervised like any other: reported, never lost to a log line.
+        self.loop.set_exception_handler(
+            lambda _loop, context: self._report(
+                "loop", context.get("exception") or RuntimeError(context["message"])
+            )
+        )
         # Held, since the loop keeps only a weak reference to its tasks.
         self._heartbeat_task = self.loop.create_task(self._heartbeat())
         self.loop.call_soon(self._ready.set)

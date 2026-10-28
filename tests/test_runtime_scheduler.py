@@ -8,7 +8,7 @@ import time
 
 import pytest
 
-from pycompose.runtime.scheduler import Scheduler
+from pycompose.runtime.scheduler import Scheduler, to_thread
 from pycompose.testing.simulator import Simulator
 
 
@@ -119,11 +119,67 @@ def test_app_code_reaches_the_session_pools_through_to_thread() -> None:
     from pycompose.errors import StateError
 
     sim = Simulator()
-    assert sim.run(to_thread("io", sum, [1, 2, 3])) == 6
+
+    async def summed() -> int:
+        return await to_thread("io", sum, [1, 2, 3])
+
+    assert sim.run(summed()) == 6
 
     async def elsewhere() -> int:
         return await to_thread("cpu", sum, [1])
 
     with pytest.raises(StateError, match="session's loop"):
         asyncio.run(elsewhere())
+    sim.close()
+
+
+def test_storage_calls_run_in_order_even_when_nobody_waits() -> None:
+    from pycompose.runtime.loop import LoopThread
+
+    written: list[int] = []
+    loop = LoopThread(lambda *_: None)
+    try:
+
+        def queue() -> None:
+            for n in range(50):
+                # Asked for, never awaited: each still runs, in the order asked.
+                to_thread("storage", written.append, n)
+
+        loop.call(queue)
+    finally:
+        loop.stop()  # finishes what the storage thread was asked to do
+    assert written == list(range(50))
+
+
+def test_a_cancelled_waiter_never_unqueues_its_call() -> None:
+    sim = Simulator()
+    done: list[str] = []
+
+    async def gives_up() -> None:
+        waiting = asyncio.ensure_future(to_thread("storage", done.append, "write"))
+        waiting.cancel()
+        await asyncio.sleep(0)
+
+    sim.run(gives_up())
+    sim.settle()
+    assert done == ["write"]
+    sim.close()
+
+
+def test_a_failure_nobody_waits_for_is_reported() -> None:
+    sim = Simulator()
+
+    def fails() -> None:
+        raise OSError("disk full")
+
+    async def forgets() -> None:
+        to_thread("storage", fails)
+        await asyncio.sleep(0)
+
+    sim.run(forgets())
+    sim.settle()
+    import gc
+
+    gc.collect()
+    assert [type(error) for _, error in sim.failures] == [OSError]
     sim.close()
