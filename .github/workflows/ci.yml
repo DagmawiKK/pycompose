@@ -73,6 +73,12 @@ jobs:
         run: pip install -e ".[dev]"
       - name: Codegen drift check
         run: python tools/schema/gen.py --check
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JDK_VERSION }}
+      - name: Protocol model check (TLA+)
+        run: python tools/spec/check.py
       - name: Classified lock diff (behaviour and breaking changes need approval)
         env:
           PR_BASE: ${{ github.event.pull_request.base.sha }}

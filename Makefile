@@ -1,4 +1,4 @@
-.PHONY: lint lint-py lint-kt lint-workflows typecheck test fmt fmt-py fmt-kt precommit codegen codegen-check
+.PHONY: lint lint-py lint-kt lint-workflows typecheck test fmt fmt-py fmt-kt precommit codegen codegen-check spec
 
 lint: lint-py lint-kt lint-workflows
 
@@ -22,6 +22,9 @@ typecheck:
 
 codegen:
 	python tools/schema/gen.py
+
+spec:
+	python tools/spec/check.py
 
 codegen-check:
 	python tools/schema/gen.py --check
