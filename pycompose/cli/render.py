@@ -99,7 +99,7 @@ def first_screen(project: Project) -> str:
     Raises:
         ProjectError: If the app published no snapshot.
     """
-    from pycompose.bridge.session import RuntimeSession
+    from pycompose.bridge.session import compose_once
 
     python = project.table("python")
     source = project_path(project.root, str(python.get("source_dir", "app")))
@@ -108,14 +108,7 @@ def first_screen(project: Project) -> str:
         documents_at(files),
         fresh_imports(source),
     ):
-        session = RuntimeSession(
-            str(python.get("entrypoint", "main:app")), "", debug=True
-        )
-        try:
-            snapshot = session.snapshot()
-            error = session.error()
-        finally:
-            session.close()
+        snapshot, error = compose_once(str(python.get("entrypoint", "main:app")))
     if not snapshot:
         raise ProjectError("the app published no snapshot", error=error)
     return snapshot

@@ -17,6 +17,7 @@ a semantics dump (``pycompose render``).
 
 from __future__ import annotations
 
+import functools
 import json
 import os
 import subprocess
@@ -28,10 +29,13 @@ from types import TracebackType
 from typing import Any, Self
 
 import pycompose
+from pycompose import async_task
+from pycompose.app.session import REFRESH
 from pycompose.bridge.imports import fresh_imports
 from pycompose.bridge.session import RuntimeSession
 from pycompose.extensions.environment import install as install_paths
 from pycompose.repository import documents_at
+from pycompose.runtime.loop import LoopThread
 
 Node = dict[str, Any]
 
@@ -63,10 +67,22 @@ class AppDriver:
         self._documents.__enter__()
         self._imports = fresh_imports(root / python.get("source_dir", "app"))
         self._imports.__enter__()
+        # The app runs on a loop thread of its own, as on a device, so the work
+        # its view models launch runs between the actions a test delivers.
+        self._failures: list[str] = []
+        self._refreshes: list[str] = []
+        self._loop = LoopThread(self._report)
+        async_task.install_sink(lambda action, _payload: self._refreshes.append(action))
         started = False
         try:
-            self._session = RuntimeSession(
-                python.get("entrypoint", "main:app"), route, debug=True, restore=restore
+            self._session = self._loop.call(
+                functools.partial(
+                    RuntimeSession,
+                    python.get("entrypoint", "main:app"),
+                    route,
+                    debug=True,
+                    restore=restore,
+                )
             )
             started = True
         finally:
@@ -86,10 +102,35 @@ class AppDriver:
 
     def close(self) -> None:
         """End the session, drop the app's modules and delete its files."""
-        self._session.close()
+        self._loop.call(self._session.close)
         self._release()
 
+    def _report(self, scope: str, error: BaseException) -> None:
+        self._failures.append(f"{scope}: {error}")
+
+    @property
+    def failures(self) -> list[str]:
+        """Every launched task that failed, as ``scope: error``.
+
+        Returns:
+            The failures, oldest first.
+        """
+        return list(self._failures)
+
+    def _deliver(self, source: str) -> None:
+        """Run one action on the loop, then every refresh the app signals."""
+        self._loop.call(self._session.accept_action, source)
+        # Let the work the action woke run, then publish what it changed, as
+        # the host does when it receives the refresh signal.
+        self._loop.call(lambda: None)
+        while self._refreshes:
+            self._refreshes.clear()
+            self._loop.call(self._session.accept_action, envelope(REFRESH, {}))
+            self._loop.call(lambda: None)
+
     def _release(self) -> None:
+        self._loop.stop()
+        async_task.install_sink(None)
         self._imports.__exit__(None, None, None)
         self._documents.__exit__(None, None, None)
         install_paths()
@@ -104,10 +145,10 @@ class AppDriver:
         Raises:
             AssertionError: If the app published none; the message is its error.
         """
-        source = self._session.snapshot()
+        source = self._loop.call(self._session.snapshot)
         if not source:
             raise AssertionError(
-                self._session.error() or "the app published no snapshot"
+                self._loop.call(self._session.error) or "the app published no snapshot"
             )
         snapshot: dict[str, Any] = json.loads(source)
         return snapshot
@@ -180,7 +221,7 @@ class AppDriver:
         action = _action(node, prop)
         if action is None:
             raise AssertionError(f"{node['type']} {node['id']} has no {prop}")
-        self._session.accept_action(envelope(action, payload))
+        self._deliver(envelope(action, payload))
         self._echo_navigation()
 
     def click(self, **selector: str) -> None:
@@ -237,7 +278,7 @@ class AppDriver:
             event: The event's name.
             **payload: Its fields.
         """
-        self._session.accept_action(envelope(event, payload))
+        self._deliver(envelope(event, payload))
         self._echo_navigation()
 
     def render(self, out: Path, name: str = "screen") -> tuple[Path, Path]:

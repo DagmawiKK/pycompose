@@ -239,7 +239,7 @@ def app_problems(project: Project) -> list[Problem]:
     Returns:
         The failure, if composing or validating failed.
     """
-    from pycompose.bridge.session import RuntimeSession
+    from pycompose.bridge.session import compose_once
     from pycompose.cli.build import codegen
 
     # The app's generated package is what the build would generate from it.
@@ -256,8 +256,7 @@ def app_problems(project: Project) -> list[Problem]:
         fresh_imports(source),
     ):
         try:
-            session = RuntimeSession(entrypoint, "", debug=True)
-            session.close()
+            compose_once(entrypoint)
         except Exception as exc:  # any failure is the app's to see
             return [
                 Problem("app", f"{type(exc).__name__}: {exc}", "fix the app's code")

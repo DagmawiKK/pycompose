@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 import importlib
 import logging
 import re
@@ -15,12 +16,13 @@ from typing import Any
 from pycompose.app.app import App as ViewApp
 from pycompose.app.session import NavigationSession
 from pycompose.bridge.api import BridgeSurface
-from pycompose.core.context import AppContext, carried, context
+from pycompose.core.context import AppContext, carried, context, has_context
 from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
+from pycompose.runtime.loop import LoopThread
 from pycompose.state import Actions, App, Store, actions_for_module
 
-__all__ = ["RuntimeSession"]
+__all__ = ["RuntimeSession", "compose_once"]
 
 LOGGER = logging.getLogger(__name__)
 
@@ -273,7 +275,8 @@ class RuntimeSession:
         if "." in self._module:
             directory = directory.parent
         previous = _user_modules(directory)
-        previous_context = context()
+        # An app built from view models runs with no context installed.
+        previous_context = context() if has_context() else None
         for name, module in previous.items():
             del sys.modules[name]
             cached = getattr(module, "__cached__", None)
@@ -316,3 +319,29 @@ def _user_modules(directory: Path) -> dict[str, ModuleType]:
         if Path(path).is_relative_to(directory):
             result[name] = module
     return result
+
+
+def compose_once(entrypoint: str) -> tuple[str, str]:
+    """Start the app on a loop thread of its own, as a device does, then end it.
+
+    Args:
+        entrypoint: The app's ``module:export``.
+
+    Returns:
+        The first snapshot, or empty when none was valid, and the error.
+    """
+
+    def report(scope: str, error: BaseException) -> None:
+        LOGGER.warning("Task in %s failed: %s", scope, error, exc_info=error)
+
+    loop = LoopThread(report, name="pycompose-compose-once")
+    try:
+        session = loop.call(
+            functools.partial(RuntimeSession, entrypoint, "", debug=True)
+        )
+        try:
+            return loop.call(session.snapshot), loop.call(session.error)
+        finally:
+            loop.call(session.close)
+    finally:
+        loop.stop()
