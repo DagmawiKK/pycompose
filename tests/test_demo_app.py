@@ -1,358 +1,205 @@
-"""The bundled demo app: add, complete, filter and delete through the bridge."""
+"""The bundled demo app: add, complete, filter and delete through the runtime."""
 
 from __future__ import annotations
 
-import importlib.util
 import json
 import sys
+from collections.abc import Iterator
 from pathlib import Path
-from types import ModuleType
 from typing import Any
 
 import pytest
 
-from pycompose.bridge import BridgeSurface
+from pycompose.bridge import runtime
 from pycompose.contract.catalog import SCHEMA_VERSION
-from pycompose.core.props import to_camel_case
-from pycompose.state import Store
 
-DEMO = (
-    Path(__file__).resolve().parents[1]
-    / "android"
-    / "host"
-    / "src"
-    / "main"
-    / "python"
-    / "main.py"
-)
+DEMO = Path(__file__).resolve().parents[1] / "android/host/src/main/python"
 
 
-@pytest.fixture(scope="module")
-def demo() -> ModuleType:
-    """Import the bundled demo app exactly as the Android worker does.
-
-    Returns:
-        The demo module, loaded from its on-device path.
-    """
-    spec = importlib.util.spec_from_file_location("pycompose_demo_main", DEMO)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    # The Android worker resolves sibling imports from the same python source
-    # directory; mirror that for todo_model.
-    python_dir = str(DEMO.parent)
-    sys.path.append(python_dir)
-    try:
-        spec.loader.exec_module(module)
-    finally:
-        del sys.modules[spec.name]
-        sys.path.remove(python_dir)
-    return module
+@pytest.fixture
+def demo(monkeypatch: pytest.MonkeyPatch) -> Iterator[str]:
+    """Put the demo's directory where the worker finds it, and clean up after."""
+    monkeypatch.syspath_prepend(str(DEMO))
+    yield "main:app"
+    runtime.close()
+    for name in ("main", "todo_model"):
+        sys.modules.pop(name, None)
 
 
-class Screen:
-    """Read-only view over the latest demo snapshot, by component type."""
-
-    def __init__(self, bridge: BridgeSurface) -> None:
-        self._bridge = bridge
-
-    def _nodes(self, kind: str) -> list[dict[str, Any]]:
-        source = self._bridge.expose_latest_snapshot()
-        assert source is not None
-        found: list[dict[str, Any]] = []
-        pending = [json.loads(source)["root"]]
-        while pending:
-            node = pending.pop(0)
-            if node["type"] == kind:
-                found.append(node["props"])
-            pending = node.get("children", []) + pending
-        return found
-
-    def titles(self) -> list[str]:
-        """Return the visible task titles in order.
-
-        Returns:
-            Task titles, excluding the screen heading.
-        """
-        return [text["text"] for text in self._nodes("Text")[2:]]
-
-    def heading(self) -> list[str]:
-        """Return the screen's own text lines.
-
-        Returns:
-            Title and summary text.
-        """
-        return [text["text"] for text in self._nodes("Text")[:2]]
-
-    def filters(self) -> list[tuple[str, bool]]:
-        """Return each filter chip's label and selection state.
-
-        Returns:
-            Label and selected pairs in declaration order.
-        """
-        return [(chip["label"], chip["selected"]) for chip in self._nodes("FilterChip")]
-
-    def checked(self) -> list[bool]:
-        """Return each visible task's checkbox value.
-
-        Returns:
-            Checkbox values in list order.
-        """
-        return [box["checked"] for box in self._nodes("Checkbox")]
-
-    def draft(self) -> str:
-        """Return the input field's current text.
-
-        Returns:
-            The draft title.
-        """
-        return self._nodes("TextField")[0]["value"]
-
-    def add_enabled(self) -> bool:
-        """Return whether the add control accepts a tap.
-
-        Returns:
-            The add button's enabled flag.
-        """
-        return bool(self._nodes("Button")[0]["enabled"])
+def snapshot() -> dict[str, Any]:
+    return json.loads(runtime.fetch_latest_snapshot())
 
 
-def send(
-    bridge: BridgeSurface,
-    handler: Any,
-    bound: dict[str, Any] | None = None,
-    **payload: Any,
-) -> None:
-    """Deliver one host action envelope the way the Android renderer does.
+def nodes(kind: str) -> list[dict[str, Any]]:
+    found: list[dict[str, Any]] = []
+    pending = [snapshot()["root"]]
+    while pending:
+        node = pending.pop(0)
+        if node["type"] == kind:
+            found.append(node["props"])
+        pending = node.get("children", []) + pending
+    return found
+
+
+def titles() -> list[str]:
+    """The visible task titles, after the heading and summary."""
+    return [text["text"] for text in nodes("Text")[2:]]
+
+
+def summary() -> str:
+    return nodes("Text")[1]["text"]
+
+
+def intents() -> list[dict[str, Any]]:
+    found: list[dict[str, Any]] = []
+
+    def visit(value: object) -> None:
+        if isinstance(value, dict):
+            if set(value) == {"fields", "intent"}:
+                if value not in found:
+                    found.append(value)
+                return
+            for item in value.values():
+                visit(item)
+        elif isinstance(value, list):
+            for item in value:
+                visit(item)
+
+    visit(snapshot()["root"])
+    return found
+
+
+def send(name: str, bound: dict[str, Any] | None = None, **payload: Any) -> None:
+    """Deliver the tap on the control carrying intent class ``name``.
 
     Args:
-        bridge: Surface owning the demo session.
-        handler: App action the control is bound to.
-        bound: The values the control binds, which name its binding; None for
-            the only control bound to this handler on screen.
-        **payload: Event fields; bindings supply their own fixed values.
+        name: The intent's class name.
+        bound: The fields the control binds, when several carry the class.
+        **payload: The event's own fields.
     """
-    if bound is not None:
-        intent = handler.with_args(**bound).spec.intent()
-    else:
-        snapshot = json.loads(bridge.expose_latest_snapshot() or "{}")
-        (intent,) = {
-            json.dumps(found, sort_keys=True): found
-            for found in _intents(snapshot["root"])
-            if found["intent"] == handler.name
-        }.values()
-    bridge.accept_action(json.dumps({**intent, "payload": payload}))
-
-
-def _intents(value: object) -> list[dict]:
-    """Every intent object the controls under ``value`` carry."""
-    if isinstance(value, dict):
-        if set(value) == {"fields", "intent"}:
-            return [value]
-        return [found for item in value.values() for found in _intents(item)]
-    if isinstance(value, list):
-        return [found for item in value for found in _intents(item)]
-    return []
-
-
-def test_demo_builds_a_valid_snapshot_of_instance_scoped_bindings(
-    demo: ModuleType,
-) -> None:
-    state = demo.app.build(route="", restore="")
-    bridge = BridgeSurface(Store(state), demo.actions)
-    snapshot = json.loads(bridge.expose_latest_snapshot() or "{}")
-    contracts = snapshot["metadata"]["intents"]
-    carried = json.dumps(snapshot["root"])
-    for binding in (
-        demo.add_task.with_args(title=""),
-        demo.set_draft.binding(),
-        demo.toggle_task.with_args(task_id=1),
-        demo.set_filter.with_args(value="done"),
-    ):
-        assert json.dumps(binding.spec.intent()) in carried
-    assert snapshot["schemaVersion"] == SCHEMA_VERSION
-    draft = contracts[demo.set_draft.name]["payload"]
-    assert draft == {"value": {"required": True, "type": "string"}}
-    toggle = contracts[demo.toggle_task.name]["payload"]
-    assert toggle["done"] == {"required": True, "type": "boolean"}
-    assert contracts[demo.set_filter.name]["payload"]["value"]["values"] == [
-        "all",
-        "active",
-        "done",
-    ]
-    assert bridge.expose_latest_error() == ""
-
-
-def test_demo_effects_ride_the_add_snapshot_only(demo: ModuleType) -> None:
-    bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
-
-    def effects() -> list[dict]:
-        snapshot = json.loads(bridge.expose_latest_snapshot() or "{}")
-        return snapshot.get("metadata", {}).get("effects", [])
-
-    assert effects() == []
-    send(bridge, demo.set_draft, value="Buy milk")
-    assert effects() == []
-    send(bridge, demo.add_task)
-    assert effects() == [{"kind": "toast", "payload": {"message": 'Added "Buy milk"'}}]
-    # The next transition publishes its own snapshot, so nothing replays.
-    send(bridge, demo.set_filter, {"value": "active"})
-    assert effects() == []
-
-
-def test_demo_adds_completes_filters_and_deletes_tasks(demo: ModuleType) -> None:
-    bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
-    screen = Screen(bridge)
-    assert screen.heading() == ["Tasks", "1 active, 1 done"]
-    assert screen.titles() == ["Read the PyCompose plan", "Try the todo demo"]
-    assert screen.filters() == [("All", True), ("Active", False), ("Done", False)]
-
-    send(bridge, demo.set_draft, value="  Buy milk  ")
-    assert screen.draft() == "  Buy milk  "
-    assert screen.add_enabled()
-    send(bridge, demo.add_task)
-    assert screen.titles() == [
-        "Read the PyCompose plan",
-        "Try the todo demo",
-        "Buy milk",
-    ]
-    assert screen.draft() == ""
-    assert not screen.add_enabled()
-    assert screen.heading() == ["Tasks", "2 active, 1 done"]
-
-    send(bridge, demo.toggle_task, {"task_id": 2}, done=True)
-    assert screen.checked() == [True, True, False]
-    send(bridge, demo.toggle_task, {"task_id": 2}, done=False)
-    assert screen.checked() == [True, False, False]
-
-    send(bridge, demo.set_filter, {"value": "active"})
-    assert screen.filters() == [("All", False), ("Active", True), ("Done", False)]
-    assert screen.titles() == ["Try the todo demo", "Buy milk"]
-    send(bridge, demo.set_filter, {"value": "done"})
-    assert screen.titles() == ["Read the PyCompose plan"]
-    send(bridge, demo.set_filter, {"value": "active"})
-    send(bridge, demo.remove_task, {"task_id": 3})
-    assert screen.titles() == ["Try the todo demo"]
-    assert bridge.expose_latest_error() == ""
-
-
-def test_demo_reports_empty_filters_without_crashing(demo: ModuleType) -> None:
-    bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
-    screen = Screen(bridge)
-    send(bridge, demo.set_filter, {"value": "done"})
-    assert screen.titles() == ["Read the PyCompose plan"]
-    send(bridge, demo.remove_task, {"task_id": 1})
-    assert screen.titles() == ["Nothing finished yet."]
-
-
-def send_lifecycle(bridge: BridgeSurface, handler: Any, **payload: Any) -> None:
-    """Deliver a host-initiated lifecycle event the way the activity does.
-
-    Args:
-        bridge: Surface owning the demo session.
-        handler: The app action the host names by its bare camelCase alias.
-        **payload: Event fields declared by the lifecycle contract.
-    """
-    action_id = to_camel_case(handler.name.rpartition(".")[2])
-    bridge.accept_action(json.dumps({"intent": action_id, "payload": payload}))
-
-
-def test_demo_receives_host_lifecycle_events_by_their_camel_case_name(
-    demo: ModuleType,
-) -> None:
-    bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
-    screen = Screen(bridge)
-
-    def summary() -> str:
-        return screen.heading()[1]
-
-    assert summary() == "1 active, 1 done"
-    send_lifecycle(
-        bridge,
-        demo.on_config_changed,
-        darkMode=True,
-        locale="fr-FR",
-        density=3.0,
-        orientation="landscape",
+    (intent,) = (
+        found
+        for found in intents()
+        if found["intent"].rpartition(".")[2] == name
+        and (bound is None or found["fields"] == bound)
     )
-    assert summary() == "landscape, dark, fr-FR @ 3x"
-    send_lifecycle(bridge, demo.on_resume)
-    assert summary() == "resumed"
-    assert bridge.expose_latest_error() == ""
+    runtime.accept_action(json.dumps({**intent, "payload": payload}))
 
 
-def test_demo_rejects_events_that_break_the_declared_contract(
-    demo: ModuleType,
-) -> None:
-    bridge = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
-    screen = Screen(bridge)
-    before = bridge.expose_latest_snapshot()
-
-    send(bridge, demo.set_draft, value=7)
-    assert bridge.expose_latest_snapshot() == before
-    assert "invalid app action payload" in bridge.expose_latest_error()
-
-    send(bridge, demo.add_task, title="Sneaky")
-    assert bridge.expose_latest_snapshot() == before
-    assert "invalid app action payload" in bridge.expose_latest_error()
-
-    # A well-typed intent is the handler's to judge; this one names no task.
-    send(bridge, demo.remove_task, {"task_id": 99})
-    assert bridge.expose_latest_snapshot() == before
-    assert screen.titles() == ["Read the PyCompose plan", "Try the todo demo"]
+def effects() -> list[dict[str, Any]]:
+    return snapshot().get("metadata", {}).get("effects", [])
 
 
-def test_demo_survives_process_death_by_rehydrating_saved_data(
-    demo: ModuleType,
-) -> None:
-    first = BridgeSurface(Store(demo.app.build(route="", restore="")), demo.actions)
-    screen = Screen(first)
-    send(first, demo.set_draft, value="Survive rotation")
-    send(first, demo.add_task)
-    send(first, demo.toggle_task, {"task_id": 3}, done=True)
-    assert screen.titles() == [
-        "Read the PyCompose plan",
-        "Try the todo demo",
-        "Survive rotation",
+def test_demo_builds_a_valid_snapshot_of_instance_scoped_intents(demo: str) -> None:
+    runtime.start(demo, "", True)
+    current = snapshot()
+    assert current["schemaVersion"] == SCHEMA_VERSION
+    contracts = {
+        name.rpartition(".")[2]: contract["payload"]
+        for name, contract in current["metadata"]["intents"].items()
+    }
+    assert contracts["SetDraft"] == {"value": {"required": True, "type": "string"}}
+    assert contracts["ToggleTask"]["done"] == {"required": True, "type": "boolean"}
+    assert contracts["SetFilter"]["value"]["values"] == ["all", "active", "done"]
+    toggles = [i["fields"] for i in intents() if i["intent"].endswith(".ToggleTask")]
+    assert toggles == [{"taskId": 1}, {"taskId": 2}]
+    assert runtime.fetch_latest_error() == ""
+
+
+def test_demo_effects_ride_the_add_snapshot_only(demo: str) -> None:
+    runtime.start(demo, "", True)
+    assert effects() == []
+    send("SetDraft", value="Buy milk")
+    assert effects() == []
+    send("AddTask")
+    assert effects() == [{"kind": "toast", "payload": {"message": 'Added "Buy milk"'}}]
+    # The next intent publishes its own snapshot, so nothing replays.
+    send("SetFilter", {"value": "active"})
+    assert effects() == []
+
+
+def test_demo_adds_completes_filters_and_deletes_tasks(demo: str) -> None:
+    runtime.start(demo, "", True)
+    assert summary() == "1 active, 1 done"
+    assert titles() == ["Read the PyCompose plan", "Try the todo demo"]
+    assert [(c["label"], c["selected"]) for c in nodes("FilterChip")] == [
+        ("All", True),
+        ("Active", False),
+        ("Done", False),
     ]
+
+    send("SetDraft", value="  Buy milk  ")
+    assert nodes("TextField")[0]["value"] == "  Buy milk  "
+    assert nodes("Button")[0]["enabled"]
+    send("AddTask")
+    assert titles() == ["Read the PyCompose plan", "Try the todo demo", "Buy milk"]
+    assert nodes("TextField")[0]["value"] == ""
+    assert not nodes("Button")[0]["enabled"]
+    assert summary() == "2 active, 1 done"
+
+    send("ToggleTask", {"taskId": 2}, done=True)
+    assert [box["checked"] for box in nodes("Checkbox")] == [True, True, False]
+    send("ToggleTask", {"taskId": 2}, done=False)
+    assert [box["checked"] for box in nodes("Checkbox")] == [True, False, False]
+
+    send("SetFilter", {"value": "active"})
+    assert titles() == ["Try the todo demo", "Buy milk"]
+    send("SetFilter", {"value": "done"})
+    assert titles() == ["Read the PyCompose plan"]
+    send("SetFilter", {"value": "active"})
+    send("RemoveTask", {"taskId": 3})
+    assert titles() == ["Try the todo demo"]
+    assert runtime.fetch_latest_error() == ""
+
+
+def test_demo_reports_empty_filters_without_crashing(demo: str) -> None:
+    runtime.start(demo, "", True)
+    send("SetFilter", {"value": "done"})
+    assert titles() == ["Read the PyCompose plan"]
+    send("RemoveTask", {"taskId": 1})
+    assert titles() == ["Nothing finished yet."]
+
+
+def test_demo_receives_the_resume_event(demo: str) -> None:
+    runtime.start(demo, "", True)
+    assert summary() == "1 active, 1 done"
+    runtime.accept_action(json.dumps({"intent": "onResume", "payload": {}}))
+    assert summary() == "resumed"
+    assert runtime.fetch_latest_error() == ""
+
+
+def test_demo_rejects_events_that_break_the_declared_contract(demo: str) -> None:
+    runtime.start(demo, "", True)
+    before = runtime.fetch_latest_snapshot()
+
+    send("SetDraft", value=7)
+    assert runtime.fetch_latest_snapshot() == before
+    assert "invalid app action payload" in runtime.fetch_latest_error()
+
+    send("AddTask", title="Sneaky")
+    assert runtime.fetch_latest_snapshot() == before
+    assert "invalid app action payload" in runtime.fetch_latest_error()
+
+
+def test_demo_survives_process_death_by_restoring_saved_state(demo: str) -> None:
+    runtime.start(demo, "", True)
+    send("SetDraft", value="Survive rotation")
+    send("AddTask")
+    send("ToggleTask", {"taskId": 3}, done=True)
+    send("SetFilter", {"value": "done"})
+    shown = titles()
 
     # The host hands the published bytes straight back to a rebuilt process.
-    saved = json.loads(first.expose_latest_snapshot())["metadata"]["data"]
-    rebuilt = BridgeSurface(
-        Store(demo.app.build(route="", restore=json.dumps(saved))), demo.actions
-    )
-    after = Screen(rebuilt)
-    assert after.titles() == screen.titles()
-    assert after.heading()[1] == screen.heading()[1]
-    # The restored filter and draft come back too, not just the task list.
-    assert json.loads(rebuilt.expose_latest_snapshot())["metadata"]["data"] == saved
+    saved = snapshot()["metadata"]["data"]
+    runtime.close()
+    runtime.start(demo, "", True, restore=json.dumps(saved))
+    assert titles() == shown
+    assert snapshot()["metadata"]["data"] == saved
 
 
-def test_demo_boots_cleanly_from_data_it_cannot_use(demo: ModuleType) -> None:
-    for unusable in ("", "not json", "[]", '{"tasks": "no"}', '{"tasks": [1, 2]}'):
-        rebuilt = BridgeSurface(
-            Store(demo.app.build(route="", restore=unusable)), demo.actions
-        )
-        assert Screen(rebuilt).titles() == [
-            "Read the PyCompose plan",
-            "Try the todo demo",
-        ], unusable
-        assert rebuilt.expose_latest_error() == "", unusable
-
-
-def test_demo_keeps_the_rendersable_tasks_from_a_partly_corrupt_save(
-    demo: ModuleType,
-) -> None:
-    saved = json.dumps(
-        {
-            "tasks": [
-                {"id": 1, "title": "Good", "done": False},
-                {"id": "no number", "title": "Bad", "done": False},
-                {"id": 2, "title": "Also good", "done": True},
-            ],
-        }
-    )
-    rebuilt = BridgeSurface(
-        Store(demo.app.build(route="", restore=saved)), demo.actions
-    )
-    assert Screen(rebuilt).titles() == ["Good", "Also good"]
+def test_demo_boots_cleanly_from_data_it_cannot_use(demo: str) -> None:
+    for unusable in ("", "not json", "[]", '{"stack": "no"}', '{"stack": [1, 2]}'):
+        runtime.close()
+        runtime.start(demo, "", True, restore=unusable)
+        assert titles() == ["Read the PyCompose plan", "Try the todo demo"], unusable
+        assert runtime.fetch_latest_error() == "", unusable

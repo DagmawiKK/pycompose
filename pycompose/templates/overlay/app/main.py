@@ -6,23 +6,31 @@ components it uses and nothing else.
 """
 
 from m3 import Text
-from pycompose.state import App, AppState
+from pycompose.app import App, Destination, ViewModel
+from pycompose.state import AppState
 
 
-class Session(AppState):
-    """The shell this app remembers across process death."""
+class Greeting(AppState):
+    """What the screen shows; saved across process death."""
 
 
-def view(session: Session) -> Text:
-    """Compose the screen for this shell.
+class GreetingViewModel(ViewModel[Greeting]):
+    """The screen's state and behaviour."""
+
+    def __init__(self) -> None:
+        super().__init__(Greeting())
+
+
+def screen(state: Greeting) -> Text:
+    """Draw the screen from its state.
 
     Args:
-        session: The app's shell, restored from the bytes the host saved.
+        state: The view model's state.
 
     Returns:
-        The greeting screen.
+        The greeting.
     """
     return Text(id="greeting", text="Hello PyCompose")
 
 
-app = App(state=Session, view=view)
+app = App(start=Destination(lambda _container, _route: GreetingViewModel(), screen))

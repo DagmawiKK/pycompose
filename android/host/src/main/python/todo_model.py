@@ -1,17 +1,14 @@
-"""Pure model layer of the todo sample app: declared shape and selectors.
+"""Pure model layer of the todo sample app: its data and the selectors over it.
 
-The state's declared shape (:data:`INITIAL`), its wire payload types and the
-pure selectors the composables and actions share. Actions mutate through
-these; nothing here can touch the host.
+Nothing here can touch the host; the view model changes the data through these
+and the screen reads it through them.
 """
 
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, Literal, cast
-
-from pycompose.state import State
-from pycompose.utils.json_canonical import thaw_json
+from dataclasses import dataclass
+from typing import Literal
 
 Filter = Literal["all", "active", "done"]
 
@@ -27,54 +24,53 @@ EMPTY_MESSAGES: Mapping[str, str] = {
     "done": "Nothing finished yet.",
 }
 
-INITIAL: Mapping[str, Any] = {
-    "tasks": [
-        {"id": 1, "title": "Read the PyCompose plan", "done": True},
-        {"id": 2, "title": "Try the todo demo", "done": False},
-    ],
-    "draft": "",
-    "filter": "all",
-    "summary": "1 active, 1 done",
-}
 
+@dataclass(frozen=True)
+class Task:
+    """One task.
 
-def model(state: State) -> dict[str, Any]:
-    """Return the app's task model as ordinary mutable JSON values.
-
-    Args:
-        state: Current snapshot whose frozen data describes the screen.
-
-    Returns:
-        A detached copy the next transition may edit before freezing it again.
+    Attributes:
+        id: Stable identity, never reused.
+        title: What to do.
+        done: Whether it is finished.
     """
-    return cast("dict[str, Any]", thaw_json(state.data or {}))
+
+    id: int
+    title: str
+    done: bool = False
 
 
-def visible_tasks(tasks: list[Any], selected: str) -> list[Any]:
+INITIAL: tuple[Task, ...] = (
+    Task(1, "Read the PyCompose plan", done=True),
+    Task(2, "Try the todo demo"),
+)
+
+
+def visible_tasks(tasks: tuple[Task, ...], selected: str) -> list[Task]:
     """Return the tasks the current filter admits, in their existing order.
 
     Args:
-        tasks: Every task in the model.
+        tasks: Every task.
         selected: Active filter name.
 
     Returns:
         Tasks matching the filter; all of them when the filter is ``all``.
     """
     if selected == "active":
-        return [task for task in tasks if not task["done"]]
+        return [task for task in tasks if not task.done]
     if selected == "done":
-        return [task for task in tasks if task["done"]]
+        return [task for task in tasks if task.done]
     return list(tasks)
 
 
-def summary_for(tasks: list[Any]) -> str:
+def summary_for(tasks: tuple[Task, ...]) -> str:
     """Return the plain completion count shown under the heading.
 
     Args:
-        tasks: Every task in the model.
+        tasks: Every task.
 
     Returns:
         Text naming how many tasks are active and how many are done.
     """
-    done = sum(1 for task in tasks if task["done"])
+    done = sum(1 for task in tasks if task.done)
     return f"{len(tasks) - done} active, {done} done"

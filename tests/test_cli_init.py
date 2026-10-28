@@ -172,11 +172,9 @@ def test_generated_python_entrypoint_emits_valid_ir(tmp_path: Path) -> None:
     config = tomllib.loads((project / "pycompose.toml").read_text())
     assert config["app"]["application_id"] == "com.example.app_demo_app"
     script = (
-        "import main\nfrom pycompose.ir import emit_ir, validate_ir, to_json\n"
-        "candidate = emit_ir(\n"
-        f"    main.app.build(route='', restore=''), '{SCHEMA_VERSION}'\n"
-        ")\n"
-        "assert validate_ir(candidate).snapshot is candidate\nprint(to_json(candidate))"
+        "from pycompose.bridge.session import compose_once\n"
+        "snapshot, error = compose_once('main:app')\n"
+        "assert snapshot, error\nprint(snapshot)"
     )
     result = subprocess.run(
         [sys.executable, "-c", script],
