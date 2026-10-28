@@ -1,7 +1,7 @@
 """Drive an app the way its Android host does, with no device (plan 31 §18.7).
 
 ``AppDriver`` starts the app through the same session the device runs, finds
-controls in the snapshot it publishes, and acts on them by the action bindings
+controls in the snapshot it publishes, and acts on them by the intents
 the snapshot itself carries, exactly as the renderer does. Navigation effects
 are echoed back as the host echoes them, so a test walks the app screen by
 screen::
@@ -180,9 +180,7 @@ class AppDriver:
         action = _action(node, prop)
         if action is None:
             raise AssertionError(f"{node['type']} {node['id']} has no {prop}")
-        self._session.accept_action(
-            json.dumps({"actionId": action, "payload": payload})
-        )
+        self._session.accept_action(envelope(action, payload))
         self._echo_navigation()
 
     def click(self, **selector: str) -> None:
@@ -239,7 +237,7 @@ class AppDriver:
             event: The event's name.
             **payload: Its fields.
         """
-        self._session.accept_action(json.dumps({"actionId": event, "payload": payload}))
+        self._session.accept_action(envelope(event, payload))
         self._echo_navigation()
 
     def render(self, out: Path, name: str = "screen") -> tuple[Path, Path]:
@@ -292,9 +290,26 @@ class AppDriver:
                 self.lifecycle("onRouteChanged", **effect.get("payload", {}))
 
 
-def _action(node: Node, prop: str) -> str | None:
+def _action(node: Node, prop: str) -> object:
     value = node.get("props", {}).get(prop)
-    return value if isinstance(value, str) else None
+    return value if isinstance(value, str | dict) else None
+
+
+def envelope(target: object, payload: dict[str, Any]) -> str:
+    """Return the envelope a tap on ``target`` sends, as the host builds it.
+
+    Args:
+        target: The intent a control carries, or a registry action's name.
+        payload: The event's own fields.
+
+    Returns:
+        The action envelope as JSON.
+    """
+    if isinstance(target, dict):
+        return json.dumps(
+            {"fields": target["fields"], "intent": target["intent"], "payload": payload}
+        )
+    return json.dumps({"intent": target, "payload": payload})
 
 
 def _shown(node: Node) -> set[str]:

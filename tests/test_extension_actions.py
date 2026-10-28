@@ -29,7 +29,7 @@ def failed(state: State, error: str) -> State:
 
 
 def envelope(action_id: str, payload: dict[str, str]) -> str:
-    return json.dumps({"actionId": action_id, "payload": payload})
+    return json.dumps({"intent": action_id, "payload": payload})
 
 
 def application(
@@ -151,9 +151,9 @@ def test_ambiguous_payload_cannot_consume_a_registered_completion() -> None:
     try:
         surface, pending, _ = application(resource, str.upper)
         completion = pending.get(timeout=3)
-        identity = json.loads(completion)["actionId"]
+        identity = json.loads(completion)["intent"]
         ambiguous = (
-            f'{{"actionId":"{identity}","payload":{{"value":"altered"}},'
+            f'{{"intent":"{identity}","payload":{{"value":"altered"}},'
             '"payload":{"value":"FIRST"}}'
         )
         surface.accept_action(ambiguous)

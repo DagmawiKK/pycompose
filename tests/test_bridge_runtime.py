@@ -29,7 +29,7 @@ actions.register("increment",
     try:
         session = RuntimeSession("device_app:app", "restored", debug=True)
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "restored"
-        session.accept_action('{"actionId":"increment","payload":{}}')
+        session.accept_action('{"intent":"increment","payload":{}}')
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "changed"
         module.write_text("""from pycompose.m3 import Text
 from pycompose.state import App, AppState
@@ -236,7 +236,7 @@ actions.register("increment", increment)
         helper.write_text('label = "failed candidate"\n')
         app.write_text('import device_helper\nraise RuntimeError("broken")\n')
         session.reload("home")
-        session.accept_action('{"actionId":"increment","payload":{}}')
+        session.accept_action('{"intent":"increment","payload":{}}')
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "original"
     finally:
         sys.modules.pop("rollback_app", None)
@@ -264,7 +264,7 @@ actions.register("increment",
         session = RuntimeSession("pull_app:app", "home", debug=True)
         first = json.loads(session.envelope("main", -1))
         assert first["kind"] == "full"
-        session.accept_action('{"actionId":"increment","payload":{}}')
+        session.accept_action('{"intent":"increment","payload":{}}')
         patch = json.loads(session.envelope("main", first["serial"]))
         assert (patch["kind"], patch["baseSerial"]) == ("patch", first["serial"])
 
@@ -320,7 +320,7 @@ app = App(view=view)
     try:
         runtime.start("replay_app:app", "home", True)
         for _ in range(3):
-            runtime.accept_action('{"actionId":"increment","payload":{}}')
+            runtime.accept_action('{"intent":"increment","payload":{}}')
         log = runtime.fetch_input_log()
         assert [json.loads(line)["call"] for line in log.splitlines()] == [
             "start",

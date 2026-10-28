@@ -29,19 +29,21 @@ def test_bound_app_action_round_trips_without_native_catalog_registration() -> N
     state = State(root=Button(id="rename", text="Rename", on_click=binding))
     snapshot = emit_ir(state, "1.2.0")
     assert validate_ir(snapshot).snapshot is snapshot
-    metadata = json.loads(to_json(snapshot))["metadata"]["actionBindings"]
-    assert metadata[str(binding)]["bound"] == {"taskId": 7}
-    assert metadata[str(binding)]["payload"]["value"]["type"] == "string"
+    wire = json.loads(to_json(snapshot))
+    assert wire["root"]["props"]["onClick"] == {
+        "fields": {"taskId": 7},
+        "intent": binding.spec.handler_id,
+    }
+    contract = wire["metadata"]["intents"][binding.spec.handler_id]
+    assert contract["payload"]["value"]["type"] == "string"
     store = Store(state)
     bridge = BridgeSurface(store, Actions(rename))
     bridge.accept_action(
-        json.dumps({"actionId": str(binding), "payload": {"value": "New"}})
+        json.dumps({**binding.spec.intent(), "payload": {"value": "New"}})
     )
     assert store.value.version == 7
     before = bridge.expose_latest_snapshot()
-    bridge.accept_action(
-        json.dumps({"actionId": str(binding), "payload": {"value": 3}})
-    )
+    bridge.accept_action(json.dumps({**binding.spec.intent(), "payload": {"value": 3}}))
     assert bridge.expose_latest_snapshot() == before
     assert store.value.version == 7
 
@@ -56,9 +58,7 @@ def test_bound_values_cannot_be_overridden_and_old_envelopes_reject_app_bindings
     store = Store(state)
     bridge = BridgeSurface(store, Actions(rename))
     bridge.accept_action(
-        json.dumps(
-            {"actionId": str(binding), "payload": {"value": "New", "taskId": 99}}
-        )
+        json.dumps({**binding.spec.intent(), "payload": {"value": "New", "taskId": 99}})
     )
     assert store.value is state
 
@@ -70,9 +70,9 @@ def test_literal_payloads_survive_the_round_trip_through_frozen_metadata() -> No
     )
     snapshot = emit_ir(state, "1.3.0")
     assert validate_ir(snapshot).snapshot is snapshot
-    payload = json.loads(to_json(snapshot))["metadata"]["actionBindings"][str(binding)][
-        "payload"
-    ]
+    payload = json.loads(to_json(snapshot))["metadata"]["intents"][
+        binding.spec.handler_id
+    ]["payload"]
     assert payload["value"] == {
         "required": True,
         "type": "enum",
@@ -80,11 +80,11 @@ def test_literal_payloads_survive_the_round_trip_through_frozen_metadata() -> No
     }
     store = Store(state)
     bridge = BridgeSurface(store, Actions(choose_filter))
-    bridge.accept_action(json.dumps({"actionId": str(binding), "payload": {}}))
+    bridge.accept_action(json.dumps({**binding.spec.intent(), "payload": {}}))
     assert store.value.version == len("done")
     before = bridge.expose_latest_snapshot()
     bridge.accept_action(
-        json.dumps({"actionId": str(binding), "payload": {"value": "archived"}})
+        json.dumps({**binding.spec.intent(), "payload": {"value": "archived"}})
     )
     assert bridge.expose_latest_snapshot() == before
     assert store.value.version == len("done")
@@ -118,29 +118,25 @@ def _serial(bridge: BridgeSurface) -> int:
 def test_a_tap_resolves_against_the_snapshot_the_user_saw() -> None:
     store = Store(State(root=_primary(10), version=10))
     bridge = BridgeSurface(store, Actions(pick, advance))
-    binding = str(pick.with_args(task_id=10))
+    intent = pick.with_args(task_id=10).spec.intent()
     seen = _serial(bridge)
-    bridge.accept_action(json.dumps({"actionId": advance.name, "payload": {}}))
+    bridge.accept_action(json.dumps({"intent": advance.name, "payload": {}}))
 
-    bridge.accept_action(
-        json.dumps({"actionId": binding, "payload": {}, "serial": seen})
-    )
+    bridge.accept_action(json.dumps({**intent, "payload": {}, "serial": seen}))
 
     assert store.value.version == 10
 
 
-def test_a_tap_from_a_snapshot_no_longer_held_is_refused() -> None:
+def test_a_tap_from_a_long_gone_snapshot_still_means_what_it_meant() -> None:
+    """The intent carries its own arguments, so no snapshot is needed to read it."""
     store = Store(State(root=_primary(10), version=10))
     bridge = BridgeSurface(store, Actions(pick, advance))
-    binding = str(pick.with_args(task_id=10))
+    intent = pick.with_args(task_id=10).spec.intent()
     seen = _serial(bridge)
     for _ in range(9):
-        bridge.accept_action(json.dumps({"actionId": advance.name, "payload": {}}))
-    version = store.value.version
+        bridge.accept_action(json.dumps({"intent": advance.name, "payload": {}}))
 
-    bridge.accept_action(
-        json.dumps({"actionId": binding, "payload": {}, "serial": seen})
-    )
+    bridge.accept_action(json.dumps({**intent, "payload": {}, "serial": seen}))
 
-    assert store.value.version == version
-    assert "stale action" in bridge.expose_latest_error()
+    assert store.value.version == 10
+    assert bridge.expose_latest_error() == ""

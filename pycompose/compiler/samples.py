@@ -142,17 +142,15 @@ class _Sample:
             node["children"] = children
         return node
 
-    def _binding(self, prop: str, spec: dict[str, Any]) -> str:
-        binding = f"app.preview.{prop}"
-        self.bindings[binding] = {
-            "bound": {},
-            "handlerId": f"preview.{prop}",
+    def _binding(self, prop: str, spec: dict[str, Any]) -> dict[str, Any]:
+        handler = f"preview.{prop}"
+        self.bindings[handler] = {
             "payload": {
                 field["name"]: {"required": True, "type": field["type"]}
                 for field in spec.get("payload", [])
             },
         }
-        return binding
+        return {"fields": {}, "intent": handler}
 
     def scoped(self, name: str) -> dict[str, Any]:
         """The component, inside the parent its scope or its owner requires."""
@@ -201,5 +199,5 @@ def sample(catalog: dict[str, Any], name: str) -> dict[str, Any]:
         "version": "0.1.0",
         "schemaVersion": SCHEMA_VERSION,
         "root": root,
-        "metadata": {"actionBindings": builder.bindings},
+        "metadata": {"intents": builder.bindings},
     }

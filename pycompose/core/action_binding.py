@@ -7,14 +7,10 @@ import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import TYPE_CHECKING, cast
 
 from pycompose.contract.registry_types import PropDef
 from pycompose.errors import IrValidationError
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
-
-if TYPE_CHECKING:
-    from pycompose.core.reuse import SubtreeMemo
 
 BINDING_PATTERN = r"app\.[A-Za-z0-9_.-]+"
 _BINDING = re.compile(BINDING_PATTERN)
@@ -86,16 +82,25 @@ class BindingSpec:
             key: rule for key, rule in self.payload.items() if key not in self.bound
         }
 
-    def to_wire(self) -> dict[str, object]:
-        """Describe this binding using only JSON-compatible values.
+    def intent(self) -> dict[str, object]:
+        """Return the intent a control carries: its handler and its bound fields.
+
+        A tap sends this object back unchanged, so what it means never depends
+        on which snapshot is current when it arrives.
 
         Returns:
-            A handler identity, payload schema and fixed payload values.
+            ``{"fields": ..., "intent": ...}`` in canonical key order.
+        """
+        return {"fields": thaw_json(self.bound), "intent": self.handler_id}
+
+    def contract(self) -> dict[str, object]:
+        """Return the handler's payload contract, stated once per handler.
+
+        Returns:
+            ``{"payload": ...}``: every field the handler declares.
         """
         return {
-            "handlerId": self.handler_id,
-            "payload": {key: value.to_mapping() for key, value in self.payload.items()},
-            "bound": thaw_json(self.bound),
+            "payload": {key: value.to_mapping() for key, value in self.payload.items()}
         }
 
 
@@ -116,71 +121,48 @@ class ActionBinding(str):
         raise AttributeError("action bindings are immutable")
 
 
-def read_bindings(
+def read_intents(
     metadata: Mapping[str, object] | None,
-    memo: SubtreeMemo[BindingSpec] | None = None,
-) -> dict[str, BindingSpec]:
-    """Parse data-only binding metadata with fail-closed field/type checks.
+) -> dict[str, Mapping[str, PropDef]]:
+    """Parse the snapshot's intent contracts with fail-closed field/type checks.
 
     Args:
-        metadata: Snapshot metadata containing optional actionBindings.
-        memo: Specs parsed last pass, reused for a contract that is the same
-            frozen object under the same id; None parses every contract.
+        metadata: Snapshot metadata containing an optional ``intents`` section.
 
     Returns:
-        Validated binding declarations by stable id.
+        Each handler's payload contract, by handler id.
 
     Raises:
-        IrValidationError: If declarations or fixed payloads are malformed.
+        IrValidationError: If a contract is malformed.
     """
-    raw = metadata.get("actionBindings", {}) if metadata is not None else {}
+    raw = metadata.get("intents", {}) if metadata is not None else {}
     if not isinstance(raw, Mapping):
-        raise IrValidationError("actionBindings must be an object")
-    result = {}
-    for key, frozen in raw.items():
-        spec = memo.get(frozen, key) if memo is not None else None
-        if spec is None:
-            spec = _read_binding(key, frozen)
-            if memo is not None:
-                memo.put(frozen, spec, key)
-        result[key] = spec
-    return result
+        raise IrValidationError("intents must be an object")
+    return {key: _read_contract(key, value) for key, value in raw.items()}
 
 
-def _read_binding(key: object, frozen: object) -> BindingSpec:
-    """Parse one binding declaration.
+def _read_contract(key: object, frozen: object) -> Mapping[str, PropDef]:
+    """Parse one handler's payload contract.
 
     Args:
-        key: The binding id.
+        key: The handler id.
         frozen: Its frozen contract.
 
     Returns:
-        The validated declaration.
+        Its field definitions.
 
     Raises:
-        IrValidationError: If the declaration or its fixed payload is malformed.
+        IrValidationError: If the contract is malformed.
     """
     # Snapshot metadata is frozen JSON, so arrays arrive as tuples; thaw to read
     # the declaration with the ordinary dict/list vocabulary.
     value = thaw_json(frozen)
-    if (
-        not isinstance(key, str)
-        or _BINDING.fullmatch(key) is None
-        or not isinstance(value, Mapping)
-    ):
-        raise IrValidationError("invalid app binding declaration")
-    if set(value) != {"handlerId", "payload", "bound"}:
-        raise IrValidationError("invalid app binding fields")
-    handler, fields, bound = value["handlerId"], value["payload"], value["bound"]
-    if (
-        not isinstance(handler, str)
-        or not handler
-        or not isinstance(fields, Mapping)
-        or not isinstance(bound, Mapping)
-    ):
-        raise IrValidationError("invalid app binding contract")
+    if not isinstance(key, str) or not key or not isinstance(value, Mapping):
+        raise IrValidationError("invalid intent contract")
+    if set(value) != {"payload"} or not isinstance(value["payload"], Mapping):
+        raise IrValidationError("invalid intent contract fields")
     rules = {}
-    for name, rule in fields.items():
+    for name, rule in value["payload"].items():
         if (
             not isinstance(name, str)
             or not isinstance(rule, Mapping)
@@ -191,4 +173,28 @@ def _read_binding(key: object, frozen: object) -> BindingSpec:
         if prop.type not in {"string", "integer", "number", "boolean", "enum"}:
             raise IrValidationError("unsupported app payload type")
         rules[name] = prop
-    return BindingSpec(handler, rules, cast("Mapping[str, FrozenJsonValue]", bound))
+    return MappingProxyType(rules)
+
+
+def valid_intent(value: object, intents: Mapping[str, Mapping[str, PropDef]]) -> bool:
+    """Report whether a wire intent names a stated handler with valid bound fields.
+
+    Args:
+        value: A candidate ``{"fields": ..., "intent": ...}`` object.
+        intents: The snapshot's contracts by handler id.
+
+    Returns:
+        True when the handler is stated and its fields fit its contract.
+    """
+    if not isinstance(value, Mapping) or set(value) != {"fields", "intent"}:
+        return False
+    handler, fields = value["intent"], value["fields"]
+    if not isinstance(handler, str) or handler not in intents:
+        return False
+    if not isinstance(fields, Mapping):
+        return False
+    try:
+        check_payload(fields, intents[handler], partial=True)
+    except IrValidationError:
+        return False
+    return True

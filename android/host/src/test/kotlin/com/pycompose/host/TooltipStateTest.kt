@@ -92,11 +92,12 @@ class TooltipStateTest {
     ): String {
         val desired = visible?.let { "\"visible\":$it," } ?: ""
         return """
-            {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
-              "app.demo.visibility":{"handlerId":"demo.visibility","payload":{
-                "visible":{"required":true,"type":"boolean"}},"bound":{}}}},
+            {"version":"0.1.0","schemaVersion":"1.23.0",
+              "metadata":{"intents":{"demo.visibility":{"payload":{
+                "visible":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"TooltipBox","props":{
-               $desired"isPersistent":$persistent,"onVisibilityChange":"app.demo.visibility"},"children":[
+               $desired"isPersistent":$persistent,"onVisibilityChange":{"fields":{},
+                 "intent":"demo.visibility"}},"children":[
                {"id":"anchor","type":"Text","props":{"text":"$anchor"}},
                {"id":"tooltip","type":"PlainTooltip","props":{},"slot":"tooltip","children":[
                  {"id":"body","type":"Text","props":{"text":"Hint"}}]}]}}

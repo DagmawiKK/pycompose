@@ -1,40 +1,6 @@
 {
  "extra": 1,
  "metadata": {
-  "actionBindings": {
-   "app.__main__.edit": {
-    "bound": {},
-    "handlerId": "__main__.edit",
-    "payload": {
-     "value": {
-      "required": true,
-      "type": "string"
-     }
-    }
-   },
-   "app.__main__.flip": {
-    "bound": {},
-    "handlerId": "__main__.flip",
-    "payload": {
-     "value": {
-      "required": true,
-      "type": "boolean"
-     }
-    }
-   },
-   "app.__main__.flip.8c5aaab6e1ef": {
-    "bound": {
-     "value": true
-    },
-    "handlerId": "__main__.flip",
-    "payload": {
-     "value": {
-      "required": true,
-      "type": "boolean"
-     }
-    }
-   }
-  },
   "data": {
    "count": 2,
    "draft": "draft"
@@ -46,7 +12,25 @@
      "message": "saved"
     }
    }
-  ]
+  ],
+  "intents": {
+   "__main__.edit": {
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "string"
+     }
+    }
+   },
+   "__main__.flip": {
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   }
+  }
  },
  "root": {
   "children": [
@@ -63,7 +47,10 @@
       "id": "root.base:64:284.base:68:176",
       "props": {
        "label": "Name",
-       "onValueChange": "app.__main__.edit",
+       "onValueChange": {
+        "fields": {},
+        "intent": "__main__.edit"
+       },
        "selection": 2,
        "value": "draft"
       },
@@ -73,14 +60,22 @@
       "id": "root.base:64:284.base:71:208",
       "props": {
        "checked": true,
-       "onCheckedChange": "app.__main__.flip"
+       "onCheckedChange": {
+        "fields": {},
+        "intent": "__main__.flip"
+       }
       },
       "type": "Switch"
      },
      {
       "id": "root.base:64:284.base:72:272",
       "props": {
-       "onClick": "app.__main__.flip.8c5aaab6e1ef",
+       "onClick": {
+        "fields": {
+         "value": true
+        },
+        "intent": "__main__.flip"
+       },
        "text": "Go"
       },
       "type": "Button"

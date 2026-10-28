@@ -37,7 +37,7 @@ def test_action_handler_publishes_the_next_canonical_snapshot() -> None:
     bridge = BridgeSurface(store, actions)
     initial = bridge.expose_latest_snapshot()
     assert json.loads(initial)["root"]["props"]["text"] == "0"
-    assert bridge.accept_action('{"actionId":"increment","payload":{"by":2}}') is None
+    assert bridge.accept_action('{"intent":"increment","payload":{"by":2}}') is None
     assert bridge.expose_latest_snapshot() == (
         '{"root":{"id":"root","props":{"text":"2"},"type":"Text"},'
         '"schemaVersion":"' + SCHEMA_VERSION + '","version":"0.1.0"}'
@@ -64,9 +64,9 @@ def test_fifo_actions_apply_payload_defaults_and_preserve_order() -> None:
     actions.register("increment", append)
     bridge = BridgeSurface(store, actions)
     for message in (
-        '{"actionId":"increment","payload":{"by":3}}',
-        '{"actionId":"increment"}',
-        '{"actionId":"increment","payload":{"by":2}}',
+        '{"intent":"increment","payload":{"by":3}}',
+        '{"intent":"increment"}',
+        '{"intent":"increment","payload":{"by":2}}',
     ):
         bridge.accept_action(message)
     assert calls == [3, 1, 2]
@@ -83,16 +83,16 @@ def test_fifo_actions_apply_payload_defaults_and_preserve_order() -> None:
         "[]",
         "null",
         "{}",
-        '{"actionId":"missing"}',
-        '{"actionId":"increment","payload":null}',
-        '{"actionId":"increment","payload":{"by":true}}',
-        '{"actionId":"increment","payload":{"by":1.5}}',
-        '{"actionId":"increment","payload":{"by":NaN}}',
-        '{"actionId":"increment","payload":{"extra":1}}',
-        '{"actionId":"submit","payload":{}}',
-        '{"actionId":"increment","extra":1}',
-        '{"actionId":"increment","actionId":"submit","payload":{"email":"a"}}',
-        '{"actionId":"increment","payload":{"by":2,"by":3}}',
+        '{"intent":"missing"}',
+        '{"intent":"increment","payload":null}',
+        '{"intent":"increment","payload":{"by":true}}',
+        '{"intent":"increment","payload":{"by":1.5}}',
+        '{"intent":"increment","payload":{"by":NaN}}',
+        '{"intent":"increment","payload":{"extra":1}}',
+        '{"intent":"submit","payload":{}}',
+        '{"intent":"increment","extra":1}',
+        '{"intent":"increment","intent":"submit","payload":{"email":"a"}}',
+        '{"intent":"increment","payload":{"by":2,"by":3}}',
     ],
 )
 @pytest.mark.parametrize("debug", [True, False])
@@ -129,7 +129,7 @@ def test_no_op_preserves_snapshot_identity_and_store() -> None:
     actions.register("increment", lambda state, _payload: replace(state))
     bridge = BridgeSurface(store, actions)
     before = bridge.expose_latest_snapshot()
-    bridge.accept_action('{"actionId":"increment"}')
+    bridge.accept_action('{"intent":"increment"}')
     assert store.value is original
     assert bridge.expose_latest_snapshot() is before
 
@@ -147,7 +147,7 @@ def test_actions_from_another_thread_are_not_dispatched(
 
     actions.register("increment", handler)
     bridge = BridgeSurface(store, actions)
-    thread = Thread(target=bridge.accept_action, args=('{"actionId":"increment"}',))
+    thread = Thread(target=bridge.accept_action, args=('{"intent":"increment"}',))
     thread.start()
     thread.join()
     assert calls == []
@@ -169,8 +169,8 @@ def test_registry_generated_payload_contracts_work_through_the_bridge() -> None:
     bridge = BridgeSurface(
         Store(State(root=Node(id="text", type="Text", props={"text": "hi"}))), actions
     )
-    bridge.accept_action(json.dumps({"actionId": "increment", "payload": increment}))
-    bridge.accept_action(json.dumps({"actionId": "submit", "payload": submit}))
+    bridge.accept_action(json.dumps({"intent": "increment", "payload": increment}))
+    bridge.accept_action(json.dumps({"intent": "submit", "payload": submit}))
     assert seen == [{"by": 1}, {"email": "ada@example.com"}]
 
 
@@ -188,7 +188,7 @@ def test_handler_failure_preserves_state_and_allows_the_next_action(
     actions.register("increment", fail)
     bridge = BridgeSurface(store, actions, debug=debug)
     before = bridge.expose_latest_snapshot()
-    bridge.accept_action('{"actionId":"increment"}')
+    bridge.accept_action('{"intent":"increment"}')
     assert store.value is original
     assert bridge.expose_latest_snapshot() is before
     assert "handler failed" in caplog.text
@@ -198,7 +198,7 @@ def test_handler_failure_preserves_state_and_allows_the_next_action(
             state, root=Node(id="value", type="Text", props={"text": "next"})
         ),
     )
-    bridge.accept_action('{"actionId":"increment"}')
+    bridge.accept_action('{"intent":"increment"}')
     assert (
         json.loads(bridge.expose_latest_snapshot())["root"]["props"]["text"] == "next"
     )
@@ -215,7 +215,7 @@ def test_invalid_next_snapshot_never_commits_partial_state(debug: bool) -> None:
     )
     bridge = BridgeSurface(store, actions, debug=debug)
     before = bridge.expose_latest_snapshot()
-    bridge.accept_action('{"actionId":"increment"}')
+    bridge.accept_action('{"intent":"increment"}')
     assert store.value is original
     assert bridge.expose_latest_snapshot() is before
 
@@ -229,14 +229,14 @@ def test_reentrant_action_is_rejected_without_disturbing_the_outer_transition(
 
     def handler(state: State, _payload: object) -> State:
         calls.append("outer")
-        bridge.accept_action('{"actionId":"increment"}')
+        bridge.accept_action('{"intent":"increment"}')
         return replace(
             state, root=Node(id="value", type="Text", props={"text": "done"})
         )
 
     actions.register("increment", handler)
     bridge = BridgeSurface(store, actions)
-    bridge.accept_action('{"actionId":"increment"}')
+    bridge.accept_action('{"intent":"increment"}')
     assert calls == ["outer"]
     assert "reentrant" in caplog.text
     assert (
@@ -258,7 +258,7 @@ def test_handler_payload_is_immutable() -> None:
     bridge = BridgeSurface(
         Store(State(root=Node(id="value", type="Text", props={"text": "hi"}))), actions
     )
-    bridge.accept_action('{"actionId":"increment"}')
+    bridge.accept_action('{"intent":"increment"}')
     assert seen == [{"by": 1}]
 
 
@@ -275,7 +275,7 @@ def test_deep_snapshot_transition_is_not_limited_by_state_equality() -> None:
         "increment", lambda state, _payload: replace(state, root=nested("next"))
     )
     bridge = BridgeSurface(store, actions)
-    bridge.accept_action('{"actionId":"increment"}')
+    bridge.accept_action('{"intent":"increment"}')
     assert '"text":"next"' in bridge.expose_latest_snapshot()
 
 
@@ -347,7 +347,7 @@ def test_a_pull_from_a_known_base_is_a_patch_that_rebuilds_the_latest() -> None:
     first = json.loads(bridge.expose_envelope(-1))
     assert first["kind"] == "full"
 
-    bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":2}}')
     patch = json.loads(bridge.expose_envelope(first["serial"]))
 
     assert (patch["kind"], patch["baseSerial"]) == ("patch", first["serial"])
@@ -361,7 +361,7 @@ def test_a_release_session_names_nodes_compactly_and_its_patches_apply() -> None
     bridge = _counter_bridge(debug=False)
     first = json.loads(bridge.expose_envelope(-1))
 
-    bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":2}}')
     patch = json.loads(bridge.expose_envelope(first["serial"]))
 
     assert [len(child["id"]) for child in first["root"]["children"]] == [1, 1]
@@ -383,20 +383,20 @@ def test_an_unknown_base_or_another_session_gets_the_whole_snapshot() -> None:
 def test_a_report_is_echoed_with_its_sequence_number() -> None:
     bridge = _counter_bridge()
 
-    bridge.accept_action('{"actionId":"increment","payload":{"by":2},"seq":3}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":2},"seq":3}')
 
     latest = json.loads(bridge.expose_latest_snapshot() or "")
-    assert latest["metadata"]["echoes"] == {"increment": 3}
+    assert latest["metadata"]["echoes"] == [{"seq": 3, "target": "increment"}]
 
 
 def test_a_report_that_changes_nothing_is_still_echoed() -> None:
     bridge = _counter_bridge()
-    bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":2}}')
 
-    bridge.accept_action('{"actionId":"increment","payload":{"by":2},"seq":4}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":2},"seq":4}')
 
     latest = json.loads(bridge.expose_latest_snapshot() or "")
-    assert latest["metadata"]["echoes"] == {"increment": 4}
+    assert latest["metadata"]["echoes"] == [{"seq": 4, "target": "increment"}]
 
 
 def test_a_report_whose_handler_fails_is_still_echoed() -> None:
@@ -410,10 +410,10 @@ def test_a_report_whose_handler_fails_is_still_echoed() -> None:
         Store(State(root=Node(id="screen", type="Column", props=Props({})))), actions
     )
 
-    bridge.accept_action('{"actionId":"increment","payload":{"by":1},"seq":1}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":1},"seq":1}')
 
     latest = json.loads(bridge.expose_latest_snapshot() or "")
-    assert latest["metadata"]["echoes"] == {"increment": 1}
+    assert latest["metadata"]["echoes"] == [{"seq": 1, "target": "increment"}]
     assert "refused" in bridge.expose_latest_error()
 
 
@@ -421,7 +421,7 @@ def test_a_report_whose_handler_fails_is_still_echoed() -> None:
 def test_a_malformed_sequence_number_is_refused(seq: str) -> None:
     bridge = _counter_bridge()
 
-    bridge.accept_action(f'{{"actionId":"increment","payload":{{"by":2}},"seq":{seq}}}')
+    bridge.accept_action(f'{{"intent":"increment","payload":{{"by":2}},"seq":{seq}}}')
 
     assert "seq" in bridge.expose_latest_error()
 
@@ -429,7 +429,7 @@ def test_a_malformed_sequence_number_is_refused(seq: str) -> None:
 def test_every_envelope_names_its_surface() -> None:
     bridge = _counter_bridge()
     first = json.loads(bridge.expose_envelope(-1))
-    bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":2}}')
     patch = json.loads(bridge.expose_envelope(first["serial"]))
 
     assert (first["surface"], patch["surface"]) == ("main", "main")
@@ -439,9 +439,7 @@ def test_a_pull_or_an_action_for_another_surface_is_refused() -> None:
     bridge = _counter_bridge()
 
     assert bridge.expose_envelope(-1, "dialog") == ""
-    bridge.accept_action(
-        '{"actionId":"increment","payload":{"by":2},"surface":"dialog"}'
-    )
+    bridge.accept_action('{"intent":"increment","payload":{"by":2},"surface":"dialog"}')
 
     assert "unknown surface" in bridge.expose_latest_error()
 
@@ -454,7 +452,7 @@ def test_a_pass_over_budget_is_reported_in_debug(
     monkeypatch.setattr(api, "PASS_BUDGET", 0.0)
     bridge = _counter_bridge()
 
-    bridge.accept_action('{"actionId":"increment","payload":{"by":2}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":2}}')
 
     assert "over the 0 ms budget" in caplog.text
 
@@ -471,7 +469,7 @@ def test_the_last_pass_reports_its_time_by_phase() -> None:
 
     actions.register("increment", increment)
     bridge = BridgeSurface(store, actions)
-    bridge.accept_action('{"actionId":"increment","payload":{"by":1}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":1}}')
     phases = json.loads(bridge.expose_last_pass())
     # What the host's pass log splits its Python stage into.
     assert set(phases) == {"handler", "view", "validate", "serialize"}

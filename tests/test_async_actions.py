@@ -58,7 +58,7 @@ def delivered() -> Iterator[queue.Queue[str]]:
     pending: queue.Queue[str] = queue.Queue()
     async_task.install_sink(
         lambda aid, payload: pending.put(
-            json.dumps({"actionId": aid, "payload": json.loads(payload)})
+            json.dumps({"intent": aid, "payload": json.loads(payload)})
         )
     )
     yield pending
@@ -79,9 +79,9 @@ def test_an_async_action_comes_back_as_the_fields_it_changed(
     delivered: queue.Queue[str],
 ) -> None:
     surface = bridge()
-    surface.accept_action(json.dumps({"actionId": load.name, "payload": {"page": 2}}))
+    surface.accept_action(json.dumps({"intent": load.name, "payload": {"page": 2}}))
     assert text(surface) == "idle/0"
-    surface.accept_action(json.dumps({"actionId": bump.name, "payload": {}}))
+    surface.accept_action(json.dumps({"intent": bump.name, "payload": {}}))
 
     surface.accept_action(delivered.get(timeout=3))
 
@@ -91,7 +91,7 @@ def test_an_async_action_comes_back_as_the_fields_it_changed(
 
 def test_an_async_generator_streams_each_state(delivered: queue.Queue[str]) -> None:
     surface = bridge()
-    surface.accept_action(json.dumps({"actionId": stream.name, "payload": {}}))
+    surface.accept_action(json.dumps({"intent": stream.name, "payload": {}}))
 
     surface.accept_action(delivered.get(timeout=3))
     assert text(surface) == "loading/0"
@@ -113,7 +113,7 @@ def test_a_newer_run_cancels_the_one_it_supersedes(
     surface = bridge()
     for query in ("slow", "fast"):
         surface.accept_action(
-            json.dumps({"actionId": search.name, "payload": {"query": query}})
+            json.dumps({"intent": search.name, "payload": {"query": query}})
         )
 
     surface.accept_action(delivered.get(timeout=3))

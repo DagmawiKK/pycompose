@@ -39,7 +39,7 @@ class ScrollStateTest {
 
         compose.waitUntil(5000) { actions.isNotEmpty() }
 
-        assertEquals("app.demo.scroll.1", actions[0].actionId)
+        assertEquals(intent("demo.scroll"), actions[0].actionId)
         assertEquals(JsonPrimitive(300), actions[0].payload["offset"])
 
         compose.runOnIdle { ir.value = parse(column(offset = "600.0", scrollable = true)) }
@@ -82,7 +82,7 @@ class ScrollStateTest {
         compose.waitForIdle()
 
         assertEquals(actions.toString(), 1, actions.size)
-        assertEquals("app.demo.scroll.1", actions.single().actionId)
+        assertEquals(intent("demo.scroll"), actions.single().actionId)
         assertTrue(actions.single().payload["offset"] != JsonPrimitive(0))
     }
 
@@ -133,11 +133,11 @@ class ScrollStateTest {
                 """{"id":"root.t$index","type":"Text","props":{"text":"Row $index"}}"""
             }
         return """
-            {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
-              "app.demo.scroll.1":{"handlerId":"demo.scroll","payload":{
-                "offset":{"required":true,"type":"number"}},"bound":{}}}},
+            {"version":"0.1.0","schemaVersion":"1.23.0",
+              "metadata":{"intents":{"demo.scroll":{"payload":{
+                "offset":{"required":true,"type":"number"}}}}},
              "root":{"id":"root","type":"Column","props":{
-               "onScrollIdle":"app.demo.scroll.1"$stated$gate},
+               "onScrollIdle":{"fields":{},"intent":"demo.scroll"}$stated$gate},
                "children":[$rows]}}
             """.trimIndent()
     }

@@ -124,7 +124,7 @@ class Ticket:
                     return
                 self.payload = source
                 self.envelope = canonical_json(
-                    {"actionId": target.name, "payload": payload}
+                    {"intent": target.name, "payload": payload}
                 )
             async_task.post(self.id, source)
         except Exception as exc:
@@ -196,7 +196,7 @@ class Dispatcher:
             return source  # Normal decoder owns malformed ordinary input.
         if not isinstance(raw, dict):
             return source
-        identity = raw.get("actionId")
+        identity = raw.get("intent")
         if not isinstance(identity, str) or not identity.startswith(_PREFIX):
             return source
         with self.lock:
@@ -205,7 +205,7 @@ class Dispatcher:
             return None
         try:
             valid = (
-                set(raw) == {"actionId", "payload"}
+                set(raw) == {"intent", "payload"}
                 and ticket.payload is not None
                 and canonical_json(raw["payload"]) == ticket.payload
             )

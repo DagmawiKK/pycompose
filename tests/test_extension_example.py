@@ -64,7 +64,7 @@ def test_http_page_is_cached_and_restored_offline_through_the_runtime(
     def listen() -> None:
         runtime.install_async_sink(
             lambda aid, data: pending.put(
-                json.dumps({"actionId": aid, "payload": json.loads(data)})
+                json.dumps({"intent": aid, "payload": json.loads(data)})
             )
         )
 
@@ -92,7 +92,7 @@ def test_http_page_is_cached_and_restored_offline_through_the_runtime(
             runtime.accept_action(
                 json.dumps(
                     {
-                        "actionId": "extension_example.choose_endpoint",
+                        "intent": "extension_example.choose_endpoint",
                         "payload": {"endpoint": endpoint},
                     }
                 )
@@ -100,9 +100,7 @@ def test_http_page_is_cached_and_restored_offline_through_the_runtime(
 
         for endpoint in endpoints:
             choose(endpoint)
-            runtime.accept_action(
-                '{"actionId":"extension_example.refresh","payload":{}}'
-            )
+            runtime.accept_action('{"intent":"extension_example.refresh","payload":{}}')
             runtime.accept_action(pending.get(timeout=3))  # HTTP -> received
             runtime.accept_action(pending.get(timeout=3))  # SQLite -> cached
             assert endpoint + " café" in runtime.fetch_latest_snapshot()
@@ -124,7 +122,7 @@ def test_http_page_is_cached_and_restored_offline_through_the_runtime(
         for endpoint in endpoints:
             choose(endpoint)
             runtime.accept_action(
-                '{"actionId":"extension_example.load_cache","payload":{}}'
+                '{"intent":"extension_example.load_cache","payload":{}}'
             )
             runtime.accept_action(pending.get(timeout=3))
             assert endpoint + " café" in runtime.fetch_latest_snapshot()

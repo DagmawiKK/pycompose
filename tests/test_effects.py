@@ -46,17 +46,16 @@ def toggle(state: State, task_id: int) -> State:  # noqa: ARG001
     return state
 
 
-def test_effects_and_binding_contracts_share_one_metadata_object() -> None:
+def test_effects_and_intent_contracts_share_one_metadata_object() -> None:
     binding = toggle.with_args(task_id=1)
     state = State(
         root=Button(id="done", text="Done", on_click=binding),
         effects=(Effect("toast", {"message": "saved"}),),
     )
     snapshot = json.loads(to_json(emit_ir(state, "1.4.0")))
-    assert set(snapshot["metadata"]) == {"actionBindings", "effects"}
-    assert snapshot["metadata"]["actionBindings"][str(binding)]["bound"] == {
-        "taskId": 1
-    }
+    assert set(snapshot["metadata"]) == {"intents", "effects"}
+    assert binding.spec.handler_id in snapshot["metadata"]["intents"]
+    assert snapshot["root"]["props"]["onClick"]["fields"] == {"taskId": 1}
     assert snapshot["metadata"]["effects"][0]["kind"] == "toast"
 
 

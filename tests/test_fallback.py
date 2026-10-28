@@ -7,7 +7,7 @@ import logging
 
 import pytest
 
-from pycompose.bridge.handshake import offered_components
+from pycompose.bridge.handshake import PROTOCOL, offered_components
 from pycompose.components import Column, Fallback, Text
 from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.errors import BridgeError, IrValidationError
@@ -67,7 +67,7 @@ def test_a_lacked_component_with_no_fallback_is_refused_before_sending() -> None
 
 
 def test_the_handshake_lists_what_the_host_renders() -> None:
-    offer = {"protocol": 1, "capabilities": []}
+    offer = {"protocol": PROTOCOL, "capabilities": []}
     assert offered_components(json.dumps(offer)) is None
     listed = json.dumps({**offer, "components": ["Text", "Column"]})
     assert offered_components(listed) == {"Text", "Column"}
@@ -101,6 +101,6 @@ def test_the_runtime_keeps_the_hosts_list_for_the_sessions_it_starts(
     from pycompose.bridge import runtime, session
 
     monkeypatch.setattr(session, "_host_components", None)
-    offer = {"protocol": 1, "capabilities": [], "components": ["Text"]}
+    offer = {"protocol": PROTOCOL, "capabilities": [], "components": ["Text"]}
     runtime.handshake(json.dumps(offer))
     assert session._host_components == {"Text"}

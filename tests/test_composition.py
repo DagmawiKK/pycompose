@@ -168,7 +168,7 @@ def test_invalid_output_does_not_replace_the_last_good_bridge_snapshot() -> None
     )
     bridge = BridgeSurface(store, actions)
     snapshot = bridge.expose_latest_snapshot()
-    bridge.accept_action('{"actionId":"increment","payload":{"by":1}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":1}}')
     assert bridge.expose_latest_snapshot() == snapshot
     assert store.value is initial
 

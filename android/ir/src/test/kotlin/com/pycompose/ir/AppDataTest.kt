@@ -83,10 +83,9 @@ class AppDataTest {
                 .parse(
                     """{"version":"0.1.0","schemaVersion":"1.4.0",
                 "root":{"id":"root","type":"Button",
-                    "props":{"text":"Add","onClick":"app.main.add_task"}},
+                    "props":{"text":"Add","onClick":{"fields":{},"intent":"main.add_task"}}},
                 "metadata":{"effects":[{"kind":"finish","payload":{}}],
-                    "actionBindings":{"app.main.add_task":
-                        {"handlerId":"main.add_task","payload":{},"bound":{}}},
+                    "intents":{"main.add_task":{"payload":{}}},
                     "data":{"draft":"hi"}}}""",
                 ).getOrThrow()
         assertEquals(

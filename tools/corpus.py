@@ -170,7 +170,9 @@ MUTATIONS: dict[str, Mutation] = {
     "unknown_prop": _set("Text", "fooBar", "x"),
     "checked_string": _set("Switch", "checked", "true"),
     "required_dropped": _drop("Button", "onClick"),
-    "binding_undeclared": _set("Button", "onClick", "app.nowhere.handler"),
+    "binding_undeclared": _set(
+        "Button", "onClick", {"fields": {}, "intent": "app.nowhere.handler"}
+    ),
     "props_array": _set("Switch", "props", []),
     "unknown_type": _unknown_type,
     "unknown_slot": _unknown_slot,
@@ -187,9 +189,9 @@ MUTATIONS: dict[str, Mutation] = {
     "data_array": _metadata("data", [1]),
     "effects_object": _metadata("effects", {"kind": "toast"}),
     "effect_kind_unknown": _metadata("effects", [{"kind": "explode", "payload": {}}]),
-    "bindings_array": _metadata("actionBindings", []),
-    "echo_negative": _metadata("echoes", {"increment": -1}),
-    "echo_string": _metadata("echoes", {"increment": "1"}),
+    "intents_array": _metadata("intents", []),
+    "echo_negative": _metadata("echoes", [{"seq": -1, "target": "increment"}]),
+    "echo_string": _metadata("echoes", [{"seq": "1", "target": "increment"}]),
     "expression_literal": _set("Text", "color", _expression({"number": 0.5})),
     "expression_unknown_op": _set(
         "Text", "color", {"type": "expression", "node": {"op": "pow", "args": []}}

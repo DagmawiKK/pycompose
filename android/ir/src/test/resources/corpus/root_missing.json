@@ -1,39 +1,5 @@
 {
  "metadata": {
-  "actionBindings": {
-   "app.__main__.edit": {
-    "bound": {},
-    "handlerId": "__main__.edit",
-    "payload": {
-     "value": {
-      "required": true,
-      "type": "string"
-     }
-    }
-   },
-   "app.__main__.flip": {
-    "bound": {},
-    "handlerId": "__main__.flip",
-    "payload": {
-     "value": {
-      "required": true,
-      "type": "boolean"
-     }
-    }
-   },
-   "app.__main__.flip.8c5aaab6e1ef": {
-    "bound": {
-     "value": true
-    },
-    "handlerId": "__main__.flip",
-    "payload": {
-     "value": {
-      "required": true,
-      "type": "boolean"
-     }
-    }
-   }
-  },
   "data": {
    "count": 2,
    "draft": "draft"
@@ -45,7 +11,25 @@
      "message": "saved"
     }
    }
-  ]
+  ],
+  "intents": {
+   "__main__.edit": {
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "string"
+     }
+    }
+   },
+   "__main__.flip": {
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   }
+  }
  },
  "schemaVersion": "1.23.0",
  "version": "0.1.0"

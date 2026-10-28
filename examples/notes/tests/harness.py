@@ -1,6 +1,6 @@
 """Drive the Notes app the way the Android host does, without a device.
 
-Every action id is read out of the snapshot's own bindings rather than guessed,
+Every intent is read out of the snapshot's own controls rather than guessed,
 which is exactly what the renderer does.
 """
 
@@ -104,10 +104,8 @@ class Host:
                 one handler; None for the only control bound to it.
             **event: Event fields the handler declares as unfilled.
         """
-        action_id = self._id_for(handler, bound)
-        self._bridge.accept_action(
-            json.dumps({"actionId": action_id, "payload": event})
-        )
+        intent = self._intent_for(handler, bound)
+        self._bridge.accept_action(json.dumps({**intent, "payload": event}))
         self._follow_navigation()
 
     def lifecycle(self, event: str, **payload: Any) -> None:
@@ -117,7 +115,7 @@ class Host:
             event: The lifecycle event name.
             **payload: Fields the event declares.
         """
-        self._bridge.accept_action(json.dumps({"actionId": event, "payload": payload}))
+        self._bridge.accept_action(json.dumps({"intent": event, "payload": payload}))
         self._follow_navigation()
 
     def _follow_navigation(self) -> None:
@@ -144,8 +142,10 @@ class Host:
         """
         self.lifecycle("onRouteChanged", route=destination)
 
-    def _id_for(self, handler: str, bound: Mapping[str, Any] | None) -> str:
-        """Return the binding a control was given in the current snapshot.
+    def _intent_for(
+        self, handler: str, bound: Mapping[str, Any] | None
+    ) -> dict[str, Any]:
+        """Return the intent a control carries in the current snapshot.
 
         A control is named by its handler, and by the values it binds when
         several controls bind one handler.
@@ -155,28 +155,39 @@ class Host:
             bound: The values the control binds, or None for the only one.
 
         Returns:
-            The binding id.
+            The intent object, exactly as the control carries it.
 
         Raises:
-            AssertionError: Unless exactly one live binding matches.
+            AssertionError: Unless exactly one distinct live intent matches.
         """
-        bindings = (self.snapshot().get("metadata") or {}).get("actionBindings", {})
         wanted = (
             None
             if bound is None
             else {to_camel_case(key): value for key, value in bound.items()}
         )
-        matches = [
-            binding_id
-            for binding_id, contract in bindings.items()
-            if contract["handlerId"].rpartition(".")[2] == handler
-            and (wanted is None or contract["bound"] == wanted)
-        ]
-        if len(matches) != 1:
-            raise AssertionError(
-                f"{len(matches)} live bindings for {handler} {bound}: {list(bindings)}"
-            )
-        return cast("str", matches[0])
+        found: list[dict[str, Any]] = []
+
+        def visit(value: Any) -> None:
+            if isinstance(value, dict):
+                if set(value) == {"fields", "intent"}:
+                    named = value["intent"].rpartition(".")[2] == handler
+                    if (
+                        named
+                        and wanted in (None, value["fields"])
+                        and value not in found
+                    ):
+                        found.append(value)
+                    return
+                for item in value.values():
+                    visit(item)
+            elif isinstance(value, list):
+                for item in value:
+                    visit(item)
+
+        visit(self.snapshot()["root"])
+        if len(found) != 1:
+            raise AssertionError(f"{len(found)} live intents for {handler} {bound}")
+        return found[0]
 
 
 def titles(snapshot: dict[str, Any]) -> list[str]:

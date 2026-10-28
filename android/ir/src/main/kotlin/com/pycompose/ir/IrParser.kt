@@ -33,6 +33,7 @@ class IrParser(
 
     private val validated = ValidationCache()
     private val audited = IdentityMemo<Unit>()
+    private val lowered = IdentityMemo<IntentLowering.Lowered>()
     private val decoder = NodeDecoder(json)
 
     /** Decode one full snapshot and reject unsupported versions before rendering. */
@@ -54,7 +55,11 @@ class IrParser(
      * descendants were never checked.
      */
     internal fun accept(raw: JsonObject): ValidatedIr =
-        runCatching { validated(raw) }.onFailure { forget() }.getOrThrow()
+        runCatching {
+            validated(
+                IntentLowering.lower(raw, lowered),
+            )
+        }.onFailure { forget() }.getOrThrow()
 
     private fun validated(raw: JsonObject): ValidatedIr {
         VersionGate.check(
@@ -78,6 +83,7 @@ class IrParser(
     private fun forget() {
         validated.reset()
         audited.reset()
+        lowered.reset()
         decoder.reset()
     }
 }

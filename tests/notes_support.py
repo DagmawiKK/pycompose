@@ -6,7 +6,7 @@ import json
 import sys
 from collections.abc import Mapping
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from pycompose import AppContext, install_context
 from pycompose.bridge import BridgeSurface
@@ -163,10 +163,8 @@ class Host:
                 one handler; None for the only control bound to it.
             **event: Event fields the handler declares as unfilled.
         """
-        action_id = self._id_for(handler, bound)
-        self._bridge.accept_action(
-            json.dumps({"actionId": action_id, "payload": event})
-        )
+        intent = self.intent_for(handler, bound)
+        self._bridge.accept_action(json.dumps({**intent, "payload": event}))
         self._follow_navigation()
 
     def lifecycle(self, event: str, **payload: Any) -> None:
@@ -176,7 +174,7 @@ class Host:
             event: The lifecycle event name.
             **payload: Fields the event declares.
         """
-        self._bridge.accept_action(json.dumps({"actionId": event, "payload": payload}))
+        self._bridge.accept_action(json.dumps({"intent": event, "payload": payload}))
         self._follow_navigation()
 
     def follow(self, destination: str) -> None:
@@ -199,8 +197,10 @@ class Host:
             if kind == "navigate":
                 self.lifecycle("onRouteChanged", **body)
 
-    def _id_for(self, handler: str, bound: Mapping[str, Any] | None) -> str:
-        """Return the binding a control was given in the current snapshot.
+    def intent_for(
+        self, handler: str, bound: Mapping[str, Any] | None
+    ) -> dict[str, Any]:
+        """Return the intent a control carries in the current snapshot.
 
         A control is named by its handler, and by the values it binds when
         several controls bind one handler.
@@ -210,28 +210,52 @@ class Host:
             bound: The values the control binds, or None for the only one.
 
         Returns:
-            The binding id.
+            The intent object, exactly as the control carries it.
 
         Raises:
-            AssertionError: Unless exactly one live binding matches.
+            AssertionError: Unless exactly one distinct live intent matches.
         """
-        bindings = (self.snapshot().get("metadata") or {}).get("actionBindings", {})
         wanted = (
             None
             if bound is None
             else {to_camel_case(key): value for key, value in bound.items()}
         )
         matches = [
-            binding_id
-            for binding_id, contract in bindings.items()
-            if contract["handlerId"].rpartition(".")[2] == handler
-            and (wanted is None or contract["bound"] == wanted)
+            intent
+            for intent in live_intents(self.snapshot())
+            if intent["intent"].rpartition(".")[2] == handler
+            and (wanted is None or intent["fields"] == wanted)
         ]
         if len(matches) != 1:
-            raise AssertionError(
-                f"{len(matches)} live bindings for {handler} {bound}: {list(bindings)}"
-            )
-        return cast("str", matches[0])
+            raise AssertionError(f"{len(matches)} live intents for {handler} {bound}")
+        return matches[0]
+
+
+def live_intents(snapshot: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return every distinct intent the snapshot's controls carry.
+
+    Args:
+        snapshot: A parsed snapshot.
+
+    Returns:
+        The intents, in the order the walk meets them.
+    """
+    found: list[dict[str, Any]] = []
+
+    def visit(value: Any) -> None:
+        if isinstance(value, dict):
+            if set(value) == {"fields", "intent"}:
+                if value not in found:
+                    found.append(value)
+                return
+            for item in value.values():
+                visit(item)
+        elif isinstance(value, list):
+            for item in value:
+                visit(item)
+
+    visit(snapshot["root"])
+    return found
 
 
 def data(snapshot: dict[str, Any]) -> dict[str, Any]:

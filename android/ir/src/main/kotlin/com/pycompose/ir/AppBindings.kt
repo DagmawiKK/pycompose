@@ -74,7 +74,12 @@ object AppBindings {
         return PropertyRule(type, required, values, nullable = nullable)
     }
 
-    /** Host-created event data must satisfy the currently published binding contract. */
+    /**
+     * Host-created event data must satisfy the handler's contract.
+     *
+     * The tap names its intent, which carries its own bound fields, so it is checked
+     * against its handler's contract even when the snapshot it came from is gone.
+     */
     fun validateAction(
         source: String,
         ir: ValidatedIr,
@@ -82,7 +87,12 @@ object AppBindings {
         runCatching {
             val raw =
                 Json.parseToJsonElement(source) as? JsonObject ?: error("Invalid action envelope")
-            require(raw.keys.all { it in setOf("actionId", "payload", "seq", "serial", "surface") })
+            require(
+                raw.keys.all {
+                    it in
+                        setOf("fields", "intent", "payload", "seq", "serial", "surface", "trace")
+                },
+            ) { "Invalid action envelope" }
             raw["surface"]?.let { WireValidator.string(it, "surface") }
             for (counter in listOf("seq", "serial")) {
                 raw[counter]?.let { value ->
@@ -93,12 +103,46 @@ object AppBindings {
                     }
                 }
             }
-            val id = WireValidator.string(raw["actionId"], "actionId")
+            val name = WireValidator.string(raw["intent"], "intent")
+            val fields = raw["fields"] as? JsonObject ?: JsonObject(emptyMap())
             val payload = raw["payload"] as? JsonObject ?: error("Invalid action payload")
             val bindings = read(ir.snapshot.metadata, ir.snapshot.schemaVersion)
-            validatePayload(id, payload, bindings).getOrThrow()
+            if (name in IrContract.actionPayloads) {
+                require(fields.isEmpty()) { "Registry actions bind no fields" }
+                validatePayload(name, payload, bindings).getOrThrow()
+            } else {
+                val handle =
+                    Intents.handle(
+                        JsonObject(
+                            mapOf(
+                                "fields" to fields,
+                                "intent" to JsonPrimitive(name),
+                            ),
+                        ),
+                    )
+                val binding = bindings[handle] ?: contract(name, fields, ir)
+                validatePayload(handle, payload, mapOf(handle to binding)).getOrThrow()
+            }
             JsonAudit.scalars(raw)
         }
+
+    /** The binding a stale tap's intent means under its handler's current contract. */
+    private fun contract(
+        name: String,
+        fields: JsonObject,
+        ir: ValidatedIr,
+    ): AppBinding {
+        val contracts = ir.snapshot.metadata?.get("intents") as? JsonObject
+        val stated = contracts?.get(name) as? JsonObject ?: error("Unknown intent: $name")
+        val payload = stated["payload"] as? JsonObject ?: error("Missing payload schema")
+        val rules =
+            payload.mapValues { (field, definition) ->
+                require(fieldSyntax.matches(field)) { "Invalid payload field name" }
+                rule(definition as? JsonObject ?: error("Invalid payload field"))
+            }
+        WireValidator.properties(fields, rules, "fields", requireFields = false)
+        return AppBinding(rules, fields)
+    }
 
     /** Check a host-produced payload using the same contract as an inbound action. */
     fun validatePayload(

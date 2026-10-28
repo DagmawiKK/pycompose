@@ -43,7 +43,7 @@ class SnackbarTransientTest {
         ) { compose.onAllNodesWithText("Saved").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("Undo").performClick()
         compose.waitUntil(5000) { actions.isNotEmpty() }
-        assertEquals("app.demo.dismiss.1", actions[0].actionId)
+        assertEquals(intent("demo.dismiss"), actions[0].actionId)
         assertEquals(JsonPrimitive(1L), actions[0].payload["serial"])
 
         compose.runOnIdle { ir.value = parse(host(serial = 1)) }
@@ -182,11 +182,11 @@ class SnackbarTransientTest {
         message: String = "Saved",
     ): String =
         """
-        {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
-          "app.demo.dismiss.1":{"handlerId":"demo.dismiss","payload":{
-            "serial":{"required":true,"type":"integer"}},"bound":{}}}},
+        {"version":"0.1.0","schemaVersion":"1.23.0",
+          "metadata":{"intents":{"demo.dismiss":{"payload":{
+            "serial":{"required":true,"type":"integer"}}}}},
          "root":{"id":"root","type":"SnackbarHost","props":{
            "message":"$message","actionLabel":"Undo","serial":$serial,
-           "onDismiss":"app.demo.dismiss.1"}}}
+           "onDismiss":{"fields":{},"intent":"demo.dismiss"}}}}
         """.trimIndent()
 }

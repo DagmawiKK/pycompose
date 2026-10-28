@@ -25,6 +25,7 @@ from notes_support import (
     a_store,
     data,
     held_of,
+    live_intents,
     load_notes_app,
     nodes,
     titles_of,
@@ -179,8 +180,8 @@ def test_an_action_cannot_reach_a_note_it_was_not_bound_to(app: ModuleType) -> N
     host._bridge.accept_action(
         json.dumps(
             {
-                "actionId": host._id_for("set_title", None),
-                "payload": {"note_id": 2, "value": "hijack"},
+                **host.intent_for("set_title", None),
+                "payload": {"noteId": 2, "value": "hijack"},
             }
         )
     )
@@ -188,13 +189,14 @@ def test_an_action_cannot_reach_a_note_it_was_not_bound_to(app: ModuleType) -> N
     assert data(host.snapshot()) == data(before)
 
 
-def test_every_published_binding_names_a_registered_handler(app: ModuleType) -> None:
+def test_every_published_intent_names_a_registered_handler(app: ModuleType) -> None:
     snapshot = Host(app).snapshot()
-    bindings = (snapshot.get("metadata") or {})["actionBindings"]
+    contracts = (snapshot.get("metadata") or {})["intents"]
     registered = set(app.actions.handlers())
-    assert bindings
-    for binding_id, spec in bindings.items():
-        assert spec["handlerId"] in registered, binding_id
+    assert contracts
+    for intent in live_intents(snapshot):
+        assert intent["intent"] in registered, intent
+        assert intent["intent"] in contracts, intent
 
 
 def test_the_runtime_starts_this_app_and_its_actions_work() -> None:
@@ -223,10 +225,10 @@ def test_the_runtime_starts_this_app_and_its_actions_work() -> None:
     session.accept_action(
         json.dumps(
             {
-                "actionId": next(
-                    key
-                    for key in snapshot["metadata"]["actionBindings"]
-                    if key.endswith(".new_note")
+                **next(
+                    intent
+                    for intent in live_intents(snapshot)
+                    if intent["intent"].endswith(".new_note")
                 ),
                 "payload": {},
             }
@@ -236,7 +238,7 @@ def test_the_runtime_starts_this_app_and_its_actions_work() -> None:
     # Navigation is requested, then the host echoes the destination back.
     assert json.loads(session.snapshot())["metadata"]["data"]["route"] == "notes"
     session.accept_action(
-        json.dumps({"actionId": "onRouteChanged", "payload": {"route": "note:3"}})
+        json.dumps({"intent": "onRouteChanged", "payload": {"route": "note:3"}})
     )
     assert session.error() == ""
     assert json.loads(session.snapshot())["metadata"]["data"]["route"] == "note:3"
@@ -277,12 +279,10 @@ def test_the_app_survives_a_hot_reload_of_a_module_inside_its_package() -> None:
         session.accept_action(
             json.dumps(
                 {
-                    "actionId": next(
-                        key
-                        for key in json.loads(session.snapshot())["metadata"][
-                            "actionBindings"
-                        ]
-                        if key.endswith(".new_note")
+                    **next(
+                        intent
+                        for intent in live_intents(json.loads(session.snapshot()))
+                        if intent["intent"].endswith(".new_note")
                     ),
                     "payload": {},
                 }

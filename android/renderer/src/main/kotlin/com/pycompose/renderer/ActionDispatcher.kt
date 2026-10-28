@@ -1,9 +1,8 @@
 package com.pycompose.renderer
 
+import com.pycompose.ir.Intents
 import com.pycompose.ir.SnapshotStream
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 
 /**
  * Data-only envelope. Interpretation and validation belong to the Python worker.
@@ -21,14 +20,7 @@ data class Action(
     val serial: Long? = null,
     val surface: String = SnapshotStream.MAIN_SURFACE,
 ) {
-    fun toJson(): String =
-        buildJsonObject {
-            put("actionId", actionId)
-            put("payload", payload)
-            seq?.let { put("seq", it) }
-            serial?.let { put("serial", it) }
-            put("surface", surface)
-        }.toString()
+    fun toJson(): String = Intents.envelope(actionId, payload, seq, serial, surface)
 }
 
 class ActionDispatcher(

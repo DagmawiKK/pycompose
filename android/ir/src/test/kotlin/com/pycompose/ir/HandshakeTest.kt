@@ -23,7 +23,10 @@ class HandshakeTest {
             assertThrows<IllegalStateException> {
                 Handshake.accept("""{"capabilities":[],"protocol":${Handshake.PROTOCOL + 1}}""")
             }
-        assertEquals("Bridge protocol mismatch: host 1, app 2", refused.message)
+        assertEquals(
+            "Bridge protocol mismatch: host ${Handshake.PROTOCOL}, app ${Handshake.PROTOCOL + 1}",
+            refused.message,
+        )
     }
 
     @Test
@@ -41,7 +44,7 @@ class HandshakeTest {
     @Test
     fun `the offer states the protocol, capabilities and the components rendered`() {
         val offer = Json.parseToJsonElement(Handshake.offer()).jsonObject
-        assertEquals(1, offer.getValue("protocol").jsonPrimitive.int)
+        assertEquals(Handshake.PROTOCOL, offer.getValue("protocol").jsonPrimitive.int)
         assertEquals(JsonArray(emptyList()), offer.getValue("capabilities"))
         val components = offer.getValue("components").jsonArray.map { it.jsonPrimitive.content }
         assertEquals(IrContract.components.keys.sorted(), components)

@@ -1,4 +1,4 @@
-"""Lower Python binding declarations to wire strings and immutable metadata."""
+"""Lower Python binding declarations to wire intents and per-handler contracts."""
 
 from collections.abc import Callable, Mapping
 from typing import cast
@@ -10,31 +10,31 @@ from pycompose.errors import IrValidationError
 from pycompose.utils.json_canonical import freeze_json
 
 Declare = Callable[[str, object], None]
-"""Records one binding id and its wire contract."""
+"""Records one handler id and its payload contract."""
 
 
 def record(contracts: dict[str, object], key: str, wire: object) -> None:
-    """Record one binding contract, refusing a second, different one for its id.
+    """Record one handler's contract, refusing a second, different one for it.
 
     Args:
-        contracts: Accumulated declarations by binding id.
-        key: The binding id exactly as it appears on the wire.
-        wire: Its contract.
+        contracts: Accumulated contracts by handler id.
+        key: The handler id.
+        wire: Its payload contract.
 
     Raises:
-        IrValidationError: If one id declares two incompatible contracts.
+        IrValidationError: If one handler states two incompatible contracts.
     """
     if key in contracts and contracts[key] != wire:
-        raise IrValidationError("conflicting app binding id", binding_id=key)
+        raise IrValidationError("conflicting intent contract", intent=key)
     contracts[key] = wire
 
 
 def lower_props(props: Props, declare: Declare) -> Props:
-    """Replace one node's binding declarations by their wire ids.
+    """Replace one node's binding declarations by their wire intents.
 
     Args:
         props: The node's props, possibly carrying action declarations.
-        declare: Receives each binding's id and wire contract.
+        declare: Receives each handler's id and payload contract.
 
     Returns:
         The same props when nothing is bound, else props holding only wire data.
@@ -54,11 +54,11 @@ def lower_props(props: Props, declare: Declare) -> Props:
     if not bindings and not modifier_bindings:
         return props
 
-    def wire(binding: ActionBinding) -> str:
-        key = str(binding)
+    def wire(binding: ActionBinding) -> JsonValue:
+        spec = binding.spec
         # Frozen once here, so the contract keeps its identity in metadata.
-        declare(key, freeze_json(binding.spec.to_wire()))
-        return key
+        declare(spec.handler_id, freeze_json(spec.contract()))
+        return cast("JsonValue", spec.intent())
 
     wire_props = props.to_wire()
     for key, binding in bindings.items():

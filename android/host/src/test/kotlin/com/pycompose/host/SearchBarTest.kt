@@ -40,12 +40,12 @@ class SearchBarTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.23.0",
-             "metadata":{"actionBindings":{
-               "app.demo.search.1":{"handlerId":"demo.search","payload":{
-                 "expanded":{"required":true,"type":"boolean"}},"bound":{}}}},
+             "metadata":{"intents":{"demo.search":{"payload":{
+                 "expanded":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Column","props":{},"children":[
                {"id":"root.search","type":"SearchBar","props":{
-                 "expanded":true,"onExpandedChange":"app.demo.search.1"},"children":[
+                 "expanded":true,"onExpandedChange":{"fields":{},"intent":"demo.search"}},
+                   "children":[
                  {"id":"root.search.field","type":"Text","props":{
                    "text":"Search query"},"slot":"inputField"},
                  {"id":"root.search.suggestion","type":"Text","props":{
@@ -62,12 +62,12 @@ class SearchBarTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.23.0",
-             "metadata":{"actionBindings":{
-               "app.demo.docked.1":{"handlerId":"demo.docked","payload":{
-                 "expanded":{"required":true,"type":"boolean"}},"bound":{}}}},
+             "metadata":{"intents":{"demo.docked":{"payload":{
+                 "expanded":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Box","props":{},"children":[
                {"id":"root.search","type":"DockedSearchBar","props":{
-                 "expanded":true,"onExpandedChange":"app.demo.docked.1"},"children":[
+                 "expanded":true,"onExpandedChange":{"fields":{},"intent":"demo.docked"}},
+                   "children":[
                  {"id":"root.search.field","type":"Text","props":{
                    "text":"Docked query"},"slot":"inputField"},
                  {"id":"root.search.suggestion","type":"Text","props":{
@@ -84,12 +84,12 @@ class SearchBarTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.23.0",
-             "metadata":{"actionBindings":{
-               "app.demo.search.2":{"handlerId":"demo.search","payload":{
-                 "expanded":{"required":true,"type":"boolean"}},"bound":{}}}},
+             "metadata":{"intents":{"demo.search":{"payload":{
+                 "expanded":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Column","props":{},"children":[
                {"id":"root.search","type":"SearchBar","props":{
-                 "expanded":true,"onExpandedChange":"app.demo.search.2"},"children":[
+                 "expanded":true,"onExpandedChange":{"fields":{},"intent":"demo.search"}},
+                   "children":[
                  {"id":"root.search.field","type":"Text","props":{
                    "text":"Search query"},"slot":"inputField"}]}]}}
             """.trimIndent()
@@ -98,7 +98,7 @@ class SearchBarTest {
         compose.runOnIdle { compose.activity.onBackPressedDispatcher.onBackPressed() }
         compose.waitUntil(5000) { actions.isNotEmpty() }
 
-        assertEquals("app.demo.search.2", actions.single().actionId)
+        assertEquals(intent("demo.search"), actions.single().actionId)
         assertEquals(JsonPrimitive(false), actions.single().payload["expanded"])
     }
 }

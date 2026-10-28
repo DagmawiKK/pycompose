@@ -59,6 +59,15 @@ class Action:
     app_handler: bool = False
     seq: int | None = None
 
+    @property
+    def target(self) -> object:
+        """Return what the action was sent to, as its control carried it.
+
+        Returns:
+            The intent object for an app handler, or the registry action's name.
+        """
+        return self.binding.intent() if self.binding is not None else self.action_id
+
     def __post_init__(self) -> None:
         if self.binding is not None:
             check_payload(self.payload, self.binding.event_fields)
@@ -112,33 +121,17 @@ def _prepare_payload(
     return cast("Mapping[str, FrozenJsonValue]", freeze_json(payload))
 
 
-def decode_action(
-    action_json: str,
-    *,
-    bindings: Callable[[int | None], Mapping[str, BindingSpec] | None] | None = None,
-    handlers: Container[str] | None = None,
-) -> Action:
-    """Decode a host action and fill declared optional defaults.
-
-    An app handler is normally addressed through a control's binding, which is
-    what ties a tap to the instance it belongs to. Some events have no control --
-    a background result arriving with no screen to press -- and those name the
-    handler directly. Both are checked against the session's own registry, so
-    neither can name anything the app did not declare.
+def _envelope(action_json: str) -> dict[str, object]:
+    """Parse an action envelope and check its framing fields.
 
     Args:
-        action_json: JSON envelope with actionId, an optional payload object, an
-            optional report sequence number, the optional serial of the
-            snapshot it was dispatched against, and the surface it names.
-        bindings: The app bindings of the snapshot a serial names, or of the
-            latest snapshot for None; None when that snapshot is gone.
-        handlers: Action ids the app registered, for events with no control.
+        action_json: The host's JSON envelope.
 
     Returns:
-        An action ready for handler dispatch.
+        The envelope's fields.
 
     Raises:
-        BridgeError: If the envelope or registry payload is invalid.
+        BridgeError: If the JSON or a framing field is invalid.
     """
     try:
         if not isinstance(action_json, str):
@@ -147,51 +140,81 @@ def decode_action(
     except (TypeError, ValueError, RecursionError) as exc:
         raise BridgeError("malformed action JSON") from exc
     if not isinstance(raw, dict) or set(raw) - {
-        "actionId",
+        "intent",
+        "fields",
         "payload",
         "seq",
         "serial",
         "surface",
+        "trace",
     }:
         raise BridgeError("invalid action envelope")
     if raw.get("surface", MAIN_SURFACE) != MAIN_SURFACE:
         raise BridgeError("unknown surface", surface=raw.get("surface"))
-    seq = raw.get("seq")
-    if seq is not None and (type(seq) is not int or seq < 1):
-        raise BridgeError("seq must be a positive integer")
-    serial = raw.get("serial")
-    if serial is not None and (type(serial) is not int or serial < 1):
-        raise BridgeError("serial must be a positive integer")
-    active = bindings(serial) if bindings is not None else {}
-    if active is None:
-        # The snapshot the user acted on is no longer held, so what its controls
-        # meant cannot be known; acting on today's meaning would be a guess.
-        raise BridgeError("stale action: its snapshot is no longer held", serial=serial)
-    action_id = raw.get("actionId")
-    if not isinstance(action_id, str) or (
-        action_id not in REGISTRY.actions
-        and action_id not in REGISTRY.lifecycle
-        and action_id not in active
-        and action_id not in (handlers or ())
-    ):
-        raise BridgeError("unknown action", action_id=action_id)
-    payload = raw.get("payload", {})
-    if not isinstance(payload, dict):
-        raise BridgeError("payload must be an object", action_id=action_id)
-    binding = active.get(action_id)
-    # An app handler only takes over for an id nothing else declares. An app may
-    # register a handler whose alias happens to match a lifecycle event, and the
-    # registry contract for that event must still be the one that is enforced.
-    declared = action_id in REGISTRY.actions or action_id in REGISTRY.lifecycle
+    for name in ("seq", "serial"):
+        value = raw.get(name)
+        if value is not None and (type(value) is not int or value < 1):
+            raise BridgeError(f"{name} must be a positive integer")
+    if raw.get("trace") is not None and not isinstance(raw["trace"], str):
+        raise BridgeError("trace must be a string")
+    return raw
+
+
+Contracts = Callable[[str], Mapping[str, PropDef] | None]
+"""The payload contract of an app handler the session registered, by its id."""
+
+
+def decode_action(
+    action_json: str,
+    *,
+    contracts: Contracts | None = None,
+    handlers: Container[str] | None = None,
+) -> Action:
+    """Decode a host action and fill declared optional defaults.
+
+    A control carries an intent: a handler and the fields it bound. A tap sends
+    that intent back with the event's own fields, so its meaning is fixed by
+    what the user saw, never by whichever snapshot is current. The handler's
+    declared fields are the contract both are checked against. An event with no
+    control -- a background result -- names the handler with no bound fields.
+
+    Args:
+        action_json: JSON envelope with the intent, its bound fields, the event
+            payload, an optional report sequence number, the serial of the
+            snapshot it was dispatched against, the surface it names and an
+            optional trace id.
+        contracts: Looks up an app handler's declared fields; None knows only
+            registry actions and lifecycle events.
+        handlers: Ids registered without declared fields; their payload is
+            checked by the handler when it is dispatched.
+
+    Returns:
+        An action ready for handler dispatch.
+
+    Raises:
+        BridgeError: If the envelope or its fields are invalid.
+    """
+    raw = _envelope(action_json)
+    seq = cast("int | None", raw.get("seq"))
+    action_id = raw.get("intent")
+    if not isinstance(action_id, str) or not action_id:
+        raise BridgeError("intent must name a handler or a registry action")
+    fields, payload = raw.get("fields", {}), raw.get("payload", {})
+    if not isinstance(fields, dict) or not isinstance(payload, dict):
+        raise BridgeError("fields and payload must be objects", action_id=action_id)
+    # A registry action or lifecycle event keeps its own contract, even when an
+    # app handler's alias happens to share its name.
+    if action_id in REGISTRY.actions or action_id in REGISTRY.lifecycle:
+        if fields:
+            raise BridgeError("registry actions bind no fields", action_id=action_id)
+        return Action(action_id, payload, seq=seq)
+    contract = contracts(action_id) if contracts is not None else None
+    if contract is None:
+        if fields or action_id not in (handlers or ()):
+            raise BridgeError("unknown action", action_id=action_id)
+        return Action(action_id, payload, app_handler=True, seq=seq)
     try:
-        return Action(
-            action_id,
-            payload,
-            binding,
-            app_handler=binding is None
-            and not declared
-            and action_id in (handlers or ()),
-            seq=seq,
-        )
+        binding = BindingSpec(action_id, contract, fields)
+        return Action(action_id, payload, binding, seq=seq)
     except IrValidationError as exc:
         raise BridgeError("invalid app action payload", action_id=action_id) from exc

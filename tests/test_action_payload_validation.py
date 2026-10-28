@@ -142,7 +142,7 @@ def pick_date(state: State, selected_date_millis: int | None) -> State:
 
 def test_a_nullable_field_takes_null_but_not_another_type() -> None:
     # A derived DatePicker reports a cleared selection as null (ADR-0058).
-    from pycompose.core.action_binding import read_bindings
+    from pycompose.core.action_binding import read_intents
 
     actions = Actions(pick_date)
     state = State(root=Node(id="root", type="Text"))
@@ -154,7 +154,7 @@ def test_a_nullable_field_takes_null_but_not_another_type() -> None:
         actions.dispatch("pickDate", state, {"selectedDateMillis": "soon"})
 
     binding = pick_date.binding()
-    wire = binding.spec.to_wire()
-    assert wire["payload"]["selectedDateMillis"]["nullable"] is True
-    parsed = read_bindings({"actionBindings": {str(binding): wire}})
-    assert parsed[str(binding)].payload["selectedDateMillis"].nullable
+    contract = binding.spec.contract()
+    assert contract["payload"]["selectedDateMillis"]["nullable"] is True
+    parsed = read_intents({"intents": {binding.spec.handler_id: contract}})
+    assert parsed[binding.spec.handler_id]["selectedDateMillis"].nullable

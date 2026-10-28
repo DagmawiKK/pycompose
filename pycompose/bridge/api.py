@@ -13,8 +13,8 @@ from threading import current_thread
 from pycompose import async_task  # noqa: F401 -- installs the async action runner
 from pycompose.bridge.types import MAIN_SURFACE, decode_action
 from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
+from pycompose.contract.registry_types import PropDef
 from pycompose.contract.version import at_least
-from pycompose.core.action_binding import BindingSpec
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.core.ids import Handles
 from pycompose.core.reuse import Reuse
@@ -22,7 +22,7 @@ from pycompose.core.windows import windows
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.ir.echoes import ECHOES_SCHEMA
+from pycompose.ir.echoes import ECHOES_SCHEMA, echo_key
 from pycompose.ir.host import Host, hosted
 from pycompose.ir.model import IRRoot
 from pycompose.ir.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
@@ -44,6 +44,12 @@ MAX_PATCH_OPS = 64
 
 _SERIALS = itertools.count(1)
 """Process-wide, so a serial never names another session's snapshot."""
+
+
+def _echo_target(key: str) -> str:
+    """Return the handler or registry action an echo key names."""
+    target = json.loads(key)
+    return str(target["intent"]) if isinstance(target, dict) else str(target)
 
 
 def _unchanged(candidate: State, current: State) -> bool:
@@ -90,11 +96,12 @@ class BridgeSurface:
         self._worker = current_thread()
         self._processing = False
         self._latest: str | None = None
-        # Each snapshot a host may still hold, with the bindings it carried.
-        self._published: list[tuple[int, IRRoot, dict[str, BindingSpec]]] = []
+        # Each snapshot a host may still hold, as a base for its next patch.
+        self._published: list[tuple[int, IRRoot]] = []
         self._latest_error = ""
         self._pass: dict[str, float] = {}
-        self._bindings: dict[str, BindingSpec] = {}
+        # The handlers the latest snapshot states, whose echoes are kept.
+        self._intents: frozenset[str] = frozenset()
         # The latest report sequence number answered, per action (plan 31 §17).
         self._echoes: dict[str, int] = {}
         # The window the host last asked for, per lazy container key.
@@ -109,8 +116,8 @@ class BridgeSurface:
         try:
             published = self._snapshot(store.value)
             if published is not None:
-                self._bindings = published[2]
-                self._publish(published[0], published[1], published[2])
+                self._intents = frozenset(published[2])
+                self._publish(published[0], published[1])
         except SchemaError:
             raise
         except Exception as exc:
@@ -137,7 +144,7 @@ class BridgeSurface:
 
     def _snapshot(
         self, state: State
-    ) -> tuple[IRRoot, str, dict[str, BindingSpec]] | None:
+    ) -> tuple[IRRoot, str, dict[str, Mapping[str, PropDef]]] | None:
         echoes = self._echoes if at_least(self._schema_version, ECHOES_SCHEMA) else None
         with hosted(self._host):
             with windows(self._windows), self._timed("view"):
@@ -156,11 +163,11 @@ class BridgeSurface:
             LOGGER.warning("IR validation: %s", issue)
         if result.snapshot is None:
             return None
-        bindings = dict(result.bindings)
-        self._actions.validate_bindings(bindings)
+        intents = dict(result.intents)
+        self._actions.validate_intents(intents)
         with self._timed("serialize"):
             text = to_json(result.snapshot, self._reuse)
-        return result.snapshot, text, bindings
+        return result.snapshot, text, intents
 
     @contextmanager
     def _timed(self, phase: str) -> Iterator[None]:
@@ -172,31 +179,12 @@ class BridgeSurface:
             spent = (time.perf_counter() - started) * 1000
             self._pass[phase] = self._pass.get(phase, 0.0) + spent
 
-    def _publish(
-        self, root: IRRoot, text: str, bindings: dict[str, BindingSpec]
-    ) -> None:
+    def _publish(self, root: IRRoot, text: str) -> None:
         if text == self._latest:
             return
         self._latest = text
-        entry = (next(_SERIALS), root, bindings)
+        entry = (next(_SERIALS), root)
         self._published = [*self._published[1 - WINDOW :], entry]
-
-    def _bindings_at(self, serial: int | None) -> Mapping[str, BindingSpec] | None:
-        """Return the bindings of the snapshot the host acted on.
-
-        A tap resolves against what the user saw: a binding whose id survives
-        into a later snapshot may carry different bound values there.
-
-        Args:
-            serial: The snapshot the action was dispatched against; None for
-                actions that name none.
-
-        Returns:
-            Its bindings, or None when that snapshot is no longer held.
-        """
-        if serial is None:
-            return self._bindings
-        return next((b for s, _, b in self._published if s == serial), None)
 
     def accept_action(self, action_json: str) -> None:
         """Process one action synchronously; errors never escape to the host.
@@ -223,13 +211,13 @@ class BridgeSurface:
                 return
             action = decode_action(
                 admitted,
-                bindings=self._bindings_at,
+                contracts=self._actions.contract,
                 handlers=self._actions,
             )
             if action.seq is not None:
                 # Answered even when the handler changes nothing or fails: the
                 # host waits for this echo before it drives the holder again.
-                self._echoes[action.action_id] = action.seq
+                self._echoes[echo_key(action.target)] = action.seq
                 echoed = True
             if (
                 action.action_id in REGISTRY.lifecycle
@@ -284,8 +272,8 @@ class BridgeSurface:
         if published is None:
             return False
         self._store.mutate(lambda _state: state)
-        self._bindings = published[2]
-        self._publish(published[0], published[1], published[2])
+        self._intents = frozenset(published[2])
+        self._publish(published[0], published[1])
         return True
 
     def _republish(self, state: State) -> None:
@@ -297,7 +285,8 @@ class BridgeSurface:
         self._echoes = {
             key: seq
             for key, seq in self._echoes.items()
-            if key in self._bindings or key in REGISTRY.actions
+            if _echo_target(key) in self._intents
+            or _echo_target(key) in REGISTRY.actions
         }
         try:
             self._publish_state(state)
@@ -386,8 +375,8 @@ class BridgeSurface:
             return ""
         if not self._published:
             return ""
-        serial, latest, _ = self._published[-1]
-        base = next((root for s, root, _ in self._published if s == base_serial), None)
+        serial, latest = self._published[-1]
+        base = next((root for s, root in self._published if s == base_serial), None)
         if base is not None:
             ops = diff_nodes(base.root, latest.root)
             whole = any(

@@ -21,7 +21,7 @@ import kotlinx.serialization.json.putJsonArray
  */
 object Handshake {
     /** Bumped only by a change no capability can describe. */
-    const val PROTOCOL = 1
+    const val PROTOCOL = 2
 
     /** What this host offers the app. */
     val CAPABILITIES: Set<String> = emptySet()

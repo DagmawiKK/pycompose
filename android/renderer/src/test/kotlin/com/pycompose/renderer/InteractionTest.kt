@@ -32,12 +32,12 @@ class InteractionTest {
         // dispatching into a guess.
         val source =
             """
-            {"version":"0.1.0","schemaVersion":"1.16.0","metadata":{"actionBindings":{
-              "app.demo.press.1":{"handlerId":"demo.press","payload":{
+            {"version":"0.1.0","schemaVersion":"1.16.0",
+              "metadata":{"intents":{"demo.press":{"payload":{
                 "pressed":{"required":true,"type":"boolean"},
-                "held":{"required":true,"type":"boolean"}},"bound":{}}}},
+                "held":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Button","props":{
-               "text":"Tap","onClick":"increment","onPress":"app.demo.press.1"}}}
+               "text":"Tap","onClick":"increment","onPress":{"fields":{},"intent":"demo.press"}}}}
             """.trimIndent()
         val snapshot = IrParser().parse(source).getOrThrow()
         val actions = mutableListOf<Action>()

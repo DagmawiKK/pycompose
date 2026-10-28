@@ -55,7 +55,7 @@ def test_lifecycle_events_reach_python_through_the_ordinary_action_queue() -> No
     bridge = BridgeSurface(store, Actions(on_resume, on_config_changed))
     seen.clear()
 
-    bridge.accept_action(json.dumps({"actionId": "onResume", "payload": {}}))
+    bridge.accept_action(json.dumps({"intent": "onResume", "payload": {}}))
     assert json.loads(bridge.expose_latest_snapshot() or "{}")["root"]["props"][
         "text"
     ] == ("resumed")
@@ -63,7 +63,7 @@ def test_lifecycle_events_reach_python_through_the_ordinary_action_queue() -> No
     bridge.accept_action(
         json.dumps(
             {
-                "actionId": "onConfigChanged",
+                "intent": "onConfigChanged",
                 "payload": {
                     "orientation": "landscape",
                     "darkMode": True,
@@ -92,7 +92,7 @@ def test_an_unhandled_lifecycle_event_is_idle_not_a_diagnostic(
         bridge.accept_action(
             json.dumps(
                 {
-                    "actionId": "onConfigChanged",
+                    "intent": "onConfigChanged",
                     "payload": {
                         "orientation": "landscape",
                         "darkMode": True,
@@ -114,7 +114,7 @@ def test_an_unhandled_catalog_action_is_still_a_diagnostic() -> None:
     """A control wired to an action nobody handles remains a wiring fault."""
     bridge = BridgeSurface(Store(State(root=Text(id="text", text="home"))), Actions())
 
-    bridge.accept_action('{"actionId":"increment","payload":{"by":1}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":1}}')
 
     assert "unknown action" in bridge.expose_latest_error()
 
@@ -144,9 +144,7 @@ def test_an_ill_formed_lifecycle_payload_leaves_state_untouched(
     state = State(root=Text(id="text", text="home"))
     bridge = BridgeSurface(Store(state), Actions(on_config_changed))
     before = bridge.expose_latest_snapshot()
-    bridge.accept_action(
-        json.dumps({"actionId": "onConfigChanged", "payload": payload})
-    )
+    bridge.accept_action(json.dumps({"intent": "onConfigChanged", "payload": payload}))
     assert bridge.expose_latest_snapshot() == before
     assert bridge.expose_latest_error()
 
@@ -164,7 +162,7 @@ def test_handlers_receive_python_names_never_the_wire_spelling() -> None:
     bridge.accept_action(
         json.dumps(
             {
-                "actionId": "onConfigChanged",
+                "intent": "onConfigChanged",
                 "payload": {
                     "orientation": "portrait",
                     "darkMode": False,
@@ -198,7 +196,7 @@ def test_a_handler_receives_only_the_host_fields_it_declares() -> None:
     bridge.accept_action(
         json.dumps(
             {
-                "actionId": "onConfigChanged",
+                "intent": "onConfigChanged",
                 "payload": {
                     "orientation": "portrait",
                     "darkMode": False,

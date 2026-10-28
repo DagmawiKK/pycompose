@@ -19,7 +19,6 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import cast
 
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
@@ -195,13 +194,11 @@ def patch_bytes(
 ) -> bytes:
     """Serialize the pull result carrying ops against the host's base.
 
-    Metadata (bindings, effects, app data) belongs to the snapshot that carried
-    it, so every envelope states it (ADR-0018 decision 3). Given the ``base``,
-    binding contracts travel as a ``bindings`` delta against the base's --
-    ``set`` for new or changed ids, ``remove`` for dropped ones -- since a
-    keystroke rarely changes any, and app data equal to the base's is not sent
-    again but named in ``keep``, for the host to carry over. Effects belong to
-    one transition and always travel whole.
+    Metadata (intent contracts, effects, echoes, app data) belongs to the
+    snapshot that carried it, so every envelope states it (ADR-0018 decision 3),
+    except app data equal to the base's: that is not sent again but named in
+    ``keep``, for the host to carry over. Effects belong to one transition and
+    always travel whole.
 
     Args:
         root: The snapshot the ops lead to; supplies version and metadata.
@@ -209,26 +206,21 @@ def patch_bytes(
         base_serial: The serial the host declared it still holds.
         serial: The serial this content is published under.
         surface: The surface the snapshot renders on.
-        base: The snapshot the host holds, for a bindings delta; None sends
-            the metadata whole.
+        base: The snapshot the host holds, so unchanged app data is kept
+            rather than sent; None sends the metadata whole.
 
     Returns:
         Canonical UTF-8 bytes.
     """
     metadata: Mapping[str, object] | None = root.metadata
-    delta: dict[str, object] | None = None
     keep: list[str] = []
     if base is not None:
-        metadata, delta = _bindings_delta(base.metadata, root.metadata)
         held = (base.metadata or {}).get("data")
         if metadata is not None and held is not None and metadata.get("data") == held:
             metadata = {k: v for k, v in metadata.items() if k != "data"} or None
             keep.append("data")
     output = bytearray(b'{"baseSerial":')
     output.extend(str(base_serial).encode())
-    if delta is not None:
-        output.extend(b',"bindings":')
-        output.extend(canonical_json_bytes(delta))
     if keep:
         output.extend(b',"keep":')
         output.extend(canonical_json_bytes(keep))
@@ -263,33 +255,3 @@ def patch_bytes(
     output.extend(canonical_json_bytes(root.version))
     output.extend(b"}")
     return bytes(output)
-
-
-def _bindings_delta(
-    base: Mapping[str, object] | None, current: Mapping[str, object] | None
-) -> tuple[Mapping[str, object] | None, dict[str, object]]:
-    """Split the bindings out of ``current`` as a delta against ``base``.
-
-    The delta is stated even when empty: its presence is what tells the host
-    the metadata beside it holds no bindings of its own.
-
-    Args:
-        base: The held snapshot's metadata.
-        current: The published snapshot's metadata.
-
-    Returns:
-        The other metadata sections (None when there are none), and the
-        bindings delta.
-    """
-    previous = cast("Mapping[str, object]", (base or {}).get("actionBindings", {}))
-    latest = cast("Mapping[str, object]", (current or {}).get("actionBindings", {}))
-    rest = {
-        key: value for key, value in (current or {}).items() if key != "actionBindings"
-    }
-    changed = {
-        key: value
-        for key, value in latest.items()
-        if not (previous.get(key) is value or previous.get(key) == value)
-    }
-    removed = sorted(key for key in previous if key not in latest)
-    return rest or None, {"remove": removed, "set": changed}

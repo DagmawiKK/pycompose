@@ -76,9 +76,8 @@ class SnapshotStream(
     }
 
     /**
-     * The patched snapshot's metadata: the envelope's own sections, the held sections it
-     * names in `keep`, and the held bindings with its `bindings` delta applied. An envelope
-     * without a delta states its metadata whole.
+     * The patched snapshot's metadata: the envelope's own sections and the held sections it
+     * names in `keep`.
      */
     private fun metadata(
         held: JsonObject?,
@@ -93,30 +92,7 @@ class SnapshotStream(
             envelope["metadata"]?.let { it as? JsonObject ?: error("metadata must be an object") }
                 ?: JsonObject(emptyMap())
         if (kept.keys.any { it in stated }) error("A section stated both whole and kept")
-        return withBindings(held, envelope, JsonObject(stated + kept))
-    }
-
-    private fun withBindings(
-        held: JsonObject?,
-        envelope: JsonObject,
-        stated: JsonObject,
-    ): JsonObject {
-        val delta = envelope["bindings"] ?: return stated
-        delta as? JsonObject ?: error("bindings must be an object")
-        require("actionBindings" !in stated) { "Bindings stated both whole and as a delta" }
-        val set = delta["set"] as? JsonObject ?: error("bindings.set must be an object")
-        val remove =
-            (delta["remove"] as? JsonArray ?: error("bindings.remove must be an array"))
-                .map { WireValidator.string(it, "bindings.remove") }
-        val previous = held?.get("actionBindings") as? JsonObject ?: JsonObject(emptyMap())
-        val bindings = previous - remove.toSet() + set
-        return if (bindings.isEmpty()) {
-            stated
-        } else {
-            JsonObject(
-                stated + ("actionBindings" to JsonObject(bindings)),
-            )
-        }
+        return JsonObject(stated + kept)
     }
 
     private fun applied(

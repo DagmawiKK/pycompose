@@ -15,7 +15,7 @@ from pycompose.errors import BridgeError
 
 __all__ = ["CAPABILITIES", "PROTOCOL", "REQUIRED", "answer", "offered_components"]
 
-PROTOCOL = 1
+PROTOCOL = 2
 """Bumped only by a change no capability can describe."""
 
 CAPABILITIES: frozenset[str] = frozenset()

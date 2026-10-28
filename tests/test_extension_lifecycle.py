@@ -48,14 +48,14 @@ def test_reload_rejects_old_completions_only_when_the_candidate_succeeds(
     pending: queue.Queue[str] = queue.Queue()
     async_task.install_sink(
         lambda aid, payload: pending.put(
-            json.dumps({"actionId": aid, "payload": json.loads(payload)})
+            json.dumps({"intent": aid, "payload": json.loads(payload)})
         )
     )
     session = RuntimeSession("extension_app:app", "home", debug=True)
     container = sys.modules["extension_app"].created[0]
     try:
         session.accept_action(
-            '{"actionId":"extension_app.launch","payload":{"value":"old"}}'
+            '{"intent":"extension_app.launch","payload":{"value":"old"}}'
         )
         queued = pending.get(timeout=3)
         path.write_text(
@@ -66,7 +66,7 @@ def test_reload_rejects_old_completions_only_when_the_candidate_succeeds(
         text = json.loads(session.snapshot())["root"]["props"]["text"]
         assert text == ("idle" if successful else "old")
         session.accept_action(
-            '{"actionId":"extension_app.launch","payload":{"value":"new"}}'
+            '{"intent":"extension_app.launch","payload":{"value":"new"}}'
         )
         session.accept_action(pending.get(timeout=3))
         assert json.loads(session.snapshot())["root"]["props"]["text"] == "new"

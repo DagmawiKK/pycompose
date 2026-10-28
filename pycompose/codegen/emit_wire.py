@@ -14,7 +14,6 @@ from pycompose.codegen.rules import (
     supported,
     version_key,
 )
-from pycompose.core.action_binding import BINDING_PATTERN
 
 JSON_SCHEMA_DRAFT = "http://json-schema.org/draft-07/schema#"
 
@@ -216,6 +215,35 @@ def _tagged(prop: dict[str, Any], value: dict[str, Any]) -> dict[str, Any]:
     return {"anyOf": forms}
 
 
+def action_schema(action_ids: list[str]) -> dict[str, Any]:
+    """Return the wire shape of an action: a registry action or an app intent.
+
+    An intent names the handler a control calls and the fields it binds. Which
+    handlers a snapshot may name, and what their fields hold, is the
+    validator's call against the snapshot's contracts, not the wire's shape.
+
+    Args:
+        action_ids: The registry's own action names.
+
+    Returns:
+        A JSON Schema for one action value.
+    """
+    intent = {
+        "type": "object",
+        "required": ["fields", "intent"],
+        "additionalProperties": False,
+        "properties": {
+            "fields": {"type": "object"},
+            "intent": {"type": "string", "minLength": 1},
+        },
+    }
+    if not action_ids:
+        return intent
+    names = "|".join(map(re.escape, action_ids))
+    registry = {"type": "string", "pattern": f"^(?:{names})" + r"(?![\s\S])"}
+    return {"oneOf": [registry, intent]}
+
+
 def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
     from pycompose.codegen.values import parameter_schema
 
@@ -252,10 +280,7 @@ def _prop_schema(prop: dict[str, Any], action_ids: list[str]) -> dict[str, Any]:
     elif ptype == "enum":
         value = {"enum": sorted(prop["values"])}
     elif ptype == "actionId":
-        # A registry action, or an app binding; which schemas may carry the
-        # latter is the validator's call, not the wire's shape.
-        names = "|".join([*map(re.escape, action_ids), BINDING_PATTERN])
-        value = {"type": "string", "pattern": f"^(?:{names})" + r"(?![\s\S])"}
+        value = action_schema(action_ids)
     elif ptype == "modifier":
         value = {
             "type": "object",

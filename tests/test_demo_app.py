@@ -133,15 +133,26 @@ def send(
         **payload: Event fields; bindings supply their own fixed values.
     """
     if bound is not None:
-        action_id = str(handler.with_args(**bound))
+        intent = handler.with_args(**bound).spec.intent()
     else:
         snapshot = json.loads(bridge.expose_latest_snapshot() or "{}")
-        (action_id,) = (
-            key
-            for key, contract in snapshot["metadata"]["actionBindings"].items()
-            if contract["handlerId"] == handler.name
-        )
-    bridge.accept_action(json.dumps({"actionId": action_id, "payload": payload}))
+        (intent,) = {
+            json.dumps(found, sort_keys=True): found
+            for found in _intents(snapshot["root"])
+            if found["intent"] == handler.name
+        }.values()
+    bridge.accept_action(json.dumps({**intent, "payload": payload}))
+
+
+def _intents(value: object) -> list[dict]:
+    """Every intent object the controls under ``value`` carry."""
+    if isinstance(value, dict):
+        if set(value) == {"fields", "intent"}:
+            return [value]
+        return [found for item in value.values() for found in _intents(item)]
+    if isinstance(value, list):
+        return [found for item in value for found in _intents(item)]
+    return []
 
 
 def test_demo_builds_a_valid_snapshot_of_instance_scoped_bindings(
@@ -150,19 +161,21 @@ def test_demo_builds_a_valid_snapshot_of_instance_scoped_bindings(
     state = demo.app.build(route="", restore="")
     bridge = BridgeSurface(Store(state), demo.actions)
     snapshot = json.loads(bridge.expose_latest_snapshot() or "{}")
-    bindings = snapshot["metadata"]["actionBindings"]
-    add = str(demo.add_task.with_args(title=""))
-    draft = str(demo.set_draft.binding())
-    toggle = str(demo.toggle_task.with_args(task_id=1))
-    done = str(demo.set_filter.with_args(value="done"))
+    contracts = snapshot["metadata"]["intents"]
+    carried = json.dumps(snapshot["root"])
+    for binding in (
+        demo.add_task.with_args(title=""),
+        demo.set_draft.binding(),
+        demo.toggle_task.with_args(task_id=1),
+        demo.set_filter.with_args(value="done"),
+    ):
+        assert json.dumps(binding.spec.intent()) in carried
     assert snapshot["schemaVersion"] == SCHEMA_VERSION
-    assert bindings[add]["bound"] == {"title": ""}
-    assert bindings[draft]["bound"] == {}
-    assert bindings[draft]["payload"] == {"value": {"required": True, "type": "string"}}
-    assert bindings[toggle]["bound"] == {"taskId": 1}
-    assert bindings[toggle]["payload"]["done"] == {"required": True, "type": "boolean"}
-    assert bindings[done]["bound"] == {"value": "done"}
-    assert bindings[done]["payload"]["value"]["values"] == [
+    draft = contracts[demo.set_draft.name]["payload"]
+    assert draft == {"value": {"required": True, "type": "string"}}
+    toggle = contracts[demo.toggle_task.name]["payload"]
+    assert toggle["done"] == {"required": True, "type": "boolean"}
+    assert contracts[demo.set_filter.name]["payload"]["value"]["values"] == [
         "all",
         "active",
         "done",
@@ -241,7 +254,7 @@ def send_lifecycle(bridge: BridgeSurface, handler: Any, **payload: Any) -> None:
         **payload: Event fields declared by the lifecycle contract.
     """
     action_id = to_camel_case(handler.name.rpartition(".")[2])
-    bridge.accept_action(json.dumps({"actionId": action_id, "payload": payload}))
+    bridge.accept_action(json.dumps({"intent": action_id, "payload": payload}))
 
 
 def test_demo_receives_host_lifecycle_events_by_their_camel_case_name(
@@ -277,14 +290,16 @@ def test_demo_rejects_events_that_break_the_declared_contract(
 
     send(bridge, demo.set_draft, value=7)
     assert bridge.expose_latest_snapshot() == before
+    assert "invalid app action payload" in bridge.expose_latest_error()
 
     send(bridge, demo.add_task, title="Sneaky")
     assert bridge.expose_latest_snapshot() == before
+    assert "invalid app action payload" in bridge.expose_latest_error()
 
+    # A well-typed intent is the handler's to judge; this one names no task.
     send(bridge, demo.remove_task, {"task_id": 99})
     assert bridge.expose_latest_snapshot() == before
     assert screen.titles() == ["Read the PyCompose plan", "Try the todo demo"]
-    assert bridge.expose_latest_error()
 
 
 def test_demo_survives_process_death_by_rehydrating_saved_data(

@@ -54,21 +54,17 @@ class ResolutionTest {
     }
 
     @Test
-    fun `dispatcher transports arbitrary ids and data without interpreting them`() {
+    fun `dispatcher transports an intent and its data without interpreting them`() {
         val actions = mutableListOf<Action>()
         val dispatcher = ActionDispatcher { actions.add(it) }
         val payload = buildJsonObject { put("value", "Ada") }
-        dispatcher.dispatch("app.profile.change", payload)
-        assertEquals(Action("app.profile.change", payload), actions.single())
-        assertEquals(
-            "app.profile.change",
-            Json
-                .parseToJsonElement(
-                    actions.single().toJson(),
-                ).jsonObject["actionId"]
-                ?.jsonPrimitive
-                ?.content,
-        )
+        val handle = intent("profile.change", """{"id":7}""")
+        dispatcher.dispatch(handle, payload)
+        assertEquals(Action(handle, payload), actions.single())
+        val sent = Json.parseToJsonElement(actions.single().toJson()).jsonObject
+        assertEquals("profile.change", sent["intent"]?.jsonPrimitive?.content)
+        assertEquals("""{"id":7}""", sent["fields"].toString())
+        assertEquals(payload, sent["payload"])
     }
 
     @Test

@@ -21,7 +21,7 @@ from pycompose.contract.catalog import (
 )
 from pycompose.contract.registry_types import PropDef
 from pycompose.contract.version import require_version
-from pycompose.core.action_binding import ActionBinding, BindingSpec, read_bindings
+from pycompose.core.action_binding import ActionBinding, read_intents, valid_intent
 from pycompose.core.node import Node
 from pycompose.core.resources import valid_resource
 from pycompose.core.reuse import Reuse
@@ -71,15 +71,19 @@ _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
 }
 
 
+Intents = Mapping[str, Mapping[str, PropDef]]
+"""Each stated handler's payload contract, by handler id."""
+
+
 def validate_prop(
-    value: object, prop: PropDef, *, action_ids: frozenset[str] = frozenset()
+    value: object, prop: PropDef, *, intents: Intents | None = None
 ) -> bool:
     """Check a JSON value against a generated prop or payload definition.
 
     Args:
         value: Candidate value, including frozen JSON containers.
         prop: Definition from the component registry.
-        action_ids: Active app binding ids declared in this snapshot.
+        intents: The snapshot's intent contracts, for action props.
 
     Returns:
         Whether the type, bounds and registry references are valid.
@@ -87,14 +91,20 @@ def validate_prop(
     if value is None:
         return prop.nullable
     check = _TYPE_CHECKS.get(prop.type)
-    if prop.value_type is not None and isinstance(value, Mapping):
-        return _valid_value(value, prop)
-    binding = prop.type == "actionId" and isinstance(value, str) and value in action_ids
-    if check is None or not (binding or check(value, prop)):
+    if isinstance(value, Mapping) and (
+        prop.value_type is not None or prop.type == "actionId"
+    ):
+        # An action prop's object is an intent; any other object is a value.
+        return (
+            valid_intent(value, intents or {})
+            if prop.type == "actionId"
+            else _valid_value(value, prop)
+        )
+    if check is None or not check(value, prop):
         return False
     try:
         if prop.type == "modifier":
-            validate_modifier(value, action_ids=action_ids)
+            validate_modifier(value, intents=intents)
         else:
             check_json(value)
     except IrValidationError:
@@ -123,9 +133,7 @@ def _valid_value(value: object, prop: PropDef) -> bool:
     return True
 
 
-def validate_modifier(
-    value: object, *, action_ids: frozenset[str] = frozenset()
-) -> None:
+def validate_modifier(value: object, *, intents: Intents | None = None) -> None:
     """Validate ordered operations using generated modifier definitions.
 
     Legacy modifier objects without operations remain JSON-compatible. Invalid
@@ -133,7 +141,7 @@ def validate_modifier(
 
     Args:
         value: Ordinary or frozen modifier object.
-        action_ids: Active app binding ids declared in this snapshot.
+        intents: The snapshot's intent contracts, for click actions.
 
     Raises:
         IrValidationError: If operations, props or action references are invalid.
@@ -164,9 +172,7 @@ def validate_modifier(
             if key == "type":
                 continue
             declared = spec.get(key)
-            if declared is None or not validate_prop(
-                item, declared, action_ids=action_ids
-            ):
+            if declared is None or not validate_prop(item, declared, intents=intents):
                 raise IrValidationError(
                     "invalid modifier prop", modifier=name, prop=key
                 )
@@ -198,12 +204,12 @@ class ValidationResult:
     Attributes:
         snapshot: Safe snapshot, or None when no root can be rendered.
         issues: Failures encountered in stable traversal order.
-        bindings: The snapshot's validated app bindings by id, parsed once here.
+        intents: The snapshot's intent contracts by handler id, parsed once here.
     """
 
     snapshot: IRRoot | None
     issues: tuple[ValidationIssue, ...] = ()
-    bindings: Mapping[str, BindingSpec] = field(default_factory=dict)
+    intents: Intents = field(default_factory=dict)
 
 
 def _section_ok(
@@ -272,7 +278,6 @@ def validate_ir(
     validation = _Validation(debug, snapshot.schema_version, host=current_host())
     if reuse is not None:
         reuse.validated.start()
-        reuse.bindings.start()
         validation.memo = reuse.validated
     metadata = snapshot.metadata
     if metadata is not None:
@@ -282,11 +287,11 @@ def validate_ir(
             validation.report("invalid metadata", snapshot.root)
             metadata = None
     try:
-        bindings = read_bindings(metadata, reuse.bindings if reuse else None)
+        intents = read_intents(metadata)
     except (IrValidationError, ComponentRegistryError):
-        validation.report("invalid app action bindings", snapshot.root)
+        validation.report("invalid intent contracts", snapshot.root)
         return ValidationResult(None, tuple(validation.issues))
-    if bindings and not validation.available("1.2.0"):
+    if intents and not validation.available("1.2.0"):
         validation.report("app actions require newer schema", snapshot.root)
         return ValidationResult(None, tuple(validation.issues))
     # Effects and app data are checked for publishability, not read back here.
@@ -321,7 +326,7 @@ def validate_ir(
         snapshot.root,
     ):
         return ValidationResult(None, tuple(validation.issues))
-    validation.action_ids = frozenset(bindings)
+    validation.intents = intents
     root = validation.node(snapshot.root)
     if root is not None:
         # An expression may read a holder anywhere in the snapshot.
@@ -333,7 +338,7 @@ def validate_ir(
     elif root is not snapshot.root or metadata is not snapshot.metadata:
         safe = replace(snapshot, root=root, metadata=metadata)
     return ValidationResult(
-        snapshot=safe, issues=tuple(validation.issues), bindings=bindings
+        snapshot=safe, issues=tuple(validation.issues), intents=intents
     )
 
 

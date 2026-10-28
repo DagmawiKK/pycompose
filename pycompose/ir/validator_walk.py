@@ -17,7 +17,7 @@ from dataclasses import dataclass, field, replace
 from typing import cast
 
 from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
-from pycompose.contract.registry_types import ComponentDef
+from pycompose.contract.registry_types import ComponentDef, PropDef
 from pycompose.core.node import Node, Props
 from pycompose.core.reuse import SubtreeMemo
 from pycompose.core.traversal import NodeCycleError, walk_nodes
@@ -53,7 +53,7 @@ class _Validation:
         self.derived_ids = derived_ids
         # A snapshot bound for a host refuses what it cannot render (ADR-0050).
         self.host = host
-        self.action_ids: frozenset[str] = frozenset()
+        self.intents: Mapping[str, Mapping[str, PropDef]] = {}
         self.issues: list[ValidationIssue] = []
         self.ids: set[str] = set()
         self.path: list[str] = []
@@ -154,7 +154,7 @@ class _Validation:
                 self.report("prop requires newer schema", node, name)
                 removed.add(name)
                 invalid_required |= prop.required
-            elif not validate_prop(props[name], prop, action_ids=self.action_ids):
+            elif not validate_prop(props[name], prop, intents=self.intents):
                 self.report("invalid prop value", node, name)
                 removed.add(name)
                 invalid_required |= prop.required

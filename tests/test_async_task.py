@@ -301,7 +301,7 @@ def _envelope(action_id: str, payload: str) -> str:
     Returns:
         The envelope JSON.
     """
-    return json.dumps({"actionId": action_id, "payload": json.loads(payload)})
+    return json.dumps({"intent": action_id, "payload": json.loads(payload)})
 
 
 # ---------------------------------------------------------------------------

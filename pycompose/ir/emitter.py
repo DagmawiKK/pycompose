@@ -26,6 +26,7 @@ from pycompose.core.traversal import walk_nodes
 from pycompose.errors import IrValidationError
 from pycompose.ir.bindings import lower_props, record
 from pycompose.ir.data import lower_data
+from pycompose.ir.echoes import lower_echoes
 from pycompose.ir.effects import lower_effects
 from pycompose.ir.model import IRRoot
 from pycompose.ir.streams import is_expression, resolve_streams
@@ -78,18 +79,18 @@ def emit_ir(
     if emission.streams:
         root = resolve_streams(root, emission.keyed)
     bindings = (
-        cast("Mapping[str, JsonValue]", {"actionBindings": contracts})
-        if contracts
-        else None
+        cast("Mapping[str, JsonValue]", {"intents": contracts}) if contracts else None
     )
     metadata: Mapping[str, JsonValue] | None = None
-    # Binding contracts, effect requests and app data share one metadata object;
+    # Intent contracts, effect requests and app data share one metadata object;
     # their keys never collide, so a merge preserves both declaration orders.
     for member in (
         bindings,
         lower_effects(state.effects),
         lower_data(state.data),
-        cast("Mapping[str, JsonValue]", {"echoes": dict(echoes)}) if echoes else None,
+        cast("Mapping[str, JsonValue]", {"echoes": lower_echoes(echoes)})
+        if echoes
+        else None,
     ):
         if member is not None:
             metadata = {**(metadata or {}), **member}

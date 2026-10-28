@@ -122,28 +122,24 @@ class SnapshotStreamTest {
     }
 
     @Test
-    fun `a bindings delta is applied to the bindings the host holds`() {
-        fun contract(handler: String) = """{"handlerId":"$handler","payload":{},"bound":{}}"""
+    fun `a patch states its intent contracts whole`() {
+        val contract = """{"payload":{}}"""
         val stream = SnapshotStream()
         stream
             .accept(
-                """{"kind":"full","metadata":{"actionBindings":{
-                    "app.demo.a.1":${contract("demo.a")},"app.demo.b.1":${contract("demo.b")}}},
+                """{"kind":"full","metadata":{"intents":{"demo.a":$contract}},
                     "root":${root("0")},"schemaVersion":"1.2.0","serial":1,"version":"0.1.0"}""",
             ).getOrThrow()
         val patched =
             stream
                 .accept(
-                    """{"baseSerial":1,"bindings":{"remove":["app.demo.a.1"],
-                        "set":{"app.demo.c.1":${contract("demo.c")}}},"kind":"patch","ops":[],
-                        "schemaVersion":"1.2.0","serial":2,"version":"0.1.0"}""",
+                    """{"baseSerial":1,"kind":"patch",
+                        "metadata":{"intents":{"demo.b":$contract}},
+                        "ops":[],"schemaVersion":"1.2.0","serial":2,"version":"0.1.0"}""",
                 ).getOrThrow()
                 .snapshot
 
-        val bindings =
-            patched.metadata?.get(
-                "actionBindings",
-            ) as kotlinx.serialization.json.JsonObject
-        assertEquals(setOf("app.demo.b.1", "app.demo.c.1"), bindings.keys)
+        val intents = patched.metadata?.get("intents") as kotlinx.serialization.json.JsonObject
+        assertEquals(setOf("demo.b"), intents.keys)
     }
 }

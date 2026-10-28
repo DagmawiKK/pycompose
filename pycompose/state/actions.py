@@ -6,6 +6,7 @@ from collections.abc import Callable, Mapping
 from types import ModuleType
 from typing import Any
 
+from pycompose.contract.registry_types import PropDef
 from pycompose.core.action_binding import BindingSpec, check_payload
 from pycompose.core.node import Node
 from pycompose.core.props import to_camel_case
@@ -109,20 +110,31 @@ class Actions:
             self.register(alias, self._handlers[definition.name])
             self._contracts.setdefault(alias, definition)
 
-    def validate_bindings(self, bindings: Mapping[str, BindingSpec]) -> None:
-        """Check snapshot bindings against the app's actual annotated handlers.
+    def contract(self, action_id: str) -> Mapping[str, PropDef] | None:
+        """Return a registered action's declared payload fields.
 
         Args:
-            bindings: Data-only binding declarations emitted by the app.
+            action_id: The action's id.
+
+        Returns:
+            Its fields by wire name, or None when no action has that id.
+        """
+        definition = self._definitions.get(action_id)
+        return definition.fields if definition is not None else None
+
+    def validate_intents(self, intents: Mapping[str, Mapping[str, PropDef]]) -> None:
+        """Check the snapshot's intent contracts against the app's handlers.
+
+        Args:
+            intents: Each stated handler's payload contract, by handler id.
 
         Raises:
-            StateError: If handlers or annotation-derived contracts do not match.
+            StateError: If a handler is unregistered or its contract differs.
         """
-        for spec in bindings.values():
-            definition = self._definitions.get(spec.handler_id)
-            if definition is None or definition.fields != dict(spec.payload):
+        for handler_id, payload in intents.items():
+            if self.contract(handler_id) != dict(payload):
                 raise StateError(
-                    "unregistered or mismatched app action", action_id=spec.handler_id
+                    "unregistered or mismatched app action", action_id=handler_id
                 )
 
     def dispatch_binding(
