@@ -500,7 +500,18 @@ def test_the_last_pass_reports_its_time_by_phase() -> None:
     actions.register("increment", increment)
     bridge = BridgeSurface(store, actions)
     bridge.accept_action('{"intent":"increment","payload":{"by":1}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":2}}')
     phases = json.loads(bridge.expose_last_pass())
-    # What the host's pass log splits its Python stage into.
-    assert set(phases) == {"handler", "view", "validate", "serialize"}
-    assert all(spent >= 0 for spent in phases.values())
+    # What the host's pass log splits its Python stage into, summed over every
+    # action the host ran before it read them.
+    assert set(phases) == {
+        "handler",
+        "view",
+        "validate",
+        "serialize",
+        "accept",
+        "actions",
+    }
+    assert phases["actions"] == 2
+    assert phases["accept"] >= phases["handler"] + phases["view"]
+    assert json.loads(bridge.expose_last_pass()) == {}

@@ -140,6 +140,9 @@ class BridgeSurface:
         self._published: list[tuple[int, IRRoot]] = []
         self._latest_error = ""
         self._pass: dict[str, float] = {}
+        # Phases summed over every action since the host last read them: one
+        # host pass may run several actions before it pulls.
+        self._batch: dict[str, float] = {}
         # The handlers the latest snapshot states, whose echoes are kept.
         self._intents: frozenset[str] = frozenset()
         # The latest report sequence number answered, per action (plan 31 §17).
@@ -270,6 +273,14 @@ class BridgeSurface:
             self._processing = False
             elapsed = time.perf_counter() - started
             self._stats.record(name, trace, elapsed * 1000, self._pass, failed=failed)
+            # One host pass may run several actions before it pulls; its log
+            # line reads them all, plus the time spent inside the actions.
+            for phase, ms in (
+                *self._pass.items(),
+                ("actions", 1.0),
+                ("accept", elapsed * 1000),
+            ):
+                self._batch[phase] = self._batch.get(phase, 0.0) + ms
             if self._debug and elapsed > PASS_BUDGET:
                 LOGGER.warning(
                     "Action pass took %.0f ms, over the %.0f ms budget; every tap "
@@ -453,13 +464,15 @@ class BridgeSurface:
         return full.decode("utf-8")
 
     def expose_last_pass(self) -> str:
-        """Return the last action pass's time by phase, for the host's pass log.
+        """Return the time by phase of every action since the last call.
 
         Returns:
-            JSON milliseconds by phase: handler, view, validate, serialize.
+            JSON milliseconds by phase (handler, view, validate, serialize),
+            ``accept`` for the whole of the actions and ``actions`` for how many.
         """
         self._require_worker()
-        return json.dumps({k: round(v, 2) for k, v in self._pass.items()})
+        batch, self._batch = self._batch, {}
+        return json.dumps({k: round(v, 2) for k, v in batch.items()})
 
     def node_paths(self) -> dict[str, str]:
         """Return each node name's readable path, kept only in debug.
