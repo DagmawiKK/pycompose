@@ -420,6 +420,7 @@ class BridgeSurface:
             successor: Replacement after successful reload, or None on shutdown.
         """
         self._require_worker()
+        self._actions.close()
         self._deliveries.retire(
             successor._deliveries if successor is not None else None
         )

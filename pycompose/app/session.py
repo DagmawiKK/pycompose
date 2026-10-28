@@ -150,7 +150,13 @@ class NavigationSession(Actions):
         self._pending = True
         self._signal()
 
+    def _take_effects(self) -> None:
+        """Queue what every view model emitted, so effects keep the order emitted."""
+        for entry in self.entries:
+            self._effects.extend(entry.view_model.take_effects())
+
     def _navigate(self, operation: NavOp) -> None:
+        self._take_effects()
         if isinstance(operation, Push):
             self.entries.append(self._entry(operation.route))
         elif isinstance(operation, Replace):
@@ -168,6 +174,12 @@ class NavigationSession(Actions):
     def _close(self, entry: _Entry) -> None:
         self._scope.spawn(entry.view_model.clear())
 
+    def close(self) -> None:
+        """Clear every screen's view model, top first, as the session ends."""
+        for entry in reversed(self.entries):
+            self._close(entry)
+        self.entries = []
+
     def snapshot_state(self, previous: State | None) -> State:
         """Return the state the top screen draws now, as the next snapshot's source.
 
@@ -178,10 +190,8 @@ class NavigationSession(Actions):
             The top screen with every entry's saved state and pending effects.
         """
         top = self.entries[-1]
-        effects = [*self._effects]
-        self._effects = []
-        for entry in self.entries:
-            effects.extend(entry.view_model.take_effects())
+        self._take_effects()
+        effects, self._effects = self._effects, []
         stack = [
             {
                 "route": json.loads(entry.key),

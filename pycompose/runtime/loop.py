@@ -46,14 +46,18 @@ class LoopThread:
 
     def _run(self) -> None:
         asyncio.set_event_loop(self.loop)
-        heartbeat = self.loop.create_task(self._heartbeat())
+        # Held, since the loop keeps only a weak reference to its tasks.
+        self._heartbeat_task = self.loop.create_task(self._heartbeat())
         self.loop.call_soon(self._ready.set)
         try:
             self.loop.run_forever()
         finally:
-            heartbeat.cancel()
+            # Whatever is still running ends here, cancelled, as asyncio.run ends it.
+            pending = asyncio.all_tasks(self.loop)
+            for task in pending:
+                task.cancel()
             self.loop.run_until_complete(
-                asyncio.gather(heartbeat, return_exceptions=True)
+                asyncio.gather(*pending, return_exceptions=True)
             )
             self.loop.close()
 

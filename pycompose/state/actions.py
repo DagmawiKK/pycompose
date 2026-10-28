@@ -32,12 +32,7 @@ class Actions:
             self._adopt(definition)
 
     def _adopt(self, definition: AppAction[Any]) -> None:
-        """Register one definition under its qualified id and its bare alias.
-
-        Dispatch routes through the definition rather than the bare function it
-        wraps, which is what lets a session-native action decode its shell and
-        rebuild its screen on every path -- the runtime's and a direct test's
-        alike -- without either of them knowing the difference.
+        """Register one definition under its id and alias; dispatch runs through it.
 
         Args:
             definition: The action to register.
@@ -306,6 +301,9 @@ class Actions:
 
     def handlers(self) -> Mapping[str, ActionHandler]:
         return self._handlers.copy()
+
+    def close(self) -> None:
+        """Release what the registry runs; a plain registry runs nothing."""
 
     def declared(
         self, action_id: str, payload: Mapping[str, object]
