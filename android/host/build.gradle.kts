@@ -84,6 +84,9 @@ chaquopy {
                 layout.buildDirectory.dir("generated/runtime"),
             ),
         )
+        // Tool caches beside the app's source (.mypy_cache, .pytest_cache and
+        // the like) and stale bytecode are never part of the app.
+        exclude("**/.*", "**/.*/**", "**/__pycache__/**")
     }
 }
 
