@@ -8,7 +8,6 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any, cast
 
-from pycompose import async_task
 from pycompose.app.app import App, Destination
 from pycompose.app.effects import Finish, Navigate
 from pycompose.app.intents import intent_class
@@ -28,6 +27,7 @@ from pycompose.core.action_binding import BindingSpec
 from pycompose.core.effect import Effect
 from pycompose.core.props import JsonValue
 from pycompose.errors import StateError
+from pycompose.runtime import signal
 from pycompose.runtime.scope import Report, Scope
 from pycompose.state.actions import Actions
 from pycompose.state.state import State
@@ -41,9 +41,7 @@ REFRESH = "pycompose.refresh"
 
 
 def _post_refresh() -> None:
-    try:
-        async_task.post(REFRESH, "{}")
-    except StateError:
+    if not signal.post(REFRESH):
         # No host is listening, as in a test driving the bridge directly; the
         # next action publishes the change instead.
         LOGGER.debug("state changed with no host listening")

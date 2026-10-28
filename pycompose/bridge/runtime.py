@@ -15,6 +15,7 @@ from pycompose.bridge.session import RuntimeSession, offer_components
 from pycompose.core.context import install as install_context
 from pycompose.errors import BridgeError
 from pycompose.extensions.environment import install as install_paths
+from pycompose.runtime import signal
 from pycompose.runtime.loop import LoopThread
 
 LOGGER = logging.getLogger(__name__)
@@ -187,6 +188,7 @@ def close(identity: str = "") -> None:
         _session.close()
         _session = None
     async_task.shutdown()
+    signal.install(None)
     install_paths()
     install_context(None)
 
@@ -202,6 +204,10 @@ def install_async_sink(sink: object, admission: object = None) -> None:
     async_task.install_sink(
         cast("Callable[[str, str], None]", sink),
         admission=cast("Callable[[str, str], bool] | None", admission),
+    )
+    signal.install(
+        cast("Callable[[str, str], None] | None", sink),
+        cast("Callable[[str, str], bool] | None", admission),
     )
 
 

@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from pycompose import async_task
 from pycompose.bridge import runtime
+from pycompose.runtime import signal
 
 APP = """
 import asyncio
@@ -110,7 +110,7 @@ def notes(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[str]:
     monkeypatch.syspath_prepend(str(tmp_path))
     yield "nav_app:app"
     runtime.close()
-    async_task.install_sink(None)
+    signal.install(None)
     sys.modules.pop("nav_app", None)
 
 

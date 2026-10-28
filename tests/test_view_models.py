@@ -11,12 +11,12 @@ from pathlib import Path
 
 import pytest
 
-from pycompose import async_task
 from pycompose.app import Intent, StateFlow
 from pycompose.bridge import runtime
 from pycompose.errors import StateError
 from pycompose.ir import emit_ir, to_json
 from pycompose.m3 import Button
+from pycompose.runtime import signal
 from pycompose.state import State
 
 APP = """
@@ -85,7 +85,7 @@ def counter(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[str]:
     monkeypatch.syspath_prepend(str(tmp_path))
     yield "counter_app:app"
     runtime.close()
-    async_task.install_sink(None)
+    signal.install(None)
     sys.modules.pop("counter_app", None)
 
 
@@ -142,7 +142,7 @@ def test_background_work_signals_one_refresh_and_publishes_its_state(
     counter: str,
 ) -> None:
     refreshes: list[str] = []
-    async_task.install_sink(lambda action, *_: refreshes.append(action))
+    signal.install(lambda event, _payload: refreshes.append(event))
     runtime.start(counter, "home", True)
     _tap(_snapshot(), "load")
     # The task runs on the loop after the tap; wait for it to finish there.

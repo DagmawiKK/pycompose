@@ -12,6 +12,7 @@ from pycompose.app.flow import StateFlow
 from pycompose.app.intents import Intent
 from pycompose.app.navigation import Pop, Push, Replace, Route
 from pycompose.app.viewmodel import ViewModel
+from pycompose.runtime.scheduler import to_thread
 
 __all__ = [
     "App",
@@ -30,4 +31,5 @@ __all__ = [
     "Toast",
     "TypedEffect",
     "ViewModel",
+    "to_thread",
 ]

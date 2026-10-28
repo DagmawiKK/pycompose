@@ -112,3 +112,18 @@ def test_the_real_scheduler_keeps_cpu_work_on_one_named_thread() -> None:
     assert next(iter(found)).startswith("pycompose-cpu")
     scheduler.close()
     loop.close()
+
+
+def test_app_code_reaches_the_session_pools_through_to_thread() -> None:
+    from pycompose.app import to_thread
+    from pycompose.errors import StateError
+
+    sim = Simulator()
+    assert sim.run(to_thread("io", sum, [1, 2, 3])) == 6
+
+    async def elsewhere() -> int:
+        return await to_thread("cpu", sum, [1])
+
+    with pytest.raises(StateError, match="session's loop"):
+        asyncio.run(elsewhere())
+    sim.close()

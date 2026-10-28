@@ -29,12 +29,12 @@ from types import TracebackType
 from typing import Any, Self
 
 import pycompose
-from pycompose import async_task
 from pycompose.app.session import REFRESH
 from pycompose.bridge.imports import fresh_imports
 from pycompose.bridge.session import RuntimeSession
 from pycompose.extensions.environment import install as install_paths
 from pycompose.repository import documents_at
+from pycompose.runtime import signal
 from pycompose.runtime.loop import LoopThread
 
 Node = dict[str, Any]
@@ -72,7 +72,7 @@ class AppDriver:
         self._failures: list[str] = []
         self._refreshes: list[str] = []
         self._loop = LoopThread(self._report)
-        async_task.install_sink(lambda action, _payload: self._refreshes.append(action))
+        signal.install(lambda event, _payload: self._refreshes.append(event))
         started = False
         try:
             self._session = self._loop.call(
@@ -130,7 +130,7 @@ class AppDriver:
 
     def _release(self) -> None:
         self._loop.stop()
-        async_task.install_sink(None)
+        signal.install(None)
         self._imports.__exit__(None, None, None)
         self._documents.__exit__(None, None, None)
         install_paths()

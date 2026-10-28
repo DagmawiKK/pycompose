@@ -5,16 +5,23 @@ from __future__ import annotations
 import asyncio
 import functools
 import random
+import weakref
 from collections.abc import Callable
 from concurrent.futures import Executor, ThreadPoolExecutor
 from typing import Literal, TypeVar
 
+from pycompose.errors import StateError
 from pycompose.runtime.scope import Report, Scope
 
-__all__ = ["Scheduler", "ThreadKind"]
+__all__ = ["Scheduler", "ThreadKind", "to_thread"]
 
 T = TypeVar("T")
 ThreadKind = Literal["io", "cpu"]
+
+_SCHEDULERS: weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, Scheduler] = (
+    weakref.WeakKeyDictionary()
+)
+"""The scheduler each session loop runs with, so app code can find its pools."""
 
 
 class Scheduler:
@@ -47,6 +54,7 @@ class Scheduler:
         self._executors: dict[ThreadKind, Executor] = {"io": io, "cpu": cpu}
         self._random = rng
         self._report = report
+        _SCHEDULERS[loop] = self
 
     @classmethod
     def real(
@@ -121,3 +129,28 @@ class Scheduler:
         """Stop both pools, dropping work that has not started."""
         for executor in self._executors.values():
             executor.shutdown(wait=False, cancel_futures=True)
+
+
+async def to_thread(kind: ThreadKind, work: Callable[..., T], *args: object) -> T:
+    """Run ``work`` off the loop on the session's pool for ``kind``.
+
+    ``"io"`` is for calls that mostly wait, such as a blocking HTTP client or a
+    database; ``"cpu"`` is for computation, on one thread so it never queues
+    in front of the loop. Cancelling the awaiting task discards the result; the
+    call itself runs to completion, because a thread cannot be stopped.
+
+    Args:
+        kind: ``"io"`` or ``"cpu"``.
+        work: The callable to run.
+        *args: Its arguments.
+
+    Returns:
+        What ``work`` returned.
+
+    Raises:
+        StateError: Outside a session's loop.
+    """
+    scheduler = _SCHEDULERS.get(asyncio.get_running_loop())
+    if scheduler is None:
+        raise StateError("to_thread runs only on a session's loop")
+    return await scheduler.to_thread(kind, work, *args)
