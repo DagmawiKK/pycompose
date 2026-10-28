@@ -57,15 +57,25 @@ internal sealed interface Command {
  * A settled report carries the holder's whole value, so the newest to an action says
  * everything an older one would have, and the app's echo of its number answers both. A
  * window request names everything the list wants, so the newest per list stands alone.
+ *
+ * Only commands with no other command between them collapse: an intent queued after a
+ * report must still see that report, so it bounds every run that may collapse.
  */
 internal fun coalesce(batch: List<Queued>): List<Queued> {
-    val kinds = batch.map { supersedes(it.command) }
-    val latest = kinds.withIndex().mapNotNull { (index, kind) -> kind?.let { it to index } }.toMap()
-    return batch.filterIndexed { index, queued ->
-        val superseded = kinds[index]?.let { latest[it] != index } ?: false
-        if (superseded) ActionTrace.end(queued.cookie)
-        !superseded
+    val newer = mutableSetOf<String>()
+    val keep = BooleanArray(batch.size)
+    for (index in batch.indices.reversed()) {
+        val kind = supersedes(batch[index].command)
+        when {
+            kind == null -> {
+                newer.clear()
+                keep[index] = true
+            }
+            newer.add(kind) -> keep[index] = true
+            else -> ActionTrace.end(batch[index].cookie)
+        }
     }
+    return batch.filterIndexed { index, _ -> keep[index] }
 }
 
 /** What a newer command must share with [command] to supersede it, or null for none. */
