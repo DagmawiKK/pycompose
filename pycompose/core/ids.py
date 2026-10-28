@@ -154,29 +154,30 @@ def id_path(node_id: str) -> tuple[str, ...]:
 class Handles:
     """Name each node identity, (parent, key), for one publishing session.
 
-    Readable mode names a node by its full path, as diagnostics want. Compact
-    mode names it by a short counter assigned on first sight and kept while the
-    identity lives, so an id costs a few bytes at any depth (ADR-0043); a
-    number is never given to a second identity, so a host can never confuse
-    a new node with one it held before.
+    A node is named by a short counter assigned on first sight and kept while
+    the identity lives, so an id costs a few bytes at any depth (ADR-0043); a
+    number is never given to a second identity, so a host can never confuse a
+    new node with one it held before. Debug and release name nodes the same
+    way, so they publish the same bytes; debug also keeps each name's readable
+    path, for diagnostics and tests, off the wire.
     """
 
-    __slots__ = ("_compact", "_names", "_next")
+    __slots__ = ("_names", "_next", "_paths")
 
-    def __init__(self, *, compact: bool) -> None:
+    def __init__(self, *, readable: bool = False) -> None:
         """Start with no identities named.
 
         Args:
-            compact: Short counter names instead of readable paths.
+            readable: Also keep each name's readable path, as debug does.
         """
-        self._compact = compact
         self._names: dict[tuple[str, str | int], str] = {}
         self._next = 1
+        self._paths: dict[str, str] | None = {self.root: ROOT_ID} if readable else None
 
     @property
     def root(self) -> str:
         """Return the root node's name."""
-        return "0" if self._compact else ROOT_ID
+        return "0"
 
     def child(self, parent: str, key: str | int) -> str:
         """Return the name of the child keyed ``key`` under ``parent``.
@@ -186,19 +187,30 @@ class Handles:
             key: The child's key among its siblings.
 
         Returns:
-            Its path, or its compact name, assigned now if it is new.
+            Its name, assigned now if it is new.
         """
-        if not self._compact:
-            # A key that is already this child's full path stays as it is.
-            if isinstance(key, str) and key.startswith(f"{parent}{_SEPARATOR}"):
-                return key
-            return child_id(parent, key)
         name = self._names.get((parent, key))
         if name is None:
             name = _base36(self._next)
             self._next += 1
             self._names[(parent, key)] = name
+            if self._paths is not None:
+                base = self._paths.get(parent, parent)
+                # A key that is already this child's full path stays as it is.
+                self._paths[name] = (
+                    key
+                    if isinstance(key, str) and key.startswith(f"{base}{_SEPARATOR}")
+                    else child_id(base, key)
+                )
         return name
+
+    def paths(self) -> dict[str, str]:
+        """Return each live name's readable path; empty unless readable.
+
+        Returns:
+            Readable path by name.
+        """
+        return dict(self._paths or {})
 
     def retain(self, live: IdRegistry) -> None:
         """Forget identities absent from the latest snapshot.
@@ -213,6 +225,10 @@ class Handles:
             self._names = {
                 identity: name for identity, name in self._names.items() if name in live
             }
+            if self._paths is not None:
+                self._paths = {
+                    name: path for name, path in self._paths.items() if name in live
+                }
 
 
 def _base36(number: int) -> str:

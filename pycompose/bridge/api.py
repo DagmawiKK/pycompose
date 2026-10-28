@@ -30,8 +30,11 @@ from pycompose.state import State, Store
 
 LOGGER = logging.getLogger(__name__)
 
-VERIFY_EVERY = 8
-"""In debug, every n-th reused composable is expanded again and compared."""
+VERIFY_EVERY = 0
+"""Every n-th reused composable is expanded again and compared; 0 never.
+
+Debug and release behave the same, so neither pays for it; tests set it to 1
+and catch an impure composable on its first reuse."""
 
 WINDOW = 8
 """Published snapshots kept as patch bases for a host that is behind."""
@@ -137,11 +140,10 @@ class BridgeSurface:
         self._echoes: dict[str, int] = {}
         # The window the host last asked for, per lazy container key.
         self._windows: dict[str, tuple[int, int]] = {}
-        # Debug re-expands a sample of reused composables to catch impure ones,
-        # and names nodes by readable paths; release names them compactly.
+        # Both name nodes compactly; debug also keeps the readable paths.
         self._reuse = Reuse(
-            ExpansionMemo(verify_every=VERIFY_EVERY if debug else 0),
-            handles=Handles(compact=not debug),
+            ExpansionMemo(verify_every=VERIFY_EVERY),
+            handles=Handles(readable=debug),
         )
         try:
             published = self._snapshot(store.value)
@@ -430,6 +432,15 @@ class BridgeSurface:
         """
         self._require_worker()
         return json.dumps({k: round(v, 2) for k, v in self._pass.items()})
+
+    def node_paths(self) -> dict[str, str]:
+        """Return each node name's readable path, kept only in debug.
+
+        Returns:
+            Readable path by node id; empty in release.
+        """
+        self._require_worker()
+        return self._reuse.handles.paths()
 
     def expose_latest_error(self) -> str:
         """Return the latest worker diagnostic as plain data.

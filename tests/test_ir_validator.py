@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+from readable import readable_reuse
 
 from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node, Props
@@ -236,9 +237,11 @@ def test_release_pipeline_can_degrade_emitted_unknown_nodes() -> None:
             ),
         )
     )
-    result = validate_ir(emit_ir(state, "1.0.0"), debug=False)
+    reuse = readable_reuse()
+    result = validate_ir(emit_ir(state, "1.0.0", reuse), debug=False)
     assert result.snapshot is not None
-    assert [node.id for node in result.snapshot.root.children] == ["root.text"]
+    paths = reuse.handles.paths()
+    assert [paths[node.id] for node in result.snapshot.root.children] == ["root.text"]
     assert len(result.issues) == 1
 
 

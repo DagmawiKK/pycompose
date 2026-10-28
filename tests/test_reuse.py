@@ -1,6 +1,9 @@
 """Publishing with a session's reuse is byte-for-byte a fresh publish."""
 
+import json
+
 import pytest
+from readable import readable_reuse, rename
 
 from pycompose import composable
 from pycompose.core.node import Node, Props
@@ -27,9 +30,11 @@ def _state(labels: list[str], *, extra: bool = False, title: str = "Rows") -> St
 
 
 def _publish(state: State, reuse: Reuse | None, *, debug: bool = True) -> str:
+    """Publish in a session, or fresh, with ids replaced by readable paths."""
+    reuse = reuse or readable_reuse()
     result = validate_ir(emit_ir(state, "1.0.0", reuse), debug=debug, reuse=reuse)
     assert result.snapshot is not None
-    return to_json(result.snapshot, reuse)
+    return json.dumps(rename(json.loads(to_json(result.snapshot, reuse)), reuse))
 
 
 SEQUENCE = [
@@ -44,7 +49,7 @@ SEQUENCE = [
 
 
 def test_a_reused_publish_matches_a_fresh_one_at_every_step() -> None:
-    reuse = Reuse()
+    reuse = readable_reuse()
     for state in SEQUENCE:
         assert _publish(state, reuse) == _publish(state, None)
 
@@ -64,7 +69,7 @@ def test_release_mode_drops_the_same_invalid_nodes_with_reuse() -> None:
             )
         )
 
-    reuse = Reuse()
+    reuse = readable_reuse()
     for title in ("one", "two", "two"):
         assert _publish(state(title), reuse, debug=False) == _publish(
             state(title), None, debug=False
@@ -72,7 +77,7 @@ def test_release_mode_drops_the_same_invalid_nodes_with_reuse() -> None:
 
 
 def test_a_duplicate_id_across_reused_subtrees_is_still_refused() -> None:
-    reuse = Reuse()
+    reuse = readable_reuse()
     _publish(_state(["a", "b"]), reuse)
     # Components refuse duplicate sibling keys on construction; a raw node does
     # not, so the emitter's claim is what must refuse it, reused or not.

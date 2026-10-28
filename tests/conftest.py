@@ -61,9 +61,8 @@ def native_document():
 def verify_every_reuse(monkeypatch: pytest.MonkeyPatch) -> None:
     """Re-expand and compare every reused composable in every test session.
 
-    Debug builds sample one reuse in eight to stay fast; a test has no such
-    budget, so a composable reading something outside its arguments fails here
-    on its first reuse rather than by chance.
+    An app never pays for the check; a test has the budget, so a composable
+    reading something outside its arguments fails here on its first reuse.
 
     Args:
         monkeypatch: Restores the sampling rate after each test.

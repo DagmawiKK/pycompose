@@ -94,8 +94,10 @@ def _snapshot() -> dict:
 
 
 def _text(snapshot: dict, node_id: str) -> str:
+    paths = json.loads(runtime.fetch_node_paths())
+
     def find(node: dict) -> str | None:
-        if node["id"].endswith(node_id) and "text" in node.get("props", {}):
+        if paths[node["id"]].endswith(node_id) and "text" in node.get("props", {}):
             return node["props"]["text"]
         for child in node.get("children", []):
             found = find(child)
@@ -109,8 +111,10 @@ def _text(snapshot: dict, node_id: str) -> str:
 
 
 def _tap(snapshot: dict, node_id: str) -> None:
+    paths = json.loads(runtime.fetch_node_paths())
+
     def find(node: dict) -> dict | None:
-        if node["id"].endswith(node_id) and "onClick" in node.get("props", {}):
+        if paths[node["id"]].endswith(node_id) and "onClick" in node.get("props", {}):
             return node["props"]["onClick"]
         for child in node.get("children", []):
             found = find(child)

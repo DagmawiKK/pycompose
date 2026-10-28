@@ -5,6 +5,7 @@ import json
 import pytest
 from hypothesis import given
 from hypothesis import strategies as st
+from readable import readable_reuse
 
 from pycompose.core import Node, Props
 from pycompose.core.props import JsonValue
@@ -95,12 +96,14 @@ def test_emission_qualifies_two_thousand_levels_without_recursion() -> None:
     root = Node(id="leaf", type="Spacer")
     for _ in range(2000):
         root = Node(id="a", type="Column", children=(root,))
-    snapshot = emit_ir(State(root=root), "1.0.0")
-    assert snapshot.root.id == "root"
+    reuse = readable_reuse()
+    snapshot = emit_ir(State(root=root), "1.0.0", reuse)
+    paths = reuse.handles.paths()
+    assert paths[snapshot.root.id] == "root"
     leaf = snapshot.root
     for _ in range(2000):
         leaf = leaf.children[0]
-    assert leaf.id == "root." + "a." * 1999 + "leaf"
+    assert paths[leaf.id] == "root." + "a." * 1999 + "leaf"
 
 
 def test_two_thousand_level_pipeline_serializes_without_recursion() -> None:
@@ -160,10 +163,12 @@ def test_shared_subtrees_are_not_cycles_and_get_unique_emitted_ids() -> None:
             ),
         )
     )
-    candidate = emit_ir(state, "1.0.0")
+    reuse = readable_reuse()
+    candidate = emit_ir(state, "1.0.0", reuse)
     assert validate_ir(candidate).snapshot is candidate
-    assert candidate.root.children[0].children[0].id == "root.left.item"
-    assert candidate.root.children[1].children[0].id == "root.right.item"
+    paths = reuse.handles.paths()
+    assert paths[candidate.root.children[0].children[0].id] == "root.left.item"
+    assert paths[candidate.root.children[1].children[0].id] == "root.right.item"
     assert to_json_bytes(candidate).count(b'"text":"shared"') == 2
 
 

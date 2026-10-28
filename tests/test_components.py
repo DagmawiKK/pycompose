@@ -7,6 +7,7 @@ from pathlib import Path
 
 import jsonschema
 import pytest
+from readable import readable
 
 from pycompose.components import (
     Box,
@@ -37,7 +38,7 @@ def test_text_constructs_a_registry_valid_node() -> None:
     candidate = emit_ir(State(root=text), "1.0.0")
     assert validate_ir(candidate).snapshot is candidate
     assert to_json_bytes(candidate) == (
-        b'{"root":{"id":"root","props":{"style":"titleLarge","text":"Hello"},'
+        b'{"root":{"id":"0","props":{"style":"titleLarge","text":"Hello"},'
         b'"type":"Text"},"schemaVersion":"1.0.0","version":"0.1.0"}'
     )
 
@@ -69,10 +70,16 @@ def test_first_batch_maps_python_props_to_registry_valid_ir(
 def test_lazy_items_keep_stable_keys_after_reordering() -> None:
     first = Text(id="first", text="one")
     second = Text(id="second", text="two")
-    a = emit_ir(State(root=LazyColumn(id="list", items=(first, second))), "1.0.0")
-    b = emit_ir(State(root=LazyColumn(id="list", items=(second, first))), "1.0.0")
-    assert [child.id for child in a.root.children] == ["root.first", "root.second"]
-    assert [child.id for child in b.root.children] == ["root.second", "root.first"]
+    a = readable(State(root=LazyColumn(id="list", items=(first, second))))
+    b = readable(State(root=LazyColumn(id="list", items=(second, first))))
+    assert [child["id"] for child in a["root"]["children"]] == [
+        "root.first",
+        "root.second",
+    ]
+    assert [child["id"] for child in b["root"]["children"]] == [
+        "root.second",
+        "root.first",
+    ]
     with pytest.raises(IrValidationError, match="duplicate child key"):
         LazyColumn(id="list", items=(first, first))
 

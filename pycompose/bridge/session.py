@@ -198,6 +198,15 @@ class RuntimeSession:
         self._require_worker()
         return self._error or self._surface.expose_latest_error()
 
+    def node_paths(self) -> dict[str, str]:
+        """Return each node name's readable path, kept only in debug.
+
+        Returns:
+            Readable path by node id; empty in release.
+        """
+        self._require_worker()
+        return self._surface.node_paths()
+
     def last_pass(self) -> str:
         """Return the last action pass's time by phase.
 

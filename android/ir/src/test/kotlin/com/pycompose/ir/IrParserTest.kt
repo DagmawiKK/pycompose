@@ -38,7 +38,7 @@ class IrParserTest {
         val source = checkNotNull(javaClass.getResource("/ir_counter.json")).readText()
         val parsed = IrParser().parse(source).getOrThrow()
         assertEquals("1.0.0", parsed.snapshot.schemaVersion)
-        assertEquals("root", parsed.snapshot.root.id)
+        assertEquals("0", parsed.snapshot.root.id)
         assertNotNull(parsed.snapshot.root)
     }
 

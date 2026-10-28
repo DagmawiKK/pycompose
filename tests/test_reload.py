@@ -94,14 +94,16 @@ def source(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]:
 
 def _label(session: RuntimeSession) -> str:
     root = json.loads(session.snapshot())["root"]
-    return next(c for c in root["children"] if c["id"].endswith("label"))["props"][
-        "text"
-    ]
+    paths = session.node_paths()
+    return next(c for c in root["children"] if paths[c["id"]].endswith("label"))[
+        "props"
+    ]["text"]
 
 
 def _tap(session: RuntimeSession, node: str) -> None:
     root = json.loads(session.snapshot())["root"]
-    target = next(c for c in root["children"] if c["id"].endswith(node))
+    paths = session.node_paths()
+    target = next(c for c in root["children"] if paths[c["id"]].endswith(node))
     session.accept_action(json.dumps({**target["props"]["onClick"], "payload": {}}))
 
 

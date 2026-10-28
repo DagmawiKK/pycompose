@@ -40,7 +40,7 @@ def test_action_handler_publishes_the_next_canonical_snapshot() -> None:
     assert json.loads(initial)["root"]["props"]["text"] == "0"
     assert bridge.accept_action('{"intent":"increment","payload":{"by":2}}') is None
     assert bridge.expose_latest_snapshot() == (
-        '{"root":{"id":"root","props":{"text":"2"},"type":"Text"},'
+        '{"root":{"id":"0","props":{"text":"2"},"type":"Text"},'
         '"schemaVersion":"' + SCHEMA_VERSION + '","version":"0.1.0"}'
     )
     assert store.value.root.props.values["text"] == "2"
@@ -352,22 +352,38 @@ def test_a_pull_from_a_known_base_is_a_patch_that_rebuilds_the_latest() -> None:
     patch = json.loads(bridge.expose_envelope(first["serial"]))
 
     assert (patch["kind"], patch["baseSerial"]) == ("patch", first["serial"])
-    assert [(op["op"], op["id"]) for op in patch["ops"]] == [("setProp", "root.count")]
+    paths = bridge.node_paths()
+    assert [(op["op"], paths[op["id"]]) for op in patch["ops"]] == [
+        ("setProp", "root.count")
+    ]
     latest = json.loads(bridge.expose_latest_snapshot() or "")
     assert _apply_ops(first["root"], patch["ops"]) == latest["root"]
     assert patch.get("metadata") == latest.get("metadata")
 
 
-def test_a_release_session_names_nodes_compactly_and_its_patches_apply() -> None:
-    bridge = _counter_bridge(debug=False)
-    first = json.loads(bridge.expose_envelope(-1))
-
-    bridge.accept_action('{"intent":"increment","payload":{"by":2}}')
-    patch = json.loads(bridge.expose_envelope(first["serial"]))
-
-    assert [len(child["id"]) for child in first["root"]["children"]] == [1, 1]
-    latest = json.loads(bridge.expose_latest_snapshot() or "")
-    assert _apply_ops(first["root"], patch["ops"]) == latest["root"]
+def test_debug_and_release_publish_the_same_bytes() -> None:
+    """Debug differs only in what it keeps aside: the readable path table."""
+    debug, release = _counter_bridge(debug=True), _counter_bridge(debug=False)
+    published: list[tuple[str, str]] = []
+    bases = {"debug": -1, "release": -1}
+    for by in (2, 3, 3, 5):
+        envelopes = []
+        for name, bridge in (("debug", debug), ("release", release)):
+            bridge.accept_action(
+                json.dumps({"intent": "increment", "payload": {"by": by}})
+            )
+            envelope = json.loads(bridge.expose_envelope(bases[name]))
+            bases[name] = envelope.pop("serial")
+            envelope.pop("baseSerial", None)
+            envelopes.append(json.dumps(envelope, sort_keys=True))
+        published.append((debug.expose_latest_snapshot() or "", envelopes[0]))
+        assert debug.expose_latest_snapshot() == release.expose_latest_snapshot()
+        assert envelopes[0] == envelopes[1]
+    assert [
+        len(child["id"]) for child in json.loads(published[0][0])["root"]["children"]
+    ] == [1, 1]
+    assert release.node_paths() == {}
+    assert set(debug.node_paths().values()) >= {"root", "root.title", "root.count"}
 
 
 def test_an_unknown_base_or_another_session_gets_the_whole_snapshot() -> None:

@@ -36,14 +36,14 @@
    {
     "children": [
      {
-      "id": "root.base:64:264.base:67:140",
+      "id": "2",
       "props": {
        "text": "Body"
       },
       "type": "Text"
      },
      {
-      "id": "root.base:64:264.base:68:176",
+      "id": "3",
       "props": {
        "label": "Name",
        "onValueChange": {
@@ -56,7 +56,7 @@
       "type": "TextField"
      },
      {
-      "id": "root.base:64:264.base:71:208",
+      "id": "4",
       "props": {
        "checked": true,
        "onCheckedChange": {
@@ -67,7 +67,7 @@
       "type": "Switch"
      },
      {
-      "id": "root.base:64:264.base:72:252",
+      "id": "5",
       "props": {
        "onClick": {
         "fields": {
@@ -80,7 +80,7 @@
       "type": "Button"
      }
     ],
-    "id": "root.base:64:264",
+    "id": "1",
     "props": {
      "modifier": {
       "operations": [
@@ -98,7 +98,7 @@
     "type": "Column"
    },
    {
-    "id": "root.base:63:38",
+    "id": "6",
     "props": {
      "color": {
       "node": {
@@ -119,7 +119,7 @@
     "type": "Text"
    }
   ],
-  "id": "root",
+  "id": "0",
   "props": {},
   "type": "Scaffold"
  },

@@ -49,7 +49,8 @@ def test_a_requested_window_is_composed_keyed_by_each_item() -> None:
     node = root(bridge)
     assert node["props"]["itemOffset"] == 5_000  # type: ignore[index]
     assert texts(node) == [f"row {n}" for n in range(5_000, 5_010)]
-    assert node["children"][0]["id"].endswith("n5000")  # type: ignore[index]
+    first = node["children"][0]["id"]  # type: ignore[index]
+    assert bridge.node_paths()[first].endswith("n5000")
 
 
 def test_a_window_is_clamped_to_the_items_and_the_maximum() -> None:

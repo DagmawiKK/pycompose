@@ -6,6 +6,7 @@ import json
 import logging
 
 import pytest
+from readable import readable_reuse
 
 from pycompose.bridge.handshake import PROTOCOL, offered_components
 from pycompose.components import Column, Fallback, Text
@@ -51,10 +52,14 @@ def test_a_component_newer_than_the_hosts_schema_falls_back() -> None:
 
 
 def test_the_two_sides_are_keyed_apart() -> None:
+    # One session, so a shared name would mean one identity for both.
+    reuse = readable_reuse()
     lacking = Host(EVERYTHING - {"HorizontalDivider"})
-    shown = emit_ir(State(root=_screen()), SCHEMA_VERSION).root.children[0]
+    shown = emit_ir(State(root=_screen()), SCHEMA_VERSION, reuse).root.children[0]
     with hosted(lacking):
-        standing_in = emit_ir(State(root=_screen()), SCHEMA_VERSION).root.children[0]
+        standing_in = emit_ir(
+            State(root=_screen()), SCHEMA_VERSION, reuse
+        ).root.children[0]
     assert shown.id != standing_in.id
 
 

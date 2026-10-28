@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from readable import readable_reuse, rename
 
 from pycompose.composition import slot_nodes
 from pycompose.core.node import Node, Props
@@ -52,11 +53,12 @@ def snapshot(root: Node, schema_version: str = "1.0.0") -> dict:
         schema_version: Wire contract version the tree is written against.
 
     Returns:
-        The canonical wire snapshot.
+        The canonical wire snapshot, each node named by its readable path.
     """
-    candidate = emit_ir(State(root=root), schema_version)
+    reuse = readable_reuse()
+    candidate = emit_ir(State(root=root), schema_version, reuse)
     assert validate_ir(candidate).snapshot is candidate
-    return to_dict(candidate)
+    return rename(to_dict(candidate), reuse)
 
 
 def test_a_slot_name_must_be_camel_case() -> None:

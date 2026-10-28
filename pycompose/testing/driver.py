@@ -179,8 +179,8 @@ class AppDriver:
     ) -> Node:
         """The one node matching every given selector.
 
-        ``id`` matches the end of a node's path, so the key a view gave it is
-        enough; ``text`` matches the node that shows it.
+        ``id`` matches the end of a node's readable path, so the key a view
+        gave it is enough; ``text`` matches the node that shows it.
 
         Args:
             id: The node's key.
@@ -193,10 +193,11 @@ class AppDriver:
         Raises:
             AssertionError: Unless exactly one node matches.
         """
+        paths = self._loop.call(self._session.node_paths)
         matches = [
             node
             for node in self.nodes()
-            if (id is None or node["id"].rsplit(".", 1)[-1] == id or node["id"] == id)
+            if (id is None or _named(paths.get(node["id"], node["id"]), id))
             and (type is None or node["type"] == type)
             and (text is None or text in _shown(node))
         ]
@@ -329,6 +330,10 @@ class AppDriver:
         for effect in effects:
             if effect.get("kind") == "navigate":
                 self.lifecycle("onRouteChanged", **effect.get("payload", {}))
+
+
+def _named(path: str, key: str) -> bool:
+    return path == key or path.rsplit(".", 1)[-1] == key
 
 
 def _action(node: Node, prop: str) -> object:

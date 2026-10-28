@@ -80,7 +80,8 @@ def shown(bridge: BridgeSurface) -> str:
 
 def tap(bridge: BridgeSurface, node: str, prop: str, **payload: object) -> None:
     root = json.loads(bridge.expose_latest_snapshot() or "{}")["root"]
-    target = next(c for c in root["children"] if c["id"].endswith(node))
+    paths = bridge.node_paths()
+    target = next(c for c in root["children"] if paths[c["id"]].endswith(node))
     bridge.accept_action(json.dumps({**target["props"][prop], "payload": payload}))
 
 
@@ -144,7 +145,8 @@ def test_a_tap_from_a_long_gone_snapshot_still_means_what_it_meant(
 ) -> None:
     """The intent carries its own fields, so no old snapshot is needed to read it."""
     root = json.loads(bridge.expose_latest_snapshot() or "{}")["root"]
-    red = next(c for c in root["children"] if c["id"].endswith("red"))
+    paths = bridge.node_paths()
+    red = next(c for c in root["children"] if paths[c["id"]].endswith("red"))
     for title in ("a", "b", "c"):
         tap(bridge, "title", "onValueChange", value=title)
     bridge.accept_action(json.dumps({**red["props"]["onClick"], "payload": {}}))

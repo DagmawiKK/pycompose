@@ -69,7 +69,7 @@ def emit_ir(
     )
     if reuse is not None:
         reuse.emitted.start()
-    handles = reuse.handles if reuse else Handles(compact=False)
+    handles = reuse.handles if reuse else Handles()
     ids = IdRegistry()
     emission = _Emission(ids, handles, reuse.emitted if reuse else None)
     root, contracts = _emit_node(

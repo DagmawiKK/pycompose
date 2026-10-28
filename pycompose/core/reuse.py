@@ -77,4 +77,4 @@ class Reuse:
     validated: SubtreeMemo[Any] = field(default_factory=SubtreeMemo)
     serialized: SubtreeMemo[bytes] = field(default_factory=SubtreeMemo)
     bindings: SubtreeMemo[Any] = field(default_factory=SubtreeMemo)
-    handles: Handles = field(default_factory=lambda: Handles(compact=False))
+    handles: Handles = field(default_factory=Handles)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import functools
+import json
 import logging
 import sys
 from collections.abc import Callable
@@ -277,6 +278,16 @@ def fetch_latest_error() -> str:
         _failure,
     ]
     return " / ".join(part for part in parts if part)
+
+
+@_on_loop
+def fetch_node_paths() -> str:
+    """Pull each node name's readable path, for debug diagnostics.
+
+    Returns:
+        JSON readable path by node id; an empty object in release.
+    """
+    return json.dumps(_session.node_paths() if _session is not None else {})
 
 
 @_on_loop
