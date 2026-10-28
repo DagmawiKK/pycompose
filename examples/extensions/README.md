@@ -1,9 +1,9 @@
-# Extension proof app
+# HTTPX and SQLite app
 
-HTTPX and SQLite are optional reference extensions, not framework special cases.
-The app uses normal HTTPX requests and SQLite transactions through the shared
-`Resource` interface. The database connection opens, runs, and closes on one
-thread. App code owns its schema, pagination, and cache policy.
+HTTPX and SQLite are ordinary Python libraries here, not framework special
+cases. The view model runs every blocking call off the loop with
+`to_thread("io", …)`; a lock keeps the SQLite connection to one call at a time.
+App code owns its schema, pagination, and cache policy.
 
 From an installed checkout:
 
@@ -12,26 +12,24 @@ pycompose init extension-demo
 cp -R examples/extensions/app/. extension-demo/app/
 ```
 
-Append to `extension-demo/pycompose.toml`:
+In `extension-demo/pycompose.toml`, set the requirement and add the permission:
 
 ```toml
-[extensions]
-definitions = ["builtin:httpx", "builtin:sqlite"]
+[python]
+requirements = ["httpx>=0.27,<0.29"]
 
 [android]
 permissions = ["android.permission.INTERNET"]
 ```
 
-Then run `pycompose extensions plan` and `pycompose debug` inside the project.
-The build installs the extension's HTTPX requirement; a desktop development
-environment can install `pycompose[httpx]` separately. SQLite is provided by Python.
-Normal apps do not ship either reference recipe unless selected.
+Then run `pycompose debug` inside the project. The build installs HTTPX; SQLite
+is provided by Python.
 
 Choose `/posts`, `/comments`, `/albums`, `/photos`, `/todos`, or `/users`, then
 Refresh to fetch three records. Next page fetches another page. Each endpoint/page
 is cached separately. Load cache works offline for the current page. Tap UI stays
-usable during requests. Failures offer explicit retry; request identities reject
-stale network and cache results. This is a small page-by-page demonstration, not
+usable during requests. Failures offer explicit retry; a new request cancels
+the one before it, so a stale response never replaces the page asked for. This is a small page-by-page demonstration, not
 a complete infinite-scroll/navigation framework.
 
 `app/settings.py` selects the base URL. The default is a public demonstration

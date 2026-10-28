@@ -91,7 +91,7 @@ XML to touch:
 | --- | --- |
 | `app/` | the app's Python source (entrypoint `main:app` by default) |
 | `resources/` | strings, drawables, fonts — synced into the host |
-| `pycompose.toml` | identity, version, Python requirements, theme, permissions, signing, extensions |
+| `pycompose.toml` | identity, version, Python requirements, theme, permissions, signing |
 | `.pycompose/` | the Android project, generated from the app on every build; ignored by git |
 
 `pycompose prebuild` shows what the generated project would change, and
@@ -352,7 +352,6 @@ is dismissed before it commits, the observers report `hidden` and a failed
 | `pycompose doctor` | Report Android toolchain and schema compatibility |
 | `pycompose validate <file>` | Validate IR JSON against the registry and wire schema |
 | `pycompose stubs <path>` | Print optional module stubs from a project's declarations without importing app code |
-| `pycompose extensions plan` / `evidence` | Check extension requirements without importing them; `evidence` prints observed scenario evidence |
 
 Release signing reads `[signing]` from `pycompose.toml` and the passwords from
 the `PYCOMPOSE_STORE_PASSWORD` and `PYCOMPOSE_KEY_PASSWORD` environment
@@ -379,24 +378,24 @@ That is the notes example's editor on an arm64 emulator, warm; measure on the
 phones you target, and run it more than once, since the first passes after an
 install are much slower.
 
-## Extensions
+## Python libraries
 
-Normal Python libraries stay normal Python libraries. Optional extensions add
-owned execution and lifecycle coordination. Append to `pycompose.toml`:
+Python libraries stay ordinary Python libraries. Declare them, and any Android
+permission they need, in `pycompose.toml`:
 
 ```toml
-[extensions]
-definitions = ["builtin:httpx", "builtin:sqlite"]
+[python]
+requirements = ["httpx>=0.27,<0.29"]
 
 [android]
 permissions = ["android.permission.INTERNET"]
 ```
 
-`pycompose extensions plan` checks requirements without importing the
-integrations. Builds install the declared Python requirements and stage only the
-selected recipes; permission choices feed a generated manifest while your native
-edits stay intact. HTTPX and SQLite are reference recipes; app code uses them as
-ordinary libraries.
+Builds install the requirements; permissions feed a generated manifest while
+your native edits stay intact. A view model runs a blocking call off the loop
+with `await to_thread("io", fn, *args)`, and computation with
+`await to_thread("cpu", fn, *args)`; `examples/extensions` uses HTTPX and SQLite
+that way.
 
 ## Development
 

@@ -38,6 +38,10 @@ class Container:
     def __init__(self):
         self.built = []
         self.cleared = []
+        self.closed = False
+
+    def close(self):
+        self.closed = True
 
 
 class CounterViewModel(ViewModel[Counter]):
@@ -127,6 +131,7 @@ def test_a_reload_rebuilds_from_saved_state_and_cancels_work_in_flight(
         # The container survived; the old view model was cleared, its work
         # with it, and the new one was built once.
         assert session._container is container
+        assert not container.closed
         assert container.built == ["v1", "v2 edited"]
         assert container.cleared == ["v1"]
 
@@ -135,7 +140,9 @@ def test_a_reload_rebuilds_from_saved_state_and_cancels_work_in_flight(
         _refresh(session)
         assert _label(session) == "v2 edited:3:False"
         assert session.error() == ""
+        # The container ends with the session, not with a reload.
         session.close()
+        assert container.closed
 
     sim.run(run())
     assert sim.failures == []

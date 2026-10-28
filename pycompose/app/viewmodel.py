@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import contextvars
 import threading
 from collections.abc import Callable, Coroutine, Iterator
@@ -20,6 +21,7 @@ from pycompose.state.app_state import AppState
 __all__ = ["ViewModel", "ViewModelHost", "hosting"]
 
 S = TypeVar("S", bound=AppState)
+T = TypeVar("T")
 
 
 @dataclass(frozen=True)
@@ -109,11 +111,14 @@ class ViewModel(Generic[S]):
         if self._host is not None:
             self._host.changed()
 
-    def launch(self, work: Coroutine[Any, Any, Any]) -> None:
-        """Run ``work`` until it ends or this view model is cleared.
+    def launch(self, work: Coroutine[Any, Any, T]) -> asyncio.Task[T]:
+        """Run ``work`` until it ends, is cancelled, or this view model is cleared.
 
         Args:
             work: The coroutine to run.
+
+        Returns:
+            Its task, which the view model may cancel to supersede it.
 
         Raises:
             StateError: If the view model was built outside a session.
@@ -121,7 +126,7 @@ class ViewModel(Generic[S]):
         if self._scope is None:
             work.close()
             raise StateError("launch needs a view model built by a session")
-        self._scope.spawn(work)
+        return self._scope.spawn(work)
 
     def navigate(self, operation: NavOp) -> None:
         """Change the back stack: push, replace or pop a screen.

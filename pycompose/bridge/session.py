@@ -11,7 +11,7 @@ from contextlib import suppress
 from pathlib import Path
 from threading import current_thread
 from types import ModuleType
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 from pycompose.app.app import App as ViewApp
 from pycompose.app.session import NavigationSession
@@ -25,6 +25,12 @@ from pycompose.state import Actions, App, Store, actions_for_module
 __all__ = ["RuntimeSession", "compose_once"]
 
 LOGGER = logging.getLogger(__name__)
+
+
+@runtime_checkable
+class _Closeable(Protocol):
+    def close(self) -> None: ...
+
 
 _host_components: frozenset[str] | None = None
 """What the host's handshake said it renders, for every session it starts."""
@@ -322,9 +328,15 @@ class RuntimeSession:
             return True
 
     def close(self) -> None:
-        """Retire registered work and close its resources off the Compose thread."""
+        """Retire registered work and close its resources off the Compose thread.
+
+        A container that has a ``close`` method is closed with the session, as the
+        app's long-lived objects end with the process on a device.
+        """
         self._require_worker()
         self._surface.close()
+        if isinstance(self._container, _Closeable):
+            self._container.close()
 
 
 def _user_modules(directory: Path) -> dict[str, ModuleType]:

@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import IO
 
 from pycompose.cli.console import echo, echo_error, ok, step
-from pycompose.cli.extensions import check_extensions, stage_extensions
+from pycompose.cli.permissions import stage_manifest
 from pycompose.cli.prebuild import generated, prebuild
 from pycompose.cli.project import (
     Project,
@@ -54,11 +54,7 @@ def _requirements(project: Project) -> list[str]:
     requirements = validate_requirements(
         project.table("python").get("requirements", []), field="python.requirements"
     )
-    report = check_extensions(project)
-    extra = validate_requirements(
-        report["requirements"], field="extension.requirements"
-    )
-    return list(dict.fromkeys([*requirements, *extra]))
+    return list(dict.fromkeys(requirements))
 
 
 def _scaffold_template_version(project: Project) -> tuple[int, ...] | None:
@@ -393,7 +389,11 @@ def prepare(project: Project) -> tuple[Path, dict[str, str]]:
         env["JAVA_HOME"] = home
     _app_properties(project, env)
     _jvm_properties(project, env)
-    stage_extensions(project, env)
+    # The app's permissions reach Gradle as a generated copy of its manifest.
+    env.pop("ORG_GRADLE_PROJECT_pycomposeManifest", None)
+    manifest = stage_manifest(project)
+    if manifest is not None:
+        env["ORG_GRADLE_PROJECT_pycomposeManifest"] = str(manifest)
     if not generated(project):
         sync_resources(project)
     codegen(project)

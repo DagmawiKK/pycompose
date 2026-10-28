@@ -108,9 +108,6 @@ key_password_env = "KEY"
 permissions = ["android.permission.INTERNET"]
 plugins = []
 
-[extensions]
-definitions = []
-
 [toolchain]
 library_version = "0.1.0"
 schema_version = "1.23.0"

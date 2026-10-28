@@ -119,18 +119,6 @@
         }
       }
     },
-    "extensions": {
-      "type": "object",
-      "description": "Python integrations the app opts into.",
-      "additionalProperties": false,
-      "properties": {
-        "definitions": {
-          "type": "array",
-          "items": {"type": "string", "minLength": 1},
-          "description": "Extension definitions: builtin:name or a path to a definition file."
-        }
-      }
-    },
     "toolchain": {
       "type": "object",
       "description": "Which PyCompose and wire schema the app was written against.",

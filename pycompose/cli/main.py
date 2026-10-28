@@ -12,7 +12,6 @@ from pycompose.cli import console, project_commands
 from pycompose.cli.build import build_project
 from pycompose.cli.config import KEYS, Setting, change, settings
 from pycompose.cli.doctor import doctor
-from pycompose.cli.extensions import show_evidence, show_plan
 from pycompose.cli.init import init_project
 from pycompose.cli.install import Deploy, install_project
 from pycompose.cli.prebuild import generated
@@ -42,7 +41,6 @@ _MENU = (
     ("migrate", "Move an app-owned Android project to a generated one"),
     ("sync", "Sync named resources into the Android host"),
     ("doctor", "Report Android toolchain and schema compatibility"),
-    ("extensions", "Plan explicitly selected extension capabilities"),
     ("validate", "Validate IR JSON against the registry and wire schema"),
     ("stubs", "Print optional module type stubs"),
     ("init", "Create a project from packaged template assets"),
@@ -148,12 +146,6 @@ def _parser() -> argparse.ArgumentParser:
         "stubs", help="Print optional module type stubs without importing app code"
     )
     stubs.add_argument("path", type=Path)
-    extensions = commands.add_parser(
-        "extensions", help="Plan extensions without importing their implementations"
-    )
-    extensions.add_argument(
-        "action", choices=("plan", "evidence"), nargs="?", default="plan"
-    )
     return parser
 
 
@@ -190,13 +182,6 @@ def _validate(args: argparse.Namespace) -> int:
 def _stubs(args: argparse.Namespace) -> int:
     print(generate_stubs(args.path), end="")
     return 0
-
-
-def _extensions(args: argparse.Namespace) -> int:
-    project = load_project(Path.cwd())
-    if args.action == "evidence":
-        return show_evidence(project)
-    return show_plan(project)
 
 
 def _build(args: argparse.Namespace) -> int:
@@ -423,7 +408,6 @@ def main(argv: list[str] | None = None) -> int:
         "doctor": _doctor,
         "run": _run,
         "stubs": _stubs,
-        "extensions": _extensions,
     }
     try:
         return handlers[args.command](args)

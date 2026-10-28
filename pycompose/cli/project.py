@@ -153,6 +153,11 @@ def load_project(directory: Path) -> Project:
         raise ProjectError(
             "cannot read pycompose.toml; run from a project created with pycompose init"
         ) from exc
+    if "extensions" in config:
+        raise ProjectError(
+            "[extensions] was removed: list Python packages in [python] requirements "
+            "and Android permissions in [android] permissions"
+        )
     return Project(root, config)
 
 
