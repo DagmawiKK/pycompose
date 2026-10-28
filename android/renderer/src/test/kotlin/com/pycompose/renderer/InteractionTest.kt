@@ -90,7 +90,7 @@ class InteractionTest {
                         bound = JsonObject(emptyMap()),
                     ),
             )
-        val sink = ObservationSink(bindings, ActionDispatcher { actions.add(it) }, reports::add)
+        val sink = ObservationSink({ bindings }, ActionDispatcher { actions.add(it) }, reports::add)
 
         sink.observe("value", "app.demo.value.1", JsonPrimitive(0.5f))
         sink.observe("firstVisibleIndex", "app.demo.index.1", JsonPrimitive(3))
@@ -113,7 +113,7 @@ class InteractionTest {
         val reports = Reports()
         val sink =
             ObservationSink(
-                mapOf("app.demo.a.1" to binding, "app.demo.b.1" to binding),
+                { mapOf("app.demo.a.1" to binding, "app.demo.b.1" to binding) },
                 ActionDispatcher { actions.add(it) },
                 {},
                 reports,
@@ -146,7 +146,7 @@ class InteractionTest {
                         bound = JsonObject(emptyMap()),
                     ),
             )
-        val sink = ObservationSink(bindings, ActionDispatcher { actions.add(it) }, reports::add)
+        val sink = ObservationSink({ bindings }, ActionDispatcher { actions.add(it) }, reports::add)
 
         sink.observe("value", "app.demo.value.1", JsonPrimitive(3))
 
@@ -165,7 +165,7 @@ class InteractionTest {
             )
         val sink =
             ObservationSink(
-                mapOf("app.demo.index.1" to binding),
+                { mapOf("app.demo.index.1" to binding) },
                 ActionDispatcher { actions.add(it) },
                 reports::add,
             )

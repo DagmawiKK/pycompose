@@ -83,13 +83,13 @@ private fun kindAndState(interaction: Interaction): Pair<String, Boolean>? =
  * The declaration is data, so nothing here needs the renderer or the
  * composition: the sink is testable on its own.
  *
- * @param bindings Session bindings by action id.
+ * @param bindings The bindings of the snapshot on screen, by action id.
  * @param actions Dispatcher that receives the action.
  * @param report Sink for a message the host cannot turn into an action.
  * @param reports Numbers each report, so the app's echo can be told from a stale one.
  */
 internal class ObservationSink(
-    private val bindings: Map<String, AppBinding>,
+    private val bindings: () -> Map<String, AppBinding>,
     private val actions: ActionDispatcher,
     private val report: (String) -> Unit,
     private val reports: Reports = Reports(),
@@ -107,7 +107,7 @@ internal class ObservationSink(
         value: JsonPrimitive,
     ) {
         val fields =
-            bindings[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
+            bindings()[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
         val types =
             when {
                 value.isString -> setOf("string")
@@ -135,12 +135,12 @@ internal class ObservationSink(
         value: JsonObject,
     ) {
         val fields =
-            bindings[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
+            bindings()[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
         if (fields.keys != value.keys) {
             report("Cannot observe $kind for $actionId: expected ${fields.keys}, got ${value.keys}")
             return
         }
-        com.pycompose.ir.AppBindings.validatePayload(actionId, value, bindings).fold(
+        com.pycompose.ir.AppBindings.validatePayload(actionId, value, bindings()).fold(
             onSuccess = { actions.dispatch(actionId, value, reports.next(actionId)) },
             onFailure = { report("Cannot observe $kind for $actionId: ${it.message}") },
         )
