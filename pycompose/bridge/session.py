@@ -13,7 +13,7 @@ from types import ModuleType
 from typing import Any
 
 from pycompose.app.app import App as ViewApp
-from pycompose.app.session import ScreenSession
+from pycompose.app.session import NavigationSession
 from pycompose.bridge.api import BridgeSurface
 from pycompose.core.context import AppContext, carried, context
 from pycompose.core.context import install as install_context
@@ -94,7 +94,7 @@ class RuntimeSession:
         module = importlib.import_module(self._module)
         app = getattr(module, self._export, None)
         if isinstance(app, ViewApp):
-            return self._build_view(app, restore)
+            return self._build_view(app, route, restore)
         if not isinstance(app, App):
             raise BridgeError(
                 "entrypoint must name the module's App export",
@@ -130,11 +130,12 @@ class RuntimeSession:
             raise BridgeError("app build produced no valid snapshot")
         return surface
 
-    def _build_view(self, app: ViewApp, restore: str) -> BridgeSurface:
+    def _build_view(self, app: ViewApp, route: str, restore: str) -> BridgeSurface:
         """Start an app built from view models on its start destination.
 
         Args:
             app: The app.
+            route: The route the host restored or was opened with.
             restore: Saved state the host handed back, or empty.
 
         Returns:
@@ -143,8 +144,8 @@ class RuntimeSession:
         Raises:
             BridgeError: If the first snapshot is invalid.
         """
-        screen = ScreenSession(
-            app, self._resolve_container(app), restore, report=self._report_task
+        screen = NavigationSession(
+            app, self._resolve_container(app), route, restore, report=self._report_task
         )
         surface = BridgeSurface(
             Store(screen.snapshot_state(None)),

@@ -73,7 +73,7 @@ def screen(state):
 
 
 app = App(
-    start=Destination(lambda c: CounterViewModel(c.rows), screen),
+    start=Destination(lambda c, route: CounterViewModel(c.rows), screen),
     container=Container,
 )
 """
@@ -159,7 +159,9 @@ def test_saved_state_restores_and_loaded_fields_are_never_saved(
     runtime.start(counter, "home", True)
     _tap(_snapshot(), "three")
     saved = _snapshot()["metadata"]["data"]
-    assert saved == {"count": 3, "label": "ready"}
+    assert [entry["state"] for entry in saved["stack"]] == [
+        {"count": 3, "label": "ready"}
+    ]
     runtime.close()
     runtime.start(counter, "home", True, restore=json.dumps(saved))
     assert _text(_snapshot(), "count") == "3"

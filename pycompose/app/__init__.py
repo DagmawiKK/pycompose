@@ -6,10 +6,11 @@ function. Controls send intents, the view model handles them on the session's
 loop thread, and its tasks run supervised until it is cleared.
 """
 
-from pycompose.app.app import App, Destination
+from pycompose.app.app import App, Destination, Home
 from pycompose.app.effects import Finish, Haptic, Navigate, OpenUrl, Toast, TypedEffect
 from pycompose.app.flow import StateFlow
 from pycompose.app.intents import Intent
+from pycompose.app.navigation import Pop, Push, Replace, Route
 from pycompose.app.viewmodel import ViewModel
 
 __all__ = [
@@ -17,9 +18,14 @@ __all__ = [
     "Destination",
     "Finish",
     "Haptic",
+    "Home",
     "Intent",
     "Navigate",
     "OpenUrl",
+    "Pop",
+    "Push",
+    "Replace",
+    "Route",
     "StateFlow",
     "Toast",
     "TypedEffect",

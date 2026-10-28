@@ -1,24 +1,38 @@
-"""One destination's view model, served to the bridge as its action registry."""
+"""The back stack: a view model per screen, served to the bridge as its registry."""
 
 from __future__ import annotations
 
 import json
 import logging
 from collections.abc import Callable, Mapping
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, cast
 
 from pycompose import async_task
-from pycompose.app.app import App
+from pycompose.app.app import App, Destination
+from pycompose.app.effects import Finish, Navigate
 from pycompose.app.intents import intent_class
+from pycompose.app.navigation import (
+    NavOp,
+    Pop,
+    Push,
+    Replace,
+    Route,
+    parse_route,
+    route_key,
+)
 from pycompose.app.viewmodel import ViewModel, ViewModelHost, hosting
+from pycompose.contract.catalog import REGISTRY
 from pycompose.contract.registry_types import PropDef
 from pycompose.core.action_binding import BindingSpec
+from pycompose.core.effect import Effect
+from pycompose.core.props import JsonValue
 from pycompose.errors import StateError
-from pycompose.runtime.scope import Report
+from pycompose.runtime.scope import Report, Scope
 from pycompose.state.actions import Actions
 from pycompose.state.state import State
 
-__all__ = ["REFRESH", "ScreenSession"]
+__all__ = ["REFRESH", "NavigationSession"]
 
 LOGGER = logging.getLogger(__name__)
 
@@ -35,17 +49,28 @@ def _post_refresh() -> None:
         LOGGER.debug("state changed with no host listening")
 
 
-class ScreenSession(Actions):
-    """A destination's view model, behind the registry interface the bridge calls.
+@dataclass
+class _Entry:
+    """One screen on the back stack."""
 
-    Intents decode against their own classes, run on the view model, and the
-    screen draws its state into the next snapshot. A change made outside an
-    intent -- by a task the view model launched -- sends one refresh signal
-    until that refresh is handled.
+    route: Route
+    key: str
+    destination: Destination[Any]
+    view_model: ViewModel[Any]
+
+
+class NavigationSession(Actions):
+    """The app's back stack, behind the registry interface the bridge calls.
+
+    The top entry's view model receives intents and lifecycle events, and its
+    screen draws the snapshot. Pushing builds a view model from its destination;
+    popping cancels the popped view model's work. Every entry's saved state is
+    published, so process death restores the whole stack.
 
     Args:
-        app: The app whose start destination this is.
+        app: The app.
         container: The session's container, or None.
+        route: The route the host restored or was opened with.
         restore: The saved state the host handed back, or empty.
         report: Receives each supervised task's failure.
         signal: Tells the host to pull again; posts a refresh by default.
@@ -55,36 +80,69 @@ class ScreenSession(Actions):
         self,
         app: App,
         container: object | None,
+        route: str,
         restore: str,
         report: Report,
         signal: Callable[[], None] = _post_refresh,
     ) -> None:
         super().__init__()
-        self._destination = app.start
+        self._app = app
+        self._container = container
         self._signal = signal
         self._dispatching = False
         self._pending = False
-        with hosting(ViewModelHost(report, self._changed)):
-            factory = self._destination.view_model
-            self.view_model: ViewModel[Any] = (
-                factory(container) if container is not None else factory()
-            )
-        self._restore(restore)
+        self._effects: list[Effect] = []
+        self._scope = Scope("navigation", report)
+        self._host = ViewModelHost(report, self._changed, self._navigate)
+        self.entries: list[_Entry] = self._restored(restore) or [
+            self._entry(app.route())
+        ]
+        self._open(route)
 
-    def _restore(self, restore: str) -> None:
+    def _entry(self, route: Route, saved: object = None) -> _Entry:
+        destination = self._app.destination(route)
+        with hosting(self._host):
+            model = destination.view_model(self._container, route)
+        if saved is not None:
+            state = model.state
+            codec = type(state).codec
+            loaded = {f.name: getattr(state, f.name) for f in codec.fields if f.loaded}
+            # Set directly: restoring is part of building, not a change to publish.
+            model._state = codec.decode(saved).evolve(**loaded)
+        return _Entry(route, route_key(route), destination, model)
+
+    def _restored(self, restore: str) -> list[_Entry]:
         if not restore:
-            return
-        state = self.view_model.state
+            return []
         try:
-            saved = type(state).codec.decode(json.loads(restore))
-        except (StateError, ValueError):
+            stack = json.loads(restore)["stack"]
+            entries = []
+            for item in stack:
+                route = parse_route(json.dumps(item["route"]))
+                if route is None:
+                    raise StateError("saved route names no destination")
+                entries.append(self._entry(route, item["state"]))
+        except (StateError, ValueError, KeyError, TypeError):
             LOGGER.warning("saved state is unreadable; starting fresh")
+            return []
+        return entries
+
+    def _open(self, key: str) -> None:
+        """Open a route the host named, if the app allows it from outside."""
+        if key == self.entries[-1].key:
             return
-        loaded = {
-            f.name: getattr(state, f.name) for f in type(state).codec.fields if f.loaded
-        }
-        # Set directly: restoring is part of building, not a change to publish.
-        self.view_model._state = saved.evolve(**loaded)
+        route = parse_route(key)
+        if route is not None and type(route) in self._app.deep_links:
+            self.entries.append(self._entry(route))
+
+    @property
+    def top(self) -> ViewModel[Any]:
+        """The view model of the screen on top.
+
+        Returns:
+            The top entry's view model.
+        """
+        return self.entries[-1].view_model
 
     def _changed(self) -> None:
         if self._dispatching or self._pending:
@@ -92,21 +150,53 @@ class ScreenSession(Actions):
         self._pending = True
         self._signal()
 
+    def _navigate(self, operation: NavOp) -> None:
+        if isinstance(operation, Push):
+            self.entries.append(self._entry(operation.route))
+        elif isinstance(operation, Replace):
+            self._close(self.entries.pop())
+            self.entries.append(self._entry(operation.route))
+        elif len(self.entries) > 1:
+            self._close(self.entries.pop())
+        else:
+            self._effects.append(Finish().effect())
+            return
+        # The host keeps the route only to hand it back after process death.
+        self._effects.append(Navigate(self.entries[-1].key).effect())
+        self._changed()
+
+    def _close(self, entry: _Entry) -> None:
+        self._scope.spawn(entry.view_model.clear())
+
     def snapshot_state(self, previous: State | None) -> State:
-        """Return the state the screen draws now, as the next snapshot's source.
+        """Return the state the top screen draws now, as the next snapshot's source.
 
         Args:
             previous: The snapshot state before, or None for the first.
 
         Returns:
-            The view model's state drawn by its screen, with emitted effects.
+            The top screen with every entry's saved state and pending effects.
         """
-        state = self.view_model.state
+        top = self.entries[-1]
+        effects = [*self._effects]
+        self._effects = []
+        for entry in self.entries:
+            effects.extend(entry.view_model.take_effects())
+        stack = [
+            {
+                "route": json.loads(entry.key),
+                "state": type(entry.view_model.state).codec.encode(
+                    entry.view_model.state
+                ),
+            }
+            for entry in self.entries
+        ]
+        saved: dict[str, JsonValue] = {"stack": cast("list[JsonValue]", stack)}
         return State(
-            root=self._destination.screen(state),
+            root=top.destination.screen(top.view_model.state),
             version=previous.version + 1 if previous is not None else 0,
-            app=state,
-            effects=self.view_model.take_effects(),
+            data=saved,
+            effects=tuple(effects),
         )
 
     def contract(self, action_id: str) -> Mapping[str, PropDef] | None:
@@ -122,20 +212,35 @@ class ScreenSession(Actions):
         return cls.contract() if cls is not None else None
 
     def __contains__(self, action_id: object) -> bool:
-        """Report whether an event names this session's refresh signal.
+        """Report whether an event is one this session handles itself.
 
         Args:
             action_id: The event's id.
 
         Returns:
-            True only for the refresh signal.
+            True for the refresh signal and every host lifecycle event.
         """
-        return action_id == REFRESH
+        return action_id == REFRESH or action_id in REGISTRY.lifecycle
+
+    def declared(
+        self, action_id: str, payload: Mapping[str, object]
+    ) -> Mapping[str, object]:
+        """Return a lifecycle event's fields as the host sent them.
+
+        Args:
+            action_id: The event's id.
+            payload: Its fields, already checked against the host contract.
+
+        Returns:
+            The same fields.
+        """
+        del action_id
+        return payload
 
     def dispatch_binding(
         self, spec: BindingSpec, state: State, payload: Mapping[str, object]
     ) -> State:
-        """Run one intent on the view model and draw the result.
+        """Run one intent on the top screen's view model and draw the result.
 
         Args:
             spec: The intent's class name, contract and bound fields.
@@ -154,26 +259,40 @@ class ScreenSession(Actions):
         intent = cls.codec.decode({**spec.bound, **payload})
         self._dispatching = True
         try:
-            self.view_model.on_intent(intent)
+            self.top.on_intent(intent)
         finally:
             self._dispatching = False
         return self.snapshot_state(state)
 
-    def dispatch(self, action_id: str, state: State, payload: Any = None) -> State:  # noqa: ARG002 -- the refresh signal carries no data
-        """Handle the refresh signal: draw the state as it is now.
+    def dispatch(self, action_id: str, state: State, payload: Any = None) -> State:
+        """Handle the refresh signal and the host's lifecycle events.
 
         Args:
             action_id: The event's id.
             state: The snapshot state before.
-            payload: Unused; the refresh signal carries no data.
+            payload: The event's fields.
 
         Returns:
             The next snapshot state.
 
         Raises:
-            StateError: For anything but the refresh signal.
+            StateError: For an event this session does not handle.
         """
-        if action_id != REFRESH:
-            raise StateError("unknown action", action_id=action_id)
-        self._pending = False
+        self._dispatching = True
+        try:
+            if action_id == REFRESH:
+                self._pending = False
+            elif action_id == "onBackRequested":
+                if not self.top.on_back():
+                    self._navigate(Pop())
+            elif action_id == "onRouteChanged":
+                self._open(str((payload or {}).get("route", "")))
+            elif action_id == "onResume":
+                self.top.on_resume()
+            elif action_id == "onPause":
+                self.top.on_pause()
+            elif action_id not in REGISTRY.lifecycle:
+                raise StateError("unknown action", action_id=action_id)
+        finally:
+            self._dispatching = False
         return self.snapshot_state(state)

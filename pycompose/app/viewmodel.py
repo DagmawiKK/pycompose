@@ -11,6 +11,7 @@ from typing import Any, Generic, TypeVar
 
 from pycompose.app.effects import TypedEffect
 from pycompose.app.intents import Intent
+from pycompose.app.navigation import NavOp
 from pycompose.core.effect import Effect
 from pycompose.errors import StateError
 from pycompose.runtime.scope import Report, Scope
@@ -29,10 +30,12 @@ class ViewModelHost:
         report: Receives each supervised task's failure.
         changed: Called when state changes outside an intent, so the session
             publishes it.
+        navigate: Applies one change to the back stack.
     """
 
     report: Report
     changed: Callable[[], None]
+    navigate: Callable[[NavOp], None]
 
 
 _HOST: contextvars.ContextVar[ViewModelHost | None] = contextvars.ContextVar(
@@ -119,6 +122,33 @@ class ViewModel(Generic[S]):
             work.close()
             raise StateError("launch needs a view model built by a session")
         self._scope.spawn(work)
+
+    def navigate(self, operation: NavOp) -> None:
+        """Change the back stack: push, replace or pop a screen.
+
+        Args:
+            operation: The change.
+
+        Raises:
+            StateError: If the view model was built outside a session.
+        """
+        if self._host is None:
+            raise StateError("navigate needs a view model built by a session")
+        self._host.navigate(operation)
+
+    def on_back(self) -> bool:
+        """Handle the back button before the screen closes.
+
+        Returns:
+            True to keep the screen; False, the default, to close it.
+        """
+        return False
+
+    def on_resume(self) -> None:
+        """React to the app returning to the foreground."""
+
+    def on_pause(self) -> None:
+        """React to the app leaving the foreground."""
 
     def on_intent(self, intent: Intent) -> None:
         """Handle one intent from the screen.
