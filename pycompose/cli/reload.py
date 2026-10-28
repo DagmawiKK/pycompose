@@ -10,6 +10,8 @@ import sys
 from pathlib import Path
 from types import ModuleType
 
+from pycompose.app.app import App as ViewApp
+from pycompose.bridge.session import compose_once
 from pycompose.cli.project import Project, ProjectError, project_path
 from pycompose.core.context import AppContext, carried
 from pycompose.core.context import install as install_context
@@ -142,6 +144,13 @@ class AppReloader:
         module = importlib.import_module(self._module)
         self._modules()
         app = getattr(module, self._function, None)
+        if isinstance(app, ViewApp):
+            # Composed as a device session composes it: its start screen, with
+            # a container of its own, on a loop thread that ends with it.
+            snapshot, error = compose_once(f"{self._module}:{self._function}")
+            if not snapshot:
+                raise ProjectError("app did not produce a valid snapshot", error=error)
+            return snapshot
         if not isinstance(app, App):
             raise ProjectError(
                 "entrypoint must name the module's App export",

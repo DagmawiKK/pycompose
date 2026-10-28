@@ -69,6 +69,7 @@ class RuntimeSession:
         self._worker = current_thread()
         self._error = ""
         self._container: object | None = None
+        self._navigation: NavigationSession | None = None
         self.identity = identity
         self._surface = self._build(route, restore)
 
@@ -95,6 +96,7 @@ class RuntimeSession:
     def _build(self, route: str, restore: str = "") -> BridgeSurface:
         module = importlib.import_module(self._module)
         app = getattr(module, self._export, None)
+        self._navigation = None
         if isinstance(app, ViewApp):
             return self._build_view(app, route, restore)
         if not isinstance(app, App):
@@ -149,14 +151,22 @@ class RuntimeSession:
         screen = NavigationSession(
             app, self._resolve_container(app), route, restore, report=self._report_task
         )
-        surface = BridgeSurface(
-            Store(screen.snapshot_state(None)),
-            screen,
-            debug=self._debug,
-            host_components=_host_components,
-        )
-        if surface.expose_latest_snapshot() is None:
-            raise BridgeError("app build produced no valid snapshot")
+        built = False
+        try:
+            surface = BridgeSurface(
+                Store(screen.snapshot_state(None)),
+                screen,
+                debug=self._debug,
+                host_components=_host_components,
+            )
+            if surface.expose_latest_snapshot() is None:
+                raise BridgeError("app build produced no valid snapshot")
+            built = True
+        finally:
+            if not built:
+                # Its view models must not keep working behind a failed build.
+                screen.close()
+        self._navigation = screen
         return surface
 
     def _report_task(self, scope: str, error: BaseException) -> None:
@@ -253,11 +263,16 @@ class RuntimeSession:
 
         Only modules beside the app entrypoint are evicted, never the runtime.
         This hook does not download source files; dev delivery invokes it after
-        updated source has been staged on the device.
+        updated source has been staged on the device. An app built from view
+        models is rebuilt from its live back stack, its container kept; the old
+        view models are cleared only once the new ones are built, so a failed
+        reload changes nothing.
 
         Args:
-            route: Minimal route to supply when rebuilding the app.
-            restore: Saved app data to hand back to the rebuilt app.
+            route: Minimal route to supply when rebuilding the app; an app built
+                from view models uses its live stack's top instead.
+            restore: Saved app data to hand back to the rebuilt app; an app built
+                from view models uses its live stack instead.
 
         Returns:
             Whether a new valid app session replaced the previous one.
@@ -277,6 +292,11 @@ class RuntimeSession:
         previous = _user_modules(directory)
         # An app built from view models runs with no context installed.
         previous_context = context() if has_context() else None
+        previous_navigation = self._navigation
+        if previous_navigation is not None:
+            # The live stack is newer than anything the host saved: every view
+            # model is rebuilt from it with the new code.
+            route, restore = previous_navigation.top_key, previous_navigation.saved()
         for name, module in previous.items():
             del sys.modules[name]
             cached = getattr(module, "__cached__", None)
@@ -292,6 +312,7 @@ class RuntimeSession:
                 del sys.modules[name]
             sys.modules.update(previous)
             install_context(previous_context)
+            self._navigation = previous_navigation
             self._error = str(exc)
             return False
         else:

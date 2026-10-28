@@ -94,10 +94,19 @@ class NavigationSession(Actions):
         self._effects: list[Effect] = []
         self._scope = Scope("navigation", report)
         self._host = ViewModelHost(report, self._changed, self._navigate)
-        self.entries: list[_Entry] = self._restored(restore) or [
-            self._entry(app.route())
-        ]
-        self._open(route)
+        self.entries: list[_Entry] = []
+        built = False
+        try:
+            self._restore(restore)
+            if not self.entries:
+                self.entries.append(self._entry(app.route()))
+            self._open(route)
+            built = True
+        finally:
+            if not built:
+                # A view model that failed to build must not leave its siblings'
+                # work running behind a session nobody holds.
+                self.close()
 
     def _entry(self, route: Route, saved: object = None) -> _Entry:
         destination = self._app.destination(route)
@@ -111,29 +120,56 @@ class NavigationSession(Actions):
             model._state = codec.decode(saved).evolve(**loaded)
         return _Entry(route, route_key(route), destination, model)
 
-    def _restored(self, restore: str) -> list[_Entry]:
+    def _restore(self, restore: str) -> None:
+        """Rebuild the saved stack, or none of it when any entry is unreadable."""
         if not restore:
-            return []
+            return
         try:
-            stack = json.loads(restore)["stack"]
-            entries = []
-            for item in stack:
+            for item in json.loads(restore)["stack"]:
                 route = parse_route(json.dumps(item["route"]))
                 if route is None:
                     raise StateError("saved route names no destination")
-                entries.append(self._entry(route, item["state"]))
+                self.entries.append(self._entry(route, item["state"]))
         except (StateError, ValueError, KeyError, TypeError):
             LOGGER.warning("saved state is unreadable; starting fresh")
-            return []
-        return entries
+            self.close()
 
     def _open(self, key: str) -> None:
         """Open a route the host named, if the app allows it from outside."""
-        if key == self.entries[-1].key:
+        if key == self.top_key:
             return
         route = parse_route(key)
         if route is not None and type(route) in self._app.deep_links:
             self.entries.append(self._entry(route))
+
+    @property
+    def top_key(self) -> str:
+        """The route on top, as the host keeps it.
+
+        Returns:
+            The top entry's route key.
+        """
+        return self.entries[-1].key
+
+    def saved(self) -> str:
+        """Return every entry's route and saved state, as a restore hands it back.
+
+        Returns:
+            The saved stack as JSON.
+        """
+        return json.dumps(self._stack())
+
+    def _stack(self) -> dict[str, JsonValue]:
+        stack = [
+            {
+                "route": json.loads(entry.key),
+                "state": type(entry.view_model.state).codec.encode(
+                    entry.view_model.state
+                ),
+            }
+            for entry in self.entries
+        ]
+        return {"stack": cast("list[JsonValue]", stack)}
 
     @property
     def top(self) -> ViewModel[Any]:
@@ -192,20 +228,10 @@ class NavigationSession(Actions):
         top = self.entries[-1]
         self._take_effects()
         effects, self._effects = self._effects, []
-        stack = [
-            {
-                "route": json.loads(entry.key),
-                "state": type(entry.view_model.state).codec.encode(
-                    entry.view_model.state
-                ),
-            }
-            for entry in self.entries
-        ]
-        saved: dict[str, JsonValue] = {"stack": cast("list[JsonValue]", stack)}
         return State(
             root=top.destination.screen(top.view_model.state),
             version=previous.version + 1 if previous is not None else 0,
-            data=saved,
+            data=self._stack(),
             effects=tuple(effects),
         )
 

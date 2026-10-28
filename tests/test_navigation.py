@@ -60,6 +60,8 @@ class ListViewModel(ViewModel[ListState]):
 
 class DetailViewModel(ViewModel[DetailState]):
     def __init__(self, route):
+        if route.id == 13:
+            raise RuntimeError("detail 13 cannot be built")
         super().__init__(DetailState(id=route.id))
         self.launch(self.forever())
 
@@ -194,3 +196,20 @@ def test_only_an_allowed_route_opens_from_outside(notes: str) -> None:
     unknown = json.dumps({"fields": {}, "route": "nav_app.Nowhere"})
     runtime.start(notes, unknown, True)
     assert _title() == "list:0"
+
+
+def test_a_view_model_that_fails_to_build_leaves_no_work_running(notes: str) -> None:
+    runtime.start(notes, "home", True)
+    _tap(1)
+    saved = json.dumps(_snapshot()["metadata"]["data"])
+    runtime.close()
+    _settle()
+    cleared = sys.modules["nav_app"].CLEARED
+    cleared.clear()
+
+    broken = json.dumps({"fields": {"id": 13}, "route": "nav_app.DetailRoute"})
+    with pytest.raises(RuntimeError, match="cannot be built"):
+        runtime.start(notes, broken, True, restore=saved)
+    _settle()
+    # The restored detail screen was built, then cleared with the failed session.
+    assert cleared == [7]
