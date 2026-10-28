@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -74,6 +75,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val snapshot by model.snapshot.collectAsStateWithLifecycle()
             val error by model.error.collectAsStateWithLifecycle()
+            // The app's first frame is its first snapshot, not the empty window:
+            // what start-up tooling ("Fully drawn") and Baseline Profiles measure.
+            ReportDrawnWhen { snapshot != null }
             LaunchedEffect(error) {
                 if (error.isNotEmpty()) Log.w("PyCompose", error)
             }
@@ -193,6 +197,9 @@ class MainActivity : ComponentActivity() {
 
     private companion object {
         const val DEV_POLL_MS = 1_000L
+
+        /** The launch extra that turns on the per-pass log line in a release build. */
+        const val TIME_PASSES = "pycompose.timePasses"
     }
 
     /** The activity owns the bridge and the native effect capabilities it exposes. */
@@ -209,6 +216,7 @@ class MainActivity : ComponentActivity() {
             createSavedStateHandle(),
             (application as PyComposeApplication).pythonWorker,
             initialConfig = configurationPayload(),
-            timePasses = BuildConfig.DEBUG,
+            // A release build logs its passes only when a measurement asks for it.
+            timePasses = BuildConfig.DEBUG || intent.getBooleanExtra(TIME_PASSES, false),
         )
 }
