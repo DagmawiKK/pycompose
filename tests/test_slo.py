@@ -24,6 +24,12 @@ def test_tiny_growth_is_noise_whatever_its_share() -> None:
     assert slo.regressions({"passP50Ms": 0.01}, {"passP50Ms": 0.05}) == []
 
 
+def test_a_device_floor_absorbs_a_frame_of_jitter() -> None:
+    before = {"tapToFrameP50Ms": 10.0}
+    assert slo.regressions(before, {"tapToFrameP50Ms": 14.0}, floor_ms=5) == []
+    assert slo.regressions(before, {"tapToFrameP50Ms": 16.0}, floor_ms=5) != []
+
+
 def test_the_gate_fails_a_deliberate_regression(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

@@ -196,6 +196,68 @@ jobs:
           name: slo
           path: reports/slo/
 
+  device-slo-gate:
+    name: 8 · Tap-to-frame SLO gate (emulator)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JDK_VERSION }}
+      - uses: gradle/actions/setup-gradle@v4
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - name: Install pinned SDK packages
+        run: sdkmanager "platforms;android-37.0" "build-tools;34.0.0"
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Check out the base commit
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+        run: |
+          base="${PR_BASE:-$PUSH_BASE}"
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            base="$(git rev-parse HEAD^)"
+          fi
+          git worktree add --detach "$RUNNER_TEMP/slo-base" "$base"
+          mkdir -p reports/device-slo
+      # The base and the change run on one emulator, one after the other, so
+      # they are measured on the same machine. A base that cannot build the
+      # notes app or log its passes leaves nothing to compare against.
+      - name: Measure tap to frame, base commit then change
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: |
+            (cd "$RUNNER_TEMP/slo-base" && pip install -q -e . && cd examples/notes && pycompose debug --no-launch && python "$GITHUB_WORKSPACE/tools/slo.py" device -o "$GITHUB_WORKSPACE/reports/device-slo/before.json") || echo "::notice::the base commit cannot run the device measurement; gate skipped"
+            pip install -q -e . && cd examples/notes && pycompose debug --no-launch && python ../../tools/slo.py device -o ../../reports/device-slo/after.json
+      - name: Fail on a regression over 20%
+        run: |
+          if [[ -f reports/device-slo/before.json ]]; then
+            python tools/slo.py check reports/device-slo/before.json reports/device-slo/after.json --floor-ms 5
+          fi
+      - name: Upload measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: device-slo
+          path: reports/device-slo/
+
   kotlin-lint-test-archunit:
     name: 3 · Kotlin lint · tests · ArchUnit
     runs-on: ubuntu-latest
