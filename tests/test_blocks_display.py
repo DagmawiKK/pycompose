@@ -45,6 +45,12 @@ def test_pictures_labels_and_json_show_what_an_event_wrote(tmp_path: Path) -> No
         images = [n["props"]["resource"] for n in app.nodes() if n["type"] == "Image"]
         assert len(images) == 3 and len(set(images)) == 1
         assert images[0].startswith("@file/") and images[0].endswith(".png")
+        scales = [
+            n["props"]["contentScale"]["name"]
+            for n in app.nodes()
+            if n["type"] == "Image"
+        ]
+        assert scales == ["FillWidth", "Crop", "Crop"]
         texts = app.texts()
         assert "dog" in texts and "dog  70%" in texts and "cat  25%" in texts
         assert "fox  5%" not in texts

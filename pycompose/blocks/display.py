@@ -11,6 +11,7 @@ from pycompose.blocks.components import Component
 from pycompose.core.resources import valid_resource
 from pycompose.extensions.environment import paths
 from pycompose.m3 import FlowRow, LinearProgressIndicator, Modifier, Text
+from pycompose.values import ContentScale
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
@@ -94,6 +95,8 @@ class Image(Component):
                         m3.Image(
                             resource=reference,
                             content_description=self.label or "Image",
+                            # As wide as the screen allows, keeping its proportions.
+                            content_scale=ContentScale("FillWidth"),
                             modifier=Modifier().fill_max_width(),
                         )
                     ]
@@ -165,7 +168,9 @@ class Gallery(Component):
                             id=f"p{i}",
                             resource=reference,
                             content_description=f"{self.label or 'Picture'} {i + 1}",
-                            modifier=Modifier().size(THUMBNAIL).padding(2),
+                            # Square tiles, cropped to fill, as a photo grid shows them.
+                            content_scale=ContentScale("Crop"),
+                            modifier=Modifier().padding(2).size(THUMBNAIL),
                         )
                         for i, reference in enumerate(view.value(self))
                     ],
