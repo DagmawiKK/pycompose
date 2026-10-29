@@ -3,18 +3,9 @@
 from importlib.resources import files
 
 from pycompose.core import Node
-from pycompose.ui import (
-    Box,
-    Button,
-    Column,
-    LazyColumn,
-    Modifier,
-    Row,
-    Scaffold,
-    Spacer,
-    Text,
-    TextField,
-)
+from pycompose.foundation import Box, Column, LazyColumn, Row, Spacer
+from pycompose.material3 import Button, Scaffold, Text, TextField
+from pycompose.ui import Modifier
 
 
 def golden_names() -> tuple[str, ...]:

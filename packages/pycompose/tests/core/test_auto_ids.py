@@ -10,8 +10,10 @@ from pycompose.app import Intent
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.node import Node
 from pycompose.errors import IrError, IrValidationError
+from pycompose.foundation import Column
+from pycompose.material3 import Button, Text
 from pycompose.state import State
-from pycompose.ui import Button, Column, Modifier, Text
+from pycompose.ui import Modifier
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 

@@ -7,8 +7,8 @@ import jsonschema
 import pytest
 
 from pycompose.errors import IrValidationError
+from pycompose.material3 import Text
 from pycompose.state import State
-from pycompose.ui import Text
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
@@ -125,7 +125,7 @@ def test_the_icon_vocabulary_accepts_only_labels_the_pin_carries() -> None:
 
 
 def test_component_factories_keep_omission_native() -> None:
-    from pycompose.ui import Button
+    from pycompose.material3 import Button
     from pycompose.values import Dp, ThemeColor, buttonColors, buttonElevation
 
     assert buttonColors() == {"type": "buttonColors"}
@@ -197,8 +197,8 @@ def test_generated_json_schema_agrees_on_recursive_and_versioned_values() -> Non
 
 
 def test_nullable_component_props_keep_absent_null_and_value() -> None:
+    from pycompose.material3 import Button
     from pycompose.material3 import Button as GeneratedButton
-    from pycompose.ui import Button
     from pycompose.values import buttonElevation
 
     for component in (Button, GeneratedButton):

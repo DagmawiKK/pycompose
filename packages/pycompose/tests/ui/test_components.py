@@ -13,22 +13,18 @@ from readable import readable
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
-from pycompose.state import State
-from pycompose.ui import (
-    Box,
+from pycompose.foundation import Box, Column, LazyColumn, Row, Spacer
+from pycompose.material3 import (
     Button,
     Checkbox,
-    Column,
     FilterChip,
-    LazyColumn,
-    Modifier,
-    Row,
     Scaffold,
-    Spacer,
     Text,
     TextButton,
     TextField,
 )
+from pycompose.state import State
+from pycompose.ui import Modifier
 from pycompose.ui.base import Component
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
@@ -235,28 +231,22 @@ def test_the_wire_padding_object_matches_the_bundled_schema() -> None:
 def test_every_component_fails_closed_on_unknown_props(
     component: type[Component], valid: dict[str, JsonValue]
 ) -> None:
-    with pytest.raises(IrValidationError, match="unknown prop") as exc:
+    # Each constructor's signature is the catalog's props, so an unknown one is
+    # refused before a node exists.
+    with pytest.raises(TypeError, match="extra"):
         component(id="bad", **valid, extra=1)
-    assert exc.value.context["node_id"] == "bad"
-    assert exc.value.context["prop"] == "extra"
 
 
 @pytest.mark.parametrize(
     "build",
     [
-        lambda: Text(id="x"),
         lambda: Text(id="x", text=1),
         lambda: Text(id="x", text="hi", style="wrong"),
         lambda: Button(id="x", text="go", on_click="missing"),
         lambda: Button(id="x", text="go", on_click="submit", enabled=1),
-        lambda: TextField(id="x", value=""),
         lambda: TextField(id="x", value=1, on_value_change="submit"),
         lambda: Row(id="x", vertical_alignment="wrong"),
-        lambda: Column(id="x", horizontalAlignment="start"),
-        lambda: Spacer(id="x", children=(Text(id="nested", text="no"),)),
-        lambda: Checkbox(id="x"),
         lambda: Checkbox(id="x", checked="yes", on_checked_change="increment"),
-        lambda: TextButton(id="x", text="Delete"),
         lambda: FilterChip(id="x", label="All", selected="yes", on_click="increment"),
         lambda: FilterChip(id="x", label="All", selected=True, on_click="missing"),
     ],
@@ -265,6 +255,25 @@ def test_invalid_component_values_fail_at_construction(
     build: Callable[[], Component],
 ) -> None:
     with pytest.raises(IrValidationError):
+        build()
+
+
+@pytest.mark.parametrize(
+    "build",
+    [
+        lambda: Text(id="x"),
+        lambda: TextField(id="x", value=""),
+        lambda: Column(id="x", horizontalAlignment="start"),
+        lambda: Spacer(id="x", children=(Text(id="nested", text="no"),)),
+        lambda: Checkbox(id="x"),
+        lambda: TextButton(id="x", text="Delete"),
+    ],
+)
+def test_a_call_its_signature_refuses_fails_before_any_node_exists(
+    build: Callable[[], Component],
+) -> None:
+    """A missing required prop, a wire spelling or children on a leaf."""
+    with pytest.raises(TypeError):
         build()
 
 

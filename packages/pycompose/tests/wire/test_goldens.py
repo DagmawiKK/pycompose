@@ -12,18 +12,10 @@ from readable import readable
 
 from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node
+from pycompose.foundation import Box, Column, LazyColumn, Row, Spacer
+from pycompose.material3 import Button, Text, TextField
 from pycompose.state import State
-from pycompose.ui import (
-    Box,
-    Button,
-    Column,
-    LazyColumn,
-    Modifier,
-    Row,
-    Spacer,
-    Text,
-    TextField,
-)
+from pycompose.ui import Modifier
 from pycompose.utils.json_canonical import canonical_json_bytes
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
