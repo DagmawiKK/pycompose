@@ -25,6 +25,7 @@ import sys
 import tempfile
 import time
 import tomllib
+from collections.abc import Callable
 from pathlib import Path
 from types import TracebackType
 from typing import Any, Self
@@ -306,22 +307,31 @@ class AppDriver:
 
         Args:
             timeout: Seconds to wait before giving up.
+        """
+        self.wait_until(self._loop.idle, timeout)
+
+    def wait_until(self, condition: Callable[[], bool], timeout: float = 5.0) -> None:
+        """Deliver what launched work publishes until ``condition`` holds.
+
+        Args:
+            condition: Checked after each delivery, such as a value on screen.
+            timeout: Seconds to wait before giving up.
 
         Raises:
-            AssertionError: If work is still running after ``timeout``.
+            AssertionError: If it still does not hold after ``timeout``.
         """
         deadline = time.monotonic() + timeout
         while True:
-            # Idle first: finished work posted its refresh before it finished,
-            # so an idle loop with no refresh waiting has nothing left to show.
-            idle = self._loop.idle()
+            # Checked first: work that finished posted its refresh before it
+            # finished, so a condition met with no refresh waiting is settled.
+            met = condition()
             if self._refreshes:
                 self._refreshes.clear()
                 self._deliver(envelope(REFRESH, {}))
-            elif idle:
+            elif met:
                 return
             elif time.monotonic() > deadline:
-                raise AssertionError(f"the app was still working after {timeout} s")
+                raise AssertionError(f"still waiting after {timeout} s")
             else:
                 time.sleep(0.005)
 
