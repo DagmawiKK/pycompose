@@ -172,7 +172,7 @@ class ExpansionMemo:
     """Reuse a deferred declaration's expansion while its inputs are unchanged.
 
     A composable's output is a pure function of its definition and arguments
-    (the :class:`~pycompose.composition.Composable` contract). Arguments are
+    (the :class:`~pycompose.ui.composition.Composable` contract). Arguments are
     keyed by value for scalars and by identity otherwise, so a structurally
     shared frozen State re-runs only the declarations whose inputs changed.
     Each pass keeps exactly the entries it used, which bounds the memo by the

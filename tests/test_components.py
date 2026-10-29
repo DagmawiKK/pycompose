@@ -10,7 +10,11 @@ import pytest
 from pycompose_testing.helpers import component_screen, read_golden
 from readable import readable
 
-from pycompose.components import (
+from pycompose.contract.catalog import SCHEMA_VERSION
+from pycompose.core.props import JsonValue
+from pycompose.errors import IrValidationError
+from pycompose.state import State
+from pycompose.ui import (
     Box,
     Button,
     Checkbox,
@@ -25,11 +29,7 @@ from pycompose.components import (
     TextButton,
     TextField,
 )
-from pycompose.components.base import Component
-from pycompose.contract.catalog import SCHEMA_VERSION
-from pycompose.core.props import JsonValue
-from pycompose.errors import IrValidationError
-from pycompose.state import State
+from pycompose.ui.base import Component
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 

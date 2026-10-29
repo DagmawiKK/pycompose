@@ -114,12 +114,12 @@ def render_python_exports(
     # Sorted by module, because the pre-commit isort hook would otherwise
     # reorder a file nobody may hand-edit and `gen.py --check` would then fail
     # forever on it -- the same two-gates-revert-each-other trap as ktlint
-    # against the Kotlin adapters. "pycompose.m3.generated_components" sorts
-    # after "pycompose.components.modifiers"; a bare "m3" sorts before it, so
-    # the order genuinely differs between the library and an app slice.
+    # against the Kotlin adapters. Both "pycompose.m3.generated_components"
+    # and an app slice's bare "m3" sort before "pycompose.ui.modifiers", but a
+    # rename of either module could change that, so the order is computed.
     imports = [
         (f"{package}.generated_components", names),
-        ("pycompose.components.modifiers", ["Modifier"]),
+        ("pycompose.ui.modifiers", ["Modifier"]),
     ]
     blocks = [
         f"from {module} import ("

@@ -2,7 +2,8 @@
 
 from importlib.resources import files
 
-from pycompose.components import (
+from pycompose.core import Node
+from pycompose.ui import (
     Box,
     Button,
     Column,
@@ -14,7 +15,6 @@ from pycompose.components import (
     Text,
     TextField,
 )
-from pycompose.core import Node
 
 
 def golden_names() -> tuple[str, ...]:

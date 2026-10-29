@@ -1,6 +1,6 @@
 """Material 3 input components."""
 
-from pycompose.components.base import Component
+from pycompose.ui.base import Component
 
 
 class TextField(Component):

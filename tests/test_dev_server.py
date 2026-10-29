@@ -128,7 +128,7 @@ def test_imported_user_module_edits_reload_before_entrypoint_and_cache_is_fresh(
     helper = project / "app" / "screen_text.py"
     helper.write_text('TITLE = "First"\n')
     (project / "app" / "main.py").write_text(
-        "from screen_text import TITLE\nfrom pycompose.components import Text\n"
+        "from screen_text import TITLE\nfrom pycompose.ui import Text\n"
         "from pycompose.app import App, Destination, ViewModel\n"
         "from pycompose.state import AppState\n"
         "class Greeting(AppState):\n    pass\n"

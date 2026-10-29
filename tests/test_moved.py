@@ -32,6 +32,14 @@ MOVED = [
     ),
     ("pycompose.ir", "pycompose.wire", "emit_ir", "pycompose.wire"),
     ("pycompose.ir.model", "pycompose.wire.model", "IRRoot", "pycompose.wire"),
+    ("pycompose.components", "pycompose.ui", "Modifier", "pycompose.ui"),
+    ("pycompose.components.layout", "pycompose.ui.layout", "Column", "pycompose.ui"),
+    (
+        "pycompose.composition",
+        "pycompose.ui.composition",
+        "composable",
+        "pycompose.ui.composition",
+    ),
 ]
 
 

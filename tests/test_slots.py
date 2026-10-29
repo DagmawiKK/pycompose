@@ -16,7 +16,6 @@ from typing import Any
 import pytest
 from readable import readable_reuse, rename
 
-from pycompose.composition import slot_nodes
 from pycompose.core.node import Node, Props
 from pycompose.errors import IrError, IrValidationError
 from pycompose.m3 import (
@@ -28,6 +27,7 @@ from pycompose.m3 import (
     TooltipBox,
 )
 from pycompose.state import State
+from pycompose.ui.composition import slot_nodes
 from pycompose.wire import emit_ir, to_dict, validate_ir
 
 

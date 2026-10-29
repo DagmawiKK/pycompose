@@ -133,8 +133,8 @@ def test_nested_compositions_are_stable_when_instances_reorder() -> None:
 
 
 def test_recursive_composition_has_definition_and_instance_context() -> None:
-    from pycompose.composition import expand
     from pycompose.errors import IrValidationError
+    from pycompose.ui.composition import expand
 
     @composable
     def recursive():
@@ -147,7 +147,7 @@ def test_recursive_composition_has_definition_and_instance_context() -> None:
 
 
 def test_composable_detaches_mutable_prop_containers() -> None:
-    from pycompose.composition import expand
+    from pycompose.ui.composition import expand
 
     @composable
     def names(*, values):
@@ -185,7 +185,7 @@ def test_invalid_output_does_not_replace_the_last_good_bridge_snapshot() -> None
 
 
 def test_modifiers_are_forwarded_once_without_altering_internal_order() -> None:
-    from pycompose.composition import expand
+    from pycompose.ui.composition import expand
 
     @composable
     def padded(*, modifier: Modifier):

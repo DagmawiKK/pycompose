@@ -9,8 +9,8 @@ from pycompose_codegen.derive.lock import LOCK
 from pycompose_codegen.derive.scoped_modifiers import _named, modifier_props
 from pycompose_codegen.emit.scoped_modifiers_kotlin import render_scoped_modifiers
 
-from pycompose.components.modifiers import Modifier
 from pycompose.errors import IrValidationError
+from pycompose.ui.modifiers import Modifier
 from pycompose.values import ExposedDropdownMenuAnchorType
 
 MENU = "androidx.compose.material3.ExposedDropdownMenuBoxScope"

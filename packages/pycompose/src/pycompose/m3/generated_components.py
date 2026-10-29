@@ -7,14 +7,14 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import Any, Literal, cast, overload
 
-from pycompose.components.base import ActionTarget, Component, PropValue
-from pycompose.components.modifiers import Modifier
-from pycompose.composition import Content, content_nodes, slot_nodes
 from pycompose.core.expressions import Expression
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
 from pycompose.core.values import UNSET, _Unset
 from pycompose.errors import IrValidationError
+from pycompose.ui.base import ActionTarget, Component, PropValue
+from pycompose.ui.composition import Content, content_nodes, slot_nodes
+from pycompose.ui.modifiers import Modifier
 
 __all__ = [
     "AlertDialog",

@@ -87,7 +87,7 @@ def _method(name: str, modifier: dict[str, Any]) -> list[str]:
 
 
 def render_scoped_operations(registry: dict[str, Any]) -> str:
-    """Render ``pycompose/components/scoped_modifiers.py``.
+    """Render ``pycompose/ui/scoped_modifiers.py``.
 
     Args:
         registry: The catalog lock.
@@ -121,11 +121,11 @@ def render_scoped_operations(registry: dict[str, Any]) -> str:
                 "",
                 "from typing import TYPE_CHECKING, Literal",
                 "",
-                "from pycompose.components.modifier_operation import _Operation",
                 "from pycompose.core.props import JsonValue",
+                "from pycompose.ui.modifier_operation import _Operation",
                 "",
                 "if TYPE_CHECKING:",
-                "    from pycompose.components.modifiers import Modifier",
+                "    from pycompose.ui.modifiers import Modifier",
                 "",
                 *aliases,
                 "",

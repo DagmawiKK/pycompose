@@ -1,6 +1,6 @@
 """Material 3 action components."""
 
-from pycompose.components.base import Component
+from pycompose.ui.base import Component
 
 
 class Button(Component):

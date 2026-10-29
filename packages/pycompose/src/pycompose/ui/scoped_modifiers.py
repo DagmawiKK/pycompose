@@ -5,11 +5,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal
 
-from pycompose.components.modifier_operation import _Operation
 from pycompose.core.props import JsonValue
+from pycompose.ui.modifier_operation import _Operation
 
 if TYPE_CHECKING:
-    from pycompose.components.modifiers import Modifier
+    from pycompose.ui.modifiers import Modifier
 
 _BoxAlignAlignment = Literal[
     "bottomCenter",

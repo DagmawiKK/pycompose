@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
-from pycompose.components.base import Component
-from pycompose.components.modifiers import Modifier
 from pycompose.core import Node
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
+from pycompose.ui.base import Component
+from pycompose.ui.modifiers import Modifier
 from pycompose.utils.json_canonical import FrozenJsonValue
 
 

@@ -6,9 +6,9 @@ from dataclasses import replace
 import jsonschema
 import pytest
 
-from pycompose.components import Text
 from pycompose.errors import IrValidationError
 from pycompose.state import State
+from pycompose.ui import Text
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
@@ -72,7 +72,7 @@ def test_recursive_brushes_validate_before_reaching_native_code() -> None:
 
 
 def test_shapes_and_edges_are_typed_records_not_universal_enums() -> None:
-    from pycompose.components import Modifier
+    from pycompose.ui import Modifier
     from pycompose.values import (
         Color,
         Dp,
@@ -125,7 +125,7 @@ def test_the_icon_vocabulary_accepts_only_labels_the_pin_carries() -> None:
 
 
 def test_component_factories_keep_omission_native() -> None:
-    from pycompose.components import Button
+    from pycompose.ui import Button
     from pycompose.values import Dp, ThemeColor, buttonColors, buttonElevation
 
     assert buttonColors() == {"type": "buttonColors"}
@@ -161,7 +161,7 @@ def test_float_wrappers_reject_non_native_numbers(value: object) -> None:
 
 
 def test_layout_rejects_negative_dimensions_before_rendering() -> None:
-    from pycompose.components import Modifier
+    from pycompose.ui import Modifier
     from pycompose.values import Dp, PaddingValues
 
     assert Dp(-2)["value"] == -2  # Dp itself can be signed, layout constraints cannot.
@@ -174,7 +174,7 @@ def test_layout_rejects_negative_dimensions_before_rendering() -> None:
 def test_generated_json_schema_agrees_on_recursive_and_versioned_values() -> None:
     from pathlib import Path
 
-    from pycompose.components import Modifier
+    from pycompose.ui import Modifier
     from pycompose.values import Dp, Sp, TextStyle
 
     schema = json.loads(
@@ -197,8 +197,8 @@ def test_generated_json_schema_agrees_on_recursive_and_versioned_values() -> Non
 
 
 def test_nullable_component_props_keep_absent_null_and_value() -> None:
-    from pycompose.components import Button
     from pycompose.m3 import Button as GeneratedButton
+    from pycompose.ui import Button
     from pycompose.values import buttonElevation
 
     for component in (Button, GeneratedButton):
@@ -216,7 +216,7 @@ def test_nullable_component_props_keep_absent_null_and_value() -> None:
 def test_legacy_dimensions_cannot_bypass_native_float_constraints(
     dimension: float,
 ) -> None:
-    from pycompose.components import Modifier
+    from pycompose.ui import Modifier
 
     with pytest.raises(IrValidationError):
         Modifier().size(dimension)

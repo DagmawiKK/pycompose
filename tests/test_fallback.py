@@ -9,11 +9,11 @@ import pytest
 from readable import readable_reuse
 
 from pycompose.bridge.handshake import PROTOCOL, offered_components
-from pycompose.components import Column, Fallback, Text
 from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.errors import BridgeError, IrValidationError
 from pycompose.m3 import HorizontalDivider
 from pycompose.state import State
+from pycompose.ui import Column, Fallback, Text
 from pycompose.wire import emit_ir, validate_ir
 from pycompose.wire.host import Host, hosted
 

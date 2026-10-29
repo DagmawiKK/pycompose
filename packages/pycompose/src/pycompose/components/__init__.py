@@ -1,26 +1,22 @@
-"""pycompose.components — PascalCase Material 3 component classes."""
+"""Moved to :mod:`pycompose.ui`; this name works for one release."""
 
-from pycompose.components.buttons import Button, TextButton
-from pycompose.components.fallback import Fallback
-from pycompose.components.input import Checkbox, FilterChip, TextField
-from pycompose.components.layout import Box, Column, Row, Scaffold
-from pycompose.components.lists import LazyColumn
-from pycompose.components.modifiers import Modifier
-from pycompose.components.primitives import Spacer, Text
+from pycompose._moved import forward
 
-__all__ = [
-    "Box",
-    "Checkbox",
-    "Column",
-    "Button",
-    "Fallback",
-    "FilterChip",
-    "LazyColumn",
-    "Modifier",
-    "Row",
-    "Scaffold",
-    "Spacer",
-    "Text",
-    "TextButton",
-    "TextField",
-]
+forward(
+    __name__,
+    "pycompose.ui",
+    globals(),
+    submodules={
+        "base": "pycompose.ui.base",
+        "buttons": "pycompose.ui.buttons",
+        "fallback": "pycompose.ui.fallback",
+        "input": "pycompose.ui.input",
+        "layout": "pycompose.ui.layout",
+        "lists": "pycompose.ui.lists",
+        "modifier_operation": "pycompose.ui.modifier_operation",
+        "modifiers": "pycompose.ui.modifiers",
+        "primitives": "pycompose.ui.primitives",
+        "scoped_modifiers": "pycompose.ui.scoped_modifiers",
+        "windowed": "pycompose.ui.windowed",
+    },
+)

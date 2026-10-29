@@ -10,7 +10,10 @@ from hypothesis import strategies as st
 from pycompose_testing.helpers import component_screen, golden_names, read_golden
 from readable import readable
 
-from pycompose.components import (
+from pycompose.contract.catalog import REGISTRY
+from pycompose.core import Node
+from pycompose.state import State
+from pycompose.ui import (
     Box,
     Button,
     Column,
@@ -21,9 +24,6 @@ from pycompose.components import (
     Text,
     TextField,
 )
-from pycompose.contract.catalog import REGISTRY
-from pycompose.core import Node
-from pycompose.state import State
 from pycompose.utils.json_canonical import canonical_json_bytes
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 

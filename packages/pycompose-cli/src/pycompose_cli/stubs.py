@@ -121,7 +121,7 @@ def generate_stubs(path: Path) -> str:
     for node in source.body:
         if isinstance(node, ast.ImportFrom) and node.module in {
             "pycompose",
-            "pycompose.composition",
+            "pycompose.ui.composition",
         }:
             aliases.update(
                 alias.asname or alias.name
@@ -132,7 +132,7 @@ def generate_stubs(path: Path) -> str:
             aliases.update(
                 f"{alias.asname or alias.name}.composable"
                 for alias in node.names
-                if alias.name in {"pycompose", "pycompose.composition"}
+                if alias.name in {"pycompose", "pycompose.ui.composition"}
             )
     declarations = _Declarations(aliases).declarations(source.body)
     futures = [

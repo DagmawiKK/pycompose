@@ -8,7 +8,6 @@ from types import CodeType
 from typing import Any, ClassVar, NoReturn, TypeAlias, cast
 
 from pycompose.app.intents import Intent
-from pycompose.components.modifiers import Modifier
 from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node, Props
 from pycompose.core.expressions import Expression
@@ -16,6 +15,7 @@ from pycompose.core.ids import call_location, call_site
 from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
 from pycompose.core.values import _Unset
 from pycompose.errors import IrValidationError
+from pycompose.ui.modifiers import Modifier
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
 from pycompose.wire.validator import validate_component
 
@@ -99,7 +99,7 @@ class Component(Node):
         item = kwargs.pop("item", None)
         if item is None:
             return super().__new__(chosen)
-        from pycompose.components.windowed import Windowed
+        from pycompose.ui.windowed import Windowed
 
         site = call_site(0, _CONSTRUCTORS | {Component.__new__.__code__})
         return Windowed(

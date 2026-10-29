@@ -7,7 +7,7 @@ from functools import partial
 from typing import TYPE_CHECKING, Concatenate, Generic, ParamSpec
 
 if TYPE_CHECKING:
-    from pycompose.components.modifiers import Modifier
+    from pycompose.ui.modifiers import Modifier
 
 P = ParamSpec("P")
 

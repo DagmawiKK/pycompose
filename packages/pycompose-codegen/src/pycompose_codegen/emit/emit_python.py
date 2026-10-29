@@ -50,13 +50,14 @@ def render_python_components(
         "from collections.abc import Callable, Sequence",
         "from typing import Any, Literal, cast" + (", overload" if overloaded else ""),
         "",
-        "from pycompose.components.base import ActionTarget, Component, PropValue",
-        "from pycompose.components.modifiers import Modifier",
-        "from pycompose.composition import Content, content_nodes, slot_nodes",
+        # Sorted as isort sorts them, so the formatter never rewrites the file.
         "from pycompose.core.expressions import Expression",
         "from pycompose.core.node import Node",
         "from pycompose.core.props import JsonValue",
         "from pycompose.errors import IrValidationError",
+        "from pycompose.ui.base import ActionTarget, Component, PropValue",
+        "from pycompose.ui.composition import Content, content_nodes, slot_nodes",
+        "from pycompose.ui.modifiers import Modifier",
         "",
         "__all__ = [",
         *(f'    "{name}",' for name in names),
@@ -79,7 +80,7 @@ def render_python_components(
             lines.index("from collections.abc import Callable, Sequence"), "import json"
         )
         lines.insert(
-            lines.index("from pycompose.errors import IrValidationError") + 1,
+            lines.index("from pycompose.core.expressions import Expression"),
             "from pycompose.contract.catalog import REGISTRY",
         )
         lines.extend(

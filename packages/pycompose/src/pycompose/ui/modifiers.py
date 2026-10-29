@@ -7,10 +7,10 @@ from dataclasses import dataclass, field
 from typing import cast
 
 from pycompose.app.intents import Intent
-from pycompose.components.modifier_operation import _Operation
-from pycompose.components.scoped_modifiers import ScopedOperations
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
+from pycompose.ui.modifier_operation import _Operation
+from pycompose.ui.scoped_modifiers import ScopedOperations
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
 from pycompose.values import Dp, PaddingValues
 from pycompose.wire.validator import validate_modifier

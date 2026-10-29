@@ -79,9 +79,9 @@ def test_expansion_failures_name_the_composable_source_and_instance() -> None:
     import pytest
 
     from pycompose import composable
-    from pycompose.composition import expand
     from pycompose.errors import IrValidationError
     from pycompose.m3 import Text
+    from pycompose.ui.composition import expand
 
     @composable
     def broken():

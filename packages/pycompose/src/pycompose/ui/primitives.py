@@ -1,6 +1,6 @@
 """Material 3 primitive components."""
 
-from pycompose.components.base import Component
+from pycompose.ui.base import Component
 
 
 class Text(Component):

@@ -288,9 +288,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("ScopedModifiers.kt")] = (
         render_scoped_modifiers(registry)
     )
-    artifacts[PACKAGE / "components/scoped_modifiers.py"] = render_scoped_operations(
-        registry
-    )
+    artifacts[PACKAGE / "ui/scoped_modifiers.py"] = render_scoped_operations(registry)
     return artifacts
 
 

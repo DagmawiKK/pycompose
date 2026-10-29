@@ -13,16 +13,16 @@ from pycompose.version import __version__
 
 if TYPE_CHECKING:
     from pycompose import storage
-    from pycompose.composition import composable
     from pycompose.core.expressions import Expression, Stream
     from pycompose.storage import documents as repository
+    from pycompose.ui.composition import composable
 
 __all__ = ["Expression", "Stream", "__version__", "composable", "repository", "storage"]
 
 _LAZY = {
     "Expression": ("pycompose.core.expressions", "Expression"),
     "Stream": ("pycompose.core.expressions", "Stream"),
-    "composable": ("pycompose.composition", "composable"),
+    "composable": ("pycompose.ui.composition", "composable"),
     "repository": ("pycompose.storage.documents", None),
     "storage": ("pycompose.storage", None),
 }

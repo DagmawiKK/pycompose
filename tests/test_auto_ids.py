@@ -7,11 +7,11 @@ from readable import ids, readable
 
 from pycompose import composable
 from pycompose.app import Intent
-from pycompose.components import Button, Column, Modifier, Text
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.node import Node
 from pycompose.errors import IrError, IrValidationError
 from pycompose.state import State
+from pycompose.ui import Button, Column, Modifier, Text
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
