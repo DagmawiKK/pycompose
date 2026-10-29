@@ -19,6 +19,7 @@ class LifecycleTest {
                 "onBackRequested",
                 "onConfigChanged",
                 "onRouteChanged",
+                "onTrimMemory",
             ),
             Lifecycle.ids,
         )

@@ -249,9 +249,8 @@ class Renderer(
         val context = remember { RenderContext(actions, this, emptyMap()) }
         // Set as this snapshot is composed, so a holder that reports the moment it
         // is composed already finds the contract it reports against.
-        remember(ir) {
-            context.bindings = AppBindings.read(ir.snapshot.metadata, ir.snapshot.schemaVersion)
-        }
+        context.bindings =
+            remember(ir) { AppBindings.read(ir.snapshot.metadata, ir.snapshot.schemaVersion) }
         val answered =
             remember(ir) {
                 val echoes = Echoes.read(ir.snapshot.metadata)
