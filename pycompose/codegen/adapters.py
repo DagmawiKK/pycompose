@@ -58,6 +58,7 @@ from pycompose.codegen.adapter_helpers import (
 )
 from pycompose.codegen.adapter_imports import extra_imports
 from pycompose.codegen.state_families import property_props
+from pycompose.codegen.text_echo import echoed_text
 from pycompose.contract.registry_vocabulary import STATE_STREAMS
 
 __all__ = [
@@ -330,6 +331,7 @@ def render(name: str, entry: dict[str, Any]) -> str:
         held |= set(entry.get("props", {}))
     if not _resolve_constructor(state, entry.get("props", {}), out):
         return ""
+    held |= echoed_text(entry.get("props", {}), out)
     for prop, spec in entry.get("props", {}).items():
         if "protocol" in spec or prop in observed or prop in held:
             # The host fills the source or the state holder; an observed prop

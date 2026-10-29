@@ -433,18 +433,19 @@ object GeneratedAdapters {
             }
             .register("BasicTextField") { node, modifier, context ->
                 val model = node as BasicTextFieldNode
+                val echoed = rememberEchoedText(model.id, model.props.value)
                 val textStyleWire = model.props.textStyle
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else androidx.compose.ui.text.TextStyle.Companion.Default
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 BasicTextField(
                     modifier = modifier,
+                    value = echoed.text,
+                    onValueChange = { value -> echoed.typed(value); context.event(model.props.onValueChange, JsonPrimitive(value)) },
                     enabled = model.props.enabled,
                     minLines = model.props.minLines.toInt(),
-                    onValueChange = { value -> context.event(model.props.onValueChange, JsonPrimitive(value)) },
                     readOnly = model.props.readOnly,
                     singleLine = model.props.singleLine,
                     textStyle = textStyleValue,
-                    value = model.props.value,
                     interactionSource = interactionSourceValue,
                 )
             }
@@ -1910,6 +1911,7 @@ object GeneratedAdapters {
             }
             .register("OutlinedTextField") { node, modifier, context ->
                 val model = node as OutlinedTextFieldNode
+                val echoed = rememberEchoedText(model.id, model.props.value)
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.textFieldColors(colorsWire).getOrThrow() else androidx.compose.material3.OutlinedTextFieldDefaults.colors()
                 val shapeWire = model.props.shape
@@ -1919,16 +1921,16 @@ object GeneratedAdapters {
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 OutlinedTextField(
                     modifier = modifier,
+                    value = echoed.text,
+                    onValueChange = { value -> echoed.typed(value); context.event(model.props.onValueChange, JsonPrimitive(value)) },
                     colors = colorsValue,
                     enabled = model.props.enabled,
                     isError = model.props.isError,
                     minLines = model.props.minLines.toInt(),
-                    onValueChange = { value -> context.event(model.props.onValueChange, JsonPrimitive(value)) },
                     readOnly = model.props.readOnly,
                     shape = shapeValue,
                     singleLine = model.props.singleLine,
                     textStyle = textStyleValue,
-                    value = model.props.value,
                     interactionSource = interactionSourceValue,
                     label = context.slot(model.children, "label"),
                     leadingIcon = context.slot(model.children, "leadingIcon"),

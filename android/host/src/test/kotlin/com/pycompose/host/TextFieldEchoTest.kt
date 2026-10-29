@@ -94,6 +94,32 @@ class TextFieldEchoTest {
     }
 
     @Test
+    fun aGeneratedTextFieldKeepsKeysTypedBeforeTheEchoToo() {
+        val actions = mutableListOf<Action>()
+        val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
+
+        fun outlined(value: String) =
+            IrParser()
+                .parse(
+                    """
+                    {"version":"0.1.0","schemaVersion":"1.23.0",
+                     "metadata":{"intents":{"note.title":{"payload":{
+                         "value":{"required":true,"type":"string"}}}}},
+                     "root":{"id":"title","type":"OutlinedTextField","props":{
+                       "value":"$value","onValueChange":{"fields":{},"intent":"note.title"}}}}
+                    """.trimIndent(),
+                ).getOrThrow()
+        var stated by mutableStateOf(outlined(""))
+        compose.setContent { PyComposeTheme { renderer.Render(stated) } }
+
+        compose.onNode(hasSetTextAction()).performTextInput("a")
+        compose.onNode(hasSetTextAction()).performTextInput("b")
+        stated = outlined("a")
+        compose.waitForIdle()
+        assertEquals("ab", shown())
+    }
+
+    @Test
     fun aControlledCaretStaysWhereTheUserTypesUntilTheAppMovesIt() {
         val actions = mutableListOf<Action>()
         val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
