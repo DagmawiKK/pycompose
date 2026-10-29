@@ -111,11 +111,10 @@ val stageRuntime by tasks.registering(Sync::class) {
         // (ADR-0063) -- and the catalog it validates against, as data.
         include("pycompose/**/*.py", "pycompose/py.typed", "pycompose/contract/catalog.lock.json")
         // The app's own slice is the only copy of the catalog's components it
-        // carries; shipping the library's component packages too (and the old
-        // name forwarding to them) would put every component back into the APK
-        // the slice exists to keep out.
+        // carries; shipping the library's component packages too would put
+        // every component back into the APK the slice exists to keep out.
         if (ownSlice) {
-            exclude("pycompose/foundation/**", "pycompose/material3/**", "pycompose/m3/**")
+            exclude("pycompose/foundation/**", "pycompose/material3/**")
         }
     }
     into(layout.buildDirectory.dir("generated/runtime"))

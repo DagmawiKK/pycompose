@@ -30,7 +30,6 @@ PACKAGE = "pycompose/storage/"
 TESTS = (ROOT / "tests", *sorted(ROOT.glob("packages/*/tests")))
 """The repository's tests and every distribution's."""
 TOOLING = (
-    "pycompose/testing/",
     "tools/",
     *(f"{path.relative_to(ROOT).as_posix()}/" for path in TESTS),
 )
