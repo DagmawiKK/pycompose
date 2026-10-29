@@ -12,7 +12,7 @@ repos:
     rev: v1.11.2
     hooks:
       - id: mypy
-        files: ^pycompose/
+        files: ^packages/pycompose/src/pycompose/
         additional_dependencies: [types-jsonschema]
 
   - repo: https://github.com/jsh9/pydoclint
@@ -20,12 +20,6 @@ repos:
     hooks:
       - id: pydoclint
 
-  - repo: https://github.com/seddonym/import-linter
-    rev: v2.0
-    hooks:
-      - id: import-linter
-        name: import-linter (python boundaries)
-        args: ["--config", "pyproject.toml"]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -58,19 +52,27 @@ repos:
         name: Registry codegen --check
         language: system
         entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/schema/gen.py --check; fi; exec python tools/schema/gen.py --check'
-        files: ^(schema/catalog\.lock\.json|pycompose/compiler/|pycompose/m3/|pycompose/ir/generated_|pycompose/bridge/generated_|android/ir/src/main/kotlin/com/pycompose/ir/generated/)
+        files: ^(schema/catalog\.lock\.json|packages/pycompose/src/pycompose/compiler/|packages/pycompose/src/pycompose/m3/|packages/pycompose/src/pycompose/ir/generated_|packages/pycompose/src/pycompose/bridge/generated_|android/ir/src/main/kotlin/com/pycompose/ir/generated/)
         pass_filenames: false
       - id: template-assemble
         name: Assemble package assets (gitignored copies)
         language: system
         entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/template/sync.py; fi; exec python tools/template/sync.py'
-        files: ^(android/|schema/|pycompose/templates/overlay/|tools/template/)
+        files: ^(android/|schema/|packages/pycompose/src/pycompose/templates/overlay/|tools/template/)
+        pass_filenames: false
+      # From the project's environment: it must import the installed packages
+      # and the repo's tools/, which an isolated hook environment has neither of.
+      - id: import-linter
+        name: import-linter (python boundaries)
+        language: system
+        entry: bash -c 'if [ -x .venv/bin/lint-imports ]; then exec .venv/bin/lint-imports --config pyproject.toml; fi; exec lint-imports --config pyproject.toml'
+        types: [python]
         pass_filenames: false
       - id: bandit
         name: bandit (security findings, medium and above)
         language: system
-        entry: bash -c 'if [ -x .venv/bin/bandit ]; then exec .venv/bin/bandit -ll -q -r pycompose; fi; exec bandit -ll -q -r pycompose'
-        files: ^pycompose/.*\.py$
+        entry: bash -c 'if [ -x .venv/bin/bandit ]; then exec .venv/bin/bandit -ll -q -r packages/pycompose/src/pycompose; fi; exec bandit -ll -q -r packages/pycompose/src/pycompose'
+        files: ^packages/pycompose/src/pycompose/.*\.py$
         pass_filenames: false
       - id: actionlint
         name: actionlint (workflow files)

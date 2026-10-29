@@ -4,9 +4,9 @@ lint: lint-py lint-kt lint-workflows
 
 lint-py:
 	ruff check .
-	mypy pycompose
-	bandit -ll -q -r pycompose
-	pydoclint pycompose
+	mypy packages/pycompose/src/pycompose
+	bandit -ll -q -r packages/pycompose/src/pycompose
+	pydoclint packages/pycompose/src/pycompose
 	lint-imports --config pyproject.toml
 	python tools/limits.py
 	@if [ -d examples/notes/app ]; then (cd examples/notes/app && lint-imports --config importlinter.toml); fi
@@ -18,7 +18,7 @@ lint-workflows:
 	actionlint .github/workflows/*.yml
 
 typecheck:
-	mypy pycompose
+	mypy packages/pycompose/src/pycompose
 
 codegen:
 	python tools/schema/gen.py

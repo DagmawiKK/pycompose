@@ -77,7 +77,7 @@ def _smoke_goldens(wheel: Path) -> None:
     names = golden_names()
     assert names, "the wheel packaged no golden fixtures at all"
 
-    source_dir = ROOT / "pycompose" / "testing" / "fixtures"
+    source_dir = ROOT / "packages/pycompose/src/pycompose" / "testing" / "fixtures"
     source_names = tuple(sorted(p.name for p in source_dir.glob("*.json")))
     assert names == source_names, (
         f"wheel goldens {names} != source fixtures {source_names}; "

@@ -13,7 +13,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 COMPONENTS_PATH = ROOT / "schema" / "catalog.lock.json"
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
-PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
+PACKAGE = ROOT / "packages/pycompose/src/pycompose"
+PAYLOADS_PATH = PACKAGE / "bridge" / "generated_payloads.py"
 
 PROP_TYPE_VOCABULARY = {
     "resource",
@@ -93,7 +94,7 @@ def test_ir_schema_is_fresh() -> None:
         "pycompose.codegen.emit_wire"
     ).render_ir_schema(_registry())
     assert (
-        ROOT / "pycompose" / "schema" / "ir.schema.json"
+        PACKAGE / "schema" / "ir.schema.json"
     ).read_bytes() == IR_SCHEMA_PATH.read_bytes()
 
 

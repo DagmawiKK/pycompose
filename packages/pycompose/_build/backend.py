@@ -14,7 +14,8 @@ from typing import Any
 from setuptools import build_meta as _setuptools
 from setuptools.build_meta import *  # noqa: F403 -- the PEP 517 hooks
 
-ROOT = Path(__file__).resolve().parents[2]
+# packages/pycompose/_build/backend.py: the checkout is three folders up.
+ROOT = Path(__file__).resolve().parents[3]
 
 
 def _assemble() -> None:

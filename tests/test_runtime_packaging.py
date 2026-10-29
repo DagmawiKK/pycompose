@@ -24,6 +24,8 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "packages/pycompose/src"
+"""Where the library's modules live; paths below are relative to it."""
 PACKAGE = "pycompose/extensions/"
 TOOLING = (
     "pycompose/cli/",
@@ -35,25 +37,27 @@ TOOLING = (
 )
 
 
+def _base(path: Path) -> Path:
+    return SRC if path.is_relative_to(SRC) else ROOT
+
+
 def _relative(path: Path) -> str:
-    """A repository-relative POSIX path, for prefix tests and messages."""
-    return path.relative_to(ROOT).as_posix()
+    """A POSIX path from the library's source root or the repository's."""
+    return path.relative_to(_base(path)).as_posix()
 
 
 def _sources() -> list[Path]:
     """Every first-party module: the library, its examples, and its tooling."""
     found = []
-    for top in ("pycompose", "examples", "tests", "tools"):
+    for top in (SRC / "pycompose", ROOT / "examples", ROOT / "tests", ROOT / "tools"):
         found.extend(
-            path
-            for path in (ROOT / top).rglob("*.py")
-            if "__pycache__" not in path.parts
+            path for path in top.rglob("*.py") if "__pycache__" not in path.parts
         )
     return found
 
 
 def _module_name(path: Path) -> str:
-    parts = list(path.relative_to(ROOT).with_suffix("").parts)
+    parts = list(path.relative_to(_base(path)).with_suffix("").parts)
     if parts[-1] == "__init__":
         parts.pop()
     return ".".join(parts)
@@ -133,7 +137,7 @@ def test_no_module_under_extensions_is_reached_only_by_tooling() -> None:
 
 def test_the_packaged_runtime_still_excludes_tooling_directories() -> None:
     """The exclusions the rule above depends on are directory-wide, not by name."""
-    gradle = (ROOT / "pycompose/templates/android/host/build.gradle.kts").read_text(
+    gradle = (SRC / "pycompose/templates/android/host/build.gradle.kts").read_text(
         encoding="utf-8"
     )
     missing = [

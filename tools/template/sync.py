@@ -97,13 +97,14 @@ ship as their own asset, never in the scaffold, so an app carries them only
 while ``add`` runs."""
 
 
-TEMPLATES = ROOT / "pycompose/templates"
+PACKAGE = ROOT / "packages/pycompose/src/pycompose"
+TEMPLATES = PACKAGE / "templates"
 OVERLAY = TEMPLATES / "overlay"
 """The template's own files: what a scaffolded app has that ``android/`` lacks."""
 
 COPIES = {
-    ROOT / "pycompose/contract/catalog.lock.json": ROOT / "schema/catalog.lock.json",
-    ROOT / "pycompose/schema/ir.schema.json": ROOT / "schema/ir.schema.json",
+    PACKAGE / "contract/catalog.lock.json": ROOT / "schema/catalog.lock.json",
+    PACKAGE / "schema/ir.schema.json": ROOT / "schema/ir.schema.json",
 }
 """Single files the package carries, by their source."""
 

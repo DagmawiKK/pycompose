@@ -43,7 +43,11 @@ extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
     sourceSets.getByName("main").manifest.srcFile(
         providers.gradleProperty("pycomposeManifest").getOrElse("src/main/AndroidManifest.xml"),
     )
-    sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
+    sourceSets
+        .getByName(
+            "test",
+        ).resources
+        .srcDir("../../packages/pycompose/src/pycompose/testing/fixtures")
     sourceSets.getByName("test").kotlin.srcDir("../architecture/src/test/kotlin")
     // Device-free rendering of an app's snapshots (`pycompose render`); it ships
     // with every generated project, unlike the library's own tests.
@@ -96,7 +100,12 @@ chaquopy {
 val ownSlice = providers.gradleProperty("pycomposeOwnSlice").orNull == "true"
 
 val stageRuntime by tasks.registering(Sync::class) {
-    from(providers.gradleProperty("pycomposeRuntimeDir").getOrElse(rootProject.file("..").path)) {
+    from(
+        providers
+            .gradleProperty(
+                "pycomposeRuntimeDir",
+            ).getOrElse(rootProject.file("../packages/pycompose/src").path),
+    ) {
         // The catalog the runtime validates against ships as data beside its loader.
         include("pycompose/**/*.py", "pycompose/py.typed", "pycompose/contract/catalog.lock.json")
         // Planning, evidence and project tooling are CLI-tier: nothing on a device

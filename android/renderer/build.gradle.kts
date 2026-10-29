@@ -23,7 +23,11 @@ extensions.configure<com.android.build.api.dsl.LibraryExtension> {
         .kotlin
         .srcDir(rootProject.file(".pycompose/generated/renderer/src/main/kotlin"))
     sourceSets.getByName("test").kotlin.srcDir("../architecture/src/test/kotlin")
-    sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
+    sourceSets
+        .getByName(
+            "test",
+        ).resources
+        .srcDir("../../packages/pycompose/src/pycompose/testing/fixtures")
 }
 
 kotlin {

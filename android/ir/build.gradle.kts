@@ -22,7 +22,11 @@ kotlin.sourceSets
     .srcDir("../architecture/src/test/kotlin")
 
 // The golden snapshots Python's tests also read: one copy, beside the library.
-sourceSets.getByName("test").resources.srcDir("../../pycompose/testing/fixtures")
+sourceSets
+    .getByName(
+        "test",
+    ).resources
+    .srcDir("../../packages/pycompose/src/pycompose/testing/fixtures")
 
 dependencies {
     implementation(libs.serialization.json)

@@ -43,7 +43,7 @@ for native work the Android SDK (platform 37, build-tools 34) via
 git clone https://github.com/DagmawiKK/pycompose
 cd pycompose
 python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
+pip install -e "./packages/pycompose[dev]"   # or: uv sync --all-extras
 npm ci
 pre-commit install
 ```
@@ -110,7 +110,7 @@ its base. Check its report if you touch the IR, diffing, or bridge.
   (`{"approved": {"<id>": "<reason>"}}`); clear approvals once the change
   merges, because an approval naming no current change also fails.
 - **Package copies are assembled, never committed.** The template a scaffolded
-  app gets (`android/` plus `pycompose/templates/overlay/`), the extraction
+  app gets (`android/` plus `packages/pycompose/src/pycompose/templates/overlay/`), the extraction
   module and the lock and wire schema copies are written by
   `tools/template/sync.py`; the build backend, the test session and the
   pre-commit hook run it. Edit the source, never the copy.

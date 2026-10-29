@@ -28,7 +28,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install
-        run: pip install -e ".[dev]"
+        run: pip install -e "./packages/pycompose[dev]"
       - name: Actionlint (workflow files)
         shell: bash
         run: |
@@ -39,11 +39,11 @@ jobs:
       - name: Ruff format check
         run: ruff format --check .
       - name: mypy
-        run: mypy pycompose
+        run: mypy packages/pycompose/src/pycompose
       - name: Bandit
-        run: bandit -ll -q -r pycompose
+        run: bandit -ll -q -r packages/pycompose/src/pycompose
       - name: pydoclint (Google-style docstrings)
-        run: pydoclint pycompose
+        run: pydoclint packages/pycompose/src/pycompose
       - name: import-linter (blocking boundary gate)
         run: lint-imports --config pyproject.toml
       - name: Line budgets (ADR-0015)
@@ -70,7 +70,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install
-        run: pip install -e ".[dev]"
+        run: pip install -e "./packages/pycompose[dev]"
       - name: Codegen drift check
         run: python tools/schema/gen.py --check
       - uses: actions/setup-java@v4
@@ -95,7 +95,7 @@ jobs:
         run: pytest -q -k "schema or golden"
       - name: Verify goldens ship in the wheel
         run: |
-          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/pycompose-wheel" .
+          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/pycompose-wheel" ./packages/pycompose
           python -I - tools/wheel_smoke.py "$RUNNER_TEMP/pycompose-wheel"
       - name: Upload reports
         if: failure()
@@ -117,7 +117,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install measurement dependencies
-        run: pip install -e ".[dev]"
+        run: pip install -e "./packages/pycompose[dev]"
       - name: Prepare matched baseline
         env:
           PR_BASE: ${{ github.event.pull_request.base.sha }}
@@ -164,7 +164,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install
-        run: pip install -e ".[dev]"
+        run: pip install -e "./packages/pycompose[dev]"
       - name: Measure the base commit and the change on this runner
         env:
           PR_BASE: ${{ github.event.pull_request.base.sha }}
@@ -179,12 +179,12 @@ jobs:
           mkdir -p reports/slo
           # A base older than the view model runtime cannot run this
           # measurement; then there is nothing to compare against.
-          if (cd "$RUNNER_TEMP/slo-base" && pip install -q -e . && python tools/slo.py measure -o "$GITHUB_WORKSPACE/reports/slo/before.json"); then
+          if (cd "$RUNNER_TEMP/slo-base" && pip install -q -e "$(test -f packages/pycompose/pyproject.toml && echo packages/pycompose || echo .)" && python tools/slo.py measure -o "$GITHUB_WORKSPACE/reports/slo/before.json"); then
             echo "measured=true" >> "$GITHUB_ENV"
           else
             echo "::notice::the base commit predates the SLO measurement; gate skipped"
           fi
-          pip install -q -e .
+          pip install -q -e ./packages/pycompose
           python tools/slo.py measure -o reports/slo/after.json
       - name: Fail on a regression over 20%
         if: env.measured == 'true'
@@ -244,8 +244,8 @@ jobs:
           target: google_apis
           disable-animations: true
           script: |
-            (cd "$RUNNER_TEMP/slo-base" && pip install -q -e . && cd examples/notes && pycompose debug --no-launch && python "$GITHUB_WORKSPACE/tools/slo.py" device -o "$GITHUB_WORKSPACE/reports/device-slo/before.json") || echo "::notice::the base commit cannot run the device measurement; gate skipped"
-            pip install -q -e . && cd examples/notes && pycompose debug --no-launch && python ../../tools/slo.py device -o ../../reports/device-slo/after.json
+            (cd "$RUNNER_TEMP/slo-base" && pip install -q -e "$(test -f packages/pycompose/pyproject.toml && echo packages/pycompose || echo .)" && cd examples/notes && pycompose debug --no-launch && python "$GITHUB_WORKSPACE/tools/slo.py" device -o "$GITHUB_WORKSPACE/reports/device-slo/before.json") || echo "::notice::the base commit cannot run the device measurement; gate skipped"
+            pip install -q -e ./packages/pycompose && cd examples/notes && pycompose debug --no-launch && python ../../tools/slo.py device -o ../../reports/device-slo/after.json
       - name: Fail on a regression over 20%
         run: |
           if [[ -f reports/device-slo/before.json ]]; then
@@ -279,7 +279,7 @@ jobs:
       - name: Install pinned SDK packages
         run: sdkmanager "platforms;android-37.0" "build-tools;34.0.0"
       - name: Install the package (the render gate writes its samples with it)
-        run: pip install -e ".[dev]"
+        run: pip install -e "./packages/pycompose[dev]"
       - name: Spotless + Detekt + lint + unit tests (incl. ArchUnit)
         if: hashFiles('android/settings.gradle.kts') != ''
         working-directory: android
@@ -325,7 +325,7 @@ jobs:
       - name: Install pinned SDK packages
         run: sdkmanager "platforms;android-37.0" "build-tools;34.0.0"
       - name: Install CLI
-        run: pip install -e ".[dev]"
+        run: pip install -e "./packages/pycompose[dev]"
       - name: Generate sample project
         run: |
           cd "$RUNNER_TEMP"
@@ -340,7 +340,7 @@ jobs:
           PY
       - name: Verify installed wheel CLI and template assets
         run: |
-          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/cli-wheel" .
+          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/cli-wheel" ./packages/pycompose
           python -m venv "$RUNNER_TEMP/cli-venv"
           # Install like a user: the CLI has a runtime dependency (rich), and a
           # --no-deps install produced a wheel that could not import.
@@ -429,9 +429,9 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install CLI
-        run: pip install -e ".[dev]"
+        run: pip install -e "./packages/pycompose[dev]"
       - name: Sync check
-        if: hashFiles('pycompose/cli/sync.py') != ''
+        if: hashFiles('packages/pycompose/src/pycompose/cli/sync.py') != ''
         run: |
           cd "$RUNNER_TEMP"
           pycompose init sync-smoke
@@ -449,6 +449,6 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install CLI
-        run: pip install -e ".[dev]"
+        run: pip install -e "./packages/pycompose[dev]"
       - name: Hot reload smoke
         run: pytest -q -m "hot_reload_smoke"

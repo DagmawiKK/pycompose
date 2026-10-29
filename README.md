@@ -67,11 +67,11 @@ From a checkout:
 ```bash
 git clone https://github.com/DagmawiKK/pycompose
 cd pycompose
-pip install .
+pip install ./packages/pycompose
 ```
 
 For work on the framework itself, install the dev extras instead:
-`pip install -e ".[dev]"`.
+`pip install -e "./packages/pycompose[dev]"`, or `uv sync --all-extras` at the root.
 
 ## Quick start
 
@@ -669,7 +669,7 @@ calls HTTPX or any other blocking library directly, as `examples/weather` does.
 ## Development
 
 ```bash
-pip install -e ".[dev]"
+pip install -e "./packages/pycompose[dev]"   # or: uv sync --all-extras
 pre-commit install
 npm ci                                  # commit-message linting
 make fmt && make precommit && make test

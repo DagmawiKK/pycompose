@@ -7,7 +7,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HOME = ROOT / "pycompose" / "contract" / "registry_vocabulary.py"
+PACKAGE = ROOT / "packages/pycompose/src/pycompose"
+HOME = PACKAGE / "contract" / "registry_vocabulary.py"
 
 
 def _terms() -> list[str]:
@@ -36,7 +37,7 @@ def _terms() -> list[str]:
 def _hand_sources() -> list[Path]:
     """Return every hand-written Python file the vocabulary could leak into."""
     roots = [
-        ROOT / "pycompose",
+        PACKAGE,
         ROOT / "tools",
         ROOT / "tests",
     ]
