@@ -24,6 +24,7 @@ from pycompose.blocks.app import Blocks, Interface
 from pycompose.blocks.chat import Chatbot, ChatInterface
 from pycompose.blocks.components import Button, Component
 from pycompose.blocks.containers import Accordion, Column, Row, Tab, Tabs
+from pycompose.blocks.display import JSON, Gallery, Image, Label
 from pycompose.blocks.layout import Event
 from pycompose.blocks.selection import Checkbox, Dropdown, Radio, Slider
 from pycompose.blocks.text import Markdown, Number, Textbox
@@ -39,7 +40,11 @@ __all__ = [
     "Component",
     "Dropdown",
     "Event",
+    "Gallery",
+    "Image",
     "Interface",
+    "JSON",
+    "Label",
     "Markdown",
     "Number",
     "Radio",

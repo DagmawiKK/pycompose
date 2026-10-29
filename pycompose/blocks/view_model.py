@@ -108,16 +108,20 @@ class BlocksViewModel(ViewModel[BlocksState]):
     async def _run(self, event: Event, args: list[Any]) -> None:
         run = asyncio.current_task()
         try:
+            # Outputs are converted on the I/O pool: holding a picture writes a file.
             if inspect.isasyncgenfunction(event.fn):
                 async for item in event.fn(*args):
-                    self._show(event, run, _written(event.outputs, item))
+                    written = await to_thread("io", _written, event.outputs, item)
+                    self._show(event, run, written)
             elif inspect.isgeneratorfunction(event.fn):
                 await self._stream(event, args, run)
             elif inspect.iscoroutinefunction(event.fn):
-                self._show(event, run, _written(event.outputs, await event.fn(*args)))
+                result = await event.fn(*args)
+                written = await to_thread("io", _written, event.outputs, result)
+                self._show(event, run, written)
             else:
-                result = await to_thread("io", event.fn, *args)
-                self._show(event, run, _written(event.outputs, result))
+                written = await to_thread("io", _call, event, args)
+                self._show(event, run, written)
         except asyncio.CancelledError:
             raise  # superseded: the newer run owns the outputs now
         except Exception as error:
@@ -161,6 +165,11 @@ class BlocksViewModel(ViewModel[BlocksState]):
 
     def _value(self, component: Component) -> Any:
         return self.state.values.get(component.id, component.default)
+
+
+def _call(event: Event, args: list[Any]) -> dict[str, Any]:
+    """Run a plain function and convert its result, both off the loop."""
+    return _written(event.outputs, event.fn(*args))
 
 
 def _written(outputs: tuple[Component, ...], result: Any) -> dict[str, Any]:
