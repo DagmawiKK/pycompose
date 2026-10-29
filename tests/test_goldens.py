@@ -23,9 +23,9 @@ from pycompose.components import (
 )
 from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node
-from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
 from pycompose.utils.json_canonical import canonical_json_bytes
+from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_golden_screen_rebuilds_match_packaged_fixture_exactly() -> None:

@@ -66,7 +66,7 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["blocks", "m3", "composition", "components", "bridge", "app", "extensions", "runtime", "storage", "ir", "state", "schema", "core", "contract", "utils"]
+layers = ["blocks", "m3", "composition", "components", "bridge", "app", "extensions", "runtime", "storage", "wire", "state", "schema", "core", "contract", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
 
@@ -83,7 +83,7 @@ explanation = "Python bridge surface is Chaquopy-agnostic; the host implements t
 name = "Runtime packages never import CLI or templates"
 type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
-                  "pycompose.blocks", "pycompose.ir", "pycompose.bridge", "pycompose.components",
+                  "pycompose.blocks", "pycompose.wire", "pycompose.bridge", "pycompose.components",
                    "pycompose.utils", "pycompose.m3", "pycompose.composition",
                     "pycompose.storage", "pycompose.extensions", "pycompose.repository", "pycompose.media"]
 forbidden_modules = ["pycompose_cli"]
@@ -93,14 +93,14 @@ explanation = "CLI and template assets are desktop concerns, never runtime deps.
 name = "State is independent (no ir/bridge/components deps)"
 type = "forbidden"
 source_modules = ["pycompose.state"]
-forbidden_modules = ["pycompose.ir", "pycompose.bridge", "pycompose.components"]
+forbidden_modules = ["pycompose.wire", "pycompose.bridge", "pycompose.components"]
 explanation = "State + Store stay minimal and purpose-free."
 
 [[tool.importlinter.contracts]]
 name = "Runtime never imports testing helpers or fixtures"
 type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
-                   "pycompose.blocks", "pycompose.ir", "pycompose.bridge", "pycompose.components",
+                   "pycompose.blocks", "pycompose.wire", "pycompose.bridge", "pycompose.components",
                    "pycompose.utils", "pycompose.m3", "pycompose.composition",
                     "pycompose.storage", "pycompose.extensions", "pycompose.repository", "pycompose.media"]
 forbidden_modules = ["pycompose_testing"]
@@ -141,7 +141,7 @@ explanation = "derive writes the lock that emit reads; both find the checkout th
 name = "Codegen reads the runtime's catalog, never its machinery"
 type = "forbidden"
 source_modules = ["pycompose_codegen"]
-forbidden_modules = ["pycompose.app", "pycompose.blocks", "pycompose.bridge", "pycompose.runtime", "pycompose.state", "pycompose.ir", "pycompose.components", "pycompose.m3", "pycompose.composition", "pycompose.storage", "pycompose.repository", "pycompose.media", "pycompose.extensions", "pycompose_testing", "pycompose_cli"]
+forbidden_modules = ["pycompose.app", "pycompose.blocks", "pycompose.bridge", "pycompose.runtime", "pycompose.state", "pycompose.wire", "pycompose.components", "pycompose.m3", "pycompose.composition", "pycompose.storage", "pycompose.repository", "pycompose.media", "pycompose.extensions", "pycompose_testing", "pycompose_cli"]
 explanation = """It generates code from the catalog's types and rules; running an app is not its
 concern, so it imports only pycompose.contract, pycompose.core and pycompose.errors (ADR-0063)."""
 

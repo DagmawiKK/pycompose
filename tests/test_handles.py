@@ -6,9 +6,9 @@ from pycompose.components import Column, Text
 from pycompose.core.ids import Handles
 from pycompose.core.node import Node
 from pycompose.core.reuse import Reuse
-from pycompose.ir import emit_ir
-from pycompose.ir.patch import PatchOp, ReplaceSubtree, diff_nodes
 from pycompose.state import State
+from pycompose.wire import emit_ir
+from pycompose.wire.patch import PatchOp, ReplaceSubtree, diff_nodes
 
 
 def session(*, readable: bool = False) -> Reuse:

@@ -10,11 +10,11 @@ from pycompose.app import Intent
 from pycompose.app.intents import intent_name
 from pycompose.core.effect import Effect
 from pycompose.errors import IrValidationError, StateError
-from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.ir.effects import read_effects
-from pycompose.ir.model import IRRoot
 from pycompose.m3 import Button, Text
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_json, validate_ir
+from pycompose.wire.effects import read_effects
+from pycompose.wire.model import IRRoot
 
 
 def _snapshot(*effects: Effect, version: str = "1.4.0") -> dict:

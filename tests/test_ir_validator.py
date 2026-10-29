@@ -8,8 +8,8 @@ from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node, Props
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError, SchemaError
-from pycompose.ir import IRRoot, emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
+from pycompose.wire import IRRoot, emit_ir, to_json_bytes, validate_ir
 
 
 @pytest.mark.parametrize(

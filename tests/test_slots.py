@@ -19,7 +19,6 @@ from readable import readable_reuse, rename
 from pycompose.composition import slot_nodes
 from pycompose.core.node import Node, Props
 from pycompose.errors import IrError, IrValidationError
-from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.m3 import (
     Column,
     PlainTooltip,
@@ -29,6 +28,7 @@ from pycompose.m3 import (
     TooltipBox,
 )
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_dict, validate_ir
 
 
 def text_node(node_id: str, content: str = "hi", **extra: object) -> Node:

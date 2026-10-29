@@ -20,9 +20,9 @@ def test_validate_accepts_tagged_nullable_and_numeric_value_unions(
     tmp_path: Path,
 ) -> None:
     from pycompose.components import Button, Column, Modifier, Text
-    from pycompose.ir import emit_ir, to_json_bytes
     from pycompose.state import State
     from pycompose.values import Dp, Sp, TextStyle, ThemeColor
+    from pycompose.wire import emit_ir, to_json_bytes
 
     root = Column(
         id="root",

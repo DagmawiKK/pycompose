@@ -81,8 +81,8 @@ def test_an_overload_is_named_after_what_sets_it_apart() -> None:
 
 def test_the_keywords_a_call_passes_choose_the_overload() -> None:
     from pycompose.contract.catalog import SCHEMA_VERSION
-    from pycompose.ir import emit_ir, to_json
     from pycompose.m3 import Card, CardWithoutOnClick, Text
+    from pycompose.wire import emit_ir, to_json
 
     class OpenNote(Intent):
         pass

@@ -23,9 +23,9 @@ from dataclasses import dataclass
 from pycompose.core.node import Node
 from pycompose.core.props import JsonValue
 from pycompose.core.reuse import Reuse
-from pycompose.ir.model import IRRoot
-from pycompose.ir.serializer import node_bytes
 from pycompose.utils.json_canonical import FrozenJsonValue, canonical_json_bytes
+from pycompose.wire.model import IRRoot
+from pycompose.wire.serializer import node_bytes
 
 __all__ = [
     "PatchOp",

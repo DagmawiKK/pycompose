@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from pycompose.ir import Action, ActionQueue
+from pycompose.wire import Action, ActionQueue
 
 
 def test_action_fields() -> None:

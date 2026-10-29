@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, cast
 
 from pycompose.core import Node
-from pycompose.ir import IRRoot, validate_ir
+from pycompose.wire import IRRoot, validate_ir
 from pycompose_cli.project import ProjectError, read_json
 from pycompose_cli.wire_schema import WireSchema
 

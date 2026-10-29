@@ -24,14 +24,14 @@ from pycompose.core.props import JsonValue
 from pycompose.core.reuse import Reuse, SubtreeMemo
 from pycompose.core.traversal import walk_nodes
 from pycompose.errors import IrValidationError
-from pycompose.ir.bindings import lower_props, record
-from pycompose.ir.data import lower_data
-from pycompose.ir.echoes import lower_echoes
-from pycompose.ir.effects import lower_effects
-from pycompose.ir.model import IRRoot
-from pycompose.ir.streams import is_expression, resolve_streams
 from pycompose.state.state import State
 from pycompose.utils.json_canonical import FrozenJsonValue
+from pycompose.wire.bindings import lower_props, record
+from pycompose.wire.data import lower_data
+from pycompose.wire.echoes import lower_echoes
+from pycompose.wire.effects import lower_effects
+from pycompose.wire.model import IRRoot
+from pycompose.wire.streams import is_expression, resolve_streams
 
 __all__ = ["emit_ir"]
 

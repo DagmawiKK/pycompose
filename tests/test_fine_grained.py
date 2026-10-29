@@ -6,9 +6,9 @@ from pycompose import composable
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.core.node import Node
 from pycompose.core.reuse import Reuse
-from pycompose.ir import emit_ir
 from pycompose.m3 import Column, Text
 from pycompose.state import AppState, State
+from pycompose.wire import emit_ir
 
 runs: list[str] = []
 

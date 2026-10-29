@@ -12,8 +12,8 @@ from readable import ids, readable
 
 from pycompose.core import Node, Props
 from pycompose.errors import IrError, IrValidationError, SchemaError
-from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_emit_ir_matches_golden_and_generated_schema() -> None:

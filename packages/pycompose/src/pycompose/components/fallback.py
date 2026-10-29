@@ -7,7 +7,7 @@ from collections.abc import Callable
 from pycompose.core.expansion import DeferredNode
 from pycompose.core.ids import call_site
 from pycompose.core.node import Node
-from pycompose.ir.host import current_host
+from pycompose.wire.host import current_host
 
 
 class Fallback(DeferredNode):

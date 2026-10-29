@@ -1,27 +1,24 @@
-"""pycompose.ir — pure emitter, canonical serializer, validation tables."""
+"""Moved to :mod:`pycompose.wire`; this name works for one release."""
 
-from __future__ import annotations
+from pycompose._moved import forward
 
-from pycompose.ir.actions import Action, ActionQueue
-from pycompose.ir.emitter import emit_ir
-from pycompose.ir.model import IRRoot
-from pycompose.ir.serializer import (
-    node_to_dict,
-    to_dict,
-    to_json,
-    to_json_bytes,
+forward(
+    __name__,
+    "pycompose.wire",
+    globals(),
+    submodules={
+        "actions": "pycompose.wire.actions",
+        "bindings": "pycompose.wire.bindings",
+        "data": "pycompose.wire.data",
+        "echoes": "pycompose.wire.echoes",
+        "effects": "pycompose.wire.effects",
+        "emitter": "pycompose.wire.emitter",
+        "host": "pycompose.wire.host",
+        "model": "pycompose.wire.model",
+        "patch": "pycompose.wire.patch",
+        "serializer": "pycompose.wire.serializer",
+        "streams": "pycompose.wire.streams",
+        "validator": "pycompose.wire.validator",
+        "validator_walk": "pycompose.wire.validator_walk",
+    },
 )
-from pycompose.ir.validator import ValidationResult, validate_ir
-
-__all__ = [
-    "Action",
-    "ActionQueue",
-    "IRRoot",
-    "ValidationResult",
-    "emit_ir",
-    "node_to_dict",
-    "to_dict",
-    "to_json",
-    "to_json_bytes",
-    "validate_ir",
-]

@@ -29,8 +29,8 @@ from pycompose.components.base import Component
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
-from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_text_constructs_a_registry_valid_node() -> None:

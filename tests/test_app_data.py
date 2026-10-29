@@ -7,10 +7,10 @@ import json
 import pytest
 
 from pycompose.errors import IrValidationError
-from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.ir.data import read_data
 from pycompose.m3 import Text
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_json, validate_ir
+from pycompose.wire.data import read_data
 
 
 def _snapshot(state: State, version: str = "1.4.0") -> dict:

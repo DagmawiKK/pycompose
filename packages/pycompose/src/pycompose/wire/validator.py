@@ -27,14 +27,14 @@ from pycompose.core.resources import valid_resource
 from pycompose.core.reuse import Reuse
 from pycompose.core.values import validate_bounds, validate_number, validate_value
 from pycompose.errors import ComponentRegistryError, IrValidationError
-from pycompose.ir.data import DATA_SCHEMA, read_data
-from pycompose.ir.echoes import ECHOES_SCHEMA, read_echoes
-from pycompose.ir.effects import EFFECTS_SCHEMA, read_effects
-from pycompose.ir.host import current_host
-from pycompose.ir.model import IRRoot
-from pycompose.ir.streams import stream_problems
-from pycompose.ir.validator_walk import _Validation
 from pycompose.utils.json_canonical import check_json
+from pycompose.wire.data import DATA_SCHEMA, read_data
+from pycompose.wire.echoes import ECHOES_SCHEMA, read_echoes
+from pycompose.wire.effects import EFFECTS_SCHEMA, read_effects
+from pycompose.wire.host import current_host
+from pycompose.wire.model import IRRoot
+from pycompose.wire.streams import stream_problems
+from pycompose.wire.validator_walk import _Validation
 
 __all__ = [
     "ValidationResult",

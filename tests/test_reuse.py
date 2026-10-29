@@ -10,9 +10,9 @@ from pycompose.core.node import Node, Props
 from pycompose.core.reuse import Reuse
 from pycompose.core.windows import windows
 from pycompose.errors import IrError
-from pycompose.ir import emit_ir, to_json, validate_ir
 from pycompose.m3 import Column, LazyColumn, Text
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_json, validate_ir
 
 
 @composable

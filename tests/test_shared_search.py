@@ -6,9 +6,9 @@ from pycompose.contract.catalog import REGISTRY
 from pycompose.contract.registry_elements import SlotRule
 from pycompose.core.node import Node
 from pycompose.errors import ComponentRegistryError, IrValidationError
-from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.state import State
 from pycompose.values import Dp, RoundedCornerShape
+from pycompose.wire import emit_ir, to_dict, validate_ir
 
 
 def owner(**overrides: object) -> Node:

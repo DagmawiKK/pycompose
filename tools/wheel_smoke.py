@@ -43,9 +43,9 @@ def _add_wheel(wheel_dir: Path) -> Path:
 def _smoke_emit_and_compose() -> None:
     """Prove emit, composable and Component resolution all work from the wheel."""
     from pycompose import composable
-    from pycompose.ir import emit_ir
     from pycompose.m3 import Column, Text
     from pycompose.state import State
+    from pycompose.wire import emit_ir
 
     assert Column(id="screen", children=[Text(id="title", text="Hello")]).type == (
         "Column"
@@ -72,8 +72,8 @@ def _smoke_goldens(wheel: Path) -> None:
         read_golden,
     )
 
-    from pycompose.ir import emit_ir, to_json_bytes
     from pycompose.state import State
+    from pycompose.wire import emit_ir, to_json_bytes
 
     names = golden_names()
     assert names, "the wheel packaged no golden fixtures at all"

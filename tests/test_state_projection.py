@@ -25,10 +25,10 @@ from pycompose_codegen.emit.state_rules import STATE_VALUE_TYPES
 
 from pycompose.contract.catalog import REGISTRY
 from pycompose.core.node import Node
-from pycompose.ir import emit_ir, to_dict, validate_ir
-from pycompose.ir.validator import validate_prop
 from pycompose.m3 import ModalBottomSheet, ModalNavigationDrawer, Text
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_dict, validate_ir
+from pycompose.wire.validator import validate_prop
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 

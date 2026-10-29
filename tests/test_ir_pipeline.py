@@ -10,9 +10,9 @@ from readable import readable_reuse
 from pycompose.core import Node, Props
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrError, IrValidationError
-from pycompose.ir import IRRoot, emit_ir, to_dict, to_json, to_json_bytes, validate_ir
 from pycompose.state import State
 from pycompose.utils.json_canonical import canonical_json, check_json
+from pycompose.wire import IRRoot, emit_ir, to_dict, to_json, to_json_bytes, validate_ir
 
 
 def test_node_detaches_raw_mapping_props_at_construction() -> None:

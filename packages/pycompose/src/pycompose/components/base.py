@@ -16,8 +16,8 @@ from pycompose.core.ids import call_location, call_site
 from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
 from pycompose.core.values import _Unset
 from pycompose.errors import IrValidationError
-from pycompose.ir.validator import validate_component
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
+from pycompose.wire.validator import validate_component
 
 ActionTarget = str | Intent | type[Intent]
 """What an action prop takes: an intent, an intent class, or a registry action id."""

@@ -22,9 +22,9 @@ import pytest
 from pycompose_codegen.emit.adapters import render
 
 from pycompose.core.node import Node
-from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.m3 import Button
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_dict, validate_ir
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 

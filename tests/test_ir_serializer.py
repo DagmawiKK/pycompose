@@ -8,8 +8,8 @@ import pytest
 
 from pycompose.core import ROOT_ID, Node, Props, child_id
 from pycompose.errors import IrValidationError
-from pycompose.ir import serializer
 from pycompose.utils.json_canonical import canonical_json
+from pycompose.wire import serializer
 
 
 def test_serialize_simple_node_canonical_keys() -> None:

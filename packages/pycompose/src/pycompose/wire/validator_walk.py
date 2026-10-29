@@ -21,8 +21,8 @@ from pycompose.core.node import Node
 from pycompose.core.reuse import SubtreeMemo
 from pycompose.core.traversal import walk_nodes
 from pycompose.errors import IrValidationError
-from pycompose.ir.host import Host
 from pycompose.utils.json_canonical import FrozenJsonValue, check_json
+from pycompose.wire.host import Host
 
 
 @dataclass(slots=True)
@@ -92,7 +92,7 @@ class _Validation:
             self.ids.add(node.id)
 
     def prepare(self, node: Node) -> _NodeFrame:
-        from pycompose.ir.validator import validate_prop
+        from pycompose.wire.validator import validate_prop
 
         self.identity(node)
         spec = REGISTRY.components.get(node.type)

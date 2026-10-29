@@ -3,9 +3,9 @@
 import pytest
 
 from pycompose.errors import IrValidationError
-from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.m3 import StatefulSearchBarInputField
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_dict, validate_ir
 
 
 def test_text_selection_and_revision_travel_in_one_snapshot() -> None:

@@ -3,8 +3,8 @@
 import pytest
 
 from pycompose.core import Node
-from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_imported_builtins_preserve_the_native_contract() -> None:

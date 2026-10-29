@@ -24,13 +24,13 @@ from pycompose.core.ids import Handles
 from pycompose.core.reuse import Reuse
 from pycompose.core.windows import windows
 from pycompose.errors import BridgeError, SchemaError
-from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.ir.echoes import ECHOES_SCHEMA, echo_key
-from pycompose.ir.host import Host, hosted
-from pycompose.ir.model import IRRoot
-from pycompose.ir.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
 from pycompose.runtime.trace import tracing
 from pycompose.state import State, Store
+from pycompose.wire import emit_ir, to_json, validate_ir
+from pycompose.wire.echoes import ECHOES_SCHEMA, echo_key
+from pycompose.wire.host import Host, hosted
+from pycompose.wire.model import IRRoot
+from pycompose.wire.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
 
 LOGGER = logging.getLogger(__name__)
 

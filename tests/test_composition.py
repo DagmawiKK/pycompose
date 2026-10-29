@@ -7,9 +7,9 @@ from pycompose import composable
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.core.reuse import Reuse
 from pycompose.errors import IrValidationError
-from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.m3 import Column, Modifier, Scaffold, Text
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_dict, validate_ir
 
 
 def test_composable_expands_on_emission_with_scoped_identity() -> None:
@@ -69,7 +69,7 @@ def test_composable_expands_on_emission_with_scoped_identity() -> None:
 
 def test_python_declarations_cannot_cross_the_wire_unexpanded() -> None:
     from pycompose.errors import IrValidationError
-    from pycompose.ir import to_json_bytes
+    from pycompose.wire import to_json_bytes
 
     @composable
     def greeting():
@@ -102,7 +102,7 @@ def test_named_content_callables_expand_on_the_worker() -> None:
 
 
 def test_nested_compositions_are_stable_when_instances_reorder() -> None:
-    from pycompose.ir import to_json_bytes
+    from pycompose.wire import to_json_bytes
 
     @composable
     def label(*, text: str):

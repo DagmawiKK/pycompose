@@ -8,8 +8,8 @@ import pytest
 
 from pycompose.components import Text
 from pycompose.errors import IrValidationError
-from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_color_is_data_and_reaches_canonical_ir() -> None:

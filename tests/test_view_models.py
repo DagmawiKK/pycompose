@@ -14,10 +14,10 @@ import pytest
 from pycompose.app import Intent, StateFlow
 from pycompose.bridge import runtime
 from pycompose.errors import StateError
-from pycompose.ir import emit_ir, to_json
 from pycompose.m3 import Button
 from pycompose.runtime import signal
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_json
 
 APP = """
 import asyncio

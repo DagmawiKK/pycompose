@@ -11,8 +11,8 @@ from typing import Any
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.ids import Handles
 from pycompose.core.reuse import Reuse
-from pycompose.ir import emit_ir, to_dict
 from pycompose.state import State
+from pycompose.wire import emit_ir, to_dict
 
 
 def readable_reuse() -> Reuse:

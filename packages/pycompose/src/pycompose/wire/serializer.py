@@ -15,8 +15,8 @@ from pycompose.core.props import JsonValue
 from pycompose.core.reuse import Reuse, SubtreeMemo
 from pycompose.core.traversal import walk_nodes
 from pycompose.errors import IrValidationError
-from pycompose.ir.model import IRRoot
 from pycompose.utils.json_canonical import canonical_json_bytes, thaw_json
+from pycompose.wire.model import IRRoot
 
 __all__ = ["node_bytes", "node_to_dict", "to_dict", "to_json", "to_json_bytes"]
 

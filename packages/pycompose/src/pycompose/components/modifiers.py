@@ -11,9 +11,9 @@ from pycompose.components.modifier_operation import _Operation
 from pycompose.components.scoped_modifiers import ScopedOperations
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
-from pycompose.ir.validator import validate_modifier
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
 from pycompose.values import Dp, PaddingValues
+from pycompose.wire.validator import validate_modifier
 
 _PADDING_SIDES = ("start", "top", "end", "bottom")
 

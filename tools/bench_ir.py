@@ -41,9 +41,18 @@ try:
     from pycompose.core.reuse import Reuse
 except ImportError:
     Reuse = None  # type: ignore[assignment,misc]
-from pycompose.ir import emit_ir, to_json_bytes, validate_ir
-from pycompose.ir.model import IRRoot
-from pycompose.ir.patch import diff_nodes, patch_bytes
+try:
+    from pycompose.wire import emit_ir, to_json_bytes, validate_ir
+    from pycompose.wire.model import IRRoot
+    from pycompose.wire.patch import diff_nodes, patch_bytes
+except ImportError:  # a base commit from before the package was named wire
+    from pycompose.ir import (  # type: ignore[no-redef]
+        emit_ir,
+        to_json_bytes,
+        validate_ir,
+    )
+    from pycompose.ir.model import IRRoot  # type: ignore[no-redef]
+    from pycompose.ir.patch import diff_nodes, patch_bytes  # type: ignore[no-redef]
 from pycompose.state import State
 
 SHAPES = ("wide", "nested", "props", "drop", "optional")

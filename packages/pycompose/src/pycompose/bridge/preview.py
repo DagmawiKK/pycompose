@@ -12,9 +12,9 @@ import itertools
 
 from pycompose.bridge.protocol import AppSession
 from pycompose.core.reuse import Reuse
-from pycompose.ir import emit_ir, validate_ir
-from pycompose.ir.host import Host, hosted
-from pycompose.ir.patch import full_bytes
+from pycompose.wire import emit_ir, validate_ir
+from pycompose.wire.host import Host, hosted
+from pycompose.wire.patch import full_bytes
 
 __all__ = ["BELOW_SURFACE", "preview_envelope"]
 

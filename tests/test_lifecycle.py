@@ -11,9 +11,9 @@ from handlers import Handlers
 
 from pycompose.bridge import BridgeSurface
 from pycompose.errors import IrValidationError
-from pycompose.ir import emit_ir
 from pycompose.m3 import Button, Text
 from pycompose.state import State, Store
+from pycompose.wire import emit_ir
 
 CONFIG = {
     "orientation": "landscape",
