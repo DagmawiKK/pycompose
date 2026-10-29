@@ -18,6 +18,13 @@ class InitError(PyComposeError):
     """The project name or packaged template is invalid."""
 
 
+STARTERS = ("blocks", "viewmodel")
+"""The apps ``init`` can start with; the first is the default, in ``app/``."""
+
+STARTER_DIR = "starters"
+"""Where the template keeps the other starters' entry modules."""
+
+
 def _copy_assets(
     source: Traversable, target: Path, *, android_root: Path | None = None
 ) -> None:
@@ -27,6 +34,8 @@ def _copy_assets(
     its resources and its dotfiles -- since the Android project is generated.
     """
     for asset in sorted(source.iterdir(), key=lambda entry: entry.name):
+        if asset.name == STARTER_DIR:
+            continue  # read by init for the starter chosen, never copied whole
         android = asset.name not in {"app", "resources"} and not asset.name.startswith(
             "."
         )
@@ -82,7 +91,7 @@ def _generate_slice(target: Path, android_root: Path) -> None:
 
 
 def init_project(
-    name: str, *, directory: Path, native: bool = False
+    name: str, *, directory: Path, native: bool = False, starter: str = STARTERS[0]
 ) -> tuple[Path, bool, bool]:
     """Copy template assets and write config without replacing existing work.
 
@@ -90,6 +99,8 @@ def init_project(
         name: Single project-directory name, starting with an ASCII letter.
         directory: Parent directory in which to create the project.
         native: Expose the Android scaffold at the project root for customization.
+        starter: The app it starts with: ``blocks``, components and functions,
+            or ``viewmodel``, a view model drawing native components.
 
     Returns:
         Project path, whether it was created, and Android scaffold availability.
@@ -98,6 +109,8 @@ def init_project(
         InitError: If the name or template manifest is invalid.
         FileExistsError: If a non-directory project path appears during creation.
     """
+    if starter not in STARTERS:
+        raise InitError("unknown starter", starter=starter, known=",".join(STARTERS))
     if re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{0,62}", name) is None:
         raise InitError(
             "name must start with a letter and contain only letters, digits, "
@@ -156,6 +169,9 @@ def init_project(
     # A native project owns its Android files; any other is generated from the
     # app on every build (plan 31 §21), so only the app's own files are copied.
     _copy_assets(template, target, android_root=android_root if native else None)
+    if starter != STARTERS[0]:
+        main = template.joinpath(STARTER_DIR, starter, "main.py")
+        (target / "app" / "main.py").write_bytes(main.read_bytes())
     # The launcher label is an app string like any other, so it flows through
     # the same resource pipeline and localizes with it.
     with (target / "resources" / "strings.json").open(

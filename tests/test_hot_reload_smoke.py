@@ -24,12 +24,11 @@ def test_python_edit_produces_a_new_full_snapshot_without_gradle(
         )
         with urllib.request.urlopen(request, timeout=5) as response:
             initial = json.load(response)
-        assert (
-            json.loads(initial["snapshot"])["root"]["props"]["text"]
-            == "Hello PyCompose"
-        )
+        assert "Type your name and tap Greet." in initial["snapshot"]
         main = project / "app" / "main.py"
-        main.write_text(main.read_text().replace("Hello PyCompose", "Reloaded screen"))
+        main.write_text(
+            main.read_text().replace("Type your name and tap Greet.", "Reloaded screen")
+        )
         deadline = time.monotonic() + 5
         while time.monotonic() < deadline:
             with urllib.request.urlopen(request, timeout=5) as response:
@@ -38,10 +37,8 @@ def test_python_edit_produces_a_new_full_snapshot_without_gradle(
                 break
             time.sleep(0.02)
         assert current["revision"] > initial["revision"]
-        assert (
-            json.loads(current["snapshot"])["root"]["props"]["text"]
-            == "Reloaded screen"
-        )
-        assert current["diagnostics"]["nodeCount"] == 1
+        assert "Reloaded screen" in current["snapshot"]
+        nodes = current["diagnostics"]["nodeCount"]
+        assert nodes == initial["diagnostics"]["nodeCount"]
         assert current["diagnostics"]["lastError"] is None
         assert not (project / ".pycompose/android/host/build").exists()

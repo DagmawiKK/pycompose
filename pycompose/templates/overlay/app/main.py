@@ -1,36 +1,19 @@
-"""Python entrypoint for the generated app.
+"""Your app: components, an event, and a plain function.
 
-The components come from the app's own generated package, which the build
-regenerates from what this source references (ADR-0014), so the app ships the
-components it uses and nothing else.
+Edit this file while ``pycompose run`` is watching: the phone reloads on save.
+The README lists every component and shows how to stream, pick photos, and
+build screens of your own with view models.
 """
 
-from m3 import Text
-from pycompose.app import App, Destination, ViewModel
-from pycompose.state import AppState
+import pycompose.blocks as pc
 
 
-class Greeting(AppState):
-    """What the screen shows; saved across process death."""
+def greet(name: str) -> str:
+    """Answer the button: whatever this returns fills the outputs."""
+    return f"Hello, {name.strip() or 'world'}!"
 
 
-class GreetingViewModel(ViewModel[Greeting]):
-    """The screen's state and behaviour."""
-
-    def __init__(self) -> None:
-        super().__init__(Greeting())
-
-
-def screen(state: Greeting) -> Text:
-    """Draw the screen from its state.
-
-    Args:
-        state: The view model's state.
-
-    Returns:
-        The greeting.
-    """
-    return Text(id="greeting", text="Hello PyCompose")
-
-
-app = App(start=Destination(lambda _container, _route: GreetingViewModel(), screen))
+with pc.Blocks() as app:
+    name = pc.Textbox(label="Your name")
+    greeting = pc.Markdown("Type your name and tap Greet.")
+    pc.Button("Greet").click(greet, inputs=name, outputs=greeting)

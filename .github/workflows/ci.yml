@@ -334,11 +334,9 @@ jobs:
         working-directory: ${{ runner.temp }}/smoke/app
         run: |
           python - <<'PY'
-          import main
-          from pycompose.ir import emit_ir, validate_ir
-          from pycompose.ir.generated_validators import SCHEMA_VERSION
-          candidate = emit_ir(main.app.build(route="home"), SCHEMA_VERSION)
-          assert validate_ir(candidate).snapshot is candidate
+          from pycompose.bridge.session import compose_once
+          snapshot, error = compose_once("main:app")
+          assert snapshot and not error, error
           PY
       - name: Verify installed wheel CLI and template assets
         run: |

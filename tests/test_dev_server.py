@@ -54,7 +54,9 @@ def test_failed_reload_preserves_the_last_good_snapshot_and_files_then_recovers(
         assert broken["snapshot"] == initial["snapshot"]
         assert broken["files"] == initial["files"]
         assert broken["revision"] == initial["revision"]
-        main.write_text(source.replace("Hello PyCompose", "Recovered screen"))
+        main.write_text(
+            source.replace("Type your name and tap Greet.", "Recovered screen")
+        )
         recovered = wait_for(
             server, lambda data: data["revision"] > initial["revision"]
         )

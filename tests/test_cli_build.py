@@ -45,7 +45,8 @@ assert os.environ["ORG_GRADLE_PROJECT_pycomposeVersionName"] == "0.1.0"
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeEntrypoint"] == "main:app"
 source = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeSourceDir"])
 assert source == Path("app").resolve()
-assert os.environ["ORG_GRADLE_PROJECT_pycomposeOwnSlice"] == "true"
+# The blocks starter draws with the library's components, so it carries them.
+assert os.environ["ORG_GRADLE_PROJECT_pycomposeOwnSlice"] == "false"
 runtime = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"])
 assert (runtime / "pycompose/bridge/runtime.py").is_file()
 assert Path(os.environ["ORG_GRADLE_PROJECT_pycomposeBuildPython"]).is_file()

@@ -64,6 +64,13 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Expose Android sources at the project root",
     )
+    init.add_argument(
+        "--template",
+        choices=("blocks", "viewmodel"),
+        default="blocks",
+        help="Start from components and functions (blocks), or from a view "
+        "model drawing native components (viewmodel)",
+    )
     _device_parsers(commands)
     build = commands.add_parser(
         "build", help="Package an Android app through its Gradle wrapper"
@@ -333,7 +340,7 @@ def _run(args: argparse.Namespace) -> int:
 
 def _init(args: argparse.Namespace) -> int:
     path, created, scaffold = init_project(
-        args.name, directory=Path.cwd(), native=args.native
+        args.name, directory=Path.cwd(), native=args.native, starter=args.template
     )
     if not created:
         console.warn(f"{path} already exists; no files changed.")
