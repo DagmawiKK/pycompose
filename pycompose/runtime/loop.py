@@ -91,6 +91,19 @@ class LoopThread:
         """
         return time.monotonic() - self._beat
 
+    def idle(self) -> bool:
+        """Report whether every task the session started has finished.
+
+        Returns:
+            True when only the loop's own heartbeat is still running.
+        """
+        return self.call(
+            lambda: all(
+                task is self._heartbeat_task or task.done()
+                for task in asyncio.all_tasks(self.loop)
+            )
+        )
+
     def call(self, work: Callable[..., T], *args: object) -> T:
         """Run ``work`` on the loop thread and wait for its result.
 

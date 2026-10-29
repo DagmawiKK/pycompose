@@ -23,6 +23,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 import tomllib
 from pathlib import Path
 from types import TracebackType
@@ -71,6 +72,8 @@ class AppDriver:
         # its view models launch runs between the actions a test delivers.
         self._failures: list[str] = []
         self._refreshes: list[str] = []
+        self._effects: list[dict[str, Any]] = []
+        self._pulled = ""
         self._loop = LoopThread(self._report)
         signal.install(lambda event, _payload: self._refreshes.append(event))
         started = False
@@ -117,16 +120,35 @@ class AppDriver:
         """
         return list(self._failures)
 
+    @property
+    def effects(self) -> list[dict[str, Any]]:
+        """Every effect the app asked for, in the snapshots the host pulled.
+
+        Returns:
+            The effects, oldest first.
+        """
+        return list(self._effects)
+
     def _deliver(self, source: str) -> None:
-        """Run one action on the loop, then every refresh the app signals."""
+        """Run one action and pull, then every refresh the app signals."""
         self._loop.call(self._session.accept_action, source)
+        self._pull()
         # Let the work the action woke run, then publish what it changed, as
         # the host does when it receives the refresh signal.
         self._loop.call(lambda: None)
         while self._refreshes:
             self._refreshes.clear()
             self._loop.call(self._session.accept_action, envelope(REFRESH, {}))
+            self._pull()
             self._loop.call(lambda: None)
+
+    def _pull(self) -> None:
+        """Pull as the host does after each pass, keeping the effects it carries."""
+        source = self._loop.call(self._session.snapshot)
+        if source and source != self._pulled:
+            self._pulled = source
+            metadata = json.loads(source).get("metadata") or {}
+            self._effects.extend(metadata.get("effects", []))
 
     def _release(self) -> None:
         self._loop.stop()
@@ -175,17 +197,24 @@ class AppDriver:
         return [text for node in self.nodes() for text in sorted(_shown(node))]
 
     def find(
-        self, *, id: str | None = None, text: str | None = None, type: str | None = None
+        self,
+        *,
+        id: str | None = None,
+        text: str | None = None,
+        type: str | None = None,
+        label: str | None = None,
     ) -> Node:
         """The one node matching every given selector.
 
         ``id`` matches the end of a node's readable path, so the key a view
-        gave it is enough; ``text`` matches the node that shows it.
+        gave it is enough; ``text`` matches the node that shows it; ``label``
+        matches the control whose label slot shows it, as a user names a field.
 
         Args:
             id: The node's key.
             text: A text it shows.
             type: Its component type.
+            label: The text its label slot shows.
 
         Returns:
             The node.
@@ -200,11 +229,11 @@ class AppDriver:
             if (id is None or _named(paths.get(node["id"], node["id"]), id))
             and (type is None or node["type"] == type)
             and (text is None or text in _shown(node))
+            and (label is None or label in _labelled(node))
         ]
         if len(matches) != 1:
-            wanted = {
-                k: v for k, v in {"id": id, "text": text, "type": type}.items() if v
-            }
+            given = {"id": id, "text": text, "type": type, "label": label}
+            wanted = {k: v for k, v in given.items() if v}
             raise AssertionError(f"{len(matches)} nodes match {wanted}")
         return matches[0]
 
@@ -272,6 +301,30 @@ class AppDriver:
         else:
             self.act("onValueChange", node, value=value)
 
+    def settle(self, timeout: float = 5.0) -> None:
+        """Wait until the work the app launched has finished and is on screen.
+
+        Args:
+            timeout: Seconds to wait before giving up.
+
+        Raises:
+            AssertionError: If work is still running after ``timeout``.
+        """
+        deadline = time.monotonic() + timeout
+        while True:
+            # Idle first: finished work posted its refresh before it finished,
+            # so an idle loop with no refresh waiting has nothing left to show.
+            idle = self._loop.idle()
+            if self._refreshes:
+                self._refreshes.clear()
+                self._deliver(envelope(REFRESH, {}))
+            elif idle:
+                return
+            elif time.monotonic() > deadline:
+                raise AssertionError(f"the app was still working after {timeout} s")
+            else:
+                time.sleep(0.005)
+
     def lifecycle(self, event: str, **payload: Any) -> None:
         """Deliver a host lifecycle event, such as ``onRouteChanged``.
 
@@ -337,7 +390,15 @@ def _named(path: str, key: str) -> bool:
 
 
 def _action(node: Node, prop: str) -> object:
-    value = node.get("props", {}).get(prop)
+    props = node.get("props", {})
+    value = props.get(prop)
+    if value is None and prop == "onClick":
+        # A clickable modifier makes any node tappable, as the renderer applies it.
+        operations = (props.get("modifier") or {}).get("operations", [])
+        value = next(
+            (op.get("onClick") for op in operations if op.get("type") == "clickable"),
+            None,
+        )
     return value if isinstance(value, str | dict) else None
 
 
@@ -356,6 +417,16 @@ def envelope(target: object, payload: dict[str, Any]) -> str:
             {"fields": target["fields"], "intent": target["intent"], "payload": payload}
         )
     return json.dumps({"intent": target, "payload": payload})
+
+
+def _labelled(node: Node) -> set[str]:
+    """The texts a node's label slot shows."""
+    return {
+        text
+        for child in node.get("children", [])
+        if child.get("slot") == "label"
+        for text in _shown(child)
+    }
 
 
 def _shown(node: Node) -> set[str]:
