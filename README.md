@@ -1,9 +1,18 @@
 # PyCompose
 
-Write Android app UIs in Python; they render as native Jetpack Compose
-**Material 3**. Python declares the tree and owns the state; a Kotlin host draws
-it. The two sides exchange only data — a canonical JSON snapshot one way,
+Write Android apps in Python; they render as native Jetpack Compose
+**Material 3**. Python declares the screen and owns the state; a Kotlin host
+draws it. The two sides exchange only data — a canonical JSON snapshot one way,
 intents and their fields the other — never objects, callbacks, or reflection.
+
+There are two ways to write an app, and they share everything underneath:
+
+- **Blocks** — components, events and plain functions. Declare the screen in a
+  `with` block, connect a button to a function, and the function's result fills
+  the outputs. The quickest way from an idea, an API or a model to an app.
+- **View models** — the full-control route, shaped like Android's architecture
+  guidance: each screen's view model owns its state, controls send typed
+  intents, and screens are drawn from about 130 native components.
 
 > Early development. The contract, the component compiler, the CLI and about 130
 > Material 3 and foundation components work end to end, including hot reload, a
@@ -67,11 +76,13 @@ For work on the framework itself, install the dev extras instead:
 ## Quick start
 
 ```bash
-pycompose init notes     # scaffold a project
-cd notes
+pycompose init hello     # scaffold a project, starting from blocks
+cd hello
 pycompose debug          # build, install, launch — once
 pycompose run            # the same, plus hot reload for .py and resources/
 ```
+
+`pycompose init hello --template viewmodel` starts from a view model instead.
 
 No device attached? `pycompose build apk` (or `pycompose release apk`)
 packages without installing, and `pycompose check` finds what a build or the
@@ -97,7 +108,94 @@ XML to touch:
 `pycompose prebuild` shows what the generated project would change, and
 `pycompose explain <file>` names the settings that produced a generated file.
 
-An app is one `App` in the entry module. Here is a counter, in full:
+The app `init` writes, in full:
+
+```python
+import pycompose.blocks as pc
+
+
+def greet(name: str) -> str:
+    return f"Hello, {name.strip() or 'world'}!"
+
+
+with pc.Blocks() as app:
+    name = pc.Textbox(label="Your name")
+    greeting = pc.Markdown("Type your name and tap Greet.")
+    pc.Button("Greet").click(greet, inputs=name, outputs=greeting)
+```
+
+Change the text while `pycompose run` is watching and the phone shows it on save.
+
+## Building with blocks
+
+Every component and layout created inside `with pc.Blocks() as app:` joins the
+screen in the order the code creates it. Each is drawn from native Material 3
+components, so the app looks and behaves like any Compose app.
+
+| Kind | Components |
+| --- | --- |
+| Text | `Textbox`, `Number`, `Markdown` |
+| Choices | `Checkbox`, `Radio`, `Dropdown`, `Slider` |
+| Results | `Image`, `Gallery`, `Label` (a classifier's top labels as bars), `JSON`, `Chatbot` |
+| Files | `Image(interactive=True)`, `File`, `UploadButton` |
+| Actions | `Button` |
+| Layout | `Row` (wraps to the screen's width), `Column`, `Tabs` with `Tab`, `Accordion` |
+
+Every component takes `label`, `visible` and, where it makes sense,
+`interactive`; a component that is the output of a function shows a progress
+bar while the function runs.
+
+**Events** connect a component to a function. `inputs` are the components the
+function reads, in order; `outputs` the ones its result fills — one value per
+output, a tuple for several:
+
+```python
+pc.Button("Forecast").click(forecast, inputs=[city, days], outputs=[now, ahead])
+city.change(suggest, inputs=city, outputs=hints)      # on every edit
+upload.upload(describe, inputs=upload, outputs=text)  # on every file picked
+```
+
+- A plain function runs on a thread pool, so a slow network call never freezes
+  the screen; an `async def` one runs on the app's loop.
+- **A function that yields streams:** each value it yields is shown as it
+  arrives, which is how a chat reply appears word by word.
+- An event that fires again before its last run returned cancels that run, so
+  only the latest result is shown.
+- An exception becomes a toast with its message; the outputs keep their values.
+
+**Shortcuts** build the usual app around one function:
+
+```python
+app = pc.Interface(translate, inputs=pc.Textbox(label="English"), outputs=pc.Textbox(label="French"))
+app = pc.ChatInterface(reply)   # reply(message, history) returns or yields text
+```
+
+Chat history is a list of `{"role": "user" | "assistant", "content": text}`
+messages, the shape chat model APIs take, so a function can pass it straight on.
+
+**Pictures** go in an `Image` or `Gallery` output as bytes, a file path, or a
+PIL image. The host loads nothing from the network: download in your function
+and return the bytes. An interactive `Image`, a `File` or an `UploadButton`
+opens the system picker — the photo picker for images — with no permission
+prompt, and the function receives the picked file's path.
+
+The examples are complete apps, each a single file:
+
+| Example | What it shows |
+| --- | --- |
+| `examples/weather` | two HTTP calls behind one button; tabs for the results |
+| `examples/chat` | a chat with any OpenAI-compatible model, the reply streaming in |
+| `examples/dogs` | downloading photos and showing them in an image and a gallery |
+| `examples/photos` | picking a photo and editing it with Pillow on every change |
+| `examples/notes` | the view-model route: two screens, SQLite, navigation, theming |
+
+Each one runs with `cd examples/<name> && pycompose debug`.
+
+## Building with view models
+
+When an app outgrows one screen of components — several screens, its own
+navigation, native components beyond the blocks set — it is written as view
+models. Here is a counter, in full:
 
 ```python
 """A counter: one view model, one intent, one screen."""
@@ -144,10 +242,172 @@ app = App(start=Destination(lambda _container, _route: CounterViewModel(), scree
 App code imports `m3`; the build generates that package from the components the
 source references, so an app ships what it uses and nothing else.
 
-A complete two-screen app — persistence, navigation, a repository, theming —
-lives in `examples/notes`.
+### Structuring a larger app
 
-## What an app declares
+An app with several screens follows Android's [guide to app
+architecture](https://developer.android.com/topic/architecture): a data layer
+behind the domain, a UI layer of view models and screens, and dependencies
+wired by hand in one place. `examples/notes` is built this way; the excerpts
+below are from it.
+
+```
+app/
+  main.py                  # the App: routes → destinations, the container
+  notes_app/
+    domain/                # models and use cases; imports nothing above it
+    data/                  # repositories behind the domain's Protocol
+    container.py           # the app's long-lived objects, built once
+    routes.py              # where the app can go
+    view_models/           # each screen's state, intents and behaviour
+    views/                 # screens: pure functions of their state
+```
+
+**Domain** — entities are frozen dataclasses, and what the domain needs from
+storage is a `Protocol`, so any implementation satisfies it structurally.
+Use cases hold the repository; nothing above them ever sees it:
+
+```python
+@dataclass(frozen=True)
+class Note:
+    id: int
+    title: str = ""
+    body: str = ""
+
+
+class NotesRepo(Protocol):
+    def load(self) -> list[Note]: ...
+    def insert(self, note: Note) -> None: ...
+    def update(self, note: Note) -> None: ...
+    def delete(self, note_id: int) -> None: ...
+
+
+class Notes:
+    """Everything the app can do with notes, with the storage already bound."""
+
+    def __init__(self, notes: NotesRepo, changed=lambda _notes: None) -> None: ...
+    def create(self, title: str = "", body: str = "") -> int: ...
+    def rename(self, note_id: int, title: str) -> None: ...
+```
+
+**Data** — `SqliteNotesRepo` implements `NotesRepo` on SQLite, one row per
+note. Its statements run on the session's storage thread with
+`to_thread("storage", ...)`, in order, so the loop never waits on the disk.
+
+**Container** — Google's manual dependency injection: one object holds the
+app's long-lived dependencies, built once per session. It is the only place
+that names a storage backend, and a `StateFlow` lets screens follow the data:
+
+```python
+class AppContainer:
+    def __init__(self, repo: NotesRepo) -> None:
+        self.notes = Notes(repo, changed=self._publish)
+        self.listing: StateFlow[tuple[Note, ...]] = StateFlow(tuple(self.notes.list()))
+
+    def _publish(self, notes: list[Note]) -> None:
+        self.listing.value = tuple(notes)
+
+
+def build() -> AppContainer:
+    return AppContainer(SqliteNotesRepo())
+```
+
+**Routes and destinations** — a route is a typed destination; each opens a view
+model built from the container, drawn by its screen. Python owns the back stack
+and saves every entry, so process death restores all of it:
+
+```python
+class NotesRoute(Route):
+    """The list of every note."""
+
+
+class EditorRoute(Route):
+    note_id: int
+
+
+app = App(
+    start=NotesRoute(),
+    destinations={
+        NotesRoute: Destination(
+            lambda c, _route: ListViewModel(c.notes, c.listing), list_screen
+        ),
+        EditorRoute: Destination(
+            lambda c, route: EditorViewModel(c.notes, route.note_id), editor_screen
+        ),
+    },
+    container=build,
+    deep_links=frozenset({EditorRoute}),
+)
+```
+
+**View models** — state the screen can rebuild is marked `Loaded[...]`: it is
+reloaded when the view model is built and never saved, since Android's saved
+state is limited to kilobytes. A view model follows the container's `StateFlow`
+for as long as it lives, so an edit made on the editor is on the list when the
+user comes back:
+
+```python
+class ListState(AppState):
+    notes: Loaded[tuple[Note, ...]] = ()   # from storage, never saved
+    previews: bool = True                  # small UI state, saved
+
+
+class OpenNote(Intent):
+    note_id: int
+
+
+class ListViewModel(ViewModel[ListState]):
+    def __init__(self, notes: Notes, listing: StateFlow[tuple[Note, ...]]) -> None:
+        super().__init__(ListState(notes=listing.value))
+        self._notes = notes
+        self._listing = listing
+        self.launch(self._follow())
+
+    async def _follow(self) -> None:
+        async for notes in self._listing:
+            self.state = self.state.evolve(notes=notes)
+
+    def on_intent(self, intent: Intent) -> None:
+        match intent:
+            case OpenNote(note_id=note_id) if self._notes.get(note_id) is not None:
+                self.navigate(Push(EditorRoute(note_id=note_id)))
+```
+
+**Screens** — a pure function of the view model's state, built from native
+components. A list is data: `LazyColumn` asks Python only for the rows on
+screen, and each row's intent carries the note it stands for:
+
+```python
+def list_screen(state: ListState) -> Node:
+    return Scaffold(
+        content=LazyColumn(
+            items=list(state.notes),
+            key=lambda note: f"row_{note.id}",
+            item=lambda note: Card(
+                on_click=OpenNote(note_id=note.id),
+                children=[Text(text=note.label, style="titleMedium")],
+            ),
+        ),
+    )
+```
+
+**Tests** — because the use cases see only the `Protocol`, an in-memory
+repository runs every one of them without a disk, and `AppDriver` walks the
+whole app, screen by screen, as the host would:
+
+```python
+notes = Notes(MemoryNotesRepo([Note(1, "Milk")]))
+note_id = notes.create("Eggs")
+assert notes.get(note_id).title == "Eggs"
+
+with AppDriver(Path("examples/notes")) as app:
+    app.click(type="FloatingActionButton")
+    app.edit("Groceries", label="Title")
+```
+
+The full app, with an editor, filters, a bottom sheet and theming, is in
+`examples/notes`.
+
+### What an app declares
 
 **`App`** — the entry object the session discovers. It takes where the app
 starts, a `Destination` per route, an optional container factory (Google's
@@ -187,7 +447,7 @@ identity. Only things declared in a loop that carry an intent, and composables
 called in a loop, need an `id` to survive a reorder.
 
 **Effects** — `self.emit(...)` asks the host for something one-shot: `Toast`,
-`Haptic`, `OpenUrl`. Effects run at most once, in order; anything that must
+`Haptic`, `OpenUrl`, `PickFile` (answered by `on_file_picked(request, path)`). Effects run at most once, in order; anything that must
 happen belongs in state instead.
 
 **Lifecycle** — `on_back` (return True to keep the screen), `on_resume` and
@@ -235,9 +495,10 @@ Row(
 
 One worn outside such a parent is reported by the host rather than ignored.
 
-## Components
+## Native components
 
-134 Material 3 and foundation components, 145 counting the overloads a
+What view-model screens are drawn from, and what blocks components are built
+from: 134 Material 3 and foundation components, 145 counting the overloads a
 component reaches through its own name. `*` marks experimental entries.
 
 | Category | Components |
@@ -340,7 +601,7 @@ is dismissed before it commits, the observers report `hidden` and a failed
 
 | Command | What it does |
 | --- | --- |
-| `pycompose init <name> [--native]` | Scaffold a project; `--native` keeps Android sources at the root |
+| `pycompose init <name> [--template blocks\|viewmodel] [--native]` | Scaffold a project, starting from blocks (the default) or a view model; `--native` keeps Android sources at the root |
 | `pycompose run [--device <serial>] [--dev-client]` | Build, install, launch, and watch `.py` and `resources/` for hot reload; `--dev-client` skips the app's Gradle build |
 | `pycompose dev-client [--rebuild]` | Build the prebuilt dev client once for this PyCompose version |
 | `pycompose debug [--no-launch]` | One build-install-launch pass, no watcher |
@@ -402,7 +663,8 @@ Builds install the requirements; permissions feed a generated manifest while
 your native edits stay intact. A view model runs a blocking call off the loop
 with `await to_thread("io", fn, *args)`, and computation with
 `await to_thread("cpu", fn, *args)`; `examples/extensions` uses HTTPX and SQLite
-that way.
+that way. A blocks function needs neither: it already runs off the loop, so it
+calls HTTPX or any other blocking library directly, as `examples/weather` does.
 
 ## Development
 
