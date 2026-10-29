@@ -17,7 +17,8 @@ class Fallback(DeferredNode):
     and ``otherwise`` where the host lacks one: an extension a stock dev client
     does not carry, or a component newer than the host's schema. The two are
     keyed apart, so neither inherits the other's native state. It is built on
-    every pass, since the host is not one of its inputs.
+    every pass, since the host is not one of its inputs, and so is every
+    composable enclosing it.
     """
 
     __slots__ = ("content", "otherwise")

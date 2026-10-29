@@ -35,7 +35,11 @@ class DeferredNode(Node, ABC):
 
     __slots__ = ()
     memoized: ClassVar[bool] = True
-    """False for a declaration whose output depends on more than its inputs."""
+    """False for a declaration whose output depends on more than its inputs.
+
+    Every declaration enclosing one then depends on more than its inputs too, so
+    none of them is reused either: each is built again on every pass.
+    """
 
     @property
     @abstractmethod
@@ -75,6 +79,9 @@ class _Frame:
     output: list[Node]
     children: list[Node] = field(default_factory=list)
     reads: Reads | None = ()
+    parent: _Frame | None = None
+    volatile: bool = False
+    """Whether an unmemoized declaration was expanded in this frame's subtree."""
 
 
 def _passes_on(built: tuple[Node, ...], ids: Collection[int]) -> bool:
@@ -290,6 +297,12 @@ class _Expansion:
         node = frame.node
         self.active.remove(id(node))
         self.path.pop()
+        if isinstance(node, DeferredNode) and not node.memoized:
+            frame.volatile = True
+        if frame.volatile and frame.parent is not None:
+            # An enclosing declaration's output holds this one's, so it too
+            # depends on more than its inputs and must not be reused.
+            frame.parent.volatile = True
         if isinstance(node, DeferredNode):
             self.definitions.remove(node.recursion_key)
             self.context.pop()
@@ -298,7 +311,7 @@ class _Expansion:
                 for child in frame.children
             )
             frame.output.extend(produced)
-            if memo is not None and node.memoized:
+            if memo is not None and not frame.volatile:
                 memo._store(_memo_key(frame), node, produced, frame.reads)
             return
         identity = f"{frame.prefix}.{node.id}" if frame.prefix and node.id else node.id
@@ -402,7 +415,7 @@ def expand_nodes(root: Node, memo: ExpansionMemo | None = None) -> Node:
             prefix = f"{frame.prefix}.{own}" if frame.prefix else own
         _require_keyed_instances(children)
         pending.extend(
-            (_Frame(child, prefix, frame.children), True)
+            (_Frame(child, prefix, frame.children, parent=frame), True)
             for child in reversed(children)
         )
     if len(output) != 1:

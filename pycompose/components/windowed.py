@@ -18,7 +18,8 @@ class Windowed(DeferredNode):
     It states the item count, composes only the items in the window the host
     asked for, and keys each by ``key``, so a 10,000-item list costs what is on
     screen. It is built on every pass, since the window is not one of its
-    inputs; the items it builds are ordinary declarations and reuse as usual.
+    inputs, and so is every composable enclosing it; the items it builds are
+    ordinary declarations and reuse as usual.
     """
 
     __slots__ = ("component", "data", "item", "keyed", "options")
