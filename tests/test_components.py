@@ -7,6 +7,7 @@ from pathlib import Path
 
 import jsonschema
 import pytest
+from pycompose_testing.helpers import component_screen, read_golden
 from readable import readable
 
 from pycompose.components import (
@@ -30,7 +31,6 @@ from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
-from pycompose.testing.helpers import component_screen, read_golden
 
 
 def test_text_constructs_a_registry_valid_node() -> None:

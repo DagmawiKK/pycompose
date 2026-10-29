@@ -10,10 +10,10 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from pycompose_testing.driver import AppDriver
 
 import pycompose.blocks as pc
 from pycompose.errors import StateError
-from pycompose.testing.driver import AppDriver
 
 GREET = """
 import threading

@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from pycompose_testing.driver import AppDriver
 from test_blocks import project, value
 from test_media import PIXEL
 
 from pycompose import media
 from pycompose.extensions.environment import paths
-from pycompose.testing.driver import AppDriver
 
 PICKS = """
 from pathlib import Path

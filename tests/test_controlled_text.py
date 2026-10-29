@@ -18,10 +18,10 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from pycompose_testing.driver import AppDriver
 
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.m3 import TextField
-from pycompose.testing.driver import AppDriver
 
 APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"
 SCHEMA = json.loads(Path("schema/catalog.lock.json").read_text())

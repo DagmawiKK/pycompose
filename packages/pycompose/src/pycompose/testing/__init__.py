@@ -1,6 +1,10 @@
-"""Stdlib-only golden fixtures and sample builders for the Python contract seam.
+"""Moved: the test driver is its own distribution, pycompose-testing.
 
-Fixture bytes are reviewed artifacts, not auto-updated snapshots. A deliberate
-IR change must justify each byte change in its commit/PR; AGENTS.md's PR
-checklist requires this. Files have one terminal newline, outside wire bytes.
+It runs on a developer's machine, never on a device, so the runtime no longer
+carries it (ADR-0063). Importing the old name says where it went.
 """
+
+raise ImportError(
+    "pycompose.testing moved to pycompose_testing: install pycompose-testing "
+    "(or pycompose[testing]) and import from pycompose_testing"
+)

@@ -26,7 +26,7 @@ def golden_names() -> tuple[str, ...]:
     return tuple(
         sorted(
             resource.name
-            for resource in files("pycompose.testing").joinpath("fixtures").iterdir()
+            for resource in files("pycompose_testing").joinpath("fixtures").iterdir()
             if resource.is_file() and resource.name.endswith(".json")
         )
     )
@@ -47,7 +47,7 @@ def read_golden(name: str) -> bytes:
     if name not in golden_names():
         raise ValueError(f"unknown golden fixture: {name}")
     return (
-        files("pycompose.testing")
+        files("pycompose_testing")
         .joinpath("fixtures", name)
         .read_bytes()
         .removesuffix(b"\n")

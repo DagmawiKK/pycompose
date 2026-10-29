@@ -27,7 +27,7 @@ extensions.configure<com.android.build.api.dsl.LibraryExtension> {
         .getByName(
             "test",
         ).resources
-        .srcDir("../../packages/pycompose/src/pycompose/testing/fixtures")
+        .srcDir("../../packages/pycompose-testing/src/pycompose_testing/fixtures")
 }
 
 kotlin {

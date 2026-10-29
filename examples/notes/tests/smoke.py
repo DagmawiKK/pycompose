@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pycompose.testing.driver import AppDriver
+from pycompose_testing.driver import AppDriver
 
 ROOT = Path(__file__).resolve().parents[1]
 

@@ -4,9 +4,8 @@ import json
 from pathlib import Path
 
 import pytest
+from pycompose_testing.helpers import read_golden
 from test_cli_init import cli
-
-from pycompose.testing.helpers import read_golden
 
 
 def test_validate_accepts_a_canonical_fixture_outside_a_project(tmp_path: Path) -> None:

@@ -31,7 +31,7 @@ ignore = ["PLR0913", "PLR2004"]
 [tool.ruff.lint.per-file-ignores]
 # The scheduler's own home, and desktop-only code, may use them directly.
 "packages/pycompose/src/pycompose/runtime/**" = ["TID251"]
-"packages/pycompose/src/pycompose/testing/**" = ["TID251"]
+"packages/pycompose-testing/src/**" = ["TID251"]
 "packages/pycompose/src/pycompose/cli/**" = ["TID251"]
 "packages/pycompose-codegen/src/**" = ["TID251"]
 "tests/**" = ["TID251"]
@@ -60,13 +60,13 @@ check_untyped_defs = true
 exclude = ["templates", "build"]
 
 [tool.importlinter]
-root_packages = ["pycompose", "pycompose_codegen", "tools"]
+root_packages = ["pycompose", "pycompose_codegen", "pycompose_testing", "tools"]
 include_external_packages = true
 
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["cli", "testing", "blocks", "m3", "composition", "components", "bridge", "app", "media", "extensions", "runtime", "repository", "ir", "state", "schema", "core", "contract", "utils"]
+layers = ["cli", "blocks", "m3", "composition", "components", "bridge", "app", "media", "extensions", "runtime", "repository", "ir", "state", "schema", "core", "contract", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
 
@@ -84,7 +84,7 @@ name = "Runtime packages never import CLI or templates"
 type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
                   "pycompose.blocks", "pycompose.ir", "pycompose.bridge", "pycompose.components",
-                   "pycompose.utils", "pycompose.testing", "pycompose.m3", "pycompose.composition",
+                   "pycompose.utils", "pycompose.m3", "pycompose.composition",
                     "pycompose.repository", "pycompose.extensions", "pycompose.media"]
 forbidden_modules = ["pycompose.cli", "pycompose.templates"]
 explanation = "CLI and template assets are desktop concerns, never runtime deps."
@@ -103,14 +103,14 @@ source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "p
                    "pycompose.blocks", "pycompose.ir", "pycompose.bridge", "pycompose.components",
                    "pycompose.utils", "pycompose.m3", "pycompose.composition",
                     "pycompose.repository", "pycompose.extensions", "pycompose.media"]
-forbidden_modules = ["pycompose.testing"]
+forbidden_modules = ["pycompose_testing"]
 explanation = "Testing consumes runtime public APIs; runtime stays independent of test data."
 
 [[tool.importlinter.contracts]]
 name = "CLI does not depend on testing helpers"
 type = "forbidden"
 source_modules = ["pycompose.cli"]
-forbidden_modules = ["pycompose.testing"]
+forbidden_modules = ["pycompose_testing"]
 explanation = "The CLI ships independent project assets, not test fixture builders."
 
 [[tool.importlinter.contracts]]
@@ -146,14 +146,14 @@ explanation = "derive writes the lock that emit reads; both find the checkout th
 name = "Codegen reads the runtime's catalog, never its machinery"
 type = "forbidden"
 source_modules = ["pycompose_codegen"]
-forbidden_modules = ["pycompose.app", "pycompose.blocks", "pycompose.bridge", "pycompose.runtime", "pycompose.state", "pycompose.ir", "pycompose.components", "pycompose.m3", "pycompose.composition", "pycompose.repository", "pycompose.media", "pycompose.extensions", "pycompose.testing", "pycompose.cli"]
+forbidden_modules = ["pycompose.app", "pycompose.blocks", "pycompose.bridge", "pycompose.runtime", "pycompose.state", "pycompose.ir", "pycompose.components", "pycompose.m3", "pycompose.composition", "pycompose.repository", "pycompose.media", "pycompose.extensions", "pycompose_testing", "pycompose.cli"]
 explanation = """It generates code from the catalog's types and rules; running an app is not its
 concern, so it imports only pycompose.contract, pycompose.core and pycompose.errors (ADR-0063)."""
 
 [[tool.importlinter.contracts]]
 name = "Tools import the library; never the reverse"
 type = "layers"
-layers = ["tools", "pycompose_codegen", "pycompose"]
+layers = ["tools", "pycompose_testing", "pycompose_codegen", "pycompose"]
 # Until the CLI leaves the runtime package, which uses codegen to build apps.
 ignore_imports = ["pycompose.cli.** -> pycompose_codegen.**"]
 explanation = """tools/ is repo-only tooling: it may read the library it serves (previews, the

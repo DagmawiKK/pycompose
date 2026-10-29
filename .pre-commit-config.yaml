@@ -71,7 +71,7 @@ repos:
       - id: bandit
         name: bandit (security findings, medium and above)
         language: system
-        entry: bash -c 'if [ -x .venv/bin/bandit ]; then exec .venv/bin/bandit -ll -q -r packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen; fi; exec bandit -ll -q -r packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen'
+        entry: bash -c 'if [ -x .venv/bin/bandit ]; then exec .venv/bin/bandit -ll -q -r packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing; fi; exec bandit -ll -q -r packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing'
         files: ^packages/[^/]+/src/.*\.py$
         pass_filenames: false
       - id: actionlint

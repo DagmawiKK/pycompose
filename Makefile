@@ -1,5 +1,5 @@
 # Every distribution's source: what the Python checks cover.
-PY_SRC := packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen
+PY_SRC := packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing
 
 .PHONY: lint lint-py lint-kt lint-workflows typecheck test fmt fmt-py fmt-kt precommit codegen codegen-check spec
 

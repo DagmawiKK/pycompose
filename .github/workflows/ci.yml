@@ -15,7 +15,7 @@ concurrency:
 
 env:
   # Every distribution's source: what the Python checks cover.
-  PY_SRC: packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen
+  PY_SRC: packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing
   PYTHON_VERSION: "3.12"
   JDK_VERSION: "17"
 
@@ -30,7 +30,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen
+        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
       - name: Actionlint (workflow files)
         shell: bash
         run: |
@@ -78,7 +78,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen
+        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
       - name: Codegen drift check
         run: python tools/schema/gen.py --check
       - uses: actions/setup-java@v4
@@ -103,7 +103,7 @@ jobs:
         run: pytest -q -k "schema or golden"
       - name: Verify goldens ship in the wheel
         run: |
-          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/pycompose-wheel" ./packages/pycompose ./packages/pycompose-codegen
+          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/pycompose-wheel" ./packages/pycompose ./packages/pycompose-codegen ./packages/pycompose-testing
           python -I - tools/wheel_smoke.py "$RUNNER_TEMP/pycompose-wheel"
       - name: Upload reports
         if: failure()
@@ -125,7 +125,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install measurement dependencies
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen
+        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
       - name: Prepare matched baseline
         env:
           PR_BASE: ${{ github.event.pull_request.base.sha }}
@@ -172,7 +172,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen
+        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
       - name: Measure the base commit and the change on this runner
         env:
           PR_BASE: ${{ github.event.pull_request.base.sha }}
@@ -296,7 +296,7 @@ jobs:
       - name: Install pinned SDK packages
         run: sdkmanager "platforms;android-37.0" "build-tools;34.0.0"
       - name: Install the package (the render gate writes its samples with it)
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen
+        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
       - name: Spotless + Detekt + lint + unit tests (incl. ArchUnit)
         if: hashFiles('android/settings.gradle.kts') != ''
         working-directory: android
@@ -342,7 +342,7 @@ jobs:
       - name: Install pinned SDK packages
         run: sdkmanager "platforms;android-37.0" "build-tools;34.0.0"
       - name: Install CLI
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen
+        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
       - name: Generate sample project
         run: |
           cd "$RUNNER_TEMP"
@@ -357,7 +357,7 @@ jobs:
           PY
       - name: Verify installed wheel CLI and template assets
         run: |
-          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/cli-wheel" ./packages/pycompose ./packages/pycompose-codegen
+          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/cli-wheel" ./packages/pycompose ./packages/pycompose-codegen ./packages/pycompose-testing
           python -m venv "$RUNNER_TEMP/cli-venv"
           # Install like a user: the CLI has a runtime dependency (rich), and a
           # --no-deps install produced a wheel that could not import.
@@ -446,7 +446,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install CLI
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen
+        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
       - name: Sync check
         if: hashFiles('packages/pycompose/src/pycompose/cli/sync.py') != ''
         run: |
@@ -466,6 +466,6 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
       - name: Install CLI
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen
+        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
       - name: Hot reload smoke
         run: pytest -q -m "hot_reload_smoke"

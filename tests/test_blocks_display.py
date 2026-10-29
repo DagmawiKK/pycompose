@@ -7,11 +7,11 @@ import sys
 from pathlib import Path
 
 import pytest
+from pycompose_testing.driver import AppDriver
 from test_blocks import project
 from test_media import PIXEL
 
 import pycompose.blocks as pc
-from pycompose.testing.driver import AppDriver
 
 DISPLAY = f"""
 import pycompose.blocks as pc

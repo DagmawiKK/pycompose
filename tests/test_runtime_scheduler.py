@@ -7,9 +7,9 @@ import threading
 import time
 
 import pytest
+from pycompose_testing.simulator import Simulator
 
 from pycompose.runtime.scheduler import Scheduler, to_thread
-from pycompose.testing.simulator import Simulator
 
 
 def test_simulated_time_jumps_to_the_next_timer() -> None:

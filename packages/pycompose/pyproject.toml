@@ -20,6 +20,8 @@ pycompose = "pycompose.cli.main:main"
 # The command line generates app slices with the catalog pipeline; it moves to
 # its own distribution next, taking this with it.
 cli = ["pycompose-codegen"]
+# The headless test driver, for an app's own tests.
+testing = ["pycompose-testing"]
 dev = [
     "bandit>=1.7",
     "hypothesis>=6.100",
@@ -46,10 +48,11 @@ include = ["pycompose*"]
 exclude = ["pycompose.templates*"]
 
 [tool.setuptools.package-data]
-pycompose = ["py.typed", "contract/catalog.lock.json", "schema/ir.schema.json", "schema/pycompose.schema.json", "testing/fixtures/*.json", "templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep", "templates/extract/**/*", "templates/toolchain.toml"]
+pycompose = ["py.typed", "contract/catalog.lock.json", "schema/ir.schema.json", "schema/pycompose.schema.json", "templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep", "templates/extract/**/*", "templates/toolchain.toml"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pycompose.version.__version__" }
 
 [tool.uv.sources]
 pycompose-codegen = { workspace = true }
+pycompose-testing = { workspace = true }

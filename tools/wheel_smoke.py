@@ -66,18 +66,19 @@ def _smoke_goldens(wheel: Path) -> None:
     Args:
         wheel: The wheel under test, kept only for the drift message.
     """
-    from pycompose.ir import emit_ir, to_json_bytes
-    from pycompose.state import State
-    from pycompose.testing.helpers import (
+    from pycompose_testing.helpers import (
         component_screen,
         golden_names,
         read_golden,
     )
 
+    from pycompose.ir import emit_ir, to_json_bytes
+    from pycompose.state import State
+
     names = golden_names()
     assert names, "the wheel packaged no golden fixtures at all"
 
-    source_dir = ROOT / "packages/pycompose/src/pycompose" / "testing" / "fixtures"
+    source_dir = ROOT / "packages/pycompose-testing/src/pycompose_testing/fixtures"
     source_names = tuple(sorted(p.name for p in source_dir.glob("*.json")))
     assert names == source_names, (
         f"wheel goldens {names} != source fixtures {source_names}; "

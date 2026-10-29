@@ -7,6 +7,7 @@ import jsonschema
 import pytest
 from hypothesis import given
 from hypothesis import strategies as st
+from pycompose_testing.helpers import component_screen, golden_names, read_golden
 from readable import readable
 
 from pycompose.components import (
@@ -24,7 +25,6 @@ from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
 from pycompose.state import State
-from pycompose.testing.helpers import component_screen, golden_names, read_golden
 from pycompose.utils.json_canonical import canonical_json_bytes
 
 

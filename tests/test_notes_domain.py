@@ -336,8 +336,7 @@ def test_the_database_writes_one_row_per_change_and_never_reuses_an_id(
     from notes_app.data.notes_repo import SqliteNotesRepo
     from notes_app.domain import Notes
     from notes_app.domain.models import Note
-
-    from pycompose.testing.simulator import Simulator
+    from pycompose_testing.simulator import Simulator
 
     path = tmp_path / "notes.db"
     sim = Simulator()
