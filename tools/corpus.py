@@ -25,8 +25,9 @@ from typing import Any
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from pycompose_cli.validate import validate_file
+
 from pycompose.app import Intent
-from pycompose.cli.validate import validate_file
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.effect import Effect
 from pycompose.errors import PyComposeError

@@ -3,10 +3,9 @@
 import json
 from pathlib import Path
 
+from pycompose_cli.project import ProjectError, load_project
 from test_cli_build import wrapper
 from test_cli_init import cli
-
-from pycompose.cli.project import ProjectError, load_project
 
 
 def declare(project: Path, *, requirements: list[str], internet: bool) -> None:

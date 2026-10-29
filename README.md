@@ -67,11 +67,15 @@ From a checkout:
 ```bash
 git clone https://github.com/DagmawiKK/pycompose
 cd pycompose
-pip install ./packages/pycompose
+pip install ./packages/pycompose ./packages/pycompose-codegen ./packages/pycompose-cli
 ```
 
+That installs the `pycompose` command (`pycompose-cli`), the runtime an app runs
+on (`pycompose`) and the catalog pipeline the build uses (`pycompose-codegen`);
+`pycompose-testing` adds `AppDriver` for an app's own tests.
+
 For work on the framework itself, install the dev extras instead:
-`pip install -e "./packages/pycompose[dev]"`, or `uv sync --all-extras` at the root.
+`uv sync --all-packages --all-extras` at the root, which installs every package, editable, with the dev tools.
 
 ## Quick start
 
@@ -669,7 +673,7 @@ calls HTTPX or any other blocking library directly, as `examples/weather` does.
 ## Development
 
 ```bash
-pip install -e "./packages/pycompose[dev]"   # or: uv sync --all-extras
+uv sync --all-packages --all-extras                     # every package, editable, plus the dev tools
 pre-commit install
 npm ci                                  # commit-message linting
 make fmt && make precommit && make test

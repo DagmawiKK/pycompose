@@ -370,7 +370,7 @@ class AppDriver:
                 [
                     sys.executable,
                     "-m",
-                    "pycompose.cli",
+                    "pycompose_cli",
                     "render",
                     str(snapshot),
                     "--out",

@@ -8,13 +8,6 @@ repos:
         args: [--fix]
       - id: ruff-format
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
-    hooks:
-      - id: mypy
-        files: ^packages/[^/]+/src/
-        additional_dependencies: [types-jsonschema]
-
   - repo: https://github.com/jsh9/pydoclint
     rev: 0.11.0
     hooks:
@@ -58,10 +51,17 @@ repos:
         name: Assemble package assets (gitignored copies)
         language: system
         entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/template/sync.py; fi; exec python tools/template/sync.py'
-        files: ^(android/|schema/|packages/pycompose/src/pycompose/templates/overlay/|tools/template/)
+        files: ^(android/|schema/|packages/pycompose-cli/src/pycompose_cli/templates/overlay/|tools/template/)
         pass_filenames: false
-      # From the project's environment: it must import the installed packages
-      # and the repo's tools/, which an isolated hook environment has neither of.
+      # From the project's environment: these must import the installed
+      # packages (and import-linter the repo's tools/), which an isolated hook
+      # environment has none of.
+      - id: mypy
+        name: mypy
+        language: system
+        entry: bash -c 'if [ -x .venv/bin/mypy ]; then exec .venv/bin/mypy packages/pycompose/src/pycompose packages/pycompose-cli/src/pycompose_cli packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing; fi; exec mypy packages/pycompose/src/pycompose packages/pycompose-cli/src/pycompose_cli packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing'
+        files: ^packages/[^/]+/src/.*\.py$
+        pass_filenames: false
       - id: import-linter
         name: import-linter (python boundaries)
         language: system
@@ -71,7 +71,7 @@ repos:
       - id: bandit
         name: bandit (security findings, medium and above)
         language: system
-        entry: bash -c 'if [ -x .venv/bin/bandit ]; then exec .venv/bin/bandit -ll -q -r packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing; fi; exec bandit -ll -q -r packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing'
+        entry: bash -c 'if [ -x .venv/bin/bandit ]; then exec .venv/bin/bandit -ll -q -r packages/pycompose/src/pycompose packages/pycompose-cli/src/pycompose_cli packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing; fi; exec bandit -ll -q -r packages/pycompose/src/pycompose packages/pycompose-cli/src/pycompose_cli packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing'
         files: ^packages/[^/]+/src/.*\.py$
         pass_filenames: false
       - id: actionlint

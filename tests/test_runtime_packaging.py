@@ -28,8 +28,6 @@ SRC = ROOT / "packages/pycompose/src"
 """Where the library's modules live; paths below are relative to it."""
 PACKAGE = "pycompose/extensions/"
 TOOLING = (
-    "pycompose/cli/",
-    "pycompose/templates/",
     "pycompose/testing/",
     "tests/",
     "tools/",
@@ -136,9 +134,11 @@ def test_no_module_under_extensions_is_reached_only_by_tooling() -> None:
 
 def test_the_packaged_runtime_still_excludes_tooling_directories() -> None:
     """The exclusions the rule above depends on are directory-wide, not by name."""
-    gradle = (SRC / "pycompose/templates/android/host/build.gradle.kts").read_text(
-        encoding="utf-8"
-    )
+    gradle = (
+        ROOT
+        / "packages/pycompose-cli/src/pycompose_cli"
+        / "templates/android/host/build.gradle.kts"
+    ).read_text(encoding="utf-8")
     missing = [
         directory
         for directory in TOOLING

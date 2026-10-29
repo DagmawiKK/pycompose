@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+# setuptools, after assembling the scaffold template (tools/template/sync.py).
+build-backend = "backend"
+backend-path = ["_build"]
+
+[project]
+name = "pycompose-cli"
+description = "The PyCompose command line: create, run, build and release Android apps written in Python."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dynamic = ["version"]
+dependencies = [
+    "pycompose",
+    "pycompose-codegen",
+    "rich>=13.7",
+    "packaging>=24",
+    "defusedxml>=0.7",
+]
+
+[project.scripts]
+pycompose = "pycompose_cli.main:main"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pycompose_cli*"]
+# The scaffold holds an app's Python, which is data here, never a subpackage.
+exclude = ["pycompose_cli.templates*"]
+
+[tool.setuptools.package-data]
+pycompose_cli = ["templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep", "templates/extract/**/*", "templates/toolchain.toml"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pycompose_cli.__version__" }
+
+[tool.uv.sources]
+pycompose = { workspace = true }
+pycompose-codegen = { workspace = true }

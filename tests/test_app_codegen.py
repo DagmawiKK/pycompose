@@ -246,7 +246,7 @@ def test_an_app_on_a_drawing_layer_carries_what_the_layer_draws(tmp_path: Path) 
 
 def test_an_app_on_a_drawing_layer_keeps_the_library_catalog(tmp_path: Path) -> None:
     """Its own slice may not stand in for the catalog pycompose.blocks draws from."""
-    from pycompose.cli.build import _own_slice
+    from pycompose_cli.build import _own_slice
 
     app = tmp_path / "app"
     app.mkdir()

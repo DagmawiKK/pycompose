@@ -8,10 +8,10 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from pycompose_cli import add
+from pycompose_cli.project import Project
 from pycompose_codegen.derive.samples import sample
 
-from pycompose.cli import add
-from pycompose.cli.project import Project
 from pycompose.contract.catalog import REGISTRY
 
 ROOT = Path(__file__).resolve().parents[1]

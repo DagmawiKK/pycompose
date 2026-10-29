@@ -27,7 +27,7 @@ def cli(
         "PYTHONPATH": str(Path(__file__).parents[1]),
     }
     return subprocess.run(
-        [sys.executable, "-m", "pycompose.cli", *arguments],
+        [sys.executable, "-m", "pycompose_cli", *arguments],
         cwd=directory,
         env=environment,
         text=True,
@@ -67,7 +67,9 @@ def test_init_creates_config_python_entrypoint_and_resource_directories(
     assert (project / ".gitignore").is_file()
     assert result.stderr == ""
     manifest = tomllib.loads(
-        files("pycompose").joinpath("templates", "android", "template.toml").read_text()
+        files("pycompose_cli")
+        .joinpath("templates", "android", "template.toml")
+        .read_text()
     )
     assert config["toolchain"]["template_version"] == manifest["template_version"]
     assert (project / NATIVE / "gradlew").stat().st_mode & 0o111

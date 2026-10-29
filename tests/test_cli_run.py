@@ -50,7 +50,7 @@ if sys.argv[1:] == ["devices"]:
         "ANDROID_SDK_ROOT": "",
     }
     process = subprocess.Popen(
-        [sys.executable, "-m", "pycompose.cli", "run"],
+        [sys.executable, "-m", "pycompose_cli", "run"],
         cwd=project,
         env=env,
         stdout=subprocess.PIPE,
@@ -138,7 +138,8 @@ def test_run_missing_adb_is_actionable(tmp_path: Path) -> None:
 def test_run_on_the_dev_client_installs_it_and_serves_the_app(tmp_path: Path) -> None:
     import zipfile
 
-    from pycompose.cli.dev_client import FINGERPRINT, framework_fingerprint
+    from pycompose_cli.dev_client import FINGERPRINT, framework_fingerprint
+
     from pycompose.version import __version__
 
     assert cli(tmp_path, "init", "demo", "--native").returncode == 0
@@ -176,7 +177,7 @@ if sys.argv[1:] == ["devices"]:
         "ANDROID_SDK_ROOT": "",
     }
     process = subprocess.Popen(
-        [sys.executable, "-m", "pycompose.cli", "run", "--dev-client"],
+        [sys.executable, "-m", "pycompose_cli", "run", "--dev-client"],
         cwd=project,
         env=env,
         stdout=subprocess.PIPE,
@@ -207,8 +208,9 @@ if sys.argv[1:] == ["devices"]:
 def test_a_dev_client_built_from_another_framework_is_refused(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pycompose.cli import dev_client
-    from pycompose.cli.project import ProjectError
+    from pycompose_cli import dev_client
+    from pycompose_cli.project import ProjectError
+
     from pycompose.version import __version__
 
     monkeypatch.setattr(dev_client, "HOME", tmp_path / "home" / "toolchain")
@@ -259,7 +261,7 @@ if "-d" in sys.argv:
         [
             sys.executable,
             "-m",
-            "pycompose.cli",
+            "pycompose_cli",
             "bench",
             "--keys",
             "3",

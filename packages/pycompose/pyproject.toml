@@ -11,15 +11,12 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
 dynamic = ["version"]
-dependencies = ["rich>=13.7", "packaging>=24", "defusedxml>=0.7"]
-
-[project.scripts]
-pycompose = "pycompose.cli.main:main"
+# The runtime needs nothing beyond the standard library: it is what ships to a phone.
+dependencies = []
 
 [project.optional-dependencies]
-# The command line generates app slices with the catalog pipeline; it moves to
-# its own distribution next, taking this with it.
-cli = ["pycompose-codegen"]
+# The command line: init, run, build and release (the `pycompose` command).
+cli = ["pycompose-cli"]
 # The headless test driver, for an app's own tests.
 testing = ["pycompose-testing"]
 dev = [
@@ -44,15 +41,14 @@ include-package-data = false
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["pycompose*"]
-exclude = ["pycompose.templates*"]
+include = ["pycompose", "pycompose.*"]
 
 [tool.setuptools.package-data]
-pycompose = ["py.typed", "contract/catalog.lock.json", "schema/ir.schema.json", "schema/pycompose.schema.json", "templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep", "templates/extract/**/*", "templates/toolchain.toml"]
+pycompose = ["py.typed", "contract/catalog.lock.json", "schema/ir.schema.json", "schema/pycompose.schema.json"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pycompose.version.__version__" }
 
 [tool.uv.sources]
-pycompose-codegen = { workspace = true }
+pycompose-cli = { workspace = true }
 pycompose-testing = { workspace = true }

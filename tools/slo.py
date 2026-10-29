@@ -113,7 +113,7 @@ def measure(*, rounds: int = 5, keystrokes: int = 300) -> dict[str, float]:
 
 def _device_bounds(executable: str, serial: str, pattern: str) -> tuple[int, int]:
     """Find the centre of the first on-screen element whose attributes match."""
-    from pycompose.cli.device import adb_command
+    from pycompose_cli.device import adb_command
 
     for _ in range(20):
         adb_command(executable, "-s", serial, "shell", "uiautomator", "dump")
@@ -146,8 +146,8 @@ def measure_device(
     Returns:
         Milliseconds from the keystroke reaching the host to its frame drawn.
     """
-    from pycompose.cli.bench import bench
-    from pycompose.cli.device import adb, adb_command, select_device
+    from pycompose_cli.bench import bench
+    from pycompose_cli.device import adb, adb_command, select_device
 
     executable = adb()
     serial = select_device(executable, device)

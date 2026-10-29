@@ -44,8 +44,8 @@ android/build/compose-api/
 
 # Package copies assembled from their one source by tools/template/sync.py
 # (the build backend runs it for every wheel, sdist and editable install).
-/packages/pycompose/src/pycompose/templates/android/
-/packages/pycompose/src/pycompose/templates/extract/
+/packages/pycompose-cli/src/pycompose_cli/templates/android/
+/packages/pycompose-cli/src/pycompose_cli/templates/extract/
 /packages/pycompose/src/pycompose/contract/catalog.lock.json
 /packages/pycompose/src/pycompose/schema/ir.schema.json
 

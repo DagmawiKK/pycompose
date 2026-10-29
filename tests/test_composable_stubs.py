@@ -19,7 +19,7 @@ def test_cli_generates_typed_composable_stubs_without_executing_source(
         '    return Text(id="name", text=name)\n'
     )
     generated = subprocess.run(
-        [sys.executable, "-m", "pycompose.cli", "stubs", str(source)],
+        [sys.executable, "-m", "pycompose_cli", "stubs", str(source)],
         capture_output=True,
         text=True,
         check=False,

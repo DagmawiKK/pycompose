@@ -13,8 +13,8 @@ from test_cli_init import cli
 def test_python_edit_produces_a_new_full_snapshot_without_gradle(
     tmp_path: Path,
 ) -> None:
-    from pycompose.cli.dev_server import DevServer
-    from pycompose.cli.project import load_project
+    from pycompose_cli.dev_server import DevServer
+    from pycompose_cli.project import load_project
 
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"

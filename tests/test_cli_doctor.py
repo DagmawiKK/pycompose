@@ -51,7 +51,7 @@ def test_doctor_reports_detected_tools_and_declared_plugin_versions(
         (project / NATIVE / "local.properties").write_text(f"sdk.dir={sdk}\n")
         env.update(ANDROID_HOME="", ANDROID_SDK_ROOT="")
     result = subprocess.run(
-        [sys.executable, "-m", "pycompose.cli", "doctor"],
+        [sys.executable, "-m", "pycompose_cli", "doctor"],
         cwd=project,
         env=env,
         capture_output=True,
@@ -85,7 +85,7 @@ def test_doctor_surfaces_a_broken_toolchain_instead_of_claiming_health(
         "PATH": "",
     }
     result = subprocess.run(
-        [sys.executable, "-m", "pycompose.cli", "doctor"],
+        [sys.executable, "-m", "pycompose_cli", "doctor"],
         cwd=tmp_path / "demo",
         env=env,
         capture_output=True,

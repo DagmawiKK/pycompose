@@ -1,0 +1,93 @@
+"""Debug build/install/launch lifecycle; the host consumes dev bundles later."""
+
+from __future__ import annotations
+
+import re
+import subprocess
+import threading
+from contextlib import suppress
+from pathlib import Path
+
+from pycompose_cli.build import build_project
+from pycompose_cli.console import notice, ok
+from pycompose_cli.dev_server import DevServer
+from pycompose_cli.device import adb, adb_command, select_device
+from pycompose_cli.project import Project, ProjectError
+
+
+def run_project(
+    project: Project,
+    *,
+    device: str | None = None,
+    port: int = 0,
+    dev_client: bool = False,
+) -> None:
+    """Build a debug APK, install and launch it, and serve until interrupted.
+
+    With ``dev_client`` the prebuilt dev client is installed instead, and runs
+    the app the dev server serves: no Gradle build of the app at all.
+
+    Args:
+        project: Project containing the Android scaffold and app configuration.
+        device: ADB serial; automatic selection requires exactly one ready device.
+        port: Desktop loopback dev-server port; zero selects an available port.
+        dev_client: Run the app on the prebuilt dev client.
+
+    Raises:
+        ProjectError: If app configuration, device selection or deployment fails.
+    """
+    app_id = project.table("app").get("application_id")
+    if (
+        not isinstance(app_id, str)
+        or re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+", app_id) is None
+    ):
+        raise ProjectError("app.application_id must be an Android package name")
+    executable = adb()
+    serial = select_device(executable, device)
+    if dev_client:
+        from pycompose_cli.dev_client import APPLICATION_ID
+        from pycompose_cli.dev_client import dev_client as client
+
+        app_id = APPLICATION_ID
+        artifacts: tuple[Path, ...] = (client(),)
+    else:
+        artifacts = build_project(project)
+    if len(artifacts) != 1:
+        raise ProjectError("run requires a single universal debug APK")
+    with DevServer(project, port=port) as server:
+        tunnel = f"tcp:{server.url.rpartition(':')[2]}"
+        reversed_port = False
+        try:
+            adb_command(executable, "-s", serial, "install", "-r", str(artifacts[0]))
+            ok(f"Installed {app_id} on {serial}")
+            adb_command(
+                executable, "-s", serial, "reverse", "--no-rebind", tunnel, tunnel
+            )
+            reversed_port = True
+            adb_command(
+                executable,
+                "-s",
+                serial,
+                "shell",
+                "am",
+                "start",
+                "-W",
+                "-n",
+                f"{app_id}/com.pycompose.host.MainActivity",
+                "--es",
+                "pycompose.dev.url",
+                server.url,
+                "--es",
+                "pycompose.dev.token",
+                server.token,
+                "--es",
+                "pycompose.dev.source",
+                str(project.table("python").get("source_dir", "app")),
+            )
+            notice("Watching Python and resources. Drawables/fonts require a rebuild.")
+            notice("Native hot reload and the overlay require debug host integration.")
+            threading.Event().wait()
+        finally:
+            if reversed_port:
+                with suppress(ProjectError, OSError, subprocess.TimeoutExpired):
+                    adb_command(executable, "-s", serial, "reverse", "--remove", tunnel)

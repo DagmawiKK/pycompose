@@ -5,10 +5,9 @@ import tomllib
 from pathlib import Path
 
 import pytest
+from pycompose_cli import main
 from test_cli_build import wrapper
 from test_cli_init import cli
-
-from pycompose.cli import main
 
 
 def test_config_show_prints_every_setting_and_its_source(tmp_path: Path) -> None:

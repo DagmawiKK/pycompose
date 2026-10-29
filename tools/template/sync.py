@@ -98,7 +98,9 @@ while ``add`` runs."""
 
 
 PACKAGE = ROOT / "packages/pycompose/src/pycompose"
-TEMPLATES = PACKAGE / "templates"
+"""The runtime package: it carries the catalog lock and the wire schema."""
+TEMPLATES = ROOT / "packages/pycompose-cli/src/pycompose_cli/templates"
+"""The command line's templates: it carries the scaffold an app starts from."""
 OVERLAY = TEMPLATES / "overlay"
 """The template's own files: what a scaffolded app has that ``android/`` lacks."""
 
