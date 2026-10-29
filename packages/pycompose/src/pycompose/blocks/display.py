@@ -6,11 +6,10 @@ import json
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
-from pycompose import m3, media
+from pycompose import m3
 from pycompose.blocks.components import Component
 from pycompose.blocks.intents import Pick
 from pycompose.core.resources import valid_resource
-from pycompose.extensions.environment import paths
 from pycompose.m3 import (
     FlowRow,
     LinearProgressIndicator,
@@ -18,6 +17,8 @@ from pycompose.m3 import (
     OutlinedButton,
     Text,
 )
+from pycompose.storage import media
+from pycompose.storage.paths import paths
 from pycompose.values import ContentScale
 
 if TYPE_CHECKING:

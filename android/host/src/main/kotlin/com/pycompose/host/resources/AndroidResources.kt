@@ -91,7 +91,7 @@ class AndroidResources(
     }
 
     companion object {
-        /** The cache folder Python writes media into (`pycompose.media`). */
+        /** The cache folder Python writes media into (`pycompose.storage.media`). */
         private const val MEDIA = "pycompose-media"
         private const val MAX_ASSET_BYTES = 8 * 1024 * 1024
         private const val MAX_PIXELS = 4L * 1024 * 1024

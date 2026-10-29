@@ -13,9 +13,9 @@ from pycompose.bridge.handshake import answer, offered_components
 from pycompose.bridge.inputs import InputLog, digest
 from pycompose.bridge.session import RuntimeSession, offer_components
 from pycompose.errors import BridgeError
-from pycompose.extensions.environment import install as install_paths
 from pycompose.runtime import signal
 from pycompose.runtime.loop import LoopThread
+from pycompose.storage.paths import install as install_paths
 
 LOGGER = logging.getLogger(__name__)
 P = ParamSpec("P")

@@ -12,8 +12,8 @@ from m3 import Button, Column, Row, Text
 from settings import BASE_URL, HTTP_OPTIONS
 
 from pycompose.app import App, Destination, Intent, ViewModel, to_thread
-from pycompose.extensions import paths
 from pycompose.state import AppState
+from pycompose.storage import paths
 
 Endpoint = Literal["/posts", "/comments", "/albums", "/photos", "/todos", "/users"]
 ENDPOINTS: tuple[Endpoint, ...] = (

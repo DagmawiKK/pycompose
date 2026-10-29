@@ -34,10 +34,10 @@ import pycompose
 from pycompose.app.session import REFRESH
 from pycompose.bridge.imports import fresh_imports
 from pycompose.bridge.session import RuntimeSession
-from pycompose.extensions.environment import install as install_paths
-from pycompose.repository import documents_at
 from pycompose.runtime import signal
 from pycompose.runtime.loop import LoopThread
+from pycompose.storage.documents import documents_at
+from pycompose.storage.paths import install as install_paths
 
 Node = dict[str, Any]
 

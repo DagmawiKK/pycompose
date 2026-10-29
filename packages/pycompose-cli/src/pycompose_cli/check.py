@@ -24,7 +24,7 @@ from xml.etree.ElementTree import Element
 from defusedxml import ElementTree
 
 from pycompose.bridge.imports import fresh_imports
-from pycompose.repository import documents_at
+from pycompose.storage.documents import documents_at
 from pycompose_cli.prebuild import generated, plan
 from pycompose_cli.project import Project, ProjectError, load_project, project_path
 from pycompose_cli.toolchain import lock

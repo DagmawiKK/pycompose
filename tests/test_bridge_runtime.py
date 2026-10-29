@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+import warnings
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -203,5 +204,7 @@ def test_the_removed_app_model_names_its_replacement() -> None:
         from pycompose.state import App  # noqa: F401
     with pytest.raises(ImportError, match="Intent"):
         from pycompose import action  # noqa: F401
-    with pytest.raises(ImportError, match="to_thread"):
+    # The old package warns that it moved; what it says about Resource matters here.
+    with warnings.catch_warnings(), pytest.raises(ImportError, match="to_thread"):
+        warnings.simplefilter("ignore", DeprecationWarning)
         from pycompose.extensions import Resource  # noqa: F401

@@ -16,7 +16,7 @@ from types import ModuleType, SimpleNamespace
 import pytest
 
 from pycompose.errors import StateError
-from pycompose.repository import Document, diagnostics, root, use_root
+from pycompose.storage.documents import Document, diagnostics, root, use_root
 
 
 @dataclass(frozen=True)
@@ -206,7 +206,7 @@ def test_the_storage_root_is_the_app_directory_on_a_device(
     android = ModuleType("java.android")
     android.context = SimpleNamespace(getFilesDir=lambda: str(tmp_path))
     monkeypatch.setitem(sys.modules, "java.android", android)
-    monkeypatch.setattr("pycompose.repository._override", None)
+    monkeypatch.setattr("pycompose.storage.documents._override", None)
 
     assert root() == tmp_path
 
@@ -216,7 +216,7 @@ def test_a_bridge_without_context_falls_back_to_the_environment(
 ) -> None:
     """A hollow ``java.android`` must not shadow the documented fallback."""
     monkeypatch.setitem(sys.modules, "java.android", ModuleType("java.android"))
-    monkeypatch.setattr("pycompose.repository._override", None)
+    monkeypatch.setattr("pycompose.storage.documents._override", None)
     monkeypatch.setenv("PYCOMPOSE_HOME", str(tmp_path / "env"))
 
     assert root() == tmp_path / "env"
@@ -233,7 +233,7 @@ def test_a_document_may_live_outside_the_root(tmp_path: Path) -> None:
 
 def test_diagnostics_are_bounded_so_a_failing_loop_cannot_leak() -> None:
     """A background pass that fails every time would otherwise grow forever."""
-    from pycompose.repository import DIAGNOSTIC_HISTORY
+    from pycompose.storage.documents import DIAGNOSTIC_HISTORY
 
     document = Document("notes.json", Note, directory="/proc/nope/deeper")
     for _ in range(DIAGNOSTIC_HISTORY * 3):
@@ -246,7 +246,7 @@ def test_diagnostics_are_bounded_so_a_failing_loop_cannot_leak() -> None:
 
 def test_the_newest_diagnostics_are_the_ones_kept() -> None:
     """Oldest goes first, so what survives explains what is happening now."""
-    from pycompose.repository import DIAGNOSTIC_HISTORY
+    from pycompose.storage.documents import DIAGNOSTIC_HISTORY
 
     # Alternate names so each failure is distinguishable in the history.
     names = [f"note_{index % 4}.json" for index in range(DIAGNOSTIC_HISTORY * 2)]

@@ -18,7 +18,7 @@ from pathlib import Path
 
 from notes_app.domain.models import Note
 from pycompose.app import to_thread
-from pycompose.repository import root
+from pycompose.storage.documents import root
 
 SCHEMA = (
     "CREATE TABLE IF NOT EXISTS notes ("

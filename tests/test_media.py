@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from pycompose import media
-from pycompose.extensions.environment import install
+from pycompose.storage import media
+from pycompose.storage.paths import install
 
 # A one-pixel PNG.
 PIXEL = base64.b64decode(

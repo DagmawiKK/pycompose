@@ -19,6 +19,7 @@ def test_public_init_exports_version_and_composition() -> None:
         "__version__",
         "composable",
         "repository",
+        "storage",
     ]
     assert callable(pycompose.composable)
 

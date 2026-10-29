@@ -16,8 +16,8 @@ from pycompose.app.intents import intent_class
 from pycompose.app.navigation import route_key
 from pycompose.bridge.session import RuntimeSession
 from pycompose.contract.catalog import SCHEMA_VERSION
-from pycompose.repository import use_root
 from pycompose.runtime.loop import LoopThread
+from pycompose.storage.documents import use_root
 
 if TYPE_CHECKING:
     from types import ModuleType

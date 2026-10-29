@@ -12,7 +12,7 @@ from test_cli_init import cli
 from test_cli_permissions import declare
 
 from pycompose.bridge import runtime
-from pycompose.extensions import paths
+from pycompose.storage import paths
 
 
 def prepare_example(tmp_path: Path) -> Path:

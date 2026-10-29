@@ -1,12 +1,21 @@
-"""Where the app's private files live on the device."""
+"""Moved to :mod:`pycompose.storage.paths`; this name works for one release.
+
+``pycompose.extensions`` is kept free for the library adapters of ADR-0063,
+which are distributions of their own (``pycompose_sqlite`` and the like).
+"""
 
 from __future__ import annotations
 
 from typing import Any
 
-from pycompose.extensions.environment import AppPaths, paths
+from pycompose._moved import forward
 
-__all__ = ["AppPaths", "paths"]
+forward(
+    __name__,
+    "pycompose.storage.paths",
+    globals(),
+    submodules={"environment": "pycompose.storage.paths"},
+)
 
 REMOVED = {
     "Resource": "own the library object in the app's container and call it "

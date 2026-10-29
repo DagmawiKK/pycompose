@@ -16,7 +16,7 @@ import tempfile
 from pathlib import Path
 
 from pycompose.bridge.imports import fresh_imports
-from pycompose.repository import documents_at
+from pycompose.storage.documents import documents_at
 from pycompose_cli.build import prepare
 from pycompose_cli.console import step
 from pycompose_cli.project import Project, ProjectError, project_path
