@@ -44,6 +44,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
+from pycompose.codegen.checkout import PACKAGE, ROOT
 from pycompose.compiler.accounting_views import (
     approval_facts,
     empty_bucket,
@@ -382,11 +383,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--strict", action="store_true")
     parser.add_argument("--summary", action="store_true")
     args = parser.parse_args(argv)
-    root = Path(__file__).resolve().parents[2]
     protected = {
         args.schema.resolve(),
-        (root / "schema/catalog.lock.json").resolve(),
-        (root / "pycompose/contract/catalog.lock.json").resolve(),
+        (ROOT / "schema/catalog.lock.json").resolve(),
+        (PACKAGE / "contract/catalog.lock.json").resolve(),
     }
     if args.out and args.out.resolve() in protected:
         parser.error("an account cannot overwrite an approved schema")

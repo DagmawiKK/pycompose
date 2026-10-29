@@ -7,14 +7,12 @@ lazily -- the house pattern -- so the module graph stays acyclic).
 
 import json
 import re
-from pathlib import Path
 from typing import Any, NoReturn, cast
 
+from pycompose.codegen.checkout import PACKAGE, ROOT
 from pycompose.contract.registry_rules import with_rules
 
-ROOT = Path(__file__).resolve().parents[2]
-
-PACKAGED_CATALOG = ROOT / "pycompose" / "contract" / "catalog.lock.json"
+PACKAGED_CATALOG = PACKAGE / "contract" / "catalog.lock.json"
 """The catalog as shipped in the wheel, for an app with no repo checkout."""
 
 SCHEMA_PATH = ROOT / "schema/catalog.lock.json"

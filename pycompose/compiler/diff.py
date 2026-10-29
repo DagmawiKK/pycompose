@@ -23,7 +23,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-APPROVALS = Path(__file__).resolve().parents[2] / "schema/policy/approvals.json"
+from pycompose.codegen.checkout import ROOT
+
+APPROVALS = ROOT / "schema/policy/approvals.json"
 AUTOMATIC = frozenset({"additive", "fidelity", "metadata"})
 METADATA = frozenset({"since", "reshaped", "category", "package"})
 FIDELITY = frozenset({"default", "nativeDefault", "fallback"})

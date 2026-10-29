@@ -17,11 +17,12 @@ import json
 import re
 from typing import Any
 
+from pycompose.codegen.checkout import ROOT
 from pycompose.compiler import signatures
 from pycompose.compiler.classpath_dump import ANDROID, DUMP_DIR, inventory
 from pycompose.compiler.diff import Change, classify, load_approvals, unapproved
 from pycompose.compiler.gradle import extract, resolve
-from pycompose.compiler.lock import LOCK, ROOT, Report, dumps, generate
+from pycompose.compiler.lock import LOCK, Report, dumps, generate
 from pycompose.compiler.policy import load
 
 SIGNATURES = ROOT / "schema/signatures"

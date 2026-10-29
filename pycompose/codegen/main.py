@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from pycompose.codegen.checkout import PACKAGE, ROOT
 from pycompose.codegen.rules import (
     PACKAGED_CATALOG,
     SCHEMA_PATH,
@@ -32,10 +33,9 @@ __all__ = [
     "main",
 ]
 
-ROOT = Path(__file__).resolve().parents[2]
 
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
-PAYLOADS_PATH = ROOT / "pycompose" / "bridge" / "generated_payloads.py"
+PAYLOADS_PATH = PACKAGE / "bridge" / "generated_payloads.py"
 KOTLIN_ADAPTERS_PATH = (
     ROOT / "android/host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
 )
@@ -46,8 +46,8 @@ KOTLIN_MODELS_PATH = (
 KOTLIN_REGISTRY_PATH = (
     ROOT / "android/ir/src/main/kotlin/com/pycompose/ir/generated/IrContract.kt"
 )
-PYTHON_COMPONENTS_PATH = ROOT / "pycompose/m3/generated_components.py"
-PYTHON_EXPORTS_PATH = ROOT / "pycompose/m3/__init__.py"
+PYTHON_COMPONENTS_PATH = PACKAGE / "m3/generated_components.py"
+PYTHON_EXPORTS_PATH = PACKAGE / "m3/__init__.py"
 KOTLIN_VALUES_RELATIVE = Path(
     "android/renderer/src/main/kotlin/com/pycompose/renderer/generated/ValueResolver.kt"
 )
@@ -279,7 +279,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         KOTLIN_REGISTRY_PATH: render_kotlin_registry(registry),
         PYTHON_COMPONENTS_PATH: render_python_components(registry),
         PYTHON_EXPORTS_PATH: render_python_exports(registry),
-        ROOT / "pycompose/values.py": render_values(registry),
+        PACKAGE / "values.py": render_values(registry),
         KOTLIN_MODELS_PATH.with_name("ValueModels.kt"): render_models(registry),
         ROOT / KOTLIN_VALUES_RELATIVE: render_native(registry),
     }
@@ -288,8 +288,8 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("ScopedModifiers.kt")] = (
         render_scoped_modifiers(registry)
     )
-    artifacts[ROOT / "pycompose/components/scoped_modifiers.py"] = (
-        render_scoped_operations(registry)
+    artifacts[PACKAGE / "components/scoped_modifiers.py"] = render_scoped_operations(
+        registry
     )
     return artifacts
 

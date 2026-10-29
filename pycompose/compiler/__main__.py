@@ -20,10 +20,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+from pycompose.codegen.checkout import ROOT
 from pycompose.compiler import signatures
 from pycompose.compiler.classpath_dump import DUMP_DIR, inventory
 from pycompose.compiler.diff import classify, load_approvals, unapproved
-from pycompose.compiler.lock import LOCK, ROOT, Report, dumps, generate
+from pycompose.compiler.lock import LOCK, Report, dumps, generate
 from pycompose.compiler.policy import load
 
 REPORT = DUMP_DIR / "composegen-report.md"

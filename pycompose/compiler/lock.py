@@ -14,6 +14,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from pycompose.codegen.checkout import ROOT
 from pycompose.compiler.candidate_props import CandidateError, family_index
 from pycompose.compiler.check import compare, compare_values
 from pycompose.compiler.classpath_dump import (
@@ -35,7 +36,6 @@ from pycompose.compiler.propose import value_families
 from pycompose.compiler.rules import SHAPES, reshape
 from pycompose.compiler.scoped_modifiers import scoped_declarations, scoped_modifiers
 
-ROOT = Path(__file__).resolve().parents[2]
 LOCK = ROOT / "schema/catalog.lock.json"
 
 ORDER = (

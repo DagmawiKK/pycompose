@@ -15,6 +15,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
+from pycompose.codegen.checkout import PACKAGE, ROOT
 from pycompose.codegen.defaults import render_default
 from pycompose.compiler.classpath_dump import (
     DUMP_DIR,
@@ -428,11 +429,10 @@ def main() -> None:
     parser.add_argument("--out", type=Path)
     parser.add_argument("--fail-on-blocked", action="store_true")
     args = parser.parse_args()
-    root = Path(__file__).resolve().parents[2]
     protected = {
         args.schema.resolve(),
-        (root / "schema/catalog.lock.json").resolve(),
-        (root / "pycompose/contract/catalog.lock.json").resolve(),
+        (ROOT / "schema/catalog.lock.json").resolve(),
+        (PACKAGE / "contract/catalog.lock.json").resolve(),
     }
     if args.out and args.out.resolve() in protected:
         parser.error("a proposal cannot overwrite an approved schema")
