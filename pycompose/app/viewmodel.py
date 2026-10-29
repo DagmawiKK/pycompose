@@ -166,6 +166,14 @@ class ViewModel(Generic[S]):
                 ``"critical"`` when memory is short and it may be killed next.
         """
 
+    def on_file_picked(self, request: str, path: str) -> None:
+        """Receive the file the user picked after :class:`PickFile`.
+
+        Args:
+            request: The request the effect named.
+            path: The copy in the app's media cache, or empty when cancelled.
+        """
+
     def on_intent(self, intent: Intent) -> None:
         """Handle one intent from the screen.
 

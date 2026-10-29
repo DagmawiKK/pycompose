@@ -11,7 +11,15 @@ from typing import ClassVar
 
 from pycompose.core.effect import Effect
 
-__all__ = ["Finish", "Haptic", "Navigate", "OpenUrl", "Toast", "TypedEffect"]
+__all__ = [
+    "Finish",
+    "Haptic",
+    "Navigate",
+    "OpenUrl",
+    "PickFile",
+    "Toast",
+    "TypedEffect",
+]
 
 
 class TypedEffect:
@@ -68,6 +76,25 @@ class OpenUrl(TypedEffect):
 
     kind: ClassVar[str] = "openUrl"
     url: str
+
+
+@dataclass(frozen=True)
+class PickFile(TypedEffect):
+    """Let the user pick a file with the system picker.
+
+    The host copies the pick into the app's media cache and answers with
+    :meth:`ViewModel.on_file_picked`; the bytes never cross the bridge.
+
+    Attributes:
+        kind: The registered effect kind.
+        request: Handed back with the answer, to tell picks apart.
+        accept: A MIME type such as ``image/*``, which opens the photo picker,
+            or ``*/*`` for any file.
+    """
+
+    kind: ClassVar[str] = "pickFile"
+    request: str
+    accept: str = "*/*"
 
 
 @dataclass(frozen=True)

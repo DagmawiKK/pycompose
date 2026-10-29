@@ -2204,6 +2204,10 @@ object IrContract {
         "openUrl" to mapOf(
                 "url" to PropertyRule("string", required = true),
         ),
+        "pickFile" to mapOf(
+                "accept" to PropertyRule("string", required = true),
+                "request" to PropertyRule("string", required = true),
+        ),
         "toast" to mapOf(
                 "message" to PropertyRule("string", required = true),
         ),
@@ -2216,6 +2220,10 @@ object IrContract {
                 "density" to PropertyRule("number", required = true),
                 "locale" to PropertyRule("string", required = true),
                 "orientation" to PropertyRule("enum", required = true, values = setOf("portrait", "landscape")),
+        ),
+        "onFilePicked" to mapOf(
+                "path" to PropertyRule("string", required = true),
+                "request" to PropertyRule("string", required = true),
         ),
         "onPause" to mapOf(
         ),

@@ -7,7 +7,15 @@ loop thread, and its tasks run supervised until it is cleared.
 """
 
 from pycompose.app.app import App, Destination, Home
-from pycompose.app.effects import Finish, Haptic, Navigate, OpenUrl, Toast, TypedEffect
+from pycompose.app.effects import (
+    Finish,
+    Haptic,
+    Navigate,
+    OpenUrl,
+    PickFile,
+    Toast,
+    TypedEffect,
+)
 from pycompose.app.flow import StateFlow
 from pycompose.app.intents import Intent
 from pycompose.app.navigation import Pop, Push, Replace, Route
@@ -25,6 +33,7 @@ __all__ = [
     "Intent",
     "Navigate",
     "OpenUrl",
+    "PickFile",
     "Pop",
     "Push",
     "Replace",

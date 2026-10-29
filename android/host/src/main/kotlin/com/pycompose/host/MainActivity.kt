@@ -60,11 +60,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val picker = FilePicker(this, model)
         model.effectRunner =
-            AndroidEffectRunner(
-                this,
-                model::navigate,
-            ) { message -> Log.w("PyCompose", message) }
+            AndroidEffectRunner(this, model::navigate, picker::pick) { message ->
+                Log.w("PyCompose", message)
+            }
         edgeToEdge()
         followDevServer()
         setContent {

@@ -192,6 +192,18 @@
         }
       }
     },
+    "pickFile": {
+      "payload": {
+        "request": {
+          "type": "string",
+          "required": true
+        },
+        "accept": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
     "toast": {
       "payload": {
         "message": {
@@ -239,6 +251,18 @@
         },
         "density": {
           "type": "number",
+          "required": true
+        }
+      }
+    },
+    "onFilePicked": {
+      "payload": {
+        "request": {
+          "type": "string",
+          "required": true
+        },
+        "path": {
+          "type": "string",
           "required": true
         }
       }

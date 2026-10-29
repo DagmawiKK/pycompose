@@ -399,6 +399,11 @@ class NavigationSession:
                 self.top.on_resume()
             elif action_id == "onPause":
                 self.top.on_pause()
+            elif action_id == "onFilePicked":
+                fields = payload or {}
+                self.top.on_file_picked(
+                    str(fields.get("request", "")), str(fields.get("path", ""))
+                )
             elif action_id == "onTrimMemory":
                 level = str((payload or {}).get("level", ""))
                 for entry in reversed(self.entries):

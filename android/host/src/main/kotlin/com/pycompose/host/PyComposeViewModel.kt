@@ -220,6 +220,13 @@ class PyComposeViewModel(
         enqueue(Command.Lifecycle(event, payload))
     }
 
+    /** The file pick the system picker is open for; saved, as the picker outlives the process. */
+    internal var pickRequest: String?
+        get() = savedState[PICK]
+        set(value) {
+            savedState[PICK] = value
+        }
+
     fun dispatch(action: Action) {
         // Stamped with what was on screen when the user acted, not when it is processed.
         val shown = mutableSnapshot.value?.serial?.takeIf { it != SnapshotStream.NONE }
@@ -389,6 +396,7 @@ class PyComposeViewModel(
         private const val QUEUE_CAPACITY = 64
         private const val STATE = "pycompose.data"
         private const val EPOCH = "pycompose.epoch"
+        private const val PICK = "pycompose.pick"
 
         /**
          * Comfortably under Android's ~500 KB per-transaction Binder limit, so
