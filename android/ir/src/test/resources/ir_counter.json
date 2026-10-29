@@ -1,1 +1,0 @@
-{"root":{"children":[{"id":"1","props":{"text":"Hello"},"type":"Text"},{"id":"2","props":{"onClick":"increment","text":"Add"},"type":"Button"}],"id":"0","props":{},"type":"Column"},"schemaVersion":"1.0.0","version":"0.1.0"}

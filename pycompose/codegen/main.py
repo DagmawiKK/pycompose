@@ -318,12 +318,6 @@ def main(argv: list[str] | None = None) -> int:
         return build_app(args.app, check=args.check)
     registry = load_registry()
     artifacts = framework_artifacts(registry)
-    for fixture in sorted((ROOT / "pycompose/testing/fixtures").glob("*.json")):
-        # The repository's own tests read these through the modules' test
-        # source sets. A scaffold ships no framework tests, so the template
-        # carries none.
-        relative = Path("ir/src/test/resources") / fixture.name
-        artifacts[ROOT / "android" / relative] = fixture.read_text(encoding="utf-8")
     if args.check:
         drifted = [
             str(artifact)
