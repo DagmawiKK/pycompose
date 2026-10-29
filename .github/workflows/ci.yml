@@ -29,8 +29,13 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
       - name: Install
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-cli -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
+        run: |
+          uv sync --all-packages --all-extras --locked
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
       - name: Actionlint (workflow files)
         shell: bash
         run: |
@@ -77,8 +82,13 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
       - name: Install
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-cli -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
+        run: |
+          uv sync --all-packages --all-extras --locked
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
       - name: Codegen drift check
         run: python tools/schema/gen.py --check
       - uses: actions/setup-java@v4
@@ -103,7 +113,7 @@ jobs:
         run: pytest -q -k "schema or golden"
       - name: Verify goldens ship in the wheel
         run: |
-          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/pycompose-wheel" ./packages/pycompose ./packages/pycompose-cli ./packages/pycompose-codegen ./packages/pycompose-testing
+          uv build --all-packages --out-dir "$RUNNER_TEMP/pycompose-wheel"
           python -I - tools/wheel_smoke.py "$RUNNER_TEMP/pycompose-wheel"
       - name: Upload reports
         if: failure()
@@ -295,8 +305,13 @@ jobs:
           packages: platform-tools
       - name: Install pinned SDK packages
         run: sdkmanager "platforms;android-37.0" "build-tools;34.0.0"
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
       - name: Install the package (the render gate writes its samples with it)
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-cli -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
+        run: |
+          uv sync --all-packages --all-extras --locked
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
       - name: Spotless + Detekt + lint + unit tests (incl. ArchUnit)
         if: hashFiles('android/settings.gradle.kts') != ''
         working-directory: android
@@ -341,8 +356,13 @@ jobs:
           packages: platform-tools
       - name: Install pinned SDK packages
         run: sdkmanager "platforms;android-37.0" "build-tools;34.0.0"
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
       - name: Install CLI
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-cli -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
+        run: |
+          uv sync --all-packages --all-extras --locked
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
       - name: Generate sample project
         run: |
           cd "$RUNNER_TEMP"
@@ -357,7 +377,7 @@ jobs:
           PY
       - name: Verify installed wheel CLI and template assets
         run: |
-          pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/cli-wheel" ./packages/pycompose ./packages/pycompose-cli ./packages/pycompose-codegen ./packages/pycompose-testing
+          uv build --all-packages --out-dir "$RUNNER_TEMP/cli-wheel"
           python -m venv "$RUNNER_TEMP/cli-venv"
           # Install like a user: the CLI has a runtime dependency (rich), and a
           # --no-deps install produced a wheel that could not import.
@@ -434,6 +454,11 @@ jobs:
               assert not any(
                   name.startswith("pycompose/m3/") for name in packaged
               ), sorted(packaged)
+              # No tool ships: they are other distributions, never staged.
+              tools = ("pycompose_cli/", "pycompose_codegen/", "pycompose_testing/")
+              assert not any(name.startswith(tools) for name in packaged), sorted(
+                  packaged
+              )
           PY
 
   resource-sync-check:
@@ -445,10 +470,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
       - name: Install CLI
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-cli -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
+        run: |
+          uv sync --all-packages --all-extras --locked
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
       - name: Sync check
-        if: hashFiles('packages/pycompose/src/pycompose/cli/sync.py') != ''
+        if: hashFiles('packages/pycompose-cli/src/pycompose_cli/sync.py') != ''
         run: |
           cd "$RUNNER_TEMP"
           pycompose init sync-smoke
@@ -465,7 +495,12 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
       - name: Install CLI
-        run: pip install -e "./packages/pycompose[dev]" -e ./packages/pycompose-cli -e ./packages/pycompose-codegen -e ./packages/pycompose-testing
+        run: |
+          uv sync --all-packages --all-extras --locked
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
       - name: Hot reload smoke
         run: pytest -q -m "hot_reload_smoke"

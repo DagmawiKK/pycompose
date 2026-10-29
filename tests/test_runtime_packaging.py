@@ -1,10 +1,9 @@
 """A package an application ships must not become the home of CLI-only tooling.
 
-``stageRuntime`` keeps tooling out of an APK by excluding whole directories:
-``cli/``, ``templates/`` and ``testing/`` are never staged. A tool-only module in
-any other package therefore ships by default and needs a hand-written exclusion,
-and its dotted path then means one thing on a host and another on a device: an
-import that works in development fails only on the device.
+``stageRuntime`` stages the runtime package whole: the command line, the catalog
+pipeline and the test driver are separate distributions (ADR-0063), so a
+tool-only module left inside the runtime would ship to every device, and its
+dotted path would mean one thing on a host and another on a device.
 
 ``pycompose.extensions`` is where that happened. Planning and evidence lived
 beside the runtime contracts and had to be kept out of every APK by name. The
@@ -128,20 +127,5 @@ def test_no_module_under_extensions_is_reached_only_by_tooling() -> None:
     unreached = sorted(inside - reached)
     assert not unreached, (
         f"{unreached} are reached only from the CLI or from tests, so every APK "
-        "would carry modules no device calls; move them under pycompose/cli/"
+        "would carry modules no device calls; move them to pycompose-cli"
     )
-
-
-def test_the_packaged_runtime_still_excludes_tooling_directories() -> None:
-    """The exclusions the rule above depends on are directory-wide, not by name."""
-    gradle = (
-        ROOT
-        / "packages/pycompose-cli/src/pycompose_cli"
-        / "templates/android/host/build.gradle.kts"
-    ).read_text(encoding="utf-8")
-    missing = [
-        directory
-        for directory in TOOLING
-        if directory.startswith("pycompose/") and f'"{directory}**"' not in gradle
-    ]
-    assert missing == [], "the packaged runtime no longer excludes these wholesale"

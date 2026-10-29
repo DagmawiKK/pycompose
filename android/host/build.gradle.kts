@@ -106,17 +106,10 @@ val stageRuntime by tasks.registering(Sync::class) {
                 "pycomposeRuntimeDir",
             ).getOrElse(rootProject.file("../packages/pycompose/src").path),
     ) {
-        // The catalog the runtime validates against ships as data beside its loader.
+        // The runtime package whole -- the command line, the catalog pipeline and
+        // the test driver are other distributions, so none of them is in it
+        // (ADR-0063) -- and the catalog it validates against, as data.
         include("pycompose/**/*.py", "pycompose/py.typed", "pycompose/contract/catalog.lock.json")
-        // Planning, evidence and project tooling are CLI-tier: nothing on a device
-        // imports them, so they are excluded as directories, never by module list.
-        exclude(
-            "pycompose/cli/**",
-            "pycompose/codegen/**",
-            "pycompose/compiler/**",
-            "pycompose/templates/**",
-            "pycompose/testing/**",
-        )
         // The app's own slice is the only copy of the catalog's components it
         // carries; shipping pycompose/m3 too would put every component back
         // into the APK the slice exists to keep out.
