@@ -40,6 +40,10 @@ EXCLUDED = frozenset(
         # label from resources/strings.json as a generated string instead, so
         # this file would collide with that app_name and is never shipped.
         "pycompose_app.xml",
+        # The sample's own strings and the keep rule for them: the framework's
+        # resource tests read them; an app ships its own resources instead.
+        "pycompose_demo.xml",
+        "pycompose_keep.xml",
     }
 )
 
@@ -56,6 +60,10 @@ EXCLUDED_SUFFIXES = (
     Path("com/pycompose/host/ui/GeneratedAdapters.kt"),
     Path("com/pycompose/host/GeneratedPreviews.kt"),
     Path("src/test"),
+    # The sample a raw Gradle build of the framework runs, and its asset: an
+    # app's build always names the app's own source, so a scaffold needs neither.
+    Path("python"),
+    Path("assets/demo"),
 )
 
 
@@ -160,6 +168,12 @@ def assemble(check: bool = False) -> list[str]:
             changed.append(path.relative_to(ROOT).as_posix())
             if not check:
                 path.unlink()
+        if not check and target.is_dir():
+            # A folder its removed files leave empty would still be copied into
+            # every new project; deepest first, so emptied parents go too.
+            for folder in sorted(target.rglob("*"), key=lambda p: -len(p.parts)):
+                if folder.is_dir() and not any(folder.iterdir()):
+                    folder.rmdir()
         for relative, source in files.items():
             destination = target / relative if relative.parts else target
             contents = source.read_bytes()
