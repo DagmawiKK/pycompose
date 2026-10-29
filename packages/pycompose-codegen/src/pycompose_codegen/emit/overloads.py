@@ -111,3 +111,17 @@ def validate(components: dict[str, Any], die: Callable[[str], NoReturn]) -> None
             for second in members[index + 1 :]:
                 if ambiguous(components[first], components[second]):
                     die(f"keywords cannot tell {first!r} from {second!r}")
+
+
+def native_name(name: str, entry: dict[str, Any]) -> str:
+    """Return the native callable a component schema entry binds.
+
+    A schema entry usually carries its native name. An overload that shares a
+    native name with a sibling gets a distinct schema name, and only its
+    recorded source says which callable the adapter must invoke.
+    """
+    source = entry.get("source")
+    if isinstance(source, dict):
+        native = source.get("name")
+        return native if isinstance(native, str) else name
+    return name

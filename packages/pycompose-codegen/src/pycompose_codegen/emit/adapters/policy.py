@@ -7,8 +7,6 @@ falls back to, and the package of every bare Compose name the generator writes.
 
 from __future__ import annotations
 
-from typing import Any
-
 SCALAR_KOTLIN = {
     "string": "String",
     "boolean": "Boolean",
@@ -150,17 +148,3 @@ def camel(name: str) -> str:
 def simple(scope: str) -> str:
     """A scope's class as the adapters spell it: imported, so by simple name."""
     return scope.rsplit(".", 1)[-1]
-
-
-def native_name(name: str, entry: dict[str, Any]) -> str:
-    """Return the native callable a component schema entry binds.
-
-    A schema entry usually carries its native name. An overload that shares a
-    native name with a sibling gets a distinct schema name, and only its
-    recorded source says which callable the adapter must invoke.
-    """
-    source = entry.get("source")
-    if isinstance(source, dict):
-        native = source.get("name")
-        return native if isinstance(native, str) else name
-    return name

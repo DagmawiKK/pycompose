@@ -27,7 +27,7 @@ from typing import Any
 from pycompose_codegen.emit.adapters.eligibility import held_props, is_mechanical
 from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.imports import extra_imports
-from pycompose_codegen.emit.adapters.policy import native_name, simple
+from pycompose_codegen.emit.adapters.policy import simple
 from pycompose_codegen.emit.adapters.props import render_prop
 from pycompose_codegen.emit.adapters.slots import (
     children_argument,
@@ -36,6 +36,7 @@ from pycompose_codegen.emit.adapters.slots import (
 )
 from pycompose_codegen.emit.adapters.state import host_locals, resolve_constructor
 from pycompose_codegen.emit.adapters.text_echo import echoed_text
+from pycompose_codegen.emit.overloads import native_name
 
 
 def render(name: str, entry: dict[str, Any]) -> str:

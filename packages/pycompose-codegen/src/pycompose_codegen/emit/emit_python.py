@@ -6,7 +6,6 @@ The whole-file renderers -- runtime tables and the package exports -- live in
 
 import io
 import json
-import textwrap
 import tokenize
 from typing import Any
 
@@ -14,10 +13,11 @@ from pycompose_codegen.emit.literals import (
     GENERATED_NOTICE,
     python_adjacent_statements,
 )
-from pycompose_codegen.emit.overloads import groups, keywords, python_name
+from pycompose_codegen.emit.overloads import groups, keywords, native_name, python_name
 from pycompose_codegen.emit.python_layout import (
     class_docstring,
     class_header,
+    docstring_arg,
     overloads_line,
 )
 
@@ -140,10 +140,6 @@ def _imports(body: str) -> list[str]:
     return [*standard, "", *block(_FIRST_PARTY)]
 
 
-def _python_prop(name: str) -> str:
-    return python_name(name)
-
-
 def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
     if prop["type"] == "enum":
         return f"_{component}{name[:1].upper() + name[1:]}"
@@ -166,16 +162,6 @@ def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
     }[prop["type"]]
 
 
-def _native_name(name: str, spec: dict[str, Any]) -> str:
-    """Return the native callable a schema entry binds."""
-    source = spec.get("source")
-    if isinstance(source, dict):
-        native = source.get("name")
-        if isinstance(native, str):
-            return native
-    return name
-
-
 def _python_constructor(
     name: str,
     spec: dict[str, Any],
@@ -188,7 +174,7 @@ def _python_constructor(
     header, summary = class_header(class_name or name, base, name)
     lines = [
         header,
-        *class_docstring(_native_name(name, spec)),
+        *class_docstring(native_name(name, spec)),
         "",
         "    __slots__ = ()",
         f'    component_type = "{name}"',
@@ -215,7 +201,7 @@ def _python_constructor(
             *(
                 line
                 for field, description in arguments.items()
-                for line in _docstring_arg(field, description)
+                for line in docstring_arg(field, description)
             ),
         ]
     )
@@ -229,24 +215,24 @@ def _python_constructor(
         )
     lines.extend(['        """', "        props: dict[str, PropValue] = {}"])
     for field, prop in sorted(props.items()):
-        python_name = _python_prop(field)
+        keyword = python_name(field)
         if field == "modifier" or "protocol" in prop:
             continue
         if not prop.get("required", False):
             absent = "UNSET" if prop.get("nullable") else "None"
             condition = (
-                f"not isinstance({python_name}, _Unset)"
+                f"not isinstance({keyword}, _Unset)"
                 if prop.get("nullable")
-                else f"{python_name} is not {absent}"
+                else f"{keyword} is not {absent}"
             )
             lines.extend(
                 [
                     f"        if {condition}:",
-                    f'            props["{python_name}"] = {python_name}',
+                    f'            props["{keyword}"] = {keyword}',
                 ]
             )
         else:
-            lines.append(f'        props["{python_name}"] = {python_name}')
+            lines.append(f'        props["{keyword}"] = {keyword}')
     if spec["children"]["allowed"] and alias == "items":
         # With item, construction becomes a windowed declaration before this
         # runs (Component.__new__), so a key here is one given without it.
@@ -333,7 +319,7 @@ def _python_dispatcher(
     """
     lines = [
         f"class {name}(_{name}):",
-        f'    """Native {_native_name(name, spec)}; keywords choose the overload."""',
+        f'    """Native {native_name(name, spec)}; keywords choose the overload."""',
         "",
         "    __slots__ = ()",
         "",
@@ -390,10 +376,10 @@ def _python_signature(
     for field, prop in sorted(spec["props"].items()):
         if "protocol" in prop:
             continue
-        python_name = _python_prop(field)
+        keyword = python_name(field)
         annotation, description = _python_argument(name, field, prop)
-        lines.append(f"        {python_name}: {annotation},")
-        arguments[python_name] = description
+        lines.append(f"        {keyword}: {annotation},")
+        arguments[keyword] = description
     alias = spec["children"].get("kind")
     if spec["children"]["allowed"]:
         lines.append("        children: Content = (),")
@@ -415,7 +401,7 @@ def _python_signature(
             arguments["key"] = "Each item's stable key, required with item."
             arguments["item"] = "Builds one item's node; the host asks for which."
     for slot_name, slot in sorted(spec.get("slots", {}).items()):
-        slot_arg = _python_prop(slot_name)
+        slot_arg = python_name(slot_name)
         lines.append(f"        {slot_arg}: Content | None = None,")
         native = slot.get("native")
         arguments[slot_arg] = (
@@ -440,7 +426,7 @@ def _python_slot_body(spec: dict[str, Any], children: str) -> tuple[list[str], s
         return [], children
     lines = ["        slotted: tuple[Node, ...] = ()"]
     for slot_name, _slot in sorted(spec["slots"].items()):
-        slot_arg = _python_prop(slot_name)
+        slot_arg = python_name(slot_name)
         call = f"slotted += slot_nodes({slot_arg}, "
         lines.append(f"        if {slot_arg} is not None:")
         single = f'{call}key="{slot_name}", slot="{slot_name}")'
@@ -458,26 +444,6 @@ def _python_slot_body(spec: dict[str, Any], children: str) -> tuple[list[str], s
         )
     combined = "slotted" if children == "()" else "normalized + slotted"
     return lines, combined
-
-
-def _docstring_arg(field: str, description: str) -> list[str]:
-    """Render one constructor Args entry inside the 88-column budget.
-
-    A long prop name plus its fixed note can cross the formatter's line
-    limit, and a generated file must survive the same lint as a hand-written
-    one, so the entry wraps at a word boundary under the Args indent.
-
-    Args:
-        field: The constructor parameter's name.
-        description: Its one-line note.
-
-    Returns:
-        The entry's lines, continuations indented under the first.
-    """
-    wrapped = textwrap.wrap(f"{field}: {description}", width=72) or [f"{field}:"]
-    return [f"            {wrapped[0]}"] + [
-        f"                {rest}" for rest in wrapped[1:]
-    ]
 
 
 def _python_argument(

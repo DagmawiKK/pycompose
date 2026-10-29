@@ -7,6 +7,8 @@ formatter would wrap it.
 
 from __future__ import annotations
 
+import textwrap
+
 COLUMNS = 88
 
 
@@ -63,3 +65,23 @@ def overloads_line(name: str, overloads: list[str]) -> str:
     if len(line) <= COLUMNS:
         return line
     return f"{name}.overloads = (\n" + "".join(f"    {o},\n" for o in overloads) + ")"
+
+
+def docstring_arg(field: str, description: str) -> list[str]:
+    """Render one constructor Args entry inside the 88-column budget.
+
+    A long prop name plus its fixed note can cross the formatter's line
+    limit, and a generated file must survive the same lint as a hand-written
+    one, so the entry wraps at a word boundary under the Args indent.
+
+    Args:
+        field: The constructor parameter's name.
+        description: Its one-line note.
+
+    Returns:
+        The entry's lines, continuations indented under the first.
+    """
+    wrapped = textwrap.wrap(f"{field}: {description}", width=72) or [f"{field}:"]
+    return [f"            {wrapped[0]}"] + [
+        f"                {rest}" for rest in wrapped[1:]
+    ]
