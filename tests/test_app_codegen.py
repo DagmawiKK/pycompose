@@ -382,7 +382,7 @@ def test_an_app_on_the_library_catalog_is_left_alone(tmp_path: Path) -> None:
 
     app = tmp_path / "app"
     app.mkdir()
-    (app / "main.py").write_text("from pycompose.m3 import Button\n")
+    (app / "main.py").write_text("from pycompose.material3 import Button\n")
     assert uses_generated_slice(app) is False
 
 

@@ -19,21 +19,18 @@ from todo_model import (
 from pycompose import composable
 from pycompose.app import App, Destination, Intent, Toast, ViewModel
 from pycompose.core import Node
-from pycompose.m3 import (
+from pycompose.foundation import Column, LazyColumn, Row, Spacer
+from pycompose.material3 import (
     Button,
     Checkbox,
-    Column,
     FilterChip,
-    LazyColumn,
-    Modifier,
-    Row,
     Scaffold,
-    Spacer,
     Text,
     TextButton,
     TextField,
 )
 from pycompose.state import AppState
+from pycompose.ui import Modifier
 
 
 class Todo(AppState):

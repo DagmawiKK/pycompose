@@ -12,7 +12,7 @@ def test_cli_generates_typed_composable_stubs_without_executing_source(
     source = tmp_path / "header.py"
     source.write_text(
         "from pycompose import composable\n"
-        "from pycompose.m3 import Text\n"
+        "from pycompose.material3 import Text\n"
         'raise RuntimeError("must not run")\n'
         "@composable\n"
         "def ProfileHeader(*, name: str):\n"
@@ -61,7 +61,7 @@ def test_composable_runtime_signature_exposes_the_instance_key() -> None:
 
     from pycompose import composable
     from pycompose.core import Node
-    from pycompose.m3 import Text
+    from pycompose.material3 import Text
 
     @composable
     def greeting(*, text: str = "Hello") -> Node:
@@ -80,7 +80,7 @@ def test_expansion_failures_name_the_composable_source_and_instance() -> None:
 
     from pycompose import composable
     from pycompose.errors import IrValidationError
-    from pycompose.m3 import Text
+    from pycompose.material3 import Text
     from pycompose.ui.composition import expand
 
     @composable
@@ -100,7 +100,7 @@ def test_cyclic_input_containers_fail_with_composable_context() -> None:
 
     from pycompose import composable
     from pycompose.errors import IrValidationError
-    from pycompose.m3 import Text
+    from pycompose.material3 import Text
 
     @composable
     def greeting(*, values):

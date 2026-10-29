@@ -45,7 +45,7 @@ repos:
         name: Registry codegen --check
         language: system
         entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/schema/gen.py --check; fi; exec python tools/schema/gen.py --check'
-        files: ^(schema/catalog\.lock\.json|packages/pycompose-codegen/src/|packages/pycompose/src/pycompose/m3/|packages/pycompose/src/pycompose/wire/generated_|packages/pycompose/src/pycompose/bridge/generated_|android/ir/src/main/kotlin/com/pycompose/ir/generated/)
+        files: ^(schema/catalog\.lock\.json|packages/pycompose-codegen/src/|packages/pycompose/src/pycompose/(foundation|material3)/|packages/pycompose/src/pycompose/wire/generated_|packages/pycompose/src/pycompose/bridge/generated_|android/ir/src/main/kotlin/com/pycompose/ir/generated/)
         pass_filenames: false
       - id: template-assemble
         name: Assemble package assets (gitignored copies)

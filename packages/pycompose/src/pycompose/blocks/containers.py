@@ -4,19 +4,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pycompose import m3
+from pycompose import foundation, material3
 from pycompose.blocks.intents import Expand, SetText
 from pycompose.blocks.layout import Container
 from pycompose.errors import StateError
-from pycompose.m3 import (
-    AnimatedVisibility,
-    FlowRow,
-    Icon,
-    ListItem,
-    Modifier,
-    PrimaryTabRow,
-    Text,
-)
+from pycompose.foundation import AnimatedVisibility, FlowRow
+from pycompose.material3 import Icon, ListItem, PrimaryTabRow, Text
+from pycompose.ui import Modifier
 from pycompose.values import materialIcon
 
 if TYPE_CHECKING:
@@ -41,11 +35,11 @@ class Column(Container):
         Returns:
             A native Column.
         """
-        return m3.Column(
+        return foundation.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[
-                m3.Column(
+                foundation.Column(
                     modifier=Modifier().padding(vertical=GAP / 2), children=[node]
                 )
                 for node in view.children(self)
@@ -117,14 +111,14 @@ class Tabs(Container):
         tabs = self._tabs()
         chosen = view.state.values.get(self.id, self.default)
         index = next((i for i, tab in enumerate(tabs) if tab.label == chosen), 0)
-        return m3.Column(
+        return foundation.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[
                 PrimaryTabRow(
                     selected_tab_index=index,
                     tabs=[
-                        m3.Tab(
+                        material3.Tab(
                             id=f"tab{i}",
                             selected=i == index,
                             on_click=SetText(component=self.id, value=tab.label),
@@ -162,7 +156,7 @@ class Accordion(Column):
             A native Column.
         """
         is_open = view.expanded(self, self.open)
-        return m3.Column(
+        return foundation.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[

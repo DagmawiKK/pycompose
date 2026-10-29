@@ -7,7 +7,7 @@ from test_state_projection import CATALOG, snapshot
 
 from pycompose.contract.catalog import REGISTRY
 from pycompose.core.node import Node
-from pycompose.m3 import SwipeToDismissBox, Text
+from pycompose.material3 import SwipeToDismissBox, Text
 from pycompose.wire.validator import validate_prop
 
 

@@ -46,8 +46,6 @@ KOTLIN_MODELS_PATH = (
 KOTLIN_REGISTRY_PATH = (
     ROOT / "android/ir/src/main/kotlin/com/pycompose/ir/generated/IrContract.kt"
 )
-PYTHON_COMPONENTS_PATH = PACKAGE / "m3/generated_components.py"
-PYTHON_EXPORTS_PATH = PACKAGE / "m3/__init__.py"
 KOTLIN_VALUES_RELATIVE = Path(
     "android/renderer/src/main/kotlin/com/pycompose/renderer/generated/ValueResolver.kt"
 )
@@ -254,6 +252,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         render_kotlin_registry,
     )
     from pycompose_codegen.emit.emit_modules import (
+        libraries,
         render_payloads,
         render_python_exports,
     )
@@ -277,12 +276,16 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         PAYLOADS_PATH: render_payloads(registry),
         KOTLIN_MODELS_PATH: render_kotlin_models(registry),
         KOTLIN_REGISTRY_PATH: render_kotlin_registry(registry),
-        PYTHON_COMPONENTS_PATH: render_python_components(registry),
-        PYTHON_EXPORTS_PATH: render_python_exports(registry),
         PACKAGE / "values.py": render_values(registry),
         KOTLIN_MODELS_PATH.with_name("ValueModels.kt"): render_models(registry),
         ROOT / KOTLIN_VALUES_RELATIVE: render_native(registry),
     }
+    for name, part in libraries(registry).items():
+        package = f"pycompose.{name}"
+        artifacts[PACKAGE / name / "generated_components.py"] = (
+            render_python_components(part, package)
+        )
+        artifacts[PACKAGE / name / "__init__.py"] = render_python_exports(part, package)
     artifacts[KOTLIN_ADAPTERS_PATH] = render_generated_adapters(registry)
     artifacts[ROOT / KOTLIN_DRIVES_RELATIVE] = render_holder_drives(registry)
     artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("ScopedModifiers.kt")] = (

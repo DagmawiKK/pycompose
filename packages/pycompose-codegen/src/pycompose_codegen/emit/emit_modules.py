@@ -1,4 +1,4 @@
-"""Python emission: the runtime tables and the m3 package's exports.
+"""Python emission: the runtime tables and the component packages' exports.
 
 The validator registry embeds the whole catalog as adjacent literals, so the
 runtime reads no file; payload contracts type each action's input; the exports
@@ -94,15 +94,39 @@ def render_payloads(registry: dict[str, Any]) -> str:
     )
 
 
+def libraries(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Split the catalog's components into the packages the library ships.
+
+    Material 3 entries go to ``material3`` and the design-free rest -- layout,
+    lazy lists, text, animation -- to ``foundation``, the Compose libraries a
+    Kotlin developer imports them from.
+
+    Args:
+        registry: The parsed schema.
+
+    Returns:
+        Each package's name mapped to the schema holding only its components.
+    """
+    parts: dict[str, dict[str, Any]] = {"foundation": {}, "material3": {}}
+    for name, spec in registry["components"].items():
+        material = f"{spec['package']}.".startswith("androidx.compose.material3.")
+        parts["material3" if material else "foundation"][name] = spec
+    return {
+        package: {**registry, "components": components}
+        for package, components in parts.items()
+    }
+
+
 def render_python_exports(
-    registry: dict[str, Any], package: str = "pycompose.m3"
+    registry: dict[str, Any], package: str = "pycompose.material3"
 ) -> str:
     """Generate the import surface for all supported native components.
 
     Args:
         registry: The parsed schema.
         package: The package the constructors live in. The library ships the
-            full catalog under ``pycompose.m3``; a per-app slice (ADR-0014)
+            full catalog under ``pycompose.foundation`` and
+            ``pycompose.material3``; a per-app slice (ADR-0014)
             ships its own subset under a bare ``m3``, because importing the
             library's full set would bring back every component the app just
             declined to ship.
@@ -114,8 +138,8 @@ def render_python_exports(
     # Sorted by module, because the pre-commit isort hook would otherwise
     # reorder a file nobody may hand-edit and `gen.py --check` would then fail
     # forever on it -- the same two-gates-revert-each-other trap as ktlint
-    # against the Kotlin adapters. Both "pycompose.m3.generated_components"
-    # and an app slice's bare "m3" sort before "pycompose.ui.modifiers", but a
+    # against the Kotlin adapters. Both library packages and an app slice's
+    # bare "m3" sort before "pycompose.ui.modifiers" today, but a
     # rename of either module could change that, so the order is computed.
     imports = [
         (f"{package}.generated_components", names),

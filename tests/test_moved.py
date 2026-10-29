@@ -34,6 +34,9 @@ MOVED = [
     ("pycompose.ir.model", "pycompose.wire.model", "IRRoot", "pycompose.wire"),
     ("pycompose.components", "pycompose.ui", "Modifier", "pycompose.ui"),
     ("pycompose.components.layout", "pycompose.ui.layout", "Column", "pycompose.ui"),
+    # Split in two: each half's names are the same objects through the old one.
+    ("pycompose.m3", "pycompose.foundation", "Column", "pycompose.foundation and"),
+    ("pycompose.m3", "pycompose.material3", "Button", "pycompose.foundation and"),
     (
         "pycompose.composition",
         "pycompose.ui.composition",
@@ -51,7 +54,7 @@ def test_an_old_name_warns_and_is_the_same_object(
     top = ".".join(old.split(".")[:2])
     for module in [m for m in sys.modules if m == top or m.startswith(f"{top}.")]:
         del sys.modules[module]
-    with pytest.warns(DeprecationWarning, match=f"moved to {re.escape(warned)};"):
+    with pytest.warns(DeprecationWarning, match=f"moved to {re.escape(warned)}"):
         moved = importlib.import_module(old)
     assert getattr(moved, name) is getattr(importlib.import_module(new), name)
 

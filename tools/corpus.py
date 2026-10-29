@@ -31,8 +31,10 @@ from pycompose.app import Intent
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.effect import Effect
 from pycompose.errors import PyComposeError
-from pycompose.m3 import Button, Column, Modifier, Scaffold, Switch, Text, TextField
+from pycompose.foundation import Column
+from pycompose.material3 import Button, Scaffold, Switch, Text, TextField
 from pycompose.state import State
+from pycompose.ui import Modifier
 from pycompose.wire import emit_ir, to_json
 
 ROOT = Path(__file__).resolve().parents[1]

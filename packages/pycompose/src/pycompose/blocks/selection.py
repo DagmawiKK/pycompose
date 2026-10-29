@@ -5,20 +5,20 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
 
-from pycompose import m3
+from pycompose import foundation, material3
 from pycompose.blocks.components import Component, label
 from pycompose.blocks.intents import Expand, SetFlag, SetNumber, SetText
 from pycompose.errors import StateError
-from pycompose.m3 import (
+from pycompose.foundation import Row
+from pycompose.material3 import (
     DropdownMenuItem,
     ExposedDropdownMenu,
     ExposedDropdownMenuBox,
-    Modifier,
     OutlinedTextField,
     RadioButton,
-    Row,
     Text,
 )
+from pycompose.ui import Modifier
 from pycompose.values import ExposedDropdownMenuAnchorType, Range
 
 if TYPE_CHECKING:
@@ -92,12 +92,12 @@ class Slider(Component):
             if self.step
             else None
         )
-        return m3.Column(
+        return foundation.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[
                 Text(text=f"{self.label}: {shown}" if self.label else shown),
-                m3.Slider(
+                material3.Slider(
                     value=value,
                     value_range=Range(self.minimum, self.maximum),
                     steps=steps,
@@ -142,7 +142,7 @@ class Checkbox(Component):
             id=self.id,
             vertical_alignment="center",
             children=[
-                m3.Checkbox(
+                material3.Checkbox(
                     checked=view.value(self),
                     enabled=self.interactive,
                     on_checked_change=SetFlag.bind(component=self.id),
@@ -204,7 +204,7 @@ class Radio(_Choice):
             A native Column.
         """
         chosen = view.value(self)
-        return m3.Column(
+        return foundation.Column(
             id=self.id,
             children=[
                 *([Text(text=self.label)] if self.label else []),

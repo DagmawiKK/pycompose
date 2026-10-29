@@ -14,7 +14,8 @@ which is the property that makes the catalog safe to grow without anyone
 maintaining a list.
 
 The Python slice lives in the app's own ``m3`` package rather than being imported
-from ``pycompose.m3``, and that is not a naming preference. If the app imported
+from ``pycompose.foundation`` and ``pycompose.material3``, and that is not a
+naming preference. If the app imported
 the library's full catalog while its Kotlin carried only a subset, the app could
 emit a node the host has no adapter for -- and it would fail as a blank screen at
 runtime, not as an error at build time. Two slices generated from one filter
@@ -32,7 +33,7 @@ from typing import Any
 from pycompose.contract.registry_rules import with_rules
 
 APP_PACKAGE = "m3"
-"""The app-side generated package, mirroring ``pycompose.m3``."""
+"""The app-side generated package: the library's two component packages in one."""
 
 LAYERS = ("pycompose.blocks",)
 """Library packages that draw native components for an app: an app importing one
@@ -220,7 +221,7 @@ def uses_generated_slice(python_root: Path, package: str = APP_PACKAGE) -> bool:
     """Report whether an app imports its own generated component package.
 
     This is what makes codegen bindable without a config flag. An app that
-    imports ``pycompose.m3`` has adopted the library catalog and needs nothing
+    imports ``pycompose.material3`` has adopted the library catalog and needs nothing
     generated; one that imports ``m3`` has adopted per-app codegen and needs it
     before every build. Detecting the import means an existing project cannot be
     broken by a build step that suddenly starts failing, and an adopter cannot

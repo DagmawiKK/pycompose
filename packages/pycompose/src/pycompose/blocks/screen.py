@@ -5,12 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
-from pycompose.m3 import (
-    AnimatedVisibility,
-    Column,
-    LinearProgressIndicatorWithoutProgress,
-    Modifier,
-)
+from pycompose.foundation import AnimatedVisibility, Column
+from pycompose.material3 import LinearProgressIndicatorWithoutProgress
+from pycompose.ui import Modifier
 
 if TYPE_CHECKING:
     from pycompose.blocks.components import Component

@@ -197,7 +197,7 @@ def test_generated_json_schema_agrees_on_recursive_and_versioned_values() -> Non
 
 
 def test_nullable_component_props_keep_absent_null_and_value() -> None:
-    from pycompose.m3 import Button as GeneratedButton
+    from pycompose.material3 import Button as GeneratedButton
     from pycompose.ui import Button
     from pycompose.values import buttonElevation
 

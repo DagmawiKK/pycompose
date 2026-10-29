@@ -10,10 +10,10 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING, Any
 
-from pycompose import m3
+from pycompose import material3
 from pycompose.blocks.intents import Fire
 from pycompose.blocks.layout import Element, Event
-from pycompose.m3 import Text
+from pycompose.material3 import Text
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
@@ -137,7 +137,7 @@ class Button(Element):
             A native Button.
         """
         del view
-        return m3.Button(
+        return material3.Button(
             id=self.id,
             text=self.text,
             enabled=self.interactive,

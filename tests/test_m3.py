@@ -8,7 +8,9 @@ from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_imported_builtins_preserve_the_native_contract() -> None:
-    from pycompose.m3 import Column, Modifier, Text
+    from pycompose.foundation import Column
+    from pycompose.material3 import Text
+    from pycompose.ui import Modifier
 
     node = Column(
         id="screen",
@@ -29,7 +31,8 @@ def test_imported_builtins_preserve_the_native_contract() -> None:
 
 
 def test_generated_interfaces_preserve_defaults_and_slots() -> None:
-    from pycompose.m3 import Button, LazyColumn, Scaffold, Text
+    from pycompose.foundation import LazyColumn
+    from pycompose.material3 import Button, Scaffold, Text
 
     button = Button(id="add", text="Add", on_click="increment")
     assert button.props.to_wire() == {"text": "Add", "onClick": "increment"}
@@ -44,7 +47,7 @@ def test_generated_interfaces_preserve_defaults_and_slots() -> None:
 
 def test_generated_enum_props_still_validate_at_runtime() -> None:
     from pycompose.errors import IrValidationError
-    from pycompose.m3 import Text
+    from pycompose.material3 import Text
 
     with pytest.raises(IrValidationError, match="invalid prop"):
         Text(id="name", text="Ada", style="unsupported")

@@ -8,7 +8,7 @@ from typing import Any, Literal
 import pytest
 
 from pycompose.errors import StateError
-from pycompose.m3 import Text
+from pycompose.material3 import Text
 from pycompose.state import AppState, State, Store
 from pycompose.utils.json_canonical import freeze_json, thaw_json
 

@@ -7,7 +7,8 @@ from typing import TYPE_CHECKING, Any
 from pycompose.blocks.components import Component, label
 from pycompose.blocks.intents import SetText
 from pycompose.errors import StateError
-from pycompose.m3 import Modifier, OutlinedTextField, Text
+from pycompose.material3 import OutlinedTextField, Text
+from pycompose.ui import Modifier
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View

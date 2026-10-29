@@ -10,8 +10,8 @@ from __future__ import annotations
 from typing import get_args
 
 from pycompose import values
-from pycompose.m3 import generated_components
-from pycompose.m3.generated_components import Text
+from pycompose.material3 import generated_components
+from pycompose.material3.generated_components import Text
 
 
 def test_an_enum_prop_with_a_value_type_keeps_its_literal() -> None:

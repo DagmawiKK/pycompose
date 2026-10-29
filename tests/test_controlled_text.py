@@ -21,7 +21,7 @@ import pytest
 from pycompose_testing.driver import AppDriver
 
 from pycompose.contract.catalog import SCHEMA_VERSION
-from pycompose.m3 import TextField
+from pycompose.material3 import TextField
 
 APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"
 SCHEMA = json.loads(Path("schema/catalog.lock.json").read_text())

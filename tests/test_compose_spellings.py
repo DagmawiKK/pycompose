@@ -5,7 +5,9 @@ from __future__ import annotations
 import pytest
 
 from pycompose.errors import IrValidationError
-from pycompose.m3 import Column, Modifier, Text
+from pycompose.foundation import Column
+from pycompose.material3 import Text
+from pycompose.ui import Modifier
 
 
 def test_a_modifier_chain_may_start_on_the_class_as_in_compose() -> None:

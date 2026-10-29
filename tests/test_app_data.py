@@ -7,7 +7,7 @@ import json
 import pytest
 
 from pycompose.errors import IrValidationError
-from pycompose.m3 import Text
+from pycompose.material3 import Text
 from pycompose.state import State
 from pycompose.wire import emit_ir, to_json, validate_ir
 from pycompose.wire.data import read_data

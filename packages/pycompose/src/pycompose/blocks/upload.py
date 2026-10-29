@@ -10,11 +10,12 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from pycompose import m3
+from pycompose import foundation, material3
 from pycompose.blocks.components import Component
 from pycompose.blocks.intents import Pick
 from pycompose.blocks.layout import Event
-from pycompose.m3 import Modifier, OutlinedButton, Text
+from pycompose.material3 import OutlinedButton, Text
+from pycompose.ui import Modifier
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
@@ -70,7 +71,7 @@ class File(Component):
             A native Column.
         """
         path = view.value(self)
-        return m3.Column(
+        return foundation.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[
@@ -134,4 +135,6 @@ class UploadButton(File):
             A native Button.
         """
         del view
-        return m3.Button(id=self.id, text=self.text, on_click=Pick(component=self.id))
+        return material3.Button(
+            id=self.id, text=self.text, on_click=Pick(component=self.id)
+        )

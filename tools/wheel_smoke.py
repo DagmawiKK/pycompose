@@ -43,7 +43,8 @@ def _add_wheel(wheel_dir: Path) -> Path:
 def _smoke_emit_and_compose() -> None:
     """Prove emit, composable and Component resolution all work from the wheel."""
     from pycompose import composable
-    from pycompose.m3 import Column, Text
+    from pycompose.foundation import Column
+    from pycompose.material3 import Text
     from pycompose.state import State
     from pycompose.wire import emit_ir
 

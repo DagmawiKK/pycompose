@@ -15,7 +15,8 @@ from pycompose.runtime import signal
 APP = """
 import asyncio
 from pycompose.app import App, Destination, Intent, Push, Route, ViewModel
-from pycompose.m3 import Button, Column, Text
+from pycompose.foundation import Column
+from pycompose.material3 import Button, Text
 from pycompose.state import AppState
 
 

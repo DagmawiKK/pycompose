@@ -11,7 +11,8 @@ from pycompose import composable
 from pycompose.bridge import BridgeSurface
 from pycompose.core.windows import DEFAULT_WINDOW, MAX_WINDOW
 from pycompose.errors import IrValidationError
-from pycompose.m3 import Column, LazyColumn, Text
+from pycompose.foundation import Column, LazyColumn
+from pycompose.material3 import Text
 from pycompose.state import State, Store
 
 ROWS = list(range(10_000))

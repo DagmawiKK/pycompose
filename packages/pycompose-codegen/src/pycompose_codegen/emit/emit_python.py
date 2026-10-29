@@ -1,11 +1,13 @@
-"""Python emission: the m3 component classes a Compose host composes.
+"""Python emission: the component classes a Compose host composes.
 
 The whole-file renderers -- runtime tables and the package exports -- live in
 :mod:`pycompose_codegen.emit.emit_modules`.
 """
 
+import io
 import json
 import textwrap
+import tokenize
 from typing import Any
 
 from pycompose_codegen.emit.literals import (
@@ -22,7 +24,7 @@ from pycompose_codegen.emit.python_layout import (
 
 def render_python_components(
     registry: dict[str, Any],
-    package: str = "pycompose.m3",
+    package: str = "pycompose.material3",
     own: dict[str, Any] | None = None,
 ) -> str:
     """Generate typed Python constructors from the native manifest.
@@ -41,48 +43,16 @@ def render_python_components(
     names = sorted(components)
     overloaded = groups(components)
     lines = [
-        f"# {GENERATED_NOTICE}",
-        "# ruff: noqa: PLR0912 -- one branch per slot; the schema sets the count.",
-        f'"""Typed native component constructors; import from {package}."""',
-        "",
-        "from __future__ import annotations",
-        "",
-        "from collections.abc import Callable, Sequence",
-        "from typing import Any, Literal, cast" + (", overload" if overloaded else ""),
-        "",
-        # Sorted as isort sorts them, so the formatter never rewrites the file.
-        "from pycompose.core.expressions import Expression",
-        "from pycompose.core.node import Node",
-        "from pycompose.core.props import JsonValue",
-        "from pycompose.errors import IrValidationError",
-        "from pycompose.ui.base import ActionTarget, Component, PropValue",
-        "from pycompose.ui.composition import Content, content_nodes, slot_nodes",
-        "from pycompose.ui.modifiers import Modifier",
-        "",
         "__all__ = [",
         *(f'    "{name}",' for name in names),
         "]",
         "",
         "",
     ]
-    if any(
-        p.get("nullable")
-        for s in registry["components"].values()
-        for p in s["props"].values()
-    ):
-        index = lines.index("from pycompose.errors import IrValidationError")
-        lines.insert(index, "from pycompose.core.values import UNSET, _Unset")
     if own:
         # The runtime validates against the catalog, which knows only the
         # library's components until the app's own are registered.
         raw = json.dumps(own, sort_keys=True, separators=(",", ":"))
-        lines.insert(
-            lines.index("from collections.abc import Callable, Sequence"), "import json"
-        )
-        lines.insert(
-            lines.index("from pycompose.core.expressions import Expression"),
-            "from pycompose.contract.catalog import REGISTRY",
-        )
         lines.extend(
             [
                 "REGISTRY.extend(",
@@ -120,7 +90,54 @@ def render_python_components(
             lines.extend(_python_constructor(name, spec, base=primary or "Component"))
     for name, overloads in sorted(overloaded.items()):
         lines.append(overloads_line(name, overloads))
-    return "\n".join(lines).rstrip() + "\n"
+    body = "\n".join(lines).rstrip() + "\n"
+    header = [
+        f"# {GENERATED_NOTICE}",
+        "# ruff: noqa: PLR0912 -- one branch per slot; the schema sets the count.",
+        f'"""Typed native component constructors; import from {package}."""',
+        "",
+        "from __future__ import annotations",
+        "",
+        *_imports(body),
+        "",
+    ]
+    return "\n".join(header) + "\n" + body
+
+
+# Every name a component module may use, by module, in the order isort sorts
+# them; a module imports only those its classes use, so neither one library
+# package nor an app's slice carries an unused import.
+_STANDARD = (
+    ("collections.abc", ("Callable", "Sequence")),
+    ("typing", ("Any", "Literal", "cast", "overload")),
+)
+_FIRST_PARTY = (
+    ("pycompose.contract.catalog", ("REGISTRY",)),
+    ("pycompose.core.expressions", ("Expression",)),
+    ("pycompose.core.node", ("Node",)),
+    ("pycompose.core.props", ("JsonValue",)),
+    ("pycompose.core.values", ("UNSET", "_Unset")),
+    ("pycompose.errors", ("IrValidationError",)),
+    ("pycompose.ui.base", ("ActionTarget", "Component", "PropValue")),
+    ("pycompose.ui.composition", ("Content", "content_nodes", "slot_nodes")),
+    ("pycompose.ui.modifiers", ("Modifier",)),
+)
+
+
+def _imports(body: str) -> list[str]:
+    """The import block for a module body: the names its code uses, not its text."""
+    tokens = tokenize.generate_tokens(io.StringIO(body).readline)
+    used = {token.string for token in tokens if token.type == tokenize.NAME}
+
+    def block(table: tuple[tuple[str, tuple[str, ...]], ...]) -> list[str]:
+        return [
+            f"from {module} import {', '.join(n for n in names if n in used)}"
+            for module, names in table
+            if used.intersection(names)
+        ]
+
+    standard = ["import json"] * ("json" in used) + block(_STANDARD)
+    return [*standard, "", *block(_FIRST_PARTY)]
 
 
 def _python_prop(name: str) -> str:
