@@ -228,6 +228,22 @@ def test_usage_as_an_attribute_counts(tmp_path: Path) -> None:
     assert discover(app, load_catalog(ROOT / "schema/catalog.lock.json")) == {"Spacer"}
 
 
+def test_an_app_on_a_drawing_layer_carries_what_the_layer_draws(tmp_path: Path) -> None:
+    """A blocks app names no native component, yet its screen is made of them."""
+    from pycompose.codegen.app_slice import discover, load_catalog, needs_slice
+
+    app = tmp_path / "app"
+    app.mkdir()
+    (app / "main.py").write_text(
+        "import pycompose.blocks as pc\n\nbox = pc.Textbox()\n"
+    )
+    used = discover(app, load_catalog(ROOT / "schema/catalog.lock.json"))
+    assert needs_slice(app)
+    assert {"OutlinedTextField", "ExposedDropdownMenuBox", "PrimaryTabRow"} <= used
+    (app / "main.py").write_text("X = 1\n")
+    assert not needs_slice(app)
+
+
 def test_an_app_with_no_components_is_an_error(tmp_path: Path) -> None:
     """Silently generating nothing would ship a host that renders nothing."""
     app = tmp_path / "app"

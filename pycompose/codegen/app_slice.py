@@ -24,6 +24,7 @@ agree by construction; two independently maintained sets do not.
 from __future__ import annotations
 
 import ast
+import importlib.util
 import json
 from pathlib import Path
 from typing import Any
@@ -32,6 +33,10 @@ from pycompose.contract.registry_rules import with_rules
 
 APP_PACKAGE = "m3"
 """The app-side generated package, mirroring ``pycompose.m3``."""
+
+LAYERS = ("pycompose.blocks",)
+"""Library packages that draw native components for an app: an app importing one
+carries the components the package draws, found in its source as an app's are."""
 
 APP_LOCK = "compose.lock.json"
 """The app's lock slice beside ``pycompose.toml``: its own libraries' components
@@ -123,9 +128,7 @@ def discover_values(app: Path, catalog: dict[str, Any]) -> set[str]:
 
 def _discover_names(app: Path, known: set[str]) -> set[str]:
     used: set[str] = set()
-    for source in sorted(app.rglob("*.py")):
-        if APP_PACKAGE in source.relative_to(app).parts:
-            continue
+    for source in _sources(app):
         try:
             tree = ast.parse(source.read_text(encoding="utf-8"))
         except SyntaxError as exc:
@@ -146,6 +149,73 @@ def _discover_names(app: Path, known: set[str]) -> set[str]:
     return used
 
 
+def _app_sources(python_root: Path, package: str = APP_PACKAGE) -> list[Path]:
+    """The app's own modules, without its generated package."""
+    return [
+        source
+        for source in sorted(python_root.rglob("*.py"))
+        if package not in source.relative_to(python_root).parts
+    ]
+
+
+def _sources(app: Path) -> list[Path]:
+    """The app's modules, and those of every drawing layer it imports."""
+    found = _app_sources(app)
+    for layer in layers_used(app):
+        spec = importlib.util.find_spec(layer)
+        if spec is not None and spec.origin is not None:
+            found.extend(sorted(Path(spec.origin).parent.rglob("*.py")))
+    return found
+
+
+def _imported(python_root: Path, package: str = APP_PACKAGE) -> set[str]:
+    """Every module the app's own sources import, by full name."""
+    modules: set[str] = set()
+    if not python_root.is_dir():
+        return modules
+    for source in _app_sources(python_root, package):
+        try:
+            tree = ast.parse(source.read_text(encoding="utf-8"))
+        except (SyntaxError, UnicodeDecodeError):
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                modules.update(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                modules.add(node.module)
+                modules.update(f"{node.module}.{alias.name}" for alias in node.names)
+    return modules
+
+
+def layers_used(python_root: Path) -> list[str]:
+    """Return the drawing layers an app imports.
+
+    Args:
+        python_root: Where the app's Python lives.
+
+    Returns:
+        The names in :data:`LAYERS` it imports, in that order.
+    """
+    imported = _imported(python_root)
+    return [
+        layer
+        for layer in LAYERS
+        if any(name == layer or name.startswith(f"{layer}.") for name in imported)
+    ]
+
+
+def needs_slice(python_root: Path) -> bool:
+    """Report whether a build must generate an app's component slice.
+
+    Args:
+        python_root: Where the app's Python lives.
+
+    Returns:
+        True for an app on its own generated package or on a drawing layer.
+    """
+    return uses_generated_slice(python_root) or bool(layers_used(python_root))
+
+
 def uses_generated_slice(python_root: Path, package: str = APP_PACKAGE) -> bool:
     """Report whether an app imports its own generated component package.
 
@@ -163,25 +233,10 @@ def uses_generated_slice(python_root: Path, package: str = APP_PACKAGE) -> bool:
     Returns:
         True when any module imports the generated package.
     """
-    if not python_root.is_dir():
-        return False
-    for source in sorted(python_root.rglob("*.py")):
-        if package in source.relative_to(python_root).parts:
-            continue
-        try:
-            tree = ast.parse(source.read_text(encoding="utf-8"))
-        except (SyntaxError, UnicodeDecodeError):
-            continue
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import) and any(
-                alias.name == package for alias in node.names
-            ):
-                return True
-            if isinstance(node, ast.ImportFrom) and (
-                node.module == package or (node.module or "").startswith(f"{package}.")
-            ):
-                return True
-    return False
+    return any(
+        name == package or name.startswith(f"{package}.")
+        for name in _imported(python_root, package)
+    )
 
 
 def slice_registry(

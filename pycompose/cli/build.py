@@ -259,9 +259,10 @@ def codegen(project: Project, *, kotlin: bool = True) -> None:
     something other than the build is the arrangement ADR-0014 replaced.
 
     Only runs for an app that has adopted per-app codegen -- one importing its
-    own generated package. An app on the library catalog has nothing to
-    generate, and starting to fail those builds would be a regression dressed
-    up as an improvement.
+    own generated package, or a drawing layer such as ``pycompose.blocks``,
+    whose components join the slice. An app on the library catalog has nothing
+    to generate, and starting to fail those builds would be a regression
+    dressed up as an improvement.
 
     Args:
         project: The project being built.
@@ -271,7 +272,7 @@ def codegen(project: Project, *, kotlin: bool = True) -> None:
         ProjectError: If the slice cannot be generated.
     """
     from pycompose.cli.add import sync_libraries
-    from pycompose.codegen.app_slice import APP_LOCK, uses_generated_slice
+    from pycompose.codegen.app_slice import APP_LOCK, needs_slice
     from pycompose.codegen.main import build_app
 
     python = project.table("python")
@@ -281,7 +282,7 @@ def codegen(project: Project, *, kotlin: bool = True) -> None:
     directory = project_path(project.root, source)
     # The app's own libraries reach the classpath from its lock slice.
     sync_libraries(project)
-    if not uses_generated_slice(directory):
+    if not needs_slice(directory):
         return
     app_lock = project.root / APP_LOCK
     if (
