@@ -113,7 +113,7 @@ def test_the_signature_file_is_what_the_pin_says() -> None:
             {
                 "policy": "resource",
                 "decode": "resourceImage",
-                "values": ["drawable", "asset"],
+                "values": ["drawable", "asset", "file"],
             },
         ),
     ],

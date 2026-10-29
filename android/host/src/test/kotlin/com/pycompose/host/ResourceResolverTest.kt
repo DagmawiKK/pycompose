@@ -43,7 +43,20 @@ class ResourceResolverTest {
         assertTrue(resolver.string("greeting", "not_a_locale").isFailure)
     }
 
+    @Test fun aMediaFileIsReadByItsDigestNameAndCached() {
+        val backend = FakeResources()
+        val resolver = ResourceResolver(backend)
+        val digest = "0f".repeat(32)
+        assertTrue(resolver.image("@file/$digest.png").isSuccess)
+        assertTrue(resolver.image("@file/$digest.png").isSuccess)
+        assertEquals(listOf("$digest.png"), backend.files)
+        assertTrue(resolver.image("@file/cat.png").isFailure)
+        assertTrue(resolver.image("@file/../$digest.png").isFailure)
+    }
+
     private class FakeResources : ResourceBackend {
+        val files = mutableListOf<String>()
+
         var stringCalls = 0
 
         override fun string(
@@ -71,5 +84,10 @@ class ResourceResolverTest {
         }
 
         override fun assetImage(name: String): Painter = ColorPainter(Color.Blue)
+
+        override fun fileImage(name: String): Painter {
+            files.add(name)
+            return ColorPainter(Color.Green)
+        }
     }
 }
