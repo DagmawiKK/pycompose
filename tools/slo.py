@@ -172,7 +172,10 @@ def measure_device(
         _, stages = bench(device=serial, keys=keys)
         p50s.append(stages["total"]["p50"])
         p95s.append(stages["total"]["p95"])
-    return {"tapToFrameP50Ms": min(p50s), "tapToFrameP95Ms": min(p95s)}
+    return {
+        "tapToFrameP50Ms": round(min(p50s), 2),
+        "tapToFrameP95Ms": round(min(p95s), 2),
+    }
 
 
 def regressions(
