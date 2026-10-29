@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import json
 
-import pytest
-
 from pycompose.app import App, Destination, Intent, ViewModel
 from pycompose.app.session import SAVED_LIMIT, NavigationSession
 from pycompose.bridge import BridgeSurface
@@ -84,7 +82,6 @@ def test_loaded_fields_never_count_against_the_limit() -> None:
     assert surface.expose_latest_error() == ""
 
 
-@pytest.mark.parametrize("debug", [False])
-def test_release_does_not_measure(debug: bool) -> None:
-    surface = bridge(debug=debug)
+def test_release_does_not_measure() -> None:
+    surface = bridge(debug=False)
     assert tap(surface, 1) == str(SAVED_LIMIT + 1)

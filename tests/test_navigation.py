@@ -46,11 +46,15 @@ class Edit(Intent):
 
 
 CLEARED = []
+TRIMMED = []
 
 
 class ListViewModel(ViewModel[ListState]):
     def __init__(self):
         super().__init__(ListState())
+
+    def on_trim_memory(self, level):
+        TRIMMED.append(("list", level))
 
     def on_intent(self, intent):
         if isinstance(intent, Open):
@@ -77,6 +81,9 @@ class DetailViewModel(ViewModel[DetailState]):
 
     def on_resume(self):
         self.state = self.state.evolve(resumed=self.state.resumed + 1)
+
+    def on_trim_memory(self, level):
+        TRIMMED.append(("detail", level))
 
 
 def list_screen(state):
@@ -213,3 +220,15 @@ def test_a_view_model_that_fails_to_build_leaves_no_work_running(notes: str) -> 
     _settle()
     # The restored detail screen was built, then cleared with the failed session.
     assert cleared == [7]
+
+
+def test_every_screen_on_the_stack_hears_a_memory_trim(notes: str) -> None:
+    runtime.start(notes, "home", True)
+    _tap(1)
+    _event("onTrimMemory", level="background")
+    assert sys.modules["nav_app"].TRIMMED == [
+        ("detail", "background"),
+        ("list", "background"),
+    ]
+    _event("onTrimMemory", level="huge")
+    assert runtime.fetch_latest_error() != ""

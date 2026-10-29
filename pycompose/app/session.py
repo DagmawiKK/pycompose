@@ -388,6 +388,10 @@ class NavigationSession:
                 self.top.on_resume()
             elif action_id == "onPause":
                 self.top.on_pause()
+            elif action_id == "onTrimMemory":
+                level = str((payload or {}).get("level", ""))
+                for entry in reversed(self.entries):
+                    entry.view_model.on_trim_memory(level)
             elif action_id not in REGISTRY.lifecycle:
                 raise StateError("unknown action", action_id=action_id)
         finally:

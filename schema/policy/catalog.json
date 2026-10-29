@@ -242,6 +242,19 @@
           "required": true
         }
       }
+    },
+    "onTrimMemory": {
+      "payload": {
+        "level": {
+          "type": "enum",
+          "values": [
+            "uiHidden",
+            "background",
+            "critical"
+          ],
+          "required": true
+        }
+      }
     }
   },
   "valueTypes": {

@@ -155,6 +155,17 @@ class ViewModel(Generic[S]):
     def on_pause(self) -> None:
         """React to the app leaving the foreground."""
 
+    def on_trim_memory(self, level: str) -> None:
+        """Release what can be rebuilt when the system asks for memory back.
+
+        Every screen on the back stack hears it, not only the one on top.
+
+        Args:
+            level: ``"uiHidden"`` once the app's UI is out of sight,
+                ``"background"`` when the process is cached and may be killed,
+                ``"critical"`` when memory is short and it may be killed next.
+        """
+
     def on_intent(self, intent: Intent) -> None:
         """Handle one intent from the screen.
 

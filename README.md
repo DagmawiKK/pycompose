@@ -191,7 +191,8 @@ called in a loop, need an `id` to survive a reorder.
 happen belongs in state instead.
 
 **Lifecycle** — `on_back` (return True to keep the screen), `on_resume` and
-`on_pause` reach the view model on top.
+`on_pause` reach the view model on top; `on_trim_memory(level)` reaches every
+screen on the stack when Android asks for memory back.
 
 **Background work** — `self.launch(coroutine)` runs work until it ends or the
 view model is cleared, and returns its task, so a newer request can cancel the

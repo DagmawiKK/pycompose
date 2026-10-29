@@ -1,5 +1,6 @@
 package com.pycompose.host
 
+import android.content.ComponentCallbacks2
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
@@ -49,6 +50,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 class MainActivity : ComponentActivity() {
     private val model: PyComposeViewModel by viewModels {
@@ -123,6 +125,14 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         model.lifecycle("onResume")
+    }
+
+    @Deprecated("Levels below TRIM_MEMORY_UI_HIDDEN are no longer sent from API 34")
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        trimLevel(level)?.let {
+            model.lifecycle("onTrimMemory", JsonObject(mapOf("level" to JsonPrimitive(it))))
+        }
     }
 
     override fun onPause() {
@@ -220,3 +230,18 @@ class MainActivity : ComponentActivity() {
             timePasses = BuildConfig.DEBUG || intent.getBooleanExtra(TIME_PASSES, false),
         )
 }
+
+/**
+ * Android's trim level as the app hears it: the screen went away, the process is
+ * cached, or memory is short and the process may go next; null for levels that
+ * ask nothing of the app.
+ */
+@Suppress("DEPRECATION")
+internal fun trimLevel(level: Int): String? =
+    when {
+        level >= ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> "critical"
+        level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND -> "background"
+        level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN -> "uiHidden"
+        level == ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> "critical"
+        else -> null
+    }

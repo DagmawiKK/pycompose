@@ -2222,5 +2222,8 @@ object IrContract {
         "onRouteChanged" to mapOf(
                 "route" to PropertyRule("string", required = true),
         ),
+        "onTrimMemory" to mapOf(
+                "level" to PropertyRule("enum", required = true, values = setOf("uiHidden", "background", "critical")),
+        ),
     )
 }
