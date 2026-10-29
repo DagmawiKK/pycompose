@@ -14,8 +14,15 @@ exclude = ["templates", "build", ".venv", "venv", "docs"]
 # pep8-naming, D-style docstring checks are delegated to pydoclint
 # (below). line-length 88 is the project standard (within PEP 8's
 # modern 99-char allowance).
-select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "ARG", "RUF", "PIE", "PL", "TID", "ERA", "PERF"]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "C90", "SIM", "ARG", "RUF", "PIE", "PL", "TID", "ERA", "PERF"]
 ignore = ["PLR0913", "PLR2004"]
+
+[tool.ruff.lint.mccabe]
+# Function size is where reading cost lives, so it is limited at any scale
+# (with PL's branch, statement and return counts). 13 is the most complex
+# hand-written function today: nothing new may be worse, and the ceiling only
+# comes down.
+max-complexity = 13
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 # Runtime code reaches time, randomness, ids, tasks and threads only through

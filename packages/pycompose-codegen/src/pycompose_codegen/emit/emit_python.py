@@ -93,7 +93,7 @@ def render_python_components(
     body = "\n".join(lines).rstrip() + "\n"
     header = [
         f"# {GENERATED_NOTICE}",
-        "# ruff: noqa: PLR0912 -- one branch per slot; the schema sets the count.",
+        "# ruff: noqa: C901, PLR0912 -- one branch per slot; the schema sets them.",
         f'"""Typed native component constructors; import from {package}."""',
         "",
         "from __future__ import annotations",

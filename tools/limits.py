@@ -1,18 +1,31 @@
 #!/usr/bin/env python3
 """Growth governor: line budgets for every file a human may edit (ADR-0017).
 
-Hand-written files carry budgets the whole stack checks; over budget means
-"split by responsibility", never "suppress the check". Generated artifacts are
-exempt from absolute budgets on purpose -- they must scale with the catalog --
-and are governed instead by ``tools/schema/gen.py --check`` byte-equality and
-the bounded-grammar test (``tests/test_generated_grammar.py``).
+Three rules, each measuring what it can measure well (function size and
+complexity are ruff's, in ``pyproject.toml``):
 
-    python tools/limits.py             # check; exit 1 on a violation (CI)
+* A file over its budget is two jobs: split it by responsibility, or give it
+  a budget of its own in ``BUDGETS`` with the reason. Never suppress the check.
+* A file near its budget may grow only a little in one change, so drift is
+  seen while the seam is still easy to find. A file with its own budget was
+  reviewed and is exempt.
+* A directory past a size or module count is noted, not refused: it is
+  probably a package of its own by then.
+
+Generated artifacts are exempt on purpose -- they must scale with the catalog
+-- and are governed instead by ``tools/schema/gen.py --check`` byte-equality
+and the bounded-grammar test (``tests/test_generated_grammar.py``).
+
+    python tools/limits.py               # budgets, and growth since HEAD
+    python tools/limits.py --base REF    # growth since REF (CI: the PR's base)
 """
 
 from __future__ import annotations
 
 import argparse
+import subprocess  # nosec B404 -- git, with fixed arguments
+from collections import defaultdict
+from collections.abc import Iterator
 from fnmatch import fnmatch
 from pathlib import Path
 
@@ -48,6 +61,19 @@ EXCLUDED_PARTS = (
 )
 """Directories that are never hand-edited sources: builds, caches, tooling."""
 
+GROWTH = 0.10
+"""How much a watched file may grow in one change, as a share of its size."""
+
+WATCHED = 0.6
+"""Share of its budget from which a file's growth is watched; below it, growth
+is ordinary work and the budget is far off."""
+
+PACKAGE_LINES = 3000
+"""Hand-written lines in one directory past which it is noted."""
+
+PACKAGE_FILES = 20
+"""Hand-written files in one directory past which it is noted."""
+
 SUFFIXES = (".py", ".kt")
 """Suffixes the governor audits; infra config (*.kts, *.yaml) is excluded."""
 
@@ -67,13 +93,40 @@ def _is_suppressed(path: Path) -> bool:
     return any(marker in first for marker in GENERATED_MARKERS)
 
 
-def _limit(path: Path) -> int:
+def _limit(path: Path, root: Path = ROOT) -> int:
     """Budget for one file: the most specific override, else the default."""
-    relative = path.relative_to(ROOT).as_posix()
+    relative = path.relative_to(root).as_posix()
     for pattern, limit in sorted(BUDGETS.items(), key=lambda item: -item[1]):
         if fnmatch(relative, pattern):
             return limit
     return DEFAULT_LIMIT
+
+
+def _audited(root: Path) -> Iterator[Path]:
+    """Every hand-edited source file under ``root``.
+
+    In a checkout that is what git does not ignore: an app's build tree and the
+    template's assembled copy are output, however hand-written they look.
+    """
+    listed = _git(root, "ls-files", "--cached", "--others", "--exclude-standard")
+    candidates = (
+        sorted(root.rglob("*"))
+        if listed is None
+        else sorted({root / name for name in listed.splitlines()})
+    )
+    for path in candidates:
+        if path.suffix not in SUFFIXES or not path.is_file():
+            continue
+        # Parts below the root only: a checkout inside a cache or a worktree
+        # under .claude/ is still audited.
+        if any(part in EXCLUDED_PARTS for part in path.relative_to(root).parts):
+            continue
+        if not _is_suppressed(path):
+            yield path
+
+
+def _lines(path: Path) -> int:
+    return len(path.read_text(encoding="utf-8", errors="strict").splitlines())
 
 
 def check(root: Path = ROOT) -> list[tuple[Path, int, int]]:
@@ -85,37 +138,105 @@ def check(root: Path = ROOT) -> list[tuple[Path, int, int]]:
     Returns:
         One (path, lines, budget) tuple per violation, heaviest first.
     """
-    violations: list[tuple[Path, int, int]] = []
-    for path in sorted(root.rglob("*")):
-        if path.suffix not in SUFFIXES or not path.is_file():
-            continue
-        # Parts below the root only: a checkout inside a cache or a worktree
-        # under .claude/ is still audited.
-        if any(part in EXCLUDED_PARTS for part in path.relative_to(root).parts):
-            continue
-        if _is_suppressed(path):
-            continue
-        limit = _limit(path)
-        lines = len(path.read_text(encoding="utf-8", errors="strict").splitlines())
-        if lines > limit:
-            violations.append((path, lines, limit))
+    violations = [
+        (path, lines, limit)
+        for path in _audited(root)
+        if (lines := _lines(path)) > (limit := _limit(path, root))
+    ]
     return sorted(violations, reverse=True, key=lambda item: item[1])
 
 
+def _git(root: Path, *arguments: str) -> str | None:
+    """Run git in ``root``; None when git or the revision is unavailable."""
+    try:
+        done = subprocess.run(  # nosec B603 B607 -- git, fixed arguments
+            ["git", "-C", str(root), *arguments],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return None
+    return done.stdout if done.returncode == 0 else None
+
+
+def growth(root: Path, base: str) -> list[tuple[Path, int, int]] | None:
+    """Files near their budget that grew more than ``GROWTH`` since ``base``.
+
+    Args:
+        root: Repository root to audit.
+        base: The revision the change is measured from.
+
+    Returns:
+        One (path, lines before, lines now) tuple per file that grew too much,
+        or None when ``base`` cannot be read (no git, a shallow clone, a new
+        branch's first push).
+    """
+    changed = _git(root, "diff", "--name-only", base, "--")
+    if changed is None:
+        return None
+    audited = set(_audited(root))
+    grown = []
+    for name in changed.split():
+        path = root / name
+        if path not in audited or name in BUDGETS:
+            continue
+        now = _lines(path)
+        if now < _limit(path, root) * WATCHED:
+            continue
+        before = _git(root, "show", f"{base}:{name}")
+        if before is not None and now > len(before.splitlines()) * (1 + GROWTH):
+            grown.append((path, len(before.splitlines()), now))
+    return grown
+
+
+def packages(root: Path = ROOT) -> list[tuple[Path, int, int]]:
+    """Directories past ``PACKAGE_LINES`` lines or ``PACKAGE_FILES`` files.
+
+    Args:
+        root: Repository root to audit.
+
+    Returns:
+        One (directory, lines, files) tuple per large directory, largest first.
+    """
+    sizes: dict[Path, list[int]] = defaultdict(list)
+    for path in _audited(root):
+        sizes[path.parent].append(_lines(path))
+    large = [
+        (directory, sum(lines), len(lines))
+        for directory, lines in sizes.items()
+        if sum(lines) > PACKAGE_LINES or len(lines) > PACKAGE_FILES
+    ]
+    return sorted(large, reverse=True, key=lambda item: item[1])
+
+
 def main(argv: list[str] | None = None) -> int:
-    """CLI entry: print violations with a split note, exit 1 when over budget."""
+    """CLI entry: print violations and notes; exit 1 on a budget or growth breach."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--base", default="HEAD", help="revision growth counts from")
     args = parser.parse_args(argv)
-    violations = check(args.root)
-    if not violations:
-        print("limits: every hand-edited file is within budget")
-        return 0
-    for path, lines, limit in violations:
+    for directory, lines, files in packages(args.root):
         print(
-            f"limits: {path}: {lines} lines > {limit} budget; split by responsibility"
+            f"limits: note: {directory.relative_to(args.root)}/ holds {lines} lines "
+            f"in {files} files; is it more than one package?"
         )
-    return 1
+    failed = False
+    for path, lines, limit in check(args.root):
+        failed = True
+        print(f"limits: {path}: {lines} lines > {limit} budget; split by job")
+    grown = growth(args.root, args.base)
+    if grown is None:
+        print(f"limits: note: cannot read {args.base}; growth not checked")
+    for path, before, now in grown or []:
+        failed = True
+        print(
+            f"limits: {path}: grew {before} -> {now} lines in one change; split "
+            "it, or give it a budget of its own in BUDGETS with the reason"
+        )
+    if not failed:
+        print("limits: every hand-edited file is within budget")
+    return int(failed)
 
 
 if __name__ == "__main__":

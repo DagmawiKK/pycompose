@@ -25,6 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The line budgets count a file's growth from the change's base.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -60,7 +63,10 @@ jobs:
       - name: import-linter (blocking boundary gate)
         run: lint-imports --config pyproject.toml
       - name: Line budgets (ADR-0015)
-        run: python tools/limits.py
+        env:
+          # A pull request grows from its base; a push from the commit before it.
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: python tools/limits.py --base "${BASE:-HEAD}"
       - name: pytest
         run: pytest -q --junitxml=reports/pytest.xml
       - name: Upload reports
