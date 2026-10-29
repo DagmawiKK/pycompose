@@ -43,4 +43,8 @@ class AppSession(Protocol):
         self, previous: State | None
     ) -> State: ...  # pragma: no cover - protocol declaration
 
+    def snapshot_below(
+        self,
+    ) -> State | None: ...  # pragma: no cover - protocol declaration
+
     def close(self) -> None: ...  # pragma: no cover - protocol declaration

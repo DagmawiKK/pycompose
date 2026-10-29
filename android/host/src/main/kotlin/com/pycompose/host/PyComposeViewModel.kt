@@ -71,6 +71,10 @@ class PyComposeViewModel(
     private val stream = SnapshotStream()
     private val mutableSnapshot = MutableStateFlow<SessionSnapshot?>(null)
     private val mutableError = MutableStateFlow("")
+    private val mutablePreview = MutableStateFlow<ValidatedIr?>(null)
+
+    /** The screen a back gesture in progress leads to; null when there is none. */
+    val preview: StateFlow<ValidatedIr?> = mutablePreview.asStateFlow()
     val snapshot: StateFlow<SessionSnapshot?> = mutableSnapshot.asStateFlow()
     val error: StateFlow<String> = mutableError.asStateFlow()
     private var route = savedState.get<String>("route") ?: "home"
@@ -181,12 +185,30 @@ class PyComposeViewModel(
                     // declared contract is what checks it.
                     bridge.acceptAction(command.action.copy(trace = trace).toJson())
                 }
+                is Command.Preview -> {
+                    // A picture of where back leads: drawn whole, never patched.
+                    val envelope = bridge.fetchLatest(BELOW, SnapshotStream.NONE)
+                    mutablePreview.value =
+                        envelope.takeIf { it.isNotEmpty() }?.let {
+                            SnapshotStream(surface = BELOW).accept(it).getOrNull()
+                        }
+                }
             }
             return true
         } catch (failure: Exception) {
             mutableError.value = failure.message ?: "Python worker failure"
             return false
         }
+    }
+
+    /** Ask Python for the screen a back gesture leads to; [preview] shows it. */
+    fun previewBelow() {
+        enqueue(Command.Preview)
+    }
+
+    /** Forget the preview once the gesture is over. */
+    fun dropPreview() {
+        mutablePreview.value = null
     }
 
     /** Report one host lifecycle event to Python as a plain action envelope. */
@@ -378,3 +400,6 @@ class PyComposeViewModel(
         private const val BYTES_PER_KB = 1024
     }
 }
+
+/** The surface showing the screen a back gesture leads to. */
+internal const val BELOW = "below"

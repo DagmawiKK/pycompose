@@ -11,6 +11,7 @@ from contextlib import contextmanager
 from threading import current_thread
 
 from pycompose.app.observe import Span
+from pycompose.bridge.preview import BELOW_SURFACE, preview_envelope
 from pycompose.bridge.protocol import AppSession
 from pycompose.bridge.stats import PassStats
 from pycompose.bridge.types import MAIN_SURFACE, Action, decode_action
@@ -395,7 +396,8 @@ class BridgeSurface:
 
         Args:
             base_serial: The serial of the snapshot the host holds; -1 for none.
-            surface: The surface being pulled; a session hosts only the main one.
+            surface: The surface being pulled: the main one, or ``below``, the
+                screen a back gesture leads to.
 
         Returns:
             The envelope as canonical JSON, or empty before any valid snapshot.
@@ -405,6 +407,10 @@ class BridgeSurface:
         except BridgeError as exc:
             self._report("Snapshot unavailable: worker contract violation", exc)
             return ""
+        if surface == BELOW_SURFACE:
+            return preview_envelope(
+                self._session, self._host, self._schema_version, debug=self._debug
+            )
         if surface != MAIN_SURFACE:
             unknown = BridgeError("unknown surface", surface=surface)
             self._report("Snapshot unavailable", unknown)

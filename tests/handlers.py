@@ -71,5 +71,8 @@ class Handlers:
         self._state = None
         return state
 
+    def snapshot_below(self) -> State | None:
+        return None
+
     def close(self) -> None:
         self.closed = True

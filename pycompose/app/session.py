@@ -283,6 +283,17 @@ class NavigationSession:
             if self.contract(name) != dict(payload):
                 raise StateError("undefined or mismatched intent", intent=name)
 
+    def snapshot_below(self) -> State | None:
+        """Return the screen a back gesture leads to, drawn from its state now.
+
+        Returns:
+            The entry below the top, or None for a stack of one screen.
+        """
+        if len(self.entries) < 2:
+            return None
+        below = self.entries[-2]
+        return State(root=below.destination.screen(below.view_model.state))
+
     def contract(self, action_id: str) -> Mapping[str, PropDef] | None:
         """Return the fields of the intent class a wire name names.
 

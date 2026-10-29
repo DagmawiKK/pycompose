@@ -6,13 +6,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -66,14 +67,6 @@ class MainActivity : ComponentActivity() {
             ) { message -> Log.w("PyCompose", message) }
         edgeToEdge()
         followDevServer()
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    model.lifecycle("onBackRequested")
-                }
-            },
-        )
         setContent {
             val snapshot by model.snapshot.collectAsStateWithLifecycle()
             val error by model.error.collectAsStateWithLifecycle()
@@ -83,6 +76,7 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(error) {
                 if (error.isNotEmpty()) Log.w("PyCompose", error)
             }
+            val back = rememberPredictiveBack(model)
             val renderer =
                 remember(model, LocalConfiguration.current) {
                     val resources = ResourceResolver(AndroidResources(this))
@@ -94,6 +88,7 @@ class MainActivity : ComponentActivity() {
                         windows = model::requestWindow,
                     )
                 }
+            val previewRenderer = rememberPreviewRenderer(this)
             DisposableEffect(model, LocalConfiguration.current) {
                 reportConfiguration()
                 onDispose { }
@@ -101,21 +96,17 @@ class MainActivity : ComponentActivity() {
             PyComposeTheme {
                 Surface(Modifier.fillMaxSize()) {
                     Box(Modifier.safeDrawingPadding()) {
-                        snapshot?.let { session ->
-                            key(session.epoch) { renderer.Render(session.ir) }
-                            ActionTrace.EndOnFrame(session)
+                        // Where back leads, behind the screen being dragged away.
+                        model.preview.collectAsStateWithLifecycle().value?.let {
+                            previewRenderer.Render(it)
                         }
-                        if (BuildConfig.DEBUG) {
-                            Column(Modifier.align(Alignment.BottomEnd).padding(16.dp)) {
-                                if (error.isNotEmpty()) {
-                                    Text(
-                                        error,
-                                        color = MaterialTheme.colorScheme.error,
-                                    )
-                                }
-                                TextButton(onClick = model::reload) { Text("Reload Python") }
+                        Box(Modifier.predictiveBack(back)) {
+                            snapshot?.let { session ->
+                                key(session.epoch) { renderer.Render(session.ir) }
+                                ActionTrace.EndOnFrame(session)
                             }
                         }
+                        if (BuildConfig.DEBUG) DebugOverlay(error, model::reload)
                     }
                 }
             }
@@ -245,3 +236,15 @@ internal fun trimLevel(level: Int): String? =
         level == ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> "critical"
         else -> null
     }
+
+/** A debug build's last error and its reload button, in the screen's corner. */
+@Composable
+private fun BoxScope.DebugOverlay(
+    error: String,
+    reload: () -> Unit,
+) {
+    Column(Modifier.align(Alignment.BottomEnd).padding(16.dp)) {
+        if (error.isNotEmpty()) Text(error, color = MaterialTheme.colorScheme.error)
+        TextButton(onClick = reload) { Text("Reload Python") }
+    }
+}

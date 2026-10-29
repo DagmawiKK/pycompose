@@ -232,3 +232,14 @@ def test_every_screen_on_the_stack_hears_a_memory_trim(notes: str) -> None:
     ]
     _event("onTrimMemory", level="huge")
     assert runtime.fetch_latest_error() != ""
+
+
+def test_a_back_gesture_can_preview_the_screen_below(notes: str) -> None:
+    runtime.start(notes, "home", True)
+    assert runtime.fetch_latest("below", -1) == ""  # nothing under the first screen
+    _tap(1)
+    preview = json.loads(runtime.fetch_latest("below", -1))
+    assert (preview["kind"], preview["surface"]) == ("full", "below")
+    assert preview["root"]["children"][0]["props"]["text"] == "list:7"
+    # A picture of where back leads: the main screen is still the detail.
+    assert _title() == "detail:7:0:0"

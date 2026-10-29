@@ -34,6 +34,9 @@ internal sealed interface Command {
         val last: Int,
     ) : Command
 
+    /** Draw the screen a back gesture leads to, for its preview. */
+    data object Preview : Command
+
     /** A background result, queued from whatever thread produced it. */
     data class Push(
         val action: Action,
