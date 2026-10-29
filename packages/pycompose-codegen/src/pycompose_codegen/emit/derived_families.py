@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose_codegen.emit.adapter_helpers import _camel
+from pycompose_codegen.emit.adapters.policy import camel
 from pycompose_codegen.emit.literals import kotlin_string
 from pycompose_codegen.emit.rules import DOTTED_NAME, die
 from pycompose_codegen.emit.state_families import property_props, report_name
@@ -46,7 +46,7 @@ def properties_locals(state: dict[str, Any]) -> list[str]:
     lines: list[str] = []
     seeded: list[str] = []
     for name, spec in state["properties"].items():
-        prop = f"model.props.{_camel(name)}"
+        prop = f"model.props.{camel(name)}"
         narrow = NATIVE.get(spec["nativeType"], "")
         if spec.get("nullable"):
             desired = f"{prop}.wanted {{ it.{DECODE[spec['type']]}{narrow} }}"

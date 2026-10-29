@@ -11,8 +11,9 @@ from collections.abc import Iterable
 from typing import Any
 
 from pycompose.contract.registry_vocabulary import STATE_STREAMS
-from pycompose_codegen.emit.adapter_helpers import attach_gate, state_call
+from pycompose_codegen.emit.adapters.state import state_call
 from pycompose_codegen.emit.derived_families import property_imports
+from pycompose_codegen.emit.state_families import attach_gate
 
 
 def extra_imports(entry: dict[str, Any]) -> set[str]:

@@ -221,8 +221,8 @@ def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:
 
 def test_every_family_table_names_known_state_kinds() -> None:
     """A gate, attach or constructor decision for an unknown family is a typo."""
-    from pycompose_codegen.emit.adapters import (
-        GATED_STATES,
+    from pycompose_codegen.emit.adapters.state import GATED_STATES
+    from pycompose_codegen.emit.state_families import (
         STATE_ATTACH_GATES,
         STATE_CONSTRUCTOR_PROPS,
     )

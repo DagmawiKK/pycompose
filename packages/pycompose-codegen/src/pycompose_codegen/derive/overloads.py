@@ -21,7 +21,7 @@ from typing import Any
 
 from pycompose_codegen.derive.candidate_props import CandidateError
 from pycompose_codegen.derive.component_binding import spell
-from pycompose_codegen.emit.adapter_helpers import is_mechanical
+from pycompose_codegen.emit.adapters.eligibility import is_mechanical
 from pycompose_codegen.emit.overloads import ambiguous, keywords
 
 

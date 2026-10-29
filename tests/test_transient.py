@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from pycompose_codegen.emit.adapters import render
+from pycompose_codegen.emit.adapters.assemble import render
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 

@@ -300,8 +300,10 @@ def test_a_declined_holder_is_not_bound() -> None:
 
 
 def test_codegen_reads_held_props_from_the_families() -> None:
-    from pycompose_codegen.emit.adapter_helpers import STATE_CONSTRUCTOR_PROPS
-    from pycompose_codegen.emit.state_families import STATE_FAMILIES
+    from pycompose_codegen.emit.state_families import (
+        STATE_CONSTRUCTOR_PROPS,
+        STATE_FAMILIES,
+    )
 
     assert STATE_CONSTRUCTOR_PROPS["slider"] == ("valueRange", "steps")
     assert set(STATE_CONSTRUCTOR_PROPS) == {

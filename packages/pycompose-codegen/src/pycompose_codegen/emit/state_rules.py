@@ -13,10 +13,6 @@ from pycompose.contract.registry_types import (
     STATE_KINDS,
     TRANSIENT_KINDS,
 )
-from pycompose_codegen.emit.adapter_helpers import (
-    STATE_ATTACH_GATES,
-    STATE_CONSTRUCTOR_PROPS,
-)
 from pycompose_codegen.emit.derived_families import validate_properties
 from pycompose_codegen.emit.rules import (
     NATIVE_PARAMETER,
@@ -27,6 +23,10 @@ from pycompose_codegen.emit.state_anchors import (
     SWIPE_VALUES,
     validate_anchor,
     validate_optional_field,
+)
+from pycompose_codegen.emit.state_families import (
+    STATE_ATTACH_GATES,
+    STATE_CONSTRUCTOR_PROPS,
 )
 
 INTERACTION_KEYS = frozenset({"native", "observations"})

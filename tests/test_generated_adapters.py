@@ -17,12 +17,8 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from pycompose_codegen.emit.adapters import (
-    _held,
-    is_mechanical,
-    render,
-    render_file,
-)
+from pycompose_codegen.emit.adapters.assemble import render, render_file
+from pycompose_codegen.emit.adapters.eligibility import held_props, is_mechanical
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 GENERATED = (
@@ -308,7 +304,7 @@ def test_no_optional_prop_is_passed_through() -> None:
         # report, the holder's constructor props and the attach gate -- is
         # passed to a host holder that takes it nullable by design, and so is
         # every prop of a transient component, whose request the host fills.
-        held = _held(entry.get("state"), entry.get("props", {}))
+        held = held_props(entry)
         if entry.get("transient") is not None:
             held |= set(entry["props"])
         for prop, spec in entry["props"].items():

@@ -200,3 +200,46 @@ def report_name(name: str) -> str:
         ``on<Property>Change``.
     """
     return f"on{name[0].upper()}{name[1:]}Change"
+
+
+STATE_CONSTRUCTOR_PROPS = {
+    kind: tuple(family.held) for kind, family in STATE_FAMILIES.items() if family.held
+}
+"""Props each family's holder needs at construction, beyond its primary projection.
+
+A ``SliderState`` is built from the range and the steps and owns them for as
+long as it lives; a tooltip holder is built with its persistence policy. A
+sheet carries a second projection beside its boolean presence -- the anchor and
+its report -- because one node states both. They flow into the renderer call
+that creates the holder rather than into the component's own arguments. Every
+prop named here is held exactly as the primary value and report are: the app
+states it, the adapter passes it to the holder, and it never reaches the
+component.
+"""
+
+
+STATE_ATTACH_GATES = {"scroll": "scrollable"}
+"""Props gating a family whose holder may ride the call's modifier.
+
+``Column`` has no scroll parameter -- scrolling attaches through its modifier,
+so the state cannot fill a native parameter. Its entry declares the boolean
+prop named here, which decides whether the adapter attaches the holder to the
+modifier the call receives. An entry without that prop (``ExposedDropdownMenu``
+takes a ``ScrollState``) passes the holder as its native parameter.
+"""
+
+
+def attach_gate(state: dict[str, Any] | None, props: dict[str, Any]) -> str | None:
+    """The prop gating a holder that rides the modifier, or None when it does not.
+
+    Args:
+        state: The component's ``state`` entry, if any.
+        props: The component's props.
+
+    Returns:
+        The gate prop's wire name.
+    """
+    if state is None:
+        return None
+    gate = STATE_ATTACH_GATES.get(state.get("kind", ""))
+    return gate if gate in props else None

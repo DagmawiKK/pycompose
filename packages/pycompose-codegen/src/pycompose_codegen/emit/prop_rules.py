@@ -302,7 +302,7 @@ def _validate_nullable(
     """
     if not prop.get("nullable"):
         return
-    from pycompose_codegen.emit.adapters import SCALAR_KOTLIN
+    from pycompose_codegen.emit.adapters.policy import SCALAR_KOTLIN
 
     if prop.get("required"):
         if prop["type"] not in SCALAR_KOTLIN or "decode" in prop:

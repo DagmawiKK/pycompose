@@ -6,9 +6,7 @@ import json
 from pathlib import Path
 
 import pytest
-from pycompose_codegen.emit.adapters import (
-    render,
-)
+from pycompose_codegen.emit.adapters.assemble import render
 from test_generated_adapters import (
     SCHEMA_PATH,
     components,

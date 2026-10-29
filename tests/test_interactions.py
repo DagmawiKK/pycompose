@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from pycompose_codegen.emit.adapters import render
+from pycompose_codegen.emit.adapters.assemble import render
 
 from pycompose.core.node import Node
 from pycompose.material3 import Button

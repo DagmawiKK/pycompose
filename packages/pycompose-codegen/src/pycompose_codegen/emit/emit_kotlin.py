@@ -87,7 +87,7 @@ def render_generated_adapters(registry: dict[str, Any]) -> str:
     Returns:
         The generated Kotlin source.
     """
-    from pycompose_codegen.emit.adapters import render_file
+    from pycompose_codegen.emit.adapters.assemble import render_file
 
     return render_file(registry)
 

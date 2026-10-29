@@ -9,7 +9,9 @@ so the emission is reviewed exactly once and the SSOT lands it after.
 
 from __future__ import annotations
 
-from pycompose_codegen.emit.adapters import extra_imports, is_mechanical, render
+from pycompose_codegen.emit.adapters.assemble import render
+from pycompose_codegen.emit.adapters.eligibility import is_mechanical
+from pycompose_codegen.emit.adapters.imports import extra_imports
 from test_state_projection import GATED, STATEFUL, components
 
 

@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose_codegen.emit.adapter_helpers import _Fragments
+from pycompose_codegen.emit.adapters.fragments import Fragments
 
 __all__ = ["echoed_text"]
 
 
-def echoed_text(props: dict[str, Any], out: _Fragments) -> set[str]:
+def echoed_text(props: dict[str, Any], out: Fragments) -> set[str]:
     """Render a text field's value through the host's echo of what was typed.
 
     A field that showed each snapshot's text would apply the next keystroke to

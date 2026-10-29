@@ -379,7 +379,7 @@ def test_every_approved_component_resolves_to_one_pinned_overload(
 def test_the_resolved_face_is_the_generated_call(native_document) -> None:
     from pycompose_codegen.derive.classpath_dump import inventory
     from pycompose_codegen.derive.component_binding import resolutions
-    from pycompose_codegen.emit.adapters import render
+    from pycompose_codegen.emit.adapters.assemble import render
 
     assert native_document["artifacts"]
     catalog = json.loads((ROOT / "schema/catalog.lock.json").read_text())

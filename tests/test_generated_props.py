@@ -9,10 +9,8 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from pycompose_codegen.emit.adapter_helpers import _held_props
-from pycompose_codegen.emit.adapters import (
-    render,
-)
+from pycompose_codegen.emit.adapters.assemble import render
+from pycompose_codegen.emit.adapters.eligibility import held_props
 from test_generated_adapters import (
     GENERATED,
     SCHEMA_PATH,
@@ -182,7 +180,7 @@ def test_every_enum_color_and_resource_prop_declares_its_decoder() -> None:
     """
     registry = components()
     for name, entry in sorted(registry.items()):
-        held = _held_props(entry)
+        held = held_props(entry)
         for prop, spec in entry["props"].items():
             if prop in held:
                 continue
@@ -194,8 +192,11 @@ def test_every_enum_color_and_resource_prop_declares_its_decoder() -> None:
 
 def test_a_decoder_binds_to_a_resolver_that_exists() -> None:
     """A typo'd decoder name generates Kotlin that does not compile."""
-    from pycompose_codegen.emit.adapter_helpers import RESOLVER_OWNER
-    from pycompose_codegen.emit.adapters import RESOLVER_FALLBACK, RESOLVER_RETURN
+    from pycompose_codegen.emit.adapters.policy import (
+        RESOLVER_FALLBACK,
+        RESOLVER_OWNER,
+        RESOLVER_RETURN,
+    )
 
     declared = {
         spec["decode"]
@@ -219,7 +220,7 @@ def test_a_decoder_binds_to_a_resolver_that_exists() -> None:
 
 def test_tooltip_position_uses_its_native_decoder() -> None:
     """Experimental positions have a declared resolver, never a guessed alignment."""
-    from pycompose_codegen.emit.adapters import render
+    from pycompose_codegen.emit.adapters.assemble import render
 
     entry = {
         "props": {"position": components()["TooltipBox"]["props"]["position"]},
@@ -241,7 +242,7 @@ def decoded_example() -> tuple[str, str]:
     Returns:
         The component name and its rendered adapter.
     """
-    from pycompose_codegen.emit.adapters import render as render_one
+    from pycompose_codegen.emit.adapters.assemble import render as render_one
 
     entry = {
         "children": {"allowed": False},
@@ -277,7 +278,7 @@ def test_a_resource_prop_needs_a_wrapper() -> None:
     ResourceText), so an entry with a resource prop and no wrapper is not
     generated rather than generated to block or throw.
     """
-    from pycompose_codegen.emit.adapters import render as render_one
+    from pycompose_codegen.emit.adapters.assemble import render as render_one
 
     entry = {
         "children": {"allowed": False},
@@ -295,7 +296,7 @@ def test_a_resource_prop_needs_a_wrapper() -> None:
 
 def test_an_optional_decoded_prop_is_not_passed_to_a_non_null_resolver() -> None:
     """`PropResolver.color` takes a String; a nullable would not compile."""
-    from pycompose_codegen.emit.adapters import render as render_one
+    from pycompose_codegen.emit.adapters.assemble import render as render_one
 
     entry = {
         "children": {"allowed": False},
@@ -335,8 +336,8 @@ def test_the_registry_refuses_an_unknown_decoder() -> None:
 
 def test_an_index_prop_is_guarded_by_the_items_it_indexes() -> None:
     """Compose throws outside its items; the adapter clamps or composes nothing."""
-    from pycompose_codegen.emit.adapters import extra_imports
-    from pycompose_codegen.emit.adapters import render as render_one
+    from pycompose_codegen.emit.adapters.assemble import render as render_one
+    from pycompose_codegen.emit.adapters.imports import extra_imports
 
     entry = components()["PrimaryTabRow"]
     block = render_one("PrimaryTabRow", entry)
@@ -371,7 +372,7 @@ def test_an_index_must_be_an_integer_naming_a_slot(
 
 def test_an_optional_callback_reaches_nobody_when_unbound() -> None:
     """A nullable action id must not reach dispatch, which takes a String."""
-    from pycompose_codegen.emit.adapters import render as render_one
+    from pycompose_codegen.emit.adapters.assemble import render as render_one
 
     entry = {
         "children": {"allowed": False},
