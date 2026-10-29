@@ -4045,6 +4045,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -4107,6 +4110,9 @@
                   "type": "null"
                 }
               ]
+            },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
             },
             "imageVector": {
               "$ref": "#/definitions/Family_ImageVector"
@@ -10201,6 +10207,13 @@
         }
       ]
     },
+    "Family_ContentScale": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_ContentScale"
+        }
+      ]
+    },
     "Family_DatePickerColors": {
       "oneOf": [
         {
@@ -12570,6 +12583,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "type": "object"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -13475,6 +13491,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
             },
             "modifier": {
               "properties": {
@@ -14502,6 +14521,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -15527,6 +15549,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
             },
             "modifier": {
               "properties": {
@@ -16554,6 +16579,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -17579,6 +17607,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
             },
             "modifier": {
               "properties": {
@@ -18606,6 +18637,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -19631,6 +19665,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
             },
             "modifier": {
               "properties": {
@@ -20704,6 +20741,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
             },
             "modifier": {
               "properties": {
@@ -21844,6 +21884,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -22852,6 +22895,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "type": "object"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -23746,6 +23792,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
             },
             "modifier": {
               "properties": {
@@ -25048,6 +25097,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
             },
             "modifier": {
               "properties": {
@@ -26742,6 +26794,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
             },
             "modifier": {
               "properties": {
@@ -31723,6 +31778,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -31785,6 +31843,9 @@
                   "type": "null"
                 }
               ]
+            },
+            "contentScale": {
+              "$ref": "#/definitions/Family_ContentScale"
             },
             "imageVector": {
               "$ref": "#/definitions/Family_ImageVector"
@@ -38915,6 +38976,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "type": "object"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -39749,6 +39813,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "type": "object"
             },
             "modifier": {
               "properties": {
@@ -40643,6 +40710,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "type": "object"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -41535,6 +41605,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "type": "object"
             },
             "modifier": {
               "properties": {
@@ -42429,6 +42502,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "type": "object"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -43321,6 +43397,9 @@
           "properties": {
             "contentDescription": {
               "type": "string"
+            },
+            "contentScale": {
+              "type": "object"
             },
             "modifier": {
               "properties": {
@@ -44215,6 +44294,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "type": "object"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -45108,6 +45190,9 @@
             "contentDescription": {
               "type": "string"
             },
+            "contentScale": {
+              "type": "object"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -45897,6 +45982,31 @@
       "required": [
         "type",
         "color"
+      ],
+      "type": "object"
+    },
+    "Value_ContentScale": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Crop",
+            "FillBounds",
+            "FillHeight",
+            "FillWidth",
+            "Fit",
+            "Inside",
+            "None"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "ContentScale"
+        }
+      },
+      "required": [
+        "type",
+        "name"
       ],
       "type": "object"
     },

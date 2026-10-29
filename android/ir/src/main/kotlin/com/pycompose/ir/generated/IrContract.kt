@@ -813,6 +813,7 @@ object IrContract {
             since = "1.1.0",
             props = mapOf(
                 "contentDescription" to PropertyRule("string", required = false),
+                "contentScale" to PropertyRule("value", required = false, valueType = "ContentScale"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "resource" to PropertyRule("resource", required = true, values = setOf("drawable", "asset", "file")),
             ),
@@ -825,6 +826,7 @@ object IrContract {
             props = mapOf(
                 "alignment" to PropertyRule("enum", required = false, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
                 "contentDescription" to PropertyRule("string", required = true, nullable = true),
+                "contentScale" to PropertyRule("value", required = false, valueType = "ContentScale"),
                 "imageVector" to PropertyRule("value", required = true, valueType = "ImageVector"),
                 "modifier" to PropertyRule("modifier", required = false),
             ),

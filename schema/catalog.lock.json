@@ -3594,6 +3594,11 @@
         "contentDescription": {
           "type": "string"
         },
+        "contentScale": {
+          "type": "value",
+          "valueType": "ContentScale",
+          "nativeDefault": "androidx.compose.ui.layout.ContentScale.Companion.Fit"
+        },
         "modifier": {
           "type": "modifier"
         },
@@ -3655,6 +3660,11 @@
           "type": "string",
           "required": true,
           "nullable": true
+        },
+        "contentScale": {
+          "type": "value",
+          "valueType": "ContentScale",
+          "nativeDefault": "androidx.compose.ui.layout.ContentScale.Companion.Fit"
         },
         "imageVector": {
           "type": "value",
@@ -10843,6 +10853,35 @@
       },
       "native": {
         "call": "androidx.compose.foundation.shape.RoundedCornerShape"
+      }
+    },
+    "ContentScale": {
+      "family": "ContentScale",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.layout.ContentScale",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/ui/layout/ContentScale$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Crop",
+            "FillBounds",
+            "FillHeight",
+            "FillWidth",
+            "Fit",
+            "Inside",
+            "None"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.layout.ContentScale"
       }
     },
     "CutCornerShape": {

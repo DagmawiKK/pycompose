@@ -1337,11 +1337,14 @@ object GeneratedAdapters {
             .register("ImageImageVector") { node, modifier, context ->
                 val model = node as ImageImageVectorNode
                 val alignmentValue: androidx.compose.ui.Alignment = com.pycompose.renderer.PropResolver.alignment(model.props.alignment).getOrDefault(androidx.compose.ui.Alignment.TopStart)
+                val contentScaleWire = model.props.contentScale
+                val contentScaleValue = if (contentScaleWire != null) com.pycompose.renderer.generated.ValueResolver.contentScale(contentScaleWire).getOrThrow() else androidx.compose.ui.layout.ContentScale.Companion.Fit
                 val imageVectorValue = com.pycompose.renderer.generated.ValueResolver.imageVector(model.props.imageVector).getOrThrow()
                 Image(
                     modifier = modifier,
                     alignment = alignmentValue,
                     contentDescription = model.props.contentDescription,
+                    contentScale = contentScaleValue,
                     imageVector = imageVectorValue,
                 )
             }

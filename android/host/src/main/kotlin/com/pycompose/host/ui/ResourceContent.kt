@@ -11,6 +11,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import com.pycompose.host.BuildConfig
@@ -28,13 +29,14 @@ fun ResourceImage(
     description: String?,
     modifier: Modifier,
     resources: ResourceResolver?,
+    contentScale: ContentScale = ContentScale.Fit,
 ) {
     val result by produceState<Result<Painter>?>(null, reference, resources) {
         value = null
         value = loadImage(resources, reference)
     }
     ResourceDiagnostic(result?.exceptionOrNull())
-    result?.getOrNull()?.let { Image(it, description, modifier) }
+    result?.getOrNull()?.let { Image(it, description, modifier, contentScale = contentScale) }
     if (BuildConfig.DEBUG && result?.isFailure == true) {
         Text("Missing resource: $reference", modifier)
     }
