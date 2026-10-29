@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.PropResolver
@@ -50,6 +51,9 @@ object BuiltinComponents {
                     image.props.contentDescription,
                     modifier,
                     resources,
+                    image.props.contentScale?.let {
+                        ValueResolver.contentScale(it).getOrThrow()
+                    } ?: ContentScale.Fit,
                 )
             }
 

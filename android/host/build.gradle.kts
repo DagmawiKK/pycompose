@@ -84,6 +84,9 @@ chaquopy {
                 layout.buildDirectory.dir("generated/runtime"),
             ),
         )
+        // Tool caches beside the app's source (.mypy_cache, .pytest_cache and
+        // the like) and stale bytecode are never part of the app.
+        exclude("**/.*", "**/.*/**", "**/__pycache__/**")
     }
 }
 
@@ -91,32 +94,20 @@ chaquopy {
 // build` sets the property. A raw Gradle build keeps the library catalog,
 // which is what the fallback sample under src/main/python imports.
 val ownSlice = providers.gradleProperty("pycomposeOwnSlice").orNull == "true"
-val integrationModules =
-    providers
-        .gradleProperty("pycomposeIntegrationModules")
-        .orNull
-        ?.lines()
-        ?.filter(String::isNotBlank)
-        ?.toSet()
-        .orEmpty()
 
 val stageRuntime by tasks.registering(Sync::class) {
     from(providers.gradleProperty("pycomposeRuntimeDir").getOrElse(rootProject.file("..").path)) {
-        include("pycompose/**/*.py", "pycompose/py.typed")
+        // The catalog the runtime validates against ships as data beside its loader.
+        include("pycompose/**/*.py", "pycompose/py.typed", "pycompose/contract/catalog.lock.json")
         // Planning, evidence and project tooling are CLI-tier: nothing on a device
         // imports them, so they are excluded as directories, never by module list.
         exclude(
             "pycompose/cli/**",
+            "pycompose/codegen/**",
             "pycompose/compiler/**",
             "pycompose/templates/**",
             "pycompose/testing/**",
         )
-        // Reference recipes are ordinary opt-in consumers of the extension contract.
-        exclude {
-            it.path.startsWith("pycompose/integrations/") &&
-                it.name != "__init__.py" &&
-                it.name.removeSuffix(".py") !in integrationModules
-        }
         // The app's own slice is the only copy of the catalog's components it
         // carries; shipping pycompose/m3 too would put every component back
         // into the APK the slice exists to keep out.
@@ -147,6 +138,14 @@ tasks.withType<Test>().configureEach {
             "pycomposeRender",
         ).orNull
         ?.let { systemProperty("pycompose.render", it) }
+    // Recorded queue runs, checked against the protocol model by tools/spec/trace.py.
+    systemProperty(
+        "pycompose.traces",
+        layout.buildDirectory
+            .dir("traces")
+            .get()
+            .asFile.path,
+    )
 }
 
 kotlin {

@@ -20,6 +20,9 @@ interface ResourceBackend {
     fun font(name: String): FontFamily
 
     fun assetImage(name: String): Painter
+
+    /** An image Python wrote to the app's media cache, by its content-digest name. */
+    fun fileImage(name: String): Painter = error("No media files: $name")
 }
 
 /** Configuration-scoped, name-based resources. Failures are never cached. */
@@ -77,9 +80,10 @@ class ResourceResolver(
             if (resource.kind == "drawable") {
                 return@runCatching drawable(resource.name).getOrThrow()
             }
-            images[reference] ?: backend.assetImage(resource.name).also {
-                images.put(reference, it)
-            }
+            images[reference] ?: when (resource.kind) {
+                "file" -> backend.fileImage(resource.name)
+                else -> backend.assetImage(resource.name)
+            }.also { images.put(reference, it) }
         }
 
     fun invalidate() {
@@ -99,7 +103,7 @@ class ResourceResolver(
         private const val CACHE_ENTRIES = 16
         private const val MAX_IMAGE_BYTES = 16 * 1024 * 1024
         private const val BYTES_PER_PIXEL = 4
-        private val IMAGE_KINDS = setOf("drawable", "asset")
+        private val IMAGE_KINDS = setOf("drawable", "asset", "file")
         private val LOCALE = Regex("[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-(?:[A-Z]{2}|[0-9]{3}))?")
     }
 }

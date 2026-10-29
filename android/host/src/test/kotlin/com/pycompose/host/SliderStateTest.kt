@@ -113,7 +113,7 @@ class SliderStateTest {
             .performTouchInput { swipeRight() }
 
         compose.waitUntil(5000) { actions.isNotEmpty() }
-        assertEquals("app.demo.slider.1", actions[0].actionId)
+        assertEquals(intent("demo.slider"), actions[0].actionId)
         val settled = actions[0].payload["value"]
         assertTrue(settled is JsonPrimitive && !settled.isString)
     }
@@ -127,7 +127,7 @@ class SliderStateTest {
         compose.runOnIdle { actions.clear() }
 
         compose.runOnIdle {
-            ir.value = parse(slider(value = "0.25", report = "app.demo.slider.2"))
+            ir.value = parse(slider(value = "0.25", report = "demo.settled"))
         }
         compose.waitForIdle()
         compose
@@ -135,7 +135,7 @@ class SliderStateTest {
             .performTouchInput { swipeRight() }
         compose.waitForIdle()
 
-        assertEquals("app.demo.slider.2", actions.single().actionId)
+        assertEquals(intent("demo.settled"), actions.single().actionId)
     }
 
     @Test
@@ -190,18 +190,17 @@ class SliderStateTest {
 
     private fun slider(
         value: String?,
-        report: String = "app.demo.slider.1",
+        report: String = "demo.slider",
         steps: Int = 0,
     ): String {
         val stated = if (value != null) ",\"value\":$value" else ""
         return """
-            {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
-              "$report":{"handlerId":"demo.slider","payload":{
-                "value":{"required":true,"type":"number"}},"bound":{}}}},
+            {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"intents":{
+              "$report":{"payload":{"value":{"required":true,"type":"number"}}}}},
              "root":{"id":"root","type":"Slider","props":{
                "valueRange":{"type":"Range","start":0.0,"end":1.0},
                "steps":$steps,
-                "onValueChangeFinished":"$report"$stated}}}
+                "onValueChangeFinished":{"fields":{},"intent":"$report"}$stated}}}
             """.trimIndent()
     }
 }

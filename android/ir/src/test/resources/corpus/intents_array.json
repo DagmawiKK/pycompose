@@ -1,0 +1,99 @@
+{
+ "metadata": {
+  "data": {
+   "count": 2,
+   "draft": "draft"
+  },
+  "effects": [
+   {
+    "kind": "toast",
+    "payload": {
+     "message": "saved"
+    }
+   }
+  ],
+  "intents": []
+ },
+ "root": {
+  "children": [
+   {
+    "children": [
+     {
+      "id": "2",
+      "props": {
+       "text": "Body"
+      },
+      "type": "Text"
+     },
+     {
+      "id": "3",
+      "props": {
+       "label": "Name",
+       "onValueChange": {
+        "fields": {},
+        "intent": "__main__.Edit"
+       },
+       "selection": 2,
+       "value": "draft"
+      },
+      "type": "TextField"
+     },
+     {
+      "id": "4",
+      "props": {
+       "checked": true,
+       "onCheckedChange": {
+        "fields": {},
+        "intent": "__main__.Flip"
+       }
+      },
+      "type": "Switch"
+     },
+     {
+      "id": "5",
+      "props": {
+       "onClick": {
+        "fields": {
+         "value": true
+        },
+        "intent": "__main__.Flip"
+       },
+       "text": "Go"
+      },
+      "type": "Button"
+     }
+    ],
+    "id": "1",
+    "props": {
+     "modifier": {
+      "operations": [
+       {
+        "type": "padding",
+        "value": 8
+       },
+       {
+        "fraction": 0.5,
+        "type": "fillMaxWidth"
+       }
+      ]
+     }
+    },
+    "type": "Column"
+   },
+   {
+    "id": "6",
+    "props": {
+     "style": "titleLarge",
+     "text": "Corpus"
+    },
+    "slot": "topBar",
+    "type": "Text"
+   }
+  ],
+  "id": "0",
+  "props": {},
+  "type": "Scaffold"
+ },
+ "schemaVersion": "1.23.0",
+ "version": "0.1.0"
+}

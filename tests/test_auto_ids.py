@@ -3,27 +3,23 @@
 from __future__ import annotations
 
 import pytest
+from readable import ids, readable
 
-from pycompose import action, composable
+from pycompose import composable
+from pycompose.app import Intent
 from pycompose.components import Button, Column, Modifier, Text
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core.node import Node
 from pycompose.errors import IrError, IrValidationError
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
-from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.state import State
 
 
-@action
-def bump(state: State) -> State:
-    """Return the snapshot unchanged.
+class Bump(Intent):
+    """A tap that binds nothing."""
 
-    Args:
-        state: Snapshot before the tap.
 
-    Returns:
-        The same snapshot.
-    """
-    return state
+bump = Bump()
 
 
 def ids_of(node: Node) -> list[str]:
@@ -45,7 +41,7 @@ def test_a_node_without_an_id_is_keyed_by_its_call_site() -> None:
 
     emitted = emit_ir(state, "1.0.0")
 
-    unnamed, named = ids_of(emitted.root)[1:]
+    unnamed, named = ids(readable(state, "1.0.0")["root"])[1:]
     assert unnamed.startswith(
         "root.test_a_node_without_an_id_is_keyed_by_its_call_site:"
     )
@@ -54,20 +50,18 @@ def test_a_node_without_an_id_is_keyed_by_its_call_site() -> None:
 
 
 def test_a_conditional_before_a_node_leaves_its_identity_alone() -> None:
-    def screen(*, banner: bool) -> Node:
+    def screen(*, banner: bool) -> str:
         extra = [Text(text="banner")] if banner else []
-        return emit_ir(
-            State(root=Column(id="list", children=[*extra, Text(text="body")])),
-            "1.0.0",
-        ).root.children[-1]
+        state = State(root=Column(id="list", children=[*extra, Text(text="body")]))
+        return str(readable(state, "1.0.0")["root"]["children"][-1]["id"])
 
-    assert screen(banner=True).id == screen(banner=False).id
+    assert screen(banner=True) == screen(banner=False)
 
 
 def test_a_loop_numbers_the_nodes_one_call_site_declares() -> None:
     state = State(root=Column(id="list", children=[Text(text=t) for t in "ab"]))
 
-    first, second = ids_of(emit_ir(state, "1.0.0").root)[1:]
+    first, second = ids(readable(state, "1.0.0")["root"])[1:]
 
     assert first.endswith("#0")
     assert second.endswith("#1")
@@ -83,9 +77,7 @@ def test_derived_ids_are_byte_stable_across_rebuilds() -> None:
 
 
 def test_the_root_itself_may_omit_its_id() -> None:
-    emitted = emit_ir(State(root=Text(text="hi")), "1.0.0")
-
-    assert emitted.root.id == "root"
+    assert readable(State(root=Text(text="hi")), "1.0.0")["root"]["id"] == "root"
 
 
 def test_a_node_carrying_a_binding_needs_no_id_outside_a_loop() -> None:

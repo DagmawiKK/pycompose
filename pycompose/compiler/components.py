@@ -15,6 +15,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
+from pycompose.codegen.defaults import render_default
 from pycompose.compiler.classpath_dump import (
     DUMP_DIR,
     Declaration,
@@ -37,13 +38,12 @@ from pycompose.compiler.slots import (
     slot_rule,
     slot_scopes,
 )
-from pycompose.core.registry_vocabulary import (
+from pycompose.contract.registry_vocabulary import (
     HOST_VALUES,
     RESOURCE_TYPES,
     STATE_HOLDERS,
     TRANSIENT_HOLDERS,
 )
-from pycompose.schema.codegen.defaults import render_default
 
 HOLDER_KINDS = {holder: kind for kind, holder in STATE_HOLDERS.items()}
 TRANSIENT_BY_HOLDER = {holder: kind for kind, holder in TRANSIENT_HOLDERS.items()}
@@ -432,7 +432,7 @@ def main() -> None:
     protected = {
         args.schema.resolve(),
         (root / "schema/catalog.lock.json").resolve(),
-        (root / "pycompose/schema/catalog.lock.json").resolve(),
+        (root / "pycompose/contract/catalog.lock.json").resolve(),
     }
     if args.out and args.out.resolve() in protected:
         parser.error("a proposal cannot overwrite an approved schema")

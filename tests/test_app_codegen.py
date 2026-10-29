@@ -91,7 +91,7 @@ def test_the_slice_holds_exactly_the_components_the_app_references(
     A used name brings its overloads: the keywords of a call, not its name,
     choose which of them reaches the wire.
     """
-    from pycompose.schema.codegen.app_slice import (
+    from pycompose.codegen.app_slice import (
         FLOOR_COMPONENTS,
         discover,
         load_catalog,
@@ -143,7 +143,7 @@ def test_the_hand_written_sources_define_the_floor() -> None:
     8.4). Scanning the modules keeps the floor complete when the hand-written
     sources grow a reference, and keeps it honest when they lose one.
     """
-    from pycompose.schema.codegen.app_slice import FLOOR_COMPONENTS
+    from pycompose.codegen.app_slice import FLOOR_COMPONENTS
 
     catalog = set(CATALOG["components"])
     named: set[str] = set()
@@ -169,7 +169,7 @@ def test_a_builtin_only_app_still_gets_the_adapters_object(tmp_path: Path) -> No
     object must exist even when nothing qualifies -- and must replace whatever
     a previous, larger slice left there rather than letting it linger.
     """
-    from pycompose.schema.codegen.main import build_app
+    from pycompose.codegen.main import build_app
 
     app = tmp_path / "app"
     app.mkdir()
@@ -197,7 +197,7 @@ def test_an_imported_component_counts_even_if_never_used(tmp_path: Path) -> None
     that imports one to re-export it would silently drop it -- and the build
     would fail on an import that looks perfectly ordinary.
     """
-    from pycompose.schema.codegen.app_slice import discover, load_catalog
+    from pycompose.codegen.app_slice import discover, load_catalog
 
     app = tmp_path / "app"
     app.mkdir()
@@ -208,7 +208,7 @@ def test_an_imported_component_counts_even_if_never_used(tmp_path: Path) -> None
 
 def test_the_generated_package_does_not_discover_itself(tmp_path: Path) -> None:
     """Otherwise the slice feeds itself and grows without an app asking."""
-    from pycompose.schema.codegen.app_slice import discover, load_catalog
+    from pycompose.codegen.app_slice import discover, load_catalog
 
     app = tmp_path / "app"
     (app / "m3").mkdir(parents=True)
@@ -220,12 +220,28 @@ def test_the_generated_package_does_not_discover_itself(tmp_path: Path) -> None:
 
 def test_usage_as_an_attribute_counts(tmp_path: Path) -> None:
     """`m3.Button` is an Attribute, not a Name."""
-    from pycompose.schema.codegen.app_slice import discover, load_catalog
+    from pycompose.codegen.app_slice import discover, load_catalog
 
     app = tmp_path / "app"
     app.mkdir()
     (app / "screen.py").write_text("import m3\n\nnode = m3.Spacer\n")
     assert discover(app, load_catalog(ROOT / "schema/catalog.lock.json")) == {"Spacer"}
+
+
+def test_an_app_on_a_drawing_layer_carries_what_the_layer_draws(tmp_path: Path) -> None:
+    """A blocks app names no native component, yet its screen is made of them."""
+    from pycompose.codegen.app_slice import discover, load_catalog, needs_slice
+
+    app = tmp_path / "app"
+    app.mkdir()
+    (app / "main.py").write_text(
+        "import pycompose.blocks as pc\n\nbox = pc.Textbox()\n"
+    )
+    used = discover(app, load_catalog(ROOT / "schema/catalog.lock.json"))
+    assert needs_slice(app)
+    assert {"OutlinedTextField", "ExposedDropdownMenuBox", "PrimaryTabRow"} <= used
+    (app / "main.py").write_text("X = 1\n")
+    assert not needs_slice(app)
 
 
 def test_an_app_with_no_components_is_an_error(tmp_path: Path) -> None:
@@ -295,7 +311,7 @@ def test_the_catalog_ships_in_the_package() -> None:
     Without this, `build_app` works in a checkout and fails for every real user,
     which is the shape of bug that only shows up after release.
     """
-    from pycompose.schema.codegen import main as codegen
+    from pycompose.codegen import main as codegen
 
     assert (
         codegen.PACKAGED_CATALOG.is_file()
@@ -310,7 +326,7 @@ def test_the_packaged_catalog_matches_the_source() -> None:
     copy at all -- apps would generate from a catalog the library has moved on
     from.
     """
-    from pycompose.schema.codegen import main as codegen
+    from pycompose.codegen import main as codegen
 
     assert (
         codegen.PACKAGED_CATALOG.read_bytes()
@@ -322,7 +338,7 @@ def test_codegen_reads_the_packaged_catalog_when_there_is_no_repo(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """The fallback path itself, not just the file's existence."""
-    from pycompose.schema.codegen import main as codegen
+    from pycompose.codegen import main as codegen
 
     monkeypatch.setattr(codegen, "SCHEMA_PATH", codegen.PACKAGED_CATALOG)
     registry = codegen.load_registry()
@@ -330,11 +346,11 @@ def test_codegen_reads_the_packaged_catalog_when_there_is_no_repo(
 
 
 def test_the_library_codegen_runs_from_the_package() -> None:
-    """`python -m pycompose.schema.codegen` is the entry point an app would use."""
+    """`python -m pycompose.codegen` is the entry point an app would use."""
     import subprocess
 
     result = subprocess.run(
-        [sys.executable, "-m", "pycompose.schema.codegen", "--check"],
+        [sys.executable, "-m", "pycompose.codegen", "--check"],
         capture_output=True,
         text=True,
         cwd=ROOT,
@@ -350,7 +366,7 @@ def test_the_library_codegen_runs_from_the_package() -> None:
 
 def test_an_app_on_the_library_catalog_is_left_alone(tmp_path: Path) -> None:
     """Binding codegen must not break apps that never adopted it."""
-    from pycompose.schema.codegen.app_slice import uses_generated_slice
+    from pycompose.codegen.app_slice import uses_generated_slice
 
     app = tmp_path / "app"
     app.mkdir()
@@ -359,7 +375,7 @@ def test_an_app_on_the_library_catalog_is_left_alone(tmp_path: Path) -> None:
 
 
 def test_an_app_that_adopted_the_slice_is_detected(tmp_path: Path) -> None:
-    from pycompose.schema.codegen.app_slice import uses_generated_slice
+    from pycompose.codegen.app_slice import uses_generated_slice
 
     app = tmp_path / "app"
     app.mkdir()
@@ -369,7 +385,7 @@ def test_an_app_that_adopted_the_slice_is_detected(tmp_path: Path) -> None:
 
 def test_adoption_ignores_the_generated_package_itself(tmp_path: Path) -> None:
     """Otherwise the slice makes itself look adopted forever."""
-    from pycompose.schema.codegen.app_slice import uses_generated_slice
+    from pycompose.codegen.app_slice import uses_generated_slice
 
     app = tmp_path / "app"
     (app / "m3").mkdir(parents=True)
@@ -386,7 +402,7 @@ def test_the_two_roots_are_separate(tmp_path: Path) -> None:
     takes two roots: one directory holding both only ever worked for the notes
     example, which is how the conflation survived being wrong.
     """
-    from pycompose.schema.codegen.main import build_app
+    from pycompose.codegen.main import build_app
 
     root = tmp_path / "project"
     python_root = root / "app"
@@ -414,7 +430,7 @@ def test_the_two_roots_are_separate(tmp_path: Path) -> None:
 
 def test_the_python_root_still_works_alone(tmp_path: Path) -> None:
     """The notes example's layout, where both roots are one directory."""
-    from pycompose.schema.codegen.main import build_app
+    from pycompose.codegen.main import build_app
 
     root = tmp_path / "app"
     root.mkdir()

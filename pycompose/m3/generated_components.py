@@ -3536,6 +3536,7 @@ class _Image(Component):
     accepted_keywords = frozenset(
         {
             "content_description",
+            "content_scale",
             "resource",
         }
     )
@@ -3545,6 +3546,7 @@ class _Image(Component):
         *,
         id: str | None = None,
         content_description: str | None = None,
+        content_scale: JsonValue | None = None,
         modifier: Modifier | None = None,
         resource: str,
     ) -> None:
@@ -3553,12 +3555,15 @@ class _Image(Component):
         Args:
             id: Stable instance key; None derives the node's path id.
             content_description: Native contentDescription; None uses its default.
+            content_scale: Native contentScale; None uses its default.
             modifier: Native modifier; None uses its default.
             resource: Required native resource.
         """
         props: dict[str, PropValue] = {}
         if content_description is not None:
             props["content_description"] = content_description
+        if content_scale is not None:
+            props["content_scale"] = content_scale
         props["resource"] = resource
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
@@ -3574,6 +3579,7 @@ class Image(_Image):
         *,
         id: str | None = None,
         content_description: str | None = None,
+        content_scale: JsonValue | None = None,
         modifier: Modifier | None = None,
         resource: str,
     ) -> Image: ...
@@ -3584,6 +3590,7 @@ class Image(_Image):
         id: str | None = None,
         alignment: _ImageImageVectorAlignment | None = None,
         content_description: str | None,
+        content_scale: JsonValue | None = None,
         image_vector: JsonValue,
         modifier: Modifier | None = None,
     ) -> ImageImageVector: ...
@@ -8763,6 +8770,7 @@ class ImageImageVector(Image):
         {
             "alignment",
             "content_description",
+            "content_scale",
             "image_vector",
         }
     )
@@ -8773,6 +8781,7 @@ class ImageImageVector(Image):
         id: str | None = None,
         alignment: _ImageImageVectorAlignment | None = None,
         content_description: str | None,
+        content_scale: JsonValue | None = None,
         image_vector: JsonValue,
         modifier: Modifier | None = None,
     ) -> None:
@@ -8782,6 +8791,7 @@ class ImageImageVector(Image):
             id: Stable instance key; None derives the node's path id.
             alignment: Native alignment; None uses its default.
             content_description: Required native contentDescription.
+            content_scale: Native contentScale; None uses its default.
             image_vector: Required native imageVector.
             modifier: Native modifier; None uses its default.
         """
@@ -8789,6 +8799,8 @@ class ImageImageVector(Image):
         if alignment is not None:
             props["alignment"] = alignment
         props["content_description"] = content_description
+        if content_scale is not None:
+            props["content_scale"] = content_scale
         props["image_vector"] = image_vector
         Component.__init__(self, id=id, children=(), modifier=modifier, **props)
 

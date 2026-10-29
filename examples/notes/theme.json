@@ -1,0 +1,24 @@
+{
+  "schemes": {
+    "light": {
+      "primary": "#00696E",
+      "onPrimary": "#FFFFFF",
+      "background": "#FBF9F7",
+      "surface": "#FBF9F7",
+      "onBackground": "#191C1D",
+      "onSurface": "#191C1D",
+      "onSurfaceVariant": "#6C7779",
+      "error": "#B3261E"
+    },
+    "dark": {
+      "primary": "#4FD8E0",
+      "onPrimary": "#00373A",
+      "background": "#101416",
+      "surface": "#101416",
+      "onBackground": "#E2E3E3",
+      "onSurface": "#E2E3E3",
+      "onSurfaceVariant": "#98A4A6",
+      "error": "#FFB4AB"
+    }
+  }
+}

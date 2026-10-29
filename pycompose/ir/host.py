@@ -14,8 +14,8 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass, field
 
-from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
-from pycompose.schema.version import at_least
+from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
+from pycompose.contract.version import at_least
 
 __all__ = ["Host", "current_host", "hosted"]
 

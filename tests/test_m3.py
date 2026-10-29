@@ -20,8 +20,8 @@ def test_imported_builtins_preserve_the_native_contract() -> None:
     candidate = emit_ir(State(root=node), "1.0.0")
     assert validate_ir(candidate).snapshot is candidate
     assert to_json_bytes(candidate) == (
-        b'{"root":{"children":[{"id":"root.name","props":{"text":"Ada"},'
-        b'"type":"Text"}],"id":"root","props":{"horizontalAlignment":"center",'
+        b'{"root":{"children":[{"id":"1","props":{"text":"Ada"},'
+        b'"type":"Text"}],"id":"0","props":{"horizontalAlignment":"center",'
         b'"modifier":{"operations":[{"type":"padding","value":8},'
         b'{"fraction":1,"type":"fillMaxWidth"}]}},"type":"Column"},'
         b'"schemaVersion":"1.0.0","version":"0.1.0"}'

@@ -17,7 +17,6 @@ dependencies = ["rich>=13.7", "packaging>=24", "defusedxml>=0.7"]
 pycompose = "pycompose.cli.main:main"
 
 [project.optional-dependencies]
-httpx = ["httpx>=0.27,<0.29"]
 dev = [
     "bandit>=1.7",
     "hypothesis>=6.100",
@@ -25,6 +24,7 @@ dev = [
     "import-linter==2.0",
     "jsonschema>=4.20",
     "mypy==1.11.2",
+    "pillow==11.0.0",
     "pre-commit>=3.0",
     "pydoclint>=0.5",
     "pyperf>=2.7,<3",
@@ -42,7 +42,7 @@ include = ["pycompose*"]
 exclude = ["pycompose.templates*"]
 
 [tool.setuptools.package-data]
-pycompose = ["py.typed", "schema/catalog.lock.json", "schema/ir.schema.json", "schema/pycompose.schema.json", "integrations/definitions/*.toml", "testing/fixtures/*.json", "templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep", "templates/extract/**/*", "templates/toolchain.toml"]
+pycompose = ["py.typed", "contract/catalog.lock.json", "schema/ir.schema.json", "schema/pycompose.schema.json", "testing/fixtures/*.json", "templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep", "templates/extract/**/*", "templates/toolchain.toml"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pycompose.version.__version__" }
@@ -60,7 +60,26 @@ exclude = ["templates", "build", ".venv", "venv", "docs"]
 select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "ARG", "RUF", "PIE", "PL", "TID", "ERA", "PERF"]
 ignore = ["PLR0913", "PLR2004"]
 
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+# Runtime code reaches time, randomness, ids, tasks and threads only through
+# pycompose.runtime's scheduler, so a test can replace all of them at once.
+"time.time".msg = "use the session scheduler's now()"
+"uuid.uuid4".msg = "draw ids from the session scheduler's random()"
+"random".msg = "use the session scheduler's random()"
+"threading.Thread".msg = "run work through the session scheduler"
+"concurrent.futures.ThreadPoolExecutor".msg = "use the session scheduler's to_thread()"
+"asyncio.create_task".msg = "spawn tasks in a supervised scope"
+"asyncio.ensure_future".msg = "spawn tasks in a supervised scope"
+
 [tool.ruff.lint.per-file-ignores]
+# The scheduler's own home, and desktop-only code, may use them directly.
+"pycompose/runtime/**" = ["TID251"]
+"pycompose/testing/**" = ["TID251"]
+"pycompose/cli/**" = ["TID251"]
+"pycompose/compiler/**" = ["TID251"]
+"pycompose/codegen/**" = ["TID251"]
+"tests/**" = ["TID251"]
+"tools/**" = ["TID251"]
 # Handlers here exist to be introspected, not run. An unused parameter is the
 # point: it is what proves the signature is parsed and nothing else is.
 "tests/test_auto_ids.py" = ["ARG001"]
@@ -91,17 +110,9 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["cli", "compiler", "testing", "m3", "composition", "components", "bridge", "integrations", "extensions", "async_task", "repository", "ir", "state", "schema", "core", "utils"]
+layers = ["cli", "compiler", "codegen", "testing", "blocks", "m3", "composition", "components", "bridge", "app", "media", "extensions", "runtime", "repository", "ir", "state", "schema", "core", "contract", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
-
-[[tool.importlinter.contracts]]
-name = "Extensions are consumers, never privileged core dependencies"
-type = "forbidden"
-source_modules = ["pycompose.extensions", "pycompose.bridge", "pycompose.async_task",
-                  "pycompose.repository", "pycompose.cli"]
-forbidden_modules = ["pycompose.integrations"]
-explanation = "Recipe discovery reads data; core never imports a concrete extension."
 
 [[tool.importlinter.contracts]]
 name = "Bridge is the only runtime boundary surface"
@@ -115,12 +126,12 @@ explanation = "Python bridge surface is Chaquopy-agnostic; the host implements t
 [[tool.importlinter.contracts]]
 name = "Runtime packages never import CLI or templates"
 type = "forbidden"
-source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
-                  "pycompose.ir", "pycompose.bridge", "pycompose.components",
-                   "pycompose.utils", "pycompose.testing", "pycompose.m3", "pycompose.composition", "pycompose.async_task",
-                    "pycompose.repository", "pycompose.extensions", "pycompose.integrations"]
-forbidden_modules = ["pycompose.cli", "pycompose.templates"]
-explanation = "CLI and template assets are dev/tooling concerns, never runtime deps."
+source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
+                  "pycompose.blocks", "pycompose.ir", "pycompose.bridge", "pycompose.components",
+                   "pycompose.utils", "pycompose.testing", "pycompose.m3", "pycompose.composition",
+                    "pycompose.repository", "pycompose.extensions", "pycompose.media"]
+forbidden_modules = ["pycompose.cli", "pycompose.templates", "pycompose.codegen", "pycompose.compiler"]
+explanation = "CLI, codegen, compiler and template assets are desktop concerns, never runtime deps."
 
 [[tool.importlinter.contracts]]
 name = "State is independent (no ir/bridge/components deps)"
@@ -132,10 +143,10 @@ explanation = "State + Store stay minimal and purpose-free."
 [[tool.importlinter.contracts]]
 name = "Runtime never imports testing helpers or fixtures"
 type = "forbidden"
-source_modules = ["pycompose.core", "pycompose.schema", "pycompose.state",
-                   "pycompose.ir", "pycompose.bridge", "pycompose.components",
-                   "pycompose.utils", "pycompose.m3", "pycompose.composition", "pycompose.async_task",
-                    "pycompose.repository", "pycompose.extensions", "pycompose.integrations"]
+source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
+                   "pycompose.blocks", "pycompose.ir", "pycompose.bridge", "pycompose.components",
+                   "pycompose.utils", "pycompose.m3", "pycompose.composition",
+                    "pycompose.repository", "pycompose.extensions", "pycompose.media"]
 forbidden_modules = ["pycompose.testing"]
 explanation = "Testing consumes runtime public APIs; runtime stays independent of test data."
 

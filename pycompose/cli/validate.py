@@ -59,4 +59,4 @@ def validate_file(path: Path, *, wire: bool = True) -> None:
         version=data["version"],
         metadata=data.get("metadata"),
     )
-    validate_ir(snapshot, debug=True)
+    validate_ir(snapshot)

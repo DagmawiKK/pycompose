@@ -1,7 +1,6 @@
 {
  "base": true,
  "binding_undeclared": false,
- "bindings_array": false,
  "checked_string": false,
  "children_object": false,
  "data_array": false,
@@ -15,6 +14,7 @@
  "expression_number_prop": false,
  "expression_stream_missing": false,
  "expression_unknown_op": false,
+ "intents_array": false,
  "metadata_array": false,
  "props_array": false,
  "required_dropped": false,

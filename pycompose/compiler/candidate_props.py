@@ -15,9 +15,9 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.codegen.defaults import render_default
 from pycompose.compiler.component_face import DECODE_CLASSIFIERS
 from pycompose.compiler.propose_lookup import source_name
-from pycompose.schema.codegen.defaults import render_default
 
 WIRE_SCALARS = {
     "int": "integer",

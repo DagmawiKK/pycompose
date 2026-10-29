@@ -15,8 +15,8 @@ from test_generated_adapters import (
     components,
 )
 
-from pycompose.schema.codegen.adapter_helpers import _held_props
-from pycompose.schema.codegen.adapters import (
+from pycompose.codegen.adapter_helpers import _held_props
+from pycompose.codegen.adapters import (
     render,
 )
 
@@ -79,7 +79,7 @@ def test_the_schema_refuses_a_dp_prop_it_cannot_read(
     message: str,
 ) -> None:
     """A dp prop states its default or refuses to render; it never guesses."""
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     edit(registry)
@@ -144,7 +144,7 @@ def test_a_payload_type_the_generator_cannot_map_is_refused() -> None:
 )
 def test_the_registry_refuses_an_impossible_prop(prop: dict, why: str) -> None:
     """A prop that cannot exist is refused at parse time, not at build time."""
-    from pycompose.core.registry_types import PropDef
+    from pycompose.contract.registry_types import PropDef
     from pycompose.errors import ComponentRegistryError
 
     try:
@@ -195,8 +195,8 @@ def test_every_enum_color_and_resource_prop_declares_its_decoder() -> None:
 
 def test_a_decoder_binds_to_a_resolver_that_exists() -> None:
     """A typo'd decoder name generates Kotlin that does not compile."""
-    from pycompose.schema.codegen.adapter_helpers import RESOLVER_OWNER
-    from pycompose.schema.codegen.adapters import RESOLVER_FALLBACK, RESOLVER_RETURN
+    from pycompose.codegen.adapter_helpers import RESOLVER_OWNER
+    from pycompose.codegen.adapters import RESOLVER_FALLBACK, RESOLVER_RETURN
 
     declared = {
         spec["decode"]
@@ -220,7 +220,7 @@ def test_a_decoder_binds_to_a_resolver_that_exists() -> None:
 
 def test_tooltip_position_uses_its_native_decoder() -> None:
     """Experimental positions have a declared resolver, never a guessed alignment."""
-    from pycompose.schema.codegen.adapters import render
+    from pycompose.codegen.adapters import render
 
     entry = {
         "props": {"position": components()["TooltipBox"]["props"]["position"]},
@@ -242,7 +242,7 @@ def decoded_example() -> tuple[str, str]:
     Returns:
         The component name and its rendered adapter.
     """
-    from pycompose.schema.codegen.adapters import render as render_one
+    from pycompose.codegen.adapters import render as render_one
 
     entry = {
         "children": {"allowed": False},
@@ -278,7 +278,7 @@ def test_a_resource_prop_needs_a_wrapper() -> None:
     ResourceText), so an entry with a resource prop and no wrapper is not
     generated rather than generated to block or throw.
     """
-    from pycompose.schema.codegen.adapters import render as render_one
+    from pycompose.codegen.adapters import render as render_one
 
     entry = {
         "children": {"allowed": False},
@@ -296,7 +296,7 @@ def test_a_resource_prop_needs_a_wrapper() -> None:
 
 def test_an_optional_decoded_prop_is_not_passed_to_a_non_null_resolver() -> None:
     """`PropResolver.color` takes a String; a nullable would not compile."""
-    from pycompose.schema.codegen.adapters import render as render_one
+    from pycompose.codegen.adapters import render as render_one
 
     entry = {
         "children": {"allowed": False},
@@ -319,7 +319,7 @@ def test_a_wrapped_component_is_not_reduced_to_resolved_values() -> None:
 
 def test_the_registry_refuses_a_decoder_on_a_type_that_needs_none() -> None:
     """A decode on a plain string is a category error, not a harmless extra."""
-    from pycompose.core.registry_types import PropDef
+    from pycompose.contract.registry_types import PropDef
     from pycompose.errors import ComponentRegistryError
 
     with pytest.raises(ComponentRegistryError):
@@ -327,7 +327,7 @@ def test_the_registry_refuses_a_decoder_on_a_type_that_needs_none() -> None:
 
 
 def test_the_registry_refuses_an_unknown_decoder() -> None:
-    from pycompose.core.registry_types import PropDef
+    from pycompose.contract.registry_types import PropDef
     from pycompose.errors import ComponentRegistryError
 
     with pytest.raises(ComponentRegistryError):
@@ -336,8 +336,8 @@ def test_the_registry_refuses_an_unknown_decoder() -> None:
 
 def test_an_index_prop_is_guarded_by_the_items_it_indexes() -> None:
     """Compose throws outside its items; the adapter clamps or composes nothing."""
-    from pycompose.schema.codegen.adapters import extra_imports
-    from pycompose.schema.codegen.adapters import render as render_one
+    from pycompose.codegen.adapters import extra_imports
+    from pycompose.codegen.adapters import render as render_one
 
     entry = components()["PrimaryTabRow"]
     block = render_one("PrimaryTabRow", entry)
@@ -359,7 +359,7 @@ def test_an_index_prop_is_guarded_by_the_items_it_indexes() -> None:
 def test_an_index_must_be_an_integer_naming_a_slot(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, change: dict[str, str]
 ) -> None:
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     registry["components"]["PrimaryTabRow"]["props"]["selectedTabIndex"] = change
@@ -372,7 +372,7 @@ def test_an_index_must_be_an_integer_naming_a_slot(
 
 def test_an_optional_callback_reaches_nobody_when_unbound() -> None:
     """A nullable action id must not reach dispatch, which takes a String."""
-    from pycompose.schema.codegen.adapters import render as render_one
+    from pycompose.codegen.adapters import render as render_one
 
     entry = {
         "children": {"allowed": False},

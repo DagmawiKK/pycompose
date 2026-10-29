@@ -22,7 +22,7 @@ from typing import Any
 
 import pytest
 
-from pycompose.schema.codegen.adapters import render
+from pycompose.codegen.adapters import render
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 
@@ -41,7 +41,7 @@ def _load_with(
         monkeypatch: Pytest monkeypatch fixture.
         mutate: Applies the change to the loaded registry.
     """
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     mutate(registry)
@@ -96,7 +96,7 @@ def test_a_declared_transient_loads(
 
 def test_the_shape_and_the_validator_agree_on_the_transient_keys() -> None:
     """The spec's properties are one fact with the codegen's key set."""
-    from pycompose.schema.codegen.state_rules import TRANSIENT_KEYS
+    from pycompose.codegen.state_rules import TRANSIENT_KEYS
 
     schema = json.loads(
         (
@@ -209,7 +209,7 @@ def test_the_codegen_refuses_an_unrenderable_transient(
 
 def test_the_runtime_registry_round_trips_the_transient() -> None:
     """The registry type keeps the declaration a schema reader can trust."""
-    from pycompose.core.registry_types import ComponentSpec, TransientRule
+    from pycompose.contract.registry_types import ComponentSpec, TransientRule
     from pycompose.errors import ComponentRegistryError
 
     transient = {

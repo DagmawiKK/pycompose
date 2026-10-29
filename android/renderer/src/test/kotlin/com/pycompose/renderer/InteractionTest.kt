@@ -32,12 +32,12 @@ class InteractionTest {
         // dispatching into a guess.
         val source =
             """
-            {"version":"0.1.0","schemaVersion":"1.16.0","metadata":{"actionBindings":{
-              "app.demo.press.1":{"handlerId":"demo.press","payload":{
+            {"version":"0.1.0","schemaVersion":"1.16.0",
+              "metadata":{"intents":{"demo.press":{"payload":{
                 "pressed":{"required":true,"type":"boolean"},
-                "held":{"required":true,"type":"boolean"}},"bound":{}}}},
+                "held":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Button","props":{
-               "text":"Tap","onClick":"increment","onPress":"app.demo.press.1"}}}
+               "text":"Tap","onClick":"increment","onPress":{"fields":{},"intent":"demo.press"}}}}
             """.trimIndent()
         val snapshot = IrParser().parse(source).getOrThrow()
         val actions = mutableListOf<Action>()
@@ -90,7 +90,7 @@ class InteractionTest {
                         bound = JsonObject(emptyMap()),
                     ),
             )
-        val sink = ObservationSink(bindings, ActionDispatcher { actions.add(it) }, reports::add)
+        val sink = ObservationSink({ bindings }, ActionDispatcher { actions.add(it) }, reports::add)
 
         sink.observe("value", "app.demo.value.1", JsonPrimitive(0.5f))
         sink.observe("firstVisibleIndex", "app.demo.index.1", JsonPrimitive(3))
@@ -113,7 +113,7 @@ class InteractionTest {
         val reports = Reports()
         val sink =
             ObservationSink(
-                mapOf("app.demo.a.1" to binding, "app.demo.b.1" to binding),
+                { mapOf("app.demo.a.1" to binding, "app.demo.b.1" to binding) },
                 ActionDispatcher { actions.add(it) },
                 {},
                 reports,
@@ -146,7 +146,7 @@ class InteractionTest {
                         bound = JsonObject(emptyMap()),
                     ),
             )
-        val sink = ObservationSink(bindings, ActionDispatcher { actions.add(it) }, reports::add)
+        val sink = ObservationSink({ bindings }, ActionDispatcher { actions.add(it) }, reports::add)
 
         sink.observe("value", "app.demo.value.1", JsonPrimitive(3))
 
@@ -165,7 +165,7 @@ class InteractionTest {
             )
         val sink =
             ObservationSink(
-                mapOf("app.demo.index.1" to binding),
+                { mapOf("app.demo.index.1" to binding) },
                 ActionDispatcher { actions.add(it) },
                 reports::add,
             )

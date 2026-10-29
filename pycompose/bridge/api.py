@@ -6,32 +6,39 @@ import itertools
 import json
 import logging
 import time
-from collections.abc import Iterator, Mapping
+from collections.abc import Callable, Iterator, Mapping
 from contextlib import contextmanager
 from threading import current_thread
 
-from pycompose import async_task  # noqa: F401 -- installs the async action runner
-from pycompose.bridge.types import MAIN_SURFACE, decode_action
-from pycompose.core.action_binding import BindingSpec
+from pycompose.app.observe import Span
+from pycompose.bridge.preview import BELOW_SURFACE, preview_envelope
+from pycompose.bridge.protocol import AppSession
+from pycompose.bridge.stats import PassStats
+from pycompose.bridge.types import MAIN_SURFACE, Action, decode_action
+from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
+from pycompose.contract.registry_types import PropDef
+from pycompose.contract.version import at_least
+from pycompose.core.action_binding import read_intents
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.core.ids import Handles
 from pycompose.core.reuse import Reuse
 from pycompose.core.windows import windows
 from pycompose.errors import BridgeError, SchemaError
-from pycompose.extensions.delivery import Dispatcher
 from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.ir.echoes import ECHOES_SCHEMA
-from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
+from pycompose.ir.echoes import ECHOES_SCHEMA, echo_key
 from pycompose.ir.host import Host, hosted
 from pycompose.ir.model import IRRoot
 from pycompose.ir.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
-from pycompose.schema.version import at_least
-from pycompose.state import Actions, State, Store
+from pycompose.runtime.trace import tracing
+from pycompose.state import State, Store
 
 LOGGER = logging.getLogger(__name__)
 
-VERIFY_EVERY = 8
-"""In debug, every n-th reused composable is expanded again and compared."""
+VERIFY_EVERY = 0
+"""Every n-th reused composable is expanded again and compared; 0 never.
+
+Debug and release behave the same, so neither pays for it; tests set it to 1
+and catch an impure composable on its first reuse."""
 
 WINDOW = 8
 """Published snapshots kept as patch bases for a host that is behind."""
@@ -46,14 +53,10 @@ _SERIALS = itertools.count(1)
 """Process-wide, so a serial never names another session's snapshot."""
 
 
-def _unchanged(candidate: State, current: State) -> bool:
-    if candidate is current:
-        return True
-    try:
-        return candidate == current
-    except RecursionError:
-        # Node-owning State equality is recursive; emission still supports deep IR.
-        return False
+def _echo_target(key: str) -> str:
+    """Return the handler or registry action an echo key names."""
+    target = json.loads(key)
+    return str(target["intent"]) if isinstance(target, dict) else str(target)
 
 
 class BridgeSurface:
@@ -62,27 +65,33 @@ class BridgeSurface:
     def __init__(
         self,
         store: Store,
-        actions: Actions,
+        session: AppSession,
         *,
         schema_version: str = SCHEMA_VERSION,
         debug: bool = True,
         host_components: frozenset[str] | None = None,
+        on_pass: Callable[[Span], None] | None = None,
     ) -> None:
-        """Bind the app state and handlers, and emit the initial snapshot.
+        """Bind the app state and session, and emit the initial snapshot.
 
         Args:
             store: Python-owned state store.
-            actions: Registered pure transition handlers.
+            session: The app's back stack, which handles every action.
             schema_version: Wire schema version required by this host.
             debug: Strict IR validation and loud failure logging.
             host_components: The component types the host's handshake offered;
                 None when it listed none.
+            on_pass: Receives one span per action pass, in release as in debug.
 
         Raises:
             SchemaError: If the configured schema or library version is incompatible.
         """
         self._store = store
-        self._actions = actions
+        self._session = session
+        self._closed = False
+        # Set by an action that changed something; the next pull draws it once.
+        self._dirty = False
+        self._stats = PassStats(on_pass)
         self._schema_version = schema_version
         self._debug = debug
         self._host = Host(host_components, schema_version)
@@ -90,27 +99,28 @@ class BridgeSurface:
         self._worker = current_thread()
         self._processing = False
         self._latest: str | None = None
-        # Each snapshot a host may still hold, with the bindings it carried.
-        self._published: list[tuple[int, IRRoot, dict[str, BindingSpec]]] = []
+        # Each snapshot a host may still hold, as a base for its next patch.
+        self._published: list[tuple[int, IRRoot]] = []
         self._latest_error = ""
         self._pass: dict[str, float] = {}
-        self._bindings: dict[str, BindingSpec] = {}
+        # Phases summed over every action since the host last read them: one
+        # host pass may run several actions before it pulls.
+        self._batch: dict[str, float] = {}
+        # The handlers the latest snapshot states, whose echoes are kept.
+        self._intents: frozenset[str] = frozenset()
         # The latest report sequence number answered, per action (plan 31 §17).
         self._echoes: dict[str, int] = {}
         # The window the host last asked for, per lazy container key.
         self._windows: dict[str, tuple[int, int]] = {}
-        self._deliveries = Dispatcher()
-        # Debug re-expands a sample of reused composables to catch impure ones,
-        # and names nodes by readable paths; release names them compactly.
+        # Both name nodes compactly; debug also keeps the readable paths.
         self._reuse = Reuse(
-            ExpansionMemo(verify_every=VERIFY_EVERY if debug else 0),
-            handles=Handles(compact=not debug),
+            ExpansionMemo(verify_every=VERIFY_EVERY),
+            handles=Handles(readable=debug),
         )
         try:
-            published = self._snapshot(store.value)
-            if published is not None:
-                self._bindings = published[2]
-                self._publish(published[0], published[1], published[2])
+            root, text, intents = self._snapshot(store.value)
+            self._intents = frozenset(intents)
+            self._publish(root, text)
         except SchemaError:
             raise
         except Exception as exc:
@@ -137,7 +147,7 @@ class BridgeSurface:
 
     def _snapshot(
         self, state: State
-    ) -> tuple[IRRoot, str, dict[str, BindingSpec]] | None:
+    ) -> tuple[IRRoot, str, dict[str, Mapping[str, PropDef]]]:
         echoes = self._echoes if at_least(self._schema_version, ECHOES_SCHEMA) else None
         with hosted(self._host):
             with windows(self._windows), self._timed("view"):
@@ -145,22 +155,24 @@ class BridgeSurface:
                     state, self._schema_version, self._reuse, echoes=echoes
                 )
             with self._timed("validate"):
-                result = validate_ir(emitted, debug=self._debug, reuse=self._reuse)
+                # Debug checks here and refuses an invalid snapshot; release
+                # leaves the one check to the host's typed parse, which refuses
+                # it the same way, keeping the last good snapshot on screen.
+                intents = (
+                    dict(validate_ir(emitted, reuse=self._reuse).intents)
+                    if self._debug
+                    else dict(read_intents(emitted.metadata))
+                )
         if self._debug:
             for reason in self._reuse.expansion.reasons:
                 LOGGER.debug("Rebuilt %s", reason)
             for missing in sorted(self._host.substituted - self._announced):
                 LOGGER.warning("The host has no %s; showing its fallback", missing)
             self._announced |= self._host.substituted
-        for issue in result.issues:
-            LOGGER.warning("IR validation: %s", issue)
-        if result.snapshot is None:
-            return None
-        bindings = dict(result.bindings)
-        self._actions.validate_bindings(bindings)
+        self._session.validate_intents(intents)
         with self._timed("serialize"):
-            text = to_json(result.snapshot, self._reuse)
-        return result.snapshot, text, bindings
+            text = to_json(emitted, self._reuse)
+        return emitted, text, intents
 
     @contextmanager
     def _timed(self, phase: str) -> Iterator[None]:
@@ -172,31 +184,13 @@ class BridgeSurface:
             spent = (time.perf_counter() - started) * 1000
             self._pass[phase] = self._pass.get(phase, 0.0) + spent
 
-    def _publish(
-        self, root: IRRoot, text: str, bindings: dict[str, BindingSpec]
-    ) -> None:
+    def _publish(self, root: IRRoot, text: str) -> None:
         if text == self._latest:
             return
+        self._stats.counts["published"] += 1
         self._latest = text
-        entry = (next(_SERIALS), root, bindings)
+        entry = (next(_SERIALS), root)
         self._published = [*self._published[1 - WINDOW :], entry]
-
-    def _bindings_at(self, serial: int | None) -> Mapping[str, BindingSpec] | None:
-        """Return the bindings of the snapshot the host acted on.
-
-        A tap resolves against what the user saw: a binding whose id survives
-        into a later snapshot may carry different bound values there.
-
-        Args:
-            serial: The snapshot the action was dispatched against; None for
-                actions that name none.
-
-        Returns:
-            Its bindings, or None when that snapshot is no longer held.
-        """
-        if serial is None:
-            return self._bindings
-        return next((b for s, _, b in self._published if s == serial), None)
 
     def accept_action(self, action_json: str) -> None:
         """Process one action synchronously; errors never escape to the host.
@@ -213,56 +207,42 @@ class BridgeSurface:
         self._latest_error = ""
         self._pass = {}
         started = time.perf_counter()
-        current = self._store.value
         echoed = False
+        name, trace, failed = "", None, False
         try:
-            if self._deliveries.closed:
-                return
-            admitted = self._deliveries.resolve(action_json)
-            if admitted is None:
+            if self._closed:
                 return
             action = decode_action(
-                admitted,
-                bindings=self._bindings_at,
-                handlers=self._actions,
+                action_json,
+                contracts=self._session.contract,
+                handlers=self._session,
             )
+            name, trace = action.action_id, action.trace
             if action.seq is not None:
                 # Answered even when the handler changes nothing or fails: the
                 # host waits for this echo before it drives the holder again.
-                self._echoes[action.action_id] = action.seq
+                self._echoes[echo_key(action.target)] = action.seq
                 echoed = True
-            if (
-                action.action_id in REGISTRY.lifecycle
-                and action.action_id not in self._actions
-            ):
-                # The host reports every lifecycle fact unconditionally, so
-                # whether one has a handler is the app's choice; an event
-                # nobody opted into is idle, not a fault worth a diagnostic.
-                LOGGER.debug("lifecycle event has no handler: %s", action.action_id)
-                return
-            with self._deliveries.active(), self._timed("handler"):
-                next_state = (
-                    self._actions.dispatch_binding(
-                        action.binding, current, action.payload
-                    )
-                    if action.binding is not None
-                    else self._actions.dispatch(
-                        action.action_id,
-                        current,
-                        self._host_fields(action.action_id, action.payload),
-                    )
-                )
-            if _unchanged(next_state, current) and not echoed:
-                return
-            if self._publish_state(next_state):
-                echoed = False
+            with tracing(trace):
+                self._dirty |= self._apply(action)
         except Exception as exc:
+            failed = True
             self._report("Action ignored", exc)
         finally:
-            if echoed:
-                self._republish(current)
+            # An echo is published even when the handler changed nothing or
+            # failed: the host waits for it before it drives the holder again.
+            self._dirty |= echoed
             self._processing = False
             elapsed = time.perf_counter() - started
+            self._stats.record(name, trace, elapsed * 1000, self._pass, failed=failed)
+            # One host pass may run several actions before it pulls; its log
+            # line reads them all, plus the time spent inside the actions.
+            for phase, ms in (
+                *self._pass.items(),
+                ("actions", 1.0),
+                ("accept", elapsed * 1000),
+            ):
+                self._batch[phase] = self._batch.get(phase, 0.0) + ms
             if self._debug and elapsed > PASS_BUDGET:
                 LOGGER.warning(
                     "Action pass took %.0f ms, over the %.0f ms budget; every tap "
@@ -271,38 +251,83 @@ class BridgeSurface:
                     PASS_BUDGET * 1000,
                 )
 
-    def _publish_state(self, state: State) -> bool:
-        """Publish ``state`` and make it the store's; False when it is invalid.
+    def _apply(self, action: Action) -> bool:
+        """Run one decoded action; the next pull draws what it changed.
+
+        Args:
+            action: The decoded action.
+
+        Returns:
+            Whether the action may have changed what is on screen.
+        """
+        if (
+            action.action_id in REGISTRY.lifecycle
+            and action.action_id not in self._session
+        ):
+            # The host reports every lifecycle fact unconditionally, so
+            # whether one has a handler is the app's choice; an event
+            # nobody opted into is idle, not a fault worth a diagnostic.
+            LOGGER.debug("lifecycle event has no handler: %s", action.action_id)
+            return False
+        with self._timed("handler"):
+            return (
+                self._session.dispatch_binding(
+                    action.binding, self._store.value, action.payload
+                )
+                if action.binding is not None
+                else self._session.dispatch(
+                    action.action_id,
+                    self._store.value,
+                    self._host_fields(action.action_id, action.payload),
+                )
+            )
+
+    def counters(self) -> dict[str, object]:
+        """Return release-safe counts of passes, publications and failures.
+
+        Returns:
+            Counts, the longest pass and total milliseconds by phase.
+        """
+        self._require_worker()
+        return self._stats.snapshot()
+
+    def _publish_state(self, state: State) -> None:
+        """Publish ``state`` and make it the store's; an invalid one raises first.
 
         Args:
             state: The state to render.
-
-        Returns:
-            Whether a snapshot was published.
         """
-        published = self._snapshot(state)
-        if published is None:
-            return False
+        root, text, intents = self._snapshot(state)
         self._store.mutate(lambda _state: state)
-        self._bindings = published[2]
-        self._publish(published[0], published[1], published[2])
-        return True
+        self._intents = frozenset(intents)
+        self._publish(root, text)
 
-    def _republish(self, state: State) -> None:
-        """Publish the unchanged ``state`` again so it carries the latest echoes.
+    def _flush(self) -> None:
+        """Draw and publish, once, what every action since the last pull changed.
 
-        Args:
-            state: The state the store already holds.
+        A host pass may run several actions -- a text field reports its text and
+        its caret -- before it pulls; drawing per action would draw all but the
+        last for nothing.
         """
+        if not self._dirty or self._closed:
+            return
+        self._dirty = False
         self._echoes = {
             key: seq
             for key, seq in self._echoes.items()
-            if key in self._bindings or key in REGISTRY.actions
+            if _echo_target(key) in self._intents
+            or _echo_target(key) in REGISTRY.actions
         }
+        self._pass = {}
         try:
+            with self._timed("compose"):
+                state = self._session.snapshot_state(self._store.value)
             self._publish_state(state)
         except Exception as exc:
-            self._report("Echo unavailable", exc)
+            self._report("Snapshot unavailable", exc)
+        finally:
+            for phase, ms in self._pass.items():
+                self._batch[phase] = self._batch.get(phase, 0.0) + ms
 
     def _host_fields(
         self, action_id: str, payload: Mapping[str, object]
@@ -318,7 +343,7 @@ class BridgeSurface:
             payload unchanged for an app handler addressed by name.
         """
         if action_id in REGISTRY.lifecycle or action_id in REGISTRY.actions:
-            return self._actions.declared(action_id, payload)
+            return self._session.declared(action_id, payload)
         return payload
 
     def request_window(
@@ -359,6 +384,7 @@ class BridgeSurface:
         except BridgeError as exc:
             self._report("Snapshot unavailable: worker contract violation", exc)
             return None
+        self._flush()
         return self._latest
 
     def expose_envelope(self, base_serial: int, surface: str = MAIN_SURFACE) -> str:
@@ -370,7 +396,8 @@ class BridgeSurface:
 
         Args:
             base_serial: The serial of the snapshot the host holds; -1 for none.
-            surface: The surface being pulled; a session hosts only the main one.
+            surface: The surface being pulled: the main one, or ``below``, the
+                screen a back gesture leads to.
 
         Returns:
             The envelope as canonical JSON, or empty before any valid snapshot.
@@ -380,14 +407,19 @@ class BridgeSurface:
         except BridgeError as exc:
             self._report("Snapshot unavailable: worker contract violation", exc)
             return ""
+        if surface == BELOW_SURFACE:
+            return preview_envelope(
+                self._session, self._host, self._schema_version, debug=self._debug
+            )
         if surface != MAIN_SURFACE:
             unknown = BridgeError("unknown surface", surface=surface)
             self._report("Snapshot unavailable", unknown)
             return ""
+        self._flush()
         if not self._published:
             return ""
-        serial, latest, _ = self._published[-1]
-        base = next((root for s, root, _ in self._published if s == base_serial), None)
+        serial, latest = self._published[-1]
+        base = next((root for s, root in self._published if s == base_serial), None)
         if base is not None:
             ops = diff_nodes(base.root, latest.root)
             whole = any(
@@ -407,13 +439,25 @@ class BridgeSurface:
         return full.decode("utf-8")
 
     def expose_last_pass(self) -> str:
-        """Return the last action pass's time by phase, for the host's pass log.
+        """Return the time by phase of every action since the last call.
 
         Returns:
-            JSON milliseconds by phase: handler, view, validate, serialize.
+            JSON milliseconds by phase (handler, view, validate, serialize),
+            ``accept`` for the whole of the actions and ``actions`` for how many.
         """
         self._require_worker()
-        return json.dumps({k: round(v, 2) for k, v in self._pass.items()})
+        batch, self._batch = self._batch, {}
+        return json.dumps({k: round(v, 2) for k, v in batch.items()})
+
+    def node_paths(self) -> dict[str, str]:
+        """Return each node name's readable path, kept only in debug.
+
+        Returns:
+            Readable path by node id; empty in release.
+        """
+        self._require_worker()
+        self._flush()
+        return self._reuse.handles.paths()
 
     def expose_latest_error(self) -> str:
         """Return the latest worker diagnostic as plain data.
@@ -422,15 +466,10 @@ class BridgeSurface:
             Error text, or an empty string for a successful transition.
         """
         self._require_worker()
-        return self._latest_error or self._deliveries.diagnostic
+        return self._latest_error
 
-    def close(self, *, successor: BridgeSurface | None = None) -> None:
-        """Retire completion registrations and clean up or transfer used resources.
-
-        Args:
-            successor: Replacement after successful reload, or None on shutdown.
-        """
+    def close(self) -> None:
+        """End the session: its view models are cleared and later actions ignored."""
         self._require_worker()
-        self._deliveries.retire(
-            successor._deliveries if successor is not None else None
-        )
+        self._closed = True
+        self._session.close()

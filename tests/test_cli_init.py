@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from pycompose.ir.generated_validators import SCHEMA_VERSION
+from pycompose.contract.catalog import SCHEMA_VERSION
 
 NATIVE = Path(".pycompose/android")
 OWNED = Path(".")
@@ -166,17 +166,24 @@ def test_command_entry_points_have_help(tmp_path: Path, command: str) -> None:
     assert f"pycompose {command}" in result.stdout
 
 
-def test_generated_python_entrypoint_emits_valid_ir(tmp_path: Path) -> None:
-    assert cli(tmp_path, "init", "demo-app").returncode == 0
+@pytest.mark.parametrize(
+    ("starter", "shown"),
+    [
+        ((), "Type your name and tap Greet."),
+        (("--template", "viewmodel"), "Tapped 0 times"),
+    ],
+)
+def test_generated_python_entrypoint_emits_valid_ir(
+    tmp_path: Path, starter: tuple[str, ...], shown: str
+) -> None:
+    assert cli(tmp_path, "init", "demo-app", *starter).returncode == 0
     project = tmp_path / "demo-app"
     config = tomllib.loads((project / "pycompose.toml").read_text())
     assert config["app"]["application_id"] == "com.example.app_demo_app"
     script = (
-        "import main\nfrom pycompose.ir import emit_ir, validate_ir, to_json\n"
-        "candidate = emit_ir(\n"
-        f"    main.app.build(route='', restore=''), '{SCHEMA_VERSION}'\n"
-        ")\n"
-        "assert validate_ir(candidate).snapshot is candidate\nprint(to_json(candidate))"
+        "from pycompose.bridge.session import compose_once\n"
+        "snapshot, error = compose_once('main:app')\n"
+        "assert snapshot, error\nprint(snapshot)"
     )
     result = subprocess.run(
         [sys.executable, "-c", script],
@@ -187,4 +194,5 @@ def test_generated_python_entrypoint_emits_valid_ir(tmp_path: Path) -> None:
         check=False,
     )
     assert result.returncode == 0, result.stderr
-    assert json.loads(result.stdout)["root"]["props"]["text"] == "Hello PyCompose"
+    assert f'"text":"{shown}"' in result.stdout
+    assert not (project / "starters").exists()

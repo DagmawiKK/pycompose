@@ -127,12 +127,13 @@ class RoundNineComponentsTest {
             parse(
                 """
                 {"version":"0.1.0","schemaVersion":"1.23.0",
-                 "metadata":{"actionBindings":{"app.page.note":{"handlerId":"page.note",
-                   "payload":{"value":{"required":true,"type":"string"}},"bound":{}}}},
+                 "metadata":{"intents":{"page.note":{"payload":{"value":{"required":true,
+                   "type":"string"}}}}},
                  "root":{
                   "id":"page","type":"AnimatedContent","props":{"targetState":"time"},"children":[
                     {"id":"page.field","type":"TextField","props":{
-                      "value":"","label":"Second","onValueChange":"app.page.note"}}]}}
+                      "value":"","label":"Second","onValueChange":{"fields":{},
+                        "intent":"page.note"}}}]}}
                 """.trimIndent(),
             )
         val actions = mutableListOf<Action>()
@@ -144,7 +145,7 @@ class RoundNineComponentsTest {
         shown = second
         compose.waitForIdle()
         compose.onNodeWithText("Second").performTextInput("a")
-        compose.waitUntil(5000) { actions.any { it.actionId == "app.page.note" } }
+        compose.waitUntil(5000) { actions.any { it.actionId == intent("page.note") } }
         assertEquals("""{"value":"a"}""", actions.last().payload.toString())
     }
 
@@ -153,20 +154,17 @@ class RoundNineComponentsTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.23.0",
-             "metadata":{"actionBindings":{
-               "app.demo.query":{"handlerId":"demo.query","payload":{
-                 "query":{"required":true,"type":"string"}},"bound":{}},
-               "app.demo.search":{"handlerId":"demo.search","payload":{
-                 "query":{"required":true,"type":"string"}},"bound":{}},
-               "app.demo.expanded":{"handlerId":"demo.expanded","payload":{
-                 "expanded":{"required":true,"type":"boolean"}},"bound":{}}}},
+             "metadata":{"intents":{"demo.query":{"payload":{
+                 "query":{"required":true,"type":"string"}}},"demo.search":{"payload":{
+                 "query":{"required":true,"type":"string"}}},"demo.expanded":{"payload":{
+                 "expanded":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Column","props":{},"children":[
                {"id":"root.field","type":"SearchBarInputField","props":{
                  "query":"Initial query",
                  "expanded":false,
-                 "onQueryChange":"app.demo.query",
-                 "onSearch":"app.demo.search",
-                 "onExpandedChange":"app.demo.expanded"},"children":[
+                 "onQueryChange":{"fields":{},"intent":"demo.query"},
+                 "onSearch":{"fields":{},"intent":"demo.search"},
+                 "onExpandedChange":{"fields":{},"intent":"demo.expanded"}},"children":[
                  {"id":"root.field.placeholder","type":"Text","props":{
                    "text":"Search placeholder"},"slot":"placeholder"}]}]}}
             """.trimIndent()
@@ -177,17 +175,17 @@ class RoundNineComponentsTest {
         compose.onNodeWithText("Search placeholder").assertDoesNotExist()
 
         compose.onNodeWithText("Initial query").performTextReplacement("Updated query")
-        compose.waitUntil(5000) { actions.any { it.actionId == "app.demo.query" } }
+        compose.waitUntil(5000) { actions.any { it.actionId == intent("demo.query") } }
 
-        val query = actions.last { it.actionId == "app.demo.query" }
+        val query = actions.last { it.actionId == intent("demo.query") }
         assertEquals("""{"query":"Updated query"}""", query.payload.toString())
-        assertTrue(actions.any { it.actionId == "app.demo.expanded" })
+        assertTrue(actions.any { it.actionId == intent("demo.expanded") })
 
         // A second keystroke must append at the caret, not restart from an older
         // snapshot. The local buffer keeps the field stable until Python echoes.
         compose.onNodeWithText("Updated query").performTextInput("!")
         compose.waitUntil(5000) {
-            actions.lastOrNull { it.actionId == "app.demo.query" }?.payload?.toString() ==
+            actions.lastOrNull { it.actionId == intent("demo.query") }?.payload?.toString() ==
                 """{"query":"Updated query!"}"""
         }
     }

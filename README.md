@@ -1,9 +1,18 @@
 # PyCompose
 
-Write Android app UIs in Python; they render as native Jetpack Compose
-**Material 3**. Python declares the tree and owns the state; a Kotlin host draws
-it. The two sides exchange only data — a canonical JSON snapshot one way, action
-ids and payloads the other — never objects, callbacks, or reflection.
+Write Android apps in Python; they render as native Jetpack Compose
+**Material 3**. Python declares the screen and owns the state; a Kotlin host
+draws it. The two sides exchange only data — a canonical JSON snapshot one way,
+intents and their fields the other — never objects, callbacks, or reflection.
+
+There are two ways to write an app, and they share everything underneath:
+
+- **Blocks** — components, events and plain functions. Declare the screen in a
+  `with` block, connect a button to a function, and the function's result fills
+  the outputs. The quickest way from an idea, an API or a model to an app.
+- **View models** — the full-control route, shaped like Android's architecture
+  guidance: each screen's view model owns its state, controls send typed
+  intents, and screens are drawn from about 130 native components.
 
 > Early development. The contract, the component compiler, the CLI and about 130
 > Material 3 and foundation components work end to end, including hot reload, a
@@ -12,17 +21,17 @@ ids and payloads the other — never objects, callbacks, or reflection.
 ## How it works
 
 ```
-tap → action id + payload → Python handler → new snapshot → host renders
+tap → intent + fields → view model → new state → screen(state) → host renders
 ```
 
 - **Pure IR.** Every change produces one canonical, `schemaVersion`ed JSON
   snapshot; the host validates it against sealed Kotlin models and renders.
-- **Python owns state.** Frozen `State`/`AppState` values; one full snapshot per
-  change; stable node ids keep identity across renders.
+- **Python owns state.** Each screen's view model holds a frozen `AppState`;
+  one full snapshot per change; stable node ids keep identity across renders.
 - **Pull-first.** The host sends an action, then asks for the latest snapshot.
   Python never pushes and never learns device details.
-- **One worker.** A single Python thread; Compose's main thread never runs
-  Python.
+- **One loop thread.** Python state lives on one event-loop thread; blocking
+  and CPU work go to pools. Compose's main thread never runs Python.
 - **Derived from Compose itself.** A compiler reads the pinned Compose libraries
   and derives each component's props, slots and defaults, the value types they
   take, the state holders behind controlled components, and the modifiers a
@@ -67,11 +76,13 @@ For work on the framework itself, install the dev extras instead:
 ## Quick start
 
 ```bash
-pycompose init notes     # scaffold a project
-cd notes
+pycompose init hello     # scaffold a project, starting from blocks
+cd hello
 pycompose debug          # build, install, launch — once
 pycompose run            # the same, plus hot reload for .py and resources/
 ```
+
+`pycompose init hello --template viewmodel` starts from a view model instead.
 
 No device attached? `pycompose build apk` (or `pycompose release apk`)
 packages without installing, and `pycompose check` finds what a build or the
@@ -91,120 +102,376 @@ XML to touch:
 | --- | --- |
 | `app/` | the app's Python source (entrypoint `main:app` by default) |
 | `resources/` | strings, drawables, fonts — synced into the host |
-| `pycompose.toml` | identity, version, Python requirements, permissions, signing, extensions |
+| `pycompose.toml` | identity, version, Python requirements, theme, permissions, signing |
 | `.pycompose/` | the Android project, generated from the app on every build; ignored by git |
 
 `pycompose prebuild` shows what the generated project would change, and
 `pycompose explain <file>` names the settings that produced a generated file.
 
-An app is one `App` in the entry module. Here is a counter, in full:
+The app `init` writes, in full:
 
 ```python
-"""A counter: state, one action, one view."""
+import pycompose.blocks as pc
+
+
+def greet(name: str) -> str:
+    return f"Hello, {name.strip() or 'world'}!"
+
+
+with pc.Blocks() as app:
+    name = pc.Textbox(label="Your name")
+    greeting = pc.Markdown("Type your name and tap Greet.")
+    pc.Button("Greet").click(greet, inputs=name, outputs=greeting)
+```
+
+Change the text while `pycompose run` is watching and the phone shows it on save.
+
+## Building with blocks
+
+Every component and layout created inside `with pc.Blocks() as app:` joins the
+screen in the order the code creates it. Each is drawn from native Material 3
+components, so the app looks and behaves like any Compose app.
+
+| Kind | Components |
+| --- | --- |
+| Text | `Textbox`, `Number`, `Markdown` |
+| Choices | `Checkbox`, `Radio`, `Dropdown`, `Slider` |
+| Results | `Image`, `Gallery`, `Label` (a classifier's top labels as bars), `JSON`, `Chatbot` |
+| Files | `Image(interactive=True)`, `File`, `UploadButton` |
+| Actions | `Button` |
+| Layout | `Row` (wraps to the screen's width), `Column`, `Tabs` with `Tab`, `Accordion` |
+
+Every component takes `label`, `visible` and, where it makes sense,
+`interactive`; a component that is the output of a function shows a progress
+bar while the function runs.
+
+**Events** connect a component to a function. `inputs` are the components the
+function reads, in order; `outputs` the ones its result fills — one value per
+output, a tuple for several:
+
+```python
+pc.Button("Forecast").click(forecast, inputs=[city, days], outputs=[now, ahead])
+city.change(suggest, inputs=city, outputs=hints)      # on every edit
+upload.upload(describe, inputs=upload, outputs=text)  # on every file picked
+```
+
+- A plain function runs on a thread pool, so a slow network call never freezes
+  the screen; an `async def` one runs on the app's loop.
+- **A function that yields streams:** each value it yields is shown as it
+  arrives, which is how a chat reply appears word by word.
+- An event that fires again before its last run returned cancels that run, so
+  only the latest result is shown.
+- An exception becomes a toast with its message; the outputs keep their values.
+
+**Shortcuts** build the usual app around one function:
+
+```python
+app = pc.Interface(translate, inputs=pc.Textbox(label="English"), outputs=pc.Textbox(label="French"))
+app = pc.ChatInterface(reply)   # reply(message, history) returns or yields text
+```
+
+Chat history is a list of `{"role": "user" | "assistant", "content": text}`
+messages, the shape chat model APIs take, so a function can pass it straight on.
+
+**Pictures** go in an `Image` or `Gallery` output as bytes, a file path, or a
+PIL image. The host loads nothing from the network: download in your function
+and return the bytes. An interactive `Image`, a `File` or an `UploadButton`
+opens the system picker — the photo picker for images — with no permission
+prompt, and the function receives the picked file's path.
+
+The examples are complete apps, each a single file:
+
+| Example | What it shows |
+| --- | --- |
+| `examples/weather` | two HTTP calls behind one button; tabs for the results |
+| `examples/chat` | a chat with any OpenAI-compatible model, the reply streaming in |
+| `examples/dogs` | downloading photos and showing them in an image and a gallery |
+| `examples/photos` | picking a photo and editing it with Pillow on every change |
+| `examples/notes` | the view-model route: two screens, SQLite, navigation, theming |
+
+Each one runs with `cd examples/<name> && pycompose debug`.
+
+## Building with view models
+
+When an app outgrows one screen of components — several screens, its own
+navigation, native components beyond the blocks set — it is written as view
+models. Here is a counter, in full:
+
+```python
+"""A counter: one view model, one intent, one screen."""
 
 from m3 import Button, Column, Modifier, Text
-from pycompose import Registry
+from pycompose.app import App, Destination, Intent, ViewModel
 from pycompose.core import Node
-from pycompose.state import App, AppState
+from pycompose.state import AppState
 
 
-class Session(AppState):
-    """What this app remembers across process death."""
+class Counter(AppState):
+    """What the screen shows; saved across process death."""
 
     count: int = 0
 
 
-actions = Registry()
-
-
-@actions
-def increment(session: Session) -> Session:
+class Increment(Intent):
     """Add one to the count."""
-    return session.evolve(count=session.count + 1)
 
 
-def view(session: Session) -> Node:
+class CounterViewModel(ViewModel[Counter]):
+    def __init__(self) -> None:
+        super().__init__(Counter())
+
+    def on_intent(self, intent: Intent) -> None:
+        if isinstance(intent, Increment):
+            self.state = self.state.evolve(count=self.state.count + 1)
+
+
+def screen(state: Counter) -> Node:
     """Draw the count and the button that moves it."""
     return Column(
         modifier=Modifier().padding(24),
         children=[
-            Text(text=f"Tapped {session.count} times"),
-            Button(text="Tap me", on_click=increment),
+            Text(text=f"Tapped {state.count} times"),
+            Button(text="Tap me", on_click=Increment()),
         ],
     )
 
 
-app = App(state=Session, view=view)
+app = App(start=Destination(lambda _container, _route: CounterViewModel(), screen))
 ```
 
 App code imports `m3`; the build generates that package from the components the
 source references, so an app ships what it uses and nothing else.
 
-A complete two-screen app — persistence, navigation, effects, theming — lives
-in `examples/notes`.
+### Structuring a larger app
 
-## What an app declares
+An app with several screens follows Android's [guide to app
+architecture](https://developer.android.com/topic/architecture): a data layer
+behind the domain, a UI layer of view models and screens, and dependencies
+wired by hand in one place. `examples/notes` is built this way; the excerpts
+below are from it.
 
-**`App`** — the entry object the session discovers. It takes the shell seed, the
-view, an optional container factory, and the name of the shell field mirroring
-the host's route.
-
-**`AppState`** — the shell that survives process death: route, draft text,
-appearance. Subclasses are frozen dataclasses; their codec is derived from the
-annotations, and unreadable or foreign saved bytes fall back to the seed, so a
-corrupt save starts clean instead of crashing.
-
-**Actions** — a handler is a plain function, and its signature is its whole
-contract. The first parameter is the shell; each further parameter is a field a
-control binds or an event supplies, typed by its annotation and optional when
-it has a default. A control takes the handler itself, or binds some fields now
-with `with_args`:
-
-```python
-@actions
-def open_note(session: Session, note_id: int) -> Session:
-    ...
-
-
-Button(text="Open", on_click=open_note.with_args(note_id=7))
+```
+app/
+  main.py                  # the App: routes → destinations, the container
+  notes_app/
+    domain/                # models and use cases; imports nothing above it
+    data/                  # repositories behind the domain's Protocol
+    container.py           # the app's long-lived objects, built once
+    routes.py              # where the app can go
+    view_models/           # each screen's state, intents and behaviour
+    views/                 # screens: pure functions of their state
 ```
 
-Keyword-only parameters are resolved from the app's container by name. The
-runtime discovers the registry by the module-level name `actions` (lowercase).
+**Domain** — entities are frozen dataclasses, and what the domain needs from
+storage is a `Protocol`, so any implementation satisfies it structurally.
+Use cases hold the repository; nothing above them ever sees it:
 
-An `async def` handler runs off the worker; an async generator yields each
-state as it goes, which is a loading state for free. What each state changed
-comes back and lands on the session as it is then, and a newer run of the
-same handler cancels the one it supersedes.
+```python
+@dataclass(frozen=True)
+class Note:
+    id: int
+    title: str = ""
+    body: str = ""
+
+
+class NotesRepo(Protocol):
+    def load(self) -> list[Note]: ...
+    def insert(self, note: Note) -> None: ...
+    def update(self, note: Note) -> None: ...
+    def delete(self, note_id: int) -> None: ...
+
+
+class Notes:
+    """Everything the app can do with notes, with the storage already bound."""
+
+    def __init__(self, notes: NotesRepo, changed=lambda _notes: None) -> None: ...
+    def create(self, title: str = "", body: str = "") -> int: ...
+    def rename(self, note_id: int, title: str) -> None: ...
+```
+
+**Data** — `SqliteNotesRepo` implements `NotesRepo` on SQLite, one row per
+note. Its statements run on the session's storage thread with
+`to_thread("storage", ...)`, in order, so the loop never waits on the disk.
+
+**Container** — Google's manual dependency injection: one object holds the
+app's long-lived dependencies, built once per session. It is the only place
+that names a storage backend, and a `StateFlow` lets screens follow the data:
+
+```python
+class AppContainer:
+    def __init__(self, repo: NotesRepo) -> None:
+        self.notes = Notes(repo, changed=self._publish)
+        self.listing: StateFlow[tuple[Note, ...]] = StateFlow(tuple(self.notes.list()))
+
+    def _publish(self, notes: list[Note]) -> None:
+        self.listing.value = tuple(notes)
+
+
+def build() -> AppContainer:
+    return AppContainer(SqliteNotesRepo())
+```
+
+**Routes and destinations** — a route is a typed destination; each opens a view
+model built from the container, drawn by its screen. Python owns the back stack
+and saves every entry, so process death restores all of it:
+
+```python
+class NotesRoute(Route):
+    """The list of every note."""
+
+
+class EditorRoute(Route):
+    note_id: int
+
+
+app = App(
+    start=NotesRoute(),
+    destinations={
+        NotesRoute: Destination(
+            lambda c, _route: ListViewModel(c.notes, c.listing), list_screen
+        ),
+        EditorRoute: Destination(
+            lambda c, route: EditorViewModel(c.notes, route.note_id), editor_screen
+        ),
+    },
+    container=build,
+    deep_links=frozenset({EditorRoute}),
+)
+```
+
+**View models** — state the screen can rebuild is marked `Loaded[...]`: it is
+reloaded when the view model is built and never saved, since Android's saved
+state is limited to kilobytes. A view model follows the container's `StateFlow`
+for as long as it lives, so an edit made on the editor is on the list when the
+user comes back:
+
+```python
+class ListState(AppState):
+    notes: Loaded[tuple[Note, ...]] = ()   # from storage, never saved
+    previews: bool = True                  # small UI state, saved
+
+
+class OpenNote(Intent):
+    note_id: int
+
+
+class ListViewModel(ViewModel[ListState]):
+    def __init__(self, notes: Notes, listing: StateFlow[tuple[Note, ...]]) -> None:
+        super().__init__(ListState(notes=listing.value))
+        self._notes = notes
+        self._listing = listing
+        self.launch(self._follow())
+
+    async def _follow(self) -> None:
+        async for notes in self._listing:
+            self.state = self.state.evolve(notes=notes)
+
+    def on_intent(self, intent: Intent) -> None:
+        match intent:
+            case OpenNote(note_id=note_id) if self._notes.get(note_id) is not None:
+                self.navigate(Push(EditorRoute(note_id=note_id)))
+```
+
+**Screens** — a pure function of the view model's state, built from native
+components. A list is data: `LazyColumn` asks Python only for the rows on
+screen, and each row's intent carries the note it stands for:
+
+```python
+def list_screen(state: ListState) -> Node:
+    return Scaffold(
+        content=LazyColumn(
+            items=list(state.notes),
+            key=lambda note: f"row_{note.id}",
+            item=lambda note: Card(
+                on_click=OpenNote(note_id=note.id),
+                children=[Text(text=note.label, style="titleMedium")],
+            ),
+        ),
+    )
+```
+
+**Tests** — because the use cases see only the `Protocol`, an in-memory
+repository runs every one of them without a disk, and `AppDriver` walks the
+whole app, screen by screen, as the host would:
+
+```python
+notes = Notes(MemoryNotesRepo([Note(1, "Milk")]))
+note_id = notes.create("Eggs")
+assert notes.get(note_id).title == "Eggs"
+
+with AppDriver(Path("examples/notes")) as app:
+    app.click(type="FloatingActionButton")
+    app.edit("Groceries", label="Title")
+```
+
+The full app, with an editor, filters, a bottom sheet and theming, is in
+`examples/notes`.
+
+### What an app declares
+
+**`App`** — the entry object the session discovers. It takes where the app
+starts, a `Destination` per route, an optional container factory (Google's
+manual dependency injection: built once per session and handed to each view
+model's factory), and the routes the host may open from outside.
+
+**`ViewModel`** — one screen's state and behaviour. Its state is an `AppState`:
+a frozen dataclass whose codec is derived from its annotations. The state is
+saved for process death, except fields marked `Loaded[...]`, which the view
+model refills from its repository; an unreadable save starts clean instead of
+crashing.
+
+**Intents** — what a control asks its screen to do. An intent is a typed
+dataclass; a control takes an instance (every field bound), the class (every
+field supplied by the event), or `Intent.bind(...)` (some of each):
+
+```python
+class OpenNote(Intent):
+    note_id: int
+
+
+Card(on_click=OpenNote(note_id=7), ...)
+TextField(value=note.title, on_value_change=SetTitle.bind(note_id=note.id))
+```
+
+State a target rather than a change (`SetExpanded(id, True)`, not `Toggle(id)`),
+so a duplicate or a stale tap still does the right thing.
+
+**Routes** — a `Route` is a typed destination, such as `EditorRoute(note_id=4)`.
+A view model calls `self.navigate(Push(route))`, `Replace(route)` or `Pop()`;
+Python owns the back stack, and every entry's state is saved, so process death
+restores the whole stack.
 
 **Identity** — a node needs no `id`. One declared without one is keyed by the
 line of code that declares it, so a conditional before it never shifts its
-identity. Only things declared in a loop that carry an action, and composables
+identity. Only things declared in a loop that carry an intent, and composables
 called in a loop, need an `id` to survive a reorder.
 
-**Effects** — a handler returns the next shell, or `respond(shell, *effects)` to
-ask the host for something one-shot: `navigate`, `finish`, `haptic`, `toast`,
-`openUrl`. Effects run once, in order, only for a snapshot that changed.
+**Effects** — `self.emit(...)` asks the host for something one-shot: `Toast`,
+`Haptic`, `OpenUrl`, `PickFile` (answered by `on_file_picked(request, path)`). Effects run at most once, in order; anything that must
+happen belongs in state instead.
 
-**Lifecycle** — inbound host events reach Python as actions too: `onResume`,
-`onPause`, `onBackRequested`, `onRouteChanged` (route payload), and
-`onConfigChanged` (orientation, dark mode, locale, density).
+**Lifecycle** — `on_back` (return True to keep the screen), `on_resume` and
+`on_pause` reach the view model on top; `on_trim_memory(level)` reaches every
+screen on the stack when Android asks for memory back.
 
-**Repositories and background work** — `pycompose.repository` stores documents
-atomically on disk, outside the saved-state budget. `pycompose.async_task.run`
-hands blocking work to a bounded executor and delivers the result back as an
-ordinary action, so the worker never freezes behind a request.
+**Background work** — `self.launch(coroutine)` runs work until it ends or the
+view model is cleared, and returns its task, so a newer request can cancel the
+one it supersedes. Blocking calls go to a pool with
+`await to_thread("io", fn, *args)` and computation with
+`await to_thread("cpu", fn, *args)`; the screen stays live meanwhile.
+`pycompose.repository` stores documents atomically on disk, outside the
+saved-state budget.
 
 **Controlled components** — a component whose native state lives in a holder
 (a picker, a slider, a drawer, a sheet, a tooltip) takes the value as a prop
-and reports changes through an `on_<value>_change` action:
+and reports changes through an `on_<value>_change` intent:
 
 ```python
 TimePicker(
-    hour=session.hour,
-    minute=session.minute,
-    on_hour_change=set_hour,
-    on_minute_change=set_minute,
+    hour=state.hour,
+    minute=state.minute,
+    on_hour_change=SetHour,
+    on_minute_change=SetMinute,
 )
 ```
 
@@ -228,9 +495,10 @@ Row(
 
 One worn outside such a parent is reported by the host rather than ignored.
 
-## Components
+## Native components
 
-134 Material 3 and foundation components, 145 counting the overloads a
+What view-model screens are drawn from, and what blocks components are built
+from: 134 Material 3 and foundation components, 145 counting the overloads a
 component reaches through its own name. `*` marks experimental entries.
 
 | Category | Components |
@@ -333,7 +601,7 @@ is dismissed before it commits, the observers report `hidden` and a failed
 
 | Command | What it does |
 | --- | --- |
-| `pycompose init <name> [--native]` | Scaffold a project; `--native` keeps Android sources at the root |
+| `pycompose init <name> [--template blocks\|viewmodel] [--native]` | Scaffold a project, starting from blocks (the default) or a view model; `--native` keeps Android sources at the root |
 | `pycompose run [--device <serial>] [--dev-client]` | Build, install, launch, and watch `.py` and `resources/` for hot reload; `--dev-client` skips the app's Gradle build |
 | `pycompose dev-client [--rebuild]` | Build the prebuilt dev client once for this PyCompose version |
 | `pycompose debug [--no-launch]` | One build-install-launch pass, no watcher |
@@ -352,7 +620,6 @@ is dismissed before it commits, the observers report `hidden` and a failed
 | `pycompose doctor` | Report Android toolchain and schema compatibility |
 | `pycompose validate <file>` | Validate IR JSON against the registry and wire schema |
 | `pycompose stubs <path>` | Print optional module stubs from a project's declarations without importing app code |
-| `pycompose extensions plan` / `evidence` | Check extension requirements without importing them; `evidence` prints observed scenario evidence |
 
 Release signing reads `[signing]` from `pycompose.toml` and the passwords from
 the `PYCOMPOSE_STORE_PASSWORD` and `PYCOMPOSE_KEY_PASSWORD` environment
@@ -379,24 +646,25 @@ That is the notes example's editor on an arm64 emulator, warm; measure on the
 phones you target, and run it more than once, since the first passes after an
 install are much slower.
 
-## Extensions
+## Python libraries
 
-Normal Python libraries stay normal Python libraries. Optional extensions add
-owned execution and lifecycle coordination. Append to `pycompose.toml`:
+Python libraries stay ordinary Python libraries. Declare them, and any Android
+permission they need, in `pycompose.toml`:
 
 ```toml
-[extensions]
-definitions = ["builtin:httpx", "builtin:sqlite"]
+[python]
+requirements = ["httpx>=0.27,<0.29"]
 
 [android]
 permissions = ["android.permission.INTERNET"]
 ```
 
-`pycompose extensions plan` checks requirements without importing the
-integrations. Builds install the declared Python requirements and stage only the
-selected recipes; permission choices feed a generated manifest while your native
-edits stay intact. HTTPX and SQLite are reference recipes; app code uses them as
-ordinary libraries.
+Builds install the requirements; permissions feed a generated manifest while
+your native edits stay intact. A view model runs a blocking call off the loop
+with `await to_thread("io", fn, *args)`, and computation with
+`await to_thread("cpu", fn, *args)`; `examples/extensions` uses HTTPX and SQLite
+that way. A blocks function needs neither: it already runs off the loop, so it
+calls HTTPX or any other blocking library directly, as `examples/weather` does.
 
 ## Development
 

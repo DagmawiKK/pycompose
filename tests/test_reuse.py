@@ -3,6 +3,7 @@
 import json
 
 import pytest
+from readable import readable_reuse, rename
 
 from pycompose import composable
 from pycompose.core.node import Node, Props
@@ -29,10 +30,11 @@ def _state(labels: list[str], *, extra: bool = False, title: str = "Rows") -> St
     )
 
 
-def _publish(state: State, reuse: Reuse | None, *, debug: bool = True) -> str:
-    result = validate_ir(emit_ir(state, "1.0.0", reuse), debug=debug, reuse=reuse)
-    assert result.snapshot is not None
-    return to_json(result.snapshot, reuse)
+def _publish(state: State, reuse: Reuse | None) -> str:
+    """Publish in a session, or fresh, with ids replaced by readable paths."""
+    reuse = reuse or readable_reuse()
+    result = validate_ir(emit_ir(state, "1.0.0", reuse), reuse=reuse)
+    return json.dumps(rename(json.loads(to_json(result.snapshot, reuse)), reuse))
 
 
 SEQUENCE = [
@@ -47,7 +49,7 @@ SEQUENCE = [
 
 
 def test_a_reused_publish_matches_a_fresh_one_at_every_step() -> None:
-    reuse = Reuse()
+    reuse = readable_reuse()
     for state in SEQUENCE:
         assert _publish(state, reuse) == _publish(state, None)
 
@@ -70,40 +72,18 @@ def listing(*, title: str):
 
 def test_a_reused_publish_follows_a_window_inside_a_composable() -> None:
     state = State(root=listing(id="screen", title="Rows"))
-    reuse = Reuse()
+    reuse = readable_reuse()
     first_pass = json.loads(_publish(state, reuse))
     key = first_pass["root"]["children"][1]["props"]["window"]
     for first in (0, 400, 400, 900, 0):
         with windows({key: (first, first + 9)}):
             reused = _publish(state, reuse)
             assert reused == _publish(state, None)
-            assert f'"itemOffset":{first}' in reused
-
-
-def test_release_mode_drops_the_same_invalid_nodes_with_reuse() -> None:
-    invalid = Node(id="bad", type="Unknown", props=Props({}))
-
-    def state(title: str) -> State:
-        return State(
-            root=Column(
-                id="screen",
-                children=(
-                    Text(id="title", text=title),
-                    row(id="r", label="a", extra=False),
-                    invalid,
-                ),
-            )
-        )
-
-    reuse = Reuse()
-    for title in ("one", "two", "two"):
-        assert _publish(state(title), reuse, debug=False) == _publish(
-            state(title), None, debug=False
-        )
+            assert f'"itemOffset": {first}' in reused
 
 
 def test_a_duplicate_id_across_reused_subtrees_is_still_refused() -> None:
-    reuse = Reuse()
+    reuse = readable_reuse()
     _publish(_state(["a", "b"]), reuse)
     # Components refuse duplicate sibling keys on construction; a raw node does
     # not, so the emitter's claim is what must refuse it, reused or not.

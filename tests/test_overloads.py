@@ -6,8 +6,8 @@ from typing import Any, NoReturn
 
 import pytest
 
-from pycompose import action
-from pycompose.schema.codegen.overloads import ambiguous, keywords, validate
+from pycompose.app import Intent
+from pycompose.codegen.overloads import ambiguous, keywords, validate
 from pycompose.state import State
 
 
@@ -80,15 +80,14 @@ def test_an_overload_is_named_after_what_sets_it_apart() -> None:
 
 
 def test_the_keywords_a_call_passes_choose_the_overload() -> None:
+    from pycompose.contract.catalog import SCHEMA_VERSION
     from pycompose.ir import emit_ir, to_json
-    from pycompose.ir.generated_validators import SCHEMA_VERSION
     from pycompose.m3 import Card, CardWithoutOnClick, Text
 
-    @action
-    def open_note(state: State) -> State:
-        return state
+    class OpenNote(Intent):
+        pass
 
-    clickable = Card(Text(text="Open"), on_click=open_note)
+    clickable = Card(Text(text="Open"), on_click=OpenNote())
     plain = Card(Text(text="Static"))
     assert type(clickable) is Card
     assert type(plain) is CardWithoutOnClick
@@ -101,7 +100,7 @@ def test_the_keywords_a_call_passes_choose_the_overload() -> None:
 
 
 def test_an_app_slice_carries_the_overloads_of_what_it_uses() -> None:
-    from pycompose.schema.codegen.app_slice import slice_registry
+    from pycompose.codegen.app_slice import slice_registry
 
     registry = {
         "components": {

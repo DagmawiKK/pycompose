@@ -41,7 +41,7 @@ class SheetDetentTest {
         compose.runOnIdle { ir.value = parse(sheet("expanded"), actions) }
         compose.waitForIdle()
         compose.waitUntil(5000) { actions.isNotEmpty() }
-        assertEquals(listOf("app.demo.anchor.1"), actions.map { it.actionId })
+        assertEquals(listOf(intent("demo.anchor")), actions.map { it.actionId })
         assertEquals(listOf("""{"value":"expanded"}"""), actions.map { it.payload.toString() })
         assertTrue(bodyIsComposed())
 
@@ -67,7 +67,7 @@ class SheetDetentTest {
             .performSemanticsAction(SemanticsActions.Expand)
         compose.waitUntil(5000) { actions.size == 2 }
         assertEquals("""{"value":"expanded"}""", actions.last().payload.toString())
-        assertEquals("app.demo.anchor.1", actions.last().actionId)
+        assertEquals(intent("demo.anchor"), actions.last().actionId)
 
         // The old desired partial value must not force a native expansion back.
         compose.runOnIdle { ir.value = parse(source, actions) }
@@ -153,7 +153,7 @@ class SheetDetentTest {
         compose.mainClock.autoAdvance = false
         val actions = mutableListOf<Action>()
         val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
-        val extra = ",\"onOpenChange\":\"app.demo.open.1\""
+        val extra = ",\"onOpenChange\":{\"fields\":{},\"intent\":\"demo.open\"}"
         compose.setContent {
             PyComposeTheme { renderer.Render(parse(sheet("expanded", extra = extra))) }
         }
@@ -165,7 +165,8 @@ class SheetDetentTest {
         compose.mainClock.autoAdvance = true
 
         compose.waitUntil(5000) { actions.size == 2 }
-        assertEquals(listOf("app.demo.anchor.1", "app.demo.open.1"), actions.map { it.actionId })
+        val reported = listOf(intent("demo.anchor"), intent("demo.open"))
+        assertEquals(reported, actions.map { it.actionId })
         assertEquals(
             listOf("""{"value":"hidden"}""", """{"open":false}"""),
             actions.map { it.payload.toString() },
@@ -360,27 +361,27 @@ class SheetDetentTest {
 
     @Test
     fun theBooleanObserverReportsPresenceEdgesNotEveryDetent() {
-        val extra = ",\"open\":false,\"onOpenChange\":\"app.demo.open.1\""
+        val extra = ",\"open\":false,\"onOpenChange\":{\"fields\":{},\"intent\":\"demo.open\"}"
         val ir = mutableStateOf(parse(sheet("partiallyExpanded", extra = extra)))
         val actions = mutableListOf<Action>()
         val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
         compose.setContent { PyComposeTheme { renderer.Render(ir.value) } }
         compose.waitUntil(5000) { actions.size == 2 }
         assertEquals("""{"open":true}""", actions.last().payload.toString())
-        assertEquals("app.demo.open.1", actions.last().actionId)
+        assertEquals(intent("demo.open"), actions.last().actionId)
 
         compose.runOnIdle { ir.value = parse(sheet("expanded", extra = extra), actions) }
         compose.waitForIdle()
         compose.waitUntil(5000) { actions.size == 3 }
         assertEquals("""{"value":"expanded"}""", actions.last().payload.toString())
-        assertEquals("app.demo.anchor.1", actions.last().actionId)
+        assertEquals(intent("demo.anchor"), actions.last().actionId)
 
         compose.runOnIdle { ir.value = parse(sheet("hidden", extra = extra), actions) }
         compose.waitForIdle()
         compose.waitUntil(5000) { actions.size == 5 }
         assertEquals("""{"open":false}""", actions.last().payload.toString())
-        assertEquals("app.demo.open.1", actions.last().actionId)
-        assertEquals("app.demo.open.1", actions.last().actionId)
+        assertEquals(intent("demo.open"), actions.last().actionId)
+        assertEquals(intent("demo.open"), actions.last().actionId)
         compose.waitUntil(5000) { !bodyIsComposed() }
     }
 
@@ -389,7 +390,7 @@ class SheetDetentTest {
         val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
         compose.setContent { PyComposeTheme { renderer.Render(parse(source)) } }
         compose.waitUntil(5000) { actions.isNotEmpty() }
-        assertEquals(listOf("app.demo.anchor.1"), actions.map { it.actionId })
+        assertEquals(listOf(intent("demo.anchor")), actions.map { it.actionId })
         assertEquals(listOf("""{"value":"expanded"}"""), actions.map { it.payload.toString() })
         assertTrue(bodyIsComposed())
     }
@@ -409,13 +410,13 @@ class SheetDetentTest {
         extra: String = "",
     ): String {
         val lines = if (tall) (1..100).joinToString("\\n") { "Body line $it" } else "Short body"
-        val callback = if (report) ",\"onValueChange\":\"app.demo.anchor.1\"" else ""
+        val anchor = """{"fields":{},"intent":"demo.anchor"}"""
+        val callback = if (report) ",\"onValueChange\":$anchor" else ""
         return """
-            {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
-              "app.demo.anchor.1":{"handlerId":"demo.anchor","payload":{
-                "value":{"required":true,"type":"string"}},"bound":{}},
-              "app.demo.open.1":{"handlerId":"demo.open","payload":{
-                "open":{"required":true,"type":"boolean"}},"bound":{}}}},
+            {"version":"0.1.0","schemaVersion":"1.23.0",
+              "metadata":{"intents":{"demo.anchor":{"payload":{
+                "value":{"required":true,"type":"string"}}},"demo.open":{"payload":{
+                "open":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"sheet","type":"ModalBottomSheet","props":{
                "value":"$value"$callback$extra},
                "children":[{"id":"body","type":"Text","props":{"text":"Sheet body"}},

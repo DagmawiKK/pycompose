@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import json
+
 from hypothesis import settings
 from hypothesis import strategies as st
 from hypothesis.stateful import RuleBasedStateMachine, invariant, rule
+from readable import readable_reuse, rename
 
 from pycompose import composable
-from pycompose.core.ids import Handles
 from pycompose.core.node import Node
 from pycompose.core.reuse import Reuse
 from pycompose.ir import emit_ir, to_json, validate_ir
@@ -23,10 +25,16 @@ def row(*, label: str, extra: bool) -> Node:
     return Column(children=children)
 
 
-def publish(state: State, reuse: Reuse | None) -> str:
+def publish(state: State, reuse: Reuse | None) -> dict[str, object]:
+    """Publish ``state`` in a session, or fresh, naming nodes by readable path.
+
+    Names are a session's own, so a session and a fresh build agree on what
+    each node is, not on its counter: compare them by the path debug keeps.
+    """
+    reuse = reuse or readable_reuse()
     result = validate_ir(emit_ir(state, "1.0.0", reuse), reuse=reuse)
     assert result.snapshot is not None
-    return to_json(result.snapshot, reuse)
+    return rename(json.loads(to_json(result.snapshot, reuse)), reuse)
 
 
 class Session(RuleBasedStateMachine):
@@ -37,8 +45,7 @@ class Session(RuleBasedStateMachine):
         self.labels: list[str] = ["a", "b"]
         self.extra: set[str] = set()
         self.title = "Rows"
-        self.readable = Reuse()
-        self.compact = Reuse(handles=Handles(compact=True))
+        self.session = readable_reuse()
 
     def state(self) -> State:
         rows = [
@@ -72,8 +79,7 @@ class Session(RuleBasedStateMachine):
     @invariant()
     def reuse_matches_a_fresh_build(self) -> None:
         state = self.state()
-        assert publish(state, self.readable) == publish(state, None)
-        publish(state, self.compact)
+        assert publish(state, self.session) == publish(state, None)
 
 
 TestSession = Session.TestCase

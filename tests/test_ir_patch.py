@@ -378,3 +378,28 @@ def test_changed_app_data_is_sent_whole() -> None:
 
     assert "keep" not in value
     assert value["metadata"]["data"] == {"note": "b"}
+
+
+def test_every_unchanged_section_but_effects_is_kept() -> None:
+    """Intent contracts rarely change between keystrokes; effects never repeat."""
+    sections = {
+        "intents": {"app.X": {"payload": {}}},
+        "data": {"note": "a"},
+        "effects": [{"kind": "haptic", "payload": {}}],
+    }
+    base = _snapshot(_text("hi"), metadata=sections)
+    root = _snapshot(_text("hi!"), metadata=sections)
+
+    value = json.loads(
+        patch_bytes(
+            root,
+            diff_nodes(base.root, root.root),
+            base_serial=1,
+            serial=2,
+            surface="main",
+            base=base,
+        )
+    )
+
+    assert value["keep"] == ["data", "intents"]
+    assert set(value["metadata"]) == {"effects"}

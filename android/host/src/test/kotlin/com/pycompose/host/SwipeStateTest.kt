@@ -143,22 +143,23 @@ class SwipeStateTest {
             props.add("\"value\":\"$value\"")
         }
         if (report) {
-            props.add("\"onValueChange\":\"app.demo.swipe.1\"")
+            props.add("\"onValueChange\":{\"fields\":{},\"intent\":\"demo.swipe\"}")
         }
         if (!endToStart) {
             props.add("\"enableDismissFromEndToStart\":false")
         }
         val extra = props.joinToString("") { ",$it" }
         return """
-            {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
-              "app.demo.swipe.1":{"handlerId":"demo.swipe","payload":{
-                "value":{"required":true,"type":"string"}},"bound":{}}}},
+            {"version":"0.1.0","schemaVersion":"1.23.0",
+              "metadata":{"intents":{"demo.swipe":{"payload":{
+                "value":{"required":true,"type":"string"}}}}},
              "root":{"id":"root","type":"SwipeToDismissBox","props":{
                "modifier":{"operations":[{"type":"fillMaxWidth","fraction":1.0}]}$extra
              },
                "children":[
                  {"id":"root.content","type":"Text","props":{"text":"Row"}},
-                 {"id":"root.background","type":"Text","props":{"text":"Delete"},"slot":"backgroundContent"}]}}
+                 {"id":"root.background","type":"Text","props":{"text":"Delete"},
+                   "slot":"backgroundContent"}]}}
             """.trimIndent()
     }
 }

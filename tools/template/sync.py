@@ -94,7 +94,7 @@ OVERLAY = TEMPLATES / "overlay"
 """The template's own files: what a scaffolded app has that ``android/`` lacks."""
 
 COPIES = {
-    ROOT / "pycompose/schema/catalog.lock.json": ROOT / "schema/catalog.lock.json",
+    ROOT / "pycompose/contract/catalog.lock.json": ROOT / "schema/catalog.lock.json",
     ROOT / "pycompose/schema/ir.schema.json": ROOT / "schema/ir.schema.json",
 }
 """Single files the package carries, by their source."""

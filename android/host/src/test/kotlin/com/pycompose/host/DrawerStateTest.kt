@@ -161,12 +161,12 @@ class DrawerStateTest {
             props.add("\"open\":$open")
         }
         if (report) {
-            props.add("\"onOpenChange\":\"app.demo.drawer.1\"")
+            props.add("\"onOpenChange\":{\"fields\":{},\"intent\":\"demo.drawer\"}")
         }
         return """
-            {"version":"0.1.0","schemaVersion":"1.18.0","metadata":{"actionBindings":{
-              "app.demo.drawer.1":{"handlerId":"demo.drawer","payload":{
-                "open":{"required":true,"type":"boolean"}},"bound":{}}}},
+            {"version":"0.1.0","schemaVersion":"1.18.0",
+              "metadata":{"intents":{"demo.drawer":{"payload":{
+                "open":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"ModalNavigationDrawer","props":{
                ${props.joinToString(",")}
              },

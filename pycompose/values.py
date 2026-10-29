@@ -18,6 +18,7 @@ __all__ = [
     "AnnotatedString",
     "BorderStroke",
     "Color",
+    "ContentScale",
     "CutCornerShape",
     "DisplayMode",
     "Dp",
@@ -132,14 +133,17 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     'imum":0,"required":true,"type":"value","valueType":"Dp"}},"since'
     '":"1.12.0"},"Color":{"family":"Color","parameters":{"color":{"ma'
     'ximum":4294967295,"minimum":0,'
-    '"required":true,"type":"long"}},"since":"1.11.0"},"CutCornerShap'
-    'e":{"family":"Shape","parameters":{"size":{"minimum":0,"required'
-    '":true,"type":"value","valueType":"Dp"}},"since":"1.11.0"},"Disp'
-    'layMode":{"family":"DisplayMode",'
-    '"parameters":{"name":{"required":true,"type":"string",'
-    '"values":["Input","Picker"]}},"since":"1.14.0"},"Dp":{"family":"'
-    'Dp","parameters":{"value":{"required":true,"type":"float"}},"sin'
-    'ce":"1.11.0"},"DpOffset":{"family":"DpOffset",'
+    '"required":true,"type":"long"}},"since":"1.11.0"},"ContentScale"'
+    ':{"family":"ContentScale","parameters":{"name":{"required":true,'
+    '"type":"string","values":["Crop","FillBounds","FillHeight","Fill'
+    'Width","Fit","Inside","None"]}},'
+    '"since":"1.23.0"},"CutCornerShape":{"family":"Shape",'
+    '"parameters":{"size":{"minimum":0,"required":true,"type":"value"'
+    ',"valueType":"Dp"}},"since":"1.11.0"},"DisplayMode":{"family":"D'
+    'isplayMode","parameters":{"name":{"required":true,"type":"string'
+    '","values":["Input","Picker"]}},"since":"1.14.0"},"Dp":{"family"'
+    ':"Dp","parameters":{"value":{"required":true,"type":"float"}},"s'
+    'ince":"1.11.0"},"DpOffset":{"family":"DpOffset",'
     '"parameters":{"x":{"required":true,"type":"value","valueType":"D'
     'p"},"y":{"required":true,"type":"value","valueType":"Dp"}},"sinc'
     'e":"1.13.0"},"DpSize":{"family":"DpSize","parameters":{"height":'
@@ -880,6 +884,17 @@ _AndroidExternalSurfaceZOrderName = Literal[
 ]
 
 
+_ContentScaleName = Literal[
+    "Crop",
+    "FillBounds",
+    "FillHeight",
+    "FillWidth",
+    "Fit",
+    "Inside",
+    "None",
+]
+
+
 _DisplayModeName = Literal[
     "Input",
     "Picker",
@@ -1476,6 +1491,26 @@ def Color(
         "Color",
         {
             "color": color,
+        },
+        DEFINITIONS,
+    )
+
+
+def ContentScale(
+    name: _ContentScaleName,
+) -> dict[str, JsonValue]:
+    """Construct ContentScale data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "ContentScale",
+        {
+            "name": name,
         },
         DEFINITIONS,
     )

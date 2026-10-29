@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from pycompose.schema.codegen.adapters import render
+from pycompose.codegen.adapters import render
 
 LOCK = json.loads(
     (Path(__file__).resolve().parents[1] / "schema/catalog.lock.json").read_text()

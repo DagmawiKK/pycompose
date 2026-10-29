@@ -23,7 +23,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Literal
 
-from pycompose.core.registry_vocabulary import (
+from pycompose.contract.registry_vocabulary import (
     EXPRESSION_LIMITS,
     EXPRESSION_OPS,
     STATE_STREAMS,

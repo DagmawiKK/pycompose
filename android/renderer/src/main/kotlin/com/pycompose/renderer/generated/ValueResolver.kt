@@ -31,6 +31,7 @@ import com.pycompose.ir.generated.CheckboxColorsValue
 import com.pycompose.ir.generated.ChipColorsValue
 import com.pycompose.ir.generated.ChipElevationValue
 import com.pycompose.ir.generated.ColorValue
+import com.pycompose.ir.generated.ContentScaleValue
 import com.pycompose.ir.generated.DatePickerColorsValue
 import com.pycompose.ir.generated.DisplayModeValue
 import com.pycompose.ir.generated.DpValue
@@ -85,6 +86,7 @@ import com.pycompose.ir.generated.WireAndroidExternalSurfaceZOrder
 import com.pycompose.ir.generated.WireAnnotatedString
 import com.pycompose.ir.generated.WireBorderStroke
 import com.pycompose.ir.generated.WireColor
+import com.pycompose.ir.generated.WireContentScale
 import com.pycompose.ir.generated.WireCutCornerShape
 import com.pycompose.ir.generated.WireDisplayMode
 import com.pycompose.ir.generated.WireDp
@@ -625,6 +627,29 @@ object ValueResolver {
                     "tertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryContainer
                     "tertiaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryFixed
                     "tertiaryFixedDim" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryFixedDim
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun contentScale(value: JsonElement): Result<androidx.compose.ui.layout.ContentScale> {
+        val parsed = runCatching { ValueContract.readContentScale(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(contentScale(parsed))
+    }
+
+    @Composable
+    fun contentScale(value: ContentScaleValue): androidx.compose.ui.layout.ContentScale =
+        when (value) {
+            is WireContentScale -> {
+                when (value.name) {
+                    "Crop" -> androidx.compose.ui.layout.ContentScale.Crop
+                    "FillBounds" -> androidx.compose.ui.layout.ContentScale.FillBounds
+                    "FillHeight" -> androidx.compose.ui.layout.ContentScale.FillHeight
+                    "FillWidth" -> androidx.compose.ui.layout.ContentScale.FillWidth
+                    "Fit" -> androidx.compose.ui.layout.ContentScale.Fit
+                    "Inside" -> androidx.compose.ui.layout.ContentScale.Inside
+                    "None" -> androidx.compose.ui.layout.ContentScale.None
                     else -> error("Unknown native constant")
                 }
             }

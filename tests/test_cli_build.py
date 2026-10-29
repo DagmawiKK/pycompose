@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from test_cli_init import OWNED, cli
 
-from pycompose.ir.generated_validators import SCHEMA_VERSION
+from pycompose.contract.catalog import SCHEMA_VERSION
 
 
 def wrapper(project: Path, body: str) -> None:
@@ -45,7 +45,8 @@ assert os.environ["ORG_GRADLE_PROJECT_pycomposeVersionName"] == "0.1.0"
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeEntrypoint"] == "main:app"
 source = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeSourceDir"])
 assert source == Path("app").resolve()
-assert os.environ["ORG_GRADLE_PROJECT_pycomposeOwnSlice"] == "true"
+# The blocks starter draws with the library's components, so it carries them.
+assert os.environ["ORG_GRADLE_PROJECT_pycomposeOwnSlice"] == "false"
 runtime = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"])
 assert (runtime / "pycompose/bridge/runtime.py").is_file()
 assert Path(os.environ["ORG_GRADLE_PROJECT_pycomposeBuildPython"]).is_file()

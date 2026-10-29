@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+import asyncio
+import atexit
 import json
 import sys
 from collections.abc import Mapping
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
-from pycompose import AppContext, install_context
+from pycompose.app import to_thread
+from pycompose.app.session import REFRESH, NavigationSession
 from pycompose.bridge import BridgeSurface
 from pycompose.core.props import to_camel_case
+from pycompose.runtime.loop import LoopThread
 from pycompose.state import Store
 
 if TYPE_CHECKING:
@@ -58,6 +62,33 @@ def load_notes_app() -> ModuleType:
         sys.path.remove(str(APP))
 
 
+_LOOP: LoopThread | None = None
+"""One loop thread for every host, as one process has one."""
+
+
+def _loop() -> LoopThread:
+    global _LOOP  # noqa: PLW0603 -- one loop thread per test process
+    if _LOOP is None:
+        _LOOP = LoopThread(lambda scope, error: FAILURES.append(f"{scope}: {error}"))
+        atexit.register(_end, _LOOP)
+    return _LOOP
+
+
+_HOSTS: list[Host] = []
+"""Every host started, kept so each is closed rather than collected mid-task."""
+
+
+def _end(loop: LoopThread) -> None:
+    """Close every host's session, then stop the loop, as a process ends."""
+    for host in _HOSTS:
+        loop.call(host._bridge.close)
+    loop.stop()
+
+
+FAILURES: list[str] = []
+"""Every launched task that failed, on any host."""
+
+
 class Host:
     """A stand-in for the Android host: starts a session and feeds it actions."""
 
@@ -70,11 +101,11 @@ class Host:
         follow_navigation: bool = True,
         repo: Any = None,
     ) -> None:
-        """Start a session the way ChaquopyBridge would.
+        """Start a session on the loop thread, the way ChaquopyBridge would.
 
         Args:
             app: The app entrypoint module.
-            route: The route the host restored.
+            route: The route the host restored, or empty for the start route.
             restore: Data the host saved from a previous process.
             follow_navigation: Echo navigate effects back as the host does. Off
                 to observe what an action asks for without moving the screen.
@@ -82,27 +113,63 @@ class Host:
                 touches a file and the data layer is never on the path.
         """
         from notes_app.container import AppContainer
-        from notes_app.domain import Notes
 
         self.follow_navigation = follow_navigation
         self.repo: Any = repo if repo is not None else a_store()
-        self.container = AppContainer(Notes(self.repo))
-        # A real session installs all of this while resolving the entry
-        # object. A test driving the surface directly stands in for one, so it
-        # says so once, in one place.
-        app.actions.install_container(self.container)
-        app.actions.install_view(app.app.session_view)
-        install_context(
-            AppContext(
-                actions=app.actions,
-                container=self.container,
-                notes=self.container.notes,
+        self.container = AppContainer(self.repo)
+        self._refresh = False
+
+        def start() -> BridgeSurface:
+            self.session = NavigationSession(
+                app.app,
+                self.container,
+                route,
+                restore,
+                report=lambda scope, error: FAILURES.append(f"{scope}: {error}"),
+                signal=self._signalled,
             )
-        )
-        self._bridge = BridgeSurface(
-            Store(app.app.build(route=route or "notes", restore=restore)),
-            app.actions,
-        )
+            return BridgeSurface(Store(self.session.snapshot_state(None)), self.session)
+
+        self._bridge = _loop().call(start)
+        _HOSTS.append(self)
+
+    def _signalled(self) -> None:
+        self._refresh = True
+
+    def _deliver(self, envelope: dict[str, Any]) -> None:
+        """Run one action, then the work it woke, then any refresh it signalled.
+
+        The host runs the effects of every snapshot it pulls, so each one's are
+        kept in :attr:`ran`.
+        """
+        self.ran: list[tuple[str, dict[str, Any]]] = []
+        _loop().call(self._bridge.accept_action, json.dumps(envelope))
+        self.ran += effects(self.snapshot())
+        _loop().call(lambda: None)
+        while self._refresh:
+            self._refresh = False
+            _loop().call(
+                self._bridge.accept_action,
+                json.dumps({"intent": REFRESH, "payload": {}}),
+            )
+            self.ran += effects(self.snapshot())
+            _loop().call(lambda: None)
+
+    def settle_storage(self) -> None:
+        """Wait until every write the app asked storage for has run."""
+
+        async def drained() -> None:
+            await to_thread("storage", lambda: None)
+
+        asyncio.run_coroutine_threadsafe(drained(), _loop().loop).result(timeout=10)
+
+    def envelope(self) -> str:
+        """Return the whole snapshot envelope the host would pull first.
+
+        Returns:
+            The envelope's JSON.
+        """
+        return str(_loop().call(self._bridge.expose_envelope, -1))
 
     @property
     def titles(self) -> list[str]:
@@ -111,10 +178,7 @@ class Host:
         Returns:
             Every stored title.
         """
-        return [
-            held.title
-            for held in sorted(self.repo.load(), key=lambda n: n.id, reverse=True)
-        ]
+        return [held.title for held in self.container.notes.list()]
 
     def title_of(self, note_id: int) -> str:
         """Return one note's stored title.
@@ -128,7 +192,7 @@ class Host:
         Raises:
             AssertionError: If no such note is held.
         """
-        for held in self.repo.load():
+        for held in self.container.notes.list():
             if held.id == note_id:
                 return held.title
         raise AssertionError(f"no held note with id {note_id}")
@@ -140,7 +204,7 @@ class Host:
         Returns:
             The error text, or an empty string.
         """
-        return self._bridge.expose_latest_error() or ""
+        return _loop().call(self._bridge.expose_latest_error) or ""
 
     def snapshot(self) -> dict[str, Any]:
         """Return the latest snapshot, failing loudly if there is none.
@@ -148,25 +212,23 @@ class Host:
         Returns:
             The parsed snapshot.
         """
-        source = self._bridge.expose_latest_snapshot()
+        source = _loop().call(self._bridge.expose_latest_snapshot)
         assert source is not None, self.error
         return json.loads(source)
 
     def tap(
         self, handler: str, bound: Mapping[str, Any] | None = None, **event: Any
     ) -> None:
-        """Deliver one action envelope to the control a handler is bound to.
+        """Deliver one action envelope to the control carrying an intent.
 
         Args:
-            handler: The action's function name.
+            handler: The intent's class name.
             bound: The values the control binds, when several controls bind
                 one handler; None for the only control bound to it.
             **event: Event fields the handler declares as unfilled.
         """
-        action_id = self._id_for(handler, bound)
-        self._bridge.accept_action(
-            json.dumps({"actionId": action_id, "payload": event})
-        )
+        intent = self.intent_for(handler, bound)
+        self._deliver({**intent, "payload": event})
         self._follow_navigation()
 
     def lifecycle(self, event: str, **payload: Any) -> None:
@@ -176,15 +238,14 @@ class Host:
             event: The lifecycle event name.
             **payload: Fields the event declares.
         """
-        self._bridge.accept_action(json.dumps({"actionId": event, "payload": payload}))
+        self._deliver({"intent": event, "payload": payload})
         self._follow_navigation()
 
     def follow(self, destination: str) -> None:
         """Honour a navigate effect the way the host does.
 
-        The host no longer rebuilds Python for a route change. It echoes the new
-        route back as an ordinary lifecycle action and lets the app decide what
-        that route means.
+        The host echoes the route back as a lifecycle action; Python already
+        moved its back stack, so the echo of the screen on top changes nothing.
 
         Args:
             destination: The route carried by the snapshot's navigate effect.
@@ -199,51 +260,92 @@ class Host:
             if kind == "navigate":
                 self.lifecycle("onRouteChanged", **body)
 
-    def _id_for(self, handler: str, bound: Mapping[str, Any] | None) -> str:
-        """Return the binding a control was given in the current snapshot.
+    def intent_for(
+        self, handler: str, bound: Mapping[str, Any] | None
+    ) -> dict[str, Any]:
+        """Return the intent a control carries in the current snapshot.
 
-        A control is named by its handler, and by the values it binds when
-        several controls bind one handler.
+        A control is named by its intent's class, and by the values it binds
+        when several controls carry one intent class.
 
         Args:
-            handler: The action's function name.
+            handler: The intent's class name.
             bound: The values the control binds, or None for the only one.
 
         Returns:
-            The binding id.
+            The intent object, exactly as the control carries it.
 
         Raises:
-            AssertionError: Unless exactly one live binding matches.
+            AssertionError: Unless exactly one distinct live intent matches.
         """
-        bindings = (self.snapshot().get("metadata") or {}).get("actionBindings", {})
         wanted = (
             None
             if bound is None
             else {to_camel_case(key): value for key, value in bound.items()}
         )
         matches = [
-            binding_id
-            for binding_id, contract in bindings.items()
-            if contract["handlerId"].rpartition(".")[2] == handler
-            and (wanted is None or contract["bound"] == wanted)
+            intent
+            for intent in live_intents(self.snapshot())
+            if intent["intent"].rpartition(".")[2] == handler
+            and (wanted is None or intent["fields"] == wanted)
         ]
         if len(matches) != 1:
-            raise AssertionError(
-                f"{len(matches)} live bindings for {handler} {bound}: {list(bindings)}"
-            )
-        return cast("str", matches[0])
+            raise AssertionError(f"{len(matches)} live intents for {handler} {bound}")
+        return matches[0]
 
 
-def data(snapshot: dict[str, Any]) -> dict[str, Any]:
-    """Return the app data a snapshot published.
+def live_intents(snapshot: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return every distinct intent the snapshot's controls carry.
 
     Args:
         snapshot: A parsed snapshot.
 
     Returns:
-        The published data.
+        The intents, in the order the walk meets them.
     """
-    return snapshot["metadata"]["data"]
+    found: list[dict[str, Any]] = []
+
+    def visit(value: Any) -> None:
+        if isinstance(value, dict):
+            if set(value) == {"fields", "intent"}:
+                if value not in found:
+                    found.append(value)
+                return
+            for item in value.values():
+                visit(item)
+        elif isinstance(value, list):
+            for item in value:
+                visit(item)
+
+    visit(snapshot["root"])
+    return found
+
+
+def data(snapshot: dict[str, Any]) -> dict[str, Any]:
+    """Return the saved state of the screen on top.
+
+    Args:
+        snapshot: A parsed snapshot.
+
+    Returns:
+        The top entry's saved state.
+    """
+    return snapshot["metadata"]["data"]["stack"][-1]["state"]
+
+
+def stack(snapshot: dict[str, Any]) -> list[str]:
+    """Return the back stack's route classes, bottom first.
+
+    Args:
+        snapshot: A parsed snapshot.
+
+    Returns:
+        Each entry's route class name.
+    """
+    return [
+        entry["route"]["route"].rpartition(".")[2]
+        for entry in snapshot["metadata"]["data"]["stack"]
+    ]
 
 
 def titles_of(host: Any) -> list[str]:
@@ -271,7 +373,7 @@ def held_of(host: Any, note_id: int) -> Any:
     Raises:
         AssertionError: If no such note is held.
     """
-    for held in host.repo.load():
+    for held in host.container.notes.list():
         if held.id == note_id:
             return held
     raise AssertionError(f"no held note {note_id}")

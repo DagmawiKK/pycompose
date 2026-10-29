@@ -73,6 +73,12 @@ jobs:
         run: pip install -e ".[dev]"
       - name: Codegen drift check
         run: python tools/schema/gen.py --check
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JDK_VERSION }}
+      - name: Protocol model check (TLA+)
+        run: python tools/spec/check.py
       - name: Classified lock diff (behaviour and breaking changes need approval)
         env:
           PR_BASE: ${{ github.event.pull_request.base.sha }}
@@ -146,6 +152,112 @@ jobs:
           name: ir-performance
           path: reports/ir-performance/
 
+  slo-gate:
+    name: 7 · Pass-time SLO gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Measure the base commit and the change on this runner
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+        run: |
+          base="${PR_BASE:-$PUSH_BASE}"
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            base="$(git rev-parse HEAD^)"
+          fi
+          git worktree add --detach "$RUNNER_TEMP/slo-base" "$base"
+          cp tools/slo.py "$RUNNER_TEMP/slo-base/tools/slo.py"
+          mkdir -p reports/slo
+          # A base older than the view model runtime cannot run this
+          # measurement; then there is nothing to compare against.
+          if (cd "$RUNNER_TEMP/slo-base" && pip install -q -e . && python tools/slo.py measure -o "$GITHUB_WORKSPACE/reports/slo/before.json"); then
+            echo "measured=true" >> "$GITHUB_ENV"
+          else
+            echo "::notice::the base commit predates the SLO measurement; gate skipped"
+          fi
+          pip install -q -e .
+          python tools/slo.py measure -o reports/slo/after.json
+      - name: Fail on a regression over 20%
+        if: env.measured == 'true'
+        run: python tools/slo.py check reports/slo/before.json reports/slo/after.json
+      - name: Upload measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: slo
+          path: reports/slo/
+
+  device-slo-gate:
+    name: 8 · Tap-to-frame SLO gate (emulator)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JDK_VERSION }}
+      - uses: gradle/actions/setup-gradle@v4
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - name: Install pinned SDK packages
+        run: sdkmanager "platforms;android-37.0" "build-tools;34.0.0"
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Check out the base commit
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+        run: |
+          base="${PR_BASE:-$PUSH_BASE}"
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            base="$(git rev-parse HEAD^)"
+          fi
+          git worktree add --detach "$RUNNER_TEMP/slo-base" "$base"
+          mkdir -p reports/device-slo
+      # The base and the change run on one emulator, one after the other, so
+      # they are measured on the same machine. A base that cannot build the
+      # notes app or log its passes leaves nothing to compare against.
+      - name: Measure tap to frame, base commit then change
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: |
+            (cd "$RUNNER_TEMP/slo-base" && pip install -q -e . && cd examples/notes && pycompose debug --no-launch && python "$GITHUB_WORKSPACE/tools/slo.py" device -o "$GITHUB_WORKSPACE/reports/device-slo/before.json") || echo "::notice::the base commit cannot run the device measurement; gate skipped"
+            pip install -q -e . && cd examples/notes && pycompose debug --no-launch && python ../../tools/slo.py device -o ../../reports/device-slo/after.json
+      - name: Fail on a regression over 20%
+        run: |
+          if [[ -f reports/device-slo/before.json ]]; then
+            python tools/slo.py check reports/device-slo/before.json reports/device-slo/after.json --floor-ms 5
+          fi
+      - name: Upload measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: device-slo
+          path: reports/device-slo/
+
   kotlin-lint-test-archunit:
     name: 3 · Kotlin lint · tests · ArchUnit
     runs-on: ubuntu-latest
@@ -172,6 +284,9 @@ jobs:
         if: hashFiles('android/settings.gradle.kts') != ''
         working-directory: android
         run: ./gradlew spotlessCheck detekt lintDebug testDebugUnitTest --continue
+      - name: Trace validation (recorded host runs against the TLA+ model)
+        if: hashFiles('android/settings.gradle.kts') != ''
+        run: python tools/spec/trace.py android/host/build/traces
       - name: Verify pinned public Compose inventory
         env:
           PYCOMPOSE_NATIVE_API_TESTS: "1"
@@ -219,11 +334,9 @@ jobs:
         working-directory: ${{ runner.temp }}/smoke/app
         run: |
           python - <<'PY'
-          import main
-          from pycompose.ir import emit_ir, validate_ir
-          from pycompose.ir.generated_validators import SCHEMA_VERSION
-          candidate = emit_ir(main.app.build(route="home"), SCHEMA_VERSION)
-          assert validate_ir(candidate).snapshot is candidate
+          from pycompose.bridge.session import compose_once
+          snapshot, error = compose_once("main:app")
+          assert snapshot and not error, error
           PY
       - name: Verify installed wheel CLI and template assets
         run: |

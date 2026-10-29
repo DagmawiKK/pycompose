@@ -1,6 +1,7 @@
 """Python compositions observed through the public IR pipeline."""
 
 import pytest
+from readable import readable_reuse, rename
 
 from pycompose import composable
 from pycompose.core.expansion import ExpansionMemo
@@ -27,10 +28,11 @@ def test_composable_expands_on_emission_with_scoped_identity() -> None:
     second = profile_header(id="second", name="Grace")
     state = State(root=Column(id="screen", children=(first, second)))
     assert calls == []
-    candidate = emit_ir(state, "1.0.0")
+    reuse = readable_reuse()
+    candidate = emit_ir(state, "1.0.0", reuse)
     assert validate_ir(candidate).snapshot is candidate
     assert calls == ["Ada", "Grace"]
-    assert to_dict(candidate)["root"] == {
+    assert rename(to_dict(candidate), reuse)["root"] == {
         "id": "root",
         "type": "Column",
         "props": {},
@@ -89,10 +91,11 @@ def test_named_content_callables_expand_on_the_worker() -> None:
 
     root = Scaffold(id="screen", content=content)
     assert calls == []
-    candidate = emit_ir(State(root=root), "1.0.0")
+    reuse = readable_reuse()
+    candidate = emit_ir(State(root=root), "1.0.0", reuse)
     assert calls == ["content"]
     assert validate_ir(candidate).snapshot is candidate
-    assert [node.id for node in candidate.root.children] == [
+    assert [n["id"] for n in rename(to_dict(candidate), reuse)["root"]["children"]] == [
         "root.content.first",
         "root.content.second",
     ]
@@ -111,9 +114,15 @@ def test_nested_compositions_are_stable_when_instances_reorder() -> None:
 
     first = row(id="first", text="one")
     second = row(id="second", text="two")
-    a = emit_ir(State(root=Column(id="screen", children=[first, second])), "1.0.0")
-    b = emit_ir(State(root=Column(id="screen", children=[second, first])), "1.0.0")
-    assert [node.id for node in a.root.children] == [
+    # One session: its names follow each identity across the reorder.
+    reuse = readable_reuse()
+    a = emit_ir(
+        State(root=Column(id="screen", children=[first, second])), "1.0.0", reuse
+    )
+    b = emit_ir(
+        State(root=Column(id="screen", children=[second, first])), "1.0.0", reuse
+    )
+    assert [n["id"] for n in rename(to_dict(a), reuse)["root"]["children"]] == [
         "root.first.label.text",
         "root.second.label.text",
     ]
@@ -153,8 +162,10 @@ def test_composable_detaches_mutable_prop_containers() -> None:
 def test_invalid_output_does_not_replace_the_last_good_bridge_snapshot() -> None:
     from dataclasses import replace
 
+    from handlers import Handlers
+
     from pycompose.bridge import BridgeSurface
-    from pycompose.state import Actions, Store
+    from pycompose.state import Store
 
     @composable
     def broken():
@@ -162,13 +173,13 @@ def test_invalid_output_does_not_replace_the_last_good_bridge_snapshot() -> None
 
     initial = State(root=Text(id="message", text="Hello"))
     store = Store(initial)
-    actions = Actions()
+    actions = Handlers()
     actions.register(
         "increment", lambda state, _: replace(state, root=broken(id="broken"))
     )
     bridge = BridgeSurface(store, actions)
     snapshot = bridge.expose_latest_snapshot()
-    bridge.accept_action('{"actionId":"increment","payload":{"by":1}}')
+    bridge.accept_action('{"intent":"increment","payload":{"by":1}}')
     assert bridge.expose_latest_snapshot() == snapshot
     assert store.value is initial
 
@@ -218,6 +229,7 @@ def test_a_composable_fills_a_declared_slot() -> None:
     def header(*, text: str):
         return Text(id="title", text=text)
 
+    reuse = readable_reuse()
     snapshot = emit_ir(
         State(
             root=Scaffold(
@@ -227,9 +239,10 @@ def test_a_composable_fills_a_declared_slot() -> None:
             )
         ),
         "1.0.0",
+        reuse,
     )
     assert validate_ir(snapshot).snapshot is snapshot
-    root = to_dict(snapshot)["root"]
+    root = rename(to_dict(snapshot), reuse)["root"]
     assert [(child["type"], child.get("slot")) for child in root["children"]] == [
         ("Column", None),
         ("Text", "topBar"),

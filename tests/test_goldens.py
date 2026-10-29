@@ -7,6 +7,7 @@ import jsonschema
 import pytest
 from hypothesis import given
 from hypothesis import strategies as st
+from readable import readable
 
 from pycompose.components import (
     Box,
@@ -19,9 +20,9 @@ from pycompose.components import (
     Text,
     TextField,
 )
+from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node
 from pycompose.ir import emit_ir, to_json_bytes, validate_ir
-from pycompose.ir.generated_validators import REGISTRY
 from pycompose.state import State
 from pycompose.testing.helpers import component_screen, golden_names, read_golden
 from pycompose.utils.json_canonical import canonical_json_bytes
@@ -122,12 +123,12 @@ def test_golden_property_ids_are_unique_and_props_are_registry_known(
 @given(st.lists(TEXT, min_size=0, max_size=15))
 def test_golden_property_lazy_identity_survives_reordering(texts: list[str]) -> None:
     items = tuple(Text(id=f"key{index}", text=text) for index, text in enumerate(texts))
-    first = emit_ir(State(root=LazyColumn(id="list", items=items)), "1.0.0")
-    second = emit_ir(
+    first = readable(State(root=LazyColumn(id="list", items=items)), "1.0.0")
+    second = readable(
         State(root=LazyColumn(id="list", items=tuple(reversed(items)))), "1.0.0"
     )
-    assert [item.id for item in first.root.children] == list(
-        reversed([item.id for item in second.root.children])
+    assert [item["id"] for item in first["root"].get("children", [])] == list(
+        reversed([item["id"] for item in second["root"].get("children", [])])
     )
 
 

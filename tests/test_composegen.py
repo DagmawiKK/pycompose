@@ -113,7 +113,7 @@ def test_the_signature_file_is_what_the_pin_says() -> None:
             {
                 "policy": "resource",
                 "decode": "resourceImage",
-                "values": ["drawable", "asset"],
+                "values": ["drawable", "asset", "file"],
             },
         ),
     ],
@@ -301,8 +301,8 @@ def test_a_declined_holder_is_not_bound() -> None:
 
 
 def test_codegen_reads_held_props_from_the_families() -> None:
-    from pycompose.schema.codegen.adapter_helpers import STATE_CONSTRUCTOR_PROPS
-    from pycompose.schema.codegen.state_families import STATE_FAMILIES
+    from pycompose.codegen.adapter_helpers import STATE_CONSTRUCTOR_PROPS
+    from pycompose.codegen.state_families import STATE_FAMILIES
 
     assert STATE_CONSTRUCTOR_PROPS["slider"] == ("valueRange", "steps")
     assert set(STATE_CONSTRUCTOR_PROPS) == {

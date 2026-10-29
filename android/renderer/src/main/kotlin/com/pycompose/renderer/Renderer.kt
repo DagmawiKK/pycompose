@@ -32,8 +32,15 @@ import kotlinx.serialization.json.booleanOrNull
 class RenderContext internal constructor(
     val actions: ActionDispatcher,
     internal val renderer: Renderer,
-    private val bindings: Map<String, AppBinding>,
+    bindings: Map<String, AppBinding>,
 ) {
+    /**
+     * The bindings of the snapshot on screen, read when an event fires and never
+     * while composing: one context serves the whole session, so a node whose data
+     * did not change skips recomposition.
+     */
+    internal var bindings: Map<String, AppBinding> = bindings
+
     @Composable fun node(node: UiNode) {
         renderer.Node(node, this)
     }
@@ -61,7 +68,7 @@ class RenderContext internal constructor(
      * caller hands the same three-argument function to the state helpers.
      */
     internal val observations =
-        ObservationSink(bindings, actions, renderer.report, renderer.reports)
+        ObservationSink({ this.bindings }, actions, renderer.report, renderer.reports)
 
     /**
      * Report one diagnostic for a node the host cannot compose as declared.
@@ -236,14 +243,14 @@ class Renderer(
     internal val streams = mutableStateMapOf<String, Map<String, Stream>>()
 
     @Composable fun Render(ir: ValidatedIr) {
-        val context =
-            remember(ir) {
-                RenderContext(
-                    actions,
-                    this,
-                    AppBindings.read(ir.snapshot.metadata, ir.snapshot.schemaVersion),
-                )
-            }
+        // One context for the session: a new one per snapshot would be a changed
+        // argument to every node, and recompose all of them, changed or not. The
+        // echo check changes per snapshot; only the holders that read it recompose.
+        val context = remember { RenderContext(actions, this, emptyMap()) }
+        // Set as this snapshot is composed, so a holder that reports the moment it
+        // is composed already finds the contract it reports against.
+        context.bindings =
+            remember(ir) { AppBindings.read(ir.snapshot.metadata, ir.snapshot.schemaVersion) }
         val answered =
             remember(ir) {
                 val echoes = Echoes.read(ir.snapshot.metadata)

@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from readable import readable_reuse, rename
 
 from pycompose.composition import slot_nodes
 from pycompose.core.node import Node, Props
@@ -52,11 +53,12 @@ def snapshot(root: Node, schema_version: str = "1.0.0") -> dict:
         schema_version: Wire contract version the tree is written against.
 
     Returns:
-        The canonical wire snapshot.
+        The canonical wire snapshot, each node named by its readable path.
     """
-    candidate = emit_ir(State(root=root), schema_version)
+    reuse = readable_reuse()
+    candidate = emit_ir(State(root=root), schema_version, reuse)
     assert validate_ir(candidate).snapshot is candidate
-    return to_dict(candidate)
+    return rename(to_dict(candidate), reuse)
 
 
 def test_a_slot_name_must_be_camel_case() -> None:
@@ -132,17 +134,13 @@ def test_a_root_cannot_fill_a_slot() -> None:
 
 
 def test_a_slotted_child_still_needs_a_declared_slot_on_the_wire() -> None:
-    """A release snapshot drops the subtree rather than the frame."""
     column = Node(
         id="body",
         type="Column",
         children=(text_node("line", slot="topBar"),),
     )
-    candidate = emit_ir(State(root=column), "1.0.0")
-    result = validate_ir(candidate, debug=False)
-    assert result.snapshot is not None
-    assert [child.type for child in result.snapshot.root.children] == []
-    assert any("unknown slot" in issue.message for issue in result.issues)
+    with pytest.raises(IrValidationError, match="unknown slot"):
+        validate_ir(emit_ir(State(root=column), "1.0.0"))
 
 
 def test_tooltip_content_fills_the_box_slot_and_reaches_the_wire() -> None:
@@ -218,7 +216,7 @@ def test_the_generated_constructor_slots_reach_the_wire() -> None:
 
 def test_a_slot_is_declared_or_the_registry_refuses_the_schema() -> None:
     """The runtime registry keeps the vocabulary closed, not just the codegen."""
-    from pycompose.core.registry_types import ComponentSpec
+    from pycompose.contract.registry_types import ComponentSpec
     from pycompose.errors import ComponentRegistryError
 
     with pytest.raises(ComponentRegistryError):
@@ -250,7 +248,7 @@ def _load_with(
     """
     import json
 
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(
         (Path(__file__).resolve().parents[1] / "schema/catalog.lock.json").read_text()
@@ -354,7 +352,7 @@ def test_a_slot_bearing_component_carries_its_children() -> None:
     sees it, so the declared slot is the fact that decides, not
     ``children.allowed``.
     """
-    from pycompose.schema.codegen.emit_kotlin import render_kotlin_models
+    from pycompose.codegen.emit_kotlin import render_kotlin_models
 
     models = render_kotlin_models(
         {

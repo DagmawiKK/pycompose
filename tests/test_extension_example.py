@@ -1,4 +1,4 @@
-"""The reference app uses both extension recipes through worker action delivery."""
+"""The example app uses HTTPX and SQLite directly, their calls off the loop."""
 
 import json
 import queue
@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 from test_cli_build import wrapper
-from test_cli_extensions import select
 from test_cli_init import cli
+from test_cli_permissions import declare
 
 from pycompose.bridge import runtime
 from pycompose.extensions import paths
@@ -18,7 +18,7 @@ from pycompose.extensions import paths
 def prepare_example(tmp_path: Path) -> Path:
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"
-    select(project, ["builtin:httpx", "builtin:sqlite"], internet=True)
+    declare(project, requirements=["httpx>=0.27,<0.29"], internet=True)
     source = project / "app"
     sample = Path(__file__).parents[1] / "examples/extensions/app/main.py"
     shutil.copyfile(sample, source / "extension_example.py")
@@ -63,10 +63,26 @@ def test_http_page_is_cached_and_restored_offline_through_the_runtime(
 
     def listen() -> None:
         runtime.install_async_sink(
-            lambda aid, data: pending.put(
-                json.dumps({"actionId": aid, "payload": json.loads(data)})
+            lambda event, data: pending.put(
+                json.dumps({"intent": event, "payload": json.loads(data)})
             )
         )
+
+    def intent(name: str, **fields: str) -> None:
+        runtime.accept_action(
+            json.dumps(
+                {
+                    "fields": fields,
+                    "intent": f"extension_example.{name}",
+                    "payload": {},
+                }
+            )
+        )
+
+    def finished() -> None:
+        # The work signals once it has changed the state; the signal comes back
+        # as an action, as the host delivers it, and publishes that state.
+        runtime.accept_action(pending.get(timeout=3))
 
     previous = {
         name: module
@@ -88,23 +104,10 @@ def test_http_page_is_cached_and_restored_offline_through_the_runtime(
         listen()
         endpoints = ("/posts", "/comments", "/albums", "/photos", "/todos", "/users")
 
-        def choose(endpoint: str) -> None:
-            runtime.accept_action(
-                json.dumps(
-                    {
-                        "actionId": "extension_example.choose_endpoint",
-                        "payload": {"endpoint": endpoint},
-                    }
-                )
-            )
-
         for endpoint in endpoints:
-            choose(endpoint)
-            runtime.accept_action(
-                '{"actionId":"extension_example.refresh","payload":{}}'
-            )
-            runtime.accept_action(pending.get(timeout=3))  # HTTP -> received
-            runtime.accept_action(pending.get(timeout=3))  # SQLite -> cached
+            intent("ChooseEndpoint", endpoint=endpoint)
+            intent("Refresh")
+            finished()
             assert endpoint + " café" in runtime.fetch_latest_snapshot()
             assert "HTTP 200" in runtime.fetch_latest_snapshot()
             assert runtime.fetch_latest_error() == ""
@@ -122,11 +125,9 @@ def test_http_page_is_cached_and_restored_offline_through_the_runtime(
         listen()
         sys.modules["settings"].offline = True
         for endpoint in endpoints:
-            choose(endpoint)
-            runtime.accept_action(
-                '{"actionId":"extension_example.load_cache","payload":{}}'
-            )
-            runtime.accept_action(pending.get(timeout=3))
+            intent("ChooseEndpoint", endpoint=endpoint)
+            intent("LoadCache")
+            finished()
             assert endpoint + " café" in runtime.fetch_latest_snapshot()
             assert "SQLite cache" in runtime.fetch_latest_snapshot()
             assert runtime.fetch_latest_error() == ""

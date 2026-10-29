@@ -1,4 +1,4 @@
-"""Compact handles: a session names each node identity once, and never twice."""
+"""Handles: a session names each node identity once, and never twice."""
 
 from __future__ import annotations
 
@@ -11,13 +11,16 @@ from pycompose.ir.patch import PatchOp, ReplaceSubtree, diff_nodes
 from pycompose.state import State
 
 
-def session() -> Reuse:
-    """Return a release session's reuse, which names nodes compactly.
+def session(*, readable: bool = False) -> Reuse:
+    """Return a session's reuse; a debug one also keeps readable paths.
+
+    Args:
+        readable: Keep each name's readable path, as debug does.
 
     Returns:
-        A reuse with compact handles.
+        A reuse with its own handles.
     """
-    return Reuse(handles=Handles(compact=True))
+    return Reuse(handles=Handles(readable=readable))
 
 
 def names(root: Node) -> dict[str, str]:
@@ -48,7 +51,7 @@ def column(*labels: str) -> State:
     )
 
 
-def test_compact_names_are_short_and_stable_across_passes() -> None:
+def test_names_are_short_and_stable_across_passes() -> None:
     reuse = session()
 
     first = emit_ir(column("a", "b"), "1.0.0", reuse).root
@@ -87,10 +90,16 @@ def test_forgetting_old_identities_keeps_the_live_ones() -> None:
     assert again["b"] == kept["b"]
 
 
-def test_readable_names_are_full_paths() -> None:
-    emitted = emit_ir(column("a"), "1.0.0", Reuse()).root
+def test_debug_keeps_each_names_full_path_off_the_wire() -> None:
+    reuse = session(readable=True)
+    emitted = emit_ir(column("a"), "1.0.0", reuse).root
+    paths = reuse.handles.paths()
 
-    assert names(emitted) == {"a": "root.a"}
+    assert {text: paths[name] for text, name in names(emitted).items()} == {
+        "a": "root.a"
+    }
+    assert paths[emitted.id] == "root"
+    assert session().handles.paths() == {}
 
 
 def _rows(labels: list[str], *, title: str = "Rows") -> State:
@@ -119,29 +128,20 @@ SEQUENCE = [
 ]
 
 
-def _pairs(readable: Node, compact: Node) -> list[tuple[str, str]]:
-    assert (readable.type, readable.props, len(readable.children)) == (
-        compact.type,
-        compact.props,
-        len(compact.children),
-    )
-    pairs = [(readable.id, compact.id)]
-    for left, right in zip(readable.children, compact.children, strict=True):
-        pairs += _pairs(left, right)
+def _pairs(node: Node, paths: dict[str, str]) -> list[tuple[str, str]]:
+    pairs = [(paths[node.id], node.id)]
+    for child in node.children:
+        pairs += _pairs(child, paths)
     return pairs
 
 
-def test_a_compact_session_names_the_same_identities_as_a_readable_one() -> None:
-    readable, compact = Reuse(), session()
+def test_each_identity_keeps_one_name_and_no_name_is_reused() -> None:
+    reuse = session(readable=True)
     owners: dict[str, str] = {}
     previous: dict[str, str] = {}
     for state in SEQUENCE:
-        current = dict(
-            _pairs(
-                emit_ir(state, "1.0.0", readable).root,
-                emit_ir(state, "1.0.0", compact).root,
-            )
-        )
+        root = emit_ir(state, "1.0.0", reuse).root
+        current = dict(_pairs(root, reuse.handles.paths()))
         for path, name in current.items():
             # A name is never given to a second identity, and an identity that
             # lives on from one snapshot to the next keeps its name.
@@ -150,7 +150,7 @@ def test_a_compact_session_names_the_same_identities_as_a_readable_one() -> None
         previous = current
 
 
-def test_compact_patches_rebuild_each_snapshot_from_the_last() -> None:
+def test_patches_rebuild_each_snapshot_from_the_last() -> None:
     reuse = session()
     previous = emit_ir(SEQUENCE[0], "1.0.0", reuse).root
     for state in SEQUENCE[1:]:

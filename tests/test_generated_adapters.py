@@ -18,7 +18,7 @@ from typing import Any
 
 import pytest
 
-from pycompose.schema.codegen.adapters import (
+from pycompose.codegen.adapters import (
     _held,
     is_mechanical,
     render,
@@ -256,7 +256,7 @@ def test_the_codegen_refuses_an_unproven_component_opt_in(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, markers: list[str]
 ) -> None:
     """A marker list is a promise that these, exactly, compile the file."""
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     registry["components"]["ModalBottomSheet"]["optIn"] = markers
@@ -269,7 +269,7 @@ def test_the_codegen_refuses_an_unproven_component_opt_in(
 
 def test_the_runtime_registry_round_trips_a_components_opt_in() -> None:
     """The registry type keeps the markers a schema reader can trust."""
-    from pycompose.core.registry_types import ComponentSpec
+    from pycompose.contract.registry_types import ComponentSpec
     from pycompose.errors import ComponentRegistryError
 
     declaration = {
@@ -402,7 +402,7 @@ def test_nullable_shapes_are_kept_apart(
     implements, where absence and an explicit null are two facts. Anything else
     would be passed where it does not fit or dropped silently.
     """
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     registry["components"]["Text"]["props"]["color"] = {

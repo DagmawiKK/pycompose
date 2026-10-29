@@ -97,9 +97,16 @@ def config_problems(config: dict[str, Any]) -> list[Problem]:
 
 
 def _validate(value: Any, schema: dict[str, Any], key: str) -> Iterator[Problem]:
-    kind = schema.get("type")
+    kind = str(schema.get("type", ""))
     types = {"object": dict, "array": list, "string": str, "integer": int}
-    if kind and not (isinstance(value, types[kind]) and not isinstance(value, bool)):
+    # bool is an int subclass, so a boolean is its own case, never an integer.
+    if kind == "boolean":
+        matches = isinstance(value, bool)
+    else:
+        matches = not kind or (
+            isinstance(value, types[kind]) and not isinstance(value, bool)
+        )
+    if not matches:
         article = "an" if kind[0] in "aeiou" else "a"
         yield Problem(
             key or "pycompose.toml", f"must be {article} {kind}", _fix(schema)
@@ -232,7 +239,7 @@ def app_problems(project: Project) -> list[Problem]:
     Returns:
         The failure, if composing or validating failed.
     """
-    from pycompose.bridge.runtime import RuntimeSession
+    from pycompose.bridge.session import compose_once
     from pycompose.cli.build import codegen
 
     # The app's generated package is what the build would generate from it.
@@ -249,8 +256,7 @@ def app_problems(project: Project) -> list[Problem]:
         fresh_imports(source),
     ):
         try:
-            session = RuntimeSession(entrypoint, "", debug=True)
-            session.close()
+            compose_once(entrypoint)
         except Exception as exc:  # any failure is the app's to see
             return [
                 Problem("app", f"{type(exc).__name__}: {exc}", "fix the app's code")

@@ -14,7 +14,7 @@ from collections import Counter
 from typing import Any
 
 from pycompose.compiler.classpath_dump import Declaration, Inventory
-from pycompose.core.registry_vocabulary import (
+from pycompose.contract.registry_vocabulary import (
     STATE_KINDS,
     TRANSIENT_KINDS,
 )

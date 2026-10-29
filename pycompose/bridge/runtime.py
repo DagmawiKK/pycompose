@@ -2,271 +2,113 @@
 
 from __future__ import annotations
 
-import importlib
-import re
+import functools
+import json
+import logging
 import sys
 from collections.abc import Callable
-from contextlib import suppress
-from pathlib import Path
-from threading import current_thread
-from types import ModuleType
-from typing import Any, cast
-from uuid import uuid4
+from typing import ParamSpec, TypeVar, cast
 
-from pycompose import async_task
-from pycompose.bridge.api import BridgeSurface
 from pycompose.bridge.handshake import answer, offered_components
-from pycompose.core.context import AppContext, carried, context
-from pycompose.core.context import install as install_context
+from pycompose.bridge.inputs import InputLog, digest
+from pycompose.bridge.session import RuntimeSession, offer_components
 from pycompose.errors import BridgeError
 from pycompose.extensions.environment import install as install_paths
-from pycompose.state import Actions, App, Store, actions_for_module
+from pycompose.runtime import signal
+from pycompose.runtime.loop import LoopThread
+
+LOGGER = logging.getLogger(__name__)
+P = ParamSpec("P")
+T = TypeVar("T")
+
+_loop: LoopThread | None = None
+"""The process's loop thread: every call that touches session state runs on it."""
+_failure = ""
+"""The latest supervised failure on the loop, for the host's diagnostics."""
 
 
-class RuntimeSession:
-    """Worker-owned app lifetime, with transactional debug rebuilds.
+def _report(scope: str, error: BaseException) -> None:
+    global _failure  # noqa: PLW0603 -- written only on the loop thread
+    _failure = f"{scope}: {error}"
+    LOGGER.warning("Task in %s failed: %s", scope, error, exc_info=error)
 
-    The session finds the entry module's ``App`` export and runs it: the app
-    owns the shell, the view and the container factory, and the session calls
-    that factory exactly once, retaining the result across debug reloads.
-    Repositories and other long-lived objects therefore live for the session
-    rather than for one import of the app module.
+
+def _loop_thread() -> LoopThread:
+    global _loop  # noqa: PLW0603 -- one loop thread per Python process
+    if _loop is None:
+        _loop = LoopThread(_report)
+    return _loop
+
+
+def _on_loop(work: Callable[P, T]) -> Callable[P, T]:
+    """Run ``work`` on the loop thread, whichever thread the host calls from."""
+
+    @functools.wraps(work)
+    def run(*args: P.args, **kwargs: P.kwargs) -> T:
+        return _loop_thread().call(functools.partial(work, *args, **kwargs))
+
+    return run
+
+
+_log: InputLog | None = None
+"""The debug session's input log, or None when not recording."""
+
+RECORDED = frozenset({"start", "close", "accept_action", "request_window", "reload"})
+"""The calls that change what a session shows; the rest only read it."""
+
+
+def _recorded(work: Callable[P, T]) -> Callable[P, T]:
+    """Record ``work``'s call and the snapshot it leaves, while a log is open."""
+
+    @functools.wraps(work)
+    def run(*args: P.args, **kwargs: P.kwargs) -> T:
+        result = work(*args, **kwargs)
+        if _log is not None:
+            snapshot = _session.snapshot() if _session is not None else ""
+            _log.add(work.__name__, tuple(args), dict(kwargs), snapshot)
+        return result
+
+    return run
+
+
+@_on_loop
+def fetch_input_log() -> str:
+    """Return the debug session's inputs as JSON lines, for replay.
+
+    Returns:
+        The log, or an empty string when the session is not recording.
     """
-
-    def __init__(
-        self, entrypoint: str, route: str, *, debug: bool, restore: str = ""
-    ) -> None:
-        if (
-            re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*:[A-Za-z_]\w*", entrypoint)
-            is None
-        ):
-            raise BridgeError("invalid app entrypoint")
-        self._module, self._export = entrypoint.split(":")
-        self._debug = debug
-        self._worker = current_thread()
-        self._error = ""
-        self._container: object | None = None
-        self.identity = uuid4().hex
-        self._surface = self._build(route, restore)
-
-    def _require_worker(self) -> None:
-        if current_thread() is not self._worker:
-            raise BridgeError("runtime calls must run on the owning worker")
-
-    def _resolve_container(self, app: App[Any]) -> object | None:
-        """Adopt the entry object's container factory once, then retain it.
-
-        Args:
-            app: The entry object this build discovered.
-
-        Returns:
-            The session container, or None when the app declares none.
-        """
-        if self._container is not None:
-            return self._container
-        if app.container is None:
-            return None
-        self._container = app.container()
-        return self._container
-
-    def _build(self, route: str, restore: str = "") -> BridgeSurface:
-        module = importlib.import_module(self._module)
-        app = getattr(module, self._export, None)
-        if not isinstance(app, App):
-            raise BridgeError(
-                "entrypoint must name the module's App export",
-                entrypoint=f"{self._module}:{self._export}",
-            )
-        container = self._resolve_container(app)
-        actions, problem = actions_for_module(module, app.session_view)
-        if problem is not None:
-            raise BridgeError(problem)
-        # Before `app.build`, because a composable reached during the first
-        # render resolves its registry from this. The module is already
-        # imported, so both halves of the context exist by now.
-        # The context carries the registry plus whatever the app's own container
-        # holds, so a render function reaches a use case the same way Compose
-        # reaches anything else: by name, from the ambient.
-        install_context(
-            AppContext(
-                actions=actions,
-                container=container,
-                **carried(container),
-            )
-        )
-        self._check_injection(actions, container)
-        actions.install_container(container)
-        state = app.build(route=route, restore=restore)
-        surface = BridgeSurface(
-            Store(state),
-            actions,
-            debug=self._debug,
-            host_components=_host_components,
-        )
-        if surface.expose_latest_snapshot() is None:
-            raise BridgeError("app build produced no valid snapshot")
-        return surface
-
-    def _check_injection(self, actions: Actions, container: object | None) -> None:
-        """Fail at startup when an action wants a container the app never declared.
-
-        Every handler's signature is known before the first frame is drawn, so
-        this is the whole of the check a compiler would do for a framework: a
-        missing binding is reported now, with the id of the action that asked,
-        rather than as an ``AttributeError`` on whichever control a user happens
-        to tap first.
-
-        Args:
-            actions: The app's registry, freshly built or reloaded.
-            container: The session container, or None when none was declared.
-
-        Raises:
-            BridgeError: If any action declares an injected parameter and no
-                container was declared.
-        """
-        wanted = actions.injected
-        if wanted and container is None:
-            raise BridgeError(
-                "app actions ask for a container but the entrypoint declares none",
-                injects=",".join(wanted),
-            )
-
-    def accept_action(self, source: str) -> None:
-        """Validate and run one native action before the host pulls a snapshot.
-
-        Args:
-            source: Data-only action JSON envelope.
-        """
-        self._require_worker()
-        self._surface.accept_action(source)
-
-    def snapshot(self) -> str:
-        """Return the last valid canonical snapshot as data.
-
-        Returns:
-            JSON for the latest worker-owned snapshot.
-        """
-        self._require_worker()
-        return self._surface.expose_latest_snapshot() or ""
-
-    def envelope(self, surface: str, base_serial: int) -> str:
-        """Return the latest snapshot as a patch against the host's base, or whole.
-
-        Args:
-            surface: The surface being pulled.
-            base_serial: The serial of the snapshot the host holds; -1 for none.
-
-        Returns:
-            The envelope JSON, or empty before any valid snapshot.
-        """
-        self._require_worker()
-        return self._surface.expose_envelope(base_serial, surface)
-
-    def window(self, surface: str, key: str, first: int, last: int) -> None:
-        """Compose the window of a lazy container the host now shows.
-
-        Args:
-            surface: The surface showing the container.
-            key: The container's window key.
-            first: The first item index wanted.
-            last: The last item index wanted.
-        """
-        self._require_worker()
-        self._surface.request_window(key, first, last, surface)
-
-    def error(self) -> str:
-        """Return a debug diagnostic without leaking Python exceptions or objects.
-
-        Returns:
-            Error text, or an empty string when no diagnostic is available.
-        """
-        self._require_worker()
-        return self._error or self._surface.expose_latest_error()
-
-    def last_pass(self) -> str:
-        """Return the last action pass's time by phase.
-
-        Returns:
-            JSON milliseconds by phase.
-        """
-        self._require_worker()
-        return self._surface.expose_last_pass()
-
-    def reload(self, route: str, restore: str = "") -> bool:
-        """Re-import app modules and build on this worker, retaining last-good IR.
-
-        Only modules beside the app entrypoint are evicted, never the runtime.
-        This hook does not download source files; dev delivery invokes it after
-        updated source has been staged on the device.
-
-        Args:
-            route: Minimal route to supply when rebuilding the app.
-            restore: Saved app data to hand back to the rebuilt app.
-
-        Returns:
-            Whether a new valid app session replaced the previous one.
-        """
-        self._require_worker()
-        if not self._debug:
-            return False
-        entry = sys.modules[self._module]
-        filename = getattr(entry, "__file__", None)
-        if not filename:
-            self._error = "app module has no reloadable source"
-            return False
-        top = sys.modules[self._module.split(".")[0]]
-        directory = Path(getattr(top, "__file__", None) or filename).parent
-        if "." in self._module:
-            directory = directory.parent
-        previous = _user_modules(directory)
-        previous_context = context()
-        for name, module in previous.items():
-            del sys.modules[name]
-            cached = getattr(module, "__cached__", None)
-            if cached:
-                # APK-bundled modules may have read-only bytecode.
-                with suppress(OSError):
-                    Path(cached).unlink(missing_ok=True)
-        importlib.invalidate_caches()
-        try:
-            candidate = self._build(route, restore)
-        except Exception as exc:
-            for name in _user_modules(directory):
-                del sys.modules[name]
-            sys.modules.update(previous)
-            install_context(previous_context)
-            self._error = str(exc)
-            return False
-        else:
-            self._surface.close(successor=candidate)
-            self._surface = candidate
-            self._error = ""
-            return True
-
-    def close(self) -> None:
-        """Retire registered work and close its resources off the Compose thread."""
-        self._require_worker()
-        self._surface.close()
+    return _log.dumps() if _log is not None else ""
 
 
-def _user_modules(directory: Path) -> dict[str, ModuleType]:
-    result = {}
-    for name, module in tuple(sys.modules.items()):
-        path = getattr(module, "__file__", None)
-        if (
-            name == "pycompose"
-            or name.startswith("pycompose.")
-            or not isinstance(path, str)
-        ):
-            continue
-        if Path(path).is_relative_to(directory):
-            result[name] = module
-    return result
+def replay(text: str) -> int | None:
+    """Re-run a recorded input log and check each snapshot against the record.
+
+    Args:
+        text: A log returned by :func:`fetch_input_log`.
+
+    Returns:
+        The index of the first input whose snapshot differs, or None when
+        every snapshot matches.
+    """
+    calls = {name: globals()[name] for name in RECORDED}
+    for index, entry in enumerate(InputLog.loads(text)):
+        calls[entry.call](*entry.args, **entry.kwargs)
+        if digest(fetch_latest_snapshot()) != entry.snapshot:
+            return index
+    return None
+
+
+def heartbeat() -> float:
+    """Return seconds since the loop thread last proved it was running.
+
+    Returns:
+        A small number while the loop runs; a growing one if it is stuck.
+    """
+    return _loop_thread().since_heartbeat()
 
 
 _session: RuntimeSession | None = None
-_host_components: frozenset[str] | None = None
-"""What the host's handshake said it renders, for every session it starts."""
 
 
 def handshake(offer: str) -> str:
@@ -278,9 +120,8 @@ def handshake(offer: str) -> str:
     Returns:
         This side's protocol and offered capabilities, as JSON.
     """
-    global _host_components  # noqa: PLW0603 -- one host per Python process
     reply = answer(offer)
-    _host_components = offered_components(offer)
+    offer_components(offered_components(offer))
     return reply
 
 
@@ -294,6 +135,8 @@ def use_source(path: str) -> None:
         sys.path.insert(0, path)
 
 
+@_on_loop
+@_recorded
 def start(
     entrypoint: str,
     route: str,
@@ -315,14 +158,21 @@ def start(
     Returns:
         A data-only session identity used to reject obsolete host teardown.
     """
-    global _session  # noqa: PLW0603 -- one worker-owned session per Python process
+    global _session, _log  # noqa: PLW0603 -- one worker-owned session per Python process
+    _log = InputLog() if debug else None
     if _session is not None:
         _session.close()
     install_paths(files_dir, cache_dir)
-    _session = RuntimeSession(entrypoint, route, debug=debug, restore=restore)
+    # The host compares this to reject a teardown aimed at an older session.
+    identity = f"{_loop_thread().scheduler.random().getrandbits(64):016x}"
+    _session = RuntimeSession(
+        entrypoint, route, debug=debug, restore=restore, identity=identity
+    )
     return _session.identity
 
 
+@_on_loop
+@_recorded
 def close(identity: str = "") -> None:
     """Retire an app on its worker without closing a replacement host's session.
 
@@ -335,25 +185,26 @@ def close(identity: str = "") -> None:
     if _session is not None:
         _session.close()
         _session = None
-    async_task.shutdown()
+    signal.install(None)
     install_paths()
-    install_context(None)
 
 
 def install_async_sink(sink: object, admission: object = None) -> None:
-    """Register where background results are delivered on this worker.
+    """Register where the app's refresh signal goes.
 
     Args:
-        sink: A callable taking an action id and its canonical payload text, or
-            None to stop delivering.
+        sink: A callable taking an event id and its JSON payload, or None to
+            stop sending.
         admission: Optional thread-safe native queue admission returning a boolean.
     """
-    async_task.install_sink(
-        cast("Callable[[str, str], None]", sink),
-        admission=cast("Callable[[str, str], bool] | None", admission),
+    signal.install(
+        cast("Callable[[str, str], None] | None", sink),
+        cast("Callable[[str, str], bool] | None", admission),
     )
 
 
+@_on_loop
+@_recorded
 def accept_action(source: str) -> None:
     """Forward one data-only action to the Python-owned session.
 
@@ -368,6 +219,7 @@ def accept_action(source: str) -> None:
     _session.accept_action(source)
 
 
+@_on_loop
 def fetch_latest_snapshot() -> str:
     """Pull canonical JSON from the worker-owned app session.
 
@@ -377,6 +229,7 @@ def fetch_latest_snapshot() -> str:
     return _session.snapshot() if _session is not None else ""
 
 
+@_on_loop
 def fetch_latest(surface: str, base_serial: int) -> str:
     """Pull the latest snapshot as a patch against the host's base, or whole.
 
@@ -390,6 +243,8 @@ def fetch_latest(surface: str, base_serial: int) -> str:
     return _session.envelope(surface, base_serial) if _session is not None else ""
 
 
+@_on_loop
+@_recorded
 def request_window(surface: str, key: str, first: int, last: int) -> None:
     """Ask the session to compose a window of one lazy container.
 
@@ -407,23 +262,47 @@ def request_window(surface: str, key: str, first: int, last: int) -> None:
     _session.window(surface, key, first, last)
 
 
+@_on_loop
 def fetch_latest_error() -> str:
     """Pull data-only debug diagnostics.
 
-    Background work records its failures here too, so one surface shows the app
-    everything that has gone wrong rather than only what went wrong on the
-    worker.
+    Launched work records its failures here too, so one surface shows
+    everything that has gone wrong rather than only what went wrong in an
+    action.
 
     Returns:
         Diagnostic text or an empty string.
     """
     parts = [
         _session.error() if _session is not None else "",
-        async_task.last_error(),
+        _failure,
     ]
     return " / ".join(part for part in parts if part)
 
 
+@_on_loop
+def fetch_counters() -> str:
+    """Pull release-safe counters: passes, publications, failures, phase time.
+
+    Returns:
+        JSON counters, with the seconds since the loop last ran; an object
+        holding only that before a session starts.
+    """
+    counters = _session.counters() if _session is not None else {}
+    return json.dumps({**counters, "loopIdleSeconds": round(heartbeat(), 3)})
+
+
+@_on_loop
+def fetch_node_paths() -> str:
+    """Pull each node name's readable path, for debug diagnostics.
+
+    Returns:
+        JSON readable path by node id; an empty object in release.
+    """
+    return json.dumps(_session.node_paths() if _session is not None else {})
+
+
+@_on_loop
 def fetch_last_pass() -> str:
     """Pull the last action pass's time by phase, for the host's pass log.
 
@@ -433,6 +312,8 @@ def fetch_last_pass() -> str:
     return _session.last_pass() if _session is not None else "{}"
 
 
+@_on_loop
+@_recorded
 def reload(route: str, restore: str = "") -> bool:
     """Invoke the debug rebuild hook on the Python worker.
 

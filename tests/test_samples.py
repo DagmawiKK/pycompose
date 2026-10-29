@@ -12,7 +12,7 @@ import pytest
 from pycompose.cli import add
 from pycompose.cli.project import Project
 from pycompose.compiler.samples import sample
-from pycompose.ir.generated_validators import REGISTRY
+from pycompose.contract.catalog import REGISTRY
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = json.loads((ROOT / "schema/catalog.lock.json").read_text())

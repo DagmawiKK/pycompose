@@ -80,6 +80,8 @@ class Codec:
         """
         encoded: dict[str, JsonValue] = {}
         for field in self.fields:
+            if field.loaded:
+                continue
             value = getattr(instance, field.name, None)
             if value is None and field.optional:
                 encoded[field.wire] = None
@@ -122,6 +124,8 @@ class Codec:
             )
             if field is None:
                 raise StateError(f"{self.cls.__name__} has no field {key!r}")
+            if field.loaded:
+                raise StateError(f"{self.cls.__name__}.{field.name} is never saved")
             if value is None and field.optional:
                 values[field.name] = None
                 continue

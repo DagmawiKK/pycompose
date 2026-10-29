@@ -19,6 +19,8 @@ class LifecycleTest {
                 "onBackRequested",
                 "onConfigChanged",
                 "onRouteChanged",
+                "onFilePicked",
+                "onTrimMemory",
             ),
             Lifecycle.ids,
         )

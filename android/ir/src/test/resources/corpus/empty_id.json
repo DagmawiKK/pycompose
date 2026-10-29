@@ -1,39 +1,5 @@
 {
  "metadata": {
-  "actionBindings": {
-   "app.__main__.edit": {
-    "bound": {},
-    "handlerId": "__main__.edit",
-    "payload": {
-     "value": {
-      "required": true,
-      "type": "string"
-     }
-    }
-   },
-   "app.__main__.flip": {
-    "bound": {},
-    "handlerId": "__main__.flip",
-    "payload": {
-     "value": {
-      "required": true,
-      "type": "boolean"
-     }
-    }
-   },
-   "app.__main__.flip.8c5aaab6e1ef": {
-    "bound": {
-     "value": true
-    },
-    "handlerId": "__main__.flip",
-    "payload": {
-     "value": {
-      "required": true,
-      "type": "boolean"
-     }
-    }
-   }
-  },
   "data": {
    "count": 2,
    "draft": "draft"
@@ -45,24 +11,45 @@
      "message": "saved"
     }
    }
-  ]
+  ],
+  "intents": {
+   "__main__.Edit": {
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "string"
+     }
+    }
+   },
+   "__main__.Flip": {
+    "payload": {
+     "value": {
+      "required": true,
+      "type": "boolean"
+     }
+    }
+   }
+  }
  },
  "root": {
   "children": [
    {
     "children": [
      {
-      "id": "root.base:64:284.base:67:140",
+      "id": "2",
       "props": {
        "text": "Body"
       },
       "type": "Text"
      },
      {
-      "id": "root.base:64:284.base:68:176",
+      "id": "3",
       "props": {
        "label": "Name",
-       "onValueChange": "app.__main__.edit",
+       "onValueChange": {
+        "fields": {},
+        "intent": "__main__.Edit"
+       },
        "selection": 2,
        "value": "draft"
       },
@@ -72,20 +59,28 @@
       "id": "",
       "props": {
        "checked": true,
-       "onCheckedChange": "app.__main__.flip"
+       "onCheckedChange": {
+        "fields": {},
+        "intent": "__main__.Flip"
+       }
       },
       "type": "Switch"
      },
      {
-      "id": "root.base:64:284.base:72:272",
+      "id": "5",
       "props": {
-       "onClick": "app.__main__.flip.8c5aaab6e1ef",
+       "onClick": {
+        "fields": {
+         "value": true
+        },
+        "intent": "__main__.Flip"
+       },
        "text": "Go"
       },
       "type": "Button"
      }
     ],
-    "id": "root.base:64:284",
+    "id": "1",
     "props": {
      "modifier": {
       "operations": [
@@ -103,7 +98,7 @@
     "type": "Column"
    },
    {
-    "id": "root.base:63:38",
+    "id": "6",
     "props": {
      "style": "titleLarge",
      "text": "Corpus"
@@ -112,7 +107,7 @@
     "type": "Text"
    }
   ],
-  "id": "root",
+  "id": "0",
   "props": {},
   "type": "Scaffold"
  },

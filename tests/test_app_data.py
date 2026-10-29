@@ -57,7 +57,7 @@ def test_app_data_requires_its_schema(version: str) -> None:
         validate_ir(emit_ir(state, version))
 
 
-def test_malformed_metadata_data_is_rejected_or_degraded() -> None:
+def test_malformed_metadata_data_is_rejected() -> None:
     base = emit_ir(State(root=Text(id="t", text="ok")), "1.4.0")
     broken = type(base)(
         root=base.root,
@@ -67,7 +67,6 @@ def test_malformed_metadata_data_is_rejected_or_degraded() -> None:
     )
     with pytest.raises(IrValidationError, match="app data"):
         validate_ir(broken)
-    assert validate_ir(broken, debug=False).snapshot is None
 
 
 def test_reading_data_from_a_snapshot_without_any_returns_none() -> None:

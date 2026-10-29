@@ -39,11 +39,18 @@ def test_resource_props_and_images_require_the_new_schema() -> None:
         "@string/bad/name",
         "@drawable/Logo",
         "https://example.com/a.png",
+        "@file/cat.png",
+        "@file/" + "a" * 64 + ".exe",
+        "@file/../" + "a" * 64 + ".png",
     ],
 )
 def test_bad_resource_names_fail_closed(reference: str) -> None:
     with pytest.raises(IrValidationError):
         Image(id="image", resource=reference)
+
+
+def test_a_media_file_is_named_by_its_digest() -> None:
+    Image(id="image", resource="@file/" + "0f" * 32 + ".png")
 
 
 def test_resource_screen_matches_shared_native_golden() -> None:

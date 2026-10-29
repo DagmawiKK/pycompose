@@ -41,7 +41,7 @@ class LazyListStateTest {
 
         compose.waitUntil(5000) { actions.isNotEmpty() }
 
-        assertEquals("app.demo.lazy.1", actions[0].actionId)
+        assertEquals(intent("demo.lazy"), actions[0].actionId)
         assertEquals(JsonPrimitive(5), actions[0].payload["firstVisibleIndex"])
 
         compose.runOnIdle { ir.value = parse(lazyColumn(firstVisibleIndex = "10")) }
@@ -79,7 +79,7 @@ class LazyListStateTest {
             .performTouchInput { swipeUp() }
         compose.waitForIdle()
 
-        assertEquals("app.demo.lazy.1", actions.single().actionId)
+        assertEquals(intent("demo.lazy"), actions.single().actionId)
         assertTrue(actions.single().payload["firstVisibleIndex"] != JsonPrimitive(0))
     }
 
@@ -151,11 +151,11 @@ class LazyListStateTest {
                 """{"id":"root.t$index","type":"Text","props":{"text":"Row $index"}}"""
             }
         return """
-            {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
-              "app.demo.lazy.1":{"handlerId":"demo.lazy","payload":{
-                "firstVisibleIndex":{"required":true,"type":"integer"}},"bound":{}}}},
+            {"version":"0.1.0","schemaVersion":"1.23.0",
+              "metadata":{"intents":{"demo.lazy":{"payload":{
+                "firstVisibleIndex":{"required":true,"type":"integer"}}}}},
              "root":{"id":"root","type":"LazyColumn","props":{
-               "onScrollIdle":"app.demo.lazy.1"$stated},
+               "onScrollIdle":{"fields":{},"intent":"demo.lazy"}$stated},
                "children":[$rows]}}
             """.trimIndent()
     }

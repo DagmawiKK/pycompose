@@ -7,7 +7,7 @@ from typing import Any
 import pytest
 from test_state_projection import load_with, snapshot
 
-from pycompose.ir.generated_validators import REGISTRY
+from pycompose.contract.catalog import REGISTRY
 from pycompose.ir.validator import validate_prop
 from pycompose.m3 import ModalBottomSheet, Text
 

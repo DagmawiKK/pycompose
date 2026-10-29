@@ -162,7 +162,7 @@ class SheetStateTest {
             props.add("\"open\":$open")
         }
         if (report) {
-            props.add("\"onOpenChange\":\"app.demo.sheet.1\"")
+            props.add("\"onOpenChange\":{\"fields\":{},\"intent\":\"demo.sheet\"}")
         }
         val children =
             mutableListOf(
@@ -175,9 +175,9 @@ class SheetStateTest {
             )
         }
         return """
-            {"version":"0.1.0","schemaVersion":"1.19.0","metadata":{"actionBindings":{
-              "app.demo.sheet.1":{"handlerId":"demo.sheet","payload":{
-                "open":{"required":true,"type":"boolean"}},"bound":{}}}},
+            {"version":"0.1.0","schemaVersion":"1.19.0",
+              "metadata":{"intents":{"demo.sheet":{"payload":{
+                "open":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"ModalBottomSheet","props":{
                ${props.joinToString(",")}
              },

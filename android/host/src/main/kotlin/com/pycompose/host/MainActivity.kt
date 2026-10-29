@@ -1,14 +1,18 @@
 package com.pycompose.host
 
+import android.content.ComponentCallbacks2
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,6 +41,7 @@ import com.pycompose.host.bridge.ChaquopyBridge
 import com.pycompose.host.bridge.DevSource
 import com.pycompose.host.resources.AndroidResources
 import com.pycompose.host.resources.ResourceResolver
+import com.pycompose.host.ui.AppTheme
 import com.pycompose.host.ui.BuiltinComponents
 import com.pycompose.host.ui.PyComposeTheme
 import com.pycompose.ir.Lifecycle
@@ -45,6 +51,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 class MainActivity : ComponentActivity() {
     private val model: PyComposeViewModel by viewModels {
@@ -53,27 +60,23 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val picker = FilePicker(this, model)
         model.effectRunner =
-            AndroidEffectRunner(
-                this,
-                model::navigate,
-            ) { message -> Log.w("PyCompose", message) }
-        enableEdgeToEdge()
+            AndroidEffectRunner(this, model::navigate, picker::pick) { message ->
+                Log.w("PyCompose", message)
+            }
+        edgeToEdge()
         followDevServer()
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    model.lifecycle("onBackRequested")
-                }
-            },
-        )
         setContent {
             val snapshot by model.snapshot.collectAsStateWithLifecycle()
             val error by model.error.collectAsStateWithLifecycle()
+            // The app's first frame is its first snapshot, not the empty window:
+            // what start-up tooling ("Fully drawn") and Baseline Profiles measure.
+            ReportDrawnWhen { snapshot != null }
             LaunchedEffect(error) {
                 if (error.isNotEmpty()) Log.w("PyCompose", error)
             }
+            val back = rememberPredictiveBack(model)
             val renderer =
                 remember(model, LocalConfiguration.current) {
                     val resources = ResourceResolver(AndroidResources(this))
@@ -85,6 +88,7 @@ class MainActivity : ComponentActivity() {
                         windows = model::requestWindow,
                     )
                 }
+            val previewRenderer = rememberPreviewRenderer(this)
             DisposableEffect(model, LocalConfiguration.current) {
                 reportConfiguration()
                 onDispose { }
@@ -92,21 +96,17 @@ class MainActivity : ComponentActivity() {
             PyComposeTheme {
                 Surface(Modifier.fillMaxSize()) {
                     Box(Modifier.safeDrawingPadding()) {
-                        snapshot?.let { session ->
-                            key(session.epoch) { renderer.Render(session.ir) }
-                            ActionTrace.EndOnFrame(session)
+                        // Where back leads, behind the screen being dragged away.
+                        model.preview.collectAsStateWithLifecycle().value?.let {
+                            previewRenderer.Render(it)
                         }
-                        if (BuildConfig.DEBUG) {
-                            Column(Modifier.align(Alignment.BottomEnd).padding(16.dp)) {
-                                if (error.isNotEmpty()) {
-                                    Text(
-                                        error,
-                                        color = MaterialTheme.colorScheme.error,
-                                    )
-                                }
-                                TextButton(onClick = model::reload) { Text("Reload Python") }
+                        Box(Modifier.predictiveBack(back)) {
+                            snapshot?.let { session ->
+                                key(session.epoch) { renderer.Render(session.ir) }
+                                ActionTrace.EndOnFrame(session)
                             }
                         }
+                        if (BuildConfig.DEBUG) DebugOverlay(error, model::reload)
                     }
                 }
             }
@@ -116,6 +116,14 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         model.lifecycle("onResume")
+    }
+
+    @Deprecated("Levels below TRIM_MEMORY_UI_HIDDEN are no longer sent from API 34")
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        trimLevel(level)?.let {
+            model.lifecycle("onTrimMemory", JsonObject(mapOf("level" to JsonPrimitive(it))))
+        }
     }
 
     override fun onPause() {
@@ -128,6 +136,18 @@ class MainActivity : ComponentActivity() {
         // attached here is keeping a destroyed context alive.
         model.effectRunner = null
         super.onDestroy()
+    }
+
+    /** Draw behind the system bars, with icons matching the theme's dark mode. */
+    private fun edgeToEdge() {
+        val dark = AppTheme.darkMode ?: return enableEdgeToEdge()
+        val bars =
+            if (dark) {
+                SystemBarStyle.dark(Color.TRANSPARENT)
+            } else {
+                SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+            }
+        enableEdgeToEdge(bars, bars)
     }
 
     /**
@@ -143,7 +163,7 @@ class MainActivity : ComponentActivity() {
                 Lifecycle.orientation(
                     configuration.orientation == Configuration.ORIENTATION_LANDSCAPE,
                 ),
-            darkMode = night == Configuration.UI_MODE_NIGHT_YES,
+            darkMode = AppTheme.darkMode ?: (night == Configuration.UI_MODE_NIGHT_YES),
             locale = configuration.locales[0].toLanguageTag(),
             density = configuration.densityDpi / 160.0,
         )
@@ -178,6 +198,9 @@ class MainActivity : ComponentActivity() {
 
     private companion object {
         const val DEV_POLL_MS = 1_000L
+
+        /** The launch extra that turns on the per-pass log line in a release build. */
+        const val TIME_PASSES = "pycompose.timePasses"
     }
 
     /** The activity owns the bridge and the native effect capabilities it exposes. */
@@ -194,6 +217,34 @@ class MainActivity : ComponentActivity() {
             createSavedStateHandle(),
             (application as PyComposeApplication).pythonWorker,
             initialConfig = configurationPayload(),
-            timePasses = BuildConfig.DEBUG,
+            // A release build logs its passes only when a measurement asks for it.
+            timePasses = BuildConfig.DEBUG || intent.getBooleanExtra(TIME_PASSES, false),
         )
+}
+
+/**
+ * Android's trim level as the app hears it: the screen went away, the process is
+ * cached, or memory is short and the process may go next; null for levels that
+ * ask nothing of the app.
+ */
+@Suppress("DEPRECATION")
+internal fun trimLevel(level: Int): String? =
+    when {
+        level >= ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> "critical"
+        level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND -> "background"
+        level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN -> "uiHidden"
+        level == ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> "critical"
+        else -> null
+    }
+
+/** A debug build's last error and its reload button, in the screen's corner. */
+@Composable
+private fun BoxScope.DebugOverlay(
+    error: String,
+    reload: () -> Unit,
+) {
+    Column(Modifier.align(Alignment.BottomEnd).padding(16.dp)) {
+        if (error.isNotEmpty()) Text(error, color = MaterialTheme.colorScheme.error)
+        TextButton(onClick = reload) { Text("Reload Python") }
+    }
 }

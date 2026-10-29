@@ -54,11 +54,11 @@ class ScopedCompositionTest {
         """
         {"id":"bar","type":"NavigationBar","props":{},"children":[
           {"id":"bar.notes","type":"NavigationBarItem","props":{
-            "selected":true,"onClick":"app.demo.notes.1"},"children":[
+            "selected":true,"onClick":{"fields":{},"intent":"demo.notes"}},"children":[
             ${icon("bar.notes.icon", "Notes icon")},
             {"id":"bar.notes.label","type":"Text","props":{"text":"Notes"},"slot":"label"}]},
           {"id":"bar.about","type":"NavigationBarItem","props":{
-            "selected":false,"onClick":"app.demo.about.1"},"children":[
+            "selected":false,"onClick":{"fields":{},"intent":"demo.about"}},"children":[
             ${icon("bar.about.icon", "About icon")},
             {"id":"bar.about.label","type":"Text","props":{"text":"About"},"slot":"label"}]}]}
         """.trimIndent()
@@ -72,9 +72,7 @@ class ScopedCompositionTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.22.0",
-             "metadata":{"actionBindings":{
-               "app.demo.notes.1":{"handlerId":"demo.notes","payload":{},"bound":{}},
-               "app.demo.about.1":{"handlerId":"demo.about","payload":{},"bound":{}}}},
+             "metadata":{"intents":{"demo.notes":{"payload":{}},"demo.about":{"payload":{}}}},
              "root":{"id":"root","type":"Column","props":{},"children":[${barItems()}]}}
             """.trimIndent()
         compose.setContent { PyComposeTheme { renderer().Render(parse(source)) } }
@@ -82,7 +80,7 @@ class ScopedCompositionTest {
         compose.onNodeWithText("Notes").assertIsDisplayed()
         compose.onNodeWithText("About").assertIsDisplayed()
         compose.onNodeWithText("About").performClick()
-        assertEquals(listOf("app.demo.about.1"), actions.map { it.actionId })
+        assertEquals(listOf(intent("demo.about")), actions.map { it.actionId })
     }
 
     @Test
@@ -110,29 +108,27 @@ class ScopedCompositionTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.22.0",
-             "metadata":{"actionBindings":{
-               "app.demo.card.1":{"handlerId":"demo.card","payload":{},"bound":{}},
-               "app.demo.icon.1":{"handlerId":"demo.icon","payload":{},"bound":{}},
-               "app.demo.fab.1":{"handlerId":"demo.fab","payload":{},"bound":{}},
-               "app.demo.radio.1":{"handlerId":"demo.radio","payload":{},"bound":{}},
-               "app.demo.switch.1":{"handlerId":"demo.switch","payload":{
-                 "value":{"required":true,"type":"boolean"}},"bound":{}},
-               "app.demo.notes.1":{"handlerId":"demo.notes","payload":{},"bound":{}},
-               "app.demo.about.1":{"handlerId":"demo.about","payload":{},"bound":{}}}},
+             "metadata":{"intents":{"demo.card":{"payload":{}},"demo.icon":{"payload":{}},
+               "demo.fab":{"payload":{}},"demo.radio":{"payload":{}},"demo.switch":{"payload":{
+                 "value":{"required":true,"type":"boolean"}}},"demo.notes":{"payload":{}},
+                   "demo.about":{"payload":{}}}},
              "root":{"id":"root","type":"Column","props":{},"children":[
-               {"id":"root.card","type":"Card","props":{"onClick":"app.demo.card.1"},"children":[
+               {"id":"root.card","type":"Card","props":{"onClick":{"fields":{},
+                 "intent":"demo.card"}},"children":[
                  {"id":"root.card.text","type":"Text","props":{"text":"Card body"}}]},
                {"id":"root.iconButton","type":"IconButton","props":{
-                 "onClick":"app.demo.icon.1"},"children":[
+                 "onClick":{"fields":{},"intent":"demo.icon"}},"children":[
                  ${icon("root.iconButton.icon", "Icon button", slot = null)}]},
                {"id":"root.fab","type":"FloatingActionButton","props":{
-                 "onClick":"app.demo.fab.1"},"children":[
+                 "onClick":{"fields":{},"intent":"demo.fab"}},"children":[
                  ${icon("root.fab.icon", "Floating action", slot = null)}]},
                {"id":"root.radio","type":"RadioButton","props":{
-                 "selected":true,"onClick":"app.demo.radio.1"}},
+                 "selected":true,"onClick":{"fields":{},"intent":"demo.radio"}}},
                {"id":"root.switch","type":"Switch","props":{
-                 "checked":false,"onCheckedChange":"app.demo.switch.1"},"children":[
-                 {"id":"root.switch.thumb","type":"Text","props":{"text":"•"},"slot":"thumbContent"}]},
+                 "checked":false,"onCheckedChange":{"fields":{},"intent":"demo.switch"}},
+                   "children":[
+                 {"id":"root.switch.thumb","type":"Text","props":{"text":"•"},
+                   "slot":"thumbContent"}]},
                ${barItems()},
                {"id":"root.dividers","type":"Row","props":{},"children":[
                  {"id":"root.horizontal","type":"HorizontalDivider","props":{"thickness":2}},
@@ -140,7 +136,8 @@ class ScopedCompositionTest {
                {"id":"root.modalSheet","type":"ModalDrawerSheet","props":{},"children":[
                  {"id":"root.modalSheet.text","type":"Text","props":{"text":"Modal drawer body"}}]},
                {"id":"root.dismissibleSheet","type":"DismissibleDrawerSheet","props":{},"children":[
-                 {"id":"root.dismissibleSheet.text","type":"Text","props":{"text":"Dismissible drawer body"}}]}]}}
+                 {"id":"root.dismissibleSheet.text","type":"Text",
+                   "props":{"text":"Dismissible drawer body"}}]}]}}
             """.trimIndent()
         compose.setContent { PyComposeTheme { renderer(debug = true).Render(parse(source)) } }
 
@@ -155,7 +152,7 @@ class ScopedCompositionTest {
         compose.onNodeWithText("Card body").performClick()
         compose.onNodeWithContentDescription("Icon button").performClick()
         assertEquals(
-            listOf("app.demo.card.1", "app.demo.icon.1"),
+            listOf(intent("demo.card"), intent("demo.icon")),
             actions.map { it.actionId },
         )
 
@@ -163,7 +160,7 @@ class ScopedCompositionTest {
         assertEquals("""{"value":true}""", actions.last().payload.toString())
         // The radio comes first in the tree; the bar items are selectable too.
         compose.onAllNodes(isSelectable())[0].performClick()
-        assertEquals("app.demo.radio.1", actions.last().actionId)
+        assertEquals(intent("demo.radio"), actions.last().actionId)
     }
 
     @Test
@@ -174,12 +171,12 @@ class ScopedCompositionTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.23.0",
-             "metadata":{"actionBindings":{
-               "app.demo.item.1":{"handlerId":"demo.item","payload":{},"bound":{}}}},
+             "metadata":{"intents":{"demo.item":{"payload":{}}}},
              "root":{"id":"root","type":"TopAppBar","props":{},"children":[
                {"id":"root.title","type":"Text","props":{"text":"Title"},"slot":"title"},
                {"id":"root.actions","type":"NavigationBarItem","props":{
-                 "selected":true,"onClick":"app.demo.item.1"},"slot":"actions","children":[
+                 "selected":true,"onClick":{"fields":{},"intent":"demo.item"}},"slot":"actions",
+                   "children":[
                  {"id":"root.actions.icon","type":"Text","props":{"text":"Icon"},
                   "slot":"icon"},
                  {"id":"root.actions.label","type":"Text","props":{"text":"Action label"},
@@ -191,7 +188,7 @@ class ScopedCompositionTest {
         // the proof is that the row-scoped child itself composes and clicks.
         compose.onNodeWithText("Action label").assertIsDisplayed()
         compose.onNodeWithText("Action label").performClick()
-        assertEquals(listOf("app.demo.item.1"), actions.map { it.actionId })
+        assertEquals(listOf(intent("demo.item")), actions.map { it.actionId })
     }
 
     @Test
@@ -223,11 +220,10 @@ class ScopedCompositionTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.23.0",
-             "metadata":{"actionBindings":{
-               "app.demo.open":{"handlerId":"demo.open","payload":{
-                 "expanded":{"required":true,"type":"boolean"}},"bound":{}}}},
+             "metadata":{"intents":{"demo.open":{"payload":{
+                 "expanded":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"ExposedDropdownMenuBox","props":{
-               "expanded":false,"onExpandedChange":"app.demo.open"},"children":[
+               "expanded":false,"onExpandedChange":{"fields":{},"intent":"demo.open"}},"children":[
                {"id":"root.anchor","type":"Text","props":{"text":"Choose a fruit",
                  "modifier":{"operations":[{"type":"menuAnchor",
                    "menuAnchorType":{"type":"ExposedDropdownMenuAnchorType",
@@ -236,7 +232,7 @@ class ScopedCompositionTest {
         compose.setContent { PyComposeTheme { renderer(debug = true).Render(parse(source)) } }
 
         compose.onNodeWithText("Choose a fruit").performClick()
-        assertEquals(listOf("app.demo.open"), actions.map { it.actionId })
+        assertEquals(listOf(intent("demo.open")), actions.map { it.actionId })
         assertEquals("""{"expanded":true}""", actions.last().payload.toString())
     }
 

@@ -1280,6 +1280,7 @@ data class IconToggleButton(
 @Serializable
 data class ImageProps(
     val `contentDescription`: String? = null,
+    val `contentScale`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `resource`: String,
 ) : UiProps
@@ -1300,6 +1301,7 @@ data class Image(
 data class ImageImageVectorProps(
     val `alignment`: String = "center",
     val `contentDescription`: String?,
+    val `contentScale`: JsonElement? = null,
     val `imageVector`: JsonElement,
     override val `modifier`: JsonObject? = null,
 ) : UiProps

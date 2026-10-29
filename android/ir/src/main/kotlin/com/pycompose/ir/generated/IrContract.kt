@@ -813,8 +813,9 @@ object IrContract {
             since = "1.1.0",
             props = mapOf(
                 "contentDescription" to PropertyRule("string", required = false),
+                "contentScale" to PropertyRule("value", required = false, valueType = "ContentScale"),
                 "modifier" to PropertyRule("modifier", required = false),
-                "resource" to PropertyRule("resource", required = true, values = setOf("drawable", "asset")),
+                "resource" to PropertyRule("resource", required = true, values = setOf("drawable", "asset", "file")),
             ),
         ),
         "ImageImageVector" to ComponentRule(
@@ -825,6 +826,7 @@ object IrContract {
             props = mapOf(
                 "alignment" to PropertyRule("enum", required = false, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
                 "contentDescription" to PropertyRule("string", required = true, nullable = true),
+                "contentScale" to PropertyRule("value", required = false, valueType = "ContentScale"),
                 "imageVector" to PropertyRule("value", required = true, valueType = "ImageVector"),
                 "modifier" to PropertyRule("modifier", required = false),
             ),
@@ -2202,6 +2204,10 @@ object IrContract {
         "openUrl" to mapOf(
                 "url" to PropertyRule("string", required = true),
         ),
+        "pickFile" to mapOf(
+                "accept" to PropertyRule("string", required = true),
+                "request" to PropertyRule("string", required = true),
+        ),
         "toast" to mapOf(
                 "message" to PropertyRule("string", required = true),
         ),
@@ -2215,12 +2221,19 @@ object IrContract {
                 "locale" to PropertyRule("string", required = true),
                 "orientation" to PropertyRule("enum", required = true, values = setOf("portrait", "landscape")),
         ),
+        "onFilePicked" to mapOf(
+                "path" to PropertyRule("string", required = true),
+                "request" to PropertyRule("string", required = true),
+        ),
         "onPause" to mapOf(
         ),
         "onResume" to mapOf(
         ),
         "onRouteChanged" to mapOf(
                 "route" to PropertyRule("string", required = true),
+        ),
+        "onTrimMemory" to mapOf(
+                "level" to PropertyRule("enum", required = true, values = setOf("uiHidden", "background", "critical")),
         ),
     )
 }

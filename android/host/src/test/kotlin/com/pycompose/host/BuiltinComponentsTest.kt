@@ -53,18 +53,20 @@ class BuiltinComponentsTest {
     fun boundControlsDispatchOnlyTheirOwnEventFieldsAndNestAListInAColumn() {
         val source =
             """
-            {"version":"0.1.0","schemaVersion":"1.3.0","metadata":{"actionBindings":{
-              "app.demo.toggle.1":{"handlerId":"demo.toggle","bound":{"taskId":1},"payload":{
+            {"version":"0.1.0","schemaVersion":"1.3.0",
+              "metadata":{"intents":{"demo.toggle":{"payload":{
                 "taskId":{"required":true,"type":"integer"},
                 "done":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Column","props":{},"children":[
                {"id":"row","type":"Row","props":{},"children":[
                  {"id":"row.box","type":"Checkbox","props":{
-                   "checked":false,"onCheckedChange":"app.demo.toggle.1"}},
+                   "checked":false,"onCheckedChange":{"fields":{"taskId":1},
+                     "intent":"demo.toggle"}}},
                  {"id":"row.remove","type":"TextButton","props":{
-                   "text":"Delete","onClick":"app.demo.toggle.1"}}]},
+                   "text":"Delete","onClick":{"fields":{"taskId":1},"intent":"demo.toggle"}}}]},
                {"id":"chip","type":"FilterChip","props":{
-                 "label":"All","selected":true,"onClick":"app.demo.toggle.1"}},
+                 "label":"All","selected":true,"onClick":{"fields":{"taskId":1},
+                   "intent":"demo.toggle"}}},
                {"id":"list","type":"LazyColumn","props":{},"children":[
                  {"id":"list.first","type":"Text","props":{"text":"First"}},
                  {"id":"list.second","type":"Text","props":{"text":"Second"}}]}]}}
@@ -79,7 +81,8 @@ class BuiltinComponentsTest {
         compose.onNodeWithText("All").assertExists()
         compose.onNodeWithText("Delete").performClick()
         compose.onNodeWithText("All").performClick()
-        assertEquals(listOf("app.demo.toggle.1", "app.demo.toggle.1"), actions.map { it.actionId })
+        val toggle = intent("demo.toggle", """{"taskId":1}""")
+        assertEquals(listOf(toggle, toggle), actions.map { it.actionId })
         assertTrue(actions.all { it.payload.isEmpty() })
         compose.onNode(isToggleable()).performClick()
         assertEquals("""{"done":true}""", actions.last().payload.toString())
@@ -129,13 +132,13 @@ class BuiltinComponentsTest {
         // later instead of driving the visual.
         val source =
             """
-            {"version":"0.1.0","schemaVersion":"1.16.0","metadata":{"actionBindings":{
-              "app.demo.click.1":{"handlerId":"demo.click","payload":{},"bound":{}},
-              "app.demo.press.1":{"handlerId":"demo.press","payload":{
-                "pressed":{"required":true,"type":"boolean"}},"bound":{}}}},
+            {"version":"0.1.0","schemaVersion":"1.16.0",
+              "metadata":{"intents":{"demo.click":{"payload":{}},"demo.press":{"payload":{
+                "pressed":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Column","props":{},"children":[
                {"id":"root.button","type":"Button","props":{
-                 "text":"Tap","onClick":"app.demo.click.1","onPress":"app.demo.press.1"}}]}}
+                 "text":"Tap","onClick":{"fields":{},"intent":"demo.click"},"onPress":{"fields":{},
+                   "intent":"demo.press"}}}]}}
             """.trimIndent()
         val snapshot = IrParser().parse(source).getOrThrow()
         val actions = mutableListOf<Action>()
@@ -144,15 +147,15 @@ class BuiltinComponentsTest {
 
         compose.onNodeWithText("Tap").performClick()
         compose.waitUntil(5000) {
-            actions.count { it.actionId == "app.demo.press.1" } == 2
+            actions.count { it.actionId == intent("demo.press") } == 2
         }
         assertEquals(
             listOf("""{"pressed":true}""", """{"pressed":false}"""),
             actions
-                .filter { it.actionId == "app.demo.press.1" }
+                .filter { it.actionId == intent("demo.press") }
                 .map { it.payload.toString() },
         )
-        assertTrue(actions.any { it.actionId == "app.demo.click.1" })
+        assertTrue(actions.any { it.actionId == intent("demo.click") })
     }
 
     @Test
@@ -163,16 +166,15 @@ class BuiltinComponentsTest {
         // component's own and the app learns about it a frame later.
         val source =
             """
-            {"version":"0.1.0","schemaVersion":"1.17.0","metadata":{"actionBindings":{
-              "app.demo.click.1":{"handlerId":"demo.click","payload":{},"bound":{}},
-              "app.demo.focus.1":{"handlerId":"demo.focus","payload":{
-                "focused":{"required":true,"type":"boolean"}},"bound":{}},
-              "app.demo.hover.1":{"handlerId":"demo.hover","payload":{
-                "hovered":{"required":true,"type":"boolean"}},"bound":{}}}},
+            {"version":"0.1.0","schemaVersion":"1.17.0",
+              "metadata":{"intents":{"demo.click":{"payload":{}},"demo.focus":{"payload":{
+                "focused":{"required":true,"type":"boolean"}}},"demo.hover":{"payload":{
+                "hovered":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Column","props":{},"children":[
                {"id":"root.button","type":"Button","props":{
-                 "text":"Tap","onClick":"app.demo.click.1",
-                 "onFocus":"app.demo.focus.1","onHover":"app.demo.hover.1"}}]}}
+                 "text":"Tap","onClick":{"fields":{},"intent":"demo.click"},
+                 "onFocus":{"fields":{},"intent":"demo.focus"},"onHover":{"fields":{},
+                   "intent":"demo.hover"}}}]}}
             """.trimIndent()
         val snapshot = IrParser().parse(source).getOrThrow()
         val actions = mutableListOf<Action>()
@@ -180,17 +182,17 @@ class BuiltinComponentsTest {
         compose.setContent { PyComposeTheme { renderer.Render(snapshot) } }
 
         compose.onNodeWithText("Tap").performSemanticsAction(SemanticsActions.RequestFocus)
-        compose.waitUntil(5000) { actions.any { it.actionId == "app.demo.focus.1" } }
+        compose.waitUntil(5000) { actions.any { it.actionId == intent("demo.focus") } }
         assertEquals(
             """{"focused":true}""",
-            actions.first { it.actionId == "app.demo.focus.1" }.payload.toString(),
+            actions.first { it.actionId == intent("demo.focus") }.payload.toString(),
         )
 
         compose.onNodeWithText("Tap").performMouseInput { moveTo(center) }
-        compose.waitUntil(5000) { actions.any { it.actionId == "app.demo.hover.1" } }
+        compose.waitUntil(5000) { actions.any { it.actionId == intent("demo.hover") } }
         assertEquals(
             """{"hovered":true}""",
-            actions.first { it.actionId == "app.demo.hover.1" }.payload.toString(),
+            actions.first { it.actionId == intent("demo.hover") }.payload.toString(),
         )
     }
 

@@ -21,13 +21,13 @@ from typing import Any
 
 import pytest
 
+from pycompose.codegen.state_anchors import SWIPE_VALUES
+from pycompose.codegen.state_rules import STATE_VALUE_TYPES
+from pycompose.contract.catalog import REGISTRY
 from pycompose.core.node import Node
 from pycompose.ir import emit_ir, to_dict, validate_ir
-from pycompose.ir.generated_validators import REGISTRY
 from pycompose.ir.validator import validate_prop
 from pycompose.m3 import ModalBottomSheet, ModalNavigationDrawer, Text
-from pycompose.schema.codegen.state_anchors import SWIPE_VALUES
-from pycompose.schema.codegen.state_rules import STATE_VALUE_TYPES
 from pycompose.state import State
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
@@ -191,7 +191,7 @@ def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> Non
 
 def test_every_state_kind_is_a_vocabulary_member() -> None:
     """The declaration never invents a kind the host cannot create and drive."""
-    from pycompose.core.registry_types import STATE_KINDS
+    from pycompose.contract.registry_types import STATE_KINDS
 
     for name, entry in sorted(components().items()):
         state = entry.get("state")
@@ -221,12 +221,12 @@ def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:
 
 def test_every_family_table_names_known_state_kinds() -> None:
     """A gate, attach or constructor decision for an unknown family is a typo."""
-    from pycompose.core.registry_types import STATE_KINDS
-    from pycompose.schema.codegen.adapters import (
+    from pycompose.codegen.adapters import (
         GATED_STATES,
         STATE_ATTACH_GATES,
         STATE_CONSTRUCTOR_PROPS,
     )
+    from pycompose.contract.registry_types import STATE_KINDS
 
     assert set(STATE_KINDS) >= GATED_STATES
     assert set(STATE_ATTACH_GATES) <= set(STATE_KINDS)
@@ -250,7 +250,7 @@ def load_with(
         monkeypatch: Pytest monkeypatch fixture.
         mutate: Applies the change to the loaded registry.
     """
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     mutate(registry)
@@ -507,7 +507,7 @@ def test_the_codegen_refuses_a_second_reported_field(
 
 def test_the_runtime_registry_round_trips_the_state() -> None:
     """The registry type keeps the declaration a schema reader can trust."""
-    from pycompose.core.registry_types import ComponentSpec
+    from pycompose.contract.registry_types import ComponentSpec
     from pycompose.errors import ComponentRegistryError
 
     state = {

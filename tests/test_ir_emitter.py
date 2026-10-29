@@ -7,6 +7,7 @@ from pathlib import Path
 
 import jsonschema
 import pytest
+from readable import ids, readable
 
 from pycompose.core import Node, Props
 from pycompose.errors import IrError, IrValidationError, SchemaError
@@ -63,8 +64,9 @@ def test_emitter_qualifies_stable_keys_and_preserves_action_ids() -> None:
         )
     )
     snapshot = emit_ir(state, "1.0.0")
-    assert snapshot.root.id == "root"
-    assert [child.id for child in snapshot.root.children] == [
+    named = readable(state, "1.0.0")["root"]
+    assert named["id"] == "root"
+    assert [child["id"] for child in named["children"]] == [
         "root.label",
         "root.submit",
     ]
@@ -98,10 +100,11 @@ def test_keyed_list_ids_survive_reordering() -> None:
     second = Node(id="second", type="Text", props=Props({"text": "two"}))
     root = Node(id="root", type="LazyColumn", children=(first, second))
     reordered = Node(id="root", type="LazyColumn", children=(second, first))
-    assert [node.id for node in emit_ir(State(root=root), "1.0.0").root.children] == [
+    assert ids(readable(State(root=root), "1.0.0")["root"])[1:] == [
         "root.first",
         "root.second",
     ]
-    assert [
-        node.id for node in emit_ir(State(root=reordered), "1.0.0").root.children
-    ] == ["root.second", "root.first"]
+    assert ids(readable(State(root=reordered), "1.0.0")["root"])[1:] == [
+        "root.second",
+        "root.first",
+    ]

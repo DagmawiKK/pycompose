@@ -27,6 +27,7 @@ private fun interface EffectHandler {
 class AndroidEffectRunner(
     private val activity: Activity,
     private val navigate: (String) -> Unit,
+    private val pick: (request: String, accept: String) -> Unit,
     private val report: (String) -> Unit,
 ) : EffectRunner {
     private val handlers: Map<String, EffectHandler> =
@@ -56,6 +57,12 @@ class AndroidEffectRunner(
                             report("No app can open $url")
                         }
                     }
+                },
+            "pickFile" to
+                EffectHandler { request ->
+                    val id = Effects.string(request, "request")
+                    val accept = Effects.string(request, "accept")
+                    onMain { pick(id, accept) }
                 },
             "toast" to
                 EffectHandler { request ->

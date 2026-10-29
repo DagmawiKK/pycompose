@@ -1,9 +1,9 @@
 package com.pycompose.renderer
 
+import com.pycompose.ir.Intents
 import com.pycompose.ir.SnapshotStream
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
+import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * Data-only envelope. Interpretation and validation belong to the Python worker.
@@ -13,6 +13,8 @@ import kotlinx.serialization.json.put
  * @param serial The snapshot the user acted on, so the app resolves the action against what
  *   was on screen; null resolves it against the latest snapshot.
  * @param surface The surface the action came from; every action names one.
+ * @param trace The host's trace id for the command carrying it, so a failure the app
+ *   reports names the input behind it; null when untraced.
  */
 data class Action(
     val actionId: String,
@@ -20,15 +22,13 @@ data class Action(
     val seq: Long? = null,
     val serial: Long? = null,
     val surface: String = SnapshotStream.MAIN_SURFACE,
+    val trace: String? = null,
 ) {
-    fun toJson(): String =
-        buildJsonObject {
-            put("actionId", actionId)
-            put("payload", payload)
-            seq?.let { put("seq", it) }
-            serial?.let { put("serial", it) }
-            put("surface", surface)
-        }.toString()
+    fun toJson(): String {
+        val envelope = Intents.envelope(actionId, payload, seq, serial, surface)
+        return (trace?.let { JsonObject(envelope + ("trace" to JsonPrimitive(it))) } ?: envelope)
+            .toString()
+    }
 }
 
 class ActionDispatcher(

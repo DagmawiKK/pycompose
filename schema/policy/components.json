@@ -483,7 +483,8 @@
           "type": "resource",
           "values": [
             "drawable",
-            "asset"
+            "asset",
+            "file"
           ],
           "decode": "resourceImage",
           "required": true

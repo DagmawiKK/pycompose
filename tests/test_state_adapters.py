@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from test_state_projection import GATED, STATEFUL, components
 
-from pycompose.schema.codegen.adapters import extra_imports, is_mechanical, render
+from pycompose.codegen.adapters import extra_imports, is_mechanical, render
 
 
 def test_the_adapter_passes_the_host_holder_where_the_schema_says() -> None:

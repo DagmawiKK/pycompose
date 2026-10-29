@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HOME = ROOT / "pycompose" / "core" / "registry_vocabulary.py"
+HOME = ROOT / "pycompose" / "contract" / "registry_vocabulary.py"
 
 
 def _terms() -> list[str]:

@@ -4,114 +4,59 @@ Run it with no device attached:
 
     python examples/notes/tests/smoke.py
 
-It prints what a user would see at each step, against a store of its own rather
+It prints what a user would see at each step, against storage of its own rather
 than wherever the app's notes live when a device runs it. Any failure raises.
+Process death is covered by ``tests/test_notes_example.py``.
 """
 
 from __future__ import annotations
 
-import sys
-import tempfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1] / "app"
-sys.path.insert(0, str(ROOT))
+from pycompose.testing.driver import AppDriver
 
-import main  # noqa: E402
-from harness import Host, data, effects  # noqa: E402
-
-from pycompose.repository import use_root  # noqa: E402
+ROOT = Path(__file__).resolve().parents[1]
 
 
-def show(step: str, host: Host, *extra: object) -> None:
-    """Print what the user would be looking at after one step.
+def show(step: str, app: AppDriver) -> None:
+    """Print the back stack and the texts on screen after one step.
 
     Args:
         step: What was done.
-        host: The session to read.
-        *extra: Anything else worth printing.
+        app: The running app.
     """
-    snapshot = host.snapshot()
-    route = data(snapshot)["route"]
-    print(f"{step:<34} route={route:<8} notes={host.titles}", *extra)
+    stack = app.snapshot()["metadata"]["data"]["stack"]
+    routes = [entry["route"]["route"].rpartition(".")[2] for entry in stack]
+    print(f"{step:<24} {' > '.join(routes):<26} {app.texts()[:4]}")
 
 
-def main_() -> None:
-    # A store of its own: notes outlive the process, so a file left behind by a
-    # previous run would make "fresh install" a lie, and writing to the working
-    # directory would leave one behind.
-    use_root(Path(tempfile.mkdtemp(prefix="notes-smoke-")))
+def main() -> None:
+    with AppDriver(ROOT) as app:
+        show("fresh install", app)
 
-    host = Host(main)
-    show("fresh install", host)
+        app.click(type="FloatingActionButton")
+        show("tap New note", app)
 
-    host.tap("new_note")
-    show("tap New note", host, effects(host.snapshot()))
+        title, body = (n["id"] for n in app.nodes() if n["type"] == "TextField")
+        app.edit("Groceries", id=title)
+        app.edit("Milk\nBread\nCoffee", id=body)
+        show("type title and body", app)
 
-    host.tap("set_title", value="Groceries")
-    host.tap("set_body", value="Milk\nBread\nCoffee")
-    show("type title and body", host)
+        app.lifecycle("onBackRequested")
+        show("system back", app)
+        assert "Groceries" in app.texts(), app.texts()
 
-    host.tap("go_back")
-    show("back to the list", host, effects(host.snapshot()))
+        app.click(text="How this works", type="TextButton")
+        show("tap How this works", app)
 
-    # The button binds the value it wants, so the host sends no payload for it.
-    host.tap("set_about", {"open": True})
-    show("tap How this works", host, f"aboutOpen={data(host.snapshot())['aboutOpen']}")
+        app.click(text="Groceries")
+        show("open the note", app)
 
-    # The sheet reports what it settled on, as after a swipe. This binding names
-    # no value, so the event is the one that carries it -- and the app assigns
-    # it rather than toggling what it believed.
-    host.tap("set_about", {}, open=False)
-    show(
-        "swipe the sheet away", host, f"aboutOpen={data(host.snapshot())['aboutOpen']}"
-    )
-
-    host.tap("open_note", {"note_id": 1})
-    show("open the note", host, effects(host.snapshot()))
-
-    host.lifecycle("onBackRequested")
-    show("system back", host, effects(host.snapshot()))
-
-    host.lifecycle(
-        "onConfigChanged",
-        darkMode=True,
-        orientation="portrait",
-        locale="en-US",
-        density=2.0,
-    )
-    background = host.snapshot()["root"]["props"]["containerColor"]
-    print(f"{'switch to dark mode':<34} background={background}")
-
-    # The half-typed-text case: kill the process mid-sentence.
-    host.tap("open_note", {"note_id": 1})
-    host.tap("set_title", value="Half-typed")
-    published = host.snapshot()["metadata"]["data"]
-
-    revived = Host(main, route=published["route"], restore=_json(published))
-    show("relaunch after process death", revived)
-    assert "Half-typed" in revived.titles, revived.titles
-    print(f"{'  text survived':<34} {revived.titles!r}")
-    assert revived.error == "", revived.error
-
-    revived.tap("go_back")
-    revived.tap("delete_note", {"note_id": 1})
-    show("delete the note", revived)
-
-
-def _json(value: object) -> str:
-    """Return this value as the canonical JSON the host would hand back.
-
-    Args:
-        value: The app data a snapshot published.
-
-    Returns:
-        JSON text.
-    """
-    import json
-
-    return json.dumps(value)
+        app.click(text="Delete note")
+        show("delete the note", app)
+        assert "Groceries" not in app.texts(), app.texts()
+        assert app.failures == [], app.failures
 
 
 if __name__ == "__main__":
-    main_()
+    main()

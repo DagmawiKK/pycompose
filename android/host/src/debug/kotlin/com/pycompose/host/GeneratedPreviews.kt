@@ -22,869 +22,869 @@ private fun Sample(source: String) {
 @Preview(name = "AlertDialog", showBackground = true)
 @Composable
 private fun AlertDialogPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}], "id": "preview", "props": {"onDismissRequest": "app.preview.onDismissRequest"}, "type": "AlertDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onDismissRequest": {"payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}], "id": "preview", "props": {"onDismissRequest": {"fields": {}, "intent": "preview.onDismissRequest"}}, "type": "AlertDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "AnimatedContent", showBackground = true)
 @Composable
 private fun AnimatedContentPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "AnimatedContent"}, "type": "Text"}], "id": "preview", "props": {"targetState": "Preview"}, "type": "AnimatedContent"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "AnimatedContent"}, "type": "Text"}], "id": "preview", "props": {"targetState": "Preview"}, "type": "AnimatedContent"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "AnimatedVisibility", showBackground = true)
 @Composable
 private fun AnimatedVisibilityPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "AnimatedVisibility"}, "type": "Text"}], "id": "preview", "props": {"visible": true}, "type": "AnimatedVisibility"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "AnimatedVisibility"}, "type": "Text"}], "id": "preview", "props": {"visible": true}, "type": "AnimatedVisibility"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "AssistChip", showBackground = true)
 @Composable
 private fun AssistChipPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "AssistChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "AssistChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Badge", showBackground = true)
 @Composable
 private fun BadgePreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Badge"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Badge"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Badge"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Badge"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "BadgedBox", showBackground = true)
 @Composable
 private fun BadgedBoxPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.badge", "props": {"text": "badge"}, "slot": "badge", "type": "Text"}, {"id": "preview.child", "props": {"text": "BadgedBox"}, "type": "Text"}], "id": "preview", "props": {}, "type": "BadgedBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.badge", "props": {"text": "badge"}, "slot": "badge", "type": "Text"}, {"id": "preview.child", "props": {"text": "BadgedBox"}, "type": "Text"}], "id": "preview", "props": {}, "type": "BadgedBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "BasicAlertDialog", showBackground = true)
 @Composable
 private fun BasicAlertDialogPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "BasicAlertDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": "app.preview.onDismissRequest"}, "type": "BasicAlertDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onDismissRequest": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "BasicAlertDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": {"fields": {}, "intent": "preview.onDismissRequest"}}, "type": "BasicAlertDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "BasicText", showBackground = true)
 @Composable
 private fun BasicTextPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"text": {"text": "Preview", "type": "AnnotatedString"}}, "type": "BasicText"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"text": {"text": "Preview", "type": "AnnotatedString"}}, "type": "BasicText"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "BasicTextField", showBackground = true)
 @Composable
 private fun BasicTextFieldPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onValueChange": {"bound": {}, "handlerId": "preview.onValueChange", "payload": {"value": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onValueChange": "app.preview.onValueChange", "value": "Preview"}, "type": "BasicTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onValueChange": {"payload": {"value": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onValueChange": {"fields": {}, "intent": "preview.onValueChange"}, "value": "Preview"}, "type": "BasicTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "BottomAppBar", showBackground = true)
 @Composable
 private fun BottomAppBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "BottomAppBar"}, "type": "Text"}], "id": "preview", "props": {}, "type": "BottomAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "BottomAppBar"}, "type": "Text"}], "id": "preview", "props": {}, "type": "BottomAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "BottomAppBarActions", showBackground = true)
 @Composable
 private fun BottomAppBarActionsPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}], "id": "preview", "props": {}, "type": "BottomAppBarActions"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}], "id": "preview", "props": {}, "type": "BottomAppBarActions"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "BottomSheetScaffold", showBackground = true)
 @Composable
 private fun BottomSheetScaffoldPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.sheetContent", "props": {"text": "sheetContent"}, "slot": "sheetContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "BottomSheetScaffold"}, "type": "Text"}], "id": "preview", "props": {}, "type": "BottomSheetScaffold"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.sheetContent", "props": {"text": "sheetContent"}, "slot": "sheetContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "BottomSheetScaffold"}, "type": "Text"}], "id": "preview", "props": {}, "type": "BottomSheetScaffold"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Box", showBackground = true)
 @Composable
 private fun BoxPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Box"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Box"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Box"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Box"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Button", showBackground = true)
 @Composable
 private fun ButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"onClick": "app.preview.onClick", "text": "Preview"}, "type": "Button"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "text": "Preview"}, "type": "Button"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Card", showBackground = true)
 @Composable
 private fun CardPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Card"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "Card"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Card"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "Card"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "CardWithoutOnClick", showBackground = true)
 @Composable
 private fun CardWithoutOnClickPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "CardWithoutOnClick"}, "type": "Text"}], "id": "preview", "props": {}, "type": "CardWithoutOnClick"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "CardWithoutOnClick"}, "type": "Text"}], "id": "preview", "props": {}, "type": "CardWithoutOnClick"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "CenterAlignedTopAppBar", showBackground = true)
 @Composable
 private fun CenterAlignedTopAppBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}, {"id": "preview.navigationIcon", "props": {"text": "navigationIcon"}, "slot": "navigationIcon", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}], "id": "preview", "props": {}, "type": "CenterAlignedTopAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}, {"id": "preview.navigationIcon", "props": {"text": "navigationIcon"}, "slot": "navigationIcon", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}], "id": "preview", "props": {}, "type": "CenterAlignedTopAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Checkbox", showBackground = true)
 @Composable
 private fun CheckboxPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"id": "preview", "props": {"checked": true, "modifier": {"operations": [{"contentDescription": "Checkbox", "type": "semantics"}]}, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "Checkbox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"id": "preview", "props": {"checked": true, "modifier": {"operations": [{"contentDescription": "Checkbox", "type": "semantics"}]}, "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}}, "type": "Checkbox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "CircularProgressIndicator", showBackground = true)
 @Composable
 private fun CircularProgressIndicatorPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "CircularProgressIndicator", "type": "semantics"}]}}, "type": "CircularProgressIndicator"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "CircularProgressIndicator", "type": "semantics"}]}}, "type": "CircularProgressIndicator"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "CircularProgressIndicatorProgress", showBackground = true)
 @Composable
 private fun CircularProgressIndicatorProgressPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "CircularProgressIndicatorProgress", "type": "semantics"}]}, "progress": 0.5}, "type": "CircularProgressIndicatorProgress"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "CircularProgressIndicatorProgress", "type": "semantics"}]}, "progress": 0.5}, "type": "CircularProgressIndicatorProgress"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Column", showBackground = true)
 @Composable
 private fun ColumnPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Column"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Column"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Column"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Column"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Crossfade", showBackground = true)
 @Composable
 private fun CrossfadePreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Crossfade"}, "type": "Text"}], "id": "preview", "props": {"targetState": "Preview"}, "type": "Crossfade"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Crossfade"}, "type": "Text"}], "id": "preview", "props": {"targetState": "Preview"}, "type": "Crossfade"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DatePicker", showBackground = true)
 @Composable
 private fun DatePickerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "DatePicker", "type": "semantics"}]}}, "type": "DatePicker"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "DatePicker", "type": "semantics"}]}}, "type": "DatePicker"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DatePickerDialog", showBackground = true)
 @Composable
 private fun DatePickerDialogPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}, {"id": "preview.child", "props": {"text": "DatePickerDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": "app.preview.onDismissRequest"}, "type": "DatePickerDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onDismissRequest": {"payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}, {"id": "preview.child", "props": {"text": "DatePickerDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": {"fields": {}, "intent": "preview.onDismissRequest"}}, "type": "DatePickerDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DisableSelection", showBackground = true)
 @Composable
 private fun DisableSelectionPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "DisableSelection"}, "type": "Text"}], "id": "preview", "props": {}, "type": "DisableSelection"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "DisableSelection"}, "type": "Text"}], "id": "preview", "props": {}, "type": "DisableSelection"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DismissibleDrawerSheet", showBackground = true)
 @Composable
 private fun DismissibleDrawerSheetPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "DismissibleDrawerSheet"}, "type": "Text"}], "id": "preview", "props": {}, "type": "DismissibleDrawerSheet"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "DismissibleDrawerSheet"}, "type": "Text"}], "id": "preview", "props": {}, "type": "DismissibleDrawerSheet"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DismissibleNavigationDrawer", showBackground = true)
 @Composable
 private fun DismissibleNavigationDrawerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.drawer", "props": {"text": "drawer"}, "slot": "drawer", "type": "Text"}, {"id": "preview.child", "props": {"text": "DismissibleNavigationDrawer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "DismissibleNavigationDrawer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.drawer", "props": {"text": "drawer"}, "slot": "drawer", "type": "Text"}, {"id": "preview.child", "props": {"text": "DismissibleNavigationDrawer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "DismissibleNavigationDrawer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DockedSearchBar", showBackground = true)
 @Composable
 private fun DockedSearchBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onExpandedChange": {"bound": {}, "handlerId": "preview.onExpandedChange", "payload": {"expanded": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "DockedSearchBar"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onExpandedChange": "app.preview.onExpandedChange"}, "type": "DockedSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onExpandedChange": {"payload": {"expanded": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "DockedSearchBar"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onExpandedChange": {"fields": {}, "intent": "preview.onExpandedChange"}}, "type": "DockedSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DropdownMenu", showBackground = true)
 @Composable
 private fun DropdownMenuPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "DropdownMenu"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onDismissRequest": "app.preview.onDismissRequest"}, "type": "DropdownMenu"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onDismissRequest": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "DropdownMenu"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onDismissRequest": {"fields": {}, "intent": "preview.onDismissRequest"}}, "type": "DropdownMenu"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DropdownMenuItem", showBackground = true)
 @Composable
 private fun DropdownMenuItemPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.text", "props": {"text": "text"}, "slot": "text", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "DropdownMenuItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.text", "props": {"text": "text"}, "slot": "text", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "DropdownMenuItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ElevatedAssistChip", showBackground = true)
 @Composable
 private fun ElevatedAssistChipPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "ElevatedAssistChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "ElevatedAssistChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ElevatedButton", showBackground = true)
 @Composable
 private fun ElevatedButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ElevatedButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "ElevatedButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ElevatedButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "ElevatedButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ElevatedCard", showBackground = true)
 @Composable
 private fun ElevatedCardPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ElevatedCard"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "ElevatedCard"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ElevatedCard"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "ElevatedCard"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ElevatedCardWithoutOnClick", showBackground = true)
 @Composable
 private fun ElevatedCardWithoutOnClickPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ElevatedCardWithoutOnClick"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ElevatedCardWithoutOnClick"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ElevatedCardWithoutOnClick"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ElevatedCardWithoutOnClick"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ElevatedFilterChip", showBackground = true)
 @Composable
 private fun ElevatedFilterChipPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "ElevatedFilterChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "ElevatedFilterChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ElevatedSuggestionChip", showBackground = true)
 @Composable
 private fun ElevatedSuggestionChipPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "ElevatedSuggestionChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "ElevatedSuggestionChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ExpandedDockedSearchBar", showBackground = true)
 @Composable
 private fun ExpandedDockedSearchBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "provider.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "ExpandedDockedSearchBar"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "expandedBar", "type": "ExpandedDockedSearchBar"}], "id": "provider", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "provider.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "ExpandedDockedSearchBar"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "expandedBar", "type": "ExpandedDockedSearchBar"}], "id": "provider", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ExpandedFullScreenSearchBar", showBackground = true)
 @Composable
 private fun ExpandedFullScreenSearchBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "provider.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "ExpandedFullScreenSearchBar"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "expandedBar", "type": "ExpandedFullScreenSearchBar"}], "id": "provider", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "provider.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "ExpandedFullScreenSearchBar"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "expandedBar", "type": "ExpandedFullScreenSearchBar"}], "id": "provider", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ExposedDropdownMenu", showBackground = true)
 @Composable
 private fun ExposedDropdownMenuPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}, "app.preview.onExpandedChange": {"bound": {}, "handlerId": "preview.onExpandedChange", "payload": {"expanded": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"children": [{"id": "preview.child", "props": {"text": "ExposedDropdownMenu"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onDismissRequest": "app.preview.onDismissRequest"}, "type": "ExposedDropdownMenu"}], "id": "provider", "props": {"expanded": true, "onExpandedChange": "app.preview.onExpandedChange"}, "type": "ExposedDropdownMenuBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onDismissRequest": {"payload": {}}, "preview.onExpandedChange": {"payload": {"expanded": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"children": [{"id": "preview.child", "props": {"text": "ExposedDropdownMenu"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onDismissRequest": {"fields": {}, "intent": "preview.onDismissRequest"}}, "type": "ExposedDropdownMenu"}], "id": "provider", "props": {"expanded": true, "onExpandedChange": {"fields": {}, "intent": "preview.onExpandedChange"}}, "type": "ExposedDropdownMenuBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ExposedDropdownMenuBox", showBackground = true)
 @Composable
 private fun ExposedDropdownMenuBoxPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onExpandedChange": {"bound": {}, "handlerId": "preview.onExpandedChange", "payload": {"expanded": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ExposedDropdownMenuBox"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onExpandedChange": "app.preview.onExpandedChange"}, "type": "ExposedDropdownMenuBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onExpandedChange": {"payload": {"expanded": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ExposedDropdownMenuBox"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onExpandedChange": {"fields": {}, "intent": "preview.onExpandedChange"}}, "type": "ExposedDropdownMenuBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ExtendedFloatingActionButton", showBackground = true)
 @Composable
 private fun ExtendedFloatingActionButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ExtendedFloatingActionButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "ExtendedFloatingActionButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ExtendedFloatingActionButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "ExtendedFloatingActionButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ExtendedFloatingActionButtonText", showBackground = true)
 @Composable
 private fun ExtendedFloatingActionButtonTextPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}, {"id": "preview.text", "props": {"text": "text"}, "slot": "text", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "ExtendedFloatingActionButtonText"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}, {"id": "preview.text", "props": {"text": "text"}, "slot": "text", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "ExtendedFloatingActionButtonText"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FilledIconButton", showBackground = true)
 @Composable
 private fun FilledIconButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FilledIconButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "FilledIconButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FilledIconButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "FilledIconButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FilledIconToggleButton", showBackground = true)
 @Composable
 private fun FilledIconToggleButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FilledIconToggleButton"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "FilledIconToggleButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FilledIconToggleButton"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}}, "type": "FilledIconToggleButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FilledTonalButton", showBackground = true)
 @Composable
 private fun FilledTonalButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FilledTonalButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "FilledTonalButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FilledTonalButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "FilledTonalButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FilledTonalIconButton", showBackground = true)
 @Composable
 private fun FilledTonalIconButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FilledTonalIconButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "FilledTonalIconButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FilledTonalIconButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "FilledTonalIconButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FilledTonalIconToggleButton", showBackground = true)
 @Composable
 private fun FilledTonalIconToggleButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FilledTonalIconToggleButton"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "FilledTonalIconToggleButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FilledTonalIconToggleButton"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}}, "type": "FilledTonalIconToggleButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FilterChip", showBackground = true)
 @Composable
 private fun FilterChipPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"label": "Preview", "onClick": "app.preview.onClick", "selected": true}, "type": "FilterChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"id": "preview", "props": {"label": "Preview", "onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "FilterChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FlexBox", showBackground = true)
 @Composable
 private fun FlexBoxPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FlexBox"}, "type": "Text"}], "id": "preview", "props": {}, "type": "FlexBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FlexBox"}, "type": "Text"}], "id": "preview", "props": {}, "type": "FlexBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FloatingActionButton", showBackground = true)
 @Composable
 private fun FloatingActionButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FloatingActionButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "FloatingActionButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FloatingActionButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "FloatingActionButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FlowColumn", showBackground = true)
 @Composable
 private fun FlowColumnPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FlowColumn"}, "type": "Text"}], "id": "preview", "props": {}, "type": "FlowColumn"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FlowColumn"}, "type": "Text"}], "id": "preview", "props": {}, "type": "FlowColumn"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "FlowRow", showBackground = true)
 @Composable
 private fun FlowRowPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FlowRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "FlowRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FlowRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "FlowRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "HorizontalDivider", showBackground = true)
 @Composable
 private fun HorizontalDividerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "HorizontalDivider", "type": "semantics"}]}}, "type": "HorizontalDivider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "HorizontalDivider", "type": "semantics"}]}}, "type": "HorizontalDivider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Icon", showBackground = true)
 @Composable
 private fun IconPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "imageVector": {"name": "AutoMirrored.Filled.ArrowBack", "type": "materialIcon"}}, "type": "Icon"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "imageVector": {"name": "AutoMirrored.Filled.ArrowBack", "type": "materialIcon"}}, "type": "Icon"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "IconButton", showBackground = true)
 @Composable
 private fun IconButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "IconButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "IconButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "IconButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "IconButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "IconToggleButton", showBackground = true)
 @Composable
 private fun IconToggleButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "IconToggleButton"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "IconToggleButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "IconToggleButton"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}}, "type": "IconToggleButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Image", showBackground = true)
 @Composable
 private fun ImagePreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"resource": "@drawable/preview"}, "type": "Image"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"resource": "@drawable/preview"}, "type": "Image"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ImageImageVector", showBackground = true)
 @Composable
 private fun ImageImageVectorPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "imageVector": {"name": "AutoMirrored.Filled.ArrowBack", "type": "materialIcon"}}, "type": "ImageImageVector"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "imageVector": {"name": "AutoMirrored.Filled.ArrowBack", "type": "materialIcon"}}, "type": "ImageImageVector"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "InputChip", showBackground = true)
 @Composable
 private fun InputChipPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "InputChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "InputChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Label", showBackground = true)
 @Composable
 private fun LabelPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}, {"id": "preview.child", "props": {"text": "Label"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}, {"id": "preview.child", "props": {"text": "Label"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "LargeFloatingActionButton", showBackground = true)
 @Composable
 private fun LargeFloatingActionButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LargeFloatingActionButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "LargeFloatingActionButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LargeFloatingActionButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "LargeFloatingActionButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "LargeTopAppBar", showBackground = true)
 @Composable
 private fun LargeTopAppBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}, {"id": "preview.navigationIcon", "props": {"text": "navigationIcon"}, "slot": "navigationIcon", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}], "id": "preview", "props": {}, "type": "LargeTopAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}, {"id": "preview.navigationIcon", "props": {"text": "navigationIcon"}, "slot": "navigationIcon", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}], "id": "preview", "props": {}, "type": "LargeTopAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "LazyColumn", showBackground = true)
 @Composable
 private fun LazyColumnPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LazyColumn"}, "type": "Text"}], "id": "preview", "props": {}, "type": "LazyColumn"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LazyColumn"}, "type": "Text"}], "id": "preview", "props": {}, "type": "LazyColumn"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "LazyRow", showBackground = true)
 @Composable
 private fun LazyRowPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LazyRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "LazyRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LazyRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "LazyRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "LeadingIconTab", showBackground = true)
 @Composable
 private fun LeadingIconTabPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}, {"id": "preview.text", "props": {"text": "text"}, "slot": "text", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "LeadingIconTab"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}, {"id": "preview.text", "props": {"text": "text"}, "slot": "text", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "LeadingIconTab"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "LinearProgressIndicator", showBackground = true)
 @Composable
 private fun LinearProgressIndicatorPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "LinearProgressIndicator", "type": "semantics"}]}, "progress": 0.5}, "type": "LinearProgressIndicator"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "LinearProgressIndicator", "type": "semantics"}]}, "progress": 0.5}, "type": "LinearProgressIndicator"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "LinearProgressIndicatorWithoutProgress", showBackground = true)
 @Composable
 private fun LinearProgressIndicatorWithoutProgressPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "LinearProgressIndicatorWithoutProgress", "type": "semantics"}]}}, "type": "LinearProgressIndicatorWithoutProgress"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "LinearProgressIndicatorWithoutProgress", "type": "semantics"}]}}, "type": "LinearProgressIndicatorWithoutProgress"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ListItem", showBackground = true)
 @Composable
 private fun ListItemPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.headlineContent", "props": {"text": "headlineContent"}, "slot": "headlineContent", "type": "Text"}], "id": "preview", "props": {}, "type": "ListItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.headlineContent", "props": {"text": "headlineContent"}, "slot": "headlineContent", "type": "Text"}], "id": "preview", "props": {}, "type": "ListItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "MediumTopAppBar", showBackground = true)
 @Composable
 private fun MediumTopAppBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}, {"id": "preview.navigationIcon", "props": {"text": "navigationIcon"}, "slot": "navigationIcon", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}], "id": "preview", "props": {}, "type": "MediumTopAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}, {"id": "preview.navigationIcon", "props": {"text": "navigationIcon"}, "slot": "navigationIcon", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}], "id": "preview", "props": {}, "type": "MediumTopAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ModalBottomSheet", showBackground = true)
 @Composable
 private fun ModalBottomSheetPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ModalBottomSheet"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ModalBottomSheet"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ModalBottomSheet"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ModalBottomSheet"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ModalDrawerSheet", showBackground = true)
 @Composable
 private fun ModalDrawerSheetPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ModalDrawerSheet"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ModalDrawerSheet"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ModalDrawerSheet"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ModalDrawerSheet"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ModalNavigationDrawer", showBackground = true)
 @Composable
 private fun ModalNavigationDrawerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.drawer", "props": {"text": "drawer"}, "slot": "drawer", "type": "Text"}, {"id": "preview.child", "props": {"text": "ModalNavigationDrawer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ModalNavigationDrawer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.drawer", "props": {"text": "drawer"}, "slot": "drawer", "type": "Text"}, {"id": "preview.child", "props": {"text": "ModalNavigationDrawer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ModalNavigationDrawer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ModalWideNavigationRail", showBackground = true)
 @Composable
 private fun ModalWideNavigationRailPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ModalWideNavigationRail"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ModalWideNavigationRail"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ModalWideNavigationRail"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ModalWideNavigationRail"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "MultiChoiceSegmentedButton", showBackground = true)
 @Composable
 private fun MultiChoiceSegmentedButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange", "shape": {"size": {"type": "Dp", "value": 0}, "type": "CutCornerShape"}}, "type": "MultiChoiceSegmentedButton"}], "id": "provider", "props": {}, "type": "MultiChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}, "shape": {"size": {"type": "Dp", "value": 0}, "type": "CutCornerShape"}}, "type": "MultiChoiceSegmentedButton"}], "id": "provider", "props": {}, "type": "MultiChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "MultiChoiceSegmentedButtonRow", showBackground = true)
 @Composable
 private fun MultiChoiceSegmentedButtonRowPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "MultiChoiceSegmentedButtonRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "MultiChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "MultiChoiceSegmentedButtonRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "MultiChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "NavigationBar", showBackground = true)
 @Composable
 private fun NavigationBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "NavigationBar"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "NavigationBar"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "NavigationBarItem", showBackground = true)
 @Composable
 private fun NavigationBarItemPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "NavigationBarItem"}], "id": "provider", "props": {}, "type": "Badge"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "NavigationBarItem"}], "id": "provider", "props": {}, "type": "Badge"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "NavigationDrawerItem", showBackground = true)
 @Composable
 private fun NavigationDrawerItemPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "NavigationDrawerItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "NavigationDrawerItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "NavigationRail", showBackground = true)
 @Composable
 private fun NavigationRailPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "NavigationRail"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationRail"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "NavigationRail"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationRail"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "NavigationRailItem", showBackground = true)
 @Composable
 private fun NavigationRailItemPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "NavigationRailItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "NavigationRailItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "NavigationSuite", showBackground = true)
 @Composable
 private fun NavigationSuitePreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.primaryActionContent", "props": {"text": "primaryActionContent"}, "slot": "primaryActionContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuite"}, "type": "Text"}], "id": "preview", "props": {"navigationSuiteType": {"name": "NavigationBar", "type": "NavigationSuiteType"}}, "type": "NavigationSuite"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.primaryActionContent", "props": {"text": "primaryActionContent"}, "slot": "primaryActionContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuite"}, "type": "Text"}], "id": "preview", "props": {"navigationSuiteType": {"name": "NavigationBar", "type": "NavigationSuiteType"}}, "type": "NavigationSuite"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "NavigationSuiteItem", showBackground = true)
 @Composable
 private fun NavigationSuiteItemPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "NavigationSuiteItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "NavigationSuiteItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "NavigationSuiteScaffold", showBackground = true)
 @Composable
 private fun NavigationSuiteScaffoldPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.navigationItems", "props": {"text": "navigationItems"}, "slot": "navigationItems", "type": "Text"}, {"id": "preview.primaryActionContent", "props": {"text": "primaryActionContent"}, "slot": "primaryActionContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffold"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationSuiteScaffold"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.navigationItems", "props": {"text": "navigationItems"}, "slot": "navigationItems", "type": "Text"}, {"id": "preview.primaryActionContent", "props": {"text": "primaryActionContent"}, "slot": "primaryActionContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffold"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationSuiteScaffold"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "NavigationSuiteScaffoldLayout", showBackground = true)
 @Composable
 private fun NavigationSuiteScaffoldLayoutPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.navigationSuite", "props": {"text": "navigationSuite"}, "slot": "navigationSuite", "type": "Text"}, {"id": "preview.primaryActionContent", "props": {"text": "primaryActionContent"}, "slot": "primaryActionContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffoldLayout"}, "type": "Text"}], "id": "preview", "props": {"navigationSuiteType": {"name": "NavigationBar", "type": "NavigationSuiteType"}}, "type": "NavigationSuiteScaffoldLayout"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.navigationSuite", "props": {"text": "navigationSuite"}, "slot": "navigationSuite", "type": "Text"}, {"id": "preview.primaryActionContent", "props": {"text": "primaryActionContent"}, "slot": "primaryActionContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffoldLayout"}, "type": "Text"}], "id": "preview", "props": {"navigationSuiteType": {"name": "NavigationBar", "type": "NavigationSuiteType"}}, "type": "NavigationSuiteScaffoldLayout"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType", showBackground = true)
 @Composable
 private fun NavigationSuiteScaffoldLayoutWithoutNavigationSuiteTypePreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.navigationSuite", "props": {"text": "navigationSuite"}, "slot": "navigationSuite", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.navigationSuite", "props": {"text": "navigationSuite"}, "slot": "navigationSuite", "type": "Text"}, {"id": "preview.child", "props": {"text": "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"}, "type": "Text"}], "id": "preview", "props": {}, "type": "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "OutlinedButton", showBackground = true)
 @Composable
 private fun OutlinedButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "OutlinedButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "OutlinedButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "OutlinedCard", showBackground = true)
 @Composable
 private fun OutlinedCardPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedCard"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "OutlinedCard"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedCard"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "OutlinedCard"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "OutlinedCardWithoutOnClick", showBackground = true)
 @Composable
 private fun OutlinedCardWithoutOnClickPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedCardWithoutOnClick"}, "type": "Text"}], "id": "preview", "props": {}, "type": "OutlinedCardWithoutOnClick"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedCardWithoutOnClick"}, "type": "Text"}], "id": "preview", "props": {}, "type": "OutlinedCardWithoutOnClick"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "OutlinedIconButton", showBackground = true)
 @Composable
 private fun OutlinedIconButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedIconButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "OutlinedIconButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedIconButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "OutlinedIconButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "OutlinedIconToggleButton", showBackground = true)
 @Composable
 private fun OutlinedIconToggleButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedIconToggleButton"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "OutlinedIconToggleButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "OutlinedIconToggleButton"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}}, "type": "OutlinedIconToggleButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "OutlinedSecureTextField", showBackground = true)
 @Composable
 private fun OutlinedSecureTextFieldPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "OutlinedSecureTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "OutlinedSecureTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "OutlinedTextField", showBackground = true)
 @Composable
 private fun OutlinedTextFieldPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onValueChange": {"bound": {}, "handlerId": "preview.onValueChange", "payload": {"value": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onValueChange": "app.preview.onValueChange", "value": "Preview"}, "type": "OutlinedTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onValueChange": {"payload": {"value": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onValueChange": {"fields": {}, "intent": "preview.onValueChange"}, "value": "Preview"}, "type": "OutlinedTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "PermanentDrawerSheet", showBackground = true)
 @Composable
 private fun PermanentDrawerSheetPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "PermanentDrawerSheet"}, "type": "Text"}], "id": "preview", "props": {}, "type": "PermanentDrawerSheet"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "PermanentDrawerSheet"}, "type": "Text"}], "id": "preview", "props": {}, "type": "PermanentDrawerSheet"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "PermanentNavigationDrawer", showBackground = true)
 @Composable
 private fun PermanentNavigationDrawerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.drawerContent", "props": {"text": "drawerContent"}, "slot": "drawerContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "PermanentNavigationDrawer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "PermanentNavigationDrawer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.drawerContent", "props": {"text": "drawerContent"}, "slot": "drawerContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "PermanentNavigationDrawer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "PermanentNavigationDrawer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "PlainTooltip", showBackground = true)
 @Composable
 private fun PlainTooltipPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Label"}, "type": "Text"}, {"children": [{"id": "preview.child", "props": {"text": "PlainTooltip"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "label", "type": "PlainTooltip"}], "id": "provider", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Label"}, "type": "Text"}, {"children": [{"id": "preview.child", "props": {"text": "PlainTooltip"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "label", "type": "PlainTooltip"}], "id": "provider", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "PrimaryScrollableTabRow", showBackground = true)
 @Composable
 private fun PrimaryScrollableTabRowPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.tabs", "props": {"text": "tabs"}, "slot": "tabs", "type": "Text"}], "id": "preview", "props": {"selectedTabIndex": 0}, "type": "PrimaryScrollableTabRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.tabs", "props": {"text": "tabs"}, "slot": "tabs", "type": "Text"}], "id": "preview", "props": {"selectedTabIndex": 0}, "type": "PrimaryScrollableTabRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "PrimaryTabRow", showBackground = true)
 @Composable
 private fun PrimaryTabRowPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.tabs", "props": {"text": "tabs"}, "slot": "tabs", "type": "Text"}], "id": "preview", "props": {"selectedTabIndex": 0}, "type": "PrimaryTabRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.tabs", "props": {"text": "tabs"}, "slot": "tabs", "type": "Text"}], "id": "preview", "props": {"selectedTabIndex": 0}, "type": "PrimaryTabRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "PullToRefreshBox", showBackground = true)
 @Composable
 private fun PullToRefreshBoxPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onRefresh": {"bound": {}, "handlerId": "preview.onRefresh", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "PullToRefreshBox"}, "type": "Text"}], "id": "preview", "props": {"isRefreshing": true, "onRefresh": "app.preview.onRefresh"}, "type": "PullToRefreshBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onRefresh": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "PullToRefreshBox"}, "type": "Text"}], "id": "preview", "props": {"isRefreshing": true, "onRefresh": {"fields": {}, "intent": "preview.onRefresh"}}, "type": "PullToRefreshBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "RadioButton", showBackground = true)
 @Composable
 private fun RadioButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "RadioButton", "type": "semantics"}]}, "onClick": "app.preview.onClick", "selected": true}, "type": "RadioButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "RadioButton", "type": "semantics"}]}, "onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "RadioButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "RichTooltip", showBackground = true)
 @Composable
 private fun RichTooltipPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Label"}, "type": "Text"}, {"children": [{"id": "preview.child", "props": {"text": "RichTooltip"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "label", "type": "RichTooltip"}], "id": "provider", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Label"}, "type": "Text"}, {"children": [{"id": "preview.child", "props": {"text": "RichTooltip"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "label", "type": "RichTooltip"}], "id": "provider", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Row", showBackground = true)
 @Composable
 private fun RowPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Row"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Row"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Row"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Row"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Scaffold", showBackground = true)
 @Composable
 private fun ScaffoldPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.bottomBar", "props": {"text": "bottomBar"}, "slot": "bottomBar", "type": "Text"}, {"id": "preview.floatingActionButton", "props": {"text": "floatingActionButton"}, "slot": "floatingActionButton", "type": "Text"}, {"id": "preview.snackbarHost", "props": {"text": "snackbarHost"}, "slot": "snackbarHost", "type": "Text"}, {"id": "preview.topBar", "props": {"text": "topBar"}, "slot": "topBar", "type": "Text"}, {"id": "preview.child", "props": {"text": "Scaffold"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Scaffold"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.bottomBar", "props": {"text": "bottomBar"}, "slot": "bottomBar", "type": "Text"}, {"id": "preview.floatingActionButton", "props": {"text": "floatingActionButton"}, "slot": "floatingActionButton", "type": "Text"}, {"id": "preview.snackbarHost", "props": {"text": "snackbarHost"}, "slot": "snackbarHost", "type": "Text"}, {"id": "preview.topBar", "props": {"text": "topBar"}, "slot": "topBar", "type": "Text"}, {"id": "preview.child", "props": {"text": "Scaffold"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Scaffold"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SearchBar", showBackground = true)
 @Composable
 private fun SearchBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onExpandedChange": {"bound": {}, "handlerId": "preview.onExpandedChange", "payload": {"expanded": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "SearchBar"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onExpandedChange": "app.preview.onExpandedChange"}, "type": "SearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onExpandedChange": {"payload": {"expanded": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "SearchBar"}, "type": "Text"}], "id": "preview", "props": {"expanded": true, "onExpandedChange": {"fields": {}, "intent": "preview.onExpandedChange"}}, "type": "SearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SearchBarInputField", showBackground = true)
 @Composable
 private fun SearchBarInputFieldPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onExpandedChange": {"bound": {}, "handlerId": "preview.onExpandedChange", "payload": {"expanded": {"required": true, "type": "boolean"}}}, "app.preview.onQueryChange": {"bound": {}, "handlerId": "preview.onQueryChange", "payload": {"query": {"required": true, "type": "string"}}}, "app.preview.onSearch": {"bound": {}, "handlerId": "preview.onSearch", "payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"expanded": true, "onExpandedChange": "app.preview.onExpandedChange", "onQueryChange": "app.preview.onQueryChange", "onSearch": "app.preview.onSearch", "query": "Preview"}, "type": "SearchBarInputField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onExpandedChange": {"payload": {"expanded": {"required": true, "type": "boolean"}}}, "preview.onQueryChange": {"payload": {"query": {"required": true, "type": "string"}}}, "preview.onSearch": {"payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"expanded": true, "onExpandedChange": {"fields": {}, "intent": "preview.onExpandedChange"}, "onQueryChange": {"fields": {}, "intent": "preview.onQueryChange"}, "onSearch": {"fields": {}, "intent": "preview.onSearch"}, "query": "Preview"}, "type": "SearchBarInputField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SearchBarStateInputField", showBackground = true)
 @Composable
 private fun SearchBarStateInputFieldPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}, "app.preview.onSearch": {"bound": {}, "handlerId": "preview.onSearch", "payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "SearchBarStateInputField", "type": "semantics"}]}, "onSearch": "app.preview.onSearch"}, "slot": "inputField", "type": "SearchBarStateInputField"}], "id": "provider", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}, "preview.onSearch": {"payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "SearchBarStateInputField", "type": "semantics"}]}, "onSearch": {"fields": {}, "intent": "preview.onSearch"}}, "slot": "inputField", "type": "SearchBarStateInputField"}], "id": "provider", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SecondaryScrollableTabRow", showBackground = true)
 @Composable
 private fun SecondaryScrollableTabRowPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.tabs", "props": {"text": "tabs"}, "slot": "tabs", "type": "Text"}], "id": "preview", "props": {"selectedTabIndex": 0}, "type": "SecondaryScrollableTabRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.tabs", "props": {"text": "tabs"}, "slot": "tabs", "type": "Text"}], "id": "preview", "props": {"selectedTabIndex": 0}, "type": "SecondaryScrollableTabRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SecondaryTabRow", showBackground = true)
 @Composable
 private fun SecondaryTabRowPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.tabs", "props": {"text": "tabs"}, "slot": "tabs", "type": "Text"}], "id": "preview", "props": {"selectedTabIndex": 0}, "type": "SecondaryTabRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.tabs", "props": {"text": "tabs"}, "slot": "tabs", "type": "Text"}], "id": "preview", "props": {"selectedTabIndex": 0}, "type": "SecondaryTabRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SecureTextField", showBackground = true)
 @Composable
 private fun SecureTextFieldPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "SecureTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "SecureTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SegmentedButton", showBackground = true)
 @Composable
 private fun SegmentedButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true, "shape": {"size": {"type": "Dp", "value": 0}, "type": "CutCornerShape"}}, "type": "SegmentedButton"}], "id": "provider", "props": {}, "type": "SingleChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true, "shape": {"size": {"type": "Dp", "value": 0}, "type": "CutCornerShape"}}, "type": "SegmentedButton"}], "id": "provider", "props": {}, "type": "SingleChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SelectionContainer", showBackground = true)
 @Composable
 private fun SelectionContainerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SelectionContainer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "SelectionContainer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SelectionContainer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "SelectionContainer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SharedTransitionLayout", showBackground = true)
 @Composable
 private fun SharedTransitionLayoutPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SharedTransitionLayout"}, "type": "Text"}], "id": "preview", "props": {}, "type": "SharedTransitionLayout"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SharedTransitionLayout"}, "type": "Text"}], "id": "preview", "props": {}, "type": "SharedTransitionLayout"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ShortNavigationBar", showBackground = true)
 @Composable
 private fun ShortNavigationBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ShortNavigationBar"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ShortNavigationBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ShortNavigationBar"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ShortNavigationBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ShortNavigationBarItem", showBackground = true)
 @Composable
 private fun ShortNavigationBarItemPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "ShortNavigationBarItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "ShortNavigationBarItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SingleChoiceSegmentedButtonRow", showBackground = true)
 @Composable
 private fun SingleChoiceSegmentedButtonRowPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SingleChoiceSegmentedButtonRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "SingleChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SingleChoiceSegmentedButtonRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "SingleChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Slider", showBackground = true)
 @Composable
 private fun SliderPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Slider", "type": "semantics"}]}, "valueRange": {"end": 1, "start": 0, "type": "Range"}}, "type": "Slider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Slider", "type": "semantics"}]}, "valueRange": {"end": 1, "start": 0, "type": "Range"}}, "type": "Slider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SliderValue", showBackground = true)
 @Composable
 private fun SliderValuePreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onValueChange": {"bound": {}, "handlerId": "preview.onValueChange", "payload": {"value": {"required": true, "type": "number"}}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "SliderValue", "type": "semantics"}]}, "onValueChange": "app.preview.onValueChange", "value": 0.5}, "type": "SliderValue"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onValueChange": {"payload": {"value": {"required": true, "type": "number"}}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "SliderValue", "type": "semantics"}]}, "onValueChange": {"fields": {}, "intent": "preview.onValueChange"}, "value": 0.5}, "type": "SliderValue"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SmallFloatingActionButton", showBackground = true)
 @Composable
 private fun SmallFloatingActionButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SmallFloatingActionButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "SmallFloatingActionButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SmallFloatingActionButton"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "SmallFloatingActionButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Snackbar", showBackground = true)
 @Composable
 private fun SnackbarPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Snackbar"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Snackbar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Snackbar"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Snackbar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SnackbarHost", showBackground = true)
 @Composable
 private fun SnackbarHostPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"message": "Preview", "serial": 0}, "type": "SnackbarHost"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"message": "Preview", "serial": 0}, "type": "SnackbarHost"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Spacer", showBackground = true)
 @Composable
 private fun SpacerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Spacer", "type": "semantics"}]}}, "type": "Spacer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Spacer", "type": "semantics"}]}}, "type": "Spacer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "StatefulSearchBar", showBackground = true)
 @Composable
 private fun StatefulSearchBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}], "id": "preview", "props": {"onEdit": "app.preview.onEdit", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}], "id": "preview", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "StatefulSearchBarInputField", showBackground = true)
 @Composable
 private fun StatefulSearchBarInputFieldPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onEdit": {"bound": {}, "handlerId": "preview.onEdit", "payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}, "app.preview.onExpandedChange": {"bound": {}, "handlerId": "preview.onExpandedChange", "payload": {"expanded": {"required": true, "type": "boolean"}}}, "app.preview.onSearch": {"bound": {}, "handlerId": "preview.onSearch", "payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"expanded": true, "onEdit": "app.preview.onEdit", "onExpandedChange": "app.preview.onExpandedChange", "onSearch": "app.preview.onSearch", "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBarInputField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"revision": {"required": true, "type": "integer"}, "selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}, "preview.onExpandedChange": {"payload": {"expanded": {"required": true, "type": "boolean"}}}, "preview.onSearch": {"payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"expanded": true, "onEdit": {"fields": {}, "intent": "preview.onEdit"}, "onExpandedChange": {"fields": {}, "intent": "preview.onExpandedChange"}, "onSearch": {"fields": {}, "intent": "preview.onSearch"}, "revision": 0, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBarInputField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SuggestionChip", showBackground = true)
 @Composable
 private fun SuggestionChipPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "SuggestionChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "SuggestionChip"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Surface", showBackground = true)
 @Composable
 private fun SurfacePreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Surface"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Surface"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Surface"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Surface"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SurfaceChecked", showBackground = true)
 @Composable
 private fun SurfaceCheckedPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SurfaceChecked"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "SurfaceChecked"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SurfaceChecked"}, "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}}, "type": "SurfaceChecked"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SurfaceOnClick", showBackground = true)
 @Composable
 private fun SurfaceOnClickPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SurfaceOnClick"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick"}, "type": "SurfaceOnClick"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SurfaceOnClick"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "SurfaceOnClick"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SurfaceSelected", showBackground = true)
 @Composable
 private fun SurfaceSelectedPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SurfaceSelected"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "SurfaceSelected"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SurfaceSelected"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "SurfaceSelected"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SwipeToDismissBox", showBackground = true)
 @Composable
 private fun SwipeToDismissBoxPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.backgroundContent", "props": {"text": "backgroundContent"}, "slot": "backgroundContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "SwipeToDismissBox"}, "type": "Text"}], "id": "preview", "props": {}, "type": "SwipeToDismissBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.backgroundContent", "props": {"text": "backgroundContent"}, "slot": "backgroundContent", "type": "Text"}, {"id": "preview.child", "props": {"text": "SwipeToDismissBox"}, "type": "Text"}], "id": "preview", "props": {}, "type": "SwipeToDismissBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Switch", showBackground = true)
 @Composable
 private fun SwitchPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onCheckedChange": {"bound": {}, "handlerId": "preview.onCheckedChange", "payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"id": "preview", "props": {"checked": true, "modifier": {"operations": [{"contentDescription": "Switch", "type": "semantics"}]}, "onCheckedChange": "app.preview.onCheckedChange"}, "type": "Switch"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"id": "preview", "props": {"checked": true, "modifier": {"operations": [{"contentDescription": "Switch", "type": "semantics"}]}, "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}}, "type": "Switch"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Tab", showBackground = true)
 @Composable
 private fun TabPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Tab", "type": "semantics"}]}, "onClick": "app.preview.onClick", "selected": true}, "type": "Tab"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Tab", "type": "semantics"}]}, "onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "Tab"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TabContent", showBackground = true)
 @Composable
 private fun TabContentPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "TabContent"}, "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "selected": true}, "type": "TabContent"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "TabContent"}, "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "TabContent"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Text", showBackground = true)
 @Composable
 private fun TextPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"text": "Preview"}, "type": "Text"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"text": "Preview"}, "type": "Text"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TextAnnotatedString", showBackground = true)
 @Composable
 private fun TextAnnotatedStringPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"text": {"text": "Preview", "type": "AnnotatedString"}}, "type": "TextAnnotatedString"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"text": {"text": "Preview", "type": "AnnotatedString"}}, "type": "TextAnnotatedString"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TextButton", showBackground = true)
 @Composable
 private fun TextButtonPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"onClick": "app.preview.onClick", "text": "Preview"}, "type": "TextButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "text": "Preview"}, "type": "TextButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TextField", showBackground = true)
 @Composable
 private fun TextFieldPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onValueChange": {"bound": {}, "handlerId": "preview.onValueChange", "payload": {"value": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onValueChange": "app.preview.onValueChange", "value": "Preview"}, "type": "TextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onValueChange": {"payload": {"value": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onValueChange": {"fields": {}, "intent": "preview.onValueChange"}, "value": "Preview"}, "type": "TextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TimeInput", showBackground = true)
 @Composable
 private fun TimeInputPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TimeInput", "type": "semantics"}]}}, "type": "TimeInput"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TimeInput", "type": "semantics"}]}}, "type": "TimeInput"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TimePicker", showBackground = true)
 @Composable
 private fun TimePickerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TimePicker", "type": "semantics"}]}}, "type": "TimePicker"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TimePicker", "type": "semantics"}]}}, "type": "TimePicker"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TimePickerDialog", showBackground = true)
 @Composable
 private fun TimePickerDialogPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onDismissRequest": {"bound": {}, "handlerId": "preview.onDismissRequest", "payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}, {"id": "preview.child", "props": {"text": "TimePickerDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": "app.preview.onDismissRequest"}, "type": "TimePickerDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onDismissRequest": {"payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}, {"id": "preview.child", "props": {"text": "TimePickerDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": {"fields": {}, "intent": "preview.onDismissRequest"}}, "type": "TimePickerDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TooltipBox", showBackground = true)
 @Composable
 private fun TooltipBoxPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.tooltip", "props": {"text": "tooltip"}, "slot": "tooltip", "type": "Text"}, {"id": "preview.child", "props": {"text": "TooltipBox"}, "type": "Text"}], "id": "preview", "props": {}, "type": "TooltipBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.tooltip", "props": {"text": "tooltip"}, "slot": "tooltip", "type": "Text"}, {"id": "preview.child", "props": {"text": "TooltipBox"}, "type": "Text"}], "id": "preview", "props": {}, "type": "TooltipBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TopAppBar", showBackground = true)
 @Composable
 private fun TopAppBarPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}, {"id": "preview.navigationIcon", "props": {"text": "navigationIcon"}, "slot": "navigationIcon", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}], "id": "preview", "props": {}, "type": "TopAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}, {"id": "preview.navigationIcon", "props": {"text": "navigationIcon"}, "slot": "navigationIcon", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}], "id": "preview", "props": {}, "type": "TopAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TriStateCheckbox", showBackground = true)
 @Composable
 private fun TriStateCheckboxPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TriStateCheckbox", "type": "semantics"}]}, "onClick": "app.preview.onClick", "state": {"name": "Indeterminate", "type": "ToggleableState"}}, "type": "TriStateCheckbox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "TriStateCheckbox", "type": "semantics"}]}, "onClick": {"fields": {}, "intent": "preview.onClick"}, "state": {"name": "Indeterminate", "type": "ToggleableState"}}, "type": "TriStateCheckbox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "VerticalDivider", showBackground = true)
 @Composable
 private fun VerticalDividerPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "VerticalDivider", "type": "semantics"}]}}, "type": "VerticalDivider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "VerticalDivider", "type": "semantics"}]}}, "type": "VerticalDivider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "VerticalDragHandle", showBackground = true)
 @Composable
 private fun VerticalDragHandlePreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "VerticalDragHandle", "type": "semantics"}]}}, "type": "VerticalDragHandle"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "VerticalDragHandle", "type": "semantics"}]}}, "type": "VerticalDragHandle"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "WideNavigationRail", showBackground = true)
 @Composable
 private fun WideNavigationRailPreview() {
-    Sample("""{"metadata": {"actionBindings": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "WideNavigationRail"}, "type": "Text"}], "id": "preview", "props": {}, "type": "WideNavigationRail"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "WideNavigationRail"}, "type": "Text"}], "id": "preview", "props": {}, "type": "WideNavigationRail"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "WideNavigationRailItem", showBackground = true)
 @Composable
 private fun WideNavigationRailItemPreview() {
-    Sample("""{"metadata": {"actionBindings": {"app.preview.onClick": {"bound": {}, "handlerId": "preview.onClick", "payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": "app.preview.onClick", "railExpanded": true, "selected": true}, "type": "WideNavigationRailItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "railExpanded": true, "selected": true}, "type": "WideNavigationRailItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }

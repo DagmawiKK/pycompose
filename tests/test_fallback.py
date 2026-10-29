@@ -6,12 +6,13 @@ import json
 import logging
 
 import pytest
+from readable import readable_reuse
 
-from pycompose.bridge.handshake import offered_components
+from pycompose.bridge.handshake import PROTOCOL, offered_components
 from pycompose.components import Column, Fallback, Text
+from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.errors import BridgeError, IrValidationError
 from pycompose.ir import emit_ir, validate_ir
-from pycompose.ir.generated_validators import REGISTRY, SCHEMA_VERSION
 from pycompose.ir.host import Host, hosted
 from pycompose.m3 import HorizontalDivider
 from pycompose.state import State
@@ -51,10 +52,14 @@ def test_a_component_newer_than_the_hosts_schema_falls_back() -> None:
 
 
 def test_the_two_sides_are_keyed_apart() -> None:
+    # One session, so a shared name would mean one identity for both.
+    reuse = readable_reuse()
     lacking = Host(EVERYTHING - {"HorizontalDivider"})
-    shown = emit_ir(State(root=_screen()), SCHEMA_VERSION).root.children[0]
+    shown = emit_ir(State(root=_screen()), SCHEMA_VERSION, reuse).root.children[0]
     with hosted(lacking):
-        standing_in = emit_ir(State(root=_screen()), SCHEMA_VERSION).root.children[0]
+        standing_in = emit_ir(
+            State(root=_screen()), SCHEMA_VERSION, reuse
+        ).root.children[0]
     assert shown.id != standing_in.id
 
 
@@ -67,7 +72,7 @@ def test_a_lacked_component_with_no_fallback_is_refused_before_sending() -> None
 
 
 def test_the_handshake_lists_what_the_host_renders() -> None:
-    offer = {"protocol": 1, "capabilities": []}
+    offer = {"protocol": PROTOCOL, "capabilities": []}
     assert offered_components(json.dumps(offer)) is None
     listed = json.dumps({**offer, "components": ["Text", "Column"]})
     assert offered_components(listed) == {"Text", "Column"}
@@ -78,13 +83,15 @@ def test_the_handshake_lists_what_the_host_renders() -> None:
 def test_the_bridge_announces_each_substitution_once(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
+    from handlers import Handlers
+
     from pycompose.bridge.api import BridgeSurface
-    from pycompose.state import Actions, Store
+    from pycompose.state import Store
 
     with caplog.at_level(logging.WARNING):
         surface = BridgeSurface(
             Store(State(root=_screen())),
-            Actions(),
+            Handlers(),
             host_components=EVERYTHING - {"HorizontalDivider"},
         )
     snapshot = json.loads(surface.expose_latest_snapshot() or "{}")
@@ -98,9 +105,9 @@ def test_the_bridge_announces_each_substitution_once(
 def test_the_runtime_keeps_the_hosts_list_for_the_sessions_it_starts(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from pycompose.bridge import runtime
+    from pycompose.bridge import runtime, session
 
-    monkeypatch.setattr(runtime, "_host_components", None)
-    offer = {"protocol": 1, "capabilities": [], "components": ["Text"]}
+    monkeypatch.setattr(session, "_host_components", None)
+    offer = {"protocol": PROTOCOL, "capabilities": [], "components": ["Text"]}
     runtime.handshake(json.dumps(offer))
-    assert runtime._host_components == {"Text"}
+    assert session._host_components == {"Text"}

@@ -11,11 +11,18 @@ the entire candidate even when component policy would otherwise discard it.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 
-from pycompose.core.action_binding import ActionBinding, BindingSpec, read_bindings
+from pycompose.contract.catalog import (
+    MIN_LIBRARY_VERSION,
+    MIN_SCHEMA_VERSION,
+    REGISTRY,
+    SCHEMA_VERSION,
+)
+from pycompose.contract.registry_types import PropDef
+from pycompose.contract.version import require_version
+from pycompose.core.action_binding import ActionBinding, read_intents, valid_intent
 from pycompose.core.node import Node
-from pycompose.core.registry_types import PropDef
 from pycompose.core.resources import valid_resource
 from pycompose.core.reuse import Reuse
 from pycompose.core.values import validate_bounds, validate_number, validate_value
@@ -23,21 +30,13 @@ from pycompose.errors import ComponentRegistryError, IrValidationError
 from pycompose.ir.data import DATA_SCHEMA, read_data
 from pycompose.ir.echoes import ECHOES_SCHEMA, read_echoes
 from pycompose.ir.effects import EFFECTS_SCHEMA, read_effects
-from pycompose.ir.generated_validators import (
-    MIN_LIBRARY_VERSION,
-    MIN_SCHEMA_VERSION,
-    REGISTRY,
-    SCHEMA_VERSION,
-)
 from pycompose.ir.host import current_host
 from pycompose.ir.model import IRRoot
 from pycompose.ir.streams import stream_problems
 from pycompose.ir.validator_walk import _Validation
-from pycompose.schema.version import require_version
 from pycompose.utils.json_canonical import check_json
 
 __all__ = [
-    "ValidationIssue",
     "ValidationResult",
     "validate_component",
     "validate_ir",
@@ -71,15 +70,19 @@ _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
 }
 
 
+Intents = Mapping[str, Mapping[str, PropDef]]
+"""Each stated handler's payload contract, by handler id."""
+
+
 def validate_prop(
-    value: object, prop: PropDef, *, action_ids: frozenset[str] = frozenset()
+    value: object, prop: PropDef, *, intents: Intents | None = None
 ) -> bool:
     """Check a JSON value against a generated prop or payload definition.
 
     Args:
         value: Candidate value, including frozen JSON containers.
         prop: Definition from the component registry.
-        action_ids: Active app binding ids declared in this snapshot.
+        intents: The snapshot's intent contracts, for action props.
 
     Returns:
         Whether the type, bounds and registry references are valid.
@@ -87,14 +90,20 @@ def validate_prop(
     if value is None:
         return prop.nullable
     check = _TYPE_CHECKS.get(prop.type)
-    if prop.value_type is not None and isinstance(value, Mapping):
-        return _valid_value(value, prop)
-    binding = prop.type == "actionId" and isinstance(value, str) and value in action_ids
-    if check is None or not (binding or check(value, prop)):
+    if isinstance(value, Mapping) and (
+        prop.value_type is not None or prop.type == "actionId"
+    ):
+        # An action prop's object is an intent; any other object is a value.
+        return (
+            valid_intent(value, intents or {})
+            if prop.type == "actionId"
+            else _valid_value(value, prop)
+        )
+    if check is None or not check(value, prop):
         return False
     try:
         if prop.type == "modifier":
-            validate_modifier(value, action_ids=action_ids)
+            validate_modifier(value, intents=intents)
         else:
             check_json(value)
     except IrValidationError:
@@ -123,9 +132,7 @@ def _valid_value(value: object, prop: PropDef) -> bool:
     return True
 
 
-def validate_modifier(
-    value: object, *, action_ids: frozenset[str] = frozenset()
-) -> None:
+def validate_modifier(value: object, *, intents: Intents | None = None) -> None:
     """Validate ordered operations using generated modifier definitions.
 
     Legacy modifier objects without operations remain JSON-compatible. Invalid
@@ -133,7 +140,7 @@ def validate_modifier(
 
     Args:
         value: Ordinary or frozen modifier object.
-        action_ids: Active app binding ids declared in this snapshot.
+        intents: The snapshot's intent contracts, for click actions.
 
     Raises:
         IrValidationError: If operations, props or action references are invalid.
@@ -164,46 +171,23 @@ def validate_modifier(
             if key == "type":
                 continue
             declared = spec.get(key)
-            if declared is None or not validate_prop(
-                item, declared, action_ids=action_ids
-            ):
+            if declared is None or not validate_prop(item, declared, intents=intents):
                 raise IrValidationError(
                     "invalid modifier prop", modifier=name, prop=key
                 )
 
 
 @dataclass(frozen=True, slots=True)
-class ValidationIssue:
-    """A deterministic diagnostic the boundary may log or display.
-
-    Attributes:
-        message: Human-readable validation failure.
-        node_id: Offending node id.
-        node_type: Offending component name.
-        path: Node path in the snapshot.
-        prop: Offending prop, when applicable.
-    """
-
-    message: str
-    node_id: str
-    node_type: str
-    path: tuple[str, ...]
-    prop: str | None = None
-
-
-@dataclass(frozen=True, slots=True)
 class ValidationResult:
-    """Validated IR plus release degradation diagnostics.
+    """A snapshot that passed validation, and what validation read from it.
 
     Attributes:
-        snapshot: Safe snapshot, or None when no root can be rendered.
-        issues: Failures encountered in stable traversal order.
-        bindings: The snapshot's validated app bindings by id, parsed once here.
+        snapshot: The snapshot, unchanged.
+        intents: The snapshot's intent contracts by handler id, parsed once here.
     """
 
-    snapshot: IRRoot | None
-    issues: tuple[ValidationIssue, ...] = ()
-    bindings: Mapping[str, BindingSpec] = field(default_factory=dict)
+    snapshot: IRRoot
+    intents: Intents = field(default_factory=dict)
 
 
 def _section_ok(
@@ -215,11 +199,11 @@ def _section_ok(
     stale: str,
     since: str | None,
     root: Node,
-) -> bool:
+) -> None:
     """Check one metadata section is well formed and this schema can carry it.
 
     Args:
-        validation: Collector for any diagnostic raised here.
+        validation: Raises any diagnostic found here.
         metadata: Snapshot metadata, or None when the snapshot carries none.
         read: Section reader from this module.
         absent: The exact object the reader returns when nothing was published.
@@ -227,40 +211,31 @@ def _section_ok(
         stale: Diagnostic for a section this schema cannot carry.
         since: First schema exposing the section, or None when ungated.
         root: Node attributed in any diagnostic.
-
-    Returns:
-        False when the snapshot must not be published at all.
     """
     try:
         value = read(metadata)
     except (IrValidationError, ComponentRegistryError):
         validation.report(invalid, root)
-        return False
     if value is not absent and since is not None and not validation.available(since):
         validation.report(stale, root)
-        return False
-    return True
 
 
-def validate_ir(
-    snapshot: IRRoot, *, debug: bool = True, reuse: Reuse | None = None
-) -> ValidationResult:
-    """Validate a snapshot against the generated component registry.
+def validate_ir(snapshot: IRRoot, *, reuse: Reuse | None = None) -> ValidationResult:
+    """Validate a snapshot against the generated component registry, fail-closed.
 
-    Debug failures raise IrValidationError with node/prop context. Version
-    incompatibility propagates SchemaError in either mode; never emit a snapshot
-    using a contract the runtime cannot validate. Release mode drops invalid
-    subtrees and ignores unknown/invalid optional props, returning diagnostics.
+    Python validates in debug and tests; in release the host's typed parse is
+    the one check, and an invalid snapshot is refused whole on either side, so
+    the last good one stays on screen. The first invalid node, prop or metadata
+    section raises IrValidationError with its context; a version this runtime
+    cannot validate raises SchemaError.
 
     Args:
         snapshot: Candidate full snapshot.
-        debug: Raise on invalid IR instead of returning degradation diagnostics.
         reuse: The session's subtrees that were clean last pass, skipped when
             they recur; None validates every node.
 
     Returns:
-        The validated snapshot and deterministic diagnostics.
-
+        The snapshot and the intent contracts it states.
     """
     require_version(
         snapshot.schema_version,
@@ -269,10 +244,9 @@ def validate_ir(
         supported=REGISTRY.supported_schema_versions or (SCHEMA_VERSION,),
     )
     require_version(snapshot.version, minimum=MIN_LIBRARY_VERSION, field="version")
-    validation = _Validation(debug, snapshot.schema_version, host=current_host())
+    validation = _Validation(snapshot.schema_version, host=current_host())
     if reuse is not None:
         reuse.validated.start()
-        reuse.bindings.start()
         validation.memo = reuse.validated
     metadata = snapshot.metadata
     if metadata is not None:
@@ -280,61 +254,45 @@ def validate_ir(
             check_json(metadata)
         except (IrValidationError, TypeError, ValueError):
             validation.report("invalid metadata", snapshot.root)
-            metadata = None
     try:
-        bindings = read_bindings(metadata, reuse.bindings if reuse else None)
+        intents = read_intents(metadata)
     except (IrValidationError, ComponentRegistryError):
-        validation.report("invalid app action bindings", snapshot.root)
-        return ValidationResult(None, tuple(validation.issues))
-    if bindings and not validation.available("1.2.0"):
+        validation.report("invalid intent contracts", snapshot.root)
+    if intents and not validation.available("1.2.0"):
         validation.report("app actions require newer schema", snapshot.root)
-        return ValidationResult(None, tuple(validation.issues))
-    # Effects and app data are checked for publishability, not read back here.
-    if not _section_ok(
-        validation,
-        metadata,
-        read_effects,
-        (),
-        "invalid snapshot effects",
-        "effects require newer schema",
-        EFFECTS_SCHEMA,
-        snapshot.root,
+    # Effects, app data and echoes are checked for publishability, not read back.
+    for read, absent, invalid, stale, since in (
+        (
+            read_effects,
+            (),
+            "invalid snapshot effects",
+            "effects require newer schema",
+            EFFECTS_SCHEMA,
+        ),
+        (
+            read_data,
+            None,
+            "invalid app data",
+            "app data requires newer schema",
+            DATA_SCHEMA,
+        ),
+        (
+            read_echoes,
+            None,
+            "invalid echoes",
+            "echoes require newer schema",
+            ECHOES_SCHEMA,
+        ),
     ):
-        return ValidationResult(None, tuple(validation.issues))
-    if not _section_ok(
-        validation,
-        metadata,
-        read_data,
-        None,
-        "invalid app data",
-        "app data requires newer schema",
-        DATA_SCHEMA,
-        snapshot.root,
-    ) or not _section_ok(
-        validation,
-        metadata,
-        read_echoes,
-        None,
-        "invalid echoes",
-        "echoes require newer schema",
-        ECHOES_SCHEMA,
-        snapshot.root,
-    ):
-        return ValidationResult(None, tuple(validation.issues))
-    validation.action_ids = frozenset(bindings)
-    root = validation.node(snapshot.root)
-    if root is not None:
-        # An expression may read a holder anywhere in the snapshot.
-        for node, prop, message in stream_problems(root):
-            validation.report(message, node, prop)
-    safe: IRRoot | None = snapshot
-    if root is None:
-        safe = None
-    elif root is not snapshot.root or metadata is not snapshot.metadata:
-        safe = replace(snapshot, root=root, metadata=metadata)
-    return ValidationResult(
-        snapshot=safe, issues=tuple(validation.issues), bindings=bindings
-    )
+        _section_ok(
+            validation, metadata, read, absent, invalid, stale, since, snapshot.root
+        )
+    validation.intents = intents
+    validation.node(snapshot.root)
+    # An expression may read a holder anywhere in the snapshot.
+    for node, prop, message in stream_problems(snapshot.root):
+        validation.report(message, node, prop)
+    return ValidationResult(snapshot=snapshot, intents=intents)
 
 
 def validate_component(node: Node) -> None:
@@ -347,10 +305,8 @@ def validate_component(node: Node) -> None:
     Args:
         node: Candidate component node.
     """
-    validation = _Validation(debug=True, derived_ids=True)
+    validation = _Validation(derived_ids=True)
     frame = validation.prepare(node)
-    if frame is None:
-        return
     unslotted = sum(1 for child in node.children if child.slot is None)
     if unslotted < frame.minimum:
         validation.report("too few children", node)

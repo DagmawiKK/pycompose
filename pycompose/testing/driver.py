@@ -1,7 +1,7 @@
 """Drive an app the way its Android host does, with no device (plan 31 §18.7).
 
 ``AppDriver`` starts the app through the same session the device runs, finds
-controls in the snapshot it publishes, and acts on them by the action bindings
+controls in the snapshot it publishes, and acts on them by the intents
 the snapshot itself carries, exactly as the renderer does. Navigation effects
 are echoed back as the host echoes them, so a test walks the app screen by
 screen::
@@ -17,21 +17,27 @@ a semantics dump (``pycompose render``).
 
 from __future__ import annotations
 
+import functools
 import json
 import os
 import subprocess
 import sys
 import tempfile
+import time
 import tomllib
+from collections.abc import Callable
 from pathlib import Path
 from types import TracebackType
 from typing import Any, Self
 
 import pycompose
+from pycompose.app.session import REFRESH
 from pycompose.bridge.imports import fresh_imports
-from pycompose.bridge.runtime import RuntimeSession
+from pycompose.bridge.session import RuntimeSession
 from pycompose.extensions.environment import install as install_paths
 from pycompose.repository import documents_at
+from pycompose.runtime import signal
+from pycompose.runtime.loop import LoopThread
 
 Node = dict[str, Any]
 
@@ -63,10 +69,24 @@ class AppDriver:
         self._documents.__enter__()
         self._imports = fresh_imports(root / python.get("source_dir", "app"))
         self._imports.__enter__()
+        # The app runs on a loop thread of its own, as on a device, so the work
+        # its view models launch runs between the actions a test delivers.
+        self._failures: list[str] = []
+        self._refreshes: list[str] = []
+        self._effects: list[dict[str, Any]] = []
+        self._pulled = ""
+        self._loop = LoopThread(self._report)
+        signal.install(lambda event, _payload: self._refreshes.append(event))
         started = False
         try:
-            self._session = RuntimeSession(
-                python.get("entrypoint", "main:app"), route, debug=True, restore=restore
+            self._session = self._loop.call(
+                functools.partial(
+                    RuntimeSession,
+                    python.get("entrypoint", "main:app"),
+                    route,
+                    debug=True,
+                    restore=restore,
+                )
             )
             started = True
         finally:
@@ -86,10 +106,54 @@ class AppDriver:
 
     def close(self) -> None:
         """End the session, drop the app's modules and delete its files."""
-        self._session.close()
+        self._loop.call(self._session.close)
         self._release()
 
+    def _report(self, scope: str, error: BaseException) -> None:
+        self._failures.append(f"{scope}: {error}")
+
+    @property
+    def failures(self) -> list[str]:
+        """Every launched task that failed, as ``scope: error``.
+
+        Returns:
+            The failures, oldest first.
+        """
+        return list(self._failures)
+
+    @property
+    def effects(self) -> list[dict[str, Any]]:
+        """Every effect the app asked for, in the snapshots the host pulled.
+
+        Returns:
+            The effects, oldest first.
+        """
+        return list(self._effects)
+
+    def _deliver(self, source: str) -> None:
+        """Run one action and pull, then every refresh the app signals."""
+        self._loop.call(self._session.accept_action, source)
+        self._pull()
+        # Let the work the action woke run, then publish what it changed, as
+        # the host does when it receives the refresh signal.
+        self._loop.call(lambda: None)
+        while self._refreshes:
+            self._refreshes.clear()
+            self._loop.call(self._session.accept_action, envelope(REFRESH, {}))
+            self._pull()
+            self._loop.call(lambda: None)
+
+    def _pull(self) -> None:
+        """Pull as the host does after each pass, keeping the effects it carries."""
+        source = self._loop.call(self._session.snapshot)
+        if source and source != self._pulled:
+            self._pulled = source
+            metadata = json.loads(source).get("metadata") or {}
+            self._effects.extend(metadata.get("effects", []))
+
     def _release(self) -> None:
+        self._loop.stop()
+        signal.install(None)
         self._imports.__exit__(None, None, None)
         self._documents.__exit__(None, None, None)
         install_paths()
@@ -104,10 +168,10 @@ class AppDriver:
         Raises:
             AssertionError: If the app published none; the message is its error.
         """
-        source = self._session.snapshot()
+        source = self._loop.call(self._session.snapshot)
         if not source:
             raise AssertionError(
-                self._session.error() or "the app published no snapshot"
+                self._loop.call(self._session.error) or "the app published no snapshot"
             )
         snapshot: dict[str, Any] = json.loads(source)
         return snapshot
@@ -134,17 +198,24 @@ class AppDriver:
         return [text for node in self.nodes() for text in sorted(_shown(node))]
 
     def find(
-        self, *, id: str | None = None, text: str | None = None, type: str | None = None
+        self,
+        *,
+        id: str | None = None,
+        text: str | None = None,
+        type: str | None = None,
+        label: str | None = None,
     ) -> Node:
         """The one node matching every given selector.
 
-        ``id`` matches the end of a node's path, so the key a view gave it is
-        enough; ``text`` matches the node that shows it.
+        ``id`` matches the end of a node's readable path, so the key a view
+        gave it is enough; ``text`` matches the node that shows it; ``label``
+        matches the control whose label shows it, as a user names a field.
 
         Args:
             id: The node's key.
             text: A text it shows.
             type: Its component type.
+            label: The text its label shows, as a prop or in its label slot.
 
         Returns:
             The node.
@@ -152,17 +223,18 @@ class AppDriver:
         Raises:
             AssertionError: Unless exactly one node matches.
         """
+        paths = self._loop.call(self._session.node_paths)
         matches = [
             node
             for node in self.nodes()
-            if (id is None or node["id"].rsplit(".", 1)[-1] == id or node["id"] == id)
+            if (id is None or _named(paths.get(node["id"], node["id"]), id))
             and (type is None or node["type"] == type)
             and (text is None or text in _shown(node))
+            and (label is None or label in _labelled(node))
         ]
         if len(matches) != 1:
-            wanted = {
-                k: v for k, v in {"id": id, "text": text, "type": type}.items() if v
-            }
+            given = {"id": id, "text": text, "type": type, "label": label}
+            wanted = {k: v for k, v in given.items() if v}
             raise AssertionError(f"{len(matches)} nodes match {wanted}")
         return matches[0]
 
@@ -180,9 +252,7 @@ class AppDriver:
         action = _action(node, prop)
         if action is None:
             raise AssertionError(f"{node['type']} {node['id']} has no {prop}")
-        self._session.accept_action(
-            json.dumps({"actionId": action, "payload": payload})
-        )
+        self._deliver(envelope(action, payload))
         self._echo_navigation()
 
     def click(self, **selector: str) -> None:
@@ -232,6 +302,39 @@ class AppDriver:
         else:
             self.act("onValueChange", node, value=value)
 
+    def settle(self, timeout: float = 5.0) -> None:
+        """Wait until the work the app launched has finished and is on screen.
+
+        Args:
+            timeout: Seconds to wait before giving up.
+        """
+        self.wait_until(self._loop.idle, timeout)
+
+    def wait_until(self, condition: Callable[[], bool], timeout: float = 5.0) -> None:
+        """Deliver what launched work publishes until ``condition`` holds.
+
+        Args:
+            condition: Checked after each delivery, such as a value on screen.
+            timeout: Seconds to wait before giving up.
+
+        Raises:
+            AssertionError: If it still does not hold after ``timeout``.
+        """
+        deadline = time.monotonic() + timeout
+        while True:
+            # Checked first: work that finished posted its refresh before it
+            # finished, so a condition met with no refresh waiting is settled.
+            met = condition()
+            if self._refreshes:
+                self._refreshes.clear()
+                self._deliver(envelope(REFRESH, {}))
+            elif met:
+                return
+            elif time.monotonic() > deadline:
+                raise AssertionError(f"still waiting after {timeout} s")
+            else:
+                time.sleep(0.005)
+
     def lifecycle(self, event: str, **payload: Any) -> None:
         """Deliver a host lifecycle event, such as ``onRouteChanged``.
 
@@ -239,7 +342,7 @@ class AppDriver:
             event: The event's name.
             **payload: Its fields.
         """
-        self._session.accept_action(json.dumps({"actionId": event, "payload": payload}))
+        self._deliver(envelope(event, payload))
         self._echo_navigation()
 
     def render(self, out: Path, name: str = "screen") -> tuple[Path, Path]:
@@ -292,9 +395,52 @@ class AppDriver:
                 self.lifecycle("onRouteChanged", **effect.get("payload", {}))
 
 
-def _action(node: Node, prop: str) -> str | None:
-    value = node.get("props", {}).get(prop)
-    return value if isinstance(value, str) else None
+def _named(path: str, key: str) -> bool:
+    return path == key or path.rsplit(".", 1)[-1] == key
+
+
+def _action(node: Node, prop: str) -> object:
+    props = node.get("props", {})
+    value = props.get(prop)
+    if value is None and prop == "onClick":
+        # A clickable modifier makes any node tappable, as the renderer applies it.
+        operations = (props.get("modifier") or {}).get("operations", [])
+        value = next(
+            (op.get("onClick") for op in operations if op.get("type") == "clickable"),
+            None,
+        )
+    return value if isinstance(value, str | dict) else None
+
+
+def envelope(target: object, payload: dict[str, Any]) -> str:
+    """Return the envelope a tap on ``target`` sends, as the host builds it.
+
+    Args:
+        target: The intent a control carries, or a registry action's name.
+        payload: The event's own fields.
+
+    Returns:
+        The action envelope as JSON.
+    """
+    if isinstance(target, dict):
+        return json.dumps(
+            {"fields": target["fields"], "intent": target["intent"], "payload": payload}
+        )
+    return json.dumps({"intent": target, "payload": payload})
+
+
+def _labelled(node: Node) -> set[str]:
+    """The label a node shows, as a prop or in its label slot."""
+    labels = {
+        text
+        for child in node.get("children", [])
+        if child.get("slot") == "label"
+        for text in _shown(child)
+    }
+    label = node.get("props", {}).get("label")
+    if isinstance(label, str):
+        labels.add(label)
+    return labels
 
 
 def _shown(node: Node) -> set[str]:

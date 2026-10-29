@@ -60,6 +60,37 @@
         "path": {"type": "string", "minLength": 1, "description": "The resources directory, relative to this file."}
       }
     },
+    "theme": {
+      "type": "object",
+      "description": "The app's Material theme: colours, dark mode, fonts and corner shapes.",
+      "additionalProperties": false,
+      "properties": {
+        "colors": {"type": "string", "pattern": "\\.json$", "description": "A Material Theme Builder export whose schemes.light and schemes.dark map colour roles to #RRGGBB."},
+        "dynamic": {"type": "boolean", "description": "Prefer the wallpaper's colours on Android 12+; on by default without colors, off with them."},
+        "dark": {"type": "string", "pattern": "^(system|light|dark)$", "description": "Dark mode: system, light or dark."},
+        "fonts": {
+          "type": "object",
+          "description": "Fonts from resources/fonts, by file name without the extension.",
+          "additionalProperties": false,
+          "properties": {
+            "display": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$", "description": "The font for display, headline and title styles."},
+            "body": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$", "description": "The font for body and label styles."}
+          }
+        },
+        "shapes": {
+          "type": "object",
+          "description": "Corner radii in dp for Material's five shape sizes.",
+          "additionalProperties": false,
+          "properties": {
+            "extra_small": {"type": "integer", "minimum": 0, "maximum": 1000, "description": "The extra small corner radius in dp."},
+            "small": {"type": "integer", "minimum": 0, "maximum": 1000, "description": "The small corner radius in dp."},
+            "medium": {"type": "integer", "minimum": 0, "maximum": 1000, "description": "The medium corner radius in dp."},
+            "large": {"type": "integer", "minimum": 0, "maximum": 1000, "description": "The large corner radius in dp."},
+            "extra_large": {"type": "integer", "minimum": 0, "maximum": 1000, "description": "The extra large corner radius in dp."}
+          }
+        }
+      }
+    },
     "signing": {
       "type": "object",
       "description": "Release signing: names of environment variables, never the secrets themselves.",
@@ -85,18 +116,6 @@
           "type": "array",
           "items": {"type": "string", "minLength": 1},
           "description": "Build plugins from installed packages, run in this order."
-        }
-      }
-    },
-    "extensions": {
-      "type": "object",
-      "description": "Python integrations the app opts into.",
-      "additionalProperties": false,
-      "properties": {
-        "definitions": {
-          "type": "array",
-          "items": {"type": "string", "minLength": 1},
-          "description": "Extension definitions: builtin:name or a path to a definition file."
         }
       }
     },

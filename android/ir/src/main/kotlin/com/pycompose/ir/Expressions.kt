@@ -85,7 +85,9 @@ object Expressions {
         )
 
     private fun isNumber(value: JsonPrimitive?): Boolean =
-        value != null && !value.isString && value.booleanOrNull == null &&
+        value != null &&
+            !value.isString &&
+            value.booleanOrNull == null &&
             value.doubleOrNull != null
 
     private class Walk(
@@ -106,7 +108,8 @@ object Expressions {
                 node.keys ==
                     setOf(
                         "number",
-                    ) && isNumber(node["number"] as? JsonPrimitive) -> "number"
+                    ) &&
+                    isNumber(node["number"] as? JsonPrimitive) -> "number"
                 node.keys == setOf("stream", "name") -> stream(node)
                 else -> operation(node, depth)
             }

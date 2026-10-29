@@ -14,15 +14,14 @@ from __future__ import annotations
 
 import json
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-from pycompose import AppContext, install_context
-from pycompose.ir.generated_validators import SCHEMA_VERSION
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.m3 import TextField
+from pycompose.testing.driver import AppDriver
 
 APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"
 SCHEMA = json.loads(Path("schema/catalog.lock.json").read_text())
@@ -69,21 +68,25 @@ def test_the_schema_grew_without_becoming_permissive() -> None:
 
 
 @pytest.fixture(scope="module")
-def notes(request: pytest.FixtureRequest) -> Any:
-    """Import the Notes app the way the worker does.
+def editor(request: pytest.FixtureRequest) -> Any:
+    """Import the Notes editor's intents the way the worker imports the app.
 
     Args:
         request: The fixture request, used to schedule the teardown.
 
     Returns:
-        The app entrypoint module.
+        The editor's view model module.
     """
     sys.path.insert(0, str(APP))
-    request.addfinalizer(lambda: sys.modules.pop("main", None))
+    request.addfinalizer(
+        lambda: [
+            sys.modules.pop(n) for n in list(sys.modules) if n.startswith("notes_app")
+        ]
+    )
     request.addfinalizer(lambda: sys.path.remove(str(APP)))
-    import main
+    import notes_app.view_models.note_editor as module
 
-    return main
+    return module
 
 
 def _fields(root: dict[str, Any], kind: str) -> list[dict[str, Any]]:
@@ -106,81 +109,54 @@ def _fields(root: dict[str, Any], kind: str) -> list[dict[str, Any]]:
     return found
 
 
-def _snapshot_on_editor(notes: Any) -> dict[str, Any]:
-    """Start the app on the editor with one note, and return its snapshot.
-
-    Args:
-        notes: The app entrypoint.
+def _snapshot_on_editor() -> dict[str, Any]:
+    """Start the app, open a new note, and return the editor's snapshot.
 
     Returns:
-        The parsed first snapshot.
+        The parsed snapshot.
     """
-    from notes_app.container import AppContainer
-    from notes_app.data.notes_repo import FileNotesRepo
-    from notes_app.domain import Notes
-    from notes_app.domain.models import Note
-
-    from pycompose.bridge import BridgeSurface
-    from pycompose.repository import Document, use_root
-    from pycompose.state import State as Snapshot
-    from pycompose.state import Store
-
-    use_root(Path(tempfile.mkdtemp()))
-    repo = FileNotesRepo(
-        Document("notes.json", Note, directory=Path(tempfile.mkdtemp()))
-    )
-    repo.store([Note(1, "Only", "hello")])
-    container = AppContainer(Notes(repo))
-    notes.actions.install_container(container)
-    notes.actions.install_view(notes.app.session_view)
-    install_context(
-        AppContext(actions=notes.actions, container=container, notes=container.notes)
-    )
-    assert Snapshot is not None
-    surface = BridgeSurface(
-        Store(notes.app.build(route="note:1", restore="")),
-        notes.actions,
-    )
-    return json.loads(surface.expose_latest_snapshot())
+    with AppDriver(APP.parent) as app:
+        app.click(type="FloatingActionButton")
+        return app.snapshot()
 
 
-def test_a_field_without_the_caret_declares_no_selection(notes: Any) -> None:
+def test_a_field_without_the_caret_declares_no_selection(editor: Any) -> None:
     """Uncontrolled is the default, and it declares nothing at all."""
     unbound = TextField(
         id="f",
         value="hi",
-        on_value_change=notes.actions.set_body.with_args(note_id=1),
+        on_value_change=editor.SetBody.bind(note_id=1),
     )
     assert unbound.props.get("selection") is None
     assert unbound.props.get("onSelectionChange") is None
 
 
-def test_declaring_both_halves_puts_them_in_the_props(notes: Any) -> None:
+def test_declaring_both_halves_puts_them_in_the_props(editor: Any) -> None:
     bound = TextField(
         id="f",
         value="hi",
         selection=2,
-        on_value_change=notes.actions.set_body.with_args(note_id=1),
-        on_selection_change=notes.actions.set_body_caret,
+        on_value_change=editor.SetBody.bind(note_id=1),
+        on_selection_change=editor.SetBodyCaret,
     )
     assert bound.props["selection"] == 2
     assert bound.props["onSelectionChange"]
 
 
-def test_the_editor_publishes_two_controlled_fields(notes: Any) -> None:
+def test_the_editor_publishes_two_controlled_fields() -> None:
     """Which is the whole claim of Path A, in one assertion."""
-    published = _fields(_snapshot_on_editor(notes)["root"], "TextField")
+    published = _fields(_snapshot_on_editor()["root"], "TextField")
     assert len(published) == 2
     for field in published:
         assert "selection" in field["props"]
         assert field["props"]["onSelectionChange"]
 
 
-def test_the_caret_lives_in_the_published_shell(notes: Any) -> None:
+def test_the_caret_lives_in_the_saved_state() -> None:
     """State the app owns is in the snapshot, so a test can assert on it."""
-    data = _snapshot_on_editor(notes)["metadata"]["data"]
-    assert data["titleCaret"] == 0
-    assert data["bodyCaret"] == 0
+    editor = _snapshot_on_editor()["metadata"]["data"]["stack"][-1]["state"]
+    assert editor["titleCaret"] == 0
+    assert editor["bodyCaret"] == 0
 
 
 # ---------------------------------------------------------------------------

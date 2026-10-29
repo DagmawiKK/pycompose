@@ -39,7 +39,8 @@ class TooltipComponentsTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.23.0","root":{
-              "id":"tip","type":"TooltipBox","props":{"visible":true,"isPersistent":true},"children":[
+              "id":"tip","type":"TooltipBox","props":{"visible":true,"isPersistent":true},
+                "children":[
                 {"id":"anchor","type":"Text","props":{"text":"Initial anchor"}},
                 {"id":"tooltip","type":"PlainTooltip","props":{},"slot":"tooltip","children":[
                   {"id":"body","type":"Text","props":{"text":"Initially visible"}}]}]}}
@@ -57,11 +58,14 @@ class TooltipComponentsTest {
             {"version":"0.1.0","schemaVersion":"1.23.0","root":{
               "id":"root","type":"Column","props":{},"children":[
                 {"id":"rich","type":"TooltipBox","props":{
-                  "visible":true,"isPersistent":true,"hasAction":true,"position":"below"},"children":[
+                  "visible":true,"isPersistent":true,"hasAction":true,"position":"below"},
+                    "children":[
                   {"id":"rich.anchor","type":"Text","props":{"text":"Rich anchor"}},
-                  {"id":"rich.tooltip","type":"RichTooltip","props":{"showCaret":true,"maxWidth":280},"slot":"tooltip","children":[
+                  {"id":"rich.tooltip","type":"RichTooltip","props":{"showCaret":true,
+                    "maxWidth":280},"slot":"tooltip","children":[
                     {"id":"rich.title","type":"Text","props":{"text":"Rich title"},"slot":"title"},
-                    {"id":"rich.action","type":"Text","props":{"text":"Rich action"},"slot":"action"},
+                    {"id":"rich.action","type":"Text","props":{"text":"Rich action"},
+                      "slot":"action"},
                     {"id":"rich.text","type":"Text","props":{"text":"Rich body"}}]}]}]}}
             """.trimIndent()
         val actions = mutableListOf<Action>()
@@ -81,7 +85,8 @@ class TooltipComponentsTest {
               "id":"root","type":"Column","props":{},"children":[
                 {"id":"plain","type":"TooltipBox","props":{"visible":false},"children":[
                   {"id":"plain.anchor","type":"Text","props":{"text":"Hidden anchor"}},
-                  {"id":"plain.tooltip","type":"PlainTooltip","props":{},"slot":"tooltip","children":[
+                  {"id":"plain.tooltip","type":"PlainTooltip","props":{},"slot":"tooltip",
+                    "children":[
                     {"id":"plain.text","type":"Text","props":{"text":"Hidden tooltip text"}}]}]}]}}
             """.trimIndent()
         val actions = mutableListOf<Action>()
@@ -96,15 +101,15 @@ class TooltipComponentsTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.23.0",
-             "metadata":{"actionBindings":{
-               "app.demo.visibility":{"handlerId":"demo.visibility","payload":{
-                 "visible":{"required":true,"type":"boolean"}},"bound":{}}}},
+             "metadata":{"intents":{"demo.visibility":{"payload":{
+                 "visible":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Column","props":{},"children":[
                {"id":"plain","type":"TooltipBox","props":{
                  "enableUserInput":true,
-                 "onVisibilityChange":"app.demo.visibility"},"children":[
+                 "onVisibilityChange":{"fields":{},"intent":"demo.visibility"}},"children":[
                  {"id":"plain.anchor","type":"Text","props":{"text":"Gesture anchor"}},
-                 {"id":"plain.tooltip","type":"PlainTooltip","props":{},"slot":"tooltip","children":[
+                 {"id":"plain.tooltip","type":"PlainTooltip","props":{},"slot":"tooltip",
+                   "children":[
                    {"id":"plain.text","type":"Text","props":{"text":"Gesture tooltip text"}}]}]}]}}
             """.trimIndent()
         val actions = mutableListOf<Action>()
@@ -113,10 +118,10 @@ class TooltipComponentsTest {
         compose.onNodeWithText("Gesture anchor").performTouchInput { longClick() }
         compose.waitUntil(5000) {
             actions.any {
-                it.actionId == "app.demo.visibility" &&
+                it.actionId == intent("demo.visibility") &&
                     it.payload.toString() == """{"visible":true}"""
             }
         }
-        assertTrue(actions.any { it.actionId == "app.demo.visibility" })
+        assertTrue(actions.any { it.actionId == intent("demo.visibility") })
     }
 }

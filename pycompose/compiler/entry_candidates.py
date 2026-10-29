@@ -406,6 +406,6 @@ def verify(
 
 def _framework_artifacts(candidate: dict[str, Any]) -> dict[Path, str]:
     """Render every production artifact from a candidate, writing nothing."""
-    from pycompose.schema.codegen.main import framework_artifacts
+    from pycompose.codegen.main import framework_artifacts
 
     return framework_artifacts(candidate)

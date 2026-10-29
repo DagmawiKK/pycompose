@@ -7,9 +7,9 @@ import json
 import pytest
 
 from pycompose import Stream
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.errors import IrValidationError
 from pycompose.ir import emit_ir, to_json, validate_ir
-from pycompose.ir.generated_validators import SCHEMA_VERSION
 from pycompose.m3 import Column, ModalNavigationDrawer, Text
 from pycompose.state import State
 

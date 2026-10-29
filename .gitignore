@@ -46,5 +46,9 @@ android/build/compose-api/
 # (the build backend runs it for every wheel, sdist and editable install).
 /pycompose/templates/android/
 /pycompose/templates/extract/
-/pycompose/schema/catalog.lock.json
+/pycompose/contract/catalog.lock.json
 /pycompose/schema/ir.schema.json
+
+# The example's component slice is build output, as for any app.
+/examples/*/app/m3/
+/examples/*/app/.pycompose/

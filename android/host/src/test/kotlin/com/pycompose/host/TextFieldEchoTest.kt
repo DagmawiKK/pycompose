@@ -41,15 +41,14 @@ class TextFieldEchoTest {
             .parse(
                 """
                 {"version":"0.1.0","schemaVersion":"1.23.0",
-                 "metadata":{"actionBindings":{
-                   "app.note.title":{"handlerId":"note.title","payload":{
-                     "value":{"required":true,"type":"string"}},"bound":{}},
-                   "app.note.caret":{"handlerId":"note.caret","payload":{
-                     "value":{"required":true,"type":"integer"}},"bound":{}}}},
+                 "metadata":{"intents":{"note.title":{"payload":{
+                     "value":{"required":true,"type":"string"}}},"note.caret":{"payload":{
+                     "value":{"required":true,"type":"integer"}}}}},
                  "root":{"id":"title","type":"TextField","props":{
-                   "value":"$value","label":"Title","onValueChange":"app.note.title"
+                   "value":"$value","label":"Title","onValueChange":{"fields":{},
+                     "intent":"note.title"}
                    ${caret?.let {
-                    ""","selection":$it,"onSelectionChange":"app.note.caret""""
+                    ""","selection":$it,"onSelectionChange":{"fields":{},"intent":"note.caret"}"""
                 } ?: ""}}}}
                 """.trimIndent(),
             ).getOrThrow()
@@ -76,7 +75,7 @@ class TextFieldEchoTest {
         assertEquals("ab", shown())
         assertEquals(
             listOf("a", "ab"),
-            actions.filter { it.actionId == "app.note.title" }.map {
+            actions.filter { it.actionId == intent("note.title") }.map {
                 it.payload["value"].toString().trim('"')
             },
         )
@@ -92,6 +91,32 @@ class TextFieldEchoTest {
         stated = snapshot("")
         compose.waitForIdle()
         assertEquals("", shown())
+    }
+
+    @Test
+    fun aGeneratedTextFieldKeepsKeysTypedBeforeTheEchoToo() {
+        val actions = mutableListOf<Action>()
+        val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
+
+        fun outlined(value: String) =
+            IrParser()
+                .parse(
+                    """
+                    {"version":"0.1.0","schemaVersion":"1.23.0",
+                     "metadata":{"intents":{"note.title":{"payload":{
+                         "value":{"required":true,"type":"string"}}}}},
+                     "root":{"id":"title","type":"OutlinedTextField","props":{
+                       "value":"$value","onValueChange":{"fields":{},"intent":"note.title"}}}}
+                    """.trimIndent(),
+                ).getOrThrow()
+        var stated by mutableStateOf(outlined(""))
+        compose.setContent { PyComposeTheme { renderer.Render(stated) } }
+
+        compose.onNode(hasSetTextAction()).performTextInput("a")
+        compose.onNode(hasSetTextAction()).performTextInput("b")
+        stated = outlined("a")
+        compose.waitForIdle()
+        assertEquals("ab", shown())
     }
 
     @Test

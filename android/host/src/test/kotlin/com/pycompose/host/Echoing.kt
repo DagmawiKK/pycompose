@@ -1,7 +1,9 @@
 package com.pycompose.host
 
+import com.pycompose.ir.Intents
 import com.pycompose.renderer.Action
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
@@ -19,6 +21,12 @@ internal fun echoing(
     if (echoes.isEmpty()) return source
     val root = Json.parseToJsonElement(source).jsonObject
     val metadata = root["metadata"]?.jsonObject ?: JsonObject(emptyMap())
-    val echoed = JsonObject(echoes.mapValues { JsonPrimitive(it.value) })
+    val echoed =
+        JsonArray(
+            echoes.map { (id, seq) ->
+                val target = Intents.intent(id) ?: JsonPrimitive(id)
+                JsonObject(mapOf("seq" to JsonPrimitive(seq), "target" to target))
+            },
+        )
     return JsonObject(root + ("metadata" to JsonObject(metadata + ("echoes" to echoed)))).toString()
 }

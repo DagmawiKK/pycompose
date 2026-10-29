@@ -1,8 +1,8 @@
 """The Android project is build output, generated from the app (plan 31 §21).
 
 ``.pycompose/android/`` is written on every build from the app's inputs --
-``pycompose.toml``, ``resources/``, the icon, its fragments and its lock slice
--- over PyCompose's own template, and never edited or committed. Upgrading
+``pycompose.toml``, ``resources/``, the icon, the theme, its fragments and its
+lock slice -- over PyCompose's own template, and never edited or committed. Upgrading
 PyCompose regenerates it, so the template version is not the app author's
 concern. A project whose Android directory is the app root (``--native``, or an
 ejected project) owns its files, and is never regenerated.
@@ -27,7 +27,8 @@ from pycompose.cli.permissions import selected_permissions, with_permissions
 from pycompose.cli.plugins import AndroidModel, manifest_with, run_plugins
 from pycompose.cli.project import Project, ProjectError, project_path
 from pycompose.cli.resources import resource_files
-from pycompose.schema.codegen.app_slice import APP_LOCK
+from pycompose.cli.theme import theme_files
+from pycompose.codegen.app_slice import APP_LOCK
 
 GENERATED = ".pycompose/android"
 """Where a generated project lives, relative to the app root."""
@@ -85,6 +86,8 @@ def plan(project: Project) -> Generation:
         generation.add(name.removeprefix(prefix), content, "resources/")
     for name, content in icon_files(project).items():
         generation.add(name, content, "[app] icon")
+    for name, content in theme_files(project).items():
+        generation.add(name, content, "[theme]")
     chosen = selected_permissions(project)
     manifest = generation.files[_MANIFEST].decode()
     merged = with_permissions(manifest, chosen)

@@ -173,7 +173,7 @@ class DevServer:
     def _work(self) -> None:
         app = None
         try:
-            app = AppReloader(self._project, self._schema)
+            app = AppReloader(self._project)
             self._refresh(app)
             self._ready.set()
             assert self._http is not None

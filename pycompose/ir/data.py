@@ -17,8 +17,11 @@ DATA_SCHEMA = "1.4.0"
 
 def lower_data(
     data: Mapping[str, JsonValue | FrozenJsonValue] | None,
-) -> Mapping[str, JsonValue] | None:
+) -> Mapping[str, FrozenJsonValue] | None:
     """Build the wire metadata member carrying app data.
+
+    The State froze its data once, on construction; the frozen value is carried
+    as it is, and the snapshot reuses it rather than copying it again.
 
     Args:
         data: Frozen app data from the State being emitted.
@@ -31,7 +34,7 @@ def lower_data(
     frozen = freeze_json(data)
     if not isinstance(frozen, Mapping):
         return None
-    return {"data": cast("JsonValue", thaw_json(frozen))}
+    return {"data": frozen}
 
 
 def read_data(metadata: Mapping[str, object] | None) -> dict[str, JsonValue] | None:

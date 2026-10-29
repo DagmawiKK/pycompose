@@ -148,13 +148,33 @@ class PyComposeViewModelTest {
                 )
             advanceUntilIdle()
             model.dispatch(Action("increment", seq = 1))
-            // A tap is not a report: it carries no settled value and always stands.
+            model.dispatch(Action("increment", seq = 2))
+            advanceUntilIdle()
+            assertEquals(1, bridge.sent.size)
+            assertTrue(bridge.sent[0].contains("\"seq\":2"))
+            model.close()
+        }
+
+    @Test fun `a tap keeps the report queued before it`() =
+        runTest {
+            val bridge = FakeBridge()
+            val model =
+                PyComposeViewModel(
+                    bridge,
+                    SavedStateHandle(),
+                    StandardTestDispatcher(testScheduler),
+                )
+            advanceUntilIdle()
+            model.dispatch(Action("increment", seq = 1))
+            // A tap carries no settled value and always stands, and it must see
+            // every report queued before it, so neither report collapses.
             model.dispatch(Action("increment"))
             model.dispatch(Action("increment", seq = 2))
             advanceUntilIdle()
-            assertEquals(2, bridge.sent.size)
-            assertTrue("seq" !in bridge.sent[0])
-            assertTrue(bridge.sent[1].contains("\"seq\":2"))
+            assertEquals(3, bridge.sent.size)
+            assertTrue(bridge.sent[0].contains("\"seq\":1"))
+            assertTrue("seq" !in bridge.sent[1])
+            assertTrue(bridge.sent[2].contains("\"seq\":2"))
             model.close()
         }
 

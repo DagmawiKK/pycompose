@@ -71,6 +71,10 @@ class PyComposeViewModel(
     private val stream = SnapshotStream()
     private val mutableSnapshot = MutableStateFlow<SessionSnapshot?>(null)
     private val mutableError = MutableStateFlow("")
+    private val mutablePreview = MutableStateFlow<ValidatedIr?>(null)
+
+    /** The screen a back gesture in progress leads to; null when there is none. */
+    val preview: StateFlow<ValidatedIr?> = mutablePreview.asStateFlow()
     val snapshot: StateFlow<SessionSnapshot?> = mutableSnapshot.asStateFlow()
     val error: StateFlow<String> = mutableError.asStateFlow()
     private var route = savedState.get<String>("route") ?: "home"
@@ -117,7 +121,7 @@ class PyComposeViewModel(
                             listOf(first) + generateSequence { commands.tryReceive().getOrNull() },
                         )
                     perform(batch.map { it.cookie }, batch.minOf { it.queuedAt }) {
-                        batch.map { run(it.command) }.any { it }
+                        batch.map { run(it.command, trace = "t${it.cookie}") }.any { it }
                     }
                 }
             } finally {
@@ -132,14 +136,20 @@ class PyComposeViewModel(
     /**
      * Deliver one command; its failure is reported and the rest of the batch still runs.
      *
+     * Each action carries [trace], the id of its command's trace span, so a failure the
+     * app reports names the input behind it.
+     *
      * @return Whether it reached Python, so there may be a new snapshot to pull.
      */
     @Suppress("TooGenericExceptionCaught")
-    private fun run(command: Command): Boolean {
+    private fun run(
+        command: Command,
+        trace: String,
+    ): Boolean {
         try {
             when (command) {
                 is Command.Dispatch -> {
-                    val source = command.action.toJson()
+                    val source = command.action.copy(trace = trace).toJson()
                     val current =
                         checkNotNull(mutableSnapshot.value) { "No active snapshot" }
                     AppBindings.validateAction(source, current.ir).getOrThrow()
@@ -149,7 +159,7 @@ class PyComposeViewModel(
                     // Platform events validate against the lifecycle
                     // contract alone: no snapshot has to exist yet.
                     Lifecycle.check(command.event, command.payload)
-                    bridge.acceptAction(command.action.toJson())
+                    bridge.acceptAction(command.action.copy(trace = trace).toJson())
                 }
                 is Command.Reload -> {
                     if (bridge.reload(command.route, restore)) {
@@ -165,7 +175,7 @@ class PyComposeViewModel(
                     // discard the app's session on every navigation, which
                     // is what makes a ViewModel impossible to retain.
                     Lifecycle.check("onRouteChanged", command.action.payload)
-                    bridge.acceptAction(command.action.toJson())
+                    bridge.acceptAction(command.action.copy(trace = trace).toJson())
                 }
                 is Command.Window ->
                     bridge.requestWindow(stream.surface, command.key, command.first, command.last)
@@ -173,7 +183,15 @@ class PyComposeViewModel(
                     // A background result, delivered exactly as a tap would
                     // be: the payload is the app's, and its handler's
                     // declared contract is what checks it.
-                    bridge.acceptAction(command.action.toJson())
+                    bridge.acceptAction(command.action.copy(trace = trace).toJson())
+                }
+                is Command.Preview -> {
+                    // A picture of where back leads: drawn whole, never patched.
+                    val envelope = bridge.fetchLatest(BELOW, SnapshotStream.NONE)
+                    mutablePreview.value =
+                        envelope.takeIf { it.isNotEmpty() }?.let {
+                            SnapshotStream(surface = BELOW).accept(it).getOrNull()
+                        }
                 }
             }
             return true
@@ -181,6 +199,16 @@ class PyComposeViewModel(
             mutableError.value = failure.message ?: "Python worker failure"
             return false
         }
+    }
+
+    /** Ask Python for the screen a back gesture leads to; [preview] shows it. */
+    fun previewBelow() {
+        enqueue(Command.Preview)
+    }
+
+    /** Forget the preview once the gesture is over. */
+    fun dropPreview() {
+        mutablePreview.value = null
     }
 
     /** Report one host lifecycle event to Python as a plain action envelope. */
@@ -191,6 +219,13 @@ class PyComposeViewModel(
         require(event in Lifecycle.ids) { "Undeclared lifecycle event: $event" }
         enqueue(Command.Lifecycle(event, payload))
     }
+
+    /** The file pick the system picker is open for; saved, as the picker outlives the process. */
+    internal var pickRequest: String?
+        get() = savedState[PICK]
+        set(value) {
+            savedState[PICK] = value
+        }
 
     fun dispatch(action: Action) {
         // Stamped with what was on screen when the user acted, not when it is processed.
@@ -264,14 +299,15 @@ class PyComposeViewModel(
             // A batch none of which reached Python has nothing new to pull.
             if (!ActionTrace.stage("pycompose.python", operation)) return
             val ran = System.nanoTime()
-            // Fetched between stages, so the log's own call is counted in none of them.
-            val phases = if (timePasses) bridge.fetchLastPass() else ""
-            val resumed = System.nanoTime()
+            // Python draws the snapshot once, when it is pulled, for every command.
             val envelope =
                 ActionTrace.stage("pycompose.pull") {
                     bridge.fetchLatest(stream.surface, stream.serial)
                 }
             val pulled = System.nanoTime()
+            // Fetched between stages, so the log's own call is counted in none of them.
+            val phases = if (timePasses) bridge.fetchLastPass() else ""
+            val resumed = System.nanoTime()
             val result = ActionTrace.stage("pycompose.apply") { stream.accept(envelope) }
             val applied = System.nanoTime()
             val timing =
@@ -279,8 +315,8 @@ class PyComposeViewModel(
                     PassTiming(
                         queue = PassTiming.millis(started - queuedAt),
                         python = PassTiming.millis(ran - started),
-                        pull = PassTiming.millis(pulled - resumed),
-                        apply = PassTiming.millis(applied - pulled),
+                        pull = PassTiming.millis(pulled - ran),
+                        apply = PassTiming.millis(applied - resumed),
                         phases = phases,
                         commands = cookies.size,
                         appliedAt = applied,
@@ -360,6 +396,7 @@ class PyComposeViewModel(
         private const val QUEUE_CAPACITY = 64
         private const val STATE = "pycompose.data"
         private const val EPOCH = "pycompose.epoch"
+        private const val PICK = "pycompose.pick"
 
         /**
          * Comfortably under Android's ~500 KB per-transaction Binder limit, so
@@ -371,3 +408,6 @@ class PyComposeViewModel(
         private const val BYTES_PER_KB = 1024
     }
 }
+
+/** The surface showing the screen a back gesture leads to. */
+internal const val BELOW = "below"

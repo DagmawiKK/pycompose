@@ -143,21 +143,21 @@ class StatefulSearchInputTest {
         }
         val field = compose.onNode(hasSetTextAction())
         field.performClick()
-        compose.waitUntil(5000) { actions.any { it.actionId == "app.demo.expand" } }
+        compose.waitUntil(5000) { actions.any { it.actionId == intent("demo.expand") } }
         assertEquals(
             JsonPrimitive(true),
             actions
                 .last {
-                    it.actionId == "app.demo.expand"
+                    it.actionId == intent("demo.expand")
                 }.payload["expanded"],
         )
         field.performImeAction()
-        compose.waitUntil(5000) { actions.any { it.actionId == "app.demo.search" } }
+        compose.waitUntil(5000) { actions.any { it.actionId == intent("demo.search") } }
         assertEquals(
             JsonPrimitive("compose"),
             actions
                 .last {
-                    it.actionId == "app.demo.search"
+                    it.actionId == intent("demo.search")
                 }.payload["query"],
         )
         assertEquals(0, edits().size)
@@ -188,7 +188,7 @@ class StatefulSearchInputTest {
         assertEquals(0, edits().size)
     }
 
-    private fun edits(): List<Action> = actions.filter { it.actionId == "app.demo.edit" }
+    private fun edits(): List<Action> = actions.filter { it.actionId == intent("demo.edit") }
 
     @Test
     fun acknowledgingAnEditPreservesNativeImeComposition() {
@@ -301,22 +301,23 @@ class StatefulSearchInputTest {
         return IrParser()
             .parse(
                 """
-                {"version":"0.1.0","schemaVersion":"1.23.0","metadata":{"actionBindings":{
-                  "app.demo.edit":{"handlerId":"demo.edit","payload":{
+                {"version":"0.1.0","schemaVersion":"1.23.0",
+                  "metadata":{"intents":{"demo.edit":{"payload":{
                     "text":{"type":"string","required":true},
                     "selectionStart":{"type":"integer","required":true},
                     "selectionEnd":{"type":"integer","required":true},
-                     "revision":{"type":"${options.revisionType}","required":true}},"bound":{}},
-                  "app.demo.search":{"handlerId":"demo.search","payload":{
-                    "query":{"type":"string","required":true}},"bound":{}},
-                  "app.demo.expand":{"handlerId":"demo.expand","payload":{
-                    "expanded":{"type":"boolean","required":true}},"bound":{}}}},
+                     "revision":{"type":"${options.revisionType}","required":true}}},
+                       "demo.search":{"payload":{
+                    "query":{"type":"string","required":true}}},"demo.expand":{"payload":{
+                    "expanded":{"type":"boolean","required":true}}}}},
                  "root":{"id":"$id","type":"StatefulSearchBarInputField","props":{
                    "text":"${edit.text}","selectionStart":${edit.start},
                    "selectionEnd":${edit.end},"revision":${edit.revision},
-                   "onEdit":"app.demo.edit","onSearch":"app.demo.search",
-                    "expanded":${options.expanded},"readOnly":${options.readOnly},"enabled":${options.enabled},
-                   "onExpandedChange":"app.demo.expand"},"children":[
+                   "onEdit":{"fields":{},"intent":"demo.edit"},"onSearch":{"fields":{},
+                     "intent":"demo.search"},
+                    "expanded":${options.expanded},"readOnly":${options.readOnly},
+                      "enabled":${options.enabled},
+                   "onExpandedChange":{"fields":{},"intent":"demo.expand"}},"children":[
                     $children]}}
                 """.trimIndent(),
             ).getOrThrow()

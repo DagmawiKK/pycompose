@@ -20,10 +20,10 @@ from typing import Any
 
 import pytest
 
+from pycompose.codegen.adapters import render
 from pycompose.core.node import Node
 from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.m3 import Button
-from pycompose.schema.codegen.adapters import render
 from pycompose.state import State
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
@@ -96,7 +96,7 @@ def test_every_observation_names_a_prop_it_owns() -> None:
 
 def test_every_observed_kind_is_a_vocabulary_member() -> None:
     """The declaration never invents a kind the renderer cannot classify."""
-    from pycompose.core.registry_types import INTERACTION_KINDS
+    from pycompose.contract.registry_types import INTERACTION_KINDS
 
     for name, entry in sorted(components().items()):
         interaction = entry.get("interaction")
@@ -147,7 +147,7 @@ def _load_with(
         monkeypatch: Pytest monkeypatch fixture.
         mutate: Applies the change to the loaded registry.
     """
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     mutate(registry)
@@ -286,7 +286,7 @@ def test_the_codegen_refuses_a_second_payload_field(
 
 def test_the_runtime_registry_round_trips_the_interaction() -> None:
     """The registry type keeps the declaration a schema reader can trust."""
-    from pycompose.core.registry_types import ComponentSpec
+    from pycompose.contract.registry_types import ComponentSpec
     from pycompose.errors import ComponentRegistryError
 
     spec = ComponentSpec.from_mapping(

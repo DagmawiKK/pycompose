@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import IO
 
 from pycompose.cli.console import echo, echo_error, ok, step
-from pycompose.cli.extensions import check_extensions, stage_extensions
+from pycompose.cli.permissions import stage_manifest
 from pycompose.cli.prebuild import generated, prebuild
 from pycompose.cli.project import (
     Project,
@@ -26,7 +26,7 @@ from pycompose.cli.project import (
 from pycompose.cli.requirements import validate_requirements
 from pycompose.cli.sync import sync_resources
 from pycompose.cli.toolchain import jdk_home, test_jdk
-from pycompose.schema.codegen.app_slice import APP_LOCK
+from pycompose.codegen.app_slice import APP_LOCK
 
 SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
 
@@ -54,11 +54,7 @@ def _requirements(project: Project) -> list[str]:
     requirements = validate_requirements(
         project.table("python").get("requirements", []), field="python.requirements"
     )
-    report = check_extensions(project)
-    extra = validate_requirements(
-        report["requirements"], field="extension.requirements"
-    )
-    return list(dict.fromkeys([*requirements, *extra]))
+    return list(dict.fromkeys(requirements))
 
 
 def _scaffold_template_version(project: Project) -> tuple[int, ...] | None:
@@ -121,7 +117,7 @@ def _own_slice(directory: Path) -> str:
     Returns:
         ``"true"`` or ``"false"``.
     """
-    from pycompose.schema.codegen.app_slice import uses_generated_slice
+    from pycompose.codegen.app_slice import uses_generated_slice
 
     return "true" if uses_generated_slice(directory) else "false"
 
@@ -263,9 +259,10 @@ def codegen(project: Project, *, kotlin: bool = True) -> None:
     something other than the build is the arrangement ADR-0014 replaced.
 
     Only runs for an app that has adopted per-app codegen -- one importing its
-    own generated package. An app on the library catalog has nothing to
-    generate, and starting to fail those builds would be a regression dressed
-    up as an improvement.
+    own generated package, or a drawing layer such as ``pycompose.blocks``,
+    whose components join the slice. An app on the library catalog has nothing
+    to generate, and starting to fail those builds would be a regression
+    dressed up as an improvement.
 
     Args:
         project: The project being built.
@@ -275,8 +272,8 @@ def codegen(project: Project, *, kotlin: bool = True) -> None:
         ProjectError: If the slice cannot be generated.
     """
     from pycompose.cli.add import sync_libraries
-    from pycompose.schema.codegen.app_slice import APP_LOCK, uses_generated_slice
-    from pycompose.schema.codegen.main import build_app
+    from pycompose.codegen.app_slice import APP_LOCK, needs_slice
+    from pycompose.codegen.main import build_app
 
     python = project.table("python")
     source = python.get("source_dir", "app")
@@ -285,7 +282,7 @@ def codegen(project: Project, *, kotlin: bool = True) -> None:
     directory = project_path(project.root, source)
     # The app's own libraries reach the classpath from its lock slice.
     sync_libraries(project)
-    if not uses_generated_slice(directory):
+    if not needs_slice(directory):
         return
     app_lock = project.root / APP_LOCK
     if (
@@ -393,7 +390,11 @@ def prepare(project: Project) -> tuple[Path, dict[str, str]]:
         env["JAVA_HOME"] = home
     _app_properties(project, env)
     _jvm_properties(project, env)
-    stage_extensions(project, env)
+    # The app's permissions reach Gradle as a generated copy of its manifest.
+    env.pop("ORG_GRADLE_PROJECT_pycomposeManifest", None)
+    manifest = stage_manifest(project)
+    if manifest is not None:
+        env["ORG_GRADLE_PROJECT_pycomposeManifest"] = str(manifest)
     if not generated(project):
         sync_resources(project)
     codegen(project)

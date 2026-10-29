@@ -5,9 +5,9 @@ from pathlib import Path
 
 import pytest
 
-from pycompose.schema.codegen.app_slice import slice_registry
-from pycompose.schema.codegen.values import definitions, render_python
-from pycompose.schema.codegen.values_kotlin import (
+from pycompose.codegen.app_slice import slice_registry
+from pycompose.codegen.values import definitions, render_python
+from pycompose.codegen.values_kotlin import (
     render_models,
     render_native,
 )
@@ -79,7 +79,7 @@ def test_an_operator_family_builds_its_form_rather_than_a_call() -> None:
 
 def test_an_operator_family_needs_its_native_form(tmp_path: Path, monkeypatch) -> None:
     """The form is what the resolver emits; without it there is no resolver."""
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = _with_range()
     del registry["valueTypes"]["Range"]["native"]["operator"]
@@ -94,7 +94,7 @@ def test_an_operator_family_needs_its_language_level_citation(
     tmp_path: Path, monkeypatch
 ) -> None:
     """The citation is what tells re-derivation to skip, not invent, a source."""
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = _with_range()
     del registry["valueTypes"]["Range"]["source"]["language"]
@@ -140,7 +140,7 @@ def test_the_value_specs_literal_is_joined_from_a_flat_list() -> None:
 def test_codegen_rejects_unresolved_value_dependencies(
     tmp_path: Path, monkeypatch
 ) -> None:
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["valueTypes"]["TextStyle"]["parameters"]["fontSize"]["valueType"] = (
@@ -154,7 +154,7 @@ def test_codegen_rejects_unresolved_value_dependencies(
 
 
 def test_explicit_value_imports_are_kept_in_app_slice(tmp_path: Path) -> None:
-    from pycompose.schema.codegen.main import build_app
+    from pycompose.codegen.main import build_app
 
     (tmp_path / "screen.py").write_text(
         "from m3 import Text\nfrom m3.values import Size\n"
@@ -166,7 +166,7 @@ def test_explicit_value_imports_are_kept_in_app_slice(tmp_path: Path) -> None:
 
 
 def test_codegen_refuses_untyped_native_defaults(tmp_path: Path, monkeypatch) -> None:
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     rule = registry["valueTypes"]["buttonElevation"]["parameters"]["defaultElevation"]
@@ -180,7 +180,7 @@ def test_codegen_refuses_untyped_native_defaults(tmp_path: Path, monkeypatch) ->
 
 
 def test_codegen_refuses_a_repeated_schema_version(tmp_path: Path, monkeypatch) -> None:
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["supportedSchemaVersions"].append(registry["schemaVersion"])
@@ -192,7 +192,7 @@ def test_codegen_refuses_a_repeated_schema_version(tmp_path: Path, monkeypatch) 
 
 
 def test_codegen_refuses_unproven_opt_in_markers(tmp_path: Path, monkeypatch) -> None:
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     registry["valueTypes"]["checkboxColors"]["optIn"] = [
@@ -264,7 +264,7 @@ def test_member_vocabularies_keep_each_holders_name() -> None:
 
 
 def test_codegen_refuses_an_unproven_member_holder(tmp_path: Path, monkeypatch) -> None:
-    from pycompose.schema.codegen import main, rules
+    from pycompose.codegen import main, rules
 
     path = tmp_path / "components.json"
     registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())

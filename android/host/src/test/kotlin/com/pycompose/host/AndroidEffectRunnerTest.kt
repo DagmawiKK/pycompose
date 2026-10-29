@@ -21,9 +21,15 @@ import org.robolectric.shadows.ShadowToast
 class AndroidEffectRunnerTest {
     private val navigated = mutableListOf<String>()
     private val reported = mutableListOf<String>()
+    private val picked = mutableListOf<String>()
 
     private fun runner(activity: Activity): AndroidEffectRunner =
-        AndroidEffectRunner(activity, { navigated.add(it) }, { message -> reported.add(message) })
+        AndroidEffectRunner(
+            activity,
+            { navigated.add(it) },
+            { request, accept -> picked.add("$request:$accept") },
+            { message -> reported.add(message) },
+        )
 
     private fun request(
         kind: String,
@@ -66,6 +72,15 @@ class AndroidEffectRunnerTest {
     }
 
     @Test
+    fun `a pickFile effect opens the picker for its request and type`() {
+        runner(activity()).runAll(
+            listOf(request("pickFile", """{"request":"b3","accept":"image/*"}""")),
+        )
+        settle()
+        assertEquals(listOf("b3:image/*"), picked)
+    }
+
+    @Test
     fun `every registered kind has a handler, so none is reported as unknown`() {
         runner(activity()).runAll(
             listOf(
@@ -74,6 +89,7 @@ class AndroidEffectRunnerTest {
                 request("openUrl", """{"url":"https://example.com"}"""),
                 request("haptic"),
                 request("finish"),
+                request("pickFile", """{"request":"r","accept":"*/*"}"""),
             ),
         )
         settle()
