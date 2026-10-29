@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import inspect
 import logging
+import threading
 from collections.abc import Mapping
 from dataclasses import field
 from typing import Any
@@ -43,7 +44,8 @@ class BlocksViewModel(ViewModel[BlocksState]):
     """Runs a blocks screen's events.
 
     An event that fires again before its last run returned supersedes it: the
-    last run is cancelled, so only the latest result is ever shown.
+    last run is cancelled, so only the latest result is ever shown. A function
+    that yields streams: each value it yields is shown as it arrives.
 
     Args:
         elements: Every element on the screen, by id.
@@ -104,25 +106,58 @@ class BlocksViewModel(ViewModel[BlocksState]):
         self._runs[event] = self.launch(self._run(event, args))
 
     async def _run(self, event: Event, args: list[Any]) -> None:
+        run = asyncio.current_task()
         try:
-            if inspect.iscoroutinefunction(event.fn):
-                result = await event.fn(*args)
+            if inspect.isasyncgenfunction(event.fn):
+                async for item in event.fn(*args):
+                    self._show(event, run, _written(event.outputs, item))
+            elif inspect.isgeneratorfunction(event.fn):
+                await self._stream(event, args, run)
+            elif inspect.iscoroutinefunction(event.fn):
+                self._show(event, run, _written(event.outputs, await event.fn(*args)))
             else:
                 result = await to_thread("io", event.fn, *args)
-            written = _written(event.outputs, result)
+                self._show(event, run, _written(event.outputs, result))
         except asyncio.CancelledError:
             raise  # superseded: the newer run owns the outputs now
         except Exception as error:
             LOGGER.warning("%s failed", event.fn.__qualname__, exc_info=True)
             self.emit(Toast(message=str(error) or type(error).__name__))
-            written = {}
-        if self._runs.get(event) is not asyncio.current_task():
-            return
-        del self._runs[event]
-        self.state = self.state.evolve(
-            values={**self.state.values, **written},
-            busy=self.state.busy - {c.id for c in event.outputs},
-        )
+        if self._runs.get(event) is run:
+            del self._runs[event]
+            self.state = self.state.evolve(
+                busy=self.state.busy - {c.id for c in event.outputs}
+            )
+
+    async def _stream(self, event: Event, args: list[Any], run: object) -> None:
+        """Iterate a generator on the I/O pool, showing each value on the loop.
+
+        The generator runs on one thread from start to end, as a generator must;
+        a run that is superseded stops it before its next value and closes it.
+        """
+        loop = asyncio.get_running_loop()
+        stop = threading.Event()
+
+        def pump() -> None:
+            items = event.fn(*args)
+            try:
+                for item in items:
+                    if stop.is_set():
+                        return
+                    written = _written(event.outputs, item)
+                    loop.call_soon_threadsafe(self._show, event, run, written)
+            finally:
+                items.close()
+
+        try:
+            await to_thread("io", pump)
+        finally:
+            stop.set()
+
+    def _show(self, event: Event, run: object, written: dict[str, Any]) -> None:
+        """Write a run's values, unless a newer run has superseded it."""
+        if written and self._runs.get(event) is run:
+            self.state = self.state.evolve(values={**self.state.values, **written})
 
     def _value(self, component: Component) -> Any:
         return self.state.values.get(component.id, component.default)

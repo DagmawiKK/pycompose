@@ -13,7 +13,6 @@ the same elements on every run, a reload included.
 
 from __future__ import annotations
 
-import inspect
 from collections.abc import Callable, Iterator, Sequence
 from contextvars import ContextVar
 from dataclasses import dataclass
@@ -42,8 +41,9 @@ class Event:
 
     Attributes:
         trigger: What fires it.
-        fn: Called with the inputs' values, in order; a coroutine function is
-            awaited on the loop, any other runs on the I/O pool.
+        fn: Called with the inputs' values, in order. A coroutine function is
+            awaited on the loop, any other runs on the I/O pool; one that
+            yields streams each value it yields into the outputs.
         inputs: The components whose values ``fn`` receives.
         outputs: The components ``fn``'s result is written to: one value per
             output, a tuple for several.
@@ -96,14 +96,7 @@ class Element:
 
         Returns:
             The event.
-
-        Raises:
-            StateError: If ``fn`` is a generator, which cannot stream yet.
         """
-        if inspect.isgeneratorfunction(fn) or inspect.isasyncgenfunction(fn):
-            raise StateError(
-                "an event's function returns its result; yield is not supported yet"
-            )
         event = Event(trigger, fn, _components(inputs), _components(outputs))
         self.events.append(event)
         return event

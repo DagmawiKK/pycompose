@@ -245,16 +245,6 @@ def test_the_same_code_names_the_same_nodes(tmp_path: Path) -> None:
         assert second.snapshot()["root"] == before
 
 
-def test_a_function_that_yields_is_refused_until_streaming_lands() -> None:
-    def tokens(_text: str) -> Iterator[str]:
-        yield "a"
-
-    with pc.Blocks():
-        box = pc.Textbox()
-        with pytest.raises(StateError, match="yield"):
-            pc.Button().click(tokens, box, box)
-
-
 def test_a_choice_must_offer_its_value() -> None:
     with pytest.raises(StateError, match="one of them"):
         pc.Dropdown(["a"], "b")
@@ -307,3 +297,155 @@ def test_the_weather_example_asks_for_a_city_first() -> None:
         app.click(text="Get forecast")
         app.settle()
         assert toasts(app) == ["Type a city first"]
+
+
+STREAM = """
+import asyncio
+import threading
+import pycompose.blocks as pc
+
+STEP = threading.Semaphore(0)
+CLOSED = []
+
+def words(text):
+    try:
+        shown = ""
+        for word in text.split():
+            STEP.acquire(timeout=5)
+            shown = f"{shown} {word}".strip()
+            yield shown
+    finally:
+        CLOSED.append(text)
+
+async def letters(text):
+    for i in range(1, len(text) + 1):
+        await asyncio.sleep(0)
+        yield text[:i]
+
+with pc.Blocks() as app:
+    text = pc.Textbox(label="Text")
+    out = pc.Textbox(label="Out", interactive=False)
+    pc.Button("Words").click(words, text, out)
+    pc.Button("Letters").click(letters, text, out)
+"""
+
+
+@pytest.fixture
+def stream(tmp_path: Path) -> Iterator[AppDriver]:
+    with AppDriver(project(tmp_path / "stream", STREAM)) as driver:
+        yield driver
+
+
+def test_a_generator_shows_each_value_as_it_is_yielded(stream: AppDriver) -> None:
+    step = sys.modules["main"].STEP
+    stream.edit("one two three", label="Text")
+    stream.click(text="Words")
+    step.release()
+    stream.wait_until(lambda: value(stream, "Out") == "one")
+    assert busy(stream)
+    step.release(2)
+    stream.settle()
+    assert value(stream, "Out") == "one two three"
+    assert not busy(stream)
+
+
+def test_an_async_generator_streams_on_the_loop(stream: AppDriver) -> None:
+    stream.edit("abc", label="Text")
+    stream.click(text="Letters")
+    stream.settle()
+    assert value(stream, "Out") == "abc"
+
+
+def test_a_superseded_stream_stops_and_closes(stream: AppDriver) -> None:
+    main = sys.modules["main"]
+    stream.edit("old words here", label="Text")
+    stream.click(text="Words")
+    main.STEP.release()
+    stream.wait_until(lambda: value(stream, "Out") == "old")
+    stream.edit("new", label="Text")
+    stream.click(text="Words")
+    main.STEP.release(2)
+    stream.settle()
+    assert value(stream, "Out") == "new"
+    # The stopped run closes as soon as its thread next looks; either may be first.
+    assert sorted(main.CLOSED) == ["new", "old words here"]
+
+
+CHAT = """
+import pycompose.blocks as pc
+
+SEEN = []
+
+def reply(message, history):
+    SEEN.append((message, [m["content"] for m in history]))
+    text = ""
+    for word in f"You said {message}".split():
+        text = f"{text} {word}".strip()
+        yield text
+
+app = pc.ChatInterface(reply)
+"""
+
+
+def messages(app: AppDriver) -> list[str]:
+    """The texts of the chat's bubbles, oldest first."""
+    return [
+        n["props"]["text"]
+        for n in app.nodes()
+        if n["type"] == "Text" and "slot" not in n and n["props"]["text"] != "…"
+    ]
+
+
+def test_a_chat_shows_the_message_then_streams_the_reply(tmp_path: Path) -> None:
+    with AppDriver(project(tmp_path / "chat", CHAT)) as app:
+        field = app.find(type="OutlinedTextField")
+        app.act("onValueChange", field, value="hi")
+        app.click(text="Send")
+        app.settle()
+        assert messages(app)[:2] == ["hi", "You said hi"]
+        assert app.find(type="OutlinedTextField")["props"]["value"] == ""
+        app.act("onValueChange", app.find(type="OutlinedTextField"), value="again")
+        app.click(text="Send")
+        app.settle()
+        assert sys.modules["main"].SEEN[-1] == ("again", ["hi", "You said hi"])
+
+
+def test_an_empty_message_sends_nothing(tmp_path: Path) -> None:
+    with AppDriver(project(tmp_path / "chat", CHAT)) as app:
+        app.click(text="Send")
+        app.settle()
+        assert sys.modules["main"].SEEN == []
+
+
+def test_a_chat_message_needs_a_known_role() -> None:
+    with pytest.raises(ValueError, match="role"):
+        pc.Chatbot([{"role": "robot", "content": "beep"}])
+
+
+CHAT_EXAMPLE = Path(__file__).resolve().parents[1] / "examples/chat"
+
+
+def test_the_chat_example_streams_a_server_sent_reply(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import httpx
+
+    sent: list[dict[str, Any]] = []
+
+    def server(request: httpx.Request) -> httpx.Response:
+        sent.append(json.loads(request.content))
+        chunks = [
+            f'data: {{"choices":[{{"delta":{{"content":"{word}"}}}}]}}\n\n'
+            for word in ("Hello", " there")
+        ]
+        return httpx.Response(200, content="".join(chunks) + "data: [DONE]\n\n")
+
+    client = httpx.Client(transport=httpx.MockTransport(server))
+    monkeypatch.setattr(httpx, "stream", client.stream)
+    with AppDriver(CHAT_EXAMPLE) as app:
+        app.act("onValueChange", app.find(type="OutlinedTextField"), value="hi")
+        app.click(text="Send")
+        app.settle()
+        assert messages(app)[:2] == ["hi", "Hello there"]
+    assert sent[0]["stream"] is True
+    assert sent[0]["messages"] == [{"role": "user", "content": "hi"}]
