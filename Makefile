@@ -32,7 +32,7 @@ spec:
 codegen-check:
 	python tools/schema/gen.py --check
 	cd android && ./gradlew dumpComposeApi dumpComposeDefaults
-	PYCOMPOSE_NATIVE_API_TESTS=1 pytest -q tests/test_classpath_dump.py tests/test_component_proposals.py tests/test_composegen.py
+	PYCOMPOSE_NATIVE_API_TESTS=1 pytest -q packages/pycompose-codegen/tests/derive/test_classpath_dump.py packages/pycompose-codegen/tests/derive/test_component_proposals.py packages/pycompose-codegen/tests/derive/test_composegen.py
 	python -m pycompose_codegen.derive generate --check
 
 test:

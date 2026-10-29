@@ -42,15 +42,11 @@ max-complexity = 13
 "packages/pycompose-cli/src/**" = ["TID251"]
 "packages/pycompose-codegen/src/**" = ["TID251"]
 "tests/**" = ["TID251"]
+"packages/*/tests/**" = ["TID251"]
 "tools/**" = ["TID251"]
 # Handlers here exist to be introspected, not run. An unused parameter is the
 # point: it is what proves the signature is parsed and nothing else is.
-"tests/test_auto_ids.py" = ["ARG001"]
-"tests/test_container_injection.py" = ["ARG001"]
-# Same reason: these actions exist to be counted and named, not dispatched.
-"tests/test_registry.py" = ["ARG001"]
-# Optional fields exist to prove their contracts; the handler reads only one.
-"tests/test_action_payload_validation.py" = ["ARG001"]
+"packages/pycompose/tests/core/test_auto_ids.py" = ["ARG001"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["pycompose"]
@@ -160,7 +156,7 @@ explanation = """tools/ is repo-only tooling: it may read the library it serves 
 corpus and the template sync are built on registry internals), and the runtime never learns tools/ exists."""
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["packages/pycompose/tests", "packages/pycompose-cli/tests", "packages/pycompose-codegen/tests", "packages/pycompose-testing/tests", "tests"]
 # Our own code never imports a moved module's old name; a test that checks a
 # shim on purpose captures the warning with pytest.warns.
 filterwarnings = ["error:.* moved to pycompose:DeprecationWarning"]

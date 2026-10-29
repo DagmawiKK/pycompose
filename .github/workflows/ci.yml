@@ -329,7 +329,7 @@ jobs:
         env:
           PYCOMPOSE_NATIVE_API_TESTS: "1"
         run: |
-          pytest -q tests/test_classpath_dump.py tests/test_component_proposals.py tests/test_composegen.py
+          pytest -q packages/pycompose-codegen/tests/derive/test_classpath_dump.py packages/pycompose-codegen/tests/derive/test_component_proposals.py packages/pycompose-codegen/tests/derive/test_composegen.py
           python -m pycompose_codegen.derive.classpath_dump --report android/build/compose-api/capabilities.json
           python -m pycompose_codegen.derive generate --check
       - name: Upload reports

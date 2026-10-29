@@ -18,11 +18,18 @@ DEMO = Path(__file__).resolve().parents[1] / "android/host/src/main/python"
 
 @pytest.fixture
 def demo(monkeypatch: pytest.MonkeyPatch) -> Iterator[str]:
-    """Put the demo's directory where the worker finds it, and clean up after."""
+    """Put the demo's directory where the worker finds it, and clean up after.
+
+    Another app's ``main`` may already be imported, so the demo's own is loaded
+    fresh rather than taken from the module cache.
+    """
+    modules = ("main", "todo_model")
+    for name in modules:
+        sys.modules.pop(name, None)
     monkeypatch.syspath_prepend(str(DEMO))
     yield "main:app"
     runtime.close()
-    for name in ("main", "todo_model"):
+    for name in modules:
         sys.modules.pop(name, None)
 
 

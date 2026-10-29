@@ -14,7 +14,8 @@ complexity are ruff's, in ``pyproject.toml``):
 
 Generated artifacts are exempt on purpose -- they must scale with the catalog
 -- and are governed instead by ``tools/schema/gen.py --check`` byte-equality
-and the bounded-grammar test (``tests/test_generated_grammar.py``).
+and the bounded-grammar test (``test_generated_grammar.py``, with the codegen's
+tests).
 
     python tools/limits.py               # budgets, and growth since HEAD
     python tools/limits.py --base REF    # growth since REF (CI: the PR's base)
@@ -36,6 +37,7 @@ DEFAULT_LIMIT = 500
 
 BUDGETS: dict[str, int] = {
     "tests/**": 600,
+    "packages/*/tests/**": 600,
     "tools/**": 600,
 }
 """

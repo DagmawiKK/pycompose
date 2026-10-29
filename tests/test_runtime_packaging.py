@@ -27,10 +27,12 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "packages/pycompose/src"
 """Where the library's modules live; paths below are relative to it."""
 PACKAGE = "pycompose/storage/"
+TESTS = (ROOT / "tests", *sorted(ROOT.glob("packages/*/tests")))
+"""The repository's tests and every distribution's."""
 TOOLING = (
     "pycompose/testing/",
-    "tests/",
     "tools/",
+    *(f"{path.relative_to(ROOT).as_posix()}/" for path in TESTS),
 )
 
 
@@ -46,7 +48,7 @@ def _relative(path: Path) -> str:
 def _sources() -> list[Path]:
     """Every first-party module: the library, its examples, and its tooling."""
     found = []
-    for top in (SRC / "pycompose", ROOT / "examples", ROOT / "tests", ROOT / "tools"):
+    for top in (SRC / "pycompose", ROOT / "examples", *TESTS, ROOT / "tools"):
         found.extend(
             path for path in top.rglob("*.py") if "__pycache__" not in path.parts
         )
