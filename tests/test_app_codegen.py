@@ -244,6 +244,18 @@ def test_an_app_on_a_drawing_layer_carries_what_the_layer_draws(tmp_path: Path) 
     assert not needs_slice(app)
 
 
+def test_an_app_on_a_drawing_layer_keeps_the_library_catalog(tmp_path: Path) -> None:
+    """Its own slice may not stand in for the catalog pycompose.blocks draws from."""
+    from pycompose.cli.build import _own_slice
+
+    app = tmp_path / "app"
+    app.mkdir()
+    (app / "catalog.py").write_text("from m3 import Button\n")
+    assert _own_slice(app) == "true"
+    (app / "main.py").write_text("import pycompose.blocks as pc\n")
+    assert _own_slice(app) == "false"
+
+
 def test_an_app_with_no_components_is_an_error(tmp_path: Path) -> None:
     """Silently generating nothing would ship a host that renders nothing."""
     app = tmp_path / "app"

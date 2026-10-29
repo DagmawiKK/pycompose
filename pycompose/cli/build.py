@@ -117,9 +117,12 @@ def _own_slice(directory: Path) -> str:
     Returns:
         ``"true"`` or ``"false"``.
     """
-    from pycompose.codegen.app_slice import uses_generated_slice
+    from pycompose.codegen.app_slice import layers_used, uses_generated_slice
 
-    return "true" if uses_generated_slice(directory) else "false"
+    # A drawing layer builds its nodes from the library's catalog, so an app on
+    # one keeps that catalog even when it also imports its own slice.
+    own = uses_generated_slice(directory) and not layers_used(directory)
+    return "true" if own else "false"
 
 
 def _app_properties(project: Project, env: dict[str, str]) -> None:
