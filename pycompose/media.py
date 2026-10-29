@@ -17,6 +17,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+from pycompose.core.resources import valid_resource
 from pycompose.extensions.environment import paths
 
 __all__ = ["MEDIA", "image"]
@@ -56,8 +57,13 @@ def image(source: bytes | str | Path | Any) -> str:
         ``@file/<sha256>.<format>``, for an image prop. Bytes that are not
         a PNG, JPEG, WebP or GIF image raise ``ValueError``.
     """
+    folder = paths().cache / MEDIA
     if isinstance(source, str | Path):
-        data = Path(source).read_bytes()
+        path = Path(source)
+        reference = f"@file/{path.name}"
+        if path.parent == folder and valid_resource(reference, ("file",)):
+            return reference  # already saved here, as a picked file is
+        data = path.read_bytes()
     elif isinstance(source, bytes | bytearray | memoryview):
         data = bytes(source)
     else:
@@ -65,7 +71,6 @@ def image(source: bytes | str | Path | Any) -> str:
         source.save(buffer, "PNG")
         data = buffer.getvalue()
     name = f"{hashlib.sha256(data).hexdigest()}.{_format(data)}"
-    folder = paths().cache / MEDIA
     target = folder / name
     if not target.exists():
         folder.mkdir(parents=True, exist_ok=True)

@@ -28,6 +28,7 @@ from pycompose.blocks.display import JSON, Gallery, Image, Label
 from pycompose.blocks.layout import Event
 from pycompose.blocks.selection import Checkbox, Dropdown, Radio, Slider
 from pycompose.blocks.text import Markdown, Number, Textbox
+from pycompose.blocks.upload import File, UploadButton
 
 __all__ = [
     "Accordion",
@@ -40,6 +41,7 @@ __all__ = [
     "Component",
     "Dropdown",
     "Event",
+    "File",
     "Gallery",
     "Image",
     "Interface",
@@ -53,4 +55,5 @@ __all__ = [
     "Tab",
     "Tabs",
     "Textbox",
+    "UploadButton",
 ]

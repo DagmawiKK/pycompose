@@ -1,0 +1,18 @@
+[app]
+name = "Photos"
+application_id = "com.example.photos"
+version_name = "0.1.0"
+version_code = 1
+
+[python]
+entrypoint = "main:app"
+source_dir = "app"
+requirements = ["pillow==11.0.0"]
+
+[resources]
+path = "resources"
+
+[toolchain]
+library_version = "0.1.0"
+schema_version = "1.23.0"
+android_dir = ".pycompose/android"

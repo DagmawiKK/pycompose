@@ -46,3 +46,10 @@ def test_a_path_or_anything_that_saves_itself_is_an_image(tmp_path: Path) -> Non
 def test_bytes_that_are_no_image_are_refused() -> None:
     with pytest.raises(ValueError, match="PNG, JPEG"):
         media.image(b"not a picture")
+
+
+def test_a_file_already_in_the_cache_is_not_read_again(cache: Path) -> None:
+    reference = media.image(PIXEL)
+    saved = cache / media.MEDIA / reference.removeprefix("@file/")
+    saved.write_bytes(b"changed underneath")  # proves it is not read
+    assert media.image(saved) == reference

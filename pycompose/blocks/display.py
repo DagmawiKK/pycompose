@@ -8,9 +8,16 @@ from typing import TYPE_CHECKING, Any
 
 from pycompose import m3, media
 from pycompose.blocks.components import Component
+from pycompose.blocks.intents import Pick
 from pycompose.core.resources import valid_resource
 from pycompose.extensions.environment import paths
-from pycompose.m3 import FlowRow, LinearProgressIndicator, Modifier, Text
+from pycompose.m3 import (
+    FlowRow,
+    LinearProgressIndicator,
+    Modifier,
+    OutlinedButton,
+    Text,
+)
 from pycompose.values import ContentScale
 
 if TYPE_CHECKING:
@@ -45,13 +52,22 @@ class Image(Component):
     Args:
         value: The picture it starts with, or None for none.
         label: What it is called on screen; also its description for TalkBack.
+        interactive: Whether the user can choose a photo for it, with the
+            system photo picker.
         visible: Whether it is drawn.
     """
 
     def __init__(
-        self, value: Any = None, *, label: str = "", visible: bool = True
+        self,
+        value: Any = None,
+        *,
+        label: str = "",
+        interactive: bool = False,
+        visible: bool = True,
     ) -> None:
-        super().__init__(value, label=label, visible=visible, interactive=False)
+        super().__init__(value, label=label, visible=visible, interactive=interactive)
+        if interactive:
+            self.accept = "image/*"
 
     def to_python(self, raw: Any) -> str | None:
         """Hand an event the picture as a file it can open.
@@ -101,6 +117,20 @@ class Image(Component):
                         )
                     ]
                     if reference
+                    else []
+                ),
+                *(
+                    [
+                        OutlinedButton(
+                            on_click=Pick(component=self.id),
+                            children=[
+                                Text(
+                                    text="Change photo" if reference else "Choose photo"
+                                )
+                            ],
+                        )
+                    ]
+                    if self.interactive
                     else []
                 ),
             ],

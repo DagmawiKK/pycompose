@@ -48,6 +48,8 @@ class Component(Element):
         super().__init__(visible=visible)
         self.label = label
         self.interactive = interactive
+        # The MIME type a component picks a file of, or None for one that does not.
+        self.accept: str | None = None
         self.default = self.to_raw(value)
 
     def to_python(self, raw: Any) -> Any:

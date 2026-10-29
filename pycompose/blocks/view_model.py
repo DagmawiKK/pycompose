@@ -10,11 +10,11 @@ from collections.abc import Mapping
 from dataclasses import field
 from typing import Any
 
-from pycompose.app.effects import Toast
+from pycompose.app.effects import PickFile, Toast
 from pycompose.app.intents import Intent
 from pycompose.app.viewmodel import ViewModel
 from pycompose.blocks.components import Component
-from pycompose.blocks.intents import Expand, Fire, SetFlag, SetNumber, SetText
+from pycompose.blocks.intents import Expand, Fire, Pick, SetFlag, SetNumber, SetText
 from pycompose.blocks.layout import Element, Event, Trigger
 from pycompose.runtime.scheduler import to_thread
 from pycompose.state import AppState, Loaded
@@ -75,6 +75,31 @@ class BlocksViewModel(ViewModel[BlocksState]):
                 )
             case Fire(component=key):
                 self._fire(key, "click")
+            case Pick(component=key):
+                element = self._elements.get(key)
+                if (
+                    isinstance(element, Component)
+                    and element.accept
+                    and element.interactive
+                ):
+                    self.emit(PickFile(request=key, accept=element.accept))
+
+    def on_file_picked(self, request: str, path: str) -> None:
+        """Hold the file the user picked as its component's value.
+
+        Args:
+            request: The component that asked.
+            path: The picked file's copy, or empty when the user cancelled.
+        """
+        element = self._elements.get(request)
+        if not path or not isinstance(element, Component):
+            return
+        try:
+            value = element.to_raw(path)
+        except Exception as error:  # a pick the component cannot hold
+            self.emit(Toast(message=str(error)))
+            return
+        self._changed(request, value)
 
     def _changed(self, key: str, value: Any) -> None:
         if key not in self._elements:

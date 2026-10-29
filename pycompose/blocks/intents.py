@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pycompose.app.intents import Intent
 
-__all__ = ["Expand", "Fire", "SetFlag", "SetNumber", "SetText"]
+__all__ = ["Expand", "Fire", "Pick", "SetFlag", "SetNumber", "SetText"]
 
 
 class SetText(Intent):
@@ -58,6 +58,16 @@ class Expand(Intent):
 
     component: str
     expanded: bool
+
+
+class Pick(Intent):
+    """Open the system picker for a component that holds a file.
+
+    Attributes:
+        component: The component's id.
+    """
+
+    component: str
 
 
 class Fire(Intent):

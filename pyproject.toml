@@ -24,6 +24,7 @@ dev = [
     "import-linter==2.0",
     "jsonschema>=4.20",
     "mypy==1.11.2",
+    "pillow==11.0.0",
     "pre-commit>=3.0",
     "pydoclint>=0.5",
     "pyperf>=2.7,<3",
