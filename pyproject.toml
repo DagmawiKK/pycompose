@@ -170,6 +170,14 @@ forbidden_modules = ["android", "kotlinx", "com", "gradle"]
 explanation = "Python runtime is host-agnostic by construction (ADR-0004)."
 
 [[tool.importlinter.contracts]]
+name = "The runtime never imports tool or extension packages"
+type = "forbidden"
+source_modules = ["pycompose"]
+forbidden_modules = ["pycompose_cli", "pycompose_codegen", "pycompose_testing", "pycompose_sqlite", "pycompose_http", "pycompose_pillow"]
+explanation = """Only the runtime ships to a device: tool packages run on the developer's machine,
+and extensions adapt libraries on top of the runtime's public API (ADR-0063)."""
+
+[[tool.importlinter.contracts]]
 name = "Tools import the library; never the reverse"
 type = "layers"
 layers = ["tools", "pycompose"]
