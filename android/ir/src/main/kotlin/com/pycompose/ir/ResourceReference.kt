@@ -9,6 +9,9 @@ class ResourceReference private constructor(
         private val nativeName = Regex("[a-z][a-z0-9_]*")
         private val assetSegment = Regex("[A-Za-z0-9_-][A-Za-z0-9_.-]*")
 
+        /** A media file is named by its content's SHA-256, so it is never stale. */
+        private val mediaFile = Regex("[0-9a-f]{64}\\.(png|jpg|webp|gif)")
+
         fun parse(
             value: String,
             kinds: Set<String>,
@@ -19,10 +22,10 @@ class ResourceReference private constructor(
                 val name = value.substringAfter('/')
                 require(kind in kinds) { "Unsupported resource kind: $kind" }
                 val valid =
-                    if (kind == "asset") {
-                        name.split('/').all { assetSegment.matches(it) }
-                    } else {
-                        nativeName.matches(name)
+                    when (kind) {
+                        "asset" -> name.split('/').all { assetSegment.matches(it) }
+                        "file" -> mediaFile.matches(name)
+                        else -> nativeName.matches(name)
                     }
                 require(valid) { "Invalid resource name: $name" }
                 ResourceReference(kind, name)

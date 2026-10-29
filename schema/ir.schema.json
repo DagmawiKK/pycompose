@@ -4057,7 +4057,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -12582,7 +12582,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -13488,7 +13488,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -14514,7 +14514,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -15540,7 +15540,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -16566,7 +16566,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -17592,7 +17592,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -18618,7 +18618,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -19644,7 +19644,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -20717,7 +20717,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -21856,7 +21856,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -22864,7 +22864,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -23759,7 +23759,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -25061,7 +25061,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -26755,7 +26755,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -31735,7 +31735,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -38927,7 +38927,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -39762,7 +39762,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -40655,7 +40655,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -41548,7 +41548,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -42441,7 +42441,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -43334,7 +43334,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -44227,7 +44227,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },
@@ -45120,7 +45120,7 @@
               "type": "object"
             },
             "resource": {
-              "pattern": "^(@(drawable)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "pattern": "^(@(drawable|file)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
               "type": "string"
             }
           },

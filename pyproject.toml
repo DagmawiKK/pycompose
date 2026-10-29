@@ -109,7 +109,7 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: core -> schema/state -> ir -> bridge -> components"
 type = "layers"
-layers = ["cli", "compiler", "codegen", "testing", "blocks", "m3", "composition", "components", "bridge", "app", "extensions", "runtime", "repository", "ir", "state", "schema", "core", "contract", "utils"]
+layers = ["cli", "compiler", "codegen", "testing", "blocks", "m3", "composition", "components", "bridge", "app", "media", "extensions", "runtime", "repository", "ir", "state", "schema", "core", "contract", "utils"]
 containers = ["pycompose"]
 explanation = "components depends on ir+core+registry; no cycles, no skips."
 
@@ -128,7 +128,7 @@ type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
                   "pycompose.blocks", "pycompose.ir", "pycompose.bridge", "pycompose.components",
                    "pycompose.utils", "pycompose.testing", "pycompose.m3", "pycompose.composition",
-                    "pycompose.repository", "pycompose.extensions"]
+                    "pycompose.repository", "pycompose.extensions", "pycompose.media"]
 forbidden_modules = ["pycompose.cli", "pycompose.templates", "pycompose.codegen", "pycompose.compiler"]
 explanation = "CLI, codegen, compiler and template assets are desktop concerns, never runtime deps."
 
@@ -145,7 +145,7 @@ type = "forbidden"
 source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
                    "pycompose.blocks", "pycompose.ir", "pycompose.bridge", "pycompose.components",
                    "pycompose.utils", "pycompose.m3", "pycompose.composition",
-                    "pycompose.repository", "pycompose.extensions"]
+                    "pycompose.repository", "pycompose.extensions", "pycompose.media"]
 forbidden_modules = ["pycompose.testing"]
 explanation = "Testing consumes runtime public APIs; runtime stays independent of test data."
 

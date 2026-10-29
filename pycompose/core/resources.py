@@ -4,6 +4,8 @@ import re
 
 _NATIVE = re.compile(r"[a-z][a-z0-9_]*")
 _ASSET_SEGMENT = re.compile(r"[A-Za-z0-9_-][A-Za-z0-9_.-]*")
+# A media file is named by its content's SHA-256, so it is never stale.
+_MEDIA_FILE = re.compile(r"[0-9a-f]{64}\.(png|jpg|webp|gif)")
 
 
 def valid_resource(value: object, kinds: tuple[str, ...]) -> bool:
@@ -23,4 +25,6 @@ def valid_resource(value: object, kinds: tuple[str, ...]) -> bool:
         return False
     if kind == "asset":
         return all(_ASSET_SEGMENT.fullmatch(part) for part in name.split("/"))
+    if kind == "file":
+        return _MEDIA_FILE.fullmatch(name) is not None
     return _NATIVE.fullmatch(name) is not None

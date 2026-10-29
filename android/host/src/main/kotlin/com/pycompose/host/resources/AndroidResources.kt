@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.Locale
 
 /** The only name-to-Android-id implementation. No reflection or generated R coupling. */
@@ -59,13 +60,20 @@ class AndroidResources(
             output.toByteArray()
         }
 
-    override fun assetImage(name: String): Painter {
-        val bytes = asset(name)
+    override fun assetImage(name: String): Painter = decodeImage(asset(name))
+
+    override fun fileImage(name: String): Painter {
+        val file = File(File(context.cacheDir, MEDIA), name)
+        require(file.length() in 1..MAX_ASSET_BYTES) { "Media file is missing or too large" }
+        return decodeImage(file.readBytes())
+    }
+
+    private fun decodeImage(bytes: ByteArray): Painter {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
-        require(bounds.outWidth > 0 && bounds.outHeight > 0) { "Invalid image asset" }
+        require(bounds.outWidth > 0 && bounds.outHeight > 0) { "Invalid image" }
         val area = bounds.outWidth.toLong() * bounds.outHeight
-        require(area <= MAX_PIXELS) { "Asset image is too large" }
+        require(area <= MAX_PIXELS) { "Image is too large" }
         val bitmap = checkNotNull(BitmapFactory.decodeByteArray(bytes, 0, bytes.size))
         return BitmapPainter(bitmap.asImageBitmap())
     }
@@ -83,6 +91,8 @@ class AndroidResources(
     }
 
     companion object {
+        /** The cache folder Python writes media into (`pycompose.media`). */
+        private const val MEDIA = "pycompose-media"
         private const val MAX_ASSET_BYTES = 8 * 1024 * 1024
         private const val MAX_PIXELS = 4L * 1024 * 1024
         private const val BUFFER_BYTES = 8192

@@ -154,7 +154,7 @@ cannot; the app states where the popup goes and the host builds the provider.
 RESOURCE_TYPES = {
     "androidx.compose.ui.graphics.painter.Painter": (
         "resourceImage",
-        ("drawable", "asset"),
+        ("drawable", "asset", "file"),
     ),
 }
 """Native types the wire fills with a resource reference: decoder and kinds.

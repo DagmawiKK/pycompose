@@ -814,7 +814,7 @@ object IrContract {
             props = mapOf(
                 "contentDescription" to PropertyRule("string", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
-                "resource" to PropertyRule("resource", required = true, values = setOf("drawable", "asset")),
+                "resource" to PropertyRule("resource", required = true, values = setOf("drawable", "asset", "file")),
             ),
         ),
         "ImageImageVector" to ComponentRule(
