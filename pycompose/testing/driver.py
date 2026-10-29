@@ -209,13 +209,13 @@ class AppDriver:
 
         ``id`` matches the end of a node's readable path, so the key a view
         gave it is enough; ``text`` matches the node that shows it; ``label``
-        matches the control whose label slot shows it, as a user names a field.
+        matches the control whose label shows it, as a user names a field.
 
         Args:
             id: The node's key.
             text: A text it shows.
             type: Its component type.
-            label: The text its label slot shows.
+            label: The text its label shows, as a prop or in its label slot.
 
         Returns:
             The node.
@@ -430,13 +430,17 @@ def envelope(target: object, payload: dict[str, Any]) -> str:
 
 
 def _labelled(node: Node) -> set[str]:
-    """The texts a node's label slot shows."""
-    return {
+    """The label a node shows, as a prop or in its label slot."""
+    labels = {
         text
         for child in node.get("children", [])
         if child.get("slot") == "label"
         for text in _shown(child)
     }
+    label = node.get("props", {}).get("label")
+    if isinstance(label, str):
+        labels.add(label)
+    return labels
 
 
 def _shown(node: Node) -> set[str]:
