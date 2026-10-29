@@ -2,15 +2,17 @@
 (***************************************************************************)
 (* The protocol between the host and the Python loop thread.               *)
 (*                                                                         *)
-(* The host posts widget reports and intents into one mailbox. The loop    *)
-(* thread is the only writer of app state: it takes messages in order,     *)
-(* applies them, and once the mailbox is drained publishes one immutable   *)
-(* snapshot into a slot. The host pulls whichever snapshot the slot holds. *)
+(* The host posts widget reports and intents into one mailbox. The       *)
+(* worker takes everything queued as one batch and hands it to the loop   *)
+(* thread, the only writer of app state, which applies it in order; once  *)
+(* the batch is done one immutable snapshot is published into a slot. The *)
+(* host pulls whichever snapshot the slot holds.                           *)
 (*                                                                         *)
-(* Admission: an intent is never dropped. A widget report replaces an      *)
-(* earlier report for the same widget only within the run of messages      *)
-(* after the last queued intent, so collapsing never moves a value past an *)
-(* intent that should have seen it, and the mailbox stays bounded.         *)
+(* Admission: an intent is never dropped. A widget report drops an earlier *)
+(* report for the same widget, and takes its own place at the end, only   *)
+(* within the run of messages after the last queued intent, so collapsing *)
+(* never moves a value past an intent that should have seen it, and the   *)
+(* mailbox stays bounded. A taken batch is never collapsed into.           *)
 (***************************************************************************)
 EXTENDS Naturals, Sequences, FiniteSets
 
@@ -19,7 +21,8 @@ CONSTANTS Widgets, Values, Intents, MaxReports
 NoValue == "none"
 
 VARIABLES
-    mailbox,        \* messages posted by the host, not yet taken by the loop
+    mailbox,        \* messages posted by the host, not yet taken
+    batch,          \* messages taken together, not yet applied by the loop
     hostValues,     \* each widget's latest value as the host knows it
     hostSeq,        \* each widget's report sequence number, host side
     reportsPosted,  \* how many reports the host has posted (bounds the model)
@@ -33,7 +36,7 @@ VARIABLES
     hostSerial,     \* the serial of the snapshot the host holds
     hostSeen        \* the state in the snapshot the host holds
 
-vars == <<mailbox, hostValues, hostSeq, reportsPosted, intentsPosted, state,
+vars == <<mailbox, batch, hostValues, hostSeq, reportsPosted, intentsPosted, state,
           echo, processed, bad, dirty, slot, hostSerial, hostSeen>>
 
 Report(w, v, s) == [kind |-> "report", w |-> w, v |-> v, seq |-> s]
@@ -45,12 +48,17 @@ LastIntent ==
     LET at == {i \in 1..Len(mailbox) : mailbox[i].kind = "intent"}
     IN IF at = {} THEN 0 ELSE CHOOSE i \in at : \A j \in at : j <= i
 
-QueuedIntents == {mailbox[i].id : i \in {j \in 1..Len(mailbox) : mailbox[j].kind = "intent"}}
+Queued == mailbox \o batch
+
+QueuedIntents == {Queued[i].id : i \in {j \in 1..Len(Queued) : Queued[j].kind = "intent"}}
+
+Without(s, i) == SubSeq(s, 1, i - 1) \o SubSeq(s, i + 1, Len(s))
 
 QueuedReports(w) == {i \in 1..Len(mailbox) : mailbox[i].kind = "report" /\ mailbox[i].w = w}
 
 Init ==
     /\ mailbox = <<>>
+    /\ batch = <<>>
     /\ hostValues = Unset
     /\ hostSeq = [w \in Widgets |-> 0]
     /\ reportsPosted = 0
@@ -71,11 +79,12 @@ PostReport(w, v) ==
            tail == {i \in QueuedReports(w) : i > LastIntent}
        IN /\ mailbox' = IF tail = {}
                         THEN Append(mailbox, Report(w, v, s))
-                        ELSE [mailbox EXCEPT ![CHOOSE i \in tail : TRUE] = Report(w, v, s)]
+                        ELSE Append(Without(mailbox, CHOOSE i \in tail : TRUE),
+                                    Report(w, v, s))
           /\ hostSeq' = [hostSeq EXCEPT ![w] = s]
     /\ hostValues' = [hostValues EXCEPT ![w] = v]
     /\ reportsPosted' = reportsPosted + 1
-    /\ UNCHANGED <<intentsPosted, state, echo, processed, bad, dirty, slot,
+    /\ UNCHANGED <<batch, intentsPosted, state, echo, processed, bad, dirty, slot,
                    hostSerial, hostSeen>>
 
 \* The host posts an intent; it carries what the user saw for every widget.
@@ -83,13 +92,22 @@ PostIntent(i) ==
     /\ i \notin intentsPosted
     /\ mailbox' = Append(mailbox, Intent(i, hostValues))
     /\ intentsPosted' = intentsPosted \cup {i}
-    /\ UNCHANGED <<hostValues, hostSeq, reportsPosted, state, echo, processed,
-                   bad, dirty, slot, hostSerial, hostSeen>>
+    /\ UNCHANGED <<batch, hostValues, hostSeq, reportsPosted, state, echo,
+                   processed, bad, dirty, slot, hostSerial, hostSeen>>
 
-\* The loop thread takes the oldest message and applies it.
-Process ==
+\* The worker takes everything queued, once the last batch is applied.
+Take ==
+    /\ batch = <<>>
     /\ mailbox # <<>>
-    /\ LET m == Head(mailbox) IN
+    /\ batch' = mailbox
+    /\ mailbox' = <<>>
+    /\ UNCHANGED <<hostValues, hostSeq, reportsPosted, intentsPosted, state,
+                   echo, processed, bad, dirty, slot, hostSerial, hostSeen>>
+
+\* The loop thread applies the batch's oldest message.
+Process ==
+    /\ batch # <<>>
+    /\ LET m == Head(batch) IN
          IF m.kind = "report"
          THEN /\ state' = [state EXCEPT ![m.w] = m.v]
               /\ echo' = [echo EXCEPT ![m.w] = m.seq]
@@ -97,18 +115,18 @@ Process ==
          ELSE /\ processed' = processed \cup {m.id}
               /\ bad' = (bad \/ state # m.expect)
               /\ UNCHANGED <<state, echo>>
-    /\ mailbox' = Tail(mailbox)
+    /\ batch' = Tail(batch)
     /\ dirty' = TRUE
-    /\ UNCHANGED <<hostValues, hostSeq, reportsPosted, intentsPosted, slot,
+    /\ UNCHANGED <<mailbox, hostValues, hostSeq, reportsPosted, intentsPosted, slot,
                    hostSerial, hostSeen>>
 
-\* Once the mailbox is drained, the loop publishes one snapshot.
+\* Once a batch is applied, the loop publishes one snapshot.
 Publish ==
     /\ dirty
-    /\ mailbox = <<>>
+    /\ batch = <<>>
     /\ slot' = [serial |-> slot.serial + 1, state |-> state]
     /\ dirty' = FALSE
-    /\ UNCHANGED <<mailbox, hostValues, hostSeq, reportsPosted, intentsPosted,
+    /\ UNCHANGED <<mailbox, batch, hostValues, hostSeq, reportsPosted, intentsPosted,
                    state, echo, processed, bad, hostSerial, hostSeen>>
 
 \* The host pulls the slot whenever it holds something newer.
@@ -116,18 +134,19 @@ HostPull ==
     /\ hostSerial < slot.serial
     /\ hostSerial' = slot.serial
     /\ hostSeen' = slot.state
-    /\ UNCHANGED <<mailbox, hostValues, hostSeq, reportsPosted, intentsPosted,
-                   state, echo, processed, bad, dirty, slot>>
+    /\ UNCHANGED <<mailbox, batch, hostValues, hostSeq, reportsPosted,
+                   intentsPosted, state, echo, processed, bad, dirty, slot>>
 
 Next ==
     \/ \E w \in Widgets, v \in Values : PostReport(w, v)
     \/ \E i \in Intents : PostIntent(i)
+    \/ Take
     \/ Process
     \/ Publish
     \/ HostPull
 
 \* The host may stop posting at any time; the loop and the pull are fair.
-Spec == Init /\ [][Next]_vars /\ WF_vars(Process) /\ WF_vars(Publish) /\ WF_vars(HostPull)
+Spec == Init /\ [][Next]_vars /\ WF_vars(Take) /\ WF_vars(Process) /\ WF_vars(Publish) /\ WF_vars(HostPull)
 
 -----------------------------------------------------------------------------
 \* Safety
@@ -145,7 +164,9 @@ ReportsPrecedeIntents == ~bad
 
 \* Collapsing keeps at most one queued report per widget between intents.
 MailboxBounded ==
-    \A w \in Widgets : Cardinality(QueuedReports(w)) <= Cardinality(QueuedIntents) + 1
+    \A w \in Widgets :
+        Cardinality(QueuedReports(w))
+            <= Cardinality({i \in 1..Len(mailbox) : mailbox[i].kind = "intent"}) + 1
 
 \* The host never holds a snapshot newer than the one published.
 HostNeverAhead == hostSerial <= slot.serial
@@ -166,6 +187,7 @@ NoLostIntents == <>[](processed = intentsPosted)
 \* that state carries every widget's latest reported value.
 Converges ==
     <>[](/\ mailbox = <<>>
+         /\ batch = <<>>
          /\ ~dirty
          /\ hostSerial = slot.serial
          /\ hostSeen = state

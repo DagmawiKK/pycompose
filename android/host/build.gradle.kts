@@ -138,6 +138,14 @@ tasks.withType<Test>().configureEach {
             "pycomposeRender",
         ).orNull
         ?.let { systemProperty("pycompose.render", it) }
+    // Recorded queue runs, checked against the protocol model by tools/spec/trace.py.
+    systemProperty(
+        "pycompose.traces",
+        layout.buildDirectory
+            .dir("traces")
+            .get()
+            .asFile.path,
+    )
 }
 
 kotlin {

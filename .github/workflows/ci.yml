@@ -222,6 +222,9 @@ jobs:
         if: hashFiles('android/settings.gradle.kts') != ''
         working-directory: android
         run: ./gradlew spotlessCheck detekt lintDebug testDebugUnitTest --continue
+      - name: Trace validation (recorded host runs against the TLA+ model)
+        if: hashFiles('android/settings.gradle.kts') != ''
+        run: python tools/spec/trace.py android/host/build/traces
       - name: Verify pinned public Compose inventory
         env:
           PYCOMPOSE_NATIVE_API_TESTS: "1"
