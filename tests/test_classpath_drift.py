@@ -19,8 +19,8 @@ from test_classpath_dump import (
 def test_release_drift_is_reported_instead_of_silently_accepted(
     native_document,
 ) -> None:
-    from pycompose.compiler.check import DRIFT, compare_values
-    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose_codegen.derive.check import DRIFT, compare_values
+    from pycompose_codegen.derive.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]
     found = inventory(DUMP)
@@ -37,8 +37,8 @@ def test_release_drift_is_reported_instead_of_silently_accepted(
 def test_named_member_and_omission_drift_require_review(native_document) -> None:
     from dataclasses import replace
 
-    from pycompose.compiler.check import DRIFT, compare_values
-    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose_codegen.derive.check import DRIFT, compare_values
+    from pycompose_codegen.derive.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]
     registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
@@ -64,8 +64,8 @@ def test_named_member_and_omission_drift_require_review(native_document) -> None
 
 
 def test_icon_vocabulary_drift_requires_review(native_document) -> None:
-    from pycompose.compiler.check import DRIFT, compare_values
-    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose_codegen.derive.check import DRIFT, compare_values
+    from pycompose_codegen.derive.classpath_dump import inventory, source_defaults
 
     assert native_document["artifacts"]
     registry = json.loads((ROOT / "schema/catalog.lock.json").read_text())
@@ -81,8 +81,8 @@ def test_icon_vocabulary_drift_requires_review(native_document) -> None:
 
 
 def test_inline_value_overloads_are_not_collapsed_by_jvm_erasure(tmp_path) -> None:
-    from pycompose.compiler.classpath_dump import inventory
-    from pycompose.compiler.propose import bind
+    from pycompose_codegen.derive.classpath_dump import inventory
+    from pycompose_codegen.derive.propose import bind
 
     records = [
         declaration(
@@ -131,13 +131,13 @@ def test_unused_pinned_constructor_is_generated_decoded_and_renders(
     native_document,
     tmp_path: Path,
 ) -> None:
-    from pycompose.codegen.values import render_python
-    from pycompose.codegen.values_kotlin import (
+    from pycompose_codegen.derive.classpath_dump import inventory
+    from pycompose_codegen.derive.propose import propose_value
+    from pycompose_codegen.emit.values import render_python
+    from pycompose_codegen.emit.values_kotlin import (
         render_models,
         render_native,
     )
-    from pycompose.compiler.classpath_dump import inventory
-    from pycompose.compiler.propose import propose_value
 
     assert native_document["bytecodeAudit"]["unmatchedTargetMethods"] == []
     source = next(

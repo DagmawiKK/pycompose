@@ -14,6 +14,8 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import IO
 
+from pycompose_codegen.emit.app_slice import APP_LOCK
+
 from pycompose.cli.console import echo, echo_error, ok, step
 from pycompose.cli.permissions import stage_manifest
 from pycompose.cli.prebuild import generated, prebuild
@@ -26,7 +28,6 @@ from pycompose.cli.project import (
 from pycompose.cli.requirements import validate_requirements
 from pycompose.cli.sync import sync_resources
 from pycompose.cli.toolchain import jdk_home, test_jdk
-from pycompose.codegen.app_slice import APP_LOCK
 
 SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
 
@@ -117,7 +118,7 @@ def _own_slice(directory: Path) -> str:
     Returns:
         ``"true"`` or ``"false"``.
     """
-    from pycompose.codegen.app_slice import layers_used, uses_generated_slice
+    from pycompose_codegen.emit.app_slice import layers_used, uses_generated_slice
 
     # A drawing layer builds its nodes from the library's catalog, so an app on
     # one keeps that catalog even when it also imports its own slice.
@@ -274,9 +275,10 @@ def codegen(project: Project, *, kotlin: bool = True) -> None:
     Raises:
         ProjectError: If the slice cannot be generated.
     """
+    from pycompose_codegen.emit.app_slice import APP_LOCK, needs_slice
+    from pycompose_codegen.emit.main import build_app
+
     from pycompose.cli.add import sync_libraries
-    from pycompose.codegen.app_slice import APP_LOCK, needs_slice
-    from pycompose.codegen.main import build_app
 
     python = project.table("python")
     source = python.get("source_dir", "app")

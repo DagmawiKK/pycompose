@@ -2,7 +2,7 @@
 
 from types import SimpleNamespace
 
-from pycompose.compiler.holders import _table
+from pycompose_codegen.derive.holders import _table
 
 VALUE = "pkg.Value"
 FOUND = SimpleNamespace(

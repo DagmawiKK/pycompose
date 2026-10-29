@@ -7,12 +7,12 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from pycompose_codegen.derive.app import ORIGIN, AppLibraryError, layered_closure
+from pycompose_codegen.emit.app_slice import app_components, with_app_lock
+from pycompose_codegen.emit.emit_python import render_python_components
 
 from pycompose.cli import add
 from pycompose.cli.project import Project, ProjectError
-from pycompose.codegen.app_slice import app_components, with_app_lock
-from pycompose.codegen.emit_python import render_python_components
-from pycompose.compiler.app import ORIGIN, AppLibraryError, layered_closure
 from pycompose.contract.catalog import REGISTRY
 from pycompose.contract.registry_types import ComponentRegistryError, Registry
 

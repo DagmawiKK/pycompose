@@ -5,8 +5,8 @@ from __future__ import annotations
 import difflib
 import json
 
-from pycompose.codegen.literals import CHUNK_MAX, chunks
-from pycompose.compiler.lock import LOCK
+from pycompose_codegen.derive.lock import LOCK
+from pycompose_codegen.emit.literals import CHUNK_MAX, chunks
 
 RAW = json.dumps(json.loads(LOCK.read_text()), separators=(",", ":"), sort_keys=True)
 

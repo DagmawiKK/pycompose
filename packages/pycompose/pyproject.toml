@@ -17,6 +17,9 @@ dependencies = ["rich>=13.7", "packaging>=24", "defusedxml>=0.7"]
 pycompose = "pycompose.cli.main:main"
 
 [project.optional-dependencies]
+# The command line generates app slices with the catalog pipeline; it moves to
+# its own distribution next, taking this with it.
+cli = ["pycompose-codegen"]
 dev = [
     "bandit>=1.7",
     "hypothesis>=6.100",
@@ -47,3 +50,6 @@ pycompose = ["py.typed", "contract/catalog.lock.json", "schema/ir.schema.json", 
 
 [tool.setuptools.dynamic]
 version = { attr = "pycompose.version.__version__" }
+
+[tool.uv.sources]
+pycompose-codegen = { workspace = true }

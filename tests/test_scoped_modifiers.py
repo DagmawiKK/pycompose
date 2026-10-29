@@ -5,10 +5,10 @@ from __future__ import annotations
 import json
 
 import pytest
+from pycompose_codegen.derive.lock import LOCK
+from pycompose_codegen.derive.scoped_modifiers import _named, modifier_props
+from pycompose_codegen.emit.scoped_modifiers_kotlin import render_scoped_modifiers
 
-from pycompose.codegen.scoped_modifiers_kotlin import render_scoped_modifiers
-from pycompose.compiler.lock import LOCK
-from pycompose.compiler.scoped_modifiers import _named, modifier_props
 from pycompose.components.modifiers import Modifier
 from pycompose.errors import IrValidationError
 from pycompose.values import ExposedDropdownMenuAnchorType
@@ -105,7 +105,7 @@ def test_an_alignment_outside_its_scope_vocabulary_is_rejected() -> None:
 
 
 def test_an_entry_keeps_the_version_it_entered_at() -> None:
-    from pycompose.compiler.lock import carried
+    from pycompose_codegen.derive.lock import carried
 
     stamped = {"since": "1.24.0"}
     lock = {

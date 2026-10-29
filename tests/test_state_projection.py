@@ -20,9 +20,9 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from pycompose_codegen.emit.state_anchors import SWIPE_VALUES
+from pycompose_codegen.emit.state_rules import STATE_VALUE_TYPES
 
-from pycompose.codegen.state_anchors import SWIPE_VALUES
-from pycompose.codegen.state_rules import STATE_VALUE_TYPES
 from pycompose.contract.catalog import REGISTRY
 from pycompose.core.node import Node
 from pycompose.ir import emit_ir, to_dict, validate_ir
@@ -221,11 +221,12 @@ def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:
 
 def test_every_family_table_names_known_state_kinds() -> None:
     """A gate, attach or constructor decision for an unknown family is a typo."""
-    from pycompose.codegen.adapters import (
+    from pycompose_codegen.emit.adapters import (
         GATED_STATES,
         STATE_ATTACH_GATES,
         STATE_CONSTRUCTOR_PROPS,
     )
+
     from pycompose.contract.registry_types import STATE_KINDS
 
     assert set(STATE_KINDS) >= GATED_STATES
@@ -250,7 +251,7 @@ def load_with(
         monkeypatch: Pytest monkeypatch fixture.
         mutate: Applies the change to the loaded registry.
     """
-    from pycompose.codegen import main, rules
+    from pycompose_codegen.emit import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     mutate(registry)

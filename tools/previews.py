@@ -2,7 +2,7 @@
 
 Every component the lock exposes is composed once on the JVM before an app
 can reach it (plan 31 §10). The sample is built from the component's types
-alone (``pycompose.compiler.samples``), and Python's validator accepts every
+alone (``pycompose_codegen.derive.samples``), and Python's validator accepts every
 sample before it is written. The samples are output of the lock, so they are
 written into the build directory, never committed: the host's
 ``PreviewRenderTest`` runs this tool itself and renders each one.
@@ -29,8 +29,9 @@ from typing import Any
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from pycompose_codegen.derive.samples import sample
+
 from pycompose.cli.validate import validate_file
-from pycompose.compiler.samples import sample
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = ROOT / "schema/catalog.lock.json"

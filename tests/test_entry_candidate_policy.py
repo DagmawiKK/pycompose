@@ -9,10 +9,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from pycompose_codegen.derive.candidate_props import CandidateError
+from pycompose_codegen.derive.entry_candidates import derive, select
 from test_entry_candidates import catalog, modifier, plan, synthetic
-
-from pycompose.compiler.candidate_props import CandidateError
-from pycompose.compiler.entry_candidates import derive, select
 
 
 @pytest.mark.parametrize(

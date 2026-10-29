@@ -23,22 +23,22 @@ from typing import Any
 
 from defusedxml import ElementTree
 from defusedxml.common import DefusedXmlException
-
-from pycompose.cli.https import open_https
-from pycompose.cli.project import Project, ProjectError
-from pycompose.cli.render import render
-from pycompose.cli.validate import validate_file
-from pycompose.codegen.app_slice import APP_LOCK
-from pycompose.codegen.rules import SCHEMA_PATH
-from pycompose.compiler.app import (
+from pycompose_codegen.derive.app import (
     APP_POLICY,
     AppLibraryError,
     compile_app,
     layered_closure,
 )
-from pycompose.compiler.gradle import extract, resolve
-from pycompose.compiler.lock import Report, dumps
-from pycompose.compiler.samples import sample
+from pycompose_codegen.derive.gradle import extract, resolve
+from pycompose_codegen.derive.lock import Report, dumps
+from pycompose_codegen.derive.samples import sample
+from pycompose_codegen.emit.app_slice import APP_LOCK
+from pycompose_codegen.emit.rules import SCHEMA_PATH
+
+from pycompose.cli.https import open_https
+from pycompose.cli.project import Project, ProjectError
+from pycompose.cli.render import render
+from pycompose.cli.validate import validate_file
 from pycompose.contract.catalog import REGISTRY
 from pycompose.errors import IrValidationError
 

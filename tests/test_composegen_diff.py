@@ -5,7 +5,7 @@ from __future__ import annotations
 import copy
 from typing import Any
 
-from pycompose.compiler.diff import Change, classify, unapproved
+from pycompose_codegen.derive.diff import Change, classify, unapproved
 
 BASE: dict[str, Any] = {
     "schemaVersion": "1.23.0",

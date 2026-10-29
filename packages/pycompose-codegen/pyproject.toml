@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pycompose-codegen"
+description = "The PyCompose component catalog pipeline: derive the catalog, generate code from it."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dynamic = ["version"]
+dependencies = ["pycompose"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pycompose_codegen*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pycompose_codegen.__version__" }
+
+[tool.uv.sources]
+pycompose = { workspace = true }

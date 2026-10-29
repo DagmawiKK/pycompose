@@ -29,7 +29,6 @@ SRC = ROOT / "packages/pycompose/src"
 PACKAGE = "pycompose/extensions/"
 TOOLING = (
     "pycompose/cli/",
-    "pycompose/compiler/",
     "pycompose/templates/",
     "pycompose/testing/",
     "tests/",

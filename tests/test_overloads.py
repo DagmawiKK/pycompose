@@ -5,9 +5,9 @@ from __future__ import annotations
 from typing import Any, NoReturn
 
 import pytest
+from pycompose_codegen.emit.overloads import ambiguous, keywords, validate
 
 from pycompose.app import Intent
-from pycompose.codegen.overloads import ambiguous, keywords, validate
 from pycompose.state import State
 
 
@@ -65,7 +65,7 @@ def _plan(*parameters: tuple[str, str, bool]) -> dict[str, Any]:
 
 
 def test_an_overload_is_named_after_what_sets_it_apart() -> None:
-    from pycompose.compiler.overloads import suffix
+    from pycompose_codegen.derive.overloads import suffix
 
     content = ("content", "kotlin/Function3", True)
     clickable = _plan(("onClick", "kotlin/Function0", True), content)
@@ -100,7 +100,7 @@ def test_the_keywords_a_call_passes_choose_the_overload() -> None:
 
 
 def test_an_app_slice_carries_the_overloads_of_what_it_uses() -> None:
-    from pycompose.codegen.app_slice import slice_registry
+    from pycompose_codegen.emit.app_slice import slice_registry
 
     registry = {
         "components": {

@@ -21,8 +21,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-
-from pycompose.codegen.adapters import render
+from pycompose_codegen.emit.adapters import render
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "catalog.lock.json"
 
@@ -41,7 +40,7 @@ def _load_with(
         monkeypatch: Pytest monkeypatch fixture.
         mutate: Applies the change to the loaded registry.
     """
-    from pycompose.codegen import main, rules
+    from pycompose_codegen.emit import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     mutate(registry)
@@ -96,7 +95,7 @@ def test_a_declared_transient_loads(
 
 def test_the_shape_and_the_validator_agree_on_the_transient_keys() -> None:
     """The spec's properties are one fact with the codegen's key set."""
-    from pycompose.codegen.state_rules import TRANSIENT_KEYS
+    from pycompose_codegen.emit.state_rules import TRANSIENT_KEYS
 
     schema = json.loads(
         (

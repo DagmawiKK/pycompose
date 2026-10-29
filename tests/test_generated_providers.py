@@ -6,13 +6,12 @@ import json
 from pathlib import Path
 
 import pytest
+from pycompose_codegen.emit.adapters import (
+    render,
+)
 from test_generated_adapters import (
     SCHEMA_PATH,
     components,
-)
-
-from pycompose.codegen.adapters import (
-    render,
 )
 
 
@@ -118,7 +117,7 @@ def test_the_schema_refuses_a_malformed_provider(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, provider: dict, message: str
 ) -> None:
     """The two keys the generator reads are both required, and nothing else."""
-    from pycompose.codegen import main, rules
+    from pycompose_codegen.emit import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     registry["components"]["LinearProgressIndicator"]["props"]["progress"][
@@ -141,7 +140,7 @@ def test_the_schema_refuses_a_malformed_provider(
 def test_the_schema_refuses_a_provider_it_cannot_always_fill(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, change: dict, message: str
 ) -> None:
-    from pycompose.codegen import main, rules
+    from pycompose_codegen.emit import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     registry["components"]["LinearProgressIndicator"]["props"]["progress"].update(
@@ -158,7 +157,7 @@ def test_the_schema_refuses_a_provider_on_a_modifier(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """A modifier is not a value: the app cannot state one through a lambda."""
-    from pycompose.codegen import main, rules
+    from pycompose_codegen.emit import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     registry["components"]["LinearProgressIndicator"]["props"]["modifier"] = {

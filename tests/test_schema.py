@@ -43,7 +43,7 @@ def _gen() -> object:
 
     The freshness checks grade the module that actually produces each artifact.
     """
-    return importlib.import_module("pycompose.codegen.emit_modules")
+    return importlib.import_module("pycompose_codegen.emit.emit_modules")
 
 
 def _expected(renderer: str) -> str:
@@ -91,7 +91,7 @@ def test_components_json_shape() -> None:
 
 def test_ir_schema_is_fresh() -> None:
     assert IR_SCHEMA_PATH.read_text(encoding="utf-8") == importlib.import_module(
-        "pycompose.codegen.emit_wire"
+        "pycompose_codegen.emit.emit_wire"
     ).render_ir_schema(_registry())
     assert (
         PACKAGE / "schema" / "ir.schema.json"

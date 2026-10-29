@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pycompose.codegen.main import framework_artifacts, load_registry
+from pycompose_codegen.emit.main import framework_artifacts, load_registry
 
 MAX_LINE = 300
 """Widest generated line; today's widest is a 272-character table row."""

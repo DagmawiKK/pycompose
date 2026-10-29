@@ -75,8 +75,8 @@ def _generate_slice(target: Path, android_root: Path) -> None:
     import io
     from contextlib import redirect_stderr, redirect_stdout
 
-    from pycompose.codegen.app_slice import needs_slice
-    from pycompose.codegen.main import build_app
+    from pycompose_codegen.emit.app_slice import needs_slice
+    from pycompose_codegen.emit.main import build_app
 
     app = target / "app"
     if not needs_slice(app):

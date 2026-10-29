@@ -22,13 +22,14 @@ from importlib.resources import files
 from importlib.resources.abc import Traversable
 from pathlib import Path
 
+from pycompose_codegen.emit.app_slice import APP_LOCK
+
 from pycompose.cli.icons import icon_files
 from pycompose.cli.permissions import selected_permissions, with_permissions
 from pycompose.cli.plugins import AndroidModel, manifest_with, run_plugins
 from pycompose.cli.project import Project, ProjectError, project_path
 from pycompose.cli.resources import resource_files
 from pycompose.cli.theme import theme_files
-from pycompose.codegen.app_slice import APP_LOCK
 
 GENERATED = ".pycompose/android"
 """Where a generated project lives, relative to the app root."""

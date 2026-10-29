@@ -35,7 +35,7 @@ assemble()
 
 # The notes example's component slice is build output, as it is for any app;
 # the session builds it from the example's sources before anything reads it.
-from pycompose.codegen.main import build_app  # noqa: E402
+from pycompose_codegen.emit.main import build_app  # noqa: E402
 
 if build_app(ROOT / "examples/notes/app") != 0:
     raise RuntimeError("the notes example's component slice could not be built")

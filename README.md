@@ -684,7 +684,7 @@ from the pinned Compose libraries plus the review decisions in
 
 ```bash
 cd android && ./gradlew dumpComposeApi dumpComposeDefaults && cd ..
-python -m pycompose.compiler generate   # rewrite the lock; --check verifies it
+python -m pycompose_codegen.derive generate   # rewrite the lock; --check verifies it
 python tools/schema/gen.py              # regenerate code from it; --check verifies it
 ```
 

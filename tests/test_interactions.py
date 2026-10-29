@@ -19,8 +19,8 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from pycompose_codegen.emit.adapters import render
 
-from pycompose.codegen.adapters import render
 from pycompose.core.node import Node
 from pycompose.ir import emit_ir, to_dict, validate_ir
 from pycompose.m3 import Button
@@ -147,7 +147,7 @@ def _load_with(
         monkeypatch: Pytest monkeypatch fixture.
         mutate: Applies the change to the loaded registry.
     """
-    from pycompose.codegen import main, rules
+    from pycompose_codegen.emit import main, rules
 
     registry = json.loads(SCHEMA_PATH.read_text())
     mutate(registry)

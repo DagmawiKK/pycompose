@@ -1,12 +1,15 @@
+# Every distribution's source: what the Python checks cover.
+PY_SRC := packages/pycompose/src/pycompose packages/pycompose-codegen/src/pycompose_codegen
+
 .PHONY: lint lint-py lint-kt lint-workflows typecheck test fmt fmt-py fmt-kt precommit codegen codegen-check spec
 
 lint: lint-py lint-kt lint-workflows
 
 lint-py:
 	ruff check .
-	mypy packages/pycompose/src/pycompose
-	bandit -ll -q -r packages/pycompose/src/pycompose
-	pydoclint packages/pycompose/src/pycompose
+	mypy $(PY_SRC)
+	bandit -ll -q -r $(PY_SRC)
+	pydoclint $(PY_SRC)
 	lint-imports --config pyproject.toml
 	python tools/limits.py
 	@if [ -d examples/notes/app ]; then (cd examples/notes/app && lint-imports --config importlinter.toml); fi
@@ -18,7 +21,7 @@ lint-workflows:
 	actionlint .github/workflows/*.yml
 
 typecheck:
-	mypy packages/pycompose/src/pycompose
+	mypy $(PY_SRC)
 
 codegen:
 	python tools/schema/gen.py
@@ -30,7 +33,7 @@ codegen-check:
 	python tools/schema/gen.py --check
 	cd android && ./gradlew dumpComposeApi dumpComposeDefaults
 	PYCOMPOSE_NATIVE_API_TESTS=1 pytest -q tests/test_classpath_dump.py tests/test_component_proposals.py tests/test_composegen.py
-	python -m pycompose.compiler generate --check
+	python -m pycompose_codegen.derive generate --check
 
 test:
 	pytest -q

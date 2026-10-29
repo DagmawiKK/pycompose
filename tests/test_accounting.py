@@ -42,7 +42,7 @@ def _report(**changes):
 
 
 def _support(name: str = "member", descriptor: str = "()V", **changes):
-    from pycompose.compiler.classpath_dump import Declaration
+    from pycompose_codegen.derive.classpath_dump import Declaration
 
     record = {
         "owner": "androidx.compose.material3.Holder",
@@ -53,7 +53,7 @@ def _support(name: str = "member", descriptor: str = "()V", **changes):
 
 
 def test_normalize_joins_nested_classifiers() -> None:
-    from pycompose.compiler.accounting_views import normalize
+    from pycompose_codegen.derive.accounting_views import normalize
 
     assert (
         normalize("androidx/compose/ui/Alignment$Companion")
@@ -63,7 +63,7 @@ def test_normalize_joins_nested_classifiers() -> None:
 
 
 def test_domain_of_reads_receivers_then_the_longest_owner_prefix() -> None:
-    from pycompose.compiler.accounting import MODIFIER, domain_of
+    from pycompose_codegen.derive.accounting import MODIFIER, domain_of
 
     assert domain_of("androidx.compose.material3", [MODIFIER]) == "modifiers"
     assert (
@@ -82,7 +82,7 @@ def test_domain_of_reads_receivers_then_the_longest_owner_prefix() -> None:
 
 
 def test_gap_class_names_the_work_each_reason_needs() -> None:
-    from pycompose.compiler.accounting import gap_class
+    from pycompose_codegen.derive.accounting import gap_class
 
     assert (
         gap_class("no wire policy for androidx/compose/ui/Modifier") == "value-binding"
@@ -101,7 +101,7 @@ def test_gap_class_names_the_work_each_reason_needs() -> None:
 
 
 def test_placement_keeps_every_candidate_in_one_bucket() -> None:
-    from pycompose.compiler.accounting_views import placement as _placement
+    from pycompose_codegen.derive.accounting_views import placement as _placement
 
     approved = {"androidx.compose.material3.Text"}
     component = {"surface": "component", "call": "androidx.compose.material3.Text"}
@@ -127,7 +127,7 @@ def test_placement_keeps_every_candidate_in_one_bucket() -> None:
 
 
 def test_recognition_classifies_support_by_what_consumes_it() -> None:
-    from pycompose.compiler.accounting import approval_facts, recognition
+    from pycompose_codegen.derive.accounting import approval_facts, recognition
 
     registry = _registry(
         valueTypes={
@@ -210,7 +210,7 @@ def test_recognition_classifies_support_by_what_consumes_it() -> None:
 
 
 def test_protocols_report_the_activated_host_protocols() -> None:
-    from pycompose.compiler.accounting_views import protocols as _protocols
+    from pycompose_codegen.derive.accounting_views import protocols as _protocols
 
     registry = _registry(
         actions=["increment"],
@@ -244,8 +244,8 @@ def test_protocols_report_the_activated_host_protocols() -> None:
 
 
 def test_grounding_reconciles_components_and_value_sources() -> None:
-    from pycompose.compiler.accounting_views import grounding as _grounding
-    from pycompose.compiler.classpath_dump import Declaration, Inventory
+    from pycompose_codegen.derive.accounting_views import grounding as _grounding
+    from pycompose_codegen.derive.classpath_dump import Declaration, Inventory
 
     registry = _registry(
         components={"Box": {"package": "androidx.compose.foundation.layout"}},
@@ -291,7 +291,7 @@ def test_grounding_reconciles_components_and_value_sources() -> None:
 
 
 def test_strict_findings_refuse_incompleteness_not_coverage() -> None:
-    from pycompose.compiler.accounting import strict_findings
+    from pycompose_codegen.derive.accounting import strict_findings
 
     assert strict_findings(_report()) == []
     unclassified = _report(domains={"material": {}, "unclassified": {}})
@@ -325,7 +325,7 @@ def test_strict_findings_refuse_incompleteness_not_coverage() -> None:
 
 
 def test_summarize_renders_every_section_deterministically() -> None:
-    from pycompose.compiler.accounting import summarize
+    from pycompose_codegen.derive.accounting import summarize
 
     text = summarize(_report())
     lines = text.splitlines()
@@ -343,8 +343,8 @@ def test_summarize_renders_every_section_deterministically() -> None:
 
 
 def test_account_partitions_a_synthetic_inventory(tmp_path: Path) -> None:
-    from pycompose.compiler.accounting import account, strict_findings
-    from pycompose.compiler.classpath_dump import inventory
+    from pycompose_codegen.derive.accounting import account, strict_findings
+    from pycompose_codegen.derive.classpath_dump import inventory
 
     records = [
         declaration("Inside", "inside", owner="androidx.compose.material3.InsideKt"),
@@ -448,7 +448,7 @@ def test_account_partitions_a_synthetic_inventory(tmp_path: Path) -> None:
 
 
 def test_the_cli_refuses_to_write_over_the_approved_schema() -> None:
-    from pycompose.compiler.accounting import main
+    from pycompose_codegen.derive.accounting import main
 
     with pytest.raises(SystemExit) as exit_info:
         main(
@@ -463,8 +463,13 @@ def test_the_cli_refuses_to_write_over_the_approved_schema() -> None:
 
 
 def test_the_account_is_strict_and_byte_stable_at_the_pin(native_document, tmp_path):
-    from pycompose.compiler.accounting import DOMAINS, account, main, strict_findings
-    from pycompose.compiler.classpath_dump import inventory, source_defaults
+    from pycompose_codegen.derive.accounting import (
+        DOMAINS,
+        account,
+        main,
+        strict_findings,
+    )
+    from pycompose_codegen.derive.classpath_dump import inventory, source_defaults
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
     found = inventory(DUMP)

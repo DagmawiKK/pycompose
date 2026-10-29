@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import pytest
-
-from pycompose.compiler.upgrade import UpgradeError, manual, refresh_closure
+from pycompose_codegen.derive.upgrade import UpgradeError, manual, refresh_closure
 
 CLOSURE = {
     "groups": {
@@ -112,7 +111,7 @@ def test_hand_written_components_are_the_ones_flagged() -> None:
 
 
 def test_a_decision_names_a_declaration_and_the_lock_stamps_the_pin() -> None:
-    from pycompose.compiler.component_binding import spell, stamped, unversioned
+    from pycompose_codegen.derive.component_binding import spell, stamped, unversioned
 
     source = {
         "artifact": "androidx.compose.ui:ui-android:1.0",
