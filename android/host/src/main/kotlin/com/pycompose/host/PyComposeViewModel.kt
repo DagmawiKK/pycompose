@@ -117,7 +117,7 @@ class PyComposeViewModel(
                             listOf(first) + generateSequence { commands.tryReceive().getOrNull() },
                         )
                     perform(batch.map { it.cookie }, batch.minOf { it.queuedAt }) {
-                        batch.map { run(it.command) }.any { it }
+                        batch.map { run(it.command, trace = "t${it.cookie}") }.any { it }
                     }
                 }
             } finally {
@@ -132,14 +132,20 @@ class PyComposeViewModel(
     /**
      * Deliver one command; its failure is reported and the rest of the batch still runs.
      *
+     * Each action carries [trace], the id of its command's trace span, so a failure the
+     * app reports names the input behind it.
+     *
      * @return Whether it reached Python, so there may be a new snapshot to pull.
      */
     @Suppress("TooGenericExceptionCaught")
-    private fun run(command: Command): Boolean {
+    private fun run(
+        command: Command,
+        trace: String,
+    ): Boolean {
         try {
             when (command) {
                 is Command.Dispatch -> {
-                    val source = command.action.toJson()
+                    val source = command.action.copy(trace = trace).toJson()
                     val current =
                         checkNotNull(mutableSnapshot.value) { "No active snapshot" }
                     AppBindings.validateAction(source, current.ir).getOrThrow()
@@ -149,7 +155,7 @@ class PyComposeViewModel(
                     // Platform events validate against the lifecycle
                     // contract alone: no snapshot has to exist yet.
                     Lifecycle.check(command.event, command.payload)
-                    bridge.acceptAction(command.action.toJson())
+                    bridge.acceptAction(command.action.copy(trace = trace).toJson())
                 }
                 is Command.Reload -> {
                     if (bridge.reload(command.route, restore)) {
@@ -165,7 +171,7 @@ class PyComposeViewModel(
                     // discard the app's session on every navigation, which
                     // is what makes a ViewModel impossible to retain.
                     Lifecycle.check("onRouteChanged", command.action.payload)
-                    bridge.acceptAction(command.action.toJson())
+                    bridge.acceptAction(command.action.copy(trace = trace).toJson())
                 }
                 is Command.Window ->
                     bridge.requestWindow(stream.surface, command.key, command.first, command.last)
@@ -173,7 +179,7 @@ class PyComposeViewModel(
                     // A background result, delivered exactly as a tap would
                     // be: the payload is the app's, and its handler's
                     // declared contract is what checks it.
-                    bridge.acceptAction(command.action.toJson())
+                    bridge.acceptAction(command.action.copy(trace = trace).toJson())
                 }
             }
             return true

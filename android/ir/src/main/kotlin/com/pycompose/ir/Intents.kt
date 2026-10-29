@@ -44,7 +44,7 @@ object Intents {
         seq: Long?,
         serial: Long?,
         surface: String,
-    ): String {
+    ): JsonObject {
         val intent = intent(actionId)
         return buildJsonObject {
             put("fields", intent?.get("fields") ?: JsonObject(emptyMap()))
@@ -53,6 +53,6 @@ object Intents {
             seq?.let { put("seq", JsonPrimitive(it)) }
             serial?.let { put("serial", JsonPrimitive(it)) }
             put("surface", JsonPrimitive(surface))
-        }.toString()
+        }
     }
 }
