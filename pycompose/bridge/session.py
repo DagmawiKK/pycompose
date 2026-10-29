@@ -127,7 +127,12 @@ class RuntimeSession:
         """
         self._app = app
         screen = NavigationSession(
-            app, self._resolve_container(app), route, restore, report=self._report_task
+            app,
+            self._resolve_container(app),
+            route,
+            restore,
+            report=self._report_task,
+            debug=self._debug,
         )
         built = False
         try:

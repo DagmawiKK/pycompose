@@ -30,6 +30,7 @@ from pycompose.errors import StateError
 from pycompose.runtime import signal
 from pycompose.runtime.scope import Report, Scope
 from pycompose.state.state import State
+from pycompose.utils.json_canonical import canonical_json
 
 __all__ = ["REFRESH", "NavigationSession"]
 
@@ -37,6 +38,10 @@ LOGGER = logging.getLogger(__name__)
 
 REFRESH = "pycompose.refresh"
 """The data-free signal that state changed outside an intent: publish again."""
+
+SAVED_LIMIT = 50_000
+"""Bytes one entry's saved state may take: Android saves the whole stack in one
+transaction of about 1 MB, shared with everything else the app saves."""
 
 
 def _post_refresh() -> bool:
@@ -87,6 +92,8 @@ class NavigationSession:
         restore: The saved state the host handed back, or empty.
         report: Receives each supervised task's failure.
         signal: Tells the host to pull again; posts a refresh by default.
+        debug: Refuse a pass whose saved state for one screen exceeds
+            :data:`SAVED_LIMIT`, naming the screen; release does not measure.
             Returns False when no host took it, so the next change tries again.
     """
 
@@ -98,8 +105,11 @@ class NavigationSession:
         restore: str,
         report: Report,
         signal: Callable[[], bool | None] = _post_refresh,
+        *,
+        debug: bool = True,
     ) -> None:
         self._app = app
+        self._debug = debug
         self._container = container
         self._signal = signal
         self._dispatching = False
@@ -177,6 +187,16 @@ class NavigationSession:
         stack = []
         for entry in self.entries:
             entry.saved = _saved(entry.view_model)
+            if self._debug:
+                size = len(canonical_json(entry.saved).encode())
+                if size > SAVED_LIMIT:
+                    raise StateError(
+                        "saved state is too large to survive process death; mark "
+                        "what the screen reloads Loaded[...]",
+                        screen=type(entry.route).__name__,
+                        bytes=size,
+                        limit=SAVED_LIMIT,
+                    )
             stack.append({"route": json.loads(entry.key), "state": entry.saved})
         return {"stack": cast("list[JsonValue]", stack)}
 
