@@ -8,6 +8,7 @@ import json
 import re
 from typing import Any
 
+from pycompose.model.programs.bindings import BINDINGS_SINCE, animatable
 from pycompose_codegen.emit.rules import (
     SLOT_NAME,
     die,
@@ -43,6 +44,18 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
             "Action": action_schema(action_ids),
             "Node": _node_schema(sorted(component_defs)),
             "ModifierOperation": _modifier_schema(registry),
+            # Its shape only; the specs and the target's type are the
+            # validators' (pycompose/model/programs/bindings.py, Bindings.kt).
+            "Binding": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["type", "to", "spec"],
+                "properties": {
+                    "type": {"const": "animate"},
+                    "to": {},
+                    "spec": {"type": "object"},
+                },
+            },
             # Its shape only; the closed vocabulary, types and limits are the
             # validators' (pycompose/model/programs/expressions.py, Expressions.kt).
             "Expression": {
@@ -137,11 +150,20 @@ def _modifier_schema(
                 ],
                 "properties": {
                     "type": {"const": name},
-                    **{k: _prop_schema(p) for k, p in scoped.items()},
+                    **{k: _operation_prop(p, version) for k, p in scoped.items()},
                 },
             }
         )
     return {"anyOf": variants or [False]}
+
+
+def _operation_prop(prop: dict[str, Any], version: str | None) -> dict[str, Any]:
+    """A modifier prop's schema: its value, or a binding the host animates to."""
+    schema = _prop_schema(prop)
+    bound = version is None or version_key(version) >= version_key(BINDINGS_SINCE)
+    if bound and animatable(prop["type"], prop.get("valueType")):
+        return {"anyOf": [schema, {"$ref": "#/definitions/Binding"}]}
+    return schema
 
 
 def _node_schema(component_refs: list[str]) -> dict[str, Any]:

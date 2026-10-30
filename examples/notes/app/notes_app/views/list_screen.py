@@ -37,7 +37,7 @@ from notes_app.view_models import (
     SetPreviews,
 )
 from pycompose import composable
-from pycompose.ui import Node
+from pycompose.ui import Node, animate, spring
 
 
 def list_screen(state: ListState) -> Node:
@@ -285,7 +285,10 @@ def note_row(*, note: Note, previews: bool) -> Node:
         children=[
             Row(
                 vertical_alignment="centerVertically",
-                modifier=Modifier().padding(10),
+                # The host eases each row to its new height; Python states it once.
+                modifier=Modifier()
+                .padding(10)
+                .height_in(min=animate(64 if previews else 40, spring(0.8))),
                 children=[
                     Column(modifier=Modifier().fill_max_width(0.75), children=caption),
                     TextButton(text="Delete", on_click=DeleteNote(note_id=note.id)),

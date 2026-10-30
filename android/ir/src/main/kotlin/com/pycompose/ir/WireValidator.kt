@@ -1,6 +1,7 @@
 package com.pycompose.ir
 
 import com.pycompose.ir.generated.IrContract
+import com.pycompose.program.Bindings
 import com.pycompose.program.Expressions
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -219,13 +220,31 @@ internal object WireValidator {
             val type = string(operation["type"], "$path[$index].type")
             val rules = checkNotNull(IrContract.modifiers[type]) { "Unknown modifier: $type" }
             properties(
-                JsonObject(operation.filterKeys { it != "type" }),
+                JsonObject(
+                    operation.filterKeys { it != "type" }.mapValues { (name, prop) ->
+                        target(prop, rules[name])
+                    },
+                ),
                 rules,
                 "$path[$index]",
                 actionIds,
             )
         }
     }
+}
+
+/** A modifier prop's value to check: a binding's target, where the host may animate it. */
+private fun target(
+    value: JsonElement,
+    rule: PropertyRule?,
+): JsonElement {
+    if (rule == null || !Bindings.isBinding(value)) return value
+    val animatable =
+        rule.type == "number" ||
+            (rule.type == "dp" && rule.valueType in setOf(null, "Dp")) ||
+            (rule.type == "color" && rule.valueType == "Color")
+    require(animatable) { "A ${rule.type} prop cannot animate" }
+    return Bindings.read(value as JsonObject).to
 }
 
 /** Every node, post-order, so a validated subtree knows every id it claims. */

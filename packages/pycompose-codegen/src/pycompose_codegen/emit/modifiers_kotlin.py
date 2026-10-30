@@ -12,7 +12,9 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.model.programs.bindings import animatable
 from pycompose_codegen.emit.literals import GENERATED_NOTICE, kotlin_string
+from pycompose_codegen.emit.modifier_bindings import animated as _animated
 from pycompose_codegen.emit.rules import die
 from pycompose_codegen.emit.values import resolver_call
 
@@ -32,10 +34,17 @@ def _argument(name: str, spec: dict[str, Any], parameter: str) -> str:
     """One named argument, decoded from the operation's JSON."""
     present = f'op.getValue("{name}")'
     if "valueType" in spec:
-        decoded = resolver_call(spec["valueType"], present) + ".getOrThrow()"
+        decode = resolver_call(spec["valueType"], "value") + ".getOrThrow()"
+        native = {"Color": "Color", "Dp": "Dp"}.get(spec["valueType"], "")
     else:
-        decoded = f"{present}.jsonPrimitive.{READS[spec['type']]}"
-        decoded += NARROW.get(spec.get("nativeType", ""), "")
+        decode = f"value.jsonPrimitive.{READS[spec['type']]}"
+        decode += NARROW.get(spec.get("nativeType", ""), "")
+        native = spec.get("nativeType", "Double")
+    decoded = (
+        _animated(native, present, decode)
+        if animatable(spec["type"], spec.get("valueType"))
+        else decode.replace("value", present, 1)
+    )
     if spec.get("required"):
         return f"{parameter} = {decoded}"
     if "default" in spec:
@@ -96,7 +105,12 @@ def _decoded(spec: dict[str, Any], argument: dict[str, Any]) -> str:
 
 def _passed(prop: str, spec: dict[str, Any], argument: dict[str, Any]) -> str:
     """One argument of a direct call: the prop's value, or its default when absent."""
-    present = f'op.getValue("{prop}").let {{ value -> {_decoded(spec, argument)} }}'
+    native = argument["type"].rsplit(".", 1)[-1]
+    if animatable(spec["type"], spec.get("valueType")):
+        decode = _animated(native, "wire", _decoded(spec, argument))
+        present = f'op.getValue("{prop}").let {{ wire -> {decode} }}'
+    else:
+        present = f'op.getValue("{prop}").let {{ value -> {_decoded(spec, argument)} }}'
     if spec.get("required"):
         return present
     native_default = spec.get("nativeDefault") or spec.get("fallback")
@@ -106,7 +120,6 @@ def _passed(prop: str, spec: dict[str, Any], argument: dict[str, Any]) -> str:
             die(f"modifier prop {prop!r} has no default to fall back on")
         return f'if ("{prop}" in op) {present} else {native_default}'
     default = spec["default"]
-    native = argument["type"].rsplit(".", 1)[-1]
     if native == "Dp":
         fallback = f"androidx.compose.ui.unit.Dp({float(default)}f)"
     elif isinstance(default, str):

@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from pycompose.model.programs.bindings import animatable
 from pycompose_codegen.emit.literals import GENERATED_NOTICE
 from pycompose_codegen.emit.overloads import python_name
 from pycompose_codegen.emit.python_layout import docstring_arg
@@ -37,6 +38,9 @@ def _parameter(name: str, prop: str, spec: dict[str, Any]) -> str:
         kind = "JsonValue"
     else:
         kind = TYPES[spec["type"]]
+    if animatable(spec["type"], spec.get("valueType")):
+        # The host animates to a target the app states with animate().
+        kind += " | Animate"
     if spec.get("required"):
         return f"        {python_name(prop)}: {kind},"
     if "default" in spec:
@@ -44,6 +48,15 @@ def _parameter(name: str, prop: str, spec: dict[str, Any]) -> str:
         literal = json.dumps(default) if isinstance(default, str) else repr(default)
         return f"        {python_name(prop)}: {kind} = {literal},"
     return f"        {python_name(prop)}: {kind} | None = None,"
+
+
+def _given(prop: str, spec: dict[str, Any]) -> str:
+    """The wire value of one argument: an action lowered, a binding written out."""
+    if spec["type"] == "actionId":
+        return f"lower_action({python_name(prop)})"
+    if animatable(spec["type"], spec.get("valueType")):
+        return f"lower_binding({python_name(prop)})"
+    return python_name(prop)
 
 
 def _method(name: str, modifier: dict[str, Any]) -> list[str]:
@@ -91,12 +104,7 @@ def _method(name: str, modifier: dict[str, Any]) -> list[str]:
     return [
         *lines,
         "        given: dict[str, JsonValue] = {",
-        *(
-            f'            "{p}": lower_action({python_name(p)}),'
-            if props[p]["type"] == "actionId"
-            else f'            "{p}": {python_name(p)},'
-            for p in props
-        ),
+        *(f'            "{p}": {_given(p, props[p])},' for p in props),
         "        }",
         "        return self._append(",
         f'            "{name}",',
@@ -142,6 +150,7 @@ def render_operations(registry: dict[str, Any]) -> str:
                 "from typing import TYPE_CHECKING, Literal",
                 "",
                 "from pycompose.model.nodes.props import JsonValue",
+                "from pycompose.model.programs.bindings import Animate, lower_binding",
                 "from pycompose.ui.intents import Intent, lower_action",
                 "from pycompose.ui.modifier_operation import _Operation",
                 "",

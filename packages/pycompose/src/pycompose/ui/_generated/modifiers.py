@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Literal
 
 from pycompose.model.nodes.props import JsonValue
+from pycompose.model.programs.bindings import Animate, lower_binding
 from pycompose.ui.intents import Intent, lower_action
 from pycompose.ui.modifier_operation import _Operation
 
@@ -108,8 +109,8 @@ class GeneratedOperations:
     def absolute_offset(
         self,
         *,
-        x: int | float | None = None,
-        y: int | float | None = None,
+        x: int | float | Animate | None = None,
+        y: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.absoluteOffset``.
 
@@ -121,8 +122,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "x": x,
-            "y": y,
+            "x": lower_binding(x),
+            "y": lower_binding(y),
         }
         return self._append(
             "absoluteOffset",
@@ -133,10 +134,10 @@ class GeneratedOperations:
     def absolute_padding(
         self,
         *,
-        left: int | float | None = None,
-        top: int | float | None = None,
-        right: int | float | None = None,
-        bottom: int | float | None = None,
+        left: int | float | Animate | None = None,
+        top: int | float | Animate | None = None,
+        right: int | float | Animate | None = None,
+        bottom: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.absolutePadding``.
 
@@ -150,10 +151,10 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "left": left,
-            "top": top,
-            "right": right,
-            "bottom": bottom,
+            "left": lower_binding(left),
+            "top": lower_binding(top),
+            "right": lower_binding(right),
+            "bottom": lower_binding(bottom),
         }
         return self._append(
             "absolutePadding",
@@ -176,7 +177,7 @@ class GeneratedOperations:
     @_Operation
     def alpha(
         self,
-        alpha: int | float,
+        alpha: int | float | Animate,
     ) -> Modifier:
         """Native ``androidx.compose.ui.draw.alpha``.
 
@@ -187,7 +188,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "alpha": alpha,
+            "alpha": lower_binding(alpha),
         }
         return self._append(
             "alpha",
@@ -220,7 +221,7 @@ class GeneratedOperations:
     @_Operation
     def aspect_ratio(
         self,
-        ratio: int | float,
+        ratio: int | float | Animate,
         *,
         match_height_constraints_first: bool = False,
     ) -> Modifier:
@@ -235,7 +236,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "ratio": ratio,
+            "ratio": lower_binding(ratio),
             "matchHeightConstraintsFirst": match_height_constraints_first,
         }
         return self._append(
@@ -267,7 +268,7 @@ class GeneratedOperations:
     @_Operation
     def basic_marquee(
         self,
-        velocity: int | float | None = None,
+        velocity: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.basicMarquee``.
 
@@ -278,7 +279,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "velocity": velocity,
+            "velocity": lower_binding(velocity),
         }
         return self._append(
             "basicMarquee",
@@ -403,8 +404,8 @@ class GeneratedOperations:
     def default_min_size(
         self,
         *,
-        min_width: int | float | None = None,
-        min_height: int | float | None = None,
+        min_width: int | float | Animate | None = None,
+        min_height: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.defaultMinSize``.
 
@@ -416,8 +417,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "minWidth": min_width,
-            "minHeight": min_height,
+            "minWidth": lower_binding(min_width),
+            "minHeight": lower_binding(min_height),
         }
         return self._append(
             "defaultMinSize",
@@ -438,7 +439,7 @@ class GeneratedOperations:
     @_Operation
     def fill_max_column_width(
         self,
-        fraction: int | float = 1.0,
+        fraction: int | float | Animate = 1.0,
     ) -> Modifier:
         """Native ``fillMaxColumnWidth``.
 
@@ -451,7 +452,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "fraction": fraction,
+            "fraction": lower_binding(fraction),
         }
         return self._append(
             "fillMaxColumnWidth",
@@ -461,7 +462,7 @@ class GeneratedOperations:
     @_Operation
     def fill_max_height(
         self,
-        fraction: int | float = 1.0,
+        fraction: int | float | Animate = 1.0,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.fillMaxHeight``.
 
@@ -472,7 +473,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "fraction": fraction,
+            "fraction": lower_binding(fraction),
         }
         return self._append(
             "fillMaxHeight",
@@ -482,7 +483,7 @@ class GeneratedOperations:
     @_Operation
     def fill_max_row_height(
         self,
-        fraction: int | float = 1.0,
+        fraction: int | float | Animate = 1.0,
     ) -> Modifier:
         """Native ``fillMaxRowHeight``.
 
@@ -495,7 +496,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "fraction": fraction,
+            "fraction": lower_binding(fraction),
         }
         return self._append(
             "fillMaxRowHeight",
@@ -505,7 +506,7 @@ class GeneratedOperations:
     @_Operation
     def fill_max_size(
         self,
-        fraction: int | float = 1.0,
+        fraction: int | float | Animate = 1.0,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.fillMaxSize``.
 
@@ -516,7 +517,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "fraction": fraction,
+            "fraction": lower_binding(fraction),
         }
         return self._append(
             "fillMaxSize",
@@ -526,7 +527,7 @@ class GeneratedOperations:
     @_Operation
     def fill_max_width(
         self,
-        fraction: int | float = 1,
+        fraction: int | float | Animate = 1,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.fillMaxWidth``.
 
@@ -537,7 +538,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "fraction": fraction,
+            "fraction": lower_binding(fraction),
         }
         return self._append(
             "fillMaxWidth",
@@ -602,19 +603,19 @@ class GeneratedOperations:
     def graphics_layer(
         self,
         *,
-        scale_x: int | float = 1.0,
-        scale_y: int | float = 1.0,
-        alpha: int | float = 1.0,
-        translation_x: int | float = 0.0,
-        translation_y: int | float = 0.0,
-        shadow_elevation: int | float = 0.0,
-        rotation_x: int | float = 0.0,
-        rotation_y: int | float = 0.0,
-        rotation_z: int | float = 0.0,
+        scale_x: int | float | Animate = 1.0,
+        scale_y: int | float | Animate = 1.0,
+        alpha: int | float | Animate = 1.0,
+        translation_x: int | float | Animate = 0.0,
+        translation_y: int | float | Animate = 0.0,
+        shadow_elevation: int | float | Animate = 0.0,
+        rotation_x: int | float | Animate = 0.0,
+        rotation_y: int | float | Animate = 0.0,
+        rotation_z: int | float | Animate = 0.0,
         shape: JsonValue | None = None,
         clip: bool = False,
-        ambient_shadow_color: JsonValue | None = None,
-        spot_shadow_color: JsonValue | None = None,
+        ambient_shadow_color: JsonValue | Animate | None = None,
+        spot_shadow_color: JsonValue | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.ui.graphics.graphicsLayer``.
 
@@ -639,19 +640,19 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "scaleX": scale_x,
-            "scaleY": scale_y,
-            "alpha": alpha,
-            "translationX": translation_x,
-            "translationY": translation_y,
-            "shadowElevation": shadow_elevation,
-            "rotationX": rotation_x,
-            "rotationY": rotation_y,
-            "rotationZ": rotation_z,
+            "scaleX": lower_binding(scale_x),
+            "scaleY": lower_binding(scale_y),
+            "alpha": lower_binding(alpha),
+            "translationX": lower_binding(translation_x),
+            "translationY": lower_binding(translation_y),
+            "shadowElevation": lower_binding(shadow_elevation),
+            "rotationX": lower_binding(rotation_x),
+            "rotationY": lower_binding(rotation_y),
+            "rotationZ": lower_binding(rotation_z),
             "shape": shape,
             "clip": clip,
-            "ambientShadowColor": ambient_shadow_color,
-            "spotShadowColor": spot_shadow_color,
+            "ambientShadowColor": lower_binding(ambient_shadow_color),
+            "spotShadowColor": lower_binding(spot_shadow_color),
         }
         return self._append(
             "graphicsLayer",
@@ -672,7 +673,7 @@ class GeneratedOperations:
     @_Operation
     def height(
         self,
-        height: int | float,
+        height: int | float | Animate,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.height``.
 
@@ -683,7 +684,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "height": height,
+            "height": lower_binding(height),
         }
         return self._append(
             "height",
@@ -694,8 +695,8 @@ class GeneratedOperations:
     def height_in(
         self,
         *,
-        min: int | float | None = None,
-        max: int | float | None = None,
+        min: int | float | Animate | None = None,
+        max: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.heightIn``.
 
@@ -707,8 +708,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "min": min,
-            "max": max,
+            "min": lower_binding(min),
+            "max": lower_binding(max),
         }
         return self._append(
             "heightIn",
@@ -895,8 +896,8 @@ class GeneratedOperations:
     def offset(
         self,
         *,
-        x: int | float | None = None,
-        y: int | float | None = None,
+        x: int | float | Animate | None = None,
+        y: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.offset``.
 
@@ -908,8 +909,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "x": x,
-            "y": y,
+            "x": lower_binding(x),
+            "y": lower_binding(y),
         }
         return self._append(
             "offset",
@@ -951,7 +952,7 @@ class GeneratedOperations:
     @_Operation
     def preferred_frame_rate(
         self,
-        frame_rate: int | float,
+        frame_rate: int | float | Animate,
     ) -> Modifier:
         """Native ``androidx.compose.ui.preferredFrameRate``.
 
@@ -962,7 +963,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "frameRate": frame_rate,
+            "frameRate": lower_binding(frame_rate),
         }
         return self._append(
             "preferredFrameRate",
@@ -983,7 +984,7 @@ class GeneratedOperations:
     @_Operation
     def render_in_shared_transition_scope_overlay(
         self,
-        z_index_in_overlay: int | float = 0.0,
+        z_index_in_overlay: int | float | Animate = 0.0,
     ) -> Modifier:
         """Native ``renderInSharedTransitionScopeOverlay``.
 
@@ -996,7 +997,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "zIndexInOverlay": z_index_in_overlay,
+            "zIndexInOverlay": lower_binding(z_index_in_overlay),
         }
         return self._append(
             "renderInSharedTransitionScopeOverlay",
@@ -1006,7 +1007,7 @@ class GeneratedOperations:
     @_Operation
     def required_height(
         self,
-        height: int | float,
+        height: int | float | Animate,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.requiredHeight``.
 
@@ -1017,7 +1018,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "height": height,
+            "height": lower_binding(height),
         }
         return self._append(
             "requiredHeight",
@@ -1028,8 +1029,8 @@ class GeneratedOperations:
     def required_height_in(
         self,
         *,
-        min: int | float | None = None,
-        max: int | float | None = None,
+        min: int | float | Animate | None = None,
+        max: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.requiredHeightIn``.
 
@@ -1041,8 +1042,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "min": min,
-            "max": max,
+            "min": lower_binding(min),
+            "max": lower_binding(max),
         }
         return self._append(
             "requiredHeightIn",
@@ -1053,10 +1054,10 @@ class GeneratedOperations:
     def required_size_in(
         self,
         *,
-        min_width: int | float | None = None,
-        min_height: int | float | None = None,
-        max_width: int | float | None = None,
-        max_height: int | float | None = None,
+        min_width: int | float | Animate | None = None,
+        min_height: int | float | Animate | None = None,
+        max_width: int | float | Animate | None = None,
+        max_height: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.requiredSizeIn``.
 
@@ -1070,10 +1071,10 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "minWidth": min_width,
-            "minHeight": min_height,
-            "maxWidth": max_width,
-            "maxHeight": max_height,
+            "minWidth": lower_binding(min_width),
+            "minHeight": lower_binding(min_height),
+            "maxWidth": lower_binding(max_width),
+            "maxHeight": lower_binding(max_height),
         }
         return self._append(
             "requiredSizeIn",
@@ -1083,7 +1084,7 @@ class GeneratedOperations:
     @_Operation
     def required_width(
         self,
-        width: int | float,
+        width: int | float | Animate,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.requiredWidth``.
 
@@ -1094,7 +1095,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "width": width,
+            "width": lower_binding(width),
         }
         return self._append(
             "requiredWidth",
@@ -1105,8 +1106,8 @@ class GeneratedOperations:
     def required_width_in(
         self,
         *,
-        min: int | float | None = None,
-        max: int | float | None = None,
+        min: int | float | Animate | None = None,
+        max: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.requiredWidthIn``.
 
@@ -1118,8 +1119,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "min": min,
-            "max": max,
+            "min": lower_binding(min),
+            "max": lower_binding(max),
         }
         return self._append(
             "requiredWidthIn",
@@ -1129,7 +1130,7 @@ class GeneratedOperations:
     @_Operation
     def rotate(
         self,
-        degrees: int | float,
+        degrees: int | float | Animate,
     ) -> Modifier:
         """Native ``androidx.compose.ui.draw.rotate``.
 
@@ -1140,7 +1141,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "degrees": degrees,
+            "degrees": lower_binding(degrees),
         }
         return self._append(
             "rotate",
@@ -1224,7 +1225,7 @@ class GeneratedOperations:
         heading: bool | None = None,
         live_region: _SemanticsLiveRegion | None = None,
         test_tag: str | None = None,
-        traversal_index: int | float | None = None,
+        traversal_index: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.ui.semantics.semantics``.
 
@@ -1249,7 +1250,7 @@ class GeneratedOperations:
             "heading": heading,
             "liveRegion": live_region,
             "testTag": test_tag,
-            "traversalIndex": traversal_index,
+            "traversalIndex": lower_binding(traversal_index),
         }
         return self._append(
             "semantics",
@@ -1280,11 +1281,11 @@ class GeneratedOperations:
     @_Operation
     def shadow(
         self,
-        elevation: int | float,
+        elevation: int | float | Animate,
         *,
         shape: JsonValue | None = None,
-        ambient_color: JsonValue | None = None,
-        spot_color: JsonValue | None = None,
+        ambient_color: JsonValue | Animate | None = None,
+        spot_color: JsonValue | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.ui.draw.shadow``.
 
@@ -1298,10 +1299,10 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "elevation": elevation,
+            "elevation": lower_binding(elevation),
             "shape": shape,
-            "ambientColor": ambient_color,
-            "spotColor": spot_color,
+            "ambientColor": lower_binding(ambient_color),
+            "spotColor": lower_binding(spot_color),
         }
         return self._append(
             "shadow",
@@ -1311,8 +1312,8 @@ class GeneratedOperations:
     @_Operation
     def size(
         self,
-        width: JsonValue,
-        height: JsonValue,
+        width: JsonValue | Animate,
+        height: JsonValue | Animate,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.size``.
 
@@ -1324,8 +1325,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "width": width,
-            "height": height,
+            "width": lower_binding(width),
+            "height": lower_binding(height),
         }
         return self._append(
             "size",
@@ -1336,10 +1337,10 @@ class GeneratedOperations:
     def size_in(
         self,
         *,
-        min_width: int | float | None = None,
-        min_height: int | float | None = None,
-        max_width: int | float | None = None,
-        max_height: int | float | None = None,
+        min_width: int | float | Animate | None = None,
+        min_height: int | float | Animate | None = None,
+        max_width: int | float | Animate | None = None,
+        max_height: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.sizeIn``.
 
@@ -1353,10 +1354,10 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "minWidth": min_width,
-            "minHeight": min_height,
-            "maxWidth": max_width,
-            "maxHeight": max_height,
+            "minWidth": lower_binding(min_width),
+            "minHeight": lower_binding(min_height),
+            "maxWidth": lower_binding(max_width),
+            "maxHeight": lower_binding(max_height),
         }
         return self._append(
             "sizeIn",
@@ -1516,7 +1517,7 @@ class GeneratedOperations:
     @_Operation
     def weight(
         self,
-        weight: int | float,
+        weight: int | float | Animate,
         *,
         fill: bool = True,
     ) -> Modifier:
@@ -1532,7 +1533,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "weight": weight,
+            "weight": lower_binding(weight),
             "fill": fill,
         }
         return self._append(
@@ -1543,7 +1544,7 @@ class GeneratedOperations:
     @_Operation
     def width(
         self,
-        width: int | float,
+        width: int | float | Animate,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.width``.
 
@@ -1554,7 +1555,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "width": width,
+            "width": lower_binding(width),
         }
         return self._append(
             "width",
@@ -1565,8 +1566,8 @@ class GeneratedOperations:
     def width_in(
         self,
         *,
-        min: int | float | None = None,
-        max: int | float | None = None,
+        min: int | float | Animate | None = None,
+        max: int | float | Animate | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.widthIn``.
 
@@ -1578,8 +1579,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "min": min,
-            "max": max,
+            "min": lower_binding(min),
+            "max": lower_binding(max),
         }
         return self._append(
             "widthIn",
@@ -1769,7 +1770,7 @@ class GeneratedOperations:
     @_Operation
     def z_index(
         self,
-        z_index: int | float,
+        z_index: int | float | Animate,
     ) -> Modifier:
         """Native ``androidx.compose.ui.zIndex``.
 
@@ -1780,7 +1781,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "zIndex": z_index,
+            "zIndex": lower_binding(z_index),
         }
         return self._append(
             "zIndex",

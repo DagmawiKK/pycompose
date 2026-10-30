@@ -17,6 +17,10 @@ from typing import TYPE_CHECKING, Any
 from pycompose.model.nodes.node import Node as Node  # noqa: PLC0414
 from pycompose.ui._generated.values import *  # noqa: F403 -- the catalog's values
 from pycompose.ui.fallback import Fallback as Fallback  # noqa: PLC0414
+from pycompose.ui.host import Animate as Animate  # noqa: PLC0414
+from pycompose.ui.host import animate as animate  # noqa: PLC0414
+from pycompose.ui.host import spring as spring  # noqa: PLC0414
+from pycompose.ui.host import tween as tween  # noqa: PLC0414
 from pycompose.ui.intents import Intent as Intent  # noqa: PLC0414
 from pycompose.ui.modifier import Modifier as Modifier  # noqa: PLC0414
 

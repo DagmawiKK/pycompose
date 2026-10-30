@@ -103,23 +103,31 @@ object GeneratedModifiers {
         when (type) {
             "absoluteOffset" ->
                 Modifier.absoluteOffset(
-                    x = if ("x" in op) op.getValue("x").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
-                    y = if ("y" in op) op.getValue("y").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
+                    x = if ("x" in op) op.getValue("x").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
+                    y = if ("y" in op) op.getValue("y").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
                 )
             "absolutePadding" ->
                 Modifier.absolutePadding(
-                    left = if ("left" in op) op.getValue("left").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
-                    top = if ("top" in op) op.getValue("top").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
-                    right = if ("right" in op) op.getValue("right").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
-                    bottom = if ("bottom" in op) op.getValue("bottom").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
+                    left = if ("left" in op) op.getValue("left").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
+                    top = if ("top" in op) op.getValue("top").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
+                    right = if ("right" in op) op.getValue("right").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
+                    bottom = if ("bottom" in op) op.getValue("bottom").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
                 )
             "alpha" ->
                 Modifier.alpha(
-                    alpha = op.getValue("alpha").let { value -> value.jsonPrimitive.double.toFloat() },
+                    alpha = op.getValue("alpha").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } },
                 )
             "aspectRatio" ->
                 Modifier.aspectRatio(
-                    ratio = op.getValue("ratio").let { value -> value.jsonPrimitive.double.toFloat() },
+                    ratio = op.getValue("ratio").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } },
                     matchHeightConstraintsFirst = if ("matchHeightConstraintsFirst" in op) op.getValue("matchHeightConstraintsFirst").let { value -> value.jsonPrimitive.boolean } else false,
                 )
             "background" ->
@@ -128,7 +136,8 @@ object GeneratedModifiers {
                 )
             "basicMarquee" ->
                 Modifier.basicMarquee(
-                    velocity = if ("velocity" in op) op.getValue("velocity").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.foundation.MarqueeDefaults.Velocity,
+                    velocity = if ("velocity" in op) op.getValue("velocity").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.foundation.MarqueeDefaults.Velocity,
                 )
             "captionBarPadding" ->
                 Modifier.captionBarPadding(
@@ -147,23 +156,28 @@ object GeneratedModifiers {
                 )
             "defaultMinSize" ->
                 Modifier.defaultMinSize(
-                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "displayCutoutPadding" ->
                 Modifier.displayCutoutPadding(
                 )
             "fillMaxHeight" ->
                 Modifier.fillMaxHeight(
-                    fraction = if ("fraction" in op) op.getValue("fraction").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
+                    fraction = if ("fraction" in op) op.getValue("fraction").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 1.0f,
                 )
             "fillMaxSize" ->
                 Modifier.fillMaxSize(
-                    fraction = if ("fraction" in op) op.getValue("fraction").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
+                    fraction = if ("fraction" in op) op.getValue("fraction").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 1.0f,
                 )
             "fillMaxWidth" ->
                 Modifier.fillMaxWidth(
-                    fraction = if ("fraction" in op) op.getValue("fraction").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
+                    fraction = if ("fraction" in op) op.getValue("fraction").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 1.0f,
                 )
             "focusGroup" ->
                 Modifier.focusGroup(
@@ -180,31 +194,45 @@ object GeneratedModifiers {
                 )
             "graphicsLayer" ->
                 Modifier.graphicsLayer(
-                    scaleX = if ("scaleX" in op) op.getValue("scaleX").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
-                    scaleY = if ("scaleY" in op) op.getValue("scaleY").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
-                    alpha = if ("alpha" in op) op.getValue("alpha").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
-                    translationX = if ("translationX" in op) op.getValue("translationX").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
-                    translationY = if ("translationY" in op) op.getValue("translationY").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
-                    shadowElevation = if ("shadowElevation" in op) op.getValue("shadowElevation").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
-                    rotationX = if ("rotationX" in op) op.getValue("rotationX").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
-                    rotationY = if ("rotationY" in op) op.getValue("rotationY").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
-                    rotationZ = if ("rotationZ" in op) op.getValue("rotationZ").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
+                    scaleX = if ("scaleX" in op) op.getValue("scaleX").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 1.0f,
+                    scaleY = if ("scaleY" in op) op.getValue("scaleY").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 1.0f,
+                    alpha = if ("alpha" in op) op.getValue("alpha").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 1.0f,
+                    translationX = if ("translationX" in op) op.getValue("translationX").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 0.0f,
+                    translationY = if ("translationY" in op) op.getValue("translationY").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 0.0f,
+                    shadowElevation = if ("shadowElevation" in op) op.getValue("shadowElevation").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 0.0f,
+                    rotationX = if ("rotationX" in op) op.getValue("rotationX").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 0.0f,
+                    rotationY = if ("rotationY" in op) op.getValue("rotationY").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 0.0f,
+                    rotationZ = if ("rotationZ" in op) op.getValue("rotationZ").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } } else 0.0f,
                     shape = if ("shape" in op) op.getValue("shape").let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() } else androidx.compose.ui.graphics.RectangleShape,
                     clip = if ("clip" in op) op.getValue("clip").let { value -> value.jsonPrimitive.boolean } else false,
-                    ambientShadowColor = if ("ambientShadowColor" in op) op.getValue("ambientShadowColor").let { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } else androidx.compose.ui.graphics.DefaultShadowColor,
-                    spotShadowColor = if ("spotShadowColor" in op) op.getValue("spotShadowColor").let { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } else androidx.compose.ui.graphics.DefaultShadowColor,
+                    ambientShadowColor = if ("ambientShadowColor" in op) op.getValue("ambientShadowColor").let { wire -> com.pycompose.renderer.animatedColor(wire) { value ->
+                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } } else androidx.compose.ui.graphics.DefaultShadowColor,
+                    spotShadowColor = if ("spotShadowColor" in op) op.getValue("spotShadowColor").let { wire -> com.pycompose.renderer.animatedColor(wire) { value ->
+                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } } else androidx.compose.ui.graphics.DefaultShadowColor,
                 )
             "handwritingHandler" ->
                 Modifier.handwritingHandler(
                 )
             "height" ->
                 Modifier.height(
-                    height = op.getValue("height").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                    height = op.getValue("height").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                 )
             "heightIn" ->
                 Modifier.heightIn(
-                    min = if ("min" in op) op.getValue("min").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    max = if ("max" in op) op.getValue("max").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "imeNestedScroll" ->
                 Modifier.imeNestedScroll(
@@ -230,8 +258,10 @@ object GeneratedModifiers {
                 )
             "offset" ->
                 Modifier.offset(
-                    x = if ("x" in op) op.getValue("x").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
-                    y = if ("y" in op) op.getValue("y").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
+                    x = if ("x" in op) op.getValue("x").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
+                    y = if ("y" in op) op.getValue("y").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
                 )
             "padding" ->
                 if (op.getValue("value") is JsonObject) {
@@ -246,39 +276,51 @@ object GeneratedModifiers {
                 )
             "preferredFrameRate" ->
                 Modifier.preferredFrameRate(
-                    frameRate = op.getValue("frameRate").let { value -> value.jsonPrimitive.double.toFloat() },
+                    frameRate = op.getValue("frameRate").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } },
                 )
             "recalculateWindowInsets" ->
                 Modifier.recalculateWindowInsets(
                 )
             "requiredHeight" ->
                 Modifier.requiredHeight(
-                    height = op.getValue("height").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                    height = op.getValue("height").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                 )
             "requiredHeightIn" ->
                 Modifier.requiredHeightIn(
-                    min = if ("min" in op) op.getValue("min").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    max = if ("max" in op) op.getValue("max").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "requiredSizeIn" ->
                 Modifier.requiredSizeIn(
-                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    maxWidth = if ("maxWidth" in op) op.getValue("maxWidth").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    maxHeight = if ("maxHeight" in op) op.getValue("maxHeight").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxWidth = if ("maxWidth" in op) op.getValue("maxWidth").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxHeight = if ("maxHeight" in op) op.getValue("maxHeight").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "requiredWidth" ->
                 Modifier.requiredWidth(
-                    width = op.getValue("width").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                    width = op.getValue("width").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                 )
             "requiredWidthIn" ->
                 Modifier.requiredWidthIn(
-                    min = if ("min" in op) op.getValue("min").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    max = if ("max" in op) op.getValue("max").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "rotate" ->
                 Modifier.rotate(
-                    degrees = op.getValue("degrees").let { value -> value.jsonPrimitive.double.toFloat() },
+                    degrees = op.getValue("degrees").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } },
                 )
             "safeContentPadding" ->
                 Modifier.safeContentPadding(
@@ -329,22 +371,31 @@ object GeneratedModifiers {
                 )
             "shadow" ->
                 Modifier.shadow(
-                    elevation = op.getValue("elevation").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                    elevation = op.getValue("elevation").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                     shape = if ("shape" in op) op.getValue("shape").let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() } else androidx.compose.ui.graphics.RectangleShape,
-                    ambientColor = if ("ambientColor" in op) op.getValue("ambientColor").let { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } else androidx.compose.ui.graphics.DefaultShadowColor,
-                    spotColor = if ("spotColor" in op) op.getValue("spotColor").let { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } else androidx.compose.ui.graphics.DefaultShadowColor,
+                    ambientColor = if ("ambientColor" in op) op.getValue("ambientColor").let { wire -> com.pycompose.renderer.animatedColor(wire) { value ->
+                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } } else androidx.compose.ui.graphics.DefaultShadowColor,
+                    spotColor = if ("spotColor" in op) op.getValue("spotColor").let { wire -> com.pycompose.renderer.animatedColor(wire) { value ->
+                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } } else androidx.compose.ui.graphics.DefaultShadowColor,
                 )
             "size" ->
                 Modifier.size(
-                    width = op.getValue("width").let { value -> if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
-                    height = op.getValue("height").let { value -> if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                    width = op.getValue("width").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
+                    height = op.getValue("height").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                 )
             "sizeIn" ->
                 Modifier.sizeIn(
-                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    maxWidth = if ("maxWidth" in op) op.getValue("maxWidth").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    maxHeight = if ("maxHeight" in op) op.getValue("maxHeight").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxWidth = if ("maxWidth" in op) op.getValue("maxWidth").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxHeight = if ("maxHeight" in op) op.getValue("maxHeight").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "statusBarsPadding" ->
                 Modifier.statusBarsPadding(
@@ -371,12 +422,15 @@ object GeneratedModifiers {
                 )
             "width" ->
                 Modifier.width(
-                    width = op.getValue("width").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                    width = op.getValue("width").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                 )
             "widthIn" ->
                 Modifier.widthIn(
-                    min = if ("min" in op) op.getValue("min").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    max = if ("max" in op) op.getValue("max").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.animatedDp(wire) { value ->
+                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "windowInsetsBottomHeight" ->
                 Modifier.windowInsetsBottomHeight(
@@ -415,7 +469,8 @@ object GeneratedModifiers {
                 )
             "zIndex" ->
                 Modifier.zIndex(
-                    zIndex = op.getValue("zIndex").let { value -> value.jsonPrimitive.double.toFloat() },
+                    zIndex = op.getValue("zIndex").let { wire -> com.pycompose.renderer.animatedFloat(wire) { value ->
+                        value.jsonPrimitive.double.toFloat() } },
                 )
             "alignByBaseline" ->
                 when (scope) {
@@ -461,7 +516,8 @@ object GeneratedModifiers {
                     is androidx.compose.foundation.layout.FlowColumnScope ->
                         with(scope) {
                             Modifier.fillMaxColumnWidth(
-                                fraction = if ("fraction" in op) op.getValue("fraction").jsonPrimitive.double.toFloat() else 1.0f,
+                                fraction = if ("fraction" in op) com.pycompose.renderer.animatedFloat(op.getValue("fraction")) { value ->
+                        value.jsonPrimitive.double.toFloat() } else 1.0f,
                             )
                         }
                     else -> null
@@ -471,7 +527,8 @@ object GeneratedModifiers {
                     is androidx.compose.foundation.layout.FlowRowScope ->
                         with(scope) {
                             Modifier.fillMaxRowHeight(
-                                fraction = if ("fraction" in op) op.getValue("fraction").jsonPrimitive.double.toFloat() else 1.0f,
+                                fraction = if ("fraction" in op) com.pycompose.renderer.animatedFloat(op.getValue("fraction")) { value ->
+                        value.jsonPrimitive.double.toFloat() } else 1.0f,
                             )
                         }
                     else -> null
@@ -522,7 +579,8 @@ object GeneratedModifiers {
                     is androidx.compose.animation.SharedTransitionScope ->
                         with(scope) {
                             Modifier.renderInSharedTransitionScopeOverlay(
-                                zIndexInOverlay = if ("zIndexInOverlay" in op) op.getValue("zIndexInOverlay").jsonPrimitive.double.toFloat() else 0.0f,
+                                zIndexInOverlay = if ("zIndexInOverlay" in op) com.pycompose.renderer.animatedFloat(op.getValue("zIndexInOverlay")) { value ->
+                        value.jsonPrimitive.double.toFloat() } else 0.0f,
                             )
                         }
                     else -> null
@@ -571,14 +629,16 @@ object GeneratedModifiers {
                     is androidx.compose.foundation.layout.ColumnScope ->
                         with(scope) {
                             Modifier.weight(
-                                weight = op.getValue("weight").jsonPrimitive.double.toFloat(),
+                                weight = com.pycompose.renderer.animatedFloat(op.getValue("weight")) { value ->
+                        value.jsonPrimitive.double.toFloat() },
                                 fill = if ("fill" in op) op.getValue("fill").jsonPrimitive.boolean else true,
                             )
                         }
                     is androidx.compose.foundation.layout.RowScope ->
                         with(scope) {
                             Modifier.weight(
-                                weight = op.getValue("weight").jsonPrimitive.double.toFloat(),
+                                weight = com.pycompose.renderer.animatedFloat(op.getValue("weight")) { value ->
+                        value.jsonPrimitive.double.toFloat() },
                                 fill = if ("fill" in op) op.getValue("fill").jsonPrimitive.boolean else true,
                             )
                         }

@@ -413,6 +413,24 @@
         }
       ]
     },
+    "Binding": {
+      "additionalProperties": false,
+      "properties": {
+        "spec": {
+          "type": "object"
+        },
+        "to": {},
+        "type": {
+          "const": "animate"
+        }
+      },
+      "required": [
+        "type",
+        "to",
+        "spec"
+      ],
+      "type": "object"
+    },
     "C_AlertDialog": {
       "properties": {
         "children": {
@@ -10637,46 +10655,60 @@
               "const": "absoluteOffset"
             },
             "x": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "y": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             }
@@ -10690,90 +10722,118 @@
           "additionalProperties": false,
           "properties": {
             "bottom": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "left": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "right": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "top": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -10802,7 +10862,14 @@
           "additionalProperties": false,
           "properties": {
             "alpha": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "alpha"
@@ -10838,7 +10905,14 @@
               "type": "boolean"
             },
             "ratio": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "aspectRatio"
@@ -10873,24 +10947,31 @@
               "const": "basicMarquee"
             },
             "velocity": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             }
@@ -10996,46 +11077,60 @@
           "additionalProperties": false,
           "properties": {
             "minHeight": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "minWidth": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -11064,8 +11159,15 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "fillMaxColumnWidth"
@@ -11080,8 +11182,15 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "fillMaxHeight"
@@ -11096,8 +11205,15 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "fillMaxRowHeight"
@@ -11112,8 +11228,15 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "fillMaxSize"
@@ -11128,10 +11251,17 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
-              "default": 1,
-              "maximum": 1,
-              "minimum": 0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1,
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "fillMaxWidth"
@@ -11198,16 +11328,30 @@
           "additionalProperties": false,
           "properties": {
             "alpha": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "ambientShadowColor": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/Family_Color"
+                    },
+                    {
+                      "$ref": "#/definitions/Expression"
+                    }
+                  ]
                 },
                 {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -11216,28 +11360,70 @@
               "type": "boolean"
             },
             "rotationX": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "rotationY": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "rotationZ": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "scaleX": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "scaleY": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "shadowElevation": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
@@ -11245,20 +11431,41 @@
             "spotShadowColor": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/Family_Color"
+                    },
+                    {
+                      "$ref": "#/definitions/Expression"
+                    }
+                  ]
                 },
                 {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "translationX": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "translationY": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "graphicsLayer"
@@ -11285,24 +11492,31 @@
           "additionalProperties": false,
           "properties": {
             "height": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -11320,46 +11534,60 @@
           "additionalProperties": false,
           "properties": {
             "max": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "min": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -11535,46 +11763,60 @@
               "const": "offset"
             },
             "x": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "y": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             }
@@ -11654,7 +11896,14 @@
           "additionalProperties": false,
           "properties": {
             "frameRate": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "preferredFrameRate"
@@ -11685,8 +11934,15 @@
               "const": "renderInSharedTransitionScopeOverlay"
             },
             "zIndexInOverlay": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             }
           },
           "required": [
@@ -11698,24 +11954,31 @@
           "additionalProperties": false,
           "properties": {
             "height": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -11733,46 +11996,60 @@
           "additionalProperties": false,
           "properties": {
             "max": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "min": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -11789,90 +12066,118 @@
           "additionalProperties": false,
           "properties": {
             "maxHeight": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "maxWidth": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "minHeight": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "minWidth": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -11892,24 +12197,31 @@
               "const": "requiredWidth"
             },
             "width": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             }
@@ -11924,46 +12236,60 @@
           "additionalProperties": false,
           "properties": {
             "max": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "min": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -11980,7 +12306,14 @@
           "additionalProperties": false,
           "properties": {
             "degrees": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "rotate"
@@ -12091,7 +12424,14 @@
               "type": "string"
             },
             "traversalIndex": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "semantics"
@@ -12124,32 +12464,46 @@
             "ambientColor": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/Family_Color"
+                    },
+                    {
+                      "$ref": "#/definitions/Expression"
+                    }
+                  ]
                 },
                 {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "elevation": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -12159,10 +12513,17 @@
             "spotColor": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/Family_Color"
+                    },
+                    {
+                      "$ref": "#/definitions/Expression"
+                    }
+                  ]
                 },
                 {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -12182,41 +12543,48 @@
             "height": {
               "anyOf": [
                 {
-                  "allOf": [
+                  "anyOf": [
                     {
-                      "maximum": 3.4028234663852886e+38,
-                      "minimum": -3.4028234663852886e+38,
-                      "type": "number"
+                      "allOf": [
+                        {
+                          "maximum": 3.4028234663852886e+38,
+                          "minimum": -3.4028234663852886e+38,
+                          "type": "number"
+                        },
+                        {
+                          "anyOf": [
+                            {
+                              "const": 0
+                            },
+                            {
+                              "minimum": 1.401298464324817e-45
+                            },
+                            {
+                              "maximum": -1.401298464324817e-45
+                            }
+                          ]
+                        }
+                      ],
+                      "minimum": 0
                     },
                     {
-                      "anyOf": [
+                      "allOf": [
                         {
-                          "const": 0
+                          "$ref": "#/definitions/Family_Dp"
                         },
                         {
-                          "minimum": 1.401298464324817e-45
-                        },
-                        {
-                          "maximum": -1.401298464324817e-45
+                          "properties": {
+                            "value": {
+                              "minimum": 0
+                            }
+                          }
                         }
                       ]
                     }
-                  ],
-                  "minimum": 0
+                  ]
                 },
                 {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/Family_Dp"
-                    },
-                    {
-                      "properties": {
-                        "value": {
-                          "minimum": 0
-                        }
-                      }
-                    }
-                  ]
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -12224,6 +12592,65 @@
               "const": "size"
             },
             "width": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "maximum": 3.4028234663852886e+38,
+                          "minimum": -3.4028234663852886e+38,
+                          "type": "number"
+                        },
+                        {
+                          "anyOf": [
+                            {
+                              "const": 0
+                            },
+                            {
+                              "minimum": 1.401298464324817e-45
+                            },
+                            {
+                              "maximum": -1.401298464324817e-45
+                            }
+                          ]
+                        }
+                      ],
+                      "minimum": 0
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$ref": "#/definitions/Family_Dp"
+                        },
+                        {
+                          "properties": {
+                            "value": {
+                              "minimum": 0
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "maxHeight": {
               "anyOf": [
                 {
                   "allOf": [
@@ -12245,121 +12672,97 @@
                         }
                       ]
                     }
-                  ],
-                  "minimum": 0
+                  ]
                 },
                 {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/Family_Dp"
-                    },
-                    {
-                      "properties": {
-                        "value": {
-                          "minimum": 0
-                        }
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          },
-          "required": [
-            "type",
-            "height",
-            "width"
-          ],
-          "type": "object"
-        },
-        {
-          "additionalProperties": false,
-          "properties": {
-            "maxHeight": {
-              "allOf": [
-                {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
-                    {
-                      "const": 0
-                    },
-                    {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
-                    }
-                  ]
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "maxWidth": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "minHeight": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "minWidth": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -12521,7 +12924,14 @@
               "const": "weight"
             },
             "weight": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             }
           },
           "required": [
@@ -12537,24 +12947,31 @@
               "const": "width"
             },
             "width": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             }
@@ -12569,46 +12986,60 @@
           "additionalProperties": false,
           "properties": {
             "max": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "min": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -12765,7 +13196,14 @@
               "const": "zIndex"
             },
             "zIndex": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             }
           },
           "required": [
@@ -33877,46 +34315,60 @@
               "const": "absoluteOffset"
             },
             "x": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "y": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             }
@@ -33930,90 +34382,118 @@
           "additionalProperties": false,
           "properties": {
             "bottom": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "left": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "right": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "top": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -34042,7 +34522,14 @@
           "additionalProperties": false,
           "properties": {
             "alpha": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "alpha"
@@ -34078,7 +34565,14 @@
               "type": "boolean"
             },
             "ratio": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "aspectRatio"
@@ -34113,24 +34607,31 @@
               "const": "basicMarquee"
             },
             "velocity": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             }
@@ -34236,46 +34737,60 @@
           "additionalProperties": false,
           "properties": {
             "minHeight": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "minWidth": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -34304,8 +34819,15 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "fillMaxColumnWidth"
@@ -34320,8 +34842,15 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "fillMaxHeight"
@@ -34336,8 +34865,15 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "fillMaxRowHeight"
@@ -34352,8 +34888,15 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "fillMaxSize"
@@ -34368,10 +34911,17 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
-              "default": 1,
-              "maximum": 1,
-              "minimum": 0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1,
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "fillMaxWidth"
@@ -34438,16 +34988,30 @@
           "additionalProperties": false,
           "properties": {
             "alpha": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "ambientShadowColor": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/Family_Color"
+                    },
+                    {
+                      "$ref": "#/definitions/Expression"
+                    }
+                  ]
                 },
                 {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -34456,28 +35020,70 @@
               "type": "boolean"
             },
             "rotationX": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "rotationY": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "rotationZ": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "scaleX": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "scaleY": {
-              "default": 1.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 1.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "shadowElevation": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
@@ -34485,20 +35091,41 @@
             "spotShadowColor": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/Family_Color"
+                    },
+                    {
+                      "$ref": "#/definitions/Expression"
+                    }
+                  ]
                 },
                 {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "translationX": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "translationY": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "graphicsLayer"
@@ -34525,24 +35152,31 @@
           "additionalProperties": false,
           "properties": {
             "height": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -34560,46 +35194,60 @@
           "additionalProperties": false,
           "properties": {
             "max": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "min": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -34775,46 +35423,60 @@
               "const": "offset"
             },
             "x": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "y": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             }
@@ -34894,7 +35556,14 @@
           "additionalProperties": false,
           "properties": {
             "frameRate": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "preferredFrameRate"
@@ -34925,8 +35594,15 @@
               "const": "renderInSharedTransitionScopeOverlay"
             },
             "zIndexInOverlay": {
-              "default": 0.0,
-              "type": "number"
+              "anyOf": [
+                {
+                  "default": 0.0,
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             }
           },
           "required": [
@@ -34938,24 +35614,31 @@
           "additionalProperties": false,
           "properties": {
             "height": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -34973,46 +35656,60 @@
           "additionalProperties": false,
           "properties": {
             "max": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "min": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -35029,90 +35726,118 @@
           "additionalProperties": false,
           "properties": {
             "maxHeight": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "maxWidth": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "minHeight": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "minWidth": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -35132,24 +35857,31 @@
               "const": "requiredWidth"
             },
             "width": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             }
@@ -35164,46 +35896,60 @@
           "additionalProperties": false,
           "properties": {
             "max": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "min": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -35220,7 +35966,14 @@
           "additionalProperties": false,
           "properties": {
             "degrees": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "rotate"
@@ -35331,7 +36084,14 @@
               "type": "string"
             },
             "traversalIndex": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "semantics"
@@ -35364,32 +36124,46 @@
             "ambientColor": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/Family_Color"
+                    },
+                    {
+                      "$ref": "#/definitions/Expression"
+                    }
+                  ]
                 },
                 {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "elevation": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -35399,10 +36173,17 @@
             "spotColor": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/Family_Color"
+                    },
+                    {
+                      "$ref": "#/definitions/Expression"
+                    }
+                  ]
                 },
                 {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -35422,41 +36203,48 @@
             "height": {
               "anyOf": [
                 {
-                  "allOf": [
+                  "anyOf": [
                     {
-                      "maximum": 3.4028234663852886e+38,
-                      "minimum": -3.4028234663852886e+38,
-                      "type": "number"
+                      "allOf": [
+                        {
+                          "maximum": 3.4028234663852886e+38,
+                          "minimum": -3.4028234663852886e+38,
+                          "type": "number"
+                        },
+                        {
+                          "anyOf": [
+                            {
+                              "const": 0
+                            },
+                            {
+                              "minimum": 1.401298464324817e-45
+                            },
+                            {
+                              "maximum": -1.401298464324817e-45
+                            }
+                          ]
+                        }
+                      ],
+                      "minimum": 0
                     },
                     {
-                      "anyOf": [
+                      "allOf": [
                         {
-                          "const": 0
+                          "$ref": "#/definitions/Family_Dp"
                         },
                         {
-                          "minimum": 1.401298464324817e-45
-                        },
-                        {
-                          "maximum": -1.401298464324817e-45
+                          "properties": {
+                            "value": {
+                              "minimum": 0
+                            }
+                          }
                         }
                       ]
                     }
-                  ],
-                  "minimum": 0
+                  ]
                 },
                 {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/Family_Dp"
-                    },
-                    {
-                      "properties": {
-                        "value": {
-                          "minimum": 0
-                        }
-                      }
-                    }
-                  ]
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -35464,6 +36252,65 @@
               "const": "size"
             },
             "width": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "maximum": 3.4028234663852886e+38,
+                          "minimum": -3.4028234663852886e+38,
+                          "type": "number"
+                        },
+                        {
+                          "anyOf": [
+                            {
+                              "const": 0
+                            },
+                            {
+                              "minimum": 1.401298464324817e-45
+                            },
+                            {
+                              "maximum": -1.401298464324817e-45
+                            }
+                          ]
+                        }
+                      ],
+                      "minimum": 0
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$ref": "#/definitions/Family_Dp"
+                        },
+                        {
+                          "properties": {
+                            "value": {
+                              "minimum": 0
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "height",
+            "width"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "maxHeight": {
               "anyOf": [
                 {
                   "allOf": [
@@ -35485,121 +36332,97 @@
                         }
                       ]
                     }
-                  ],
-                  "minimum": 0
+                  ]
                 },
                 {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/Family_Dp"
-                    },
-                    {
-                      "properties": {
-                        "value": {
-                          "minimum": 0
-                        }
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          },
-          "required": [
-            "type",
-            "height",
-            "width"
-          ],
-          "type": "object"
-        },
-        {
-          "additionalProperties": false,
-          "properties": {
-            "maxHeight": {
-              "allOf": [
-                {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
-                    {
-                      "const": 0
-                    },
-                    {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
-                    }
-                  ]
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "maxWidth": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "minHeight": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "minWidth": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -35761,7 +36584,14 @@
               "const": "weight"
             },
             "weight": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             }
           },
           "required": [
@@ -35777,24 +36607,31 @@
               "const": "width"
             },
             "width": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             }
@@ -35809,46 +36646,60 @@
           "additionalProperties": false,
           "properties": {
             "max": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
             "min": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "maximum": 3.4028234663852886e+38,
-                  "minimum": -3.4028234663852886e+38,
-                  "type": "number"
-                },
-                {
-                  "anyOf": [
+                  "allOf": [
                     {
-                      "const": 0
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
                     },
                     {
-                      "minimum": 1.401298464324817e-45
-                    },
-                    {
-                      "maximum": -1.401298464324817e-45
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
                     }
                   ]
+                },
+                {
+                  "$ref": "#/definitions/Binding"
                 }
               ]
             },
@@ -36005,7 +36856,14 @@
               "const": "zIndex"
             },
             "zIndex": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             }
           },
           "required": [

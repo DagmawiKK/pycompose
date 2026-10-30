@@ -16,6 +16,7 @@ from pycompose.model.canonical import FrozenJsonValue, freeze_json, thaw_json
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.values import named_value
+from pycompose.model.programs.bindings import Animate
 from pycompose.ui._generated.modifiers import GeneratedOperations
 from pycompose.ui._generated.values import Dp, PaddingValues
 from pycompose.ui._rules import validate_modifier
@@ -55,6 +56,9 @@ class Modifier(GeneratedOperations):
         )
         rules = REGISTRY.modifiers.get(name, {})
         for key, value in props.items():
+            if isinstance(value, Animate):
+                # An animatable prop arrives already lowered; this one is not.
+                raise IrValidationError("prop cannot animate", modifier=name, prop=key)
             rule = rules.get(key)
             if rule is not None and rule.type == "enum" and rule.value_type:
                 props[key] = cast(
@@ -140,13 +144,13 @@ class Modifier(GeneratedOperations):
     @_Operation
     def size(
         self,
-        width: JsonValue,
-        height: JsonValue = None,
+        width: JsonValue | Animate,
+        height: JsonValue | Animate = None,
     ) -> Modifier:
         """Append nonnegative dp size; an omitted height makes a square.
 
         Args:
-            width: Width in dp.
+            width: Width in dp, or a size the host animates to.
             height: Height in dp, or None to use width.
 
         Returns:

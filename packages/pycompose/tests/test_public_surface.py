@@ -80,7 +80,16 @@ SURFACE = {
 }
 """Each public package's names, as its ``__all__`` states them."""
 
-UI_OWN = ["Fallback", "Intent", "Modifier", "Node"]
+UI_OWN = [
+    "Animate",
+    "Fallback",
+    "Intent",
+    "Modifier",
+    "Node",
+    "animate",
+    "spring",
+    "tween",
+]
 """What ``pycompose.ui`` adds by hand to the catalog's components and values."""
 
 APPS = (

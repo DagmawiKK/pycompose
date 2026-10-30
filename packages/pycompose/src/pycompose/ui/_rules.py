@@ -23,6 +23,12 @@ from pycompose.model.nodes.values import (
     validate_number,
     validate_value,
 )
+from pycompose.model.programs.bindings import (
+    BINDINGS_SINCE,
+    animatable,
+    check_binding,
+    is_binding,
+)
 from pycompose.ui.intents import BoundIntent, valid_intent
 
 _LONG = range(-(2**63), 2**63)
@@ -157,7 +163,13 @@ def _validate_operation(operation: object, intents: Intents | None) -> None:
         if key == "type":
             continue
         declared = spec.get(key)
-        if declared is None or not validate_prop(item, declared, intents=intents):
+        value = item
+        if declared is not None and is_binding(item):
+            # The host animates to the target; the target is what is checked.
+            if not animatable(declared.type, declared.value_type):
+                raise IrValidationError("prop cannot animate", modifier=name, prop=key)
+            value = check_binding(cast("Mapping[str, object]", item))
+        if declared is None or not validate_prop(value, declared, intents=intents):
             raise IrValidationError("invalid modifier prop", modifier=name, prop=key)
 
 
@@ -271,6 +283,8 @@ class _Validation:
             current = pending.pop()
             if isinstance(current, Mapping):
                 name = current.get("type")
+                if name == "animate" and not self.available(BINDINGS_SINCE):
+                    return False
                 definition = (
                     REGISTRY.value_types.get(name) if isinstance(name, str) else None
                 )
