@@ -24,7 +24,7 @@ from pycompose_codegen.emit.python_layout import (
 
 def render_python_components(
     registry: dict[str, Any],
-    package: str = "pycompose.material3",
+    package: str = "pycompose.ui",
     own: dict[str, Any] | None = None,
 ) -> str:
     """Generate typed Python constructors from the native manifest.

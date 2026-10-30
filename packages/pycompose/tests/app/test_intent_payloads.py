@@ -11,10 +11,9 @@ from pycompose.app import App, Destination, Intent, ViewModel
 from pycompose.app.session import NavigationSession
 from pycompose.bridge import BridgeSurface
 from pycompose.errors import IrValidationError
-from pycompose.foundation import Column
-from pycompose.material3 import Button, Text, TextField
 from pycompose.model.snapshot import SnapshotStore
 from pycompose.state import AppState
+from pycompose.ui import Button, Column, Text, TextField
 
 
 class Note(AppState):

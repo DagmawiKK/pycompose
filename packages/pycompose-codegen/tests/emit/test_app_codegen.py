@@ -115,7 +115,7 @@ def test_an_unused_component_is_absent_from_both_slices(slice_names: set[str]) -
     unused = set(CATALOG["components"]) - slice_names
     assert unused, "expected the example to leave something out"
 
-    python_slice = (NOTES_APP / "m3/generated_components.py").read_text()
+    python_slice = (NOTES_APP / "components/components.py").read_text()
     contract = (NOTES_APP / IR_GENERATED / "IrContract.kt").read_text()
     for name in unused:
         assert f"class {name}(" not in python_slice, f"{name} leaked into Python"
@@ -128,7 +128,7 @@ def test_the_two_slices_agree(slice_names: set[str]) -> None:
     Nothing structurally prevents this: they are rendered by different functions
     into different languages from the same input. The test is the guarantee.
     """
-    python_slice = (NOTES_APP / "m3/generated_components.py").read_text()
+    python_slice = (NOTES_APP / "components/components.py").read_text()
     # A primary with overloads builds through a private base; its public class
     # is the name the slice holds.
     python_names = set(re.findall(r"^class ([A-Z]\w*)\(", python_slice, re.MULTILINE))
@@ -173,7 +173,7 @@ def test_a_builtin_only_app_still_gets_the_adapters_object(tmp_path: Path) -> No
 
     app = tmp_path / "app"
     app.mkdir()
-    (app / "view.py").write_text("from m3 import Text\n")
+    (app / "view.py").write_text("from components import Text\n")
     stale = (
         app / SLICE / "host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
     )
@@ -191,7 +191,7 @@ def test_a_builtin_only_app_still_gets_the_adapters_object(tmp_path: Path) -> No
 
 
 def test_an_imported_component_counts_even_if_never_used(tmp_path: Path) -> None:
-    """`from m3 import Button` binds an alias, not a Name.
+    """`from components import Button` binds an alias, not a Name.
 
     Scanning names alone finds a component only where it is *used*, so an app
     that imports one to re-export it would silently drop it -- and the build
@@ -201,7 +201,7 @@ def test_an_imported_component_counts_even_if_never_used(tmp_path: Path) -> None
 
     app = tmp_path / "app"
     app.mkdir()
-    (app / "screen.py").write_text("from m3 import Button\n\nX = 1\n")
+    (app / "screen.py").write_text("from components import Button\n\nX = 1\n")
     used = discover(app, load_catalog(ROOT / "schema/catalog.lock.json"))
     assert used == {"Button"}
 
@@ -211,20 +211,20 @@ def test_the_generated_package_does_not_discover_itself(tmp_path: Path) -> None:
     from pycompose_codegen.emit.app_slice import discover, load_catalog
 
     app = tmp_path / "app"
-    (app / "m3").mkdir(parents=True)
-    (app / "m3/generated_components.py").write_text("class Everything: pass\n")
+    (app / "components").mkdir(parents=True)
+    (app / "components/components.py").write_text("class Everything: pass\n")
     (app / "screen.py").write_text("X = 1\n")
     catalog = load_catalog(ROOT / "schema/catalog.lock.json")
     assert discover(app, catalog) == set()
 
 
 def test_usage_as_an_attribute_counts(tmp_path: Path) -> None:
-    """`m3.Button` is an Attribute, not a Name."""
+    """`components.Button` is an Attribute, not a Name."""
     from pycompose_codegen.emit.app_slice import discover, load_catalog
 
     app = tmp_path / "app"
     app.mkdir()
-    (app / "screen.py").write_text("import m3\n\nnode = m3.Spacer\n")
+    (app / "screen.py").write_text("import components\n\nnode = components.Spacer\n")
     assert discover(app, load_catalog(ROOT / "schema/catalog.lock.json")) == {"Spacer"}
 
 
@@ -250,7 +250,7 @@ def test_an_app_on_a_drawing_layer_keeps_the_library_catalog(tmp_path: Path) -> 
 
     app = tmp_path / "app"
     app.mkdir()
-    (app / "catalog.py").write_text("from m3 import Button\n")
+    (app / "catalog.py").write_text("from components import Button\n")
     assert _own_slice(app) == "true"
     (app / "main.py").write_text("import pycompose.blocks as pc\n")
     assert _own_slice(app) == "false"
@@ -382,7 +382,7 @@ def test_an_app_on_the_library_catalog_is_left_alone(tmp_path: Path) -> None:
 
     app = tmp_path / "app"
     app.mkdir()
-    (app / "main.py").write_text("from pycompose.material3 import Button\n")
+    (app / "main.py").write_text("from pycompose.ui import Button\n")
     assert uses_generated_slice(app) is False
 
 
@@ -391,7 +391,7 @@ def test_an_app_that_adopted_the_slice_is_detected(tmp_path: Path) -> None:
 
     app = tmp_path / "app"
     app.mkdir()
-    (app / "main.py").write_text("from m3 import Button\n")
+    (app / "main.py").write_text("from components import Button\n")
     assert uses_generated_slice(app) is True
 
 
@@ -400,9 +400,9 @@ def test_adoption_ignores_the_generated_package_itself(tmp_path: Path) -> None:
     from pycompose_codegen.emit.app_slice import uses_generated_slice
 
     app = tmp_path / "app"
-    (app / "m3").mkdir(parents=True)
-    (app / "m3" / "__init__.py").write_text(
-        "from m3.generated_components import (\n    Button,\n)\n"
+    (app / "components").mkdir(parents=True)
+    (app / "components" / "__init__.py").write_text(
+        "from components.components import (\n    Button,\n)\n"
     )
     assert uses_generated_slice(app) is False
 
@@ -427,17 +427,17 @@ def test_the_two_roots_are_separate(tmp_path: Path) -> None:
         parents=True
     )
     (python_root / "screen" / "view.py").write_text(
-        "from m3 import Button, Spacer, Text\n"
+        "from components import Button, Spacer, Text\n"
     )
 
     assert build_app(python_root, android_root=android_root) == 0
 
-    assert (python_root / "m3" / "generated_components.py").is_file()
+    assert (python_root / "components" / "components.py").is_file()
     assert (android_root / MODELS).is_file()
     # And nothing was written into the Python root's Android side.
     assert not (python_root / SLICE).exists()
     # And nothing was written into the Android root's Python side.
-    assert not (android_root / "m3").exists()
+    assert not (android_root / "components").exists()
 
 
 def test_the_python_root_still_works_alone(tmp_path: Path) -> None:
@@ -446,7 +446,7 @@ def test_the_python_root_still_works_alone(tmp_path: Path) -> None:
 
     root = tmp_path / "app"
     root.mkdir()
-    (root / "view.py").write_text("from m3 import Button\n")
+    (root / "view.py").write_text("from components import Button\n")
     assert build_app(root) == 0
-    assert (root / "m3" / "generated_components.py").is_file()
+    assert (root / "components" / "components.py").is_file()
     assert (root / MODELS).is_file()

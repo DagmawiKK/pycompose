@@ -15,10 +15,10 @@ from pycompose.model.nodes.expressions import Expression
 from pycompose.model.nodes.ids import call_location, call_site
 from pycompose.model.nodes.props import JsonValue, props_from_kwargs, to_snake_case
 from pycompose.model.nodes.values import _Unset, named_value
+from pycompose.ui._generated.values import Color
 from pycompose.ui._rules import validate_component
 from pycompose.ui.intents import Intent, lower_action
 from pycompose.ui.modifiers import Modifier
-from pycompose.values import Color
 
 ActionTarget = str | Intent | type[Intent]
 """What an action prop takes: an intent, an intent class, or a registry action id."""

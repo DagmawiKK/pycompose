@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from m3 import (
+from components import (
     Column,
     Icon,
     IconButton,
@@ -15,7 +15,7 @@ from m3 import (
     TextField,
     VerticalDivider,
 )
-from m3.values import materialIcon
+from components.values import materialIcon
 
 from notes_app.view_models import (
     EditorState,

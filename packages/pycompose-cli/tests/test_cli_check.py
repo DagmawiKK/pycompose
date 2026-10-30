@@ -160,7 +160,8 @@ def test_a_component_the_build_would_generate_checks_clean(tmp_path: Path) -> No
     main.write_text(
         main.read_text()
         .replace(
-            "from m3 import Text", "from m3 import Column, HorizontalDivider, Text"
+            "from components import Text",
+            "from components import Column, HorizontalDivider, Text",
         )
         .replace(
             'return Text(id="greeting", text="Hello PyCompose")',

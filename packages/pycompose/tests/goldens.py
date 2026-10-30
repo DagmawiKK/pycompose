@@ -8,10 +8,19 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pycompose.foundation import Box, Column, LazyColumn, Row, Spacer
-from pycompose.material3 import Button, Scaffold, Text, TextField
 from pycompose.model.nodes import Node
-from pycompose.ui import Modifier
+from pycompose.ui import (
+    Box,
+    Button,
+    Column,
+    LazyColumn,
+    Modifier,
+    Row,
+    Scaffold,
+    Spacer,
+    Text,
+    TextField,
+)
 
 GOLDENS = Path(__file__).resolve().parents[3] / "schema" / "goldens"
 

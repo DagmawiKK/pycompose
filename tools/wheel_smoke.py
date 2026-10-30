@@ -39,9 +39,8 @@ def _add_wheel(wheel_dir: Path) -> Path:
 def _smoke_emit_and_compose() -> None:
     """Prove emit, composable and Component resolution all work from the wheel."""
     from pycompose import composable
-    from pycompose.foundation import Column
-    from pycompose.material3 import Text
     from pycompose.model.snapshot import Snapshot
+    from pycompose.ui import Column, Text
     from pycompose.wire import emit_ir
 
     assert Column(id="screen", children=[Text(id="title", text="Hello")]).type == (

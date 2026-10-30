@@ -90,7 +90,7 @@ def dev_client(*, rebuild: bool = False) -> Path:
     names = sorted(REGISTRY.components)
     (root / "app/catalog.py").write_text(
         '"""Every component, so the dev client carries the whole catalog."""\n\n'
-        "from m3 import (  # noqa: F401\n"
+        "from components import (  # noqa: F401\n"
         + "".join(f"    {name},\n" for name in names)
         + ")\n",
         encoding="utf-8",

@@ -50,5 +50,5 @@ android/build/compose-api/
 /packages/pycompose-cli/src/pycompose_cli/schemas/ir.schema.json
 
 # The example's component slice is build output, as for any app.
-/examples/*/app/m3/
+/examples/*/app/components/
 /examples/*/app/.pycompose/

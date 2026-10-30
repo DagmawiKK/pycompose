@@ -7,10 +7,9 @@ import json
 from pycompose.app import App, Destination, Intent, ViewModel
 from pycompose.app.session import SAVED_LIMIT, NavigationSession
 from pycompose.bridge import BridgeSurface
-from pycompose.foundation import Column
-from pycompose.material3 import Button, Text
 from pycompose.model.snapshot import SnapshotStore
 from pycompose.state import AppState, Loaded
+from pycompose.ui import Button, Column, Text
 
 
 class Draft(AppState):

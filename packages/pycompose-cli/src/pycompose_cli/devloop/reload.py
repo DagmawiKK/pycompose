@@ -36,7 +36,7 @@ class AppReloader:
         if not self.directory.is_dir():
             raise ProjectError("Python source directory is missing", path=directory)
         # A module of a name the app defines, imported from elsewhere (another
-        # app's generated ``m3``), would be found before the app's own: set it
+        # app's generated ``components``), would be found before the app's own: set it
         # aside for the session, as ``fresh_imports`` does, and restore it after.
         names = {
             path.stem

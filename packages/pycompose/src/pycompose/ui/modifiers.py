@@ -16,10 +16,10 @@ from pycompose.model.canonical import FrozenJsonValue, freeze_json, thaw_json
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.values import named_value
+from pycompose.ui._generated.modifiers import GeneratedOperations
+from pycompose.ui._generated.values import Dp, PaddingValues
 from pycompose.ui._rules import validate_modifier
-from pycompose.ui.generated_modifiers import GeneratedOperations
 from pycompose.ui.modifier_operation import _Operation
-from pycompose.values import Dp, PaddingValues
 
 _PADDING_SIDES = ("start", "top", "end", "bottom")
 

@@ -204,7 +204,7 @@ models. Here is a counter, in full:
 ```python
 """A counter: one view model, one intent, one screen."""
 
-from m3 import Button, Column, Modifier, Text
+from components import Button, Column, Modifier, Text
 from pycompose.app import App, Destination, Intent, ViewModel
 from pycompose.model.nodes import Node
 from pycompose.state import AppState
@@ -243,7 +243,7 @@ def screen(state: Counter) -> Node:
 app = App(start=Destination(lambda _container, _route: CounterViewModel(), screen))
 ```
 
-App code imports `m3`; the build generates that package from the components the
+App code imports `components`; the build generates that package from the components the
 source references, so an app ships what it uses and nothing else.
 
 ### Structuring a larger app
@@ -531,7 +531,7 @@ Python moves the analog dial's hand as well as the number.
 
 `ExposedDropdownMenuBox` opens from the child wearing `menu_anchor`, usually a
 field or a text: `Modifier.menu_anchor(ExposedDropdownMenuAnchorType("PrimaryNotEditable"))`,
-with the anchor type from `pycompose.values`.
+with the anchor type from `pycompose.ui`.
 
 `SearchBar` and `DockedSearchBar` take the editable field through the
 `inputField` slot; suggestions and results are ordinary children and compose in

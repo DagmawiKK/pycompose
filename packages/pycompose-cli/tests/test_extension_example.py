@@ -87,7 +87,8 @@ def test_http_page_is_cached_and_restored_offline_through_the_runtime(
     previous = {
         name: module
         for name, module in sys.modules.items()
-        if name in {"settings", "extension_example", "m3"} or name.startswith("m3.")
+        if name in {"settings", "extension_example", "components"}
+        or name.startswith("components.")
     }
     for name in previous:
         sys.modules.pop(name)
@@ -136,8 +137,10 @@ def test_http_page_is_cached_and_restored_offline_through_the_runtime(
     finally:
         runtime.close()
         for name in tuple(sys.modules):
-            if name in {"settings", "extension_example", "m3"} or name.startswith(
-                "m3."
-            ):
+            if name in {
+                "settings",
+                "extension_example",
+                "components",
+            } or name.startswith("components."):
                 sys.modules.pop(name, None)
         sys.modules.update(previous)

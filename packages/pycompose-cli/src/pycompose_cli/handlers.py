@@ -26,7 +26,9 @@ def add_command(args: argparse.Namespace) -> int:
         console.ok(f"{name}: exposed")
     for name, reason in sorted(report.refused.items()):
         console.warn(f"{name}: refused -- {reason}")
-    console.notice("Import exposed components from m3; pycompose build regenerates it.")
+    console.notice(
+        "Import exposed components from components; pycompose build regenerates it."
+    )
     return 0
 
 

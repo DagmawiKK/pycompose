@@ -128,7 +128,7 @@ def test_imported_user_module_edits_reload_before_entrypoint_and_cache_is_fresh(
     helper = project / "app" / "screen_text.py"
     helper.write_text('TITLE = "First"\n')
     (project / "app" / "main.py").write_text(
-        "from screen_text import TITLE\nfrom pycompose.material3 import Text\n"
+        "from screen_text import TITLE\nfrom pycompose.ui import Text\n"
         "from pycompose.app import App, Destination, ViewModel\n"
         "from pycompose.state import AppState\n"
         "class Greeting(AppState):\n    pass\n"
@@ -166,7 +166,7 @@ def test_symlinked_resources_are_rejected_without_exposing_external_bytes(
 
 
 COUNTER = """
-from m3 import Button, Column, Text
+from components import Button, Column, Text
 from pycompose.app import App, Destination, Intent, ViewModel
 from pycompose.state import AppState
 
@@ -219,11 +219,11 @@ def test_another_apps_module_of_the_same_name_never_stands_in(tmp_path: Path) ->
     assert cli(tmp_path, "init", "demo").returncode == 0
     project = tmp_path / "demo"
     (project / "app" / "main.py").write_text(COUNTER)
-    stale = types.ModuleType("m3")  # an earlier app's package, with no Button
-    sys.modules["m3"] = stale
+    stale = types.ModuleType("components")  # an earlier app's package, with no Button
+    sys.modules["components"] = stale
     try:
         with DevServer(load_project(project)) as server:
             assert session(server)["diagnostics"]["lastError"] is None
-        assert sys.modules["m3"] is stale
+        assert sys.modules["components"] is stale
     finally:
-        sys.modules.pop("m3", None)
+        sys.modules.pop("components", None)

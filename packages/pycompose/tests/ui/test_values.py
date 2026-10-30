@@ -7,13 +7,13 @@ import jsonschema
 import pytest
 
 from pycompose.errors import IrValidationError
-from pycompose.material3 import Text
 from pycompose.model.snapshot import Snapshot
+from pycompose.ui import Text
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_color_is_data_and_reaches_canonical_ir() -> None:
-    from pycompose.values import Color
+    from pycompose.ui import Color
 
     color = Color(0xFF336699)
     assert color == {"type": "Color", "color": 4281558681}
@@ -23,7 +23,7 @@ def test_color_is_data_and_reaches_canonical_ir() -> None:
 
 
 def test_tagged_values_require_new_schema() -> None:
-    from pycompose.values import Color
+    from pycompose.ui import Color
 
     tagged = emit_ir(
         Snapshot(root=Text(id="t", text="Hi", color=Color(0xFF000000))), "1.11.0"
@@ -33,7 +33,7 @@ def test_tagged_values_require_new_schema() -> None:
 
 
 def test_a_hex_colour_is_written_as_its_tagged_value() -> None:
-    from pycompose.values import Color
+    from pycompose.ui import Color
 
     assert Text(id="t", text="Hi", color="#000000").props["color"] == Color(0xFF000000)
     assert Text(id="t", text="Hi", color="#80123456").props["color"] == Color(
@@ -44,7 +44,7 @@ def test_a_hex_colour_is_written_as_its_tagged_value() -> None:
 
 
 def test_text_style_keeps_unit_and_null_distinctions() -> None:
-    from pycompose.values import Dp, Em, Sp, TextStyle
+    from pycompose.ui import Dp, Em, Sp, TextStyle
 
     style = TextStyle(font_size=Sp(22), letter_spacing=Em(0.1), font_family=None)
     assert style == {
@@ -63,7 +63,7 @@ def test_text_style_keeps_unit_and_null_distinctions() -> None:
 
 
 def test_recursive_brushes_validate_before_reaching_native_code() -> None:
-    from pycompose.values import Color, Offset, horizontalGradient, linearGradient
+    from pycompose.ui import Color, Offset, horizontalGradient, linearGradient
 
     colors = [Color(0xFFFF0000), Color(0xFF0000FF)]
     brush = horizontalGradient(colors)
@@ -81,10 +81,10 @@ def test_recursive_brushes_validate_before_reaching_native_code() -> None:
 
 
 def test_shapes_and_edges_are_typed_records_not_universal_enums() -> None:
-    from pycompose.ui import Modifier
-    from pycompose.values import (
+    from pycompose.ui import (
         Color,
         Dp,
+        Modifier,
         PaddingValues,
         RoundedCornerShape,
         SolidColor,
@@ -108,7 +108,7 @@ def test_shapes_and_edges_are_typed_records_not_universal_enums() -> None:
 
 
 def test_theme_references_remain_symbolic_in_canonical_ir() -> None:
-    from pycompose.values import ThemeColor, ThemeTypography
+    from pycompose.ui import ThemeColor, ThemeTypography
 
     node = Text(
         id="t",
@@ -123,7 +123,7 @@ def test_theme_references_remain_symbolic_in_canonical_ir() -> None:
 
 
 def test_the_icon_vocabulary_accepts_only_labels_the_pin_carries() -> None:
-    from pycompose.values import materialIcon
+    from pycompose.ui import materialIcon
 
     icon = materialIcon(name="AutoMirrored.Filled.ArrowBack")
     assert icon == {"type": "materialIcon", "name": "AutoMirrored.Filled.ArrowBack"}
@@ -136,8 +136,7 @@ def test_the_icon_vocabulary_accepts_only_labels_the_pin_carries() -> None:
 
 
 def test_component_factories_keep_omission_native() -> None:
-    from pycompose.material3 import Button
-    from pycompose.values import Dp, ThemeColor, buttonColors, buttonElevation
+    from pycompose.ui import Button, Dp, ThemeColor, buttonColors, buttonElevation
 
     assert buttonColors() == {"type": "buttonColors"}
     assert buttonElevation() == {"type": "buttonElevation"}
@@ -156,7 +155,7 @@ def test_component_factories_keep_omission_native() -> None:
 
 @pytest.mark.parametrize("value", [True, -1, 4294967296, 1.5, "#FF000000"])
 def test_color_requires_unsigned_argb_bits(value: object) -> None:
-    from pycompose.values import Color
+    from pycompose.ui import Color
 
     with pytest.raises(IrValidationError):
         Color(value)
@@ -166,15 +165,14 @@ def test_color_requires_unsigned_argb_bits(value: object) -> None:
     "value", [True, float("nan"), float("inf"), 1e39, 1e-50, 10**400]
 )
 def test_float_wrappers_reject_non_native_numbers(value: object) -> None:
-    from pycompose.values import Dp
+    from pycompose.ui import Dp
 
     with pytest.raises(IrValidationError):
         Dp(value)
 
 
 def test_layout_rejects_negative_dimensions_before_rendering() -> None:
-    from pycompose.ui import Modifier
-    from pycompose.values import Dp, PaddingValues
+    from pycompose.ui import Dp, Modifier, PaddingValues
 
     assert Dp(-2)["value"] == -2  # Dp itself can be signed, layout constraints cannot.
     with pytest.raises(IrValidationError):
@@ -186,8 +184,7 @@ def test_layout_rejects_negative_dimensions_before_rendering() -> None:
 def test_generated_json_schema_agrees_on_recursive_and_versioned_values() -> None:
     from pathlib import Path
 
-    from pycompose.ui import Modifier
-    from pycompose.values import Dp, Sp, TextStyle
+    from pycompose.ui import Dp, Modifier, Sp, TextStyle
 
     schema = json.loads(
         (Path(__file__).resolve().parents[4] / "schema/ir.schema.json").read_text()
@@ -209,9 +206,8 @@ def test_generated_json_schema_agrees_on_recursive_and_versioned_values() -> Non
 
 
 def test_nullable_component_props_keep_absent_null_and_value() -> None:
-    from pycompose.material3 import Button
-    from pycompose.material3 import Button as GeneratedButton
-    from pycompose.values import buttonElevation
+    from pycompose.ui import Button, buttonElevation
+    from pycompose.ui import Button as GeneratedButton
 
     for component in (Button, GeneratedButton):
         omitted = component(id="b", text="Save", on_click="increment")
@@ -235,7 +231,7 @@ def test_legacy_dimensions_cannot_bypass_native_float_constraints(
 
 
 def test_float_boundaries_preserve_integer_precision_before_narrowing() -> None:
-    from pycompose.values import Dp
+    from pycompose.ui import Dp
 
     with pytest.raises(IrValidationError):
         Dp(340282346638528859811704183484516925441)
@@ -244,8 +240,7 @@ def test_float_boundaries_preserve_integer_precision_before_narrowing() -> None:
 
 def test_enum_border_and_annotated_families_validate_before_native_code() -> None:
     from pycompose.model.nodes.values import validate_value
-    from pycompose.values import (
-        DEFINITIONS,
+    from pycompose.ui import (
         AnnotatedString,
         BorderStroke,
         Color,
@@ -253,6 +248,7 @@ def test_enum_border_and_annotated_families_validate_before_native_code() -> Non
         SolidColor,
         ToggleableState,
     )
+    from pycompose.ui._generated.values import DEFINITIONS
 
     assert AnnotatedString(text="Hi") == {"type": "AnnotatedString", "text": "Hi"}
     assert ToggleableState(name="On") == {"type": "ToggleableState", "name": "On"}

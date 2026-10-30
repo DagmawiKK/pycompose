@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from m3 import (
+from components import (
     Card,
     Column,
     FloatingActionButton,
@@ -21,7 +21,7 @@ from m3 import (
     Text,
     TextButton,
 )
-from m3.values import Dp, PaddingValues, ThemeColor, materialIcon
+from components.values import Dp, PaddingValues, ThemeColor, materialIcon
 
 from notes_app.domain.models import Note
 from notes_app.domain.usecases import carrying_text, count_line, filled_share

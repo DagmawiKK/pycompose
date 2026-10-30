@@ -5,21 +5,22 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
 
-from pycompose import foundation, material3
+from pycompose import ui
 from pycompose.blocks.components import Component, label
 from pycompose.blocks.intents import Expand, SetFlag, SetNumber, SetText
 from pycompose.errors import StateError
-from pycompose.foundation import Row
-from pycompose.material3 import (
+from pycompose.ui import (
     DropdownMenuItem,
     ExposedDropdownMenu,
+    ExposedDropdownMenuAnchorType,
     ExposedDropdownMenuBox,
+    Modifier,
     OutlinedTextField,
     RadioButton,
+    Range,
+    Row,
     Text,
 )
-from pycompose.ui import Modifier
-from pycompose.values import ExposedDropdownMenuAnchorType, Range
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
@@ -92,12 +93,12 @@ class Slider(Component):
             if self.step
             else None
         )
-        return foundation.Column(
+        return ui.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[
                 Text(text=f"{self.label}: {shown}" if self.label else shown),
-                material3.Slider(
+                ui.Slider(
                     value=value,
                     value_range=Range(self.minimum, self.maximum),
                     steps=steps,
@@ -142,7 +143,7 @@ class Checkbox(Component):
             id=self.id,
             vertical_alignment="centerVertically",
             children=[
-                material3.Checkbox(
+                ui.Checkbox(
                     checked=view.value(self),
                     enabled=self.interactive,
                     on_checked_change=SetFlag.bind(component=self.id),
@@ -204,7 +205,7 @@ class Radio(_Choice):
             A native Column.
         """
         chosen = view.value(self)
-        return foundation.Column(
+        return ui.Column(
             id=self.id,
             children=[
                 *([Text(text=self.label)] if self.label else []),

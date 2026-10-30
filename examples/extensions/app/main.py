@@ -8,7 +8,7 @@ import sqlite3
 from typing import Any, Literal
 
 import httpx
-from m3 import Button, Column, Row, Text
+from components import Button, Column, Row, Text
 from settings import BASE_URL, HTTP_OPTIONS
 
 from pycompose.app import App, Destination, Intent, ViewModel, to_thread

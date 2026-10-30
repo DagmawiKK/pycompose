@@ -3,14 +3,14 @@
 import pytest
 
 from pycompose.errors import IrValidationError
-from pycompose.material3 import StatefulSearchBarInputField
 from pycompose.model.snapshot import Snapshot
+from pycompose.ui import StatefulSearchBarInputField
 from pycompose.wire import emit_ir, to_dict, validate_ir
 
 
 def test_text_selection_and_revision_travel_in_one_snapshot() -> None:
     """Python states a complete editing value; no native object crosses the wire."""
-    from pycompose.material3 import Text
+    from pycompose.ui import Text
 
     candidate = emit_ir(
         Snapshot(

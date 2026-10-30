@@ -115,10 +115,10 @@ val stageRuntime by tasks.registering(Sync::class) {
             "pycompose/model/catalog/catalog.lock.json",
         )
         // The app's own slice is the only copy of the catalog's components it
-        // carries; shipping the library's component packages too would put
+        // carries; shipping the library's components module too would put
         // every component back into the APK the slice exists to keep out.
         if (ownSlice) {
-            exclude("pycompose/foundation/**", "pycompose/material3/**")
+            exclude("pycompose/ui/_generated/components.py")
         }
     }
     into(layout.buildDirectory.dir("generated/runtime"))

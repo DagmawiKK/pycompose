@@ -5,7 +5,7 @@ behaviour and draw it with native components. Add routes and more screens as
 the README shows; the notes example is a complete app built this way.
 """
 
-from m3 import Button, Column, Modifier, Text
+from components import Button, Column, Modifier, Text
 from pycompose.app import App, Destination, Intent, ViewModel
 from pycompose.state import AppState
 

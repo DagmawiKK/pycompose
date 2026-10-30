@@ -5,12 +5,10 @@ from readable import readable_reuse, rename
 
 from pycompose import composable
 from pycompose.errors import IrValidationError
-from pycompose.foundation import Column
-from pycompose.material3 import Scaffold, Text
 from pycompose.model.nodes.expansion import ExpansionMemo
 from pycompose.model.nodes.reuse import Reuse
 from pycompose.model.snapshot import Snapshot
-from pycompose.ui import Modifier
+from pycompose.ui import Column, Modifier, Scaffold, Text
 from pycompose.wire import emit_ir, to_dict, validate_ir
 
 
@@ -83,7 +81,7 @@ def test_python_declarations_cannot_cross_the_wire_unexpanded() -> None:
 
 
 def test_named_content_callables_expand_on_the_worker() -> None:
-    from pycompose.material3 import Scaffold
+    from pycompose.ui import Scaffold
 
     calls = []
 

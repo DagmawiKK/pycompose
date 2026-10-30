@@ -4,9 +4,8 @@ import pytest
 from goldens import read_golden
 
 from pycompose.errors import IrValidationError
-from pycompose.foundation import Column, Image
-from pycompose.material3 import Text
 from pycompose.model.snapshot import Snapshot
+from pycompose.ui import Column, Image, Text
 from pycompose.wire import emit_ir, to_json, to_json_bytes, validate_ir
 
 

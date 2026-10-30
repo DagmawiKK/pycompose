@@ -8,12 +8,10 @@ from readable import ids, readable
 from pycompose import composable
 from pycompose.app import Intent
 from pycompose.errors import IrError, IrValidationError
-from pycompose.foundation import Column
-from pycompose.material3 import Button, Text
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.nodes.node import Node
 from pycompose.model.snapshot import Snapshot
-from pycompose.ui import Modifier
+from pycompose.ui import Button, Column, Modifier, Text
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 

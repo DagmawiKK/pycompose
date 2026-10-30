@@ -26,7 +26,7 @@ def test_init_keeps_native_machinery_out_of_the_app_root(tmp_path: Path) -> None
         assert (native / name).is_dir()
     assert (native / "gradlew").stat().st_mode & 0o111
     assert (native / "host/src/main/AndroidManifest.xml").is_file()
-    assert (project / "app/m3/generated_components.py").is_file()
+    assert (project / "app/components/components.py").is_file()
     config = tomllib.loads((project / "pycompose.toml").read_text())
     assert config["toolchain"]["android_dir"] == ".pycompose/android"
 

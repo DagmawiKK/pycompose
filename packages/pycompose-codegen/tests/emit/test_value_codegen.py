@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[4]
 def test_a_range_refuses_reversed_endpoints_before_native_construction() -> None:
     """A reversed range cannot be used by a native slider's value coercion."""
     from pycompose.errors import IrValidationError
-    from pycompose.values import Range
+    from pycompose.ui import Range
 
     with pytest.raises(IrValidationError, match="ordered"):
         Range(1.0, 0.0)
@@ -141,10 +141,10 @@ def test_explicit_value_imports_are_kept_in_app_slice(tmp_path: Path) -> None:
     from pycompose_codegen.emit.main import build_app
 
     (tmp_path / "screen.py").write_text(
-        "from m3 import Text\nfrom m3.values import Size\n"
+        "from components import Text\nfrom components.values import Size\n"
     )
     assert build_app(tmp_path) == 0
-    assert "def Size(" in (tmp_path / "m3/values.py").read_text()
+    assert "def Size(" in (tmp_path / "components/values.py").read_text()
     slice_root = tmp_path / ".pycompose/generated/ir/src/main/kotlin/com/pycompose/ir"
     assert "WireSize" in (slice_root / "generated" / "ValueModels.kt").read_text()
 

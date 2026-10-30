@@ -17,8 +17,8 @@ from pycompose.bridge.session import RuntimeSession
 APP = """
 import asyncio
 from pycompose.app import App, Destination, Intent, ViewModel
-from pycompose.foundation import Column
-from pycompose.material3 import Button, Text
+from pycompose.ui import Column
+from pycompose.ui import Button, Text
 from pycompose.state import AppState
 
 

@@ -5,9 +5,9 @@ from __future__ import annotations
 import pytest
 from test_state_projection import CATALOG, snapshot
 
-from pycompose.material3 import SwipeToDismissBox, Text
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes.node import Node
+from pycompose.ui import SwipeToDismissBox, Text
 from pycompose.ui._rules import validate_prop
 
 

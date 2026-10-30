@@ -13,9 +13,8 @@ remember to update. An app that stops referencing a component stops shipping it,
 which is the property that makes the catalog safe to grow without anyone
 maintaining a list.
 
-The Python slice lives in the app's own ``m3`` package rather than being imported
-from ``pycompose.foundation`` and ``pycompose.material3``, and that is not a
-naming preference. If the app imported
+The Python slice lives in the app's own ``components`` package rather than being
+imported from ``pycompose.ui``, and that is not a naming preference. If the app imported
 the library's full catalog while its Kotlin carried only a subset, the app could
 emit a node the host has no adapter for -- and it would fail as a blank screen at
 runtime, not as an error at build time. Two slices generated from one filter
@@ -32,8 +31,8 @@ from typing import Any
 
 from pycompose.model.catalog.rules import with_rules
 
-APP_PACKAGE = "m3"
-"""The app-side generated package: the library's two component packages in one."""
+APP_PACKAGE = "components"
+"""The app-side generated package: the components the app draws, and their values."""
 
 LAYERS = ("pycompose.blocks",)
 """Library packages that draw native components for an app: an app importing one
@@ -135,7 +134,7 @@ def _discover_names(app: Path, known: set[str]) -> set[str]:
         except SyntaxError as exc:
             raise AppCodegenError(f"cannot parse {source}: {exc}") from exc
         for node in ast.walk(tree):
-            # `from m3 import Button` binds an alias node, which is never an
+            # `from components import Button` binds an alias node, which is never an
             # ast.Name. Scanning names alone finds a component only where it is
             # *used*, so an app that imports one to re-export it -- or that
             # imports all nine and builds screens in another file -- would
@@ -144,7 +143,7 @@ def _discover_names(app: Path, known: set[str]) -> set[str]:
                 used.add(node.name)
             elif isinstance(node, ast.Name) and node.id in known:
                 used.add(node.id)
-            # `m3.Button` reads as an Attribute whose attr is the component.
+            # `components.Button` reads as an Attribute whose attr is the component.
             elif isinstance(node, ast.Attribute) and node.attr in known:
                 used.add(node.attr)
     return used
@@ -221,8 +220,8 @@ def uses_generated_slice(python_root: Path, package: str = APP_PACKAGE) -> bool:
     """Report whether an app imports its own generated component package.
 
     This is what makes codegen bindable without a config flag. An app that
-    imports ``pycompose.material3`` has adopted the library catalog and needs nothing
-    generated; one that imports ``m3`` has adopted per-app codegen and needs it
+    imports ``pycompose.ui`` has adopted the library catalog and needs nothing
+    generated; one that imports ``components`` has adopted per-app codegen and needs it
     before every build. Detecting the import means an existing project cannot be
     broken by a build step that suddenly starts failing, and an adopter cannot
     silently keep a stale slice because nothing reminded it to regenerate.

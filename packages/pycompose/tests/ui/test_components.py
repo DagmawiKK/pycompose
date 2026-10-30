@@ -11,20 +11,24 @@ from goldens import component_screen, read_golden
 from readable import readable
 
 from pycompose.errors import IrValidationError
-from pycompose.foundation import Box, Column, LazyColumn, Row, Spacer
-from pycompose.material3 import (
+from pycompose.model.catalog.lock import SCHEMA_VERSION
+from pycompose.model.nodes.props import JsonValue
+from pycompose.model.snapshot import Snapshot
+from pycompose.ui import (
+    Box,
     Button,
     Checkbox,
+    Column,
     FilterChip,
+    LazyColumn,
+    Modifier,
+    Row,
     Scaffold,
+    Spacer,
     Text,
     TextButton,
     TextField,
 )
-from pycompose.model.catalog.lock import SCHEMA_VERSION
-from pycompose.model.nodes.props import JsonValue
-from pycompose.model.snapshot import Snapshot
-from pycompose.ui import Modifier
 from pycompose.ui.base import Component
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 

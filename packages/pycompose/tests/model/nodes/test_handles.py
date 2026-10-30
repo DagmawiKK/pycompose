@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from pycompose.foundation import Column
-from pycompose.material3 import Text
 from pycompose.model.nodes.ids import Handles
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.reuse import Reuse
 from pycompose.model.snapshot import Snapshot
+from pycompose.ui import Column, Text
 from pycompose.wire import emit_ir
 from pycompose.wire.patch import PatchOp, ReplaceSubtree, diff_nodes
 

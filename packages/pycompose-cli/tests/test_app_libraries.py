@@ -102,7 +102,9 @@ def test_the_slice_codegen_merges_the_apps_lock_and_registers_it(
     assert sorted(merged["components"]) == ["Markdown", "Text"]
     assert app_components(None) == {}
     source = render_python_components(
-        {**json.loads(json.dumps(REGISTRY.to_mapping())), "components": own}, "m3", own
+        {**json.loads(json.dumps(REGISTRY.to_mapping())), "components": own},
+        "components",
+        own,
     )
     assert "REGISTRY.extend(" in source
     assert "from pycompose.model.catalog.lock import REGISTRY" in source

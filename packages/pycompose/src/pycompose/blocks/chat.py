@@ -10,13 +10,11 @@ import inspect
 from collections.abc import AsyncIterator, Callable, Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
-from pycompose import foundation
+from pycompose import ui
 from pycompose.blocks.app import Blocks
 from pycompose.blocks.components import Button, Component
 from pycompose.blocks.text import Textbox
-from pycompose.material3 import CardWithoutOnClick, Text
-from pycompose.ui import Modifier
-from pycompose.values import ThemeColor, cardColors
+from pycompose.ui import CardWithoutOnClick, Modifier, Text, ThemeColor, cardColors
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
@@ -91,7 +89,7 @@ class Chatbot(Component):
         Returns:
             A native Column.
         """
-        return foundation.Column(
+        return ui.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[
@@ -104,7 +102,7 @@ class Chatbot(Component):
 def _bubble(index: int, message: Message) -> Node:
     """One message, aligned and coloured by who sent it."""
     mine = message["role"] == "user"
-    return foundation.Column(
+    return ui.Column(
         id=f"m{index}",
         modifier=Modifier().fill_max_width().padding(vertical=4),
         horizontal_alignment="end" if mine else "start",

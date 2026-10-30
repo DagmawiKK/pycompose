@@ -10,11 +10,9 @@ from readable import readable_reuse
 
 from pycompose.bridge.handshake import PROTOCOL, offered_components
 from pycompose.errors import BridgeError, IrValidationError
-from pycompose.foundation import Column
-from pycompose.material3 import HorizontalDivider, Text
 from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
 from pycompose.model.snapshot import Snapshot
-from pycompose.ui import Fallback
+from pycompose.ui import Column, Fallback, HorizontalDivider, Text
 from pycompose.wire import emit_ir, validate_ir
 from pycompose.wire.host import Host, hosted
 

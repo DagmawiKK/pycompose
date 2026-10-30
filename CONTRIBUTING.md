@@ -131,7 +131,7 @@ Commits follow [Conventional Commits](https://www.conventionalcommits.org/)
 
 - **Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`,
   `build`, `ci`, `chore`, `revert`.
-- **Scope** names the area, for example `schema`, `m3`, `components`, `cli`,
+- **Scope** names the area, for example `schema`, `ui`, `components`, `cli`,
   `ir`, `bridge`, `state`, `host`, `renderer`.
 - **Subject:** imperative mood, lowercase start, no trailing period, header at
   most 72 characters.
@@ -142,7 +142,7 @@ Examples from the history:
 
 ```
 feat(schema): add segmented buttons and native scopes
-feat(m3): add scoped tooltip components
+feat(ui): add scoped tooltip components
 docs: rewrite README for the current API
 test(schema): verify a held-out compatible binding
 ```

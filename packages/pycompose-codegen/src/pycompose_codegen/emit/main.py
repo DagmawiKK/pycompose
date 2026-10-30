@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from pycompose_codegen.checkout import PACKAGE, ROOT
+from pycompose_codegen.emit.literals import GENERATED_NOTICE
 from pycompose_codegen.emit.rules import (
     PACKAGED_CATALOG,
     SCHEMA_PATH,
@@ -35,6 +36,12 @@ __all__ = [
 
 
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
+GENERATED = PACKAGE / "ui" / "_generated"
+GENERATED_PACKAGE = (
+    f"# {GENERATED_NOTICE}\n"
+    '"""What the catalog generates for ``pycompose.ui``.\n\n'
+    'Components, values and modifier operations."""\n'
+)
 PAYLOADS_PATH = PACKAGE / "bridge" / "generated_payloads.py"
 KOTLIN_ADAPTERS_PATH = (
     ROOT / "android/host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
@@ -151,7 +158,7 @@ def build_app(
 
     package = APP_PACKAGE
     artifacts: dict[Path, str] = {
-        python_root / package / "generated_components.py": render_python_components(
+        python_root / package / "components.py": render_python_components(
             sliced,
             package,
             {
@@ -257,11 +264,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         render_kotlin_models,
         render_kotlin_registry,
     )
-    from pycompose_codegen.emit.emit_modules import (
-        libraries,
-        render_payloads,
-        render_python_exports,
-    )
+    from pycompose_codegen.emit.emit_modules import render_payloads
     from pycompose_codegen.emit.emit_python import render_python_components
     from pycompose_codegen.emit.emit_wire import render_ir_schema
     from pycompose_codegen.emit.holders_kotlin import render_holder_drives
@@ -278,7 +281,10 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         PAYLOADS_PATH: render_payloads(registry),
         KOTLIN_MODELS_PATH: render_kotlin_models(registry),
         KOTLIN_REGISTRY_PATH: render_kotlin_registry(registry),
-        PACKAGE / "values.py": render_values(registry),
+        GENERATED / "__init__.py": GENERATED_PACKAGE,
+        GENERATED / "components.py": render_python_components(registry),
+        GENERATED / "values.py": render_values(registry),
+        GENERATED / "modifiers.py": render_operations(registry),
         PACKAGE / "app/generated_effects.py": render_python_effects(registry),
         KOTLIN_MODELS_PATH.with_name("ValueModels.kt"): render_models(registry),
         KOTLIN_MODELS_PATH.with_name("EffectModels.kt"): render_kotlin_effects(
@@ -286,18 +292,11 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         ),
         ROOT / KOTLIN_VALUES_RELATIVE: render_native(registry),
     }
-    for name, part in libraries(registry).items():
-        package = f"pycompose.{name}"
-        artifacts[PACKAGE / name / "generated_components.py"] = (
-            render_python_components(part, package)
-        )
-        artifacts[PACKAGE / name / "__init__.py"] = render_python_exports(part, package)
     artifacts[KOTLIN_ADAPTERS_PATH] = render_generated_adapters(registry)
     artifacts[ROOT / KOTLIN_DRIVES_RELATIVE] = render_holder_drives(registry)
     artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("GeneratedModifiers.kt")] = (
         render_modifiers(registry)
     )
-    artifacts[PACKAGE / "ui/generated_modifiers.py"] = render_operations(registry)
     return artifacts
 
 

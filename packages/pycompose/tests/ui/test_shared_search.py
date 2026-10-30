@@ -7,13 +7,13 @@ from pycompose.model.catalog.elements import SlotRule
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes.node import Node
 from pycompose.model.snapshot import Snapshot
-from pycompose.values import Dp, RoundedCornerShape
+from pycompose.ui import Dp, RoundedCornerShape
 from pycompose.wire import emit_ir, to_dict, validate_ir
 
 
 def owner(**overrides: object) -> Node:
     """A minimal owner with one collapsed and one expanded input declaration."""
-    from pycompose.material3 import (
+    from pycompose.ui import (
         ExpandedDockedSearchBar,
         SearchBarStateInputField,
         StatefulSearchBar,
@@ -42,7 +42,7 @@ def owner(**overrides: object) -> Node:
 
 def test_owner_emits_distinct_collapsed_and_expanded_input_slots() -> None:
     """One node states the shared editing value; each surface declares only its slot."""
-    from pycompose.material3 import (
+    from pycompose.ui import (
         ExpandedDockedSearchBar,
         SearchBarStateInputField,
         Text,
@@ -95,7 +95,7 @@ def test_owner_emits_distinct_collapsed_and_expanded_input_slots() -> None:
 
 def test_full_screen_surface_is_the_same_owner_contract() -> None:
     """The dialog variant shares the owner's state exactly like the docked one."""
-    from pycompose.material3 import (
+    from pycompose.ui import (
         ExpandedFullScreenSearchBar,
         SearchBarStateInputField,
     )
@@ -219,7 +219,7 @@ def test_the_owner_requires_the_whole_editing_projection() -> None:
 
 def test_expansion_is_optional_so_native_gestures_can_own_it() -> None:
     """An owner that states no expansion still shares editing and reports gestures."""
-    from pycompose.material3 import SearchBarStateInputField, StatefulSearchBar
+    from pycompose.ui import SearchBarStateInputField, StatefulSearchBar
 
     candidate = emit_ir(
         Snapshot(
@@ -246,7 +246,7 @@ def test_expansion_is_optional_so_native_gestures_can_own_it() -> None:
 
 def test_a_state_field_without_an_owner_still_emits_for_host_diagnosis() -> None:
     """The wire is structural; the host reports a missing owner instead of guessing."""
-    from pycompose.material3 import SearchBarStateInputField
+    from pycompose.ui import SearchBarStateInputField
 
     candidate = emit_ir(
         Snapshot(root=SearchBarStateInputField(id="orphan", on_search="submit")),

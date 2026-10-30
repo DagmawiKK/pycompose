@@ -12,7 +12,7 @@ from pycompose.blocks.containers import Column
 from pycompose.blocks.layout import Element, detached
 from pycompose.blocks.screen import View
 from pycompose.blocks.view_model import BlocksState, BlocksViewModel
-from pycompose.foundation import Column as NativeColumn
+from pycompose.ui import Column as NativeColumn
 from pycompose.ui import Modifier
 
 if TYPE_CHECKING:

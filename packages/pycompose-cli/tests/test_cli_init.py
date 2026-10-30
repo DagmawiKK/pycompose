@@ -76,7 +76,7 @@ def test_init_creates_config_python_entrypoint_and_resource_directories(
     assert (project / NATIVE / "gradle/wrapper/gradle-wrapper.jar").is_file()
     # init generates the sample's slice once, so the project works before its
     # first build and never ships the full catalog (ADR-0014).
-    assert (project / "app" / "m3" / "generated_components.py").is_file()
+    assert (project / "app" / "components" / "components.py").is_file()
     slice_root = ".pycompose/generated/ir/src/main/kotlin/com/pycompose/ir/generated"
     assert (project / NATIVE / slice_root / "UiModels.kt").is_file()
 

@@ -9,10 +9,10 @@ from typing import Any, Literal, cast
 import pytest
 
 from pycompose.errors import StateError
-from pycompose.material3 import Text
 from pycompose.model.canonical import freeze_json, thaw_json
 from pycompose.model.snapshot import Snapshot, SnapshotStore
 from pycompose.state import AppState
+from pycompose.ui import Text
 
 
 class Filter(AppState):

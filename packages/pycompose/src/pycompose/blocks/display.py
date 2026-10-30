@@ -6,16 +6,20 @@ import json
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
-from pycompose import foundation
+from pycompose import ui
 from pycompose.blocks.components import Component
 from pycompose.blocks.intents import Pick
-from pycompose.foundation import FlowRow
-from pycompose.material3 import LinearProgressIndicator, OutlinedButton, Text
 from pycompose.model.nodes.resources import valid_resource
 from pycompose.storage import media
 from pycompose.storage.paths import paths
-from pycompose.ui import Modifier
-from pycompose.values import ContentScale
+from pycompose.ui import (
+    ContentScale,
+    FlowRow,
+    LinearProgressIndicator,
+    Modifier,
+    OutlinedButton,
+    Text,
+)
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
@@ -98,14 +102,14 @@ class Image(Component):
             A native Column.
         """
         reference = view.value(self)
-        return foundation.Column(
+        return ui.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[
                 *([Text(text=self.label)] if self.label else []),
                 *(
                     [
-                        foundation.Image(
+                        ui.Image(
                             resource=reference,
                             content_description=self.label or "Image",
                             # As wide as the screen allows, keeping its proportions.
@@ -183,7 +187,7 @@ class Gallery(Component):
         Returns:
             A native Column.
         """
-        return foundation.Column(
+        return ui.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[
@@ -191,7 +195,7 @@ class Gallery(Component):
                 FlowRow(
                     modifier=Modifier().fill_max_width(),
                     children=[
-                        foundation.Image(
+                        ui.Image(
                             id=f"p{i}",
                             resource=reference,
                             content_description=f"{self.label or 'Picture'} {i + 1}",
@@ -271,14 +275,14 @@ class Label(Component):
             A native Column.
         """
         ranked = view.value(self)
-        return foundation.Column(
+        return ui.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[
                 *([Text(text=self.label)] if self.label else []),
                 *([Text(text=ranked[0][0], style="headlineMedium")] if ranked else []),
                 *(
-                    foundation.Column(
+                    ui.Column(
                         id=f"l{i}",
                         modifier=Modifier().fill_max_width().padding(vertical=4),
                         children=[
@@ -328,7 +332,7 @@ class JSON(Component):
         Returns:
             A native Column.
         """
-        return foundation.Column(
+        return ui.Column(
             id=self.id,
             modifier=Modifier().fill_max_width(),
             children=[

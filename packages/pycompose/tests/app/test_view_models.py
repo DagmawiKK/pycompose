@@ -14,16 +14,16 @@ import pytest
 from pycompose.app import Intent, StateFlow
 from pycompose.bridge import runtime
 from pycompose.errors import StateError
-from pycompose.material3 import Button
 from pycompose.model.snapshot import Snapshot
 from pycompose.runtime import signal
+from pycompose.ui import Button
 from pycompose.wire import emit_ir, to_json
 
 APP = """
 import asyncio
 from pycompose.app import App, Destination, Intent, Toast, ViewModel
-from pycompose.foundation import Column
-from pycompose.material3 import Button, Text
+from pycompose.ui import Column
+from pycompose.ui import Button, Text
 from pycompose.state import AppState, Loaded
 
 
