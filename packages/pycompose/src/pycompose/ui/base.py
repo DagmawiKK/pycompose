@@ -7,7 +7,7 @@ from difflib import get_close_matches
 from types import CodeType
 from typing import Any, ClassVar, NoReturn, TypeAlias, cast
 
-from pycompose.app.intents import Intent
+from pycompose.app.intents import Intent, lower_action
 from pycompose.contract.catalog import REGISTRY
 from pycompose.core import Node, Props
 from pycompose.core.expressions import Expression
@@ -152,7 +152,7 @@ class Component(Node):
                 )
         # A control may take an app action itself; it binds nothing of its own.
         # An expression is wire data from here on; emission resolves its keys.
-        values = {name: _lower_action(value) for name, value in props.items()}
+        values = {name: lower_action(value) for name, value in props.items()}
         wire = cast(
             "dict[str, JsonValue | FrozenJsonValue]", props_from_kwargs(**values)
         )
@@ -209,24 +209,3 @@ def _refuse(error: IrValidationError, node: Component) -> NoReturn:
         if close:
             context["did_you_mean"] = close[0]
     raise IrValidationError(error.args[0] if error.args else "", **context) from None
-
-
-def _lower_action(value: object) -> JsonValue:
-    """Turn an action a control takes into wire data or a binding.
-
-    An intent class binds nothing of its own; an intent instance binds every
-    field. An expression is wire data from here on.
-
-    Args:
-        value: A prop value as the app passed it.
-
-    Returns:
-        The value the node holds.
-    """
-    if isinstance(value, Intent):
-        return value.to_binding()
-    if isinstance(value, type) and issubclass(value, Intent):
-        return value.bind()
-    if isinstance(value, Expression):
-        return cast("JsonValue", value.to_wire())
-    return cast("JsonValue", value)

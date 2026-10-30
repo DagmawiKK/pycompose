@@ -26,12 +26,13 @@ from typing import (
 
 from pycompose.contract.registry_types import PropDef
 from pycompose.core.action_binding import ActionBinding, BindingSpec
-from pycompose.core.props import to_camel_case
+from pycompose.core.expressions import Expression
+from pycompose.core.props import JsonValue, to_camel_case
 from pycompose.errors import StateError
 from pycompose.state.app_state import AppState
 from pycompose.utils.json_canonical import canonical_json
 
-__all__ = ["Intent", "intent_class"]
+__all__ = ["Intent", "intent_class", "lower_action"]
 
 _INTENTS: dict[str, type[Intent]] = {}
 _UNSAFE = re.compile(r"[^A-Za-z0-9_.-]")
@@ -170,3 +171,24 @@ def intent_class(name: str) -> type[Intent] | None:
         The class, or None when no defined intent has that name.
     """
     return _INTENTS.get(name)
+
+
+def lower_action(value: object) -> JsonValue:
+    """Turn an action a control takes into wire data or a binding.
+
+    An intent class binds nothing of its own; an intent instance binds every
+    field. An expression is wire data from here on.
+
+    Args:
+        value: A prop value as the app passed it.
+
+    Returns:
+        The value the node holds.
+    """
+    if isinstance(value, Intent):
+        return value.to_binding()
+    if isinstance(value, type) and issubclass(value, Intent):
+        return value.bind()
+    if isinstance(value, Expression):
+        return cast("JsonValue", value.to_wire())
+    return cast("JsonValue", value)

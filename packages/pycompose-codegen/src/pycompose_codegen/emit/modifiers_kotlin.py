@@ -107,6 +107,26 @@ def _decoded(spec: dict[str, Any], argument: dict[str, Any]) -> str:
     return decoded + NARROW.get(native, "")
 
 
+def _passed(prop: str, spec: dict[str, Any], argument: dict[str, Any]) -> str:
+    """One argument of a direct call: the prop's value, or its default when absent."""
+    present = f'op.getValue("{prop}").let {{ value -> {_decoded(spec, argument)} }}'
+    if spec.get("required"):
+        return present
+    if "default" not in spec:
+        die(f"modifier prop {prop!r} has no default to fall back on")
+    default = spec["default"]
+    native = argument["type"].rsplit(".", 1)[-1]
+    if isinstance(default, bool):
+        fallback = "true" if default else "false"
+    elif native == "Float":
+        fallback = f"{float(default)}f"
+    elif native == "Double":
+        fallback = repr(float(default))
+    else:
+        fallback = repr(default)
+    return f'if ("{prop}" in op) {present} else {fallback}'
+
+
 def _direct(name: str, modifier: dict[str, Any]) -> list[str]:
     """The branch of one operation that calls its resolved function."""
     call = modifier["call"]
@@ -114,9 +134,7 @@ def _direct(name: str, modifier: dict[str, Any]) -> list[str]:
     if "block" in call:
         return _block(name, modifier, function)
     arguments = [
-        f"{argument['parameter']} = "
-        f'op.getValue("{prop}").let {{ value -> '
-        f"{_decoded(modifier['props'][prop], argument)} }}"
+        f"{argument['parameter']} = {_passed(prop, modifier['props'][prop], argument)}"
         for prop, argument in call["arguments"].items()
     ]
     bare = call.get("bare", {})

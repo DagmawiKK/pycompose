@@ -10681,6 +10681,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -10692,7 +10693,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -10782,6 +10782,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -10791,8 +10792,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -11856,6 +11856,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -11867,7 +11868,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -11896,6 +11896,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -11905,8 +11906,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -12680,6 +12680,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -12691,7 +12692,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -12720,6 +12720,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -12729,8 +12730,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -13605,6 +13605,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -13616,7 +13617,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -13652,6 +13652,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -13661,8 +13662,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -14634,6 +14634,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -14645,7 +14646,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -14681,6 +14681,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -14690,8 +14691,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -15663,6 +15663,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -15674,7 +15675,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -15710,6 +15710,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -15719,8 +15720,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -16692,6 +16692,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -16703,7 +16704,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -16739,6 +16739,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -16748,8 +16749,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -17721,6 +17721,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -17732,7 +17733,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -17768,6 +17768,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -17777,8 +17778,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -18750,6 +18750,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -18761,7 +18762,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -18797,6 +18797,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -18806,8 +18807,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -19779,6 +19779,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -19790,7 +19791,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -19826,6 +19826,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -19835,8 +19836,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -20915,6 +20915,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -20926,7 +20927,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -20962,6 +20962,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -20971,8 +20972,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -22100,6 +22100,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -22111,7 +22112,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -22147,6 +22147,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -22156,8 +22157,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -22992,6 +22992,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -23003,7 +23004,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -23032,6 +23032,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -23041,8 +23042,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -24067,6 +24067,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -24078,7 +24079,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -24114,6 +24114,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -24123,8 +24124,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -25372,6 +25372,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -25383,7 +25384,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -25419,6 +25419,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -25428,8 +25429,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -27139,6 +27139,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -27150,7 +27151,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -27186,6 +27186,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -27195,8 +27196,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -32962,6 +32962,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -32973,7 +32974,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -33063,6 +33063,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -33072,8 +33073,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -39073,6 +39073,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -39084,7 +39085,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -39113,6 +39113,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -39122,8 +39123,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -39911,6 +39911,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -39922,7 +39923,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -39951,6 +39951,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -39960,8 +39961,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -40807,6 +40807,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -40818,7 +40819,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -40847,6 +40847,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -40856,8 +40857,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -41703,6 +41703,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -41714,7 +41715,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -41743,6 +41743,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -41752,8 +41753,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -42599,6 +42599,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -42610,7 +42611,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -42639,6 +42639,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -42648,8 +42649,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -43495,6 +43495,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -43506,7 +43507,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -43535,6 +43535,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -43544,8 +43545,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -44391,6 +44391,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -44402,7 +44403,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -44431,6 +44431,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -44440,8 +44441,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },
@@ -45287,6 +45287,7 @@
           "additionalProperties": false,
           "properties": {
             "enabled": {
+              "default": true,
               "type": "boolean"
             },
             "onClick": {
@@ -45298,7 +45299,6 @@
           },
           "required": [
             "type",
-            "enabled",
             "onClick"
           ],
           "type": "object"
@@ -45327,6 +45327,7 @@
           "additionalProperties": false,
           "properties": {
             "fraction": {
+              "default": 1,
               "maximum": 1,
               "minimum": 0,
               "type": "number"
@@ -45336,8 +45337,7 @@
             }
           },
           "required": [
-            "type",
-            "fraction"
+            "type"
           ],
           "type": "object"
         },

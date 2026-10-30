@@ -47,7 +47,7 @@ object GeneratedModifiers {
             "clickable" ->
                 Modifier.clickable(
                     onClick = op.getValue("onClick").let { value -> { dispatch(value.jsonPrimitive.content) } },
-                    enabled = op.getValue("enabled").let { value -> value.jsonPrimitive.boolean },
+                    enabled = if ("enabled" in op) op.getValue("enabled").let { value -> value.jsonPrimitive.boolean } else true,
                 )
             "clip" ->
                 Modifier.clip(
@@ -55,7 +55,7 @@ object GeneratedModifiers {
                 )
             "fillMaxWidth" ->
                 Modifier.fillMaxWidth(
-                    fraction = op.getValue("fraction").let { value -> value.jsonPrimitive.double.toFloat() },
+                    fraction = if ("fraction" in op) op.getValue("fraction").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
                 )
             "padding" ->
                 if (op.getValue("value") is JsonObject) {

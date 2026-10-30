@@ -258,9 +258,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     from pycompose_codegen.emit.emit_wire import render_ir_schema
     from pycompose_codegen.emit.holders_kotlin import render_holder_drives
     from pycompose_codegen.emit.modifiers_kotlin import render_modifiers
-    from pycompose_codegen.emit.scoped_modifiers_python import (
-        render_scoped_operations,
-    )
+    from pycompose_codegen.emit.modifiers_python import render_operations
     from pycompose_codegen.emit.values import render_python as render_values
     from pycompose_codegen.emit.values_kotlin import (
         render_models,
@@ -287,7 +285,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("GeneratedModifiers.kt")] = (
         render_modifiers(registry)
     )
-    artifacts[PACKAGE / "ui/scoped_modifiers.py"] = render_scoped_operations(registry)
+    artifacts[PACKAGE / "ui/generated_modifiers.py"] = render_operations(registry)
     return artifacts
 
 

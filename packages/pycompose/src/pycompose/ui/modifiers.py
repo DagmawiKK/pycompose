@@ -1,4 +1,9 @@
-"""Immutable ordered modifier nodes validated through the generated registry."""
+"""Immutable ordered modifier nodes validated through the generated registry.
+
+Every operation is generated from the catalog (:mod:`.generated_modifiers`);
+what is written here is the chain itself and the two conveniences a person
+designed: padding by side and a square size.
+"""
 
 from __future__ import annotations
 
@@ -6,11 +11,10 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import cast
 
-from pycompose.app.intents import Intent
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
+from pycompose.ui.generated_modifiers import GeneratedOperations
 from pycompose.ui.modifier_operation import _Operation
-from pycompose.ui.scoped_modifiers import ScopedOperations
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
 from pycompose.values import Dp, PaddingValues
 from pycompose.wire.validator import validate_modifier
@@ -19,11 +23,11 @@ _PADDING_SIDES = ("start", "top", "end", "bottom")
 
 
 @dataclass(frozen=True, slots=True)
-class Modifier(ScopedOperations):
+class Modifier(GeneratedOperations):
     """An immutable sequence: order and repeated operations affect layout.
 
-    Operations a composition scope declares (``weight``, ``menu_anchor``) come
-    from :class:`ScopedOperations`, generated from the pin.
+    Every operation comes from :class:`GeneratedOperations`, generated from the
+    catalog; ``padding`` and ``size`` add their conveniences over it.
 
     Attributes:
         values: Frozen modifier wire object with ordered operations.
@@ -40,6 +44,9 @@ class Modifier(ScopedOperations):
         validate_modifier(frozen)
         object.__setattr__(self, "values", frozen)
 
+    # A slotted dataclass is a new class, so the conveniences below name it in
+    # super(): the zero-argument form would still see the class before slots.
+
     def _append(self, name: str, **props: JsonValue) -> Modifier:
         operations = cast(
             tuple[FrozenJsonValue, ...], self.values.get("operations", ())
@@ -50,7 +57,7 @@ class Modifier(ScopedOperations):
     @_Operation
     def padding(
         self,
-        value: int | float | dict[str, JsonValue] | None = None,
+        value: JsonValue = None,
         *,
         top: int | float | None = None,
         start: int | float | None = None,
@@ -89,9 +96,13 @@ class Modifier(ScopedOperations):
                 raise IrValidationError(
                     "padding takes either a padding dict or side keywords, not both"
                 )
-            return self._append("padding", value=dict(value))
+            return super(Modifier, self).padding(dict(value))
         if value is None and not any(side is not None for side in keywords):
             raise IrValidationError("padding needs a value or at least one side")
+        if value is not None and (
+            isinstance(value, bool) or not isinstance(value, int | float)
+        ):
+            raise IrValidationError("padding takes dp, a padding dict or sides")
         sides: dict[str, int | float] = {}
         if value is not None:
             sides = {name: value for name in _PADDING_SIDES}
@@ -111,29 +122,16 @@ class Modifier(ScopedOperations):
                 sides[name] = amount
         every = all(name in sides for name in _PADDING_SIDES)
         if every and len(set(sides.values())) == 1:
-            return self._append("padding", value=sides["bottom"])
-        return self._append(
-            "padding",
-            value=PaddingValues(**{name: Dp(amount) for name, amount in sides.items()}),
+            return super(Modifier, self).padding(sides["bottom"])
+        return super(Modifier, self).padding(
+            PaddingValues(**{name: Dp(amount) for name, amount in sides.items()})
         )
-
-    @_Operation
-    def fill_max_width(self, fraction: int | float = 1) -> Modifier:
-        """Append fillMaxWidth with an inclusive zero-to-one fraction.
-
-        Args:
-            fraction: Fraction of available width.
-
-        Returns:
-            A new modifier.
-        """
-        return self._append("fillMaxWidth", fraction=fraction)
 
     @_Operation
     def size(
         self,
-        width: int | float | dict[str, JsonValue],
-        height: int | float | dict[str, JsonValue] | None = None,
+        width: JsonValue,
+        height: JsonValue = None,
     ) -> Modifier:
         """Append nonnegative dp size; an omitted height makes a square.
 
@@ -144,112 +142,7 @@ class Modifier(ScopedOperations):
         Returns:
             A new modifier.
         """
-        return self._append(
-            "size", width=width, height=width if height is None else height
-        )
-
-    @_Operation
-    def clip(self, shape: str | dict[str, JsonValue]) -> Modifier:
-        """Append a registry-declared clipping shape.
-
-        Args:
-            shape: rectangle, circle or rounded.
-
-        Returns:
-            A new modifier.
-        """
-        return self._append("clip", shape=shape)
-
-    @_Operation
-    def background(self, brush: dict[str, JsonValue]) -> Modifier:
-        """Paint a decoded native brush behind content.
-
-        Args:
-            brush: Tagged Compose Brush descriptor.
-
-        Returns:
-            A new ordered modifier.
-        """
-        return self._append("background", brush=brush)
-
-    @_Operation
-    def window_insets_padding(self, insets: dict[str, JsonValue]) -> Modifier:
-        """Apply density-aware native insets.
-
-        Args:
-            insets: Tagged WindowInsets descriptor.
-
-        Returns:
-            A new ordered modifier.
-        """
-        return self._append("windowInsetsPadding", insets=insets)
-
-    @_Operation
-    def clickable(
-        self,
-        on_click: str | Intent | type[Intent],
-        *,
-        enabled: bool = True,
-    ) -> Modifier:
-        """Append an action reference, never a Python callback.
-
-        Args:
-            on_click: An intent or intent class, or a registered action id.
-            enabled: Whether clicks are enabled.
-
-        Returns:
-            A new modifier.
-        """
-        target: JsonValue = cast("JsonValue", on_click)
-        if isinstance(on_click, Intent):
-            target = on_click.to_binding()
-        elif isinstance(on_click, type) and issubclass(on_click, Intent):
-            target = on_click.bind()
-        return self._append("clickable", onClick=target, enabled=enabled)
-
-    @_Operation
-    def semantics(
-        self,
-        *,
-        content_description: str | None = None,
-        state_description: str | None = None,
-        role: str | None = None,
-        heading: bool | None = None,
-        live_region: str | None = None,
-        test_tag: str | None = None,
-        traversal_index: int | float | None = None,
-    ) -> Modifier:
-        """Describe the element to accessibility services, as Compose's ``semantics``.
-
-        A control with no text of its own (a Checkbox, a Switch, a Slider)
-        takes its label here.
-
-        Args:
-            content_description: What a screen reader announces.
-            state_description: The state announced instead of the default one.
-            role: button, checkbox, switch, radioButton, tab, image,
-                dropdownList, valuePicker or carousel.
-            heading: Whether the element heads a section.
-            live_region: polite or assertive, to announce changes.
-            test_tag: A tag tests find the element by.
-            traversal_index: Order among siblings for accessibility traversal.
-
-        Returns:
-            A new modifier.
-        """
-        given = {
-            "contentDescription": content_description,
-            "stateDescription": state_description,
-            "role": role,
-            "heading": heading,
-            "liveRegion": live_region,
-            "testTag": test_tag,
-            "traversalIndex": traversal_index,
-        }
-        return self._append(
-            "semantics",
-            **{key: value for key, value in given.items() if value is not None},
-        )
+        return super(Modifier, self).size(width, width if height is None else height)
 
     def to_wire(self) -> dict[str, JsonValue]:
         """Return a detached modifier wire object.

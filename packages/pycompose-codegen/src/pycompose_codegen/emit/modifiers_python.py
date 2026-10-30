@@ -1,8 +1,9 @@
-"""Python ``Modifier`` operations for the modifiers composition scopes declare.
+"""Python ``Modifier`` operations for every modifier the catalog declares.
 
-``Modifier().weight(1)`` appends the wire operation the host applies on the
-receiver of the node's parent lambda; the methods live on a generated base
-class ``Modifier`` inherits, so the hand-written operations stay apart.
+``Modifier().padding(8)`` and ``Modifier().weight(1)`` append the wire
+operation the host applies. The methods live on a generated base class
+``Modifier`` inherits; the few conveniences a person designed (padding by side,
+a square size) override them and call them.
 """
 
 from __future__ import annotations
@@ -12,12 +13,14 @@ from typing import Any
 
 from pycompose_codegen.emit.literals import GENERATED_NOTICE
 from pycompose_codegen.emit.overloads import python_name
+from pycompose_codegen.emit.python_layout import docstring_arg
 
 TYPES = {
     "number": "int | float",
     "integer": "int",
     "boolean": "bool",
     "string": "str",
+    "actionId": "str | Intent | type[Intent]",
 }
 
 
@@ -48,27 +51,38 @@ def _method(name: str, modifier: dict[str, Any]) -> list[str]:
     optional = [p for p in props if p not in required]
     parameters = [_parameter(name, p, props[p]) for p in required]
     if optional:
-        parameters += ["        *,", *(_parameter(name, p, props[p]) for p in optional)]
-    scopes = ", ".join(s["scope"].rsplit(".", 1)[-1] for s in modifier["scoped"])
-    natives = ", ".join(sorted({s["native"] for s in modifier["scoped"]}))
+        # One prop is passed by position, as Compose's own call takes it.
+        keyword = ["        *,"] if len(props) > 1 else []
+        parameters += [*keyword, *(_parameter(name, p, props[p]) for p in optional)]
+    if "scoped" in modifier:
+        scopes = ", ".join(s["scope"].rsplit(".", 1)[-1] for s in modifier["scoped"])
+        natives = ", ".join(sorted({s["native"] for s in modifier["scoped"]}))
+        summary = [
+            f'        """Native ``{natives}``.',
+            "",
+            f"        Worn inside {scopes}.",
+        ]
+    else:
+        summary = [f'        """Native ``{modifier["call"]["function"]}``.']
     lines = [
         "    @_Operation",
         f"    def {python_name(name)}(",
         "        self,",
         *parameters,
         "    ) -> Modifier:",
-        f'        """Native ``{natives}``.',
-        "",
-        f"        Worn inside {scopes}.",
+        *summary,
         "",
     ]
     if props:
         lines.append("        Args:")
-        lines += [
-            f"            {python_name(p)}: Native {p}"
-            + ("." if p in required else ", omitted for its native default.")
-            for p in props
-        ]
+        for p in props:
+            if p in required:
+                note = "."
+            elif "default" in props[p]:
+                note = f"; {json.dumps(props[p]['default'])} unless given."
+            else:
+                note = ", omitted for its native default."
+            lines += docstring_arg(python_name(p), f"Native {p}{note}")
         lines.append("")
     lines += ["        Returns:", "            A new modifier.", '        """']
     if not props:
@@ -76,7 +90,12 @@ def _method(name: str, modifier: dict[str, Any]) -> list[str]:
     return [
         *lines,
         "        given: dict[str, JsonValue] = {",
-        *(f'            "{p}": {python_name(p)},' for p in props),
+        *(
+            f'            "{p}": lower_action({python_name(p)}),'
+            if props[p]["type"] == "actionId"
+            else f'            "{p}": {python_name(p)},'
+            for p in props
+        ),
         "        }",
         "        return self._append(",
         f'            "{name}",',
@@ -86,8 +105,8 @@ def _method(name: str, modifier: dict[str, Any]) -> list[str]:
     ]
 
 
-def render_scoped_operations(registry: dict[str, Any]) -> str:
-    """Render ``pycompose/ui/scoped_modifiers.py``.
+def render_operations(registry: dict[str, Any]) -> str:
+    """Render ``pycompose/ui/generated_modifiers.py``.
 
     Args:
         registry: The catalog lock.
@@ -95,14 +114,14 @@ def render_scoped_operations(registry: dict[str, Any]) -> str:
     Returns:
         The Python source.
     """
-    scoped = {
+    operations = {
         name: modifier
         for name, modifier in sorted(registry.get("modifiers", {}).items())
-        if "scoped" in modifier
+        if "scoped" in modifier or "call" in modifier
     }
     aliases: list[str] = []
     methods: list[str] = []
-    for name, modifier in scoped.items():
+    for name, modifier in operations.items():
         for prop, spec in modifier["props"].items():
             if spec["type"] == "enum" and "valueType" not in spec:
                 aliases += [
@@ -115,12 +134,13 @@ def render_scoped_operations(registry: dict[str, Any]) -> str:
         "\n".join(
             [
                 f"# {GENERATED_NOTICE}",
-                '"""Modifier operations composition scopes declare (``weight``)."""',
+                '"""Every modifier operation the catalog declares, as methods."""',
                 "",
                 "from __future__ import annotations",
                 "",
                 "from typing import TYPE_CHECKING, Literal",
                 "",
+                "from pycompose.app.intents import Intent, lower_action",
                 "from pycompose.core.props import JsonValue",
                 "from pycompose.ui.modifier_operation import _Operation",
                 "",
@@ -130,8 +150,8 @@ def render_scoped_operations(registry: dict[str, Any]) -> str:
                 *aliases,
                 "",
                 "",
-                "class ScopedOperations:",
-                '    """Operations worn only inside a parent declaring them."""',
+                "class GeneratedOperations:",
+                '    """Every catalog operation; Modifier inherits them."""',
                 "",
                 "    __slots__ = ()",
                 "",

@@ -42,7 +42,7 @@
       "props": {
         "fraction": {
           "type": "number",
-          "required": true,
+          "default": 1,
           "minimum": 0,
           "maximum": 1
         }
@@ -106,7 +106,7 @@
         },
         "enabled": {
           "type": "boolean",
-          "required": true
+          "default": true
         }
       }
     },

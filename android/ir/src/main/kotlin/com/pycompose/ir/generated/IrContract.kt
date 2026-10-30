@@ -2106,7 +2106,7 @@ object IrContract {
                 "alignment" to PropertyRule("enum", required = true, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
         ),
         "clickable" to mapOf(
-                "enabled" to PropertyRule("boolean", required = true),
+                "enabled" to PropertyRule("boolean", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
         ),
         "clip" to mapOf(
@@ -2122,7 +2122,7 @@ object IrContract {
                 "fraction" to PropertyRule("number", required = false),
         ),
         "fillMaxWidth" to mapOf(
-                "fraction" to PropertyRule("number", required = true, minimum = 0.0, maximum = 1.0),
+                "fraction" to PropertyRule("number", required = false, minimum = 0.0, maximum = 1.0),
         ),
         "maskBorder" to mapOf(
                 "border" to PropertyRule("value", required = true, valueType = "BorderStroke"),
