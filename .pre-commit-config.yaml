@@ -84,6 +84,12 @@ repos:
         language: system
         entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/limits.py; fi; exec python tools/limits.py'
         files: \.(py|kt)$
+      - id: stale-packages
+        name: No source folder without a tracked file
+        language: system
+        entry: bash -c 'if [ -x .venv/bin/python ]; then exec .venv/bin/python tools/stale_packages.py; fi; exec python tools/stale_packages.py'
+        pass_filenames: false
+        always_run: true
       - id: commitlint
         name: commitlint (semantic commit messages)
         language: system

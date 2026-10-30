@@ -36,9 +36,10 @@ def test_the_gate_fails_a_deliberate_regression(
     from pycompose.bridge import api
 
     before = slo.measure(rounds=3, keystrokes=120)
-    # Every pass waits a further quarter of today's median: past the 20% limit,
-    # and measured the way CI measures it.
-    delay = before["passP50Ms"] / 4 / 1000
+    # Every pass waits a further whole 95th-percentile pass: at least double on
+    # both measures, far past the 20% limit and past any machine's noise, and
+    # measured the way CI measures it.
+    delay = before["passP95Ms"] / 1000
     original = api.BridgeSurface.accept_action
 
     def slower(self: api.BridgeSurface, source: str) -> None:
