@@ -167,17 +167,25 @@ def test_cycles_reject_the_whole_candidate(
         to_dict(snapshot)
 
 
-def test_deep_props_and_metadata_validate_and_encode_without_recursion() -> None:
+def test_deep_values_validate_and_encode_without_recursion() -> None:
     nested: JsonValue = None
     for _ in range(10000):
         nested = {"a": [nested]}
+    # Metadata carries any JSON, so validation walks the whole depth.
     snapshot = IRRoot(
-        root=Node(id="root", type="Spacer", props=Props({"modifier": nested})),
+        root=Node(id="root", type="Spacer"),
         schema_version="1.0.0",
         metadata={"nested": nested},
     )
     assert validate_ir(snapshot).snapshot is snapshot
-    assert to_json_bytes(snapshot).count(b'{"a":[') == 20000
+    assert to_json_bytes(snapshot).count(b'{"a":[') == 10000
+    # A modifier of this shape never validates, but the writer still encodes
+    # whatever it is handed without recursing.
+    unchecked = IRRoot(
+        root=Node(id="root", type="Spacer", props=Props({"modifier": nested})),
+        schema_version="1.0.0",
+    )
+    assert to_json_bytes(unchecked).count(b'{"a":[') == 10000
 
 
 @pytest.mark.parametrize(
@@ -233,7 +241,7 @@ def test_integer_subclasses_use_base_integer_formatting_in_every_container() -> 
         root=Node(
             id="root",
             type="Spacer",
-            props={"modifier": {"padding": count, "items": []}},
+            props={"modifier": {"operations": [{"type": "padding", "value": count}]}},
         ),
         schema_version="1.0.0",
         metadata={"count": count, "items": []},

@@ -10,6 +10,7 @@ from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError, SchemaError
 from pycompose.state import State
 from pycompose.wire import IRRoot, emit_ir, to_json_bytes, validate_ir
+from pycompose.wire.validator import validate_modifier
 
 
 @pytest.mark.parametrize(
@@ -151,3 +152,13 @@ def test_invalid_identity_is_rejected_before_serialization() -> None:
     snapshot = IRRoot(root=Node(id="\ud800", type="Column"), schema_version="1.0.0")
     with pytest.raises(IrValidationError, match="invalid node identity"):
         validate_ir(snapshot)
+
+
+@pytest.mark.parametrize(
+    "modifier",
+    [{}, {"size": 4}, {"operations": [], "extra": 1}],
+)
+def test_a_modifier_is_exactly_its_operations(modifier: dict[str, object]) -> None:
+    """Python writes only ``{"operations": [...]}``; any other shape is refused."""
+    with pytest.raises(IrValidationError, match="exactly its operations"):
+        validate_modifier(modifier)

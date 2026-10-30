@@ -135,8 +135,9 @@ def _valid_value(value: object, prop: PropDef) -> bool:
 def validate_modifier(value: object, *, intents: Intents | None = None) -> None:
     """Validate ordered operations using generated modifier definitions.
 
-    Legacy modifier objects without operations remain JSON-compatible. Invalid
-    JSON propagates IrValidationError from the shared checker.
+    A modifier is an object holding its operations, the only shape Python
+    writes; any other is refused. Invalid JSON propagates IrValidationError
+    from the shared checker.
 
     Args:
         value: Ordinary or frozen modifier object.
@@ -148,8 +149,8 @@ def validate_modifier(value: object, *, intents: Intents | None = None) -> None:
     check_json(value)
     if not isinstance(value, Mapping):
         raise IrValidationError("modifier must be an object")
-    if "operations" not in value:
-        return
+    if set(value) != {"operations"}:
+        raise IrValidationError("modifier must hold exactly its operations")
     operations = value["operations"]
     if not isinstance(operations, list | tuple):
         raise IrValidationError("modifier operations must be an array")
