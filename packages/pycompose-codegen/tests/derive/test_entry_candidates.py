@@ -173,7 +173,7 @@ def test_a_plan_derives_props_slots_children_and_defaults(tmp_path: Path) -> Non
         plan(parameters, optIn=["androidx.compose.material3.ExperimentalMaterial3Api"]),
         found.declarations[0],
         registry,
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     entry = item.entry
     assert entry["package"] == PACKAGE
@@ -212,7 +212,7 @@ def test_a_decision_cannot_backdate_a_candidate(tmp_path: Path) -> None:
             plan({"modifier": modifier()}),
             found.declarations[0],
             catalog(),
-            {"category": "test", "stability": "stable", "since": "1.0.0"},
+            {"category": "test", "since": "1.0.0"},
         )
 
 
@@ -243,7 +243,7 @@ def test_a_constant_family_derives_a_named_enum(tmp_path: Path) -> None:
         plan(parameters),
         found.declarations[0],
         registry,
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     assert item.entry["props"]["contentAlignment"] == {
         "type": "enum",
@@ -291,7 +291,7 @@ def test_unrenderable_defaults_omit_the_parameter_with_reasons(
         plan(parameters),
         found.declarations[0],
         registry,
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     assert set(item.entry["props"]) == {"modifier"}
     assert any(
@@ -367,7 +367,7 @@ def test_identity_selects_one_of_several_call_plans(tmp_path: Path) -> None:
         selected,
         pin,
         catalog(),
-        {"category": "test", "stability": "stable", "identity": chosen},
+        {"category": "test", "identity": chosen},
     )
     assert item.entry["source"] == identity(found.declarations[1])
     assert "identity" not in item.entry
@@ -390,7 +390,6 @@ def test_identity_must_be_a_non_empty_string(tmp_path: Path) -> None:
     found = synthetic(tmp_path)
     malformed: dict[str, Any] = {
         "category": "test",
-        "stability": "stable",
         "identity": 3,
     }
     with pytest.raises(CandidateError, match="identity needs a non-empty string"):
@@ -412,7 +411,7 @@ def test_an_int_scalar_carries_its_native_narrowing(tmp_path: Path) -> None:
         plan(parameters),
         found.declarations[0],
         catalog(),
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     assert item.entry["props"]["count"] == {
         "type": "integer",
@@ -443,7 +442,7 @@ def test_a_dp_default_renders_as_member_access(tmp_path: Path) -> None:
         plan(parameters),
         found.declarations[0],
         catalog(family("Dp", "androidx.compose.ui.unit.Dp")),
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     assert item.entry["props"]["elevation"]["nativeDefault"] == "(0).dp"
 
@@ -480,7 +479,7 @@ def test_stage_is_isolated_and_preserves_unrelated_policy(tmp_path: Path) -> Non
         plan({"modifier": modifier()}),
         found.declarations[0],
         registry,
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     candidate = stage(registry, [item])
     assert json.dumps(registry, sort_keys=True) == before
@@ -499,13 +498,13 @@ def test_the_derivation_is_deterministic(tmp_path: Path) -> None:
         plan({"modifier": modifier()}, source=recorded),
         found.declarations[0],
         registry,
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     second = derive(
         plan({"modifier": modifier()}, source=recorded),
         found.declarations[0],
         registry,
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     assert dumps(first.entry) == dumps(second.entry)
     assert first.entry["source"] == recorded
@@ -526,7 +525,7 @@ def test_a_held_out_compatible_binding_derives_and_verifies() -> None:
         plan_record,
         pin,
         approved,
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     assert verify(stage(approved, [item]), found, [item]) == []
 
@@ -541,7 +540,7 @@ def test_the_approved_pilot_entries_equal_their_derivation() -> None:
     approved = json.loads((ROOT / "schema/catalog.lock.json").read_text())
     found = inventory(DUMP)
     plans = propose_components(found, source_defaults(DUMP), approved)
-    review_input = {"category": "test", "stability": "stable"}
+    review_input = {"category": "test"}
     for name in ("AssistChip", "ElevatedAssistChip", "Badge"):
         plan_record, pin = select(plans, found, name)
         # The compiler's rules run after derivation (interaction reports here).

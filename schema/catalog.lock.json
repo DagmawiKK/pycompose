@@ -3361,7 +3361,7 @@
     "FlowColumn": {
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
-      "stability": "experimental",
+      "stability": "stable",
       "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
@@ -3417,7 +3417,7 @@
     "FlowRow": {
       "package": "androidx.compose.foundation.layout",
       "category": "layout",
-      "stability": "experimental",
+      "stability": "stable",
       "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
@@ -5376,8 +5376,7 @@
             "spaceEvenly",
             "top"
           ],
-          "nativeDefault": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults.verticalArrangement",
-          "since": "1.23.0"
+          "nativeDefault": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults.verticalArrangement"
         },
         "modifier": {
           "type": "modifier"
@@ -5584,8 +5583,7 @@
             "right",
             "start"
           ],
-          "nativeDefault": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.primaryActionContentAlignment",
-          "since": "1.23.0"
+          "nativeDefault": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.primaryActionContentAlignment"
         },
         "modifier": {
           "type": "modifier"
@@ -7778,7 +7776,7 @@
     "SliderValue": {
       "package": "androidx.compose.material3",
       "category": "input",
-      "stability": "experimental",
+      "stability": "stable",
       "since": "1.23.0",
       "source": {
         "artifact": "androidx.compose.material3:material3-android:1.4.0",

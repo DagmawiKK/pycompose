@@ -1,20 +1,17 @@
 {
   "AlertDialog": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     }
   },
   "AnimatedContent": {
     "decision": {
-      "category": "animation",
-      "stability": "stable"
+      "category": "animation"
     }
   },
   "AnimatedVisibility": {
     "decision": {
       "category": "animation",
-      "stability": "stable",
       "identity": "androidx.compose.animation:animation-android androidx.compose.animation.AnimatedVisibilityKt.AnimatedVisibility(ZLandroidx/compose/ui/Modifier;Landroidx/compose/animation/EnterTransition;Landroidx/compose/animation/ExitTransition;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
@@ -25,32 +22,27 @@
   },
   "AssistChip": {
     "decision": {
-      "category": "input",
-      "stability": "stable"
+      "category": "input"
     }
   },
   "Badge": {
     "decision": {
-      "category": "status",
-      "stability": "stable"
+      "category": "status"
     }
   },
   "BadgedBox": {
     "decision": {
-      "category": "status",
-      "stability": "stable"
+      "category": "status"
     }
   },
   "BasicAlertDialog": {
     "decision": {
-      "category": "overlays",
-      "stability": "experimental"
+      "category": "overlays"
     }
   },
   "BottomAppBar": {
     "decision": {
       "category": "navigation",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.AppBarKt.BottomAppBar-1oL4kX8(Landroidx/compose/ui/Modifier;JJFLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
@@ -63,7 +55,6 @@
   "Box": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
       "identity": "androidx.compose.foundation:foundation-layout-android androidx.compose.foundation.layout.BoxKt.Box(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
@@ -94,7 +85,6 @@
   "Button": {
     "decision": {
       "category": "buttons",
-      "stability": "stable",
       "flatten": [
         "content"
       ]
@@ -113,26 +103,22 @@
   "Card": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.CardKt.Card(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "CenterAlignedTopAppBar": {
     "decision": {
-      "category": "app-bars",
-      "stability": "experimental"
+      "category": "app-bars"
     }
   },
   "Checkbox": {
     "decision": {
-      "category": "input",
-      "stability": "stable"
+      "category": "input"
     }
   },
   "CircularProgressIndicator": {
     "decision": {
       "category": "status",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.ProgressIndicatorKt.CircularProgressIndicator-4lLiAd8(Landroidx/compose/ui/Modifier;JFJIFLandroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
@@ -141,8 +127,7 @@
   },
   "Column": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     },
     "patch": {
       "props": {
@@ -188,8 +173,7 @@
   },
   "Crossfade": {
     "decision": {
-      "category": "animation",
-      "stability": "stable"
+      "category": "animation"
     }
   },
   "CustomizedLookaheadAnimationVisualDebugging": {
@@ -198,14 +182,12 @@
   "DismissibleDrawerSheet": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.NavigationDrawerKt.DismissibleDrawerSheet-afqeVBk(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "DismissibleNavigationDrawer": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     },
     "patch": {
       "children": {
@@ -221,58 +203,49 @@
   },
   "DockedSearchBar": {
     "decision": {
-      "category": "input",
-      "stability": "experimental"
+      "category": "input"
     }
   },
   "DropdownMenu": {
     "decision": {
       "category": "status",
-      "stability": "stable",
       "holder": false
     }
   },
   "DropdownMenuItem": {
     "decision": {
-      "category": "status",
-      "stability": "stable"
+      "category": "status"
     }
   },
   "ElevatedAssistChip": {
     "decision": {
-      "category": "input",
-      "stability": "stable"
+      "category": "input"
     }
   },
   "ElevatedButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "ElevatedCard": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.CardKt.ElevatedCard(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "ElevatedFilterChip": {
     "decision": {
-      "category": "input",
-      "stability": "stable"
+      "category": "input"
     }
   },
   "ElevatedSuggestionChip": {
     "decision": {
-      "category": "input",
-      "stability": "stable"
+      "category": "input"
     }
   },
   "ExpandedDockedSearchBar": {
     "decision": {
       "category": "input",
-      "stability": "experimental",
       "holder": false
     },
     "patch": {
@@ -282,7 +255,6 @@
   "ExpandedFullScreenSearchBar": {
     "decision": {
       "category": "input",
-      "stability": "experimental",
       "holder": false
     },
     "patch": {
@@ -292,44 +264,37 @@
   "ExtendedFloatingActionButton": {
     "decision": {
       "category": "buttons",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.FloatingActionButtonKt.ExtendedFloatingActionButton-X-z6DiA(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJLandroidx/compose/material3/FloatingActionButtonElevation;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "FilledIconButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "FilledIconToggleButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "FilledTonalButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "FilledTonalIconButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "FilledTonalIconToggleButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "FilterChip": {
     "decision": {
       "category": "input",
-      "stability": "stable",
       "flatten": [
         "label"
       ]
@@ -337,8 +302,7 @@
   },
   "FloatingActionButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     },
     "patch": {
       "children": {
@@ -348,8 +312,7 @@
   },
   "FlowColumn": {
     "decision": {
-      "category": "layout",
-      "stability": "experimental"
+      "category": "layout"
     },
     "patch": {
       "props": {
@@ -375,8 +338,7 @@
   },
   "FlowRow": {
     "decision": {
-      "category": "layout",
-      "stability": "experimental"
+      "category": "layout"
     },
     "patch": {
       "props": {
@@ -402,14 +364,12 @@
   },
   "HorizontalDivider": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     }
   },
   "Icon": {
     "decision": {
       "category": "media",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.IconKt.Icon-ww6aTOc(Landroidx/compose/ui/graphics/vector/ImageVector;Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
@@ -422,8 +382,7 @@
   },
   "IconButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     },
     "patch": {
       "children": {
@@ -433,14 +392,12 @@
   },
   "IconToggleButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "Image": {
     "decision": {
       "category": "media",
-      "stability": "stable",
       "identity": "androidx.compose.foundation:foundation-android androidx.compose.foundation.ImageKt.Image(Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;FLandroidx/compose/ui/graphics/ColorFilter;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
@@ -474,26 +431,22 @@
   },
   "InputChip": {
     "decision": {
-      "category": "input",
-      "stability": "stable"
+      "category": "input"
     }
   },
   "LargeFloatingActionButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "LargeTopAppBar": {
     "decision": {
-      "category": "app-bars",
-      "stability": "experimental"
+      "category": "app-bars"
     }
   },
   "LazyColumn": {
     "decision": {
-      "category": "lists",
-      "stability": "stable"
+      "category": "lists"
     },
     "patch": {
       "props": {
@@ -516,20 +469,17 @@
   },
   "LazyRow": {
     "decision": {
-      "category": "lists",
-      "stability": "stable"
+      "category": "lists"
     }
   },
   "LeadingIconTab": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     }
   },
   "LinearProgressIndicator": {
     "decision": {
       "category": "status",
-      "stability": "experimental",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.ProgressIndicatorKt.LinearProgressIndicator-GJbTh5U(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;JJIFLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
@@ -545,8 +495,7 @@
   },
   "ListItem": {
     "decision": {
-      "category": "lists",
-      "stability": "stable"
+      "category": "lists"
     }
   },
   "LookaheadAnimationVisualDebugging": {
@@ -554,14 +503,12 @@
   },
   "MediumTopAppBar": {
     "decision": {
-      "category": "app-bars",
-      "stability": "experimental"
+      "category": "app-bars"
     }
   },
   "ModalBottomSheet": {
     "decision": {
-      "category": "layout",
-      "stability": "experimental"
+      "category": "layout"
     },
     "patch": {
       "props": {
@@ -589,14 +536,12 @@
   "ModalDrawerSheet": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.NavigationDrawerKt.ModalDrawerSheet-afqeVBk(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "ModalNavigationDrawer": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     },
     "patch": {
       "children": {
@@ -612,8 +557,7 @@
   },
   "ModalWideNavigationRail": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     },
     "patch": {
       "slots": null
@@ -622,107 +566,90 @@
   "MultiChoiceSegmentedButton": {
     "decision": {
       "category": "buttons",
-      "stability": "stable",
       "nativeName": "SegmentedButton",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SegmentedButtonKt.SegmentedButton(Landroidx/compose/material3/MultiChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V"
     }
   },
   "MultiChoiceSegmentedButtonRow": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "NavigationBar": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     }
   },
   "NavigationBarItem": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     }
   },
   "NavigationDrawerItem": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     }
   },
   "NavigationRail": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     }
   },
   "NavigationRailItem": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     }
   },
   "NavigationSuiteItem": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     }
   },
   "NavigationSuiteScaffold": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     }
   },
   "OutlinedButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "OutlinedCard": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.CardKt.OutlinedCard(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/CardColors;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "OutlinedIconButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "OutlinedIconToggleButton": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "OutlinedTextField": {
     "decision": {
       "category": "input",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.OutlinedTextFieldKt.OutlinedTextField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/text/input/VisualTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/runtime/Composer;IIII)V"
     }
   },
   "PermanentDrawerSheet": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     }
   },
   "PermanentNavigationDrawer": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     }
   },
   "PlainTooltip": {
     "decision": {
-      "category": "overlays",
-      "stability": "experimental"
+      "category": "overlays"
     },
     "patch": {
       "props": {
@@ -755,7 +682,6 @@
   "PrimaryScrollableTabRow": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
       "holder": false
     },
     "patch": {
@@ -768,8 +694,7 @@
   },
   "PrimaryTabRow": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     },
     "patch": {
       "props": {
@@ -781,20 +706,17 @@
   },
   "PullToRefreshBox": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     }
   },
   "RadioButton": {
     "decision": {
-      "category": "input",
-      "stability": "stable"
+      "category": "input"
     }
   },
   "RichTooltip": {
     "decision": {
-      "category": "overlays",
-      "stability": "experimental"
+      "category": "overlays"
     },
     "patch": {
       "props": {
@@ -857,8 +779,7 @@
   },
   "Row": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     },
     "patch": {
       "props": {
@@ -878,8 +799,7 @@
   },
   "Scaffold": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     },
     "patch": {
       "props": {
@@ -895,14 +815,12 @@
   "SearchBar": {
     "decision": {
       "category": "input",
-      "stability": "experimental",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SearchBarKt.SearchBar-Y92LkZI(Lkotlin/jvm/functions/Function2;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "SearchBarInputField": {
     "decision": {
       "category": "input",
-      "stability": "experimental",
       "nativeName": "InputField",
       "hook": true,
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SearchBarDefaults.InputField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
@@ -936,7 +854,6 @@
   "SearchBarStateInputField": {
     "decision": {
       "category": "input",
-      "stability": "experimental",
       "nativeName": "InputField",
       "hook": true,
       "holder": false,
@@ -963,7 +880,6 @@
   "SecondaryScrollableTabRow": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
       "holder": false
     },
     "patch": {
@@ -976,8 +892,7 @@
   },
   "SecondaryTabRow": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     },
     "patch": {
       "props": {
@@ -990,57 +905,48 @@
   "SegmentedButton": {
     "decision": {
       "category": "buttons",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SegmentedButtonKt.SegmentedButton(Landroidx/compose/material3/SingleChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V"
     }
   },
   "ShortNavigationBar": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     }
   },
   "ShortNavigationBarItem": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     }
   },
   "SingleChoiceSegmentedButtonRow": {
     "decision": {
-      "category": "buttons",
-      "stability": "stable"
+      "category": "buttons"
     }
   },
   "Slider": {
     "decision": {
       "category": "input",
-      "stability": "experimental",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SliderKt.Slider(Landroidx/compose/material3/SliderState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SliderColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "Snackbar": {
     "decision": {
-      "category": "status",
-      "stability": "stable"
+      "category": "status"
     }
   },
   "SnackbarHost": {
     "decision": {
-      "category": "status",
-      "stability": "stable"
+      "category": "status"
     }
   },
   "Spacer": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     }
   },
   "StatefulSearchBar": {
     "decision": {
       "category": "input",
-      "stability": "experimental",
       "nativeName": "SearchBar",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SearchBarKt.SearchBar-nbWgWpA(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/runtime/Composer;II)V"
     },
@@ -1055,7 +961,6 @@
   "StatefulSearchBarInputField": {
     "decision": {
       "category": "input",
-      "stability": "experimental",
       "nativeName": "InputField",
       "hook": true,
       "holder": "state",
@@ -1088,40 +993,34 @@
   },
   "SuggestionChip": {
     "decision": {
-      "category": "input",
-      "stability": "stable"
+      "category": "input"
     }
   },
   "Surface": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SurfaceKt.Surface-T9BRK9s(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFFLandroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "SwipeToDismissBox": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     }
   },
   "Switch": {
     "decision": {
-      "category": "input",
-      "stability": "stable"
+      "category": "input"
     }
   },
   "Tab": {
     "decision": {
       "category": "layout",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.TabKt.Tab-wqdebIU(ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;JJLandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V"
     }
   },
   "Text": {
     "decision": {
       "category": "typography",
-      "stability": "stable",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.TextKt.Text-Nvy7gAk(Ljava/lang/String;Landroidx/compose/ui/Modifier;JLandroidx/compose/foundation/text/TextAutoSize;JLandroidx/compose/ui/text/font/FontStyle;Landroidx/compose/ui/text/font/FontWeight;Landroidx/compose/ui/text/font/FontFamily;JLandroidx/compose/ui/text/style/TextDecoration;Landroidx/compose/ui/text/style/TextAlign;JIZIILkotlin/jvm/functions/Function1;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;III)V"
     },
     "patch": {
@@ -1209,7 +1108,6 @@
   "TextButton": {
     "decision": {
       "category": "buttons",
-      "stability": "stable",
       "flatten": [
         "content"
       ]
@@ -1218,7 +1116,6 @@
   "TextField": {
     "decision": {
       "category": "input",
-      "stability": "stable",
       "flatten": [
         "label"
       ],
@@ -1274,8 +1171,7 @@
   },
   "TooltipBox": {
     "decision": {
-      "category": "overlays",
-      "stability": "experimental"
+      "category": "overlays"
     },
     "patch": {
       "children": {
@@ -1291,32 +1187,27 @@
   },
   "TopAppBar": {
     "decision": {
-      "category": "app-bars",
-      "stability": "experimental"
+      "category": "app-bars"
     }
   },
   "TriStateCheckbox": {
     "decision": {
-      "category": "input",
-      "stability": "stable"
+      "category": "input"
     }
   },
   "VerticalDivider": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     }
   },
   "VerticalDragHandle": {
     "decision": {
-      "category": "layout",
-      "stability": "stable"
+      "category": "layout"
     }
   },
   "WideNavigationRail": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     },
     "patch": {
       "slots": null
@@ -1324,8 +1215,7 @@
   },
   "WideNavigationRailItem": {
     "decision": {
-      "category": "navigation",
-      "stability": "stable"
+      "category": "navigation"
     }
   }
 }

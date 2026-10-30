@@ -39,6 +39,7 @@ from pycompose_codegen.derive.policy import (
     merge,
     redundant,
     removals,
+    stability,
     unclaimed,
 )
 from pycompose_codegen.derive.propose import value_families
@@ -65,7 +66,7 @@ ORDER = (
 )
 """Section order in the lock, so a diff reads the same way every time."""
 
-REVIEW = frozenset({"category", "stability", "nativeName", "identity"})
+REVIEW = frozenset({"category", "nativeName", "identity"})
 """Decision keys the pin cannot answer: what the reviewer chose."""
 
 
@@ -140,10 +141,7 @@ def promotable(
             usable or current,
             key=lambda plan: (len(plan["parameters"]), spell(plan["source"])),
         )
-        decision = {
-            "category": domains[primary["source"]["artifact"].split(":")[0]],
-            "stability": "experimental" if primary["optIn"] else "stable",
-        }
+        decision = {"category": domains[primary["source"]["artifact"].split(":")[0]]}
         if len(usable) > 1:
             decision["identity"] = spell(primary["source"])
         decisions[name] = decision
@@ -341,7 +339,7 @@ def compile_components(
             f"{name}.{path}: policy the pin already implies"
             for path in redundant(derived, patch)
         )
-        components[name] = unclaimed(merge(derived, patch))
+        components[name] = stability(unclaimed(merge(derived, patch)))
         report.derived[name] = len(json.dumps(patch))
     decisions = {
         name: rule["decision"]
@@ -449,7 +447,7 @@ def _derives(
     source = entry.get("source")
     if source is None:
         return False
-    decision = {key: entry[key] for key in ("category", "stability")}
+    decision = {"category": entry["category"]}
     if source["name"] != name:
         decision["nativeName"] = source["name"]
     for attempt in (decision, {**decision, "identity": spell(source)}):

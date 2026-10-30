@@ -36,7 +36,7 @@ def test_an_event_payload_gets_a_semantic_name(
         plan(parameters),
         found.declarations[0],
         catalog(),
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     assert item.entry["props"][callback]["payload"] == [
         {"name": field, "type": "boolean"}
@@ -57,7 +57,7 @@ def test_an_unknown_event_payload_keeps_its_planner_name(tmp_path: Path) -> None
         plan(parameters),
         found.declarations[0],
         catalog(),
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     assert item.entry["props"]["onCustom"]["payload"] == [
         {"name": "arg0", "type": "string"}

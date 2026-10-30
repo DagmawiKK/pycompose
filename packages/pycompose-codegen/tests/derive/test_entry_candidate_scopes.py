@@ -21,7 +21,7 @@ def test_a_scope_extension_derives_the_scope_it_composes_in(tmp_path: Path) -> N
         plan({"modifier": modifier()}, receiver=receiver),
         found.declarations[0],
         catalog(),
-        {"category": "test", "stability": "stable"},
+        {"category": "test"},
     )
     assert (
         item.entry["scope"]
@@ -40,7 +40,6 @@ def test_a_schema_alias_keeps_the_native_identity(tmp_path: Path) -> None:
         catalog(),
         {
             "category": "test",
-            "stability": "stable",
             "nativeName": "Widget",
         },
         schema_name="AliasedWidget",
@@ -55,7 +54,6 @@ def test_a_schema_alias_keeps_the_native_identity(tmp_path: Path) -> None:
             catalog(),
             {
                 "category": "test",
-                "stability": "stable",
                 "nativeName": "Other",
             },
             schema_name="AliasedWidget",

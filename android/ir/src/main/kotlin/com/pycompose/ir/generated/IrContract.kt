@@ -1177,7 +1177,7 @@ object IrContract {
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
                 "navigationSuiteType" to PropertyRule("enum", required = true, valueType = "NavigationSuiteType"),
-                "verticalArrangement" to PropertyRule("enum", required = false, since = "1.23.0", valueType = "ArrangementVertical"),
+                "verticalArrangement" to PropertyRule("enum", required = false, valueType = "ArrangementVertical"),
             ),
         ),
         "NavigationSuiteItem" to ComponentRule(
@@ -1216,7 +1216,7 @@ object IrContract {
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
                 "navigationSuiteType" to PropertyRule("enum", required = true, valueType = "NavigationSuiteType"),
-                "primaryActionContentHorizontalAlignment" to PropertyRule("enum", required = false, since = "1.23.0", valueType = "AlignmentHorizontal"),
+                "primaryActionContentHorizontalAlignment" to PropertyRule("enum", required = false, valueType = "AlignmentHorizontal"),
             ),
         ),
         "NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType" to ComponentRule(

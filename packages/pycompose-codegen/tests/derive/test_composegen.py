@@ -455,8 +455,8 @@ def test_a_component_no_policy_names_is_promoted_with_derived_decisions() -> Non
     decisions = promotable(plans, {"Covered"}, closure)
     # Already covered, or deprecated in every overload: never promoted.
     assert sorted(decisions) == ["Opted", "Plain", "Two"]
-    assert decisions["Plain"] == {"category": "foundation", "stability": "stable"}
-    assert decisions["Opted"]["stability"] == "experimental"
+    # Stability is the pin's, read from the opt-ins once the entry derives.
+    assert decisions["Plain"] == {"category": "foundation"}
     # Of several overloads, the one taking the most parameters is the primary.
     assert decisions["Two"]["identity"].endswith("Two(AB)")
 

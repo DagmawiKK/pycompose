@@ -227,17 +227,15 @@ def _check_declared(plan: dict[str, Any], declaration: Declaration) -> None:
 
 def _check_decision(name: str, plan: dict[str, Any], decision: dict[str, Any]) -> None:
     """Refuse a review decision that is incomplete or names another overload."""
-    unknown = sorted(
-        set(decision) - {"category", "stability", "identity", "nativeName"}
-    )
+    unknown = sorted(set(decision) - {"category", "identity", "nativeName"})
     if unknown:
+        # Stability is the pin's: an opt-in marker makes a call experimental.
         raise CandidateError(
-            f"{name}: the decision carries only category, stability, identity "
-            f"and nativeName; got {unknown}"
+            f"{name}: the decision carries only category, identity and "
+            f"nativeName; got {unknown}"
         )
-    for key in ("category", "stability"):
-        if not isinstance(decision.get(key), str) or not decision[key]:
-            raise CandidateError(f"{name}: the decision needs a non-empty {key!r}")
+    if not isinstance(decision.get("category"), str) or not decision["category"]:
+        raise CandidateError(f"{name}: the decision needs a non-empty 'category'")
     if "identity" in decision and (
         not isinstance(decision["identity"], str) or not decision["identity"]
     ):
@@ -284,7 +282,7 @@ def derive(
     entry: dict[str, Any] = {
         "package": declaration.package,
         "category": decision["category"],
-        "stability": decision["stability"],
+        "stability": "experimental" if plan.get("optIn") else "stable",
         # A candidate enters the catalog now; older wire envelopes must not
         # claim a component that did not exist when they were published.
         "since": registry["schemaVersion"],

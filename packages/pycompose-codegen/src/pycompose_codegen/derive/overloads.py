@@ -135,7 +135,6 @@ def _derive(
     parameters = plan["parameters"]
     own = {
         "category": decision["category"],
-        "stability": decision["stability"],
         "nativeName": name,
         "identity": spell(plan["source"]),
     }
@@ -154,8 +153,6 @@ def _derive(
         # A drawer sheet's DrawerState is its drawer's, not one of its own:
         # which holder an overload shares is a decision, not a keyword.
         return "binds a state holder its primary does not"
-    if entry.get("optIn"):
-        entry["stability"] = "experimental"
     required, accepted = keywords(entry)
     primary_required, primary_accepted = keywords(components[name])
     if accepted <= primary_accepted and primary_required <= required:

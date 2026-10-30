@@ -185,3 +185,18 @@ def unclaimed(entry: dict[str, Any]) -> dict[str, Any]:
         **entry,
         "props": {name: spec for name, spec in props.items() if name not in claimed},
     }
+
+
+def stability(entry: dict[str, Any]) -> dict[str, Any]:
+    """The entry with the stability its opt-ins state, once policy applied.
+
+    A component whose call needs an opt-in marker is experimental; read after
+    the patch, so one whose marker policy removed is stable again.
+
+    Args:
+        entry: A component entry, policy applied.
+
+    Returns:
+        The entry, its ``stability`` set.
+    """
+    return {**entry, "stability": "experimental" if entry.get("optIn") else "stable"}
