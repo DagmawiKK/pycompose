@@ -1,8 +1,8 @@
-"""Emit native calls from unapproved overload plans, not component registrations.
+"""Native calls rendered from unapproved overload plans, to prove they compile.
 
-The JSON prop reader and typed native slots are a compiler-test seam. This does
-not define a new IR encoding or make a component available to Python. Catalog
-approval, slot transport/context, and guarded renderer integration remain separate.
+The proposal tests compile these against the pinned Compose artifacts; nothing
+ships them. The JSON prop reader and typed native slots are that test's seam:
+this defines no IR encoding and makes no component available to Python.
 """
 
 from __future__ import annotations
@@ -12,9 +12,10 @@ import json
 import re
 from typing import Any
 
-from pycompose.core.values import FLOAT_MAX, FLOAT_MIN
 from pycompose_codegen.emit.defaults import render_default
 from pycompose_codegen.emit.values import resolver_call
+
+from pycompose.core.values import FLOAT_MAX, FLOAT_MIN
 
 _IDENTIFIER = re.compile(r"[A-Za-z_]\w*")
 _READERS = {

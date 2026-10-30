@@ -20,13 +20,13 @@ def test_generated_native_calls_render_defaults_slots_and_events(
 ):
     from dataclasses import replace
 
+    from native_calls import call_name, render_call
     from pycompose_codegen.derive.classpath_dump import (
         Declaration,
         inventory,
         source_defaults,
     )
     from pycompose_codegen.derive.components import propose_components
-    from pycompose_codegen.emit.native_calls import call_name, render_call
 
     assert native_document["provenance"]["bom"] == "2026.09.00"
     schema = Path("schema/catalog.lock.json")
@@ -431,9 +431,9 @@ def test_unsafe_defaults_and_behavior_are_never_exposed_as_ignored_props(tmp_pat
 
 
 def test_overloads_distinguished_by_a_required_parameter_stay_addressable(tmp_path):
+    from native_calls import render_call
     from pycompose_codegen.derive.classpath_dump import inventory
     from pycompose_codegen.derive.components import propose_components
-    from pycompose_codegen.emit.native_calls import render_call
 
     unit = type_doc("kotlin/Unit")
     records = [
@@ -500,9 +500,9 @@ def test_overloads_a_call_cannot_tell_apart_are_refused(tmp_path):
 
 
 def test_optional_slot_without_null_policy_is_refused(tmp_path):
+    from native_calls import render_call
     from pycompose_codegen.derive.classpath_dump import inventory
     from pycompose_codegen.derive.components import propose_components
-    from pycompose_codegen.emit.native_calls import render_call
 
     unit = type_doc("kotlin/Unit")
     record = declaration(
@@ -540,9 +540,9 @@ def test_optional_slot_without_null_policy_is_refused(tmp_path):
 
 def test_call_generation_refuses_blockers_and_opaque_expressions(tmp_path):
     import pytest
+    from native_calls import render_call
     from pycompose_codegen.derive.classpath_dump import inventory
     from pycompose_codegen.derive.components import propose_components
-    from pycompose_codegen.emit.native_calls import render_call
 
     write_inventory(
         tmp_path,

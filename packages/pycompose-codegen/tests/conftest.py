@@ -1,7 +1,7 @@
 """Fixtures of the catalog pipeline's tests, mirroring ``derive/`` and ``emit/``.
 
-Shared data (``families``) sits here; this directory is on the path so a test
-in either folder imports it by name.
+Shared helpers (``families``, ``native_calls``) sit here; this directory is on
+the path so a test in either folder imports them by name.
 """
 
 from __future__ import annotations
