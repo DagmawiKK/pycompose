@@ -115,9 +115,7 @@ def build_app(
     from pycompose_codegen.emit.emit_modules import render_python_exports
     from pycompose_codegen.emit.emit_python import render_python_components
     from pycompose_codegen.emit.holders_kotlin import render_holder_drives
-    from pycompose_codegen.emit.scoped_modifiers_kotlin import (
-        render_scoped_modifiers,
-    )
+    from pycompose_codegen.emit.modifiers_kotlin import render_modifiers
     from pycompose_codegen.emit.values import render_python
     from pycompose_codegen.emit.values_kotlin import (
         render_models,
@@ -172,8 +170,8 @@ def build_app(
             registry
         ),
         native / _ADAPTERS_RELATIVE: render_generated_adapters(sliced),
-        native / _VALUES_RELATIVE.with_name("ScopedModifiers.kt"): (
-            render_scoped_modifiers(sliced)
+        native / _VALUES_RELATIVE.with_name("GeneratedModifiers.kt"): (
+            render_modifiers(sliced)
         ),
     }
     if kotlin:
@@ -259,9 +257,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     from pycompose_codegen.emit.emit_python import render_python_components
     from pycompose_codegen.emit.emit_wire import render_ir_schema
     from pycompose_codegen.emit.holders_kotlin import render_holder_drives
-    from pycompose_codegen.emit.scoped_modifiers_kotlin import (
-        render_scoped_modifiers,
-    )
+    from pycompose_codegen.emit.modifiers_kotlin import render_modifiers
     from pycompose_codegen.emit.scoped_modifiers_python import (
         render_scoped_operations,
     )
@@ -288,8 +284,8 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         artifacts[PACKAGE / name / "__init__.py"] = render_python_exports(part, package)
     artifacts[KOTLIN_ADAPTERS_PATH] = render_generated_adapters(registry)
     artifacts[ROOT / KOTLIN_DRIVES_RELATIVE] = render_holder_drives(registry)
-    artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("ScopedModifiers.kt")] = (
-        render_scoped_modifiers(registry)
+    artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("GeneratedModifiers.kt")] = (
+        render_modifiers(registry)
     )
     artifacts[PACKAGE / "ui/scoped_modifiers.py"] = render_scoped_operations(registry)
     return artifacts

@@ -4,43 +4,107 @@ package com.pycompose.renderer.generated
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.traversalIndex
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.double
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 
-/** Modifiers a composition scope declares, applied on its receiver. */
-object ScopedModifiers {
-    /** Every scope-declared operation, by wire name. */
-    val names: Set<String> =
-        setOf(
-            "alignByBaseline",
-            "animateEnterExit",
-            "boxAlign",
-            "columnAlign",
-            "fillMaxColumnWidth",
-            "fillMaxRowHeight",
-            "maskBorder",
-            "maskClip",
-            "matchParentSize",
-            "menuAnchor",
-            "renderInSharedTransitionScopeOverlay",
-            "rowAlign",
-            "skipToLookaheadPosition",
-            "skipToLookaheadSize",
-            "tabIndicatorOffset",
-            "weight",
-        )
-
-    /** [type] worn in [scope]; null outside every scope declaring it. */
+/** Every modifier operation the catalog declares, from its wire form. */
+object GeneratedModifiers {
+    /**
+     * [type] applied with [op]'s props; null for an operation worn
+     * outside every scope declaring it. [dispatch] sends a click's id.
+     */
     @Composable
     fun apply(
         type: String,
         scope: Any?,
         op: JsonObject,
+        dispatch: (String) -> Unit,
     ): Modifier? =
         when (type) {
+            "background" ->
+                Modifier.background(
+                    brush = op.getValue("brush").let { value -> com.pycompose.renderer.generated.ValueResolver.brush(value).getOrThrow() },
+                )
+            "clickable" ->
+                Modifier.clickable(
+                    onClick = op.getValue("onClick").let { value -> { dispatch(value.jsonPrimitive.content) } },
+                    enabled = op.getValue("enabled").let { value -> value.jsonPrimitive.boolean },
+                )
+            "clip" ->
+                Modifier.clip(
+                    shape = op.getValue("shape").let { value -> if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() else com.pycompose.renderer.PropResolver.shape(value.jsonPrimitive.content).getOrThrow() },
+                )
+            "fillMaxWidth" ->
+                Modifier.fillMaxWidth(
+                    fraction = op.getValue("fraction").let { value -> value.jsonPrimitive.double.toFloat() },
+                )
+            "padding" ->
+                if (op.getValue("value") is JsonObject) {
+                    Modifier.padding(
+                        paddingValues = op.getValue("value").let { value -> com.pycompose.renderer.generated.ValueResolver.paddingValues(value).getOrThrow() },
+                    )
+                } else {
+                    Modifier.padding(all = com.pycompose.renderer.PropResolver.dp(op.getValue("value").jsonPrimitive.double).getOrThrow())
+                }
+            "semantics" ->
+                Modifier.semantics(properties = {
+                    op["contentDescription"]?.let { contentDescription = it.jsonPrimitive.content }
+                    op["stateDescription"]?.let { stateDescription = it.jsonPrimitive.content }
+                    op["role"]?.let {
+                        role =
+                            when (it.jsonPrimitive.content) {
+                                "button" -> androidx.compose.ui.semantics.Role.Button
+                                "checkbox" -> androidx.compose.ui.semantics.Role.Checkbox
+                                "switch" -> androidx.compose.ui.semantics.Role.Switch
+                                "radioButton" -> androidx.compose.ui.semantics.Role.RadioButton
+                                "tab" -> androidx.compose.ui.semantics.Role.Tab
+                                "image" -> androidx.compose.ui.semantics.Role.Image
+                                "dropdownList" -> androidx.compose.ui.semantics.Role.DropdownList
+                                "valuePicker" -> androidx.compose.ui.semantics.Role.ValuePicker
+                                "carousel" -> androidx.compose.ui.semantics.Role.Carousel
+                                else -> error("unknown role")
+                            }
+                    }
+                    if (op["heading"]?.jsonPrimitive?.booleanOrNull == true) heading()
+                    op["liveRegion"]?.let {
+                        liveRegion =
+                            when (it.jsonPrimitive.content) {
+                                "polite" -> androidx.compose.ui.semantics.LiveRegionMode.Polite
+                                "assertive" -> androidx.compose.ui.semantics.LiveRegionMode.Assertive
+                                else -> error("unknown liveRegion")
+                            }
+                    }
+                    op["testTag"]?.let { testTag = it.jsonPrimitive.content }
+                    op["traversalIndex"]?.let { traversalIndex = it.jsonPrimitive.double.toFloat() }
+                })
+            "size" ->
+                Modifier.size(
+                    width = op.getValue("width").let { value -> if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                    height = op.getValue("height").let { value -> if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                )
+            "windowInsetsPadding" ->
+                Modifier.windowInsetsPadding(
+                    insets = op.getValue("insets").let { value -> com.pycompose.renderer.generated.ValueResolver.windowInsets(value).getOrThrow() },
+                )
             "alignByBaseline" ->
                 when (scope) {
                     is androidx.compose.foundation.layout.RowScope ->

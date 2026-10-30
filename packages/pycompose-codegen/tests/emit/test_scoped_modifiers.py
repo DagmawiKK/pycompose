@@ -7,7 +7,7 @@ import json
 import pytest
 from pycompose_codegen.derive.lock import LOCK
 from pycompose_codegen.derive.scoped_modifiers import _named, modifier_props
-from pycompose_codegen.emit.scoped_modifiers_kotlin import render_scoped_modifiers
+from pycompose_codegen.emit.modifiers_kotlin import render_modifiers
 
 from pycompose.errors import IrValidationError
 from pycompose.ui.modifiers import Modifier
@@ -75,7 +75,7 @@ def test_the_host_call_binds_by_the_native_parameter_and_rejects_other_scopes() 
             }
         }
     }
-    lines = [line.strip() for line in render_scoped_modifiers(registry).splitlines()]
+    lines = [line.strip() for line in render_modifiers(registry).splitlines()]
     call = lines.index("Modifier.menuAnchor(")
     assert lines[call - 2 : call + 2] == [
         f"is {MENU} ->",
