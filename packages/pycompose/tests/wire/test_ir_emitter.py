@@ -10,8 +10,8 @@ import pytest
 from goldens import read_golden
 from readable import ids, readable
 
-from pycompose.core import Node, Props
 from pycompose.errors import IrError, IrValidationError, SchemaError
+from pycompose.model.nodes import Node, Props
 from pycompose.state import State
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 

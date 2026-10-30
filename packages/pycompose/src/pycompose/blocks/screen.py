@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from pycompose.blocks.components import Component
     from pycompose.blocks.layout import Container, Element
     from pycompose.blocks.view_model import BlocksState
-    from pycompose.core.node import Node
+    from pycompose.model.nodes.node import Node
 
 __all__ = ["View"]
 

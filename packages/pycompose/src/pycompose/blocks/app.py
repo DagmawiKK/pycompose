@@ -16,7 +16,7 @@ from pycompose.foundation import Column as NativeColumn
 from pycompose.ui import Modifier
 
 if TYPE_CHECKING:
-    from pycompose.core.node import Node
+    from pycompose.model.nodes.node import Node
 
 __all__ = ["Blocks", "Interface"]
 

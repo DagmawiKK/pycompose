@@ -13,12 +13,12 @@ import json
 import re
 from typing import Any, NoReturn, cast
 
-from pycompose.contract.registry_rules import with_rules
-from pycompose.contract.registry_types import Registry
 from pycompose.errors import PyComposeError
+from pycompose.model.catalog.registry_rules import with_rules
+from pycompose.model.catalog.registry_types import Registry
 from pycompose_codegen.checkout import PACKAGE, ROOT
 
-PACKAGED_CATALOG = PACKAGE / "contract" / "catalog.lock.json"
+PACKAGED_CATALOG = PACKAGE / "model" / "catalog" / "catalog.lock.json"
 """The catalog as shipped in the wheel, for an app with no repo checkout."""
 
 SCHEMA_PATH = ROOT / "schema/catalog.lock.json"

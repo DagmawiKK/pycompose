@@ -12,8 +12,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from pycompose.core.node import Node
-from pycompose.core.traversal import walk_nodes
+from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.traversal import walk_nodes
 from pycompose.ui._rules import _NodeFrame, _Validation
 
 

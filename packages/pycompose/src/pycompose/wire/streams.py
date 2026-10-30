@@ -12,11 +12,11 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from pycompose.contract.registry_vocabulary import STATE_STREAMS
-from pycompose.core.expressions import validate_expression
-from pycompose.core.node import Node, Props
 from pycompose.errors import IrValidationError
-from pycompose.utils.json_canonical import freeze_json, thaw_json
+from pycompose.model.canonical import freeze_json, thaw_json
+from pycompose.model.catalog.registry_vocabulary import STATE_STREAMS
+from pycompose.model.nodes.expressions import validate_expression
+from pycompose.model.nodes.node import Node, Props
 
 
 def is_expression(value: object) -> bool:
@@ -96,7 +96,7 @@ def stream_problems(root: Node) -> list[tuple[Node, str, str]]:
         (node, prop, message) for each stream naming no node, or a node whose
         state family does not expose it.
     """
-    from pycompose.contract.catalog import REGISTRY
+    from pycompose.model.catalog.lock import REGISTRY
 
     nodes: dict[str, Node] = {}
     pending = [root]

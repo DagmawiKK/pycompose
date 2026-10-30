@@ -6,10 +6,10 @@ from collections.abc import Callable, Mapping, Sequence
 from types import MappingProxyType
 from typing import Any
 
-from pycompose.core.expansion import DeferredNode, building_path
-from pycompose.core.node import Node
-from pycompose.core.windows import window_for
 from pycompose.errors import IrValidationError
+from pycompose.model.nodes.expansion import DeferredNode, building_path
+from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.windows import window_for
 
 
 class Windowed(DeferredNode):

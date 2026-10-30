@@ -6,16 +6,16 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from typing import cast
 
-from pycompose.core.effect import Effect
-from pycompose.core.node import Node
-from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError, StateError
-from pycompose.state.app_state import AppState
-from pycompose.utils.json_canonical import (
+from pycompose.model.canonical import (
     FrozenJsonValue,
     check_json,
     freeze_json,
 )
+from pycompose.model.nodes.effect import Effect
+from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.props import JsonValue
+from pycompose.state.app_state import AppState
 
 __all__ = ["State", "Store"]
 

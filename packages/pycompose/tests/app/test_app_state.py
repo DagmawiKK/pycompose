@@ -9,8 +9,8 @@ import pytest
 
 from pycompose.errors import StateError
 from pycompose.material3 import Text
+from pycompose.model.canonical import freeze_json, thaw_json
 from pycompose.state import AppState, State, Store
-from pycompose.utils.json_canonical import freeze_json, thaw_json
 
 
 class Filter(AppState):

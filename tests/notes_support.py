@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 from pycompose.app import to_thread
 from pycompose.app.session import REFRESH, NavigationSession
 from pycompose.bridge import BridgeSurface
-from pycompose.core.props import to_camel_case
+from pycompose.model.nodes.props import to_camel_case
 from pycompose.runtime.loop import LoopThread
 from pycompose.state import Store
 

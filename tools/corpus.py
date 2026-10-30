@@ -28,11 +28,11 @@ if __package__ in {None, ""}:
 from pycompose_cli.commands.validate import validate_file
 
 from pycompose.app import Intent
-from pycompose.contract.catalog import SCHEMA_VERSION
-from pycompose.core.effect import Effect
 from pycompose.errors import PyComposeError
 from pycompose.foundation import Column
 from pycompose.material3 import Button, Scaffold, Switch, Text, TextField
+from pycompose.model.catalog.lock import SCHEMA_VERSION
+from pycompose.model.nodes.effect import Effect
 from pycompose.state import State
 from pycompose.ui import Modifier
 from pycompose.wire import emit_ir, to_json

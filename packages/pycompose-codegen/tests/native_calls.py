@@ -15,7 +15,7 @@ from typing import Any
 from pycompose_codegen.emit.defaults import render_default
 from pycompose_codegen.emit.values import resolver_call
 
-from pycompose.core.values import FLOAT_MAX, FLOAT_MIN
+from pycompose.model.nodes.values import FLOAT_MAX, FLOAT_MIN
 
 _IDENTIFIER = re.compile(r"[A-Za-z_]\w*")
 _READERS = {

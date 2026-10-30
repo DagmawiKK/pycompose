@@ -2,10 +2,10 @@
 
 import pytest
 
-from pycompose.contract.catalog import REGISTRY
-from pycompose.contract.registry_elements import SlotRule
-from pycompose.core.node import Node
 from pycompose.errors import ComponentRegistryError, IrValidationError
+from pycompose.model.catalog.lock import REGISTRY
+from pycompose.model.catalog.registry_elements import SlotRule
+from pycompose.model.nodes.node import Node
 from pycompose.state import State
 from pycompose.values import Dp, RoundedCornerShape
 from pycompose.wire import emit_ir, to_dict, validate_ir

@@ -8,9 +8,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.contract.catalog import SCHEMA_VERSION
-from pycompose.core.ids import Handles
-from pycompose.core.reuse import Reuse
+from pycompose.model.catalog.lock import SCHEMA_VERSION
+from pycompose.model.nodes.ids import Handles
+from pycompose.model.nodes.reuse import Reuse
 from pycompose.state import State
 from pycompose.wire import emit_ir, to_dict
 

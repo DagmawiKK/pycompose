@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from pycompose.core.expansion import DeferredNode
-from pycompose.core.ids import call_site
-from pycompose.core.node import Node
-from pycompose.core.target import render_target
+from pycompose.model.nodes.expansion import DeferredNode
+from pycompose.model.nodes.ids import call_site
+from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.target import render_target
 
 
 class Fallback(DeferredNode):

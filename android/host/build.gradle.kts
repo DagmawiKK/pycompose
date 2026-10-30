@@ -109,7 +109,11 @@ val stageRuntime by tasks.registering(Sync::class) {
         // The runtime package whole -- the command line, the catalog pipeline and
         // the test driver are other distributions, so none of them is in it
         // (ADR-0063) -- and the catalog it validates against, as data.
-        include("pycompose/**/*.py", "pycompose/py.typed", "pycompose/contract/catalog.lock.json")
+        include(
+            "pycompose/**/*.py",
+            "pycompose/py.typed",
+            "pycompose/model/catalog/catalog.lock.json",
+        )
         // The app's own slice is the only copy of the catalog's components it
         // carries; shipping the library's component packages too would put
         // every component back into the APK the slice exists to keep out.

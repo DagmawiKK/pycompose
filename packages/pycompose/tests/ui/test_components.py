@@ -10,8 +10,6 @@ import pytest
 from goldens import component_screen, read_golden
 from readable import readable
 
-from pycompose.contract.catalog import SCHEMA_VERSION
-from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
 from pycompose.foundation import Box, Column, LazyColumn, Row, Spacer
 from pycompose.material3 import (
@@ -23,6 +21,8 @@ from pycompose.material3 import (
     TextButton,
     TextField,
 )
+from pycompose.model.catalog.lock import SCHEMA_VERSION
+from pycompose.model.nodes.props import JsonValue
 from pycompose.state import State
 from pycompose.ui import Modifier
 from pycompose.ui.base import Component

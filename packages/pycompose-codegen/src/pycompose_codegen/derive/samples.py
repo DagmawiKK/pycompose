@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.contract.catalog import SCHEMA_VERSION
+from pycompose.model.catalog.lock import SCHEMA_VERSION
 
 SEARCH_OWNERS: dict[str, tuple[str, str | None]] = {
     "ExpandedDockedSearchBar": ("StatefulSearchBar", "expandedBar"),

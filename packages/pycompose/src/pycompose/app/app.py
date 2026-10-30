@@ -9,8 +9,8 @@ from typing import Any, Generic, TypeVar
 from pycompose.app.navigation import Route
 from pycompose.app.observe import Failure, Span
 from pycompose.app.viewmodel import ViewModel
-from pycompose.core.node import Node
 from pycompose.errors import StateError
+from pycompose.model.nodes.node import Node
 from pycompose.state.app_state import AppState
 
 __all__ = ["App", "Destination", "Home"]

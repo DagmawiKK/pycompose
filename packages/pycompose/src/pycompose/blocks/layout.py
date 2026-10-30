@@ -23,7 +23,7 @@ from pycompose.errors import StateError
 if TYPE_CHECKING:
     from pycompose.blocks.components import Component
     from pycompose.blocks.screen import View
-    from pycompose.core.node import Node
+    from pycompose.model.nodes.node import Node
 
 __all__ = ["Container", "Element", "Event", "detached"]
 

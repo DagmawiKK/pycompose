@@ -11,21 +11,21 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import cast
 
-from pycompose.contract.catalog import (
+from pycompose.errors import IrValidationError
+from pycompose.model.canonical import FrozenJsonValue
+from pycompose.model.catalog.lock import (
     MIN_SCHEMA_VERSION,
     REGISTRY,
     SCHEMA_VERSION,
 )
-from pycompose.contract.version import require_version
-from pycompose.core.expansion import expand_nodes
-from pycompose.core.ids import Handles, IdRegistry, sibling_keys
-from pycompose.core.node import Node
-from pycompose.core.props import JsonValue
-from pycompose.core.reuse import Reuse, SubtreeMemo
-from pycompose.core.traversal import walk_nodes
-from pycompose.errors import IrValidationError
+from pycompose.model.catalog.version import require_version
+from pycompose.model.nodes.expansion import expand_nodes
+from pycompose.model.nodes.ids import Handles, IdRegistry, sibling_keys
+from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.props import JsonValue
+from pycompose.model.nodes.reuse import Reuse, SubtreeMemo
+from pycompose.model.nodes.traversal import walk_nodes
 from pycompose.state.state import State
-from pycompose.utils.json_canonical import FrozenJsonValue
 from pycompose.wire.bindings import lower_props, record
 from pycompose.wire.data import lower_data
 from pycompose.wire.echoes import lower_echoes

@@ -240,7 +240,7 @@ def test_float_boundaries_preserve_integer_precision_before_narrowing() -> None:
 
 
 def test_enum_border_and_annotated_families_validate_before_native_code() -> None:
-    from pycompose.core.values import validate_value
+    from pycompose.model.nodes.values import validate_value
     from pycompose.values import (
         DEFINITIONS,
         AnnotatedString,

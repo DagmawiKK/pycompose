@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "PyCompose catalog shape",
-  "description": "Declarative SHAPE of schema/catalog.lock.json: required keys, types, nesting, and refusal of unknown keys. Vocabulary membership (prop types, stabilities, state kinds, value kinds) is deliberately NOT declared here: those closed sets live once in pycompose/core/registry_vocabulary.py and their codegen homes, and a JSON enum would be a second home the .py-scanning gate cannot see. Deep semantics (semver cross-references, value families, payload wiring) stay in the validator functions. The catalog faces both this schema and the functions, so disagreement between them surfaces as a failing test rather than as drift.",
+  "description": "Declarative SHAPE of schema/catalog.lock.json: required keys, types, nesting, and refusal of unknown keys. Vocabulary membership (prop types, stabilities, state kinds, value kinds) is deliberately NOT declared here: those closed sets live once in pycompose/model/nodes/registry_vocabulary.py and their codegen homes, and a JSON enum would be a second home the .py-scanning gate cannot see. Deep semantics (semver cross-references, value families, payload wiring) stay in the validator functions. The catalog faces both this schema and the functions, so disagreement between them surfaces as a failing test rather than as drift.",
   "type": "object",
   "required": ["schemaVersion", "minLibraryVersion", "components", "actions"],
   "additionalProperties": false,

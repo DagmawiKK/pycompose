@@ -33,12 +33,12 @@ import pyperf
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from pycompose.core import Node, Props
+from pycompose.model.nodes import Node, Props
 
 # CI runs this same script against the base commit too: one from before
 # session reuse has no ``reuse_pipeline`` to measure, and skips that phase.
 try:
-    from pycompose.core.reuse import Reuse
+    from pycompose.model.nodes.reuse import Reuse
 except ImportError:
     Reuse = None  # type: ignore[assignment,misc]
 try:

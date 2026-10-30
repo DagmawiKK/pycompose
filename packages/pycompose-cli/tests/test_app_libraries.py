@@ -13,8 +13,8 @@ from pycompose_codegen.derive.app import ORIGIN, AppLibraryError, layered_closur
 from pycompose_codegen.emit.app_slice import app_components, with_app_lock
 from pycompose_codegen.emit.emit_python import render_python_components
 
-from pycompose.contract.catalog import REGISTRY
-from pycompose.contract.registry_types import ComponentRegistryError, Registry
+from pycompose.model.catalog.lock import REGISTRY
+from pycompose.model.catalog.registry_types import ComponentRegistryError, Registry
 
 DEFAULT = {
     "groups": {"androidx.compose.ui": {"status": "extracted", "domain": "ui"}},
@@ -105,7 +105,7 @@ def test_the_slice_codegen_merges_the_apps_lock_and_registers_it(
         {**json.loads(json.dumps(REGISTRY.to_mapping())), "components": own}, "m3", own
     )
     assert "REGISTRY.extend(" in source
-    assert "from pycompose.contract.catalog import REGISTRY" in source
+    assert "from pycompose.model.catalog.lock import REGISTRY" in source
 
 
 def _project(tmp_path: Path, lock: dict[str, Any] | None = None) -> Project:

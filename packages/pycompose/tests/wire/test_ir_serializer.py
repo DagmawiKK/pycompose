@@ -6,9 +6,9 @@ import json
 
 import pytest
 
-from pycompose.core import ROOT_ID, Node, Props, child_id
 from pycompose.errors import IrValidationError
-from pycompose.utils.json_canonical import canonical_json
+from pycompose.model.canonical import canonical_json
+from pycompose.model.nodes import ROOT_ID, Node, Props, child_id
 from pycompose.wire import serializer
 
 

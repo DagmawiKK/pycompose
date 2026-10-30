@@ -13,9 +13,9 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 
-from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
-from pycompose.contract.version import at_least
-from pycompose.core.target import render_target, rendering_for
+from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
+from pycompose.model.catalog.version import at_least
+from pycompose.model.nodes.target import render_target, rendering_for
 
 __all__ = ["Host", "current_host", "hosted"]
 

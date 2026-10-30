@@ -140,8 +140,8 @@ def test_a_payload_type_the_generator_cannot_map_is_refused() -> None:
 )
 def test_the_registry_refuses_an_impossible_prop(prop: dict, why: str) -> None:
     """A prop that cannot exist is refused at parse time, not at build time."""
-    from pycompose.contract.registry_types import PropDef
     from pycompose.errors import ComponentRegistryError
+    from pycompose.model.catalog.registry_types import PropDef
 
     try:
         PropDef.from_mapping(prop, where="test")
@@ -265,16 +265,16 @@ def test_a_wrapped_component_is_not_reduced_to_resolved_values() -> None:
 
 def test_the_registry_refuses_a_decoder_on_a_type_that_needs_none() -> None:
     """A decode on a plain string is a category error, not a harmless extra."""
-    from pycompose.contract.registry_types import PropDef
     from pycompose.errors import ComponentRegistryError
+    from pycompose.model.catalog.registry_types import PropDef
 
     with pytest.raises(ComponentRegistryError):
         PropDef.from_mapping({"type": "string", "decode": "color"}, where="test")
 
 
 def test_the_registry_refuses_an_unknown_decoder() -> None:
-    from pycompose.contract.registry_types import PropDef
     from pycompose.errors import ComponentRegistryError
+    from pycompose.model.catalog.registry_types import PropDef
 
     with pytest.raises(ComponentRegistryError):
         PropDef.from_mapping({"type": "enum", "decode": "diagonal"}, where="test")

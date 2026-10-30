@@ -13,7 +13,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any
 
-from pycompose.contract.registry_vocabulary import (
+from pycompose.model.catalog.registry_vocabulary import (
     STATE_KINDS,
     TRANSIENT_KINDS,
 )

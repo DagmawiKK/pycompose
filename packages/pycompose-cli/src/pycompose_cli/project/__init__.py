@@ -7,14 +7,14 @@ import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
-from pycompose.contract.catalog import (
+from pycompose.errors import PyComposeError
+from pycompose.model.catalog.lock import (
     MIN_LIBRARY_VERSION,
     MIN_SCHEMA_VERSION,
     REGISTRY,
     SCHEMA_VERSION,
 )
-from pycompose.contract.version import require_version
-from pycompose.errors import PyComposeError
+from pycompose.model.catalog.version import require_version
 from pycompose.version import __version__
 
 

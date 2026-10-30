@@ -29,7 +29,7 @@ def test_cli_generates_typed_composable_stubs_without_executing_source(
     client = tmp_path / "client.py"
     client.write_text(
         "from header import ProfileHeader\n"
-        "from pycompose.core import Node\n"
+        "from pycompose.model.nodes import Node\n"
         'node: Node = ProfileHeader(id="profile", name="Ada")\n'
     )
     result = subprocess.run(
@@ -60,8 +60,8 @@ def test_composable_runtime_signature_exposes_the_instance_key() -> None:
     import inspect
 
     from pycompose import composable
-    from pycompose.core import Node
     from pycompose.material3 import Text
+    from pycompose.model.nodes import Node
 
     @composable
     def greeting(*, text: str = "Hello") -> Node:

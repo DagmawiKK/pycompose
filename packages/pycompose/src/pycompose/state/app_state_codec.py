@@ -26,8 +26,8 @@ from typing import (
     get_type_hints,
 )
 
-from pycompose.core.props import JsonValue, to_camel_case
 from pycompose.errors import StateError
+from pycompose.model.nodes.props import JsonValue, to_camel_case
 from pycompose.state.app_state_types import (
     _PRIMITIVES,
     _is_dataclass,

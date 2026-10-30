@@ -7,11 +7,11 @@ from hypothesis import given
 from hypothesis import strategies as st
 from readable import readable_reuse
 
-from pycompose.core import Node, Props
-from pycompose.core.props import JsonValue
 from pycompose.errors import IrError, IrValidationError
+from pycompose.model.canonical import canonical_json, check_json
+from pycompose.model.nodes import Node, Props
+from pycompose.model.nodes.props import JsonValue
 from pycompose.state import State
-from pycompose.utils.json_canonical import canonical_json, check_json
 from pycompose.wire import IRRoot, emit_ir, to_dict, to_json, to_json_bytes, validate_ir
 
 

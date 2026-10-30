@@ -12,8 +12,8 @@ from dataclasses import dataclass
 from typing import Any
 
 from pycompose.errors import StateError
+from pycompose.model.canonical import canonical_json
 from pycompose.state.app_state import AppState
-from pycompose.utils.json_canonical import canonical_json
 
 __all__ = ["Pop", "Push", "Replace", "Route", "parse_route", "route_key"]
 

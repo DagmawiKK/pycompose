@@ -4,11 +4,11 @@ import pytest
 from readable import readable_reuse, rename
 
 from pycompose import composable
-from pycompose.core.expansion import ExpansionMemo
-from pycompose.core.reuse import Reuse
 from pycompose.errors import IrValidationError
 from pycompose.foundation import Column
 from pycompose.material3 import Scaffold, Text
+from pycompose.model.nodes.expansion import ExpansionMemo
+from pycompose.model.nodes.reuse import Reuse
 from pycompose.state import State
 from pycompose.ui import Modifier
 from pycompose.wire import emit_ir, to_dict, validate_ir

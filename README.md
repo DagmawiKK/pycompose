@@ -206,7 +206,7 @@ models. Here is a counter, in full:
 
 from m3 import Button, Column, Modifier, Text
 from pycompose.app import App, Destination, Intent, ViewModel
-from pycompose.core import Node
+from pycompose.model.nodes import Node
 from pycompose.state import AppState
 
 

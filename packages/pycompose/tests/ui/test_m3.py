@@ -2,8 +2,8 @@
 
 import pytest
 
-from pycompose.contract.catalog import SCHEMA_VERSION
-from pycompose.core import Node
+from pycompose.model.catalog.lock import SCHEMA_VERSION
+from pycompose.model.nodes import Node
 from pycompose.state import State
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 

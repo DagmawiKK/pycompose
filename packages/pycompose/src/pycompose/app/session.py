@@ -20,16 +20,16 @@ from pycompose.app.navigation import (
     route_key,
 )
 from pycompose.app.viewmodel import ViewModel, ViewModelHost, hosting
-from pycompose.contract.catalog import REGISTRY
-from pycompose.contract.registry_types import PropDef
-from pycompose.core.effect import Effect
-from pycompose.core.props import JsonValue
 from pycompose.errors import StateError
+from pycompose.model.canonical import canonical_json
+from pycompose.model.catalog.lock import REGISTRY
+from pycompose.model.catalog.registry_types import PropDef
+from pycompose.model.nodes.effect import Effect
+from pycompose.model.nodes.props import JsonValue
 from pycompose.runtime import signal
 from pycompose.runtime.scope import Report, Scope
 from pycompose.state.state import State
 from pycompose.ui.intents import IntentSpec, check_payload, intent_class
-from pycompose.utils.json_canonical import canonical_json
 
 __all__ = ["REFRESH", "NavigationSession"]
 

@@ -5,9 +5,9 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping, Sequence
 
-from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
-from pycompose.utils.json_canonical import canonical_json
+from pycompose.model.canonical import canonical_json
+from pycompose.model.nodes.props import JsonValue
 
 __all__ = ["ECHOES_SCHEMA", "echo_key", "lower_echoes", "read_echoes"]
 

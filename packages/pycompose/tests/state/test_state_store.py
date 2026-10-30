@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pycompose.core import ROOT_ID, Node
+from pycompose.model.nodes import ROOT_ID, Node
 from pycompose.state import State, Store
 
 

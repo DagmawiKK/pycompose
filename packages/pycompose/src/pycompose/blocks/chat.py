@@ -20,7 +20,7 @@ from pycompose.values import ThemeColor, cardColors
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
-    from pycompose.core.node import Node
+    from pycompose.model.nodes.node import Node
 
 __all__ = ["ChatInterface", "Chatbot"]
 

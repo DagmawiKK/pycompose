@@ -6,11 +6,11 @@ from __future__ import annotations
 
 from typing import Any, Literal, overload
 
-from pycompose.core.expressions import Expression
-from pycompose.core.node import Node
-from pycompose.core.props import JsonValue
-from pycompose.core.values import UNSET, _Unset
 from pycompose.errors import IrValidationError
+from pycompose.model.nodes.expressions import Expression
+from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.props import JsonValue
+from pycompose.model.nodes.values import UNSET, _Unset
 from pycompose.ui.base import ActionTarget, Component, PropValue
 from pycompose.ui.composition import Content, content_nodes, slot_nodes
 from pycompose.ui.modifiers import Modifier

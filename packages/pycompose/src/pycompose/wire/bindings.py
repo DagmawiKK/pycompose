@@ -3,11 +3,11 @@
 from collections.abc import Callable, Mapping
 from typing import cast
 
-from pycompose.core.node import Props
-from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
+from pycompose.model.canonical import freeze_json
+from pycompose.model.nodes.node import Props
+from pycompose.model.nodes.props import JsonValue
 from pycompose.ui.intents import BoundIntent
-from pycompose.utils.json_canonical import freeze_json
 
 Declare = Callable[[str, object], None]
 """Records one handler id and its payload contract."""

@@ -12,7 +12,7 @@ from pycompose_cli.commands import add
 from pycompose_cli.project import Project
 from pycompose_codegen.derive.samples import sample
 
-from pycompose.contract.catalog import REGISTRY
+from pycompose.model.catalog.lock import REGISTRY
 
 ROOT = Path(__file__).resolve().parents[3]
 LOCK = json.loads((ROOT / "schema/catalog.lock.json").read_text())

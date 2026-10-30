@@ -10,8 +10,8 @@ import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
-from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.errors import PyComposeError
+from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.version import __version__
 from pycompose_cli.project import check_project_versions, load_project
 from pycompose_cli.project.toolchain import android_sdk, jdk_home

@@ -37,7 +37,7 @@ from notes_app.view_models import (
     SetPreviews,
 )
 from pycompose import composable
-from pycompose.core import Node
+from pycompose.model.nodes import Node
 
 
 def list_screen(state: ListState) -> Node:

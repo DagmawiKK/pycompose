@@ -8,12 +8,12 @@ from dataclasses import dataclass
 from typing import cast
 
 from pycompose.bridge.generated_payloads import IncrementPayload, SubmitPayload
-from pycompose.contract.catalog import REGISTRY
-from pycompose.contract.registry_types import PropDef
 from pycompose.errors import BridgeError, IrValidationError
+from pycompose.model.canonical import FrozenJsonValue, freeze_json
+from pycompose.model.catalog.lock import REGISTRY
+from pycompose.model.catalog.registry_types import PropDef
 from pycompose.ui._rules import validate_prop
 from pycompose.ui.intents import IntentSpec, check_payload
-from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
 
 __all__ = [
     "MAIN_SURFACE",

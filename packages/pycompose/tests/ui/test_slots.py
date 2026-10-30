@@ -13,10 +13,10 @@ from dataclasses import replace
 import pytest
 from readable import readable_reuse, rename
 
-from pycompose.core.node import Node, Props
 from pycompose.errors import IrError, IrValidationError
 from pycompose.foundation import Column
 from pycompose.material3 import PlainTooltip, RichTooltip, Scaffold, Text, TooltipBox
+from pycompose.model.nodes.node import Node, Props
 from pycompose.state import State
 from pycompose.ui.composition import slot_nodes
 from pycompose.wire import emit_ir, to_dict, validate_ir
@@ -207,8 +207,8 @@ def test_the_generated_constructor_slots_reach_the_wire() -> None:
 
 def test_a_slot_is_declared_or_the_registry_refuses_the_schema() -> None:
     """The runtime registry keeps the vocabulary closed, not just the codegen."""
-    from pycompose.contract.registry_types import ComponentSpec
     from pycompose.errors import ComponentRegistryError
+    from pycompose.model.catalog.registry_types import ComponentSpec
 
     with pytest.raises(ComponentRegistryError):
         ComponentSpec.from_mapping(

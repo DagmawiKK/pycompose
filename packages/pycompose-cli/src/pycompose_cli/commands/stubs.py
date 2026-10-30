@@ -143,7 +143,7 @@ def generate_stubs(path: Path) -> str:
     others = [node for node in declarations if node not in futures]
     imports = ast.parse(
         "from typing import Any as _StubAny\n"
-        "from pycompose.core import Node as _PyComposeNode\n"
+        "from pycompose.model.nodes import Node as _PyComposeNode\n"
     ).body
     module = ast.fix_missing_locations(
         ast.Module(body=[*futures, *imports, *others], type_ignores=[])

@@ -11,7 +11,7 @@ from typing import Any
 import pytest
 
 from pycompose.bridge import runtime
-from pycompose.contract.catalog import SCHEMA_VERSION
+from pycompose.model.catalog.lock import SCHEMA_VERSION
 
 DEMO = Path(__file__).resolve().parents[1] / "android/host/src/main/python"
 

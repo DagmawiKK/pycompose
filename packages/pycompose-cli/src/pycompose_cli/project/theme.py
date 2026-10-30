@@ -25,7 +25,7 @@ from __future__ import annotations
 import re
 from functools import cache
 
-from pycompose.contract.catalog import lock
+from pycompose.model.catalog.lock import lock
 from pycompose_cli.project import Project, ProjectError, project_path, read_json
 from pycompose_cli.project.resources import MAIN, RESOURCE_NAME
 

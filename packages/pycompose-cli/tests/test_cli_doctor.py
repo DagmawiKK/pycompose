@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from test_cli_init import NATIVE, cli
 
-from pycompose.contract.catalog import SCHEMA_VERSION
+from pycompose.model.catalog.lock import SCHEMA_VERSION
 
 
 def executable(path: Path, output: str, exit_code: int = 0) -> None:

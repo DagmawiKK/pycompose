@@ -35,8 +35,8 @@ from pycompose_codegen.derive.samples import sample
 from pycompose_codegen.emit.app_slice import APP_LOCK
 from pycompose_codegen.emit.rules import SCHEMA_PATH
 
-from pycompose.contract.catalog import REGISTRY
 from pycompose.errors import IrValidationError
+from pycompose.model.catalog.lock import REGISTRY
 from pycompose_cli.commands.render import render
 from pycompose_cli.commands.validate import validate_file
 from pycompose_cli.https import open_https

@@ -5,9 +5,9 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import cast
 
-from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
-from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
+from pycompose.model.canonical import FrozenJsonValue, freeze_json, thaw_json
+from pycompose.model.nodes.props import JsonValue
 
 __all__ = ["DATA_SCHEMA", "lower_data", "read_data"]
 

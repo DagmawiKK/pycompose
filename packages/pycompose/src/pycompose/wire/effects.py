@@ -5,13 +5,13 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import cast
 
-from pycompose.contract.catalog import REGISTRY
-from pycompose.contract.registry_types import PropDef
-from pycompose.core.effect import Effect
-from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
+from pycompose.model.canonical import FrozenJsonValue
+from pycompose.model.catalog.lock import REGISTRY
+from pycompose.model.catalog.registry_types import PropDef
+from pycompose.model.nodes.effect import Effect
+from pycompose.model.nodes.props import JsonValue
 from pycompose.ui.intents import check_payload
-from pycompose.utils.json_canonical import FrozenJsonValue
 
 __all__ = ["EFFECTS_SCHEMA", "lower_effects", "read_effects"]
 

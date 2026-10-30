@@ -7,9 +7,9 @@ import json
 import pytest
 
 from pycompose.app import Intent
-from pycompose.core.effect import Effect
 from pycompose.errors import IrValidationError, StateError
 from pycompose.material3 import Button, Text
+from pycompose.model.nodes.effect import Effect
 from pycompose.state import State
 from pycompose.ui.intents import intent_name
 from pycompose.wire import emit_ir, to_json, validate_ir

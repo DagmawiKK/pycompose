@@ -11,11 +11,11 @@ from handlers import Handlers
 
 from pycompose.bridge import BridgeSurface
 from pycompose.bridge.types import IncrementPayload, SubmitPayload
-from pycompose.contract.catalog import SCHEMA_VERSION
-from pycompose.core import Node, Props
 from pycompose.errors import SchemaError
+from pycompose.model.canonical import FrozenJsonValue
+from pycompose.model.catalog.lock import SCHEMA_VERSION
+from pycompose.model.nodes import Node, Props
 from pycompose.state import State, Store
-from pycompose.utils.json_canonical import FrozenJsonValue
 
 
 def test_action_handler_publishes_the_next_canonical_snapshot() -> None:

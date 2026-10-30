@@ -17,7 +17,7 @@ from __future__ import annotations
 import copy
 from typing import Any
 
-from pycompose.contract.registry_vocabulary import (
+from pycompose.model.catalog.registry_vocabulary import (
     INTERACTION_KINDS,
     INTERACTION_REPORTS,
 )

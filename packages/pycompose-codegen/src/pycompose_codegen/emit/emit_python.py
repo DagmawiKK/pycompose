@@ -112,12 +112,12 @@ _STANDARD = (
     ("typing", ("Any", "Literal", "cast", "overload")),
 )
 _FIRST_PARTY = (
-    ("pycompose.contract.catalog", ("REGISTRY",)),
-    ("pycompose.core.expressions", ("Expression",)),
-    ("pycompose.core.node", ("Node",)),
-    ("pycompose.core.props", ("JsonValue",)),
-    ("pycompose.core.values", ("UNSET", "_Unset")),
     ("pycompose.errors", ("IrValidationError",)),
+    ("pycompose.model.catalog.lock", ("REGISTRY",)),
+    ("pycompose.model.nodes.expressions", ("Expression",)),
+    ("pycompose.model.nodes.node", ("Node",)),
+    ("pycompose.model.nodes.props", ("JsonValue",)),
+    ("pycompose.model.nodes.values", ("UNSET", "_Unset")),
     ("pycompose.ui.base", ("ActionTarget", "Component", "PropValue")),
     ("pycompose.ui.composition", ("Content", "content_nodes", "slot_nodes")),
     ("pycompose.ui.modifiers", ("Modifier",)),

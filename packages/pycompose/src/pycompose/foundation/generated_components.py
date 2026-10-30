@@ -7,9 +7,9 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import Any, Literal, cast, overload
 
-from pycompose.core.node import Node
-from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
+from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.props import JsonValue
 from pycompose.ui.base import ActionTarget, Component, PropValue
 from pycompose.ui.composition import Content, content_nodes
 from pycompose.ui.modifiers import Modifier

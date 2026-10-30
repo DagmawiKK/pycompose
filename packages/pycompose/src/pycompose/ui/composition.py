@@ -8,10 +8,10 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Generic, ParamSpec, cast
 
-from pycompose.core.expansion import DeferredNode, expand_nodes
-from pycompose.core.ids import call_site
-from pycompose.core.node import Node
 from pycompose.errors import IrError, IrValidationError
+from pycompose.model.nodes.expansion import DeferredNode, expand_nodes
+from pycompose.model.nodes.ids import call_site
+from pycompose.model.nodes.node import Node
 from pycompose.state.app_state import AppState
 
 __all__ = [

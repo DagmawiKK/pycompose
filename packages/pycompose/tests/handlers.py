@@ -11,8 +11,8 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from typing import Any
 
-from pycompose.contract.registry_types import PropDef
 from pycompose.errors import StateError
+from pycompose.model.catalog.registry_types import PropDef
 from pycompose.state import State
 from pycompose.ui.intents import IntentSpec
 

@@ -11,7 +11,7 @@ from __future__ import annotations
 import itertools
 
 from pycompose.bridge.protocol import AppSession
-from pycompose.core.reuse import Reuse
+from pycompose.model.nodes.reuse import Reuse
 from pycompose.wire import emit_ir, validate_ir
 from pycompose.wire.host import Host, hosted
 from pycompose.wire.patch import full_bytes

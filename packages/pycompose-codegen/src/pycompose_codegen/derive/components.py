@@ -15,7 +15,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
-from pycompose.contract.registry_vocabulary import (
+from pycompose.model.catalog.registry_vocabulary import (
     HOST_VALUES,
     RESOURCE_TYPES,
     STATE_HOLDERS,
@@ -437,7 +437,7 @@ def main() -> None:
     protected = {
         args.schema.resolve(),
         (ROOT / "schema/catalog.lock.json").resolve(),
-        (PACKAGE / "contract/catalog.lock.json").resolve(),
+        (PACKAGE / "model/catalog/catalog.lock.json").resolve(),
     }
     if args.out and args.out.resolve() in protected:
         parser.error("a proposal cannot overwrite an approved schema")

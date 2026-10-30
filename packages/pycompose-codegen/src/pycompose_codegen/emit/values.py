@@ -7,8 +7,8 @@ import keyword
 import textwrap
 from typing import Any
 
-from pycompose.core.props import to_snake_case
-from pycompose.core.values import FLOAT_MAX, FLOAT_MIN
+from pycompose.model.nodes.props import to_snake_case
+from pycompose.model.nodes.values import FLOAT_MAX, FLOAT_MIN
 from pycompose_codegen.emit.defaults import render_default
 
 KINDS = {"scalar", "record", "factory", "constant", "reference", "operator"}
@@ -276,8 +276,8 @@ def render_python(registry: dict[str, Any]) -> str:
         "import json",
         *(["from typing import Literal"] if aliases else []),
         "",
-        "from pycompose.core.props import JsonValue",
-        f"from pycompose.core.values import {imports}",
+        "from pycompose.model.nodes.props import JsonValue",
+        f"from pycompose.model.nodes.values import {imports}",
         "",
         "__all__ = [",
         *(f'    "{name}",' for name in specs),

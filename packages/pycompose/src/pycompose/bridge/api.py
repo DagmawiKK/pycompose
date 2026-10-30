@@ -15,14 +15,14 @@ from pycompose.bridge.preview import BELOW_SURFACE, preview_envelope
 from pycompose.bridge.protocol import AppSession
 from pycompose.bridge.stats import PassStats
 from pycompose.bridge.types import MAIN_SURFACE, Action, decode_action
-from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
-from pycompose.contract.registry_types import PropDef
-from pycompose.contract.version import at_least
-from pycompose.core.expansion import ExpansionMemo
-from pycompose.core.ids import Handles
-from pycompose.core.reuse import Reuse
-from pycompose.core.windows import windows
 from pycompose.errors import BridgeError, SchemaError
+from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
+from pycompose.model.catalog.registry_types import PropDef
+from pycompose.model.catalog.version import at_least
+from pycompose.model.nodes.expansion import ExpansionMemo
+from pycompose.model.nodes.ids import Handles
+from pycompose.model.nodes.reuse import Reuse
+from pycompose.model.nodes.windows import windows
 from pycompose.runtime.trace import tracing
 from pycompose.state import State, Store
 from pycompose.ui.intents import read_intents

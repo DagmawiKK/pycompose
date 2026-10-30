@@ -17,7 +17,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from pycompose.core.resources import valid_resource
+from pycompose.model.nodes.resources import valid_resource
 from pycompose.storage.paths import paths
 
 __all__ = ["MEDIA", "image"]

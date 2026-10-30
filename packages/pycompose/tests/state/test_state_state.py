@@ -6,8 +6,8 @@ from dataclasses import FrozenInstanceError, replace
 
 import pytest
 
-from pycompose.core import ROOT_ID, Node
 from pycompose.errors import StateError
+from pycompose.model.nodes import ROOT_ID, Node
 from pycompose.state import State
 
 

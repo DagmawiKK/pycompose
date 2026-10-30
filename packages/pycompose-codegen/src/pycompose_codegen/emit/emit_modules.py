@@ -85,7 +85,7 @@ def render_payloads(registry: dict[str, Any]) -> str:
         '"""Generated host action input payload contracts."""\n\n'
         "from __future__ import annotations\n\n"
         f"from typing import {', '.join(sorted(imports))}\n"
-        + ("\nfrom pycompose.core.props import JsonValue\n" if uses_json else "")
+        + ("\nfrom pycompose.model.nodes.props import JsonValue\n" if uses_json else "")
         + "\n__all__ = [\n"
         + "".join(f'    "{name}",\n' for name in sorted(names.values()))
         + "]\n\n\n"

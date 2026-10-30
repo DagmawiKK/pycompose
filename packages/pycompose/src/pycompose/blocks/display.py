@@ -9,9 +9,9 @@ from typing import TYPE_CHECKING, Any
 from pycompose import foundation
 from pycompose.blocks.components import Component
 from pycompose.blocks.intents import Pick
-from pycompose.core.resources import valid_resource
 from pycompose.foundation import FlowRow
 from pycompose.material3 import LinearProgressIndicator, OutlinedButton, Text
+from pycompose.model.nodes.resources import valid_resource
 from pycompose.storage import media
 from pycompose.storage.paths import paths
 from pycompose.ui import Modifier
@@ -19,7 +19,7 @@ from pycompose.values import ContentScale
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
-    from pycompose.core.node import Node
+    from pycompose.model.nodes.node import Node
 
 __all__ = ["JSON", "Gallery", "Image", "Label"]
 

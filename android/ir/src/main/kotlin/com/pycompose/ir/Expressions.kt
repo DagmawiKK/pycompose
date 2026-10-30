@@ -9,7 +9,7 @@ import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.doubleOrNull
 
 /**
- * An expression's wire form, judged exactly as `pycompose/core/expressions.py` judges it.
+ * An expression's wire form, judged exactly as `pycompose/model/nodes/expressions.py` judges it.
  *
  * Closed and total: numbers from literals and holder streams,
  * combined by `times`, `plus`, `minus` and `clamp`, and made a colour by `alpha`

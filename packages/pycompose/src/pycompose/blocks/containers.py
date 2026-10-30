@@ -15,7 +15,7 @@ from pycompose.values import materialIcon
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
-    from pycompose.core.node import Node
+    from pycompose.model.nodes.node import Node
 
 __all__ = ["Accordion", "Column", "Row", "Tab", "Tabs"]
 

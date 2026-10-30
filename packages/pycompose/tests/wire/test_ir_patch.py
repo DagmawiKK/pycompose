@@ -7,8 +7,8 @@ import json
 from hypothesis import given
 from hypothesis import strategies as st
 
-from pycompose.core import ROOT_ID, Node, Props, child_id
-from pycompose.utils.json_canonical import canonical_json_bytes
+from pycompose.model.canonical import canonical_json_bytes
+from pycompose.model.nodes import ROOT_ID, Node, Props, child_id
 from pycompose.wire.model import IRRoot
 from pycompose.wire.patch import (
     PatchOp,

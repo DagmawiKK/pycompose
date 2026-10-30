@@ -10,16 +10,20 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import NoReturn, cast
 
-from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
-from pycompose.contract.registry_types import ComponentDef, PropDef
-from pycompose.core.node import Node
-from pycompose.core.resources import valid_resource
-from pycompose.core.reuse import SubtreeMemo
-from pycompose.core.target import RenderTarget
-from pycompose.core.values import validate_bounds, validate_number, validate_value
 from pycompose.errors import IrValidationError
+from pycompose.model.canonical import FrozenJsonValue, check_json
+from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
+from pycompose.model.catalog.registry_types import ComponentDef, PropDef
+from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.resources import valid_resource
+from pycompose.model.nodes.reuse import SubtreeMemo
+from pycompose.model.nodes.target import RenderTarget
+from pycompose.model.nodes.values import (
+    validate_bounds,
+    validate_number,
+    validate_value,
+)
 from pycompose.ui.intents import BoundIntent, valid_intent
-from pycompose.utils.json_canonical import FrozenJsonValue, check_json
 
 _LONG = range(-(2**63), 2**63)
 """The integers a host can hold: a Kotlin Long."""

@@ -7,8 +7,8 @@ from __future__ import annotations
 import json
 from typing import Literal
 
-from pycompose.core.props import JsonValue
-from pycompose.core.values import UNSET, _Unset, construct
+from pycompose.model.nodes.props import JsonValue
+from pycompose.model.nodes.values import UNSET, _Unset, construct
 
 __all__ = [
     "Alignment",

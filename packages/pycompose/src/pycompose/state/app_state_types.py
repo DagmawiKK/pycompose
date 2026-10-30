@@ -25,8 +25,8 @@ from typing import (
     get_type_hints,
 )
 
-from pycompose.core.props import to_camel_case
 from pycompose.errors import StateError
+from pycompose.model.nodes.props import to_camel_case
 
 T = TypeVar("T")
 

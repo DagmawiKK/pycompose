@@ -5,9 +5,9 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
-from pycompose.core.node import Node
-from pycompose.core.props import JsonValue
-from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
+from pycompose.model.canonical import FrozenJsonValue, freeze_json
+from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.props import JsonValue
 from pycompose.version import __version__
 
 __all__ = ["IRRoot"]

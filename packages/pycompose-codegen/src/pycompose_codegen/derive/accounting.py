@@ -388,7 +388,7 @@ def main(argv: list[str] | None = None) -> int:
     protected = {
         args.schema.resolve(),
         (ROOT / "schema/catalog.lock.json").resolve(),
-        (PACKAGE / "contract/catalog.lock.json").resolve(),
+        (PACKAGE / "model/catalog/catalog.lock.json").resolve(),
     }
     if args.out and args.out.resolve() in protected:
         parser.error("an account cannot overwrite an approved schema")

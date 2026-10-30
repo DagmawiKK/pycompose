@@ -19,7 +19,7 @@ import shutil
 from pathlib import Path
 
 import pycompose
-from pycompose.contract.catalog import REGISTRY
+from pycompose.model.catalog.lock import REGISTRY
 from pycompose.version import __version__
 from pycompose_cli.commands.build import build_project
 from pycompose_cli.commands.config import change

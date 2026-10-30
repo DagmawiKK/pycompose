@@ -17,7 +17,7 @@ from pycompose.material3 import Text
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
-    from pycompose.core.node import Node
+    from pycompose.model.nodes.node import Node
 
 __all__ = ["Button", "Component", "label"]
 

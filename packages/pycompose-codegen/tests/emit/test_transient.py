@@ -208,8 +208,8 @@ def test_the_codegen_refuses_an_unrenderable_transient(
 
 def test_the_runtime_registry_round_trips_the_transient() -> None:
     """The registry type keeps the declaration a schema reader can trust."""
-    from pycompose.contract.registry_types import ComponentSpec, TransientRule
     from pycompose.errors import ComponentRegistryError
+    from pycompose.model.catalog.registry_types import ComponentSpec, TransientRule
 
     transient = {
         "kind": "snackbar",

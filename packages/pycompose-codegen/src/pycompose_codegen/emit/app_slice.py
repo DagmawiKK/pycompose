@@ -30,7 +30,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from pycompose.contract.registry_rules import with_rules
+from pycompose.model.catalog.registry_rules import with_rules
 
 APP_PACKAGE = "m3"
 """The app-side generated package: the library's two component packages in one."""

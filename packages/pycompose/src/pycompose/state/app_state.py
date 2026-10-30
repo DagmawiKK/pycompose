@@ -29,9 +29,9 @@ from typing import (
     TypeVar,
 )
 
-from pycompose.core.props import JsonValue, to_snake_case
-from pycompose.core.reads import record
 from pycompose.errors import StateError
+from pycompose.model.nodes.props import JsonValue, to_snake_case
+from pycompose.model.nodes.reads import record
 from pycompose.state.app_state_codec import (
     _accepts,
     _decode_value,

@@ -43,8 +43,8 @@ from pathlib import Path
 from typing import Any, Generic, Protocol, TypeVar, cast, runtime_checkable
 
 from pycompose.errors import StateError
+from pycompose.model.canonical import canonical_json
 from pycompose.state.app_state import Codec
-from pycompose.utils.json_canonical import canonical_json
 
 __all__ = [
     "Document",

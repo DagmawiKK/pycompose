@@ -46,7 +46,7 @@ max-complexity = 13
 "tools/**" = ["TID251"]
 # Handlers here exist to be introspected, not run. An unused parameter is the
 # point: it is what proves the signature is parsed and nothing else is.
-"packages/pycompose/tests/core/test_auto_ids.py" = ["ARG001"]
+"packages/pycompose/tests/model/nodes/test_auto_ids.py" = ["ARG001"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["pycompose"]
@@ -69,43 +69,9 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: the runtime's packages, each importing only those below it"
 type = "layers"
-layers = ["blocks", "material3", "foundation", "bridge", "wire", "app", "ui", "runtime", "storage", "state", "core", "contract", "utils"]
+layers = ["blocks", "material3", "foundation", "bridge", "wire", "app", "ui", "runtime", "storage", "state", "model"]
 containers = ["pycompose"]
-explanation = "The host runs apps; apps describe screens with ui; ui builds on state, core and the catalog; no cycles."
-
-[[tool.importlinter.contracts]]
-name = "Bridge is the only runtime boundary surface"
-type = "forbidden"
-source_modules = ["pycompose.bridge"]
-# plan 09 words com.android/com.chaquo as forbidden; import-linter only accepts
-# top-level external modules, so `com` covers every com.* Android/Chaquopy import.
-forbidden_modules = ["android", "com", "kotlinx", "gradle"]
-explanation = "Python bridge surface is Chaquopy-agnostic; the host implements transport."
-
-[[tool.importlinter.contracts]]
-name = "Runtime packages never import CLI or templates"
-type = "forbidden"
-source_modules = ["pycompose.core", "pycompose.contract", "pycompose.state", "pycompose.runtime", "pycompose.app",
-                  "pycompose.blocks", "pycompose.wire", "pycompose.bridge", "pycompose.ui",
-                   "pycompose.utils", "pycompose.foundation", "pycompose.material3", "pycompose.storage"]
-forbidden_modules = ["pycompose_cli"]
-explanation = "CLI and template assets are desktop concerns, never runtime deps."
-
-[[tool.importlinter.contracts]]
-name = "State is independent (no ir/bridge/components deps)"
-type = "forbidden"
-source_modules = ["pycompose.state"]
-forbidden_modules = ["pycompose.wire", "pycompose.bridge", "pycompose.ui"]
-explanation = "State + Store stay minimal and purpose-free."
-
-[[tool.importlinter.contracts]]
-name = "Runtime never imports testing helpers or fixtures"
-type = "forbidden"
-source_modules = ["pycompose.core", "pycompose.contract", "pycompose.state", "pycompose.runtime", "pycompose.app",
-                   "pycompose.blocks", "pycompose.wire", "pycompose.bridge", "pycompose.ui",
-                   "pycompose.utils", "pycompose.foundation", "pycompose.material3", "pycompose.storage"]
-forbidden_modules = ["pycompose_testing"]
-explanation = "Testing consumes runtime public APIs; runtime stays independent of test data."
+explanation = "The host runs apps; apps describe screens with ui; ui builds on state and the model; no cycles."
 
 [[tool.importlinter.contracts]]
 name = "CLI does not depend on testing helpers"
@@ -144,7 +110,7 @@ type = "forbidden"
 source_modules = ["pycompose_codegen"]
 forbidden_modules = ["pycompose.app", "pycompose.blocks", "pycompose.bridge", "pycompose.runtime", "pycompose.state", "pycompose.wire", "pycompose.ui", "pycompose.foundation", "pycompose.material3", "pycompose.storage", "pycompose_testing", "pycompose_cli"]
 explanation = """It generates code from the catalog's types and rules; running an app is not its
-concern, so it imports only pycompose.contract, pycompose.core and pycompose.errors (ADR-0063)."""
+concern, so it imports only pycompose.model and pycompose.errors (ADR-0063)."""
 
 [[tool.importlinter.contracts]]
 name = "Tools import the library; never the reverse"

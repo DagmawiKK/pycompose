@@ -38,7 +38,7 @@ def test_app_data_is_copied_not_shared_with_the_snapshot() -> None:
 
 
 def test_app_data_coexists_with_bindings_and_effects() -> None:
-    from pycompose.core.effect import Effect
+    from pycompose.model.nodes.effect import Effect
 
     snapshot = _snapshot(
         State(

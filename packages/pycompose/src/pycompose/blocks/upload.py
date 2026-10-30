@@ -19,7 +19,7 @@ from pycompose.ui import Modifier
 
 if TYPE_CHECKING:
     from pycompose.blocks.screen import View
-    from pycompose.core.node import Node
+    from pycompose.model.nodes.node import Node
 
 __all__ = ["File", "UploadButton"]
 

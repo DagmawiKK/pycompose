@@ -44,7 +44,7 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
             "Node": _node_schema(sorted(component_defs)),
             "ModifierOperation": _modifier_schema(registry),
             # Its shape only; the closed vocabulary, types and limits are the
-            # validators' (pycompose/core/expressions.py, Expressions.kt).
+            # validators' (pycompose/model/nodes/expressions.py, Expressions.kt).
             "Expression": {
                 "type": "object",
                 "required": ["type", "node"],

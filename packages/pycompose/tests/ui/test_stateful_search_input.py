@@ -59,7 +59,7 @@ def test_text_selection_and_revision_travel_in_one_snapshot() -> None:
 )
 def test_out_of_range_editing_coordinates_are_rejected(prop: str, value: int) -> None:
     """Native coordinates and revisions never wrap through unsigned coercion."""
-    from pycompose.core.node import Node
+    from pycompose.model.nodes.node import Node
 
     props = {
         "text": "compose",

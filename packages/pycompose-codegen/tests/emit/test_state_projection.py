@@ -23,9 +23,9 @@ import pytest
 from pycompose_codegen.emit.state_anchors import SWIPE_VALUES
 from pycompose_codegen.emit.state_rules import STATE_VALUE_TYPES
 
-from pycompose.contract.catalog import REGISTRY
-from pycompose.core.node import Node
 from pycompose.material3 import ModalBottomSheet, ModalNavigationDrawer, Text
+from pycompose.model.catalog.lock import REGISTRY
+from pycompose.model.nodes.node import Node
 from pycompose.state import State
 from pycompose.ui._rules import validate_prop
 from pycompose.wire import emit_ir, to_dict, validate_ir
@@ -191,7 +191,7 @@ def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> Non
 
 def test_every_state_kind_is_a_vocabulary_member() -> None:
     """The declaration never invents a kind the host cannot create and drive."""
-    from pycompose.contract.registry_types import STATE_KINDS
+    from pycompose.model.catalog.registry_types import STATE_KINDS
 
     for name, entry in sorted(components().items()):
         state = entry.get("state")
@@ -227,7 +227,7 @@ def test_every_family_table_names_known_state_kinds() -> None:
         STATE_CONSTRUCTOR_PROPS,
     )
 
-    from pycompose.contract.registry_types import STATE_KINDS
+    from pycompose.model.catalog.registry_types import STATE_KINDS
 
     assert set(STATE_KINDS) >= GATED_STATES
     assert set(STATE_ATTACH_GATES) <= set(STATE_KINDS)
@@ -508,8 +508,8 @@ def test_the_codegen_refuses_a_second_reported_field(
 
 def test_the_runtime_registry_round_trips_the_state() -> None:
     """The registry type keeps the declaration a schema reader can trust."""
-    from pycompose.contract.registry_types import ComponentSpec
     from pycompose.errors import ComponentRegistryError
+    from pycompose.model.catalog.registry_types import ComponentSpec
 
     state = {
         "native": "drawerState",

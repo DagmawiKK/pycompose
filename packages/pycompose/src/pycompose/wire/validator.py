@@ -13,19 +13,19 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 
-from pycompose.contract.catalog import (
+from pycompose.errors import ComponentRegistryError, IrValidationError
+from pycompose.model.canonical import check_json
+from pycompose.model.catalog.lock import (
     MIN_LIBRARY_VERSION,
     MIN_SCHEMA_VERSION,
     REGISTRY,
     SCHEMA_VERSION,
 )
-from pycompose.contract.version import require_version
-from pycompose.core.node import Node
-from pycompose.core.reuse import Reuse
-from pycompose.errors import ComponentRegistryError, IrValidationError
+from pycompose.model.catalog.version import require_version
+from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.reuse import Reuse
 from pycompose.ui._rules import Intents, _Validation
 from pycompose.ui.intents import read_intents
-from pycompose.utils.json_canonical import check_json
 from pycompose.wire.data import DATA_SCHEMA, read_data
 from pycompose.wire.echoes import ECHOES_SCHEMA, read_echoes
 from pycompose.wire.effects import EFFECTS_SCHEMA, read_effects

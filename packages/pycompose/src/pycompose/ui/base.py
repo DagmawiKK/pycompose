@@ -7,17 +7,17 @@ from difflib import get_close_matches
 from types import CodeType
 from typing import Any, ClassVar, NoReturn, TypeAlias, cast
 
-from pycompose.contract.catalog import REGISTRY
-from pycompose.core import Node, Props
-from pycompose.core.expressions import Expression
-from pycompose.core.ids import call_location, call_site
-from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
-from pycompose.core.values import _Unset, named_value
 from pycompose.errors import IrValidationError
+from pycompose.model.canonical import FrozenJsonValue, freeze_json
+from pycompose.model.catalog.lock import REGISTRY
+from pycompose.model.nodes import Node, Props
+from pycompose.model.nodes.expressions import Expression
+from pycompose.model.nodes.ids import call_location, call_site
+from pycompose.model.nodes.props import JsonValue, props_from_kwargs, to_snake_case
+from pycompose.model.nodes.values import _Unset, named_value
 from pycompose.ui._rules import validate_component
 from pycompose.ui.intents import Intent, lower_action
 from pycompose.ui.modifiers import Modifier
-from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
 from pycompose.values import Color
 
 ActionTarget = str | Intent | type[Intent]

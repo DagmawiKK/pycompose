@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pytest
 
-from pycompose.contract.catalog import REGISTRY
-from pycompose.core import Node, Props
-from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError, SchemaError
+from pycompose.model.catalog.lock import REGISTRY
+from pycompose.model.nodes import Node, Props
+from pycompose.model.nodes.props import JsonValue
 from pycompose.state import State
 from pycompose.ui._rules import validate_modifier
 from pycompose.wire import IRRoot, emit_ir, to_json_bytes, validate_ir
