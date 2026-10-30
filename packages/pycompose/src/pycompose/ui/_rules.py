@@ -13,7 +13,7 @@ from typing import NoReturn, cast
 from pycompose.errors import IrValidationError
 from pycompose.model.canonical import FrozenJsonValue, check_json
 from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
-from pycompose.model.catalog.registry_types import ComponentDef, PropDef
+from pycompose.model.catalog.registry import ComponentDef, PropDef
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.resources import valid_resource
 from pycompose.model.nodes.reuse import SubtreeMemo

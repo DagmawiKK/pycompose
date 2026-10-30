@@ -23,7 +23,7 @@ from pycompose.app.viewmodel import ViewModel, ViewModelHost, hosting
 from pycompose.errors import StateError
 from pycompose.model.canonical import canonical_json
 from pycompose.model.catalog.lock import REGISTRY
-from pycompose.model.catalog.registry_types import PropDef
+from pycompose.model.catalog.registry import PropDef
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.snapshot import Effect, Snapshot
 from pycompose.runtime import signal

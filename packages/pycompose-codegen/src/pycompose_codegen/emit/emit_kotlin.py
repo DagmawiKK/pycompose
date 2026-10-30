@@ -213,7 +213,7 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
     Returns:
         Kotlin source lines.
     """
-    from pycompose.model.catalog.registry_vocabulary import (
+    from pycompose.model.catalog.vocabulary import (
         EXPRESSION_LIMITS,
         EXPRESSION_OPS,
         STATE_STREAMS,

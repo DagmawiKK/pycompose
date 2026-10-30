@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any
 
-from pycompose.model.catalog.registry_vocabulary import STATE_STREAMS
+from pycompose.model.catalog.vocabulary import STATE_STREAMS
 from pycompose_codegen.emit.adapters.state import state_call
 from pycompose_codegen.emit.derived_families import property_imports
 from pycompose_codegen.emit.state_families import attach_gate

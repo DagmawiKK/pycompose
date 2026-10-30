@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pycompose.model.catalog.registry_types import (
+from pycompose.model.catalog.registry import (
     AbstractComponentRegistry,
     ActionDef,
     ChildrenRule,

@@ -14,7 +14,7 @@ from pycompose_codegen.emit.app_slice import app_components, with_app_lock
 from pycompose_codegen.emit.emit_python import render_python_components
 
 from pycompose.model.catalog.lock import REGISTRY
-from pycompose.model.catalog.registry_types import ComponentRegistryError, Registry
+from pycompose.model.catalog.registry import ComponentRegistryError, Registry
 
 DEFAULT = {
     "groups": {"androidx.compose.ui": {"status": "extracted", "domain": "ui"}},

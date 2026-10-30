@@ -8,7 +8,7 @@ and slots. Importing :mod:`.rules` for ``die`` and shared constants is fine;
 import math
 from typing import Any
 
-from pycompose.model.catalog.registry_types import CONSUMERS, SLOT_KINDS
+from pycompose.model.catalog.registry import CONSUMERS, SLOT_KINDS
 from pycompose_codegen.emit.rules import (
     DOTTED_NAME,
     NATIVE_PARAMETER,

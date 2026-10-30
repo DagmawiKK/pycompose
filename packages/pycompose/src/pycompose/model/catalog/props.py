@@ -22,8 +22,8 @@ from pycompose.model.canonical import (
     freeze_json,
     thaw_json,
 )
-from pycompose.model.catalog.registry_elements import ContentSlot, ProviderDef
-from pycompose.model.catalog.registry_vocabulary import (
+from pycompose.model.catalog.elements import ContentSlot, ProviderDef
+from pycompose.model.catalog.vocabulary import (
     DECODED_TYPES,
     DECODERS,
     INTERACTION_KINDS,

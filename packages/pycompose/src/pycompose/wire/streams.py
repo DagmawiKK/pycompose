@@ -14,7 +14,7 @@ from typing import Any
 
 from pycompose.errors import IrValidationError
 from pycompose.model.canonical import freeze_json, thaw_json
-from pycompose.model.catalog.registry_vocabulary import STATE_STREAMS
+from pycompose.model.catalog.vocabulary import STATE_STREAMS
 from pycompose.model.nodes.expressions import validate_expression
 from pycompose.model.nodes.node import Node, Props
 

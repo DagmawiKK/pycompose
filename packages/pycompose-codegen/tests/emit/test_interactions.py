@@ -96,7 +96,7 @@ def test_every_observation_names_a_prop_it_owns() -> None:
 
 def test_every_observed_kind_is_a_vocabulary_member() -> None:
     """The declaration never invents a kind the renderer cannot classify."""
-    from pycompose.model.catalog.registry_types import INTERACTION_KINDS
+    from pycompose.model.catalog.registry import INTERACTION_KINDS
 
     for name, entry in sorted(components().items()):
         interaction = entry.get("interaction")
@@ -287,7 +287,7 @@ def test_the_codegen_refuses_a_second_payload_field(
 def test_the_runtime_registry_round_trips_the_interaction() -> None:
     """The registry type keeps the declaration a schema reader can trust."""
     from pycompose.errors import ComponentRegistryError
-    from pycompose.model.catalog.registry_types import ComponentSpec
+    from pycompose.model.catalog.registry import ComponentSpec
 
     spec = ComponentSpec.from_mapping(
         "Button",

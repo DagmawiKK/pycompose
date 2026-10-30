@@ -16,11 +16,10 @@ from types import MappingProxyType
 from typing import Protocol, cast
 
 from pycompose.errors import ComponentRegistryError
-from pycompose.model.catalog.registry_elements import ChildrenRule, SlotRule
-from pycompose.model.catalog.registry_props import InteractionRule, PropDef
-from pycompose.model.catalog.registry_state import StateRule
-from pycompose.model.catalog.registry_transient import TransientRule
-from pycompose.model.catalog.registry_vocabulary import ADAPTERS, WRAPPERS
+from pycompose.model.catalog.elements import ChildrenRule, SlotRule
+from pycompose.model.catalog.holders import StateRule, TransientRule
+from pycompose.model.catalog.props import InteractionRule, PropDef
+from pycompose.model.catalog.vocabulary import ADAPTERS, WRAPPERS
 
 
 class ComponentDef(Protocol):

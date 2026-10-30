@@ -12,7 +12,7 @@ from collections.abc import Callable, Mapping
 from typing import Any
 
 from pycompose.errors import StateError
-from pycompose.model.catalog.registry_types import PropDef
+from pycompose.model.catalog.registry import PropDef
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui.intents import IntentSpec
 

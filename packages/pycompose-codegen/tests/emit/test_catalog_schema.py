@@ -2,7 +2,7 @@
 
 The schema refuses unknown keys and missing required ones, so catalog growth
 must touch the declarative spec first. It deliberately declares no vocabulary
-enums: closed sets live once in registry_vocabulary and their codegen homes,
+enums: closed sets live once in vocabulary and their codegen homes,
 and a JSON enum would be a second home the .py-scanning gate cannot see.
 """
 

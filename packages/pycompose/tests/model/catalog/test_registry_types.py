@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from pycompose.errors import ComponentRegistryError
-from pycompose.model.catalog.registry_types import ComponentDef, Registry
+from pycompose.model.catalog.registry import ComponentDef, Registry
 
 ROOT = Path(__file__).resolve().parents[5]
 COMPONENTS_PATH = ROOT / "schema" / "catalog.lock.json"

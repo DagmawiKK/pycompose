@@ -10,8 +10,8 @@ The prop-type vocabulary is validated by the codegen tool (``tools/schema``)
 and the generated validators; here ``type`` is treated as an opaque string.
 
 The vocabulary, leaf rules, prop definitions and component definitions
-live in sibling modules (``registry_vocabulary``, ``registry_elements``,
-``registry_props``, ``registry_component``) whose import chain is
+live in sibling modules (``vocabulary``, ``elements``,
+``props``, ``components``) whose import chain is
 downward-only; this module re-exports their surface so established imports
 keep resolving at one path, and adds :class:`ActionDef` and the
 :class:`Registry` aggregate.
@@ -27,22 +27,21 @@ from types import MappingProxyType
 from typing import cast
 
 from pycompose.errors import ComponentRegistryError
-from pycompose.model.catalog.registry_component import ComponentDef, ComponentSpec
-from pycompose.model.catalog.registry_elements import (
+from pycompose.model.catalog.components import ComponentDef, ComponentSpec
+from pycompose.model.catalog.elements import (
     ChildrenRule,
     ContentSlot,
     ProviderDef,
     SlotRule,
 )
-from pycompose.model.catalog.registry_modifiers import (
+from pycompose.model.catalog.holders import StateRule, TransientRule
+from pycompose.model.catalog.modifiers import (
     derived_modifiers,
     modifiers_mapping,
     parse_modifiers,
 )
-from pycompose.model.catalog.registry_props import InteractionRule, PropDef
-from pycompose.model.catalog.registry_state import StateRule
-from pycompose.model.catalog.registry_transient import TransientRule
-from pycompose.model.catalog.registry_vocabulary import (
+from pycompose.model.catalog.props import InteractionRule, PropDef
+from pycompose.model.catalog.vocabulary import (
     ADAPTERS,
     CONSUMERS,
     DECODED_TYPES,

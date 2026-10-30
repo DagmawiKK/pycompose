@@ -269,7 +269,7 @@ def test_the_codegen_refuses_an_unproven_component_opt_in(
 def test_the_runtime_registry_round_trips_a_components_opt_in() -> None:
     """The registry type keeps the markers a schema reader can trust."""
     from pycompose.errors import ComponentRegistryError
-    from pycompose.model.catalog.registry_types import ComponentSpec
+    from pycompose.model.catalog.registry import ComponentSpec
 
     declaration = {
         **components()["ModalBottomSheet"],

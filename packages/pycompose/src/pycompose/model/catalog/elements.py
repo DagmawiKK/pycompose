@@ -5,8 +5,8 @@
 :class:`ChildrenRule` and :class:`SlotRule` say where a component's
 subtrees compose and which scope each carries. These are the shapes every
 outer parsed level references; prop definitions live in
-``registry_props`` and component definitions in
-``registry_component``, so the import chain here has nothing above leaves
+``props`` and component definitions in
+``components``, so the import chain here has nothing above leaves
 except the vocabulary.
 """
 
@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from typing import cast
 
 from pycompose.errors import ComponentRegistryError
-from pycompose.model.catalog.registry_vocabulary import CONSUMERS, SLOT_KINDS
+from pycompose.model.catalog.vocabulary import CONSUMERS, SLOT_KINDS
 
 
 @dataclass(frozen=True, slots=True)

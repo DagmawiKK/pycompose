@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.model.catalog.registry_types import CONSUMERS, SLOT_KINDS
+from pycompose.model.catalog.registry import CONSUMERS, SLOT_KINDS
 from pycompose_codegen.emit.adapters.policy import MECHANICAL
 from pycompose_codegen.emit.state_families import (
     STATE_CONSTRUCTOR_PROPS,

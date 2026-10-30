@@ -12,8 +12,8 @@ from functools import cache
 from importlib.resources import files
 from typing import Any
 
-from pycompose.model.catalog.registry_rules import with_rules
-from pycompose.model.catalog.registry_types import Registry
+from pycompose.model.catalog.registry import Registry
+from pycompose.model.catalog.rules import with_rules
 from pycompose.model.catalog.version import version_parts
 
 __all__ = [

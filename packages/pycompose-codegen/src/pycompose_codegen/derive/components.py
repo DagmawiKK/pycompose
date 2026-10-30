@@ -15,7 +15,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
-from pycompose.model.catalog.registry_vocabulary import (
+from pycompose.model.catalog.vocabulary import (
     HOST_VALUES,
     RESOURCE_TYPES,
     STATE_HOLDERS,

@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from pycompose.errors import ComponentRegistryError
-from pycompose.model.catalog.registry_props import PropDef
+from pycompose.model.catalog.props import PropDef
 
 
 def parse_modifiers(raw: object) -> Mapping[str, Mapping[str, PropDef]]:

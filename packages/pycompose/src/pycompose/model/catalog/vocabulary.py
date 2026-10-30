@@ -6,7 +6,7 @@ interaction and state families, prop owners, adapter modes, decoders and
 delegating wrappers. A closed set that two layers must agree on is safest
 when the second definition cannot exist: these tuples are the only
 copies, and every other file imports its names from here --
-``registry_types`` re-exports them on its established import surface.
+``registry`` re-exports them on its established import surface.
 Tests assert the agreements (for example, scope paths pairing with scope
 names); they never copy the values.
 """

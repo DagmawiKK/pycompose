@@ -17,7 +17,7 @@ from pycompose.bridge.stats import PassStats
 from pycompose.bridge.types import MAIN_SURFACE, Action, decode_action
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
-from pycompose.model.catalog.registry_types import PropDef
+from pycompose.model.catalog.registry import PropDef
 from pycompose.model.catalog.version import at_least
 from pycompose.model.nodes.expansion import ExpansionMemo
 from pycompose.model.nodes.ids import Handles

@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Protocol
 
-from pycompose.model.catalog.registry_types import PropDef
+from pycompose.model.catalog.registry import PropDef
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui.intents import IntentSpec
 

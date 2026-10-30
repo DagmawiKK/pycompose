@@ -33,7 +33,7 @@ PROP_TYPE_VOCABULARY = {
 
 
 def _registry() -> dict:
-    from pycompose.model.catalog.registry_rules import with_rules
+    from pycompose.model.catalog.rules import with_rules
 
     return with_rules(json.loads(COMPONENTS_PATH.read_text(encoding="utf-8")))
 

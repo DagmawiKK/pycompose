@@ -14,8 +14,8 @@ import re
 from typing import Any, NoReturn, cast
 
 from pycompose.errors import PyComposeError
-from pycompose.model.catalog.registry_rules import with_rules
-from pycompose.model.catalog.registry_types import Registry
+from pycompose.model.catalog.registry import Registry
+from pycompose.model.catalog.rules import with_rules
 from pycompose_codegen.checkout import PACKAGE, ROOT
 
 PACKAGED_CATALOG = PACKAGE / "model" / "catalog" / "catalog.lock.json"

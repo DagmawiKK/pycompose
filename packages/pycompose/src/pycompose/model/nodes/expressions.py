@@ -24,7 +24,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from pycompose.errors import IrValidationError
-from pycompose.model.catalog.registry_vocabulary import (
+from pycompose.model.catalog.vocabulary import (
     EXPRESSION_LIMITS,
     EXPRESSION_OPS,
     STATE_STREAMS,

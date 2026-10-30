@@ -3,8 +3,8 @@
 import pytest
 
 from pycompose.errors import ComponentRegistryError, IrValidationError
+from pycompose.model.catalog.elements import SlotRule
 from pycompose.model.catalog.lock import REGISTRY
-from pycompose.model.catalog.registry_elements import SlotRule
 from pycompose.model.nodes.node import Node
 from pycompose.model.snapshot import Snapshot
 from pycompose.values import Dp, RoundedCornerShape

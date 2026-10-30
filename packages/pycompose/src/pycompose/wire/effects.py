@@ -8,7 +8,7 @@ from typing import cast
 from pycompose.errors import IrValidationError
 from pycompose.model.canonical import FrozenJsonValue
 from pycompose.model.catalog.lock import REGISTRY
-from pycompose.model.catalog.registry_types import PropDef
+from pycompose.model.catalog.registry import PropDef
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.snapshot import Effect
 from pycompose.ui.intents import check_payload

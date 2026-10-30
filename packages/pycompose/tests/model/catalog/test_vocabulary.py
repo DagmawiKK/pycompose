@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[5]
 PACKAGE = ROOT / "packages/pycompose/src/pycompose"
-HOME = PACKAGE / "model" / "catalog" / "registry_vocabulary.py"
+HOME = PACKAGE / "model" / "catalog" / "vocabulary.py"
 
 
 def _terms() -> list[str]:
@@ -67,4 +67,4 @@ def test_the_closed_vocabularies_are_defined_in_one_module() -> None:
         for term in terms:
             assert not re.search(
                 rf"^{term}\s*(?::[^=\n]*)?=", text, re.MULTILINE
-            ), f"{path} redefines {term}; import it from registry_vocabulary"
+            ), f"{path} redefines {term}; import it from vocabulary"

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.model.catalog.registry_vocabulary import STATE_STREAMS
+from pycompose.model.catalog.vocabulary import STATE_STREAMS
 from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.policy import camel
 from pycompose_codegen.emit.adapters.props import render_value
