@@ -30,6 +30,7 @@ from pycompose_codegen.derive.components import propose_components
 from pycompose_codegen.derive.constant_families import constant_families
 from pycompose_codegen.derive.core_modifiers import core_modifiers
 from pycompose_codegen.derive.entry_candidates import derive, select
+from pycompose_codegen.derive.families import bound_families
 from pycompose_codegen.derive.holders import derive as derive_holders
 from pycompose_codegen.derive.overloads import extras
 from pycompose_codegen.derive.plain_modifiers import plain_modifiers
@@ -206,7 +207,13 @@ def generate(
     """
     found = inventory(directory)
     defaults = source_defaults(directory)
-    sections = _stamped_values(policy.sections, found)
+    artifacts = _artifacts(found)
+    sections, unbound = bound_families(
+        _stamped_values(policy.sections, found),
+        found,
+        defaults,
+        lambda source: stamped(source, artifacts),
+    )
     derived = derived_families(found, sections)
     sections["valueTypes"] = {**sections["valueTypes"], **derived}
     plans = propose_components(found, defaults, sections)
@@ -214,6 +221,7 @@ def generate(
     components, report = compile_components(
         policy.components, plans, found, sections, closure
     )
+    report.errors.extend(unbound)
     lock = {**sections, "components": dict(sorted(components.items()))}
     modifiers, report.refused_modifiers = scoped_modifiers(
         found,

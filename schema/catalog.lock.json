@@ -12560,7 +12560,6 @@
         "defaultElevation": {
           "type": "value",
           "valueType": "Dp",
-          "minimum": 0,
           "default": {
             "kind": "extensionProperty",
             "symbol": "androidx.compose.ui.unit.dp",
@@ -12569,12 +12568,12 @@
               "type": "kotlin/Double",
               "value": 0.0
             }
-          }
+          },
+          "minimum": 0
         },
         "pressedElevation": {
           "type": "value",
           "valueType": "Dp",
-          "minimum": 0,
           "default": {
             "kind": "extensionProperty",
             "symbol": "androidx.compose.ui.unit.dp",
@@ -12583,12 +12582,12 @@
               "type": "kotlin/Double",
               "value": 0.0
             }
-          }
+          },
+          "minimum": 0
         },
         "focusedElevation": {
           "type": "value",
           "valueType": "Dp",
-          "minimum": 0,
           "default": {
             "kind": "extensionProperty",
             "symbol": "androidx.compose.ui.unit.dp",
@@ -12597,12 +12596,12 @@
               "type": "kotlin/Double",
               "value": 0.0
             }
-          }
+          },
+          "minimum": 0
         },
         "hoveredElevation": {
           "type": "value",
           "valueType": "Dp",
-          "minimum": 0,
           "default": {
             "kind": "extensionProperty",
             "symbol": "androidx.compose.ui.unit.dp",
@@ -12611,12 +12610,12 @@
               "type": "kotlin/Double",
               "value": 1.0
             }
-          }
+          },
+          "minimum": 0
         },
         "disabledElevation": {
           "type": "value",
           "valueType": "Dp",
-          "minimum": 0,
           "default": {
             "kind": "extensionProperty",
             "symbol": "androidx.compose.ui.unit.dp",
@@ -12625,7 +12624,8 @@
               "type": "kotlin/Double",
               "value": 0.0
             }
-          }
+          },
+          "minimum": 0
         }
       },
       "native": {
@@ -13131,12 +13131,12 @@
       "parameters": {
         "colors": {
           "type": "list",
-          "required": true,
-          "minItems": 2,
           "items": {
             "type": "value",
             "valueType": "Color"
-          }
+          },
+          "required": true,
+          "minItems": 2
         },
         "startX": {
           "type": "float",
@@ -13180,12 +13180,12 @@
       "parameters": {
         "colors": {
           "type": "list",
-          "required": true,
-          "minItems": 2,
           "items": {
             "type": "value",
             "valueType": "Color"
-          }
+          },
+          "required": true,
+          "minItems": 2
         },
         "startY": {
           "type": "float",
@@ -13229,12 +13229,12 @@
       "parameters": {
         "colors": {
           "type": "list",
-          "required": true,
-          "minItems": 2,
           "items": {
             "type": "value",
             "valueType": "Color"
-          }
+          },
+          "required": true,
+          "minItems": 2
         },
         "start": {
           "type": "value",
@@ -13354,11 +13354,11 @@
         "fontSize": {
           "type": "value",
           "valueType": "TextUnit",
-          "minimum": 0,
           "default": {
             "kind": "property",
             "symbol": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified"
-          }
+          },
+          "minimum": 0
         },
         "letterSpacing": {
           "type": "value",
@@ -13594,8 +13594,8 @@
         "width": {
           "type": "value",
           "valueType": "Dp",
-          "minimum": 0,
-          "required": true
+          "required": true,
+          "minimum": 0
         },
         "brush": {
           "type": "value",
@@ -15554,12 +15554,12 @@
         "call": "androidx.compose.material3.IconButtonDefaults.filledTonalIconToggleButtonColors"
       },
       "omitted": {
-        "checkedContentColor": {
+        "contentColor": {
           "type": "androidx/compose/ui/graphics/Color",
           "nullable": false,
           "hasDefault": true
         },
-        "contentColor": {
+        "checkedContentColor": {
           "type": "androidx/compose/ui/graphics/Color",
           "nullable": false,
           "hasDefault": true
