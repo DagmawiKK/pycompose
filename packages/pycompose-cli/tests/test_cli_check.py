@@ -6,7 +6,7 @@ import shutil
 from datetime import date
 from pathlib import Path
 
-from pycompose_cli.check import Problem, check, config_problems, play_problems
+from pycompose_cli.commands.check import Problem, check, config_problems, play_problems
 
 ROOT = Path(__file__).resolve().parents[3]
 MANIFEST = """<manifest xmlns:android="http://schemas.android.com/apk/res/android">

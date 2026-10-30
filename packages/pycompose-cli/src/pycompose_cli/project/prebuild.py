@@ -24,12 +24,12 @@ from pathlib import Path
 
 from pycompose_codegen.emit.app_slice import APP_LOCK
 
-from pycompose_cli.icons import icon_files
-from pycompose_cli.permissions import selected_permissions, with_permissions
-from pycompose_cli.plugins import AndroidModel, manifest_with, run_plugins
 from pycompose_cli.project import Project, ProjectError, project_path
-from pycompose_cli.resources import resource_files
-from pycompose_cli.theme import theme_files
+from pycompose_cli.project.icons import icon_files
+from pycompose_cli.project.permissions import selected_permissions, with_permissions
+from pycompose_cli.project.plugins import AndroidModel, manifest_with, run_plugins
+from pycompose_cli.project.resources import resource_files
+from pycompose_cli.project.theme import theme_files
 
 GENERATED = ".pycompose/android"
 """Where a generated project lives, relative to the app root."""
@@ -272,7 +272,7 @@ extensions.configure<com.android.build.api.dsl.LibraryExtension> {
 
 def _local_properties(root: Path) -> None:
     """Point Gradle at an Android SDK, unless the project already names one."""
-    from pycompose_cli.toolchain import android_sdk
+    from pycompose_cli.project.toolchain import android_sdk
 
     target = root / "local.properties"
     sdk = android_sdk()

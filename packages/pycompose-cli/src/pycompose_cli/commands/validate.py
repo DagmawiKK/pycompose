@@ -7,8 +7,8 @@ from typing import Any, cast
 
 from pycompose.core import Node
 from pycompose.wire import IRRoot, validate_ir
+from pycompose_cli.commands.wire_schema import WireSchema
 from pycompose_cli.project import ProjectError, read_json
-from pycompose_cli.wire_schema import WireSchema
 
 
 def _node(root: dict[str, Any]) -> Node:

@@ -11,15 +11,15 @@ import time
 from pathlib import Path
 
 from pycompose_cli import console
-from pycompose_cli.prebuild import explain, prebuild
 from pycompose_cli.project import load_project
-from pycompose_cli.toolchain import setup
+from pycompose_cli.project.prebuild import explain, prebuild
+from pycompose_cli.project.toolchain import setup
 
 
 def add_command(args: argparse.Namespace) -> int:
     # The compiler is imported only when a library is added: no other command
     # pays for it.
-    from pycompose_cli.add import add_library
+    from pycompose_cli.commands.add import add_library
 
     report = add_library(load_project(Path.cwd()), args.coordinate)
     for name in report.promoted + report.overloads:
@@ -31,7 +31,7 @@ def add_command(args: argparse.Namespace) -> int:
 
 
 def check_command(_args: argparse.Namespace) -> int:
-    from pycompose_cli.check import check
+    from pycompose_cli.commands.check import check
 
     started = time.monotonic()
     problems = check(Path.cwd())
@@ -46,7 +46,7 @@ def check_command(_args: argparse.Namespace) -> int:
 
 
 def render_command(args: argparse.Namespace) -> int:
-    from pycompose_cli.render import render
+    from pycompose_cli.commands.render import render
 
     for image in render(load_project(Path.cwd()), args.snapshots, args.out):
         console.ok(f"{image} and {image.with_suffix('').name}.semantics.json")
@@ -68,7 +68,7 @@ def explain_command(args: argparse.Namespace) -> int:
 
 
 def migrate_command(_args: argparse.Namespace) -> int:
-    from pycompose_cli.migrate import migrate
+    from pycompose_cli.commands.migrate import migrate
 
     found = migrate(load_project(Path.cwd()))
     for refusal in found.refused:
@@ -85,14 +85,14 @@ def migrate_command(_args: argparse.Namespace) -> int:
 
 
 def dev_client_command(args: argparse.Namespace) -> int:
-    from pycompose_cli.dev_client import dev_client
+    from pycompose_cli.devloop.dev_client import dev_client
 
     console.ok(f"Dev client: {dev_client(rebuild=args.rebuild)}")
     return 0
 
 
 def bench_command(args: argparse.Namespace) -> int:
-    from pycompose_cli.bench import bench
+    from pycompose_cli.commands.bench import bench
 
     count, summary = bench(device=args.device, keys=args.keys, interval=args.interval)
     console.line(f"{count} passes for {args.keys} keystrokes (ms)")

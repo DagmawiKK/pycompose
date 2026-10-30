@@ -7,9 +7,9 @@ import shutil
 from pathlib import Path
 
 import pytest
-from pycompose_cli.prebuild import plan
 from pycompose_cli.project import ProjectError, load_project
-from pycompose_cli.theme import PATH, render
+from pycompose_cli.project.prebuild import plan
+from pycompose_cli.project.theme import PATH, render
 
 ROOT = Path(__file__).resolve().parents[3]
 NOTES = ROOT / "examples/notes"

@@ -27,7 +27,7 @@ from functools import cache
 
 from pycompose.contract.catalog import lock
 from pycompose_cli.project import Project, ProjectError, project_path, read_json
-from pycompose_cli.resources import MAIN, RESOURCE_NAME
+from pycompose_cli.project.resources import MAIN, RESOURCE_NAME
 
 PATH = f"{MAIN}/kotlin/com/pycompose/host/ui/AppTheme.kt"
 """Where the generated theme lives, relative to the Android project."""

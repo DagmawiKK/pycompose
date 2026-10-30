@@ -25,9 +25,9 @@ from defusedxml import ElementTree
 
 from pycompose.bridge.imports import fresh_imports
 from pycompose.storage.documents import documents_at
-from pycompose_cli.prebuild import generated, plan
 from pycompose_cli.project import Project, ProjectError, load_project, project_path
-from pycompose_cli.toolchain import lock
+from pycompose_cli.project.prebuild import generated, plan
+from pycompose_cli.project.toolchain import lock
 
 PLAY_TARGETS = ((date(2025, 8, 31), 35), (date(2026, 8, 31), 36))
 """The API level new apps and updates must target on Google Play, from each date."""
@@ -240,7 +240,7 @@ def app_problems(project: Project) -> list[Problem]:
         The failure, if composing or validating failed.
     """
     from pycompose.bridge.session import compose_once
-    from pycompose_cli.build import codegen
+    from pycompose_cli.commands.build import codegen
 
     # The app's generated package is what the build would generate from it.
     try:

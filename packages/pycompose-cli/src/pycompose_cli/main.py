@@ -10,18 +10,18 @@ from typing import Any
 
 from pycompose.errors import PyComposeError
 from pycompose.version import __version__
-from pycompose_cli import console, project_commands
-from pycompose_cli.build import build_project
-from pycompose_cli.config import KEYS, Setting, change, settings
-from pycompose_cli.doctor import doctor
-from pycompose_cli.init import init_project
-from pycompose_cli.install import Deploy, install_project
-from pycompose_cli.prebuild import generated
+from pycompose_cli import console, handlers
+from pycompose_cli.commands.build import build_project
+from pycompose_cli.commands.config import KEYS, Setting, change, settings
+from pycompose_cli.commands.doctor import doctor
+from pycompose_cli.commands.init import init_project
+from pycompose_cli.commands.install import Deploy, install_project
+from pycompose_cli.commands.run import run_project
+from pycompose_cli.commands.stubs import generate_stubs
+from pycompose_cli.commands.sync import sync_resources
+from pycompose_cli.commands.validate import validate_file
 from pycompose_cli.project import ProjectError, load_project
-from pycompose_cli.run import run_project
-from pycompose_cli.stubs import generate_stubs
-from pycompose_cli.sync import sync_resources
-from pycompose_cli.validate import validate_file
+from pycompose_cli.project.prebuild import generated
 
 _MENU = (
     ("run", "Build, install, launch and watch the app on a device"),
@@ -315,7 +315,7 @@ def _sync(args: argparse.Namespace) -> int:
         if args.check:
             console.line("The Android project is generated on every build")
             return 0
-        return project_commands.prebuild_command(args)
+        return handlers.prebuild_command(args)
     changed = sync_resources(project, check=args.check)
     if not changed:
         console.line("Resources up to date")
@@ -394,17 +394,17 @@ def main(argv: list[str] | None = None) -> int:
             console.notice("aborted")
             return 2
     args = _parser().parse_args(arguments)
-    handlers = {
+    dispatch = {
         "init": _init,
-        "add": project_commands.add_command,
-        "check": project_commands.check_command,
-        "render": project_commands.render_command,
-        "prebuild": project_commands.prebuild_command,
-        "explain": project_commands.explain_command,
-        "setup": project_commands.setup_command,
-        "dev-client": project_commands.dev_client_command,
-        "bench": project_commands.bench_command,
-        "migrate": project_commands.migrate_command,
+        "add": handlers.add_command,
+        "check": handlers.check_command,
+        "render": handlers.render_command,
+        "prebuild": handlers.prebuild_command,
+        "explain": handlers.explain_command,
+        "setup": handlers.setup_command,
+        "dev-client": handlers.dev_client_command,
+        "bench": handlers.bench_command,
+        "migrate": handlers.migrate_command,
         "sync": _sync,
         "validate": _validate,
         "build": _build,
@@ -417,7 +417,7 @@ def main(argv: list[str] | None = None) -> int:
         "stubs": _stubs,
     }
     try:
-        return handlers[args.command](args)
+        return dispatch[args.command](args)
     except (PyComposeError, OSError, subprocess.TimeoutExpired) as exc:
         console.error(args.command, str(exc))
         return 2

@@ -8,12 +8,11 @@ import tarfile
 from pathlib import Path
 
 import pytest
-from pycompose_cli import toolchain
-from pycompose_cli.icons import icon_files
-from pycompose_cli.init import init_project
-from pycompose_cli.migrate import migrate
-from pycompose_cli.prebuild import GENERATED, explain, generated, plan, prebuild
-from pycompose_cli.project import ProjectError, load_project
+from pycompose_cli.commands.init import init_project
+from pycompose_cli.commands.migrate import migrate
+from pycompose_cli.project import ProjectError, load_project, toolchain
+from pycompose_cli.project.icons import icon_files
+from pycompose_cli.project.prebuild import GENERATED, explain, generated, plan, prebuild
 
 ROOT = Path(__file__).resolve().parents[3]
 NOTES = ROOT / "examples/notes"
@@ -195,7 +194,7 @@ def test_build_plugins_add_typed_changes_in_their_declared_order(
 ) -> None:
     from dataclasses import replace
 
-    from pycompose_cli import plugins
+    from pycompose_cli.project import plugins
 
     def camera(model: plugins.AndroidModel) -> plugins.AndroidModel:
         return replace(model, features={"android.hardware.camera": False})

@@ -17,18 +17,18 @@ from typing import IO
 from pycompose_codegen.emit.app_slice import APP_LOCK
 
 import pycompose
+from pycompose_cli.commands.sync import sync_resources
 from pycompose_cli.console import echo, echo_error, ok, step
-from pycompose_cli.permissions import stage_manifest
-from pycompose_cli.prebuild import generated, prebuild
 from pycompose_cli.project import (
     Project,
     ProjectError,
     check_project_versions,
     project_path,
 )
-from pycompose_cli.requirements import validate_requirements
-from pycompose_cli.sync import sync_resources
-from pycompose_cli.toolchain import jdk_home, test_jdk
+from pycompose_cli.project.permissions import stage_manifest
+from pycompose_cli.project.prebuild import generated, prebuild
+from pycompose_cli.project.requirements import validate_requirements
+from pycompose_cli.project.toolchain import jdk_home, test_jdk
 
 SIGNING_PREFIX = "ORG_GRADLE_PROJECT_android.injected.signing."
 
@@ -280,7 +280,7 @@ def codegen(project: Project, *, kotlin: bool = True) -> None:
     from pycompose_codegen.emit.app_slice import APP_LOCK, needs_slice
     from pycompose_codegen.emit.main import build_app
 
-    from pycompose_cli.add import sync_libraries
+    from pycompose_cli.commands.add import sync_libraries
 
     python = project.table("python")
     source = python.get("source_dir", "app")

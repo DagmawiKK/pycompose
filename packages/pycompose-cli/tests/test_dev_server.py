@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from pycompose_cli.dev_server import DevServer
+from pycompose_cli.devloop.dev_server import DevServer
 from pycompose_cli.project import load_project
 from test_cli_init import cli
 

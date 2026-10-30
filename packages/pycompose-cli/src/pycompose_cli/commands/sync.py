@@ -5,7 +5,7 @@ import json
 import re
 
 from pycompose_cli.project import Project, ProjectError, project_path, read_json
-from pycompose_cli.resources import MAIN, resource_files
+from pycompose_cli.project.resources import MAIN, resource_files
 
 MANIFEST = ".pycompose/resource-sync.json"
 

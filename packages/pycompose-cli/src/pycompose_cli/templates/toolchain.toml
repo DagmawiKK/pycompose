@@ -1,7 +1,7 @@
 # The toolchain one PyCompose release is tested with (plan 31 §21.5).
 #
 # Gradle (with its distribution checksum), AGP, Kotlin, the Compose BOM and the
-# SDK levels are pinned by the Android template itself; `pycompose_cli.toolchain`
+# SDK levels are pinned by the Android template itself; `pycompose_cli.project.toolchain`
 # reads them from there, so they have one source. What `pycompose setup`
 # installs beside them is pinned here, each archive with its publisher's digest.
 

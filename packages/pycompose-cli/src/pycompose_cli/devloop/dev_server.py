@@ -16,15 +16,15 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from types import TracebackType
 from typing import Self
 
-from pycompose_cli.build import codegen
+from pycompose_cli.commands.build import codegen
+from pycompose_cli.devloop.reload import AppReloader
 from pycompose_cli.project import (
     Project,
     ProjectError,
     check_project_versions,
     project_path,
 )
-from pycompose_cli.reload import AppReloader
-from pycompose_cli.resources import resource_files
+from pycompose_cli.project.resources import resource_files
 
 SESSION_LOCK = threading.Lock()
 

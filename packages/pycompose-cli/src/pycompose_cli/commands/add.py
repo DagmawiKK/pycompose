@@ -37,10 +37,10 @@ from pycompose_codegen.emit.rules import SCHEMA_PATH
 
 from pycompose.contract.catalog import REGISTRY
 from pycompose.errors import IrValidationError
+from pycompose_cli.commands.render import render
+from pycompose_cli.commands.validate import validate_file
 from pycompose_cli.https import open_https
 from pycompose_cli.project import Project, ProjectError
-from pycompose_cli.render import render
-from pycompose_cli.validate import validate_file
 
 REPOSITORIES = (
     "https://dl.google.com/android/maven2",

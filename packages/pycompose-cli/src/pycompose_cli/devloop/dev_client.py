@@ -21,11 +21,11 @@ from pathlib import Path
 import pycompose
 from pycompose.contract.catalog import REGISTRY
 from pycompose.version import __version__
-from pycompose_cli.build import build_project
-from pycompose_cli.config import change
-from pycompose_cli.init import init_project
+from pycompose_cli.commands.build import build_project
+from pycompose_cli.commands.config import change
+from pycompose_cli.commands.init import init_project
 from pycompose_cli.project import ProjectError, load_project
-from pycompose_cli.toolchain import HOME
+from pycompose_cli.project.toolchain import HOME
 
 APPLICATION_ID = "com.pycompose.devclient"
 """The client's own identity, so it installs beside the apps it runs."""
@@ -42,7 +42,7 @@ def framework_fingerprint() -> str:
     """
     roots = {
         "runtime": Path(pycompose.__file__).parent,
-        "template": Path(__file__).parent / "templates" / "android",
+        "template": Path(__file__).resolve().parents[1] / "templates" / "android",
     }
     digest = hashlib.sha256()
     for name, root in roots.items():

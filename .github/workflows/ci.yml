@@ -485,7 +485,7 @@ jobs:
           uv sync --all-packages --all-extras --locked
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
       - name: Sync check
-        if: hashFiles('packages/pycompose-cli/src/pycompose_cli/sync.py') != ''
+        if: hashFiles('packages/pycompose-cli/src/pycompose_cli/commands/sync.py') != ''
         run: |
           cd "$RUNNER_TEMP"
           pycompose init sync-smoke

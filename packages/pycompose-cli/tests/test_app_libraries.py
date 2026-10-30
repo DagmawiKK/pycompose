@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from pycompose_cli import add
+from pycompose_cli.commands import add
 from pycompose_cli.project import Project, ProjectError
 from pycompose_codegen.derive.app import ORIGIN, AppLibraryError, layered_closure
 from pycompose_codegen.emit.app_slice import app_components, with_app_lock

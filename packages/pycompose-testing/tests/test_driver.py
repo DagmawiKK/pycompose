@@ -32,8 +32,8 @@ def test_a_selector_must_name_exactly_one_node() -> None:
 def test_the_first_screen_is_composed_as_the_device_composes_it() -> None:
     import json
 
+    from pycompose_cli.commands.render import first_screen
     from pycompose_cli.project import load_project
-    from pycompose_cli.render import first_screen
 
     snapshot = json.loads(first_screen(load_project(NOTES)))
     assert snapshot["root"]["type"]

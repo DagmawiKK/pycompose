@@ -7,9 +7,9 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from pycompose_cli.build import build_project
+from pycompose_cli.commands.build import build_project
 from pycompose_cli.console import working
-from pycompose_cli.device import adb, adb_command, select_device
+from pycompose_cli.devloop.device import adb, adb_command, select_device
 from pycompose_cli.project import Project, ProjectError
 
 _PACKAGE = re.compile(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+")

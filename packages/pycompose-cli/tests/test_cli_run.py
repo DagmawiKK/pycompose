@@ -138,7 +138,7 @@ def test_run_missing_adb_is_actionable(tmp_path: Path) -> None:
 def test_run_on_the_dev_client_installs_it_and_serves_the_app(tmp_path: Path) -> None:
     import zipfile
 
-    from pycompose_cli.dev_client import FINGERPRINT, framework_fingerprint
+    from pycompose_cli.devloop.dev_client import FINGERPRINT, framework_fingerprint
 
     from pycompose.version import __version__
 
@@ -208,7 +208,7 @@ if sys.argv[1:] == ["devices"]:
 def test_a_dev_client_built_from_another_framework_is_refused(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pycompose_cli import dev_client
+    from pycompose_cli.devloop import dev_client
     from pycompose_cli.project import ProjectError
 
     from pycompose.version import __version__

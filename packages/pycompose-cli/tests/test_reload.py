@@ -186,8 +186,8 @@ def test_a_failed_reload_changes_nothing(source: Path) -> None:
 def test_the_desktop_preview_reloads_an_app_built_from_view_models(
     source: Path, tmp_path: Path
 ) -> None:
+    from pycompose_cli.devloop.reload import AppReloader
     from pycompose_cli.project import load_project
-    from pycompose_cli.reload import AppReloader
 
     (tmp_path / "pycompose.toml").write_text(
         '[app]\nname = "Reload"\napplication_id = "com.example.reload"\n'

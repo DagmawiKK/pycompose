@@ -8,10 +8,10 @@ import threading
 from contextlib import suppress
 from pathlib import Path
 
-from pycompose_cli.build import build_project
+from pycompose_cli.commands.build import build_project
 from pycompose_cli.console import notice, ok
-from pycompose_cli.dev_server import DevServer
-from pycompose_cli.device import adb, adb_command, select_device
+from pycompose_cli.devloop.dev_server import DevServer
+from pycompose_cli.devloop.device import adb, adb_command, select_device
 from pycompose_cli.project import Project, ProjectError
 
 
@@ -45,8 +45,8 @@ def run_project(
     executable = adb()
     serial = select_device(executable, device)
     if dev_client:
-        from pycompose_cli.dev_client import APPLICATION_ID
-        from pycompose_cli.dev_client import dev_client as client
+        from pycompose_cli.devloop.dev_client import APPLICATION_ID
+        from pycompose_cli.devloop.dev_client import dev_client as client
 
         app_id = APPLICATION_ID
         artifacts: tuple[Path, ...] = (client(),)

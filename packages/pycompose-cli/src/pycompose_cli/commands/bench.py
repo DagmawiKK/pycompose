@@ -13,7 +13,7 @@ from __future__ import annotations
 import json
 import time
 
-from pycompose_cli.device import adb, adb_command, select_device
+from pycompose_cli.devloop.device import adb, adb_command, select_device
 from pycompose_cli.project import ProjectError
 
 TAG = "PyCompose.pass"

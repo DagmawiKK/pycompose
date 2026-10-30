@@ -19,10 +19,15 @@ from xml.etree.ElementTree import Element
 
 from defusedxml import ElementTree
 
-from pycompose_cli.permissions import selected_permissions, with_permissions
-from pycompose_cli.prebuild import GENERATED, generated, prebuild, template_files
 from pycompose_cli.project import Project, ProjectError, load_project
-from pycompose_cli.resources import resource_files
+from pycompose_cli.project.permissions import selected_permissions, with_permissions
+from pycompose_cli.project.prebuild import (
+    GENERATED,
+    generated,
+    prebuild,
+    template_files,
+)
+from pycompose_cli.project.resources import resource_files
 
 _ANDROID = "{http://schemas.android.com/apk/res/android}"
 _RES = "host/src/main/res/"

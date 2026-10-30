@@ -183,8 +183,8 @@ def init_project(
     ) as output:
         output.write(config)
     if not native:
-        from pycompose_cli.prebuild import prebuild
         from pycompose_cli.project import load_project
+        from pycompose_cli.project.prebuild import prebuild
 
         prebuild(load_project(target))
     if android_scaffold:

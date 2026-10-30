@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from pycompose_cli import add
+from pycompose_cli.commands import add
 from pycompose_cli.project import Project
 from pycompose_codegen.derive.samples import sample
 

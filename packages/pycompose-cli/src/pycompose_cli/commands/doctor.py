@@ -14,7 +14,7 @@ from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.errors import PyComposeError
 from pycompose.version import __version__
 from pycompose_cli.project import check_project_versions, load_project
-from pycompose_cli.toolchain import android_sdk, jdk_home
+from pycompose_cli.project.toolchain import android_sdk, jdk_home
 
 
 @dataclass(frozen=True, slots=True)
