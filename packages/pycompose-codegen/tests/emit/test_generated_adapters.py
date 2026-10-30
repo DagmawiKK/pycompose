@@ -342,7 +342,8 @@ def test_an_omitted_optional_prop_is_simply_absent() -> None:
     # straight to Compose.
     block = render("FilterChip", components()["FilterChip"])
     for prop, spec in components()["FilterChip"]["props"].items():
-        if spec["type"] == "actionId":
+        if spec["type"] == "actionId" or "valueType" in spec:
+            # A value resolves its wire form or falls back to the native default.
             continue
         if not spec.get("required") and "default" not in spec:
             assert f"model.props.{prop}" not in block

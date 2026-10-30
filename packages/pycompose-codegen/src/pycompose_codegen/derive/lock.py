@@ -32,7 +32,13 @@ from pycompose_codegen.derive.core_modifiers import core_modifiers
 from pycompose_codegen.derive.entry_candidates import derive, select
 from pycompose_codegen.derive.holders import derive as derive_holders
 from pycompose_codegen.derive.overloads import extras
-from pycompose_codegen.derive.policy import Policy, merge, redundant
+from pycompose_codegen.derive.policy import (
+    Policy,
+    merge,
+    redundant,
+    removals,
+    unclaimed,
+)
 from pycompose_codegen.derive.propose import value_families
 from pycompose_codegen.derive.rules import SHAPES, reshape
 from pycompose_codegen.derive.scoped_modifiers import (
@@ -76,6 +82,7 @@ class Report:
         modifiers: Scope-declared modifiers derived from the pin.
         families: Constant families derived from the pin.
         refused_modifiers: Scope-declared modifiers that do not derive, with why.
+        removed: Props policy removes from a derived entry, with the reason.
     """
 
     derived: dict[str, int] = field(default_factory=dict)
@@ -89,6 +96,7 @@ class Report:
     modifiers: list[str] = field(default_factory=list)
     families: list[str] = field(default_factory=list)
     refused_modifiers: dict[str, str] = field(default_factory=dict)
+    removed: dict[str, str] = field(default_factory=dict)
 
 
 def promotable(
@@ -251,12 +259,30 @@ def carried(lock: dict[str, Any], previous: dict[str, Any]) -> None:
     for section in VERSIONED:
         known = previous.get(section, {})
         for name, entry in lock.get(section, {}).items():
+            if section == "components" and name in known:
+                _carried_props(entry, known[name], lock["schemaVersion"])
             if "since" not in entry or name not in known:
                 continue
             if "since" in known[name]:
                 entry["since"] = known[name]["since"]
             else:
                 del entry["since"]
+
+
+def _carried_props(entry: dict[str, Any], known: dict[str, Any], version: str) -> None:
+    """Date each prop as its component is dated: kept if known, current if new.
+
+    A prop the committed lock lacks entered now; without a ``since``, every older
+    envelope would claim it.
+    """
+    previous = known.get("props", {})
+    for prop, spec in entry.get("props", {}).items():
+        if prop not in previous:
+            spec.setdefault("since", version)
+        elif "since" in previous[prop]:
+            spec["since"] = previous[prop]["since"]
+        else:
+            spec.pop("since", None)
 
 
 def derived_families(
@@ -329,12 +355,14 @@ def compile_components(
         except CandidateError as exc:
             report.errors.append(f"{name}: policy says derivable, but {exc}")
             continue
-        patch = rule.get("patch", {})
+        patch, removed, unreasoned = removals(name, rule.get("patch", {}))
+        report.removed.update(removed)
+        report.errors.extend(unreasoned)
         report.errors.extend(
             f"{name}.{path}: policy the pin already implies"
             for path in redundant(derived, patch)
         )
-        components[name] = merge(derived, patch)
+        components[name] = unclaimed(merge(derived, patch))
         report.derived[name] = len(json.dumps(patch))
     decisions = {
         name: rule["decision"]

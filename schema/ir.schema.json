@@ -920,6 +920,19 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -930,6 +943,31 @@
                 }
               },
               "type": "object"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
             }
           },
           "type": "object"
@@ -1194,6 +1232,10 @@
                 }
               },
               "type": "object"
+            },
+            "propagateMinConstraints": {
+              "default": false,
+              "type": "boolean"
             }
           },
           "type": "object"
@@ -1210,8 +1252,21 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "colors": {
               "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
             },
             "elevation": {
               "anyOf": [
@@ -1249,6 +1304,9 @@
             },
             "onPress": {
               "$ref": "#/definitions/Action"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
             },
             "text": {
               "type": "string"
@@ -1460,6 +1518,9 @@
             "checked": {
               "type": "boolean"
             },
+            "colors": {
+              "$ref": "#/definitions/Family_CheckboxColors"
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
@@ -1513,6 +1574,28 @@
                 },
                 {
                   "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "gapSize": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
                 }
               ]
             },
@@ -3504,6 +3587,19 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_SelectableChipColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_SelectableChipElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
@@ -3536,6 +3632,9 @@
             },
             "selected": {
               "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
             }
           },
           "required": [
@@ -3871,6 +3970,9 @@
             },
             "onPress": {
               "$ref": "#/definitions/Action"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
             }
           },
           "required": [
@@ -4328,6 +4430,9 @@
               "minimum": 0,
               "type": "integer"
             },
+            "horizontalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
+            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -4351,6 +4456,14 @@
             },
             "onScrollIdle": {
               "$ref": "#/definitions/Action"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -4404,6 +4517,17 @@
             },
             "onScrollIdle": {
               "$ref": "#/definitions/Action"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "verticalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentVertical"
             },
             "window": {
               "type": "string"
@@ -4507,6 +4631,28 @@
                 }
               ]
             },
+            "gapSize": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -4520,6 +4666,9 @@
             },
             "progress": {
               "type": "number"
+            },
+            "strokeCap": {
+              "$ref": "#/definitions/Family_StrokeCap"
             },
             "trackColor": {
               "anyOf": [
@@ -4811,6 +4960,16 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -4831,9 +4990,70 @@
             "open": {
               "type": "boolean"
             },
+            "scrimColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "sheetGesturesEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "sheetMaxWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
             "skipPartiallyExpanded": {
               "default": false,
               "type": "boolean"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
             },
             "value": {
               "enum": [
@@ -4984,6 +5204,38 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "collapsedShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "expandedHeaderTopPadding": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "expandedShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "hideOnCollapse": {
+              "default": false,
+              "type": "boolean"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -4994,6 +5246,9 @@
                 }
               },
               "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
             }
           },
           "type": "object"
@@ -5568,6 +5823,26 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -6766,6 +7041,12 @@
                   "$ref": "#/definitions/Expression"
                 }
               ]
+            },
+            "contentWindowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            },
+            "floatingActionButtonPosition": {
+              "$ref": "#/definitions/Family_FabPosition"
             },
             "modifier": {
               "properties": {
@@ -9128,6 +9409,32 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
@@ -9154,6 +9461,9 @@
             },
             "onPress": {
               "$ref": "#/definitions/Action"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
             },
             "text": {
               "type": "string"
@@ -9672,6 +9982,12 @@
                 }
               },
               "type": "object"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
             }
           },
           "type": "object"
@@ -27598,6 +27914,19 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -27608,6 +27937,31 @@
                 }
               },
               "type": "object"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
             }
           },
           "type": "object"
@@ -27872,6 +28226,10 @@
                 }
               },
               "type": "object"
+            },
+            "propagateMinConstraints": {
+              "default": false,
+              "type": "boolean"
             }
           },
           "type": "object"
@@ -27888,8 +28246,21 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "colors": {
               "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
             },
             "elevation": {
               "anyOf": [
@@ -27927,6 +28298,9 @@
             },
             "onPress": {
               "$ref": "#/definitions/Action"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
             },
             "text": {
               "type": "string"
@@ -28138,6 +28512,9 @@
             "checked": {
               "type": "boolean"
             },
+            "colors": {
+              "$ref": "#/definitions/Family_CheckboxColors"
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
@@ -28191,6 +28568,28 @@
                 },
                 {
                   "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "gapSize": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
                 }
               ]
             },
@@ -30182,6 +30581,19 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_SelectableChipColors"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_SelectableChipElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
@@ -30214,6 +30626,9 @@
             },
             "selected": {
               "type": "boolean"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
             }
           },
           "required": [
@@ -30549,6 +30964,9 @@
             },
             "onPress": {
               "$ref": "#/definitions/Action"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
             }
           },
           "required": [
@@ -31006,6 +31424,9 @@
               "minimum": 0,
               "type": "integer"
             },
+            "horizontalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
+            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -31029,6 +31450,14 @@
             },
             "onScrollIdle": {
               "$ref": "#/definitions/Action"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -31082,6 +31511,17 @@
             },
             "onScrollIdle": {
               "$ref": "#/definitions/Action"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "verticalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentVertical"
             },
             "window": {
               "type": "string"
@@ -31185,6 +31625,28 @@
                 }
               ]
             },
+            "gapSize": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -31198,6 +31660,9 @@
             },
             "progress": {
               "type": "number"
+            },
+            "strokeCap": {
+              "$ref": "#/definitions/Family_StrokeCap"
             },
             "trackColor": {
               "anyOf": [
@@ -31489,6 +31954,16 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -31509,9 +31984,70 @@
             "open": {
               "type": "boolean"
             },
+            "scrimColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "sheetGesturesEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "sheetMaxWidth": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
             "skipPartiallyExpanded": {
               "default": false,
               "type": "boolean"
+            },
+            "tonalElevation": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
             },
             "value": {
               "enum": [
@@ -31662,6 +32198,38 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "collapsedShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "expandedHeaderTopPadding": {
+              "allOf": [
+                {
+                  "maximum": 3.4028234663852886e+38,
+                  "minimum": -3.4028234663852886e+38,
+                  "type": "number"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "const": 0
+                    },
+                    {
+                      "minimum": 1.401298464324817e-45
+                    },
+                    {
+                      "maximum": -1.401298464324817e-45
+                    }
+                  ]
+                }
+              ]
+            },
+            "expandedShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "hideOnCollapse": {
+              "default": false,
+              "type": "boolean"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -31672,6 +32240,9 @@
                 }
               },
               "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
             }
           },
           "type": "object"
@@ -32790,6 +33361,26 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "containerColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "contentColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -34459,6 +35050,12 @@
                   "$ref": "#/definitions/Expression"
                 }
               ]
+            },
+            "contentWindowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            },
+            "floatingActionButtonPosition": {
+              "$ref": "#/definitions/Family_FabPosition"
             },
             "modifier": {
               "properties": {
@@ -36821,6 +37418,32 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "border": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_BorderStroke"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_ButtonColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "elevation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_ButtonElevation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
@@ -36847,6 +37470,9 @@
             },
             "onPress": {
               "$ref": "#/definitions/Action"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
             },
             "text": {
               "type": "string"
@@ -37365,6 +37991,12 @@
                 }
               },
               "type": "object"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
             }
           },
           "type": "object"

@@ -532,6 +532,29 @@
         "owner": "androidx.compose.material3.AppBarKt"
       },
       "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.material3.BottomAppBarDefaults.containerColor",
+          "since": "1.23.0"
+        },
+        "contentPadding": {
+          "type": "value",
+          "valueType": "PaddingValues",
+          "nativeDefault": "androidx.compose.material3.BottomAppBarDefaults.ContentPadding",
+          "since": "1.23.0"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.BottomAppBarDefaults.ContainerElevation",
+          "since": "1.23.0"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.BottomAppBarDefaults.windowInsets",
+          "since": "1.23.0"
+        },
         "modifier": {
           "type": "modifier"
         }
@@ -691,6 +714,11 @@
           "default": "topStart",
           "nativeDefault": "androidx.compose.ui.Alignment.Companion.TopStart"
         },
+        "propagateMinConstraints": {
+          "type": "boolean",
+          "default": false,
+          "since": "1.23.0"
+        },
         "modifier": {
           "type": "modifier"
         }
@@ -713,11 +741,24 @@
         "owner": "androidx.compose.material3.ButtonKt"
       },
       "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true,
+          "since": "1.23.0"
+        },
         "colors": {
           "type": "value",
           "valueType": "ButtonColors",
           "nativeDefault": "androidx.compose.material3.ButtonDefaults.buttonColors()",
           "since": "1.11.0"
+        },
+        "contentPadding": {
+          "type": "value",
+          "valueType": "PaddingValues",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.ContentPadding",
+          "since": "1.23.0"
         },
         "elevation": {
           "type": "value",
@@ -733,6 +774,12 @@
         "onClick": {
           "type": "actionId",
           "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.shape",
+          "since": "1.23.0"
         },
         "modifier": {
           "type": "modifier"
@@ -994,6 +1041,12 @@
           "type": "boolean",
           "required": true
         },
+        "colors": {
+          "type": "value",
+          "valueType": "CheckboxColors",
+          "nativeDefault": "androidx.compose.material3.CheckboxDefaults.colors()",
+          "since": "1.23.0"
+        },
         "enabled": {
           "type": "boolean",
           "default": true
@@ -1073,6 +1126,11 @@
           "type": "color",
           "valueType": "Color",
           "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularColor"
+        },
+        "gapSize": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize",
+          "since": "1.23.0"
         },
         "strokeCap": {
           "type": "value",
@@ -3078,6 +3136,19 @@
         "owner": "androidx.compose.material3.ChipKt"
       },
       "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "SelectableChipColors",
+          "nativeDefault": "androidx.compose.material3.FilterChipDefaults.filterChipColors()",
+          "since": "1.23.0"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "SelectableChipElevation",
+          "nativeDefault": "androidx.compose.material3.FilterChipDefaults.filterChipElevation()",
+          "nullable": true,
+          "since": "1.23.0"
+        },
         "enabled": {
           "type": "boolean",
           "default": true
@@ -3089,6 +3160,12 @@
         "selected": {
           "type": "boolean",
           "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.FilterChipDefaults.shape",
+          "since": "1.23.0"
         },
         "modifier": {
           "type": "modifier"
@@ -3466,6 +3543,12 @@
         "onClick": {
           "type": "actionId",
           "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.IconButtonDefaults.standardShape",
+          "since": "1.23.0"
         },
         "modifier": {
           "type": "modifier"
@@ -4034,6 +4117,30 @@
         "owner": "androidx.compose.foundation.lazy.LazyDslKt"
       },
       "props": {
+        "horizontalAlignment": {
+          "type": "enum",
+          "valueType": "AlignmentHorizontal",
+          "values": [
+            "centerHorizontally",
+            "end",
+            "left",
+            "right",
+            "start"
+          ],
+          "default": "start",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.Start",
+          "since": "1.23.0"
+        },
+        "reverseLayout": {
+          "type": "boolean",
+          "default": false,
+          "since": "1.23.0"
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true,
+          "since": "1.23.0"
+        },
         "modifier": {
           "type": "modifier"
         },
@@ -4094,6 +4201,28 @@
         "owner": "androidx.compose.foundation.lazy.LazyDslKt"
       },
       "props": {
+        "reverseLayout": {
+          "type": "boolean",
+          "default": false,
+          "since": "1.23.0"
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true,
+          "since": "1.23.0"
+        },
+        "verticalAlignment": {
+          "type": "enum",
+          "valueType": "AlignmentVertical",
+          "values": [
+            "bottom",
+            "centerVertically",
+            "top"
+          ],
+          "default": "top",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.Top",
+          "since": "1.23.0"
+        },
         "modifier": {
           "type": "modifier"
         },
@@ -4234,6 +4363,11 @@
           "valueType": "Color",
           "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor"
         },
+        "gapSize": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize",
+          "since": "1.23.0"
+        },
         "progress": {
           "type": "number",
           "required": true,
@@ -4242,6 +4376,12 @@
             "returns": "Float"
           },
           "since": "1.20.0"
+        },
+        "strokeCap": {
+          "type": "value",
+          "valueType": "StrokeCap",
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearStrokeCap",
+          "since": "1.23.0"
         },
         "trackColor": {
           "type": "color",
@@ -4423,6 +4563,39 @@
         "androidx.compose.material3.ExperimentalMaterial3Api"
       ],
       "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.material3.BottomSheetDefaults.ContainerColor",
+          "since": "1.23.0"
+        },
+        "scrimColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.material3.BottomSheetDefaults.ScrimColor",
+          "since": "1.23.0"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.ExpandedShape",
+          "since": "1.23.0"
+        },
+        "sheetGesturesEnabled": {
+          "type": "boolean",
+          "default": true,
+          "since": "1.23.0"
+        },
+        "sheetMaxWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetMaxWidth",
+          "since": "1.23.0"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "since": "1.23.0"
+        },
         "modifier": {
           "type": "modifier"
         },
@@ -4602,6 +4775,34 @@
         "owner": "androidx.compose.material3.WideNavigationRailKt"
       },
       "props": {
+        "collapsedShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.WideNavigationRailDefaults.modalCollapsedShape",
+          "since": "1.23.0"
+        },
+        "expandedHeaderTopPadding": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "since": "1.23.0"
+        },
+        "expandedShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.WideNavigationRailDefaults.modalExpandedShape",
+          "since": "1.23.0"
+        },
+        "hideOnCollapse": {
+          "type": "boolean",
+          "default": false,
+          "since": "1.23.0"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.WideNavigationRailDefaults.windowInsets",
+          "since": "1.23.0"
+        },
         "modifier": {
           "type": "modifier"
         }
@@ -5204,6 +5405,18 @@
         "owner": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt"
       },
       "props": {
+        "containerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.containerColor",
+          "since": "1.23.0"
+        },
+        "contentColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.contentColor",
+          "since": "1.23.0"
+        },
         "modifier": {
           "type": "modifier"
         }
@@ -6463,6 +6676,18 @@
           "type": "color",
           "valueType": "Color",
           "fallback": "androidx.compose.material3.MaterialTheme.colorScheme.background"
+        },
+        "contentWindowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.ScaffoldDefaults.contentWindowInsets",
+          "since": "1.23.0"
+        },
+        "floatingActionButtonPosition": {
+          "type": "value",
+          "valueType": "FabPosition",
+          "nativeDefault": "androidx.compose.material3.FabPosition.Companion.End",
+          "since": "1.23.0"
         },
         "modifier": {
           "type": "modifier"
@@ -8905,6 +9130,32 @@
         "owner": "androidx.compose.material3.ButtonKt"
       },
       "props": {
+        "border": {
+          "type": "value",
+          "valueType": "BorderStroke",
+          "nativeDefault": "null",
+          "nullable": true,
+          "since": "1.23.0"
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "ButtonColors",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.textButtonColors()",
+          "since": "1.23.0"
+        },
+        "contentPadding": {
+          "type": "value",
+          "valueType": "PaddingValues",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.TextButtonContentPadding",
+          "since": "1.23.0"
+        },
+        "elevation": {
+          "type": "value",
+          "valueType": "ButtonElevation",
+          "nativeDefault": "null",
+          "nullable": true,
+          "since": "1.23.0"
+        },
         "enabled": {
           "type": "boolean",
           "default": true
@@ -8912,6 +9163,12 @@
         "onClick": {
           "type": "actionId",
           "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.ButtonDefaults.textShape",
+          "since": "1.23.0"
         },
         "modifier": {
           "type": "modifier"
@@ -9604,6 +9861,18 @@
         "owner": "androidx.compose.material3.WideNavigationRailKt"
       },
       "props": {
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.WideNavigationRailDefaults.shape",
+          "since": "1.23.0"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.WideNavigationRailDefaults.windowInsets",
+          "since": "1.23.0"
+        },
         "modifier": {
           "type": "modifier"
         }

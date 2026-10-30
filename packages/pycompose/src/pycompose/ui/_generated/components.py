@@ -258,6 +258,14 @@ _ImageImageVectorAlignment = Literal[
     "topStart",
 ]
 
+_LazyColumnHorizontalAlignment = Literal[
+    "centerHorizontally",
+    "end",
+    "left",
+    "right",
+    "start",
+]
+
 _LazyColumnVerticalArrangement = Literal[
     "top",
     "center",
@@ -265,6 +273,12 @@ _LazyColumnVerticalArrangement = Literal[
     "spaceEvenly",
     "spaceBetween",
     "spaceAround",
+]
+
+_LazyRowVerticalAlignment = Literal[
+    "bottom",
+    "centerVertically",
+    "top",
 ]
 
 _ModalBottomSheetValue = Literal[
@@ -803,7 +817,11 @@ class BottomAppBar(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_padding: JsonValue | None = None,
         modifier: Modifier | None = None,
+        tonal_elevation: int | float | None = None,
+        window_insets: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered BottomAppBar.
@@ -811,13 +829,25 @@ class BottomAppBar(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
             modifier: Native modifier; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
             children: Ordered child nodes with stable keys.
 
         Raises:
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
+        if window_insets is not None:
+            props["window_insets"] = window_insets
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -972,6 +1002,7 @@ class Box(Component):
         id: str | None = None,
         content_alignment: _BoxContentAlignment | None = None,
         modifier: Modifier | None = None,
+        propagate_min_constraints: bool | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered Box.
@@ -981,6 +1012,8 @@ class Box(Component):
             id: Stable instance key; None derives the node's path id.
             content_alignment: Native contentAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
+            propagate_min_constraints: Native propagateMinConstraints; None uses its
+                default.
             children: Ordered child nodes with stable keys.
 
         Raises:
@@ -989,6 +1022,8 @@ class Box(Component):
         props: dict[str, PropValue] = {}
         if content_alignment is not None:
             props["content_alignment"] = content_alignment
+        if propagate_min_constraints is not None:
+            props["propagate_min_constraints"] = propagate_min_constraints
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -1007,7 +1042,9 @@ class Button(Component):
         self,
         *,
         id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
         colors: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
         elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
@@ -1015,13 +1052,16 @@ class Button(Component):
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
+        shape: JsonValue | None = None,
         text: str,
     ) -> None:
         """Construct a registered Button.
 
         Args:
             id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
             colors: Native colors; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
             elevation: Native elevation; omitted uses its default; None is null.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -1029,11 +1069,16 @@ class Button(Component):
             on_focus: Native onFocus; None uses its default.
             on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
+            shape: Native shape; None uses its default.
             text: Required native text.
         """
         props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
         if colors is not None:
             props["colors"] = colors
+        if content_padding is not None:
+            props["content_padding"] = content_padding
         if not isinstance(elevation, _Unset):
             props["elevation"] = elevation
         if enabled is not None:
@@ -1045,6 +1090,8 @@ class Button(Component):
             props["on_hover"] = on_hover
         if on_press is not None:
             props["on_press"] = on_press
+        if shape is not None:
+            props["shape"] = shape
         props["text"] = text
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
@@ -1256,6 +1303,7 @@ class Checkbox(Component):
         *,
         id: str | None = None,
         checked: bool,
+        colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: ActionTarget,
@@ -1268,6 +1316,7 @@ class Checkbox(Component):
         Args:
             id: Stable instance key; None derives the node's path id.
             checked: Required native checked.
+            colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_checked_change: Required native onCheckedChange.
@@ -1277,6 +1326,8 @@ class Checkbox(Component):
         """
         props: dict[str, PropValue] = {}
         props["checked"] = checked
+        if colors is not None:
+            props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
@@ -1299,6 +1350,7 @@ class _CircularProgressIndicator(Component):
     accepted_keywords = frozenset(
         {
             "color",
+            "gap_size",
             "stroke_cap",
             "stroke_width",
             "track_color",
@@ -1310,6 +1362,7 @@ class _CircularProgressIndicator(Component):
         *,
         id: str | None = None,
         color: JsonValue | Expression | None = None,
+        gap_size: int | float | None = None,
         modifier: Modifier | None = None,
         stroke_cap: JsonValue | None = None,
         stroke_width: int | float | None = None,
@@ -1320,6 +1373,7 @@ class _CircularProgressIndicator(Component):
         Args:
             id: Stable instance key; None derives the node's path id.
             color: Native color; None uses its default.
+            gap_size: Native gapSize; None uses its default.
             modifier: Native modifier; None uses its default.
             stroke_cap: Native strokeCap; None uses its default.
             stroke_width: Native strokeWidth; None uses its default.
@@ -1328,6 +1382,8 @@ class _CircularProgressIndicator(Component):
         props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
+        if gap_size is not None:
+            props["gap_size"] = gap_size
         if stroke_cap is not None:
             props["stroke_cap"] = stroke_cap
         if stroke_width is not None:
@@ -1348,6 +1404,7 @@ class CircularProgressIndicator(_CircularProgressIndicator):
         *,
         id: str | None = None,
         color: JsonValue | Expression | None = None,
+        gap_size: int | float | None = None,
         modifier: Modifier | None = None,
         stroke_cap: JsonValue | None = None,
         stroke_width: int | float | None = None,
@@ -3105,6 +3162,8 @@ class FilterChip(Component):
         self,
         *,
         id: str | None = None,
+        colors: JsonValue | None = None,
+        elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         label: str,
         modifier: Modifier | None = None,
@@ -3113,6 +3172,7 @@ class FilterChip(Component):
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
         selected: bool,
+        shape: JsonValue | None = None,
         leading_icon: Content | None = None,
         trailing_icon: Content | None = None,
     ) -> None:
@@ -3120,6 +3180,8 @@ class FilterChip(Component):
 
         Args:
             id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            elevation: Native elevation; omitted uses its default; None is null.
             enabled: Native enabled; None uses its default.
             label: Required native label.
             modifier: Native modifier; None uses its default.
@@ -3128,10 +3190,15 @@ class FilterChip(Component):
             on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
             selected: Required native selected.
+            shape: Native shape; None uses its default.
             leading_icon: Nodes for the native leadingIcon slot.
             trailing_icon: Nodes for the native trailingIcon slot.
         """
         props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if not isinstance(elevation, _Unset):
+            props["elevation"] = elevation
         if enabled is not None:
             props["enabled"] = enabled
         props["label"] = label
@@ -3143,6 +3210,8 @@ class FilterChip(Component):
         if on_press is not None:
             props["on_press"] = on_press
         props["selected"] = selected
+        if shape is not None:
+            props["shape"] = shape
         slotted: tuple[Node, ...] = ()
         if leading_icon is not None:
             slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
@@ -3452,6 +3521,7 @@ class IconButton(Component):
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
+        shape: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -3467,6 +3537,7 @@ class IconButton(Component):
             on_focus: Native onFocus; None uses its default.
             on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
+            shape: Native shape; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
@@ -3485,6 +3556,8 @@ class IconButton(Component):
             props["on_hover"] = on_hover
         if on_press is not None:
             props["on_press"] = on_press
+        if shape is not None:
+            props["shape"] = shape
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -3906,8 +3979,11 @@ class LazyColumn(Component):
         *contents: Node,
         id: str | None = None,
         first_visible_index: int | None = None,
+        horizontal_alignment: _LazyColumnHorizontalAlignment | None = None,
         modifier: Modifier | None = None,
         on_scroll_idle: ActionTarget | None = None,
+        reverse_layout: bool | None = None,
+        user_scroll_enabled: bool | None = None,
         vertical_arrangement: _LazyColumnVerticalArrangement | None = None,
         children: Content = (),
         items: Content | Sequence[Any] | None = None,
@@ -3920,8 +3996,11 @@ class LazyColumn(Component):
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             first_visible_index: Native firstVisibleIndex; None uses its default.
+            horizontal_alignment: Native horizontalAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
             on_scroll_idle: Native onScrollIdle; None uses its default.
+            reverse_layout: Native reverseLayout; None uses its default.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
             vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
             items: The children, or with item the data whose window the host
@@ -3935,8 +4014,14 @@ class LazyColumn(Component):
         props: dict[str, PropValue] = {}
         if first_visible_index is not None:
             props["first_visible_index"] = first_visible_index
+        if horizontal_alignment is not None:
+            props["horizontal_alignment"] = horizontal_alignment
         if on_scroll_idle is not None:
             props["on_scroll_idle"] = on_scroll_idle
+        if reverse_layout is not None:
+            props["reverse_layout"] = reverse_layout
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
         if key is not None or item is not None:
@@ -3968,6 +4053,9 @@ class LazyRow(Component):
         first_visible_index: int | None = None,
         modifier: Modifier | None = None,
         on_scroll_idle: ActionTarget | None = None,
+        reverse_layout: bool | None = None,
+        user_scroll_enabled: bool | None = None,
+        vertical_alignment: _LazyRowVerticalAlignment | None = None,
         children: Content = (),
         items: Content | Sequence[Any] | None = None,
         key: Callable[[Any], str | int] | None = None,
@@ -3981,6 +4069,9 @@ class LazyRow(Component):
             first_visible_index: Native firstVisibleIndex; None uses its default.
             modifier: Native modifier; None uses its default.
             on_scroll_idle: Native onScrollIdle; None uses its default.
+            reverse_layout: Native reverseLayout; None uses its default.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
+            vertical_alignment: Native verticalAlignment; None uses its default.
             children: Ordered child nodes with stable keys.
             items: The children, or with item the data whose window the host
                 composes.
@@ -3995,6 +4086,12 @@ class LazyRow(Component):
             props["first_visible_index"] = first_visible_index
         if on_scroll_idle is not None:
             props["on_scroll_idle"] = on_scroll_idle
+        if reverse_layout is not None:
+            props["reverse_layout"] = reverse_layout
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
+        if vertical_alignment is not None:
+            props["vertical_alignment"] = vertical_alignment
         if key is not None or item is not None:
             raise IrValidationError("key= needs item=", node_id=id)
         if items is not None:
@@ -4083,7 +4180,9 @@ class _LinearProgressIndicator(Component):
     accepted_keywords = frozenset(
         {
             "color",
+            "gap_size",
             "progress",
+            "stroke_cap",
             "track_color",
         }
     )
@@ -4093,8 +4192,10 @@ class _LinearProgressIndicator(Component):
         *,
         id: str | None = None,
         color: JsonValue | Expression | None = None,
+        gap_size: int | float | None = None,
         modifier: Modifier | None = None,
         progress: int | float,
+        stroke_cap: JsonValue | None = None,
         track_color: JsonValue | Expression | None = None,
     ) -> None:
         """Construct a registered LinearProgressIndicator.
@@ -4102,14 +4203,20 @@ class _LinearProgressIndicator(Component):
         Args:
             id: Stable instance key; None derives the node's path id.
             color: Native color; None uses its default.
+            gap_size: Native gapSize; None uses its default.
             modifier: Native modifier; None uses its default.
             progress: Required native progress.
+            stroke_cap: Native strokeCap; None uses its default.
             track_color: Native trackColor; None uses its default.
         """
         props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
+        if gap_size is not None:
+            props["gap_size"] = gap_size
         props["progress"] = progress
+        if stroke_cap is not None:
+            props["stroke_cap"] = stroke_cap
         if track_color is not None:
             props["track_color"] = track_color
         super().__init__(id=id, children=(), modifier=modifier, **props)
@@ -4126,8 +4233,10 @@ class LinearProgressIndicator(_LinearProgressIndicator):
         *,
         id: str | None = None,
         color: JsonValue | Expression | None = None,
+        gap_size: int | float | None = None,
         modifier: Modifier | None = None,
         progress: int | float,
+        stroke_cap: JsonValue | None = None,
         track_color: JsonValue | Expression | None = None,
     ) -> LinearProgressIndicator: ...
     @overload
@@ -4290,11 +4399,17 @@ class ModalBottomSheet(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        container_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         on_open_change: ActionTarget | None = None,
         on_value_change: ActionTarget | None = None,
         open: bool | None = None,
+        scrim_color: JsonValue | Expression | None = None,
+        shape: JsonValue | None = None,
+        sheet_gestures_enabled: bool | None = None,
+        sheet_max_width: int | float | None = None,
         skip_partially_expanded: bool | None = None,
+        tonal_elevation: int | float | None = None,
         value: _ModalBottomSheetValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -4305,12 +4420,19 @@ class ModalBottomSheet(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
             modifier: Native modifier; None uses its default.
             on_open_change: Native onOpenChange; None uses its default.
             on_value_change: Native onValueChange; None uses its default.
             open: Native open; None uses its default.
+            scrim_color: Native scrimColor; None uses its default.
+            shape: Native shape; None uses its default.
+            sheet_gestures_enabled: Native sheetGesturesEnabled; None uses its
+                default.
+            sheet_max_width: Native sheetMaxWidth; None uses its default.
             skip_partially_expanded: Native skipPartiallyExpanded; None uses its
                 default.
+            tonal_elevation: Native tonalElevation; None uses its default.
             value: Native value; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -4320,14 +4442,26 @@ class ModalBottomSheet(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
         if on_open_change is not None:
             props["on_open_change"] = on_open_change
         if on_value_change is not None:
             props["on_value_change"] = on_value_change
         if open is not None:
             props["open"] = open
+        if scrim_color is not None:
+            props["scrim_color"] = scrim_color
+        if shape is not None:
+            props["shape"] = shape
+        if sheet_gestures_enabled is not None:
+            props["sheet_gestures_enabled"] = sheet_gestures_enabled
+        if sheet_max_width is not None:
+            props["sheet_max_width"] = sheet_max_width
         if skip_partially_expanded is not None:
             props["skip_partially_expanded"] = skip_partially_expanded
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = tonal_elevation
         if value is not None:
             props["value"] = value
         if content is not None:
@@ -4484,7 +4618,12 @@ class ModalWideNavigationRail(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        collapsed_shape: JsonValue | None = None,
+        expanded_header_top_padding: int | float | None = None,
+        expanded_shape: JsonValue | None = None,
+        hide_on_collapse: bool | None = None,
         modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered ModalWideNavigationRail.
@@ -4492,13 +4631,29 @@ class ModalWideNavigationRail(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            collapsed_shape: Native collapsedShape; None uses its default.
+            expanded_header_top_padding: Native expandedHeaderTopPadding; None uses
+                its default.
+            expanded_shape: Native expandedShape; None uses its default.
+            hide_on_collapse: Native hideOnCollapse; None uses its default.
             modifier: Native modifier; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
             children: Ordered child nodes with stable keys.
 
         Raises:
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if collapsed_shape is not None:
+            props["collapsed_shape"] = collapsed_shape
+        if expanded_header_top_padding is not None:
+            props["expanded_header_top_padding"] = expanded_header_top_padding
+        if expanded_shape is not None:
+            props["expanded_shape"] = expanded_shape
+        if hide_on_collapse is not None:
+            props["hide_on_collapse"] = hide_on_collapse
+        if window_insets is not None:
+            props["window_insets"] = window_insets
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -5008,6 +5163,8 @@ class NavigationSuiteScaffold(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        container_color: JsonValue | Expression | None = None,
+        content_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
         navigation_items: Content | None = None,
@@ -5018,6 +5175,8 @@ class NavigationSuiteScaffold(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            container_color: Native containerColor; None uses its default.
+            content_color: Native contentColor; None uses its default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
             navigation_items: Nodes for the native navigationItems slot.
@@ -5027,6 +5186,10 @@ class NavigationSuiteScaffold(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if container_color is not None:
+            props["container_color"] = container_color
+        if content_color is not None:
+            props["content_color"] = content_color
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -6189,6 +6352,8 @@ class Scaffold(Component):
         *contents: Node,
         id: str | None = None,
         container_color: JsonValue | Expression | None = None,
+        content_window_insets: JsonValue | None = None,
+        floating_action_button_position: JsonValue | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -6203,6 +6368,10 @@ class Scaffold(Component):
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             container_color: Native containerColor; None uses its default.
+            content_window_insets: Native contentWindowInsets; None uses its
+                default.
+            floating_action_button_position: Native floatingActionButtonPosition;
+                None uses its default.
             modifier: Native modifier; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -6217,6 +6386,10 @@ class Scaffold(Component):
         props: dict[str, PropValue] = {}
         if container_color is not None:
             props["container_color"] = container_color
+        if content_window_insets is not None:
+            props["content_window_insets"] = content_window_insets
+        if floating_action_button_position is not None:
+            props["floating_action_button_position"] = floating_action_button_position
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -8010,27 +8183,45 @@ class TextButton(Component):
         self,
         *,
         id: str | None = None,
+        border: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
+        elevation: JsonValue | None | _Unset = UNSET,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
+        shape: JsonValue | None = None,
         text: str,
     ) -> None:
         """Construct a registered TextButton.
 
         Args:
             id: Stable instance key; None derives the node's path id.
+            border: Native border; omitted uses its default; None is null.
+            colors: Native colors; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            elevation: Native elevation; omitted uses its default; None is null.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_click: Required native onClick.
             on_focus: Native onFocus; None uses its default.
             on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
+            shape: Native shape; None uses its default.
             text: Required native text.
         """
         props: dict[str, PropValue] = {}
+        if not isinstance(border, _Unset):
+            props["border"] = border
+        if colors is not None:
+            props["colors"] = colors
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if not isinstance(elevation, _Unset):
+            props["elevation"] = elevation
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
@@ -8040,6 +8231,8 @@ class TextButton(Component):
             props["on_hover"] = on_hover
         if on_press is not None:
             props["on_press"] = on_press
+        if shape is not None:
+            props["shape"] = shape
         props["text"] = text
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
@@ -8525,6 +8718,8 @@ class WideNavigationRail(Component):
         *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
+        shape: JsonValue | None = None,
+        window_insets: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered WideNavigationRail.
@@ -8533,12 +8728,18 @@ class WideNavigationRail(Component):
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
+            shape: Native shape; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
             children: Ordered child nodes with stable keys.
 
         Raises:
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if shape is not None:
+            props["shape"] = shape
+        if window_insets is not None:
+            props["window_insets"] = window_insets
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id

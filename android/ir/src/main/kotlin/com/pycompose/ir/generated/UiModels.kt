@@ -226,7 +226,11 @@ data class BasicTextField(
 
 @Serializable
 data class BottomAppBarProps(
+    val `containerColor`: JsonElement? = null,
+    val `contentPadding`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
+    val `tonalElevation`: Double? = null,
+    val `windowInsets`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -291,6 +295,7 @@ data class BottomSheetScaffold(
 data class BoxProps(
     val `contentAlignment`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
+    val `propagateMinConstraints`: Boolean = false,
 ) : UiProps
 
 @Serializable
@@ -307,7 +312,9 @@ data class Box(
 
 @Serializable
 data class ButtonProps(
+    val `border`: OptionalValue = OptionalValue.Absent,
     val `colors`: JsonElement? = null,
+    val `contentPadding`: JsonElement? = null,
     val `elevation`: OptionalValue = OptionalValue.Absent,
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
@@ -315,6 +322,7 @@ data class ButtonProps(
     val `onFocus`: String? = null,
     val `onHover`: String? = null,
     val `onPress`: String? = null,
+    val `shape`: JsonElement? = null,
     val `text`: String,
 ) : UiProps
 
@@ -400,6 +408,7 @@ data class CenterAlignedTopAppBar(
 @Serializable
 data class CheckboxProps(
     val `checked`: Boolean,
+    val `colors`: JsonElement? = null,
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onCheckedChange`: String,
@@ -423,6 +432,7 @@ data class Checkbox(
 @Serializable
 data class CircularProgressIndicatorProps(
     val `color`: JsonElement? = null,
+    val `gapSize`: Double? = null,
     override val `modifier`: JsonObject? = null,
     val `strokeCap`: JsonElement? = null,
     val `strokeWidth`: Double? = null,
@@ -1090,6 +1100,8 @@ data class FilledTonalIconToggleButton(
 
 @Serializable
 data class FilterChipProps(
+    val `colors`: JsonElement? = null,
+    val `elevation`: OptionalValue = OptionalValue.Absent,
     val `enabled`: Boolean = true,
     val `label`: String,
     override val `modifier`: JsonObject? = null,
@@ -1098,6 +1110,7 @@ data class FilterChipProps(
     val `onHover`: String? = null,
     val `onPress`: String? = null,
     val `selected`: Boolean,
+    val `shape`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1241,6 +1254,7 @@ data class IconButtonProps(
     val `onFocus`: String? = null,
     val `onHover`: String? = null,
     val `onPress`: String? = null,
+    val `shape`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1416,10 +1430,13 @@ data class LargeTopAppBar(
 @Serializable
 data class LazyColumnProps(
     val `firstVisibleIndex`: Long? = null,
+    val `horizontalAlignment`: JsonElement? = null,
     val `itemCount`: Long? = null,
     val `itemOffset`: Long? = null,
     override val `modifier`: JsonObject? = null,
     val `onScrollIdle`: String? = null,
+    val `reverseLayout`: Boolean = false,
+    val `userScrollEnabled`: Boolean = true,
     val `verticalArrangement`: JsonElement? = null,
     val `window`: String? = null,
 ) : UiProps
@@ -1443,6 +1460,9 @@ data class LazyRowProps(
     val `itemOffset`: Long? = null,
     override val `modifier`: JsonObject? = null,
     val `onScrollIdle`: String? = null,
+    val `reverseLayout`: Boolean = false,
+    val `userScrollEnabled`: Boolean = true,
+    val `verticalAlignment`: JsonElement? = null,
     val `window`: String? = null,
 ) : UiProps
 
@@ -1485,8 +1505,10 @@ data class LeadingIconTab(
 @Serializable
 data class LinearProgressIndicatorProps(
     val `color`: JsonElement? = null,
+    val `gapSize`: Double? = null,
     override val `modifier`: JsonObject? = null,
     val `progress`: Double,
+    val `strokeCap`: JsonElement? = null,
     val `trackColor`: JsonElement? = null,
 ) : UiProps
 
@@ -1565,11 +1587,17 @@ data class MediumTopAppBar(
 
 @Serializable
 data class ModalBottomSheetProps(
+    val `containerColor`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `onOpenChange`: String? = null,
     val `onValueChange`: String? = null,
     val `open`: Boolean? = null,
+    val `scrimColor`: JsonElement? = null,
+    val `shape`: JsonElement? = null,
+    val `sheetGesturesEnabled`: Boolean = true,
+    val `sheetMaxWidth`: Double? = null,
     val `skipPartiallyExpanded`: Boolean = false,
+    val `tonalElevation`: Double? = null,
     val `value`: String? = null,
 ) : UiProps
 
@@ -1629,7 +1657,12 @@ data class ModalNavigationDrawer(
 
 @Serializable
 data class ModalWideNavigationRailProps(
+    val `collapsedShape`: JsonElement? = null,
+    val `expandedHeaderTopPadding`: Double? = null,
+    val `expandedShape`: JsonElement? = null,
+    val `hideOnCollapse`: Boolean = false,
     override val `modifier`: JsonObject? = null,
+    val `windowInsets`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1841,6 +1874,8 @@ data class NavigationSuiteItem(
 
 @Serializable
 data class NavigationSuiteScaffoldProps(
+    val `containerColor`: JsonElement? = null,
+    val `contentColor`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
 ) : UiProps
 
@@ -2263,6 +2298,8 @@ data class Row(
 @Serializable
 data class ScaffoldProps(
     val `containerColor`: JsonElement? = null,
+    val `contentWindowInsets`: JsonElement? = null,
+    val `floatingActionButtonPosition`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
 ) : UiProps
 
@@ -3017,12 +3054,17 @@ data class TextAnnotatedString(
 
 @Serializable
 data class TextButtonProps(
+    val `border`: OptionalValue = OptionalValue.Absent,
+    val `colors`: JsonElement? = null,
+    val `contentPadding`: JsonElement? = null,
+    val `elevation`: OptionalValue = OptionalValue.Absent,
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onClick`: String,
     val `onFocus`: String? = null,
     val `onHover`: String? = null,
     val `onPress`: String? = null,
+    val `shape`: JsonElement? = null,
     val `text`: String,
 ) : UiProps
 
@@ -3240,6 +3282,8 @@ data class VerticalDragHandle(
 @Serializable
 data class WideNavigationRailProps(
     override val `modifier`: JsonObject? = null,
+    val `shape`: JsonElement? = null,
+    val `windowInsets`: JsonElement? = null,
 ) : UiProps
 
 @Serializable

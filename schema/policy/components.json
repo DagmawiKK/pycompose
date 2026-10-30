@@ -54,12 +54,6 @@
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.AppBarKt.BottomAppBar-1oL4kX8(Landroidx/compose/ui/Modifier;JJFLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
-      "props": {
-        "containerColor": null,
-        "contentPadding": null,
-        "tonalElevation": null,
-        "windowInsets": null
-      },
       "children": {
         "kind": null,
         "min": 0
@@ -74,7 +68,6 @@
     },
     "patch": {
       "props": {
-        "propagateMinConstraints": null,
         "contentAlignment": {
           "values": [
             "topStart",
@@ -108,9 +101,6 @@
     },
     "patch": {
       "props": {
-        "border": null,
-        "contentPadding": null,
-        "shape": null,
         "colors": {
           "since": "1.11.0"
         },
@@ -137,11 +127,6 @@
     "decision": {
       "category": "input",
       "stability": "stable"
-    },
-    "patch": {
-      "props": {
-        "colors": null
-      }
     }
   },
   "CircularProgressIndicator": {
@@ -151,10 +136,7 @@
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.ProgressIndicatorKt.CircularProgressIndicator-4lLiAd8(Landroidx/compose/ui/Modifier;JFJIFLandroidx/compose/runtime/Composer;II)V"
     },
     "patch": {
-      "optIn": null,
-      "props": {
-        "gapSize": null
-      }
+      "optIn": null
     }
   },
   "Column": {
@@ -351,13 +333,6 @@
       "flatten": [
         "label"
       ]
-    },
-    "patch": {
-      "props": {
-        "colors": null,
-        "elevation": null,
-        "shape": null
-      }
     }
   },
   "FloatingActionButton": {
@@ -451,9 +426,6 @@
       "stability": "stable"
     },
     "patch": {
-      "props": {
-        "shape": null
-      },
       "children": {
         "kind": "content"
       }
@@ -473,8 +445,6 @@
     },
     "patch": {
       "props": {
-        "alignment": null,
-        "painter": null,
         "contentDescription": {
           "required": null,
           "nullable": null
@@ -488,6 +458,12 @@
           ],
           "decode": "resourceImage",
           "required": true
+        },
+        "alignment": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "painter": {
+          "refuse": "its hand-written adapter does not read it yet"
         }
       },
       "wrapper": "ResourceImage",
@@ -521,9 +497,6 @@
     },
     "patch": {
       "props": {
-        "horizontalAlignment": null,
-        "reverseLayout": null,
-        "userScrollEnabled": null,
         "verticalArrangement": {
           "type": "enum",
           "valueType": "ArrangementVertical",
@@ -545,13 +518,6 @@
     "decision": {
       "category": "lists",
       "stability": "stable"
-    },
-    "patch": {
-      "props": {
-        "reverseLayout": null,
-        "userScrollEnabled": null,
-        "verticalAlignment": null
-      }
     }
   },
   "LeadingIconTab": {
@@ -568,8 +534,6 @@
     },
     "patch": {
       "props": {
-        "gapSize": null,
-        "strokeCap": null,
         "progress": {
           "since": "1.20.0"
         }
@@ -601,13 +565,6 @@
     },
     "patch": {
       "props": {
-        "containerColor": null,
-        "onDismissRequest": null,
-        "scrimColor": null,
-        "shape": null,
-        "sheetGesturesEnabled": null,
-        "sheetMaxWidth": null,
-        "tonalElevation": null,
         "value": {
           "since": "1.23.0"
         },
@@ -659,14 +616,7 @@
       "stability": "stable"
     },
     "patch": {
-      "slots": null,
-      "props": {
-        "collapsedShape": null,
-        "expandedHeaderTopPadding": null,
-        "expandedShape": null,
-        "hideOnCollapse": null,
-        "windowInsets": null
-      }
+      "slots": null
     }
   },
   "MultiChoiceSegmentedButton": {
@@ -723,12 +673,6 @@
     "decision": {
       "category": "navigation",
       "stability": "stable"
-    },
-    "patch": {
-      "props": {
-        "containerColor": null,
-        "contentColor": null
-      }
     }
   },
   "OutlinedButton": {
@@ -782,13 +726,21 @@
     },
     "patch": {
       "props": {
-        "caretShape": null,
-        "shadowElevation": null,
-        "shape": null,
-        "tonalElevation": null,
         "showCaret": {
           "type": "boolean",
           "default": false
+        },
+        "caretShape": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "shadowElevation": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "shape": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "tonalElevation": {
+          "refuse": "its hand-written adapter does not read it yet"
         }
       },
       "children": {
@@ -846,11 +798,6 @@
     },
     "patch": {
       "props": {
-        "caretShape": null,
-        "colors": null,
-        "shadowElevation": null,
-        "shape": null,
-        "tonalElevation": null,
         "showCaret": {
           "type": "boolean",
           "default": false
@@ -874,6 +821,21 @@
           "type": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
           "valueType": "Color"
+        },
+        "caretShape": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "colors": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "shadowElevation": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "shape": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "tonalElevation": {
+          "refuse": "its hand-written adapter does not read it yet"
         }
       },
       "children": {
@@ -921,8 +883,6 @@
     },
     "patch": {
       "props": {
-        "contentWindowInsets": null,
-        "floatingActionButtonPosition": null,
         "containerColor": {
           "fallback": "androidx.compose.material3.MaterialTheme.colorScheme.background"
         }
@@ -950,7 +910,6 @@
     },
     "patch": {
       "props": {
-        "colors": null,
         "onQueryChange": {
           "payload": [
             {
@@ -966,6 +925,9 @@
               "type": "string"
             }
           ]
+        },
+        "colors": {
+          "refuse": "its hand-written adapter does not read it yet"
         }
       },
       "adapter": "manual"
@@ -1164,17 +1126,6 @@
     },
     "patch": {
       "props": {
-        "fontFamily": null,
-        "fontSize": null,
-        "fontStyle": null,
-        "fontWeight": null,
-        "letterSpacing": null,
-        "lineHeight": null,
-        "minLines": null,
-        "overflow": null,
-        "softWrap": null,
-        "textAlign": null,
-        "textDecoration": null,
         "color": {
           "fallback": null
         },
@@ -1212,6 +1163,39 @@
         "locale": {
           "type": "string",
           "since": "1.1.0"
+        },
+        "fontFamily": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "fontSize": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "fontStyle": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "fontWeight": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "letterSpacing": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "lineHeight": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "minLines": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "overflow": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "softWrap": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "textAlign": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "textDecoration": {
+          "refuse": "its hand-written adapter does not read it yet"
         }
       },
       "wrapper": "ResourceText",
@@ -1229,15 +1213,6 @@
       "flatten": [
         "content"
       ]
-    },
-    "patch": {
-      "props": {
-        "border": null,
-        "colors": null,
-        "contentPadding": null,
-        "elevation": null,
-        "shape": null
-      }
     }
   },
   "TextField": {
@@ -1254,13 +1229,6 @@
       "source": null,
       "slots": null,
       "props": {
-        "colors": null,
-        "isError": null,
-        "minLines": null,
-        "readOnly": null,
-        "shape": null,
-        "singleLine": null,
-        "textStyle": null,
         "selection": {
           "type": "integer"
         },
@@ -1272,6 +1240,27 @@
               "type": "integer"
             }
           ]
+        },
+        "colors": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "isError": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "minLines": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "readOnly": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "shape": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "singleLine": {
+          "refuse": "its hand-written adapter does not read it yet"
+        },
+        "textStyle": {
+          "refuse": "its hand-written adapter does not read it yet"
         }
       },
       "adapter": "manual",
@@ -1289,13 +1278,15 @@
       "stability": "experimental"
     },
     "patch": {
-      "props": {
-        "onDismissRequest": null
-      },
       "children": {
         "kind": "content"
       },
-      "adapter": "manual"
+      "adapter": "manual",
+      "props": {
+        "onDismissRequest": {
+          "refuse": "its hand-written adapter does not read it yet"
+        }
+      }
     }
   },
   "TopAppBar": {
@@ -1328,11 +1319,7 @@
       "stability": "stable"
     },
     "patch": {
-      "slots": null,
-      "props": {
-        "shape": null,
-        "windowInsets": null
-      }
+      "slots": null
     }
   },
   "WideNavigationRailItem": {

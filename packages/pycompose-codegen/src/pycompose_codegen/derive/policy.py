@@ -121,3 +121,67 @@ def redundant(base: Any, patch: Any, path: str = "") -> list[str]:
         elif key in base:
             found.extend(redundant(base[key], value, where))
     return found
+
+
+def removals(
+    name: str, patch: dict[str, Any]
+) -> tuple[dict[str, Any], dict[str, str], list[str]]:
+    """Apply each prop removal in a patch, keeping every removal's reason.
+
+    A prop leaves a derived entry only as ``{"refuse": "why"}``, which the report
+    prints; a bare null would remove it with no reason anyone can read.
+
+    Args:
+        name: The component.
+        patch: Its policy patch.
+
+    Returns:
+        The patch with each refused prop as a deletion, the reasons by
+        ``Component.prop``, and an error for each removal that gives none.
+    """
+    props = patch.get("props")
+    if not isinstance(props, dict):
+        return patch, {}, []
+    applied: dict[str, Any] = {}
+    reasons: dict[str, str] = {}
+    errors: list[str] = []
+    for prop, change in props.items():
+        if change is None:
+            errors.append(
+                f'{name}.{prop}: removed without a reason; write {{"refuse": "why"}}'
+            )
+        refused = isinstance(change, dict) and set(change) == {"refuse"}
+        if refused:
+            reasons[f"{name}.{prop}"] = change["refuse"]
+        applied[prop] = None if refused else change
+    return {**patch, "props": applied}, reasons, errors
+
+
+def unclaimed(entry: dict[str, Any]) -> dict[str, Any]:
+    """The entry without props for parameters something else already fills.
+
+    A holder that wires a sheet's dismissal, or an interaction source the host
+    remembers, owns that parameter; offering it as a prop too would bind it
+    twice.
+
+    Args:
+        entry: A component entry, policy applied.
+
+    Returns:
+        The entry, its claimed props removed.
+    """
+    state = entry.get("state") or {}
+    sources = (
+        state.get("native"),
+        state.get("dismiss"),
+        (entry.get("transient") or {}).get("native"),
+        (entry.get("interaction") or {}).get("native"),
+    )
+    claimed = {source for source in sources if isinstance(source, str)}
+    props = entry.get("props", {})
+    if not claimed.intersection(props):
+        return entry
+    return {
+        **entry,
+        "props": {name: spec for name, spec in props.items() if name not in claimed},
+    }

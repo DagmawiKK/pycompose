@@ -135,7 +135,11 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, since = "1.23.0", valueType = "Color"),
+                "contentPadding" to PropertyRule("value", required = false, since = "1.23.0", valueType = "PaddingValues"),
                 "modifier" to PropertyRule("modifier", required = false),
+                "tonalElevation" to PropertyRule("dp", required = false, since = "1.23.0"),
+                "windowInsets" to PropertyRule("value", required = false, since = "1.23.0", valueType = "WindowInsets"),
             ),
         ),
         "BottomAppBarActions" to ComponentRule(
@@ -176,6 +180,7 @@ object IrContract {
             props = mapOf(
                 "contentAlignment" to PropertyRule("enum", required = false, valueType = "Alignment"),
                 "modifier" to PropertyRule("modifier", required = false),
+                "propagateMinConstraints" to PropertyRule("boolean", required = false, since = "1.23.0"),
             ),
         ),
         "Button" to ComponentRule(
@@ -184,7 +189,9 @@ object IrContract {
             minimumChildren = 0,
             since = "1.0.0",
             props = mapOf(
+                "border" to PropertyRule("value", required = false, since = "1.23.0", valueType = "BorderStroke", nullable = true),
                 "colors" to PropertyRule("value", required = false, since = "1.11.0", valueType = "ButtonColors"),
+                "contentPadding" to PropertyRule("value", required = false, since = "1.23.0", valueType = "PaddingValues"),
                 "elevation" to PropertyRule("value", required = false, since = "1.11.0", valueType = "ButtonElevation", nullable = true),
                 "enabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -192,6 +199,7 @@ object IrContract {
                 "onFocus" to PropertyRule("actionId", required = false),
                 "onHover" to PropertyRule("actionId", required = false),
                 "onPress" to PropertyRule("actionId", required = false),
+                "shape" to PropertyRule("value", required = false, since = "1.23.0", valueType = "Shape"),
                 "text" to PropertyRule("string", required = true),
             ),
         ),
@@ -245,6 +253,7 @@ object IrContract {
             since = "1.3.0",
             props = mapOf(
                 "checked" to PropertyRule("boolean", required = true),
+                "colors" to PropertyRule("value", required = false, since = "1.23.0", valueType = "CheckboxColors"),
                 "enabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onCheckedChange" to PropertyRule("actionId", required = true),
@@ -260,6 +269,7 @@ object IrContract {
             since = "1.22.0",
             props = mapOf(
                 "color" to PropertyRule("color", required = false, valueType = "Color"),
+                "gapSize" to PropertyRule("dp", required = false, since = "1.23.0"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "strokeCap" to PropertyRule("value", required = false, valueType = "StrokeCap"),
                 "strokeWidth" to PropertyRule("dp", required = false),
@@ -695,6 +705,8 @@ object IrContract {
             minimumChildren = 0,
             since = "1.3.0",
             props = mapOf(
+                "colors" to PropertyRule("value", required = false, since = "1.23.0", valueType = "SelectableChipColors"),
+                "elevation" to PropertyRule("value", required = false, since = "1.23.0", valueType = "SelectableChipElevation", nullable = true),
                 "enabled" to PropertyRule("boolean", required = false),
                 "label" to PropertyRule("string", required = true),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -703,6 +715,7 @@ object IrContract {
                 "onHover" to PropertyRule("actionId", required = false),
                 "onPress" to PropertyRule("actionId", required = false),
                 "selected" to PropertyRule("boolean", required = true),
+                "shape" to PropertyRule("value", required = false, since = "1.23.0", valueType = "Shape"),
             ),
         ),
         "FlexBox" to ComponentRule(
@@ -790,6 +803,7 @@ object IrContract {
                 "onFocus" to PropertyRule("actionId", required = false),
                 "onHover" to PropertyRule("actionId", required = false),
                 "onPress" to PropertyRule("actionId", required = false),
+                "shape" to PropertyRule("value", required = false, since = "1.23.0", valueType = "Shape"),
             ),
         ),
         "IconToggleButton" to ComponentRule(
@@ -901,10 +915,13 @@ object IrContract {
             since = "1.0.0",
             props = mapOf(
                 "firstVisibleIndex" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
+                "horizontalAlignment" to PropertyRule("enum", required = false, since = "1.23.0", valueType = "AlignmentHorizontal"),
                 "itemCount" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
                 "itemOffset" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
+                "reverseLayout" to PropertyRule("boolean", required = false, since = "1.23.0"),
+                "userScrollEnabled" to PropertyRule("boolean", required = false, since = "1.23.0"),
                 "verticalArrangement" to PropertyRule("enum", required = false, valueType = "ArrangementVertical"),
                 "window" to PropertyRule("string", required = false),
             ),
@@ -920,6 +937,9 @@ object IrContract {
                 "itemOffset" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
+                "reverseLayout" to PropertyRule("boolean", required = false, since = "1.23.0"),
+                "userScrollEnabled" to PropertyRule("boolean", required = false, since = "1.23.0"),
+                "verticalAlignment" to PropertyRule("enum", required = false, since = "1.23.0", valueType = "AlignmentVertical"),
                 "window" to PropertyRule("string", required = false),
             ),
         ),
@@ -946,8 +966,10 @@ object IrContract {
             since = "1.20.0",
             props = mapOf(
                 "color" to PropertyRule("color", required = false, valueType = "Color"),
+                "gapSize" to PropertyRule("dp", required = false, since = "1.23.0"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "progress" to PropertyRule("number", required = true, since = "1.20.0"),
+                "strokeCap" to PropertyRule("value", required = false, since = "1.23.0", valueType = "StrokeCap"),
                 "trackColor" to PropertyRule("color", required = false, valueType = "Color"),
             ),
         ),
@@ -994,11 +1016,17 @@ object IrContract {
             minimumChildren = 0,
             since = "1.19.0",
             props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, since = "1.23.0", valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onOpenChange" to PropertyRule("actionId", required = false),
                 "onValueChange" to PropertyRule("actionId", required = false, since = "1.23.0"),
                 "open" to PropertyRule("boolean", required = false),
+                "scrimColor" to PropertyRule("color", required = false, since = "1.23.0", valueType = "Color"),
+                "shape" to PropertyRule("value", required = false, since = "1.23.0", valueType = "Shape"),
+                "sheetGesturesEnabled" to PropertyRule("boolean", required = false, since = "1.23.0"),
+                "sheetMaxWidth" to PropertyRule("dp", required = false, since = "1.23.0"),
                 "skipPartiallyExpanded" to PropertyRule("boolean", required = false, since = "1.23.0"),
+                "tonalElevation" to PropertyRule("dp", required = false, since = "1.23.0"),
                 "value" to PropertyRule("enum", required = false, values = setOf("hidden", "partiallyExpanded", "expanded"), since = "1.23.0"),
             ),
         ),
@@ -1034,7 +1062,12 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "collapsedShape" to PropertyRule("value", required = false, since = "1.23.0", valueType = "Shape"),
+                "expandedHeaderTopPadding" to PropertyRule("dp", required = false, since = "1.23.0"),
+                "expandedShape" to PropertyRule("value", required = false, since = "1.23.0", valueType = "Shape"),
+                "hideOnCollapse" to PropertyRule("boolean", required = false, since = "1.23.0"),
                 "modifier" to PropertyRule("modifier", required = false),
+                "windowInsets" to PropertyRule("value", required = false, since = "1.23.0", valueType = "WindowInsets"),
             ),
         ),
         "MultiChoiceSegmentedButton" to ComponentRule(
@@ -1166,6 +1199,8 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "containerColor" to PropertyRule("color", required = false, since = "1.23.0", valueType = "Color"),
+                "contentColor" to PropertyRule("color", required = false, since = "1.23.0", valueType = "Color"),
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
@@ -1436,6 +1471,8 @@ object IrContract {
             since = "1.0.0",
             props = mapOf(
                 "containerColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "contentWindowInsets" to PropertyRule("value", required = false, since = "1.23.0", valueType = "WindowInsets"),
+                "floatingActionButtonPosition" to PropertyRule("value", required = false, since = "1.23.0", valueType = "FabPosition"),
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
@@ -1934,12 +1971,17 @@ object IrContract {
             minimumChildren = 0,
             since = "1.3.0",
             props = mapOf(
+                "border" to PropertyRule("value", required = false, since = "1.23.0", valueType = "BorderStroke", nullable = true),
+                "colors" to PropertyRule("value", required = false, since = "1.23.0", valueType = "ButtonColors"),
+                "contentPadding" to PropertyRule("value", required = false, since = "1.23.0", valueType = "PaddingValues"),
+                "elevation" to PropertyRule("value", required = false, since = "1.23.0", valueType = "ButtonElevation", nullable = true),
                 "enabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
                 "onFocus" to PropertyRule("actionId", required = false),
                 "onHover" to PropertyRule("actionId", required = false),
                 "onPress" to PropertyRule("actionId", required = false),
+                "shape" to PropertyRule("value", required = false, since = "1.23.0", valueType = "Shape"),
                 "text" to PropertyRule("string", required = true),
             ),
         ),
@@ -2077,6 +2119,8 @@ object IrContract {
             since = "1.23.0",
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
+                "shape" to PropertyRule("value", required = false, since = "1.23.0", valueType = "Shape"),
+                "windowInsets" to PropertyRule("value", required = false, since = "1.23.0", valueType = "WindowInsets"),
             ),
         ),
         "WideNavigationRailItem" to ComponentRule(

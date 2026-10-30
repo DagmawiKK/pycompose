@@ -109,6 +109,7 @@ def test_an_entry_keeps_the_version_it_entered_at() -> None:
 
     stamped = {"since": "1.24.0"}
     lock = {
+        "schemaVersion": "1.24.0",
         "components": {
             "Old": dict(stamped),
             "New": dict(stamped),
@@ -122,3 +123,22 @@ def test_an_entry_keeps_the_version_it_entered_at() -> None:
     assert lock["components"]["New"] == {"since": "1.24.0"}
     # The first schema's components carry none, and keep carrying none.
     assert lock["components"]["Text"] == {}
+
+
+def test_a_prop_new_since_the_last_lock_enters_at_the_current_version() -> None:
+    """A restored or newly derived prop must not reach envelopes released before it."""
+    from pycompose_codegen.derive.lock import carried
+
+    lock = {
+        "schemaVersion": "1.24.0",
+        "components": {
+            "Button": {
+                "props": {"text": {"type": "string"}, "shape": {"type": "value"}}
+            }
+        },
+    }
+    previous = {"components": {"Button": {"props": {"text": {"type": "string"}}}}}
+    carried(lock, previous)
+    props = lock["components"]["Button"]["props"]
+    assert props["text"] == {"type": "string"}
+    assert props["shape"]["since"] == "1.24.0"
