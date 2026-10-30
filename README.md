@@ -12,9 +12,9 @@ There are two ways to write an app, and they share everything underneath:
   the outputs. The quickest way from an idea, an API or a model to an app.
 - **View models** — the full-control route, shaped like Android's architecture
   guidance: each screen's view model owns its state, controls send typed
-  intents, and screens are drawn from about 130 native components.
+  intents, and screens are drawn from 134 native components.
 
-> Early development. The contract, the component compiler, the CLI and about 130
+> Early development. The contract, the component compiler, the CLI and 134
 > Material 3 and foundation components work end to end, including hot reload, a
 > prebuilt dev client and signed release builds. The API will keep evolving.
 
@@ -36,8 +36,9 @@ tap → intent + fields → view model → new state → screen(state) → host 
   and derives each component's props, slots and defaults, the value types they
   take, the state holders behind controlled components, and the modifiers a
   parent's scope offers its children. The result is a committed lock that must
-  reproduce from the pin; Python components, Kotlin adapters and wire
-  validators are generated from it and never hand-edited.
+  reproduce from the pin; the Python components, values, modifiers and effects,
+  the Kotlin models and adapters, and the wire validators are generated from it
+  and never hand-edited.
 - **Controlled without a fight.** A stated value drives the native holder only
   when it changes, and each value the user settles on is reported once, so
   Python can own a picker's time or a sheet's position without overriding a
@@ -45,8 +46,12 @@ tap → intent + fields → view model → new state → screen(state) → host 
 - **Loud in debug, safe in release.** Snapshot validation fails closed in debug
   builds and degrades safely in release; library/schema/host version mismatches
   fail fast.
-- **Boundaries enforced, not suggested.** Package layering and module purity are
-  blocking checks, not conventions.
+- **Three packages to import, the rest internal.** `pycompose.ui` describes a
+  screen, `pycompose.app` runs it (`pycompose.app.blocks` included) and
+  `pycompose.state` keeps its data. `pycompose.host` (the bridge to the phone
+  and the snapshot format) and `pycompose.model` (nodes, the catalog, the
+  snapshot) are internal, and `pycompose.runtime` is the one loop. The layering
+  between them is a blocking check, and a test pins every public name.
 
 ## Requirements
 
@@ -243,8 +248,10 @@ def screen(state: Counter) -> Node:
 app = App(start=Destination(lambda _container, _route: CounterViewModel(), screen))
 ```
 
-App code imports `components`; the build generates that package from the components the
-source references, so an app ships what it uses and nothing else.
+Every component, `Modifier`, `Node` and value type is in `pycompose.ui`, the
+whole catalog. An app may import `components` instead, as this one does: the
+build generates that package from the components the source references, so the
+app ships what it uses and nothing else.
 
 ### Structuring a larger app
 
@@ -451,8 +458,10 @@ identity. Only things declared in a loop that carry an intent, and composables
 called in a loop, need an `id` to survive a reorder.
 
 **Effects** — `self.emit(...)` asks the host for something one-shot: `Toast`,
-`Haptic`, `OpenUrl`, `PickFile` (answered by `on_file_picked(request, path)`). Effects run at most once, in order; anything that must
-happen belongs in state instead.
+`Haptic`, `OpenUrl`, `PickFile` (answered by `on_file_picked(request, path)`)
+or `Finish`. Effects run at most once, in order; anything that must happen
+belongs in state instead. They are generated from the catalog, so the host runs
+each one by its typed fields.
 
 **Lifecycle** — `on_back` (return True to keep the screen), `on_resume` and
 `on_pause` reach the view model on top; `on_trim_memory(level)` reaches every
@@ -481,12 +490,13 @@ TimePicker(
 
 Omit a value to leave it to the user; set it to move the native control.
 
-**Modifiers** — `Modifier()` chains `padding`, `size`, `fill_max_width`, `clip`,
-`background`, `clickable`, window-inset padding and accessibility `semantics`.
-It also offers the modifiers a parent's scope declares, which a child wears
-only inside that parent: `weight` in a `Row` or `Column`, `row_align`,
-`column_align` and `box_align`, `match_parent_size`, and `menu_anchor` for the
-field that opens an `ExposedDropdownMenuBox`:
+**Modifiers** — `Modifier()` chains every modifier the catalog declares,
+generated as the components are: `padding` (uniform or per side), `size`,
+`fill_max_width`, `clip`, `background`, `clickable`, window-inset padding and
+accessibility `semantics`. It also offers the modifiers a parent's scope
+declares, which a child wears only inside that parent: `weight` in a `Row` or
+`Column`, `row_align`, `column_align` and `box_align`, `match_parent_size`, and
+`menu_anchor` for the field that opens an `ExposedDropdownMenuBox`:
 
 ```python
 Row(
@@ -498,6 +508,21 @@ Row(
 ```
 
 One worn outside such a parent is reported by the host rather than ignored.
+
+**Constants and colours** — a prop that takes a Compose constant (an alignment,
+an arrangement, a text style, a shape, a tooltip position) takes its Compose
+name, camelCased, and Python sends the typed value:
+
+```python
+Column(horizontal_alignment="centerHorizontally", vertical_arrangement="spaceEvenly")
+Text(text="Notes", style="titleLarge")
+Modifier().clip("circleShape")
+```
+
+A colour is a `Color`, a theme role such as `ThemeColor("primary")`, or a
+`"#RRGGBB"` string, which becomes a `Color` when the component is built. The
+app's theme itself (colours, fonts, corner radii, dark mode) is set in
+`[theme]` in `pycompose.toml`.
 
 ## Native components
 
@@ -589,10 +614,11 @@ native swipes report the anchor they settled on. Both directions and gestures
 are enabled unless `enable_dismiss_from_start_to_end`,
 `enable_dismiss_from_end_to_start`, or `gestures_enabled` say otherwise.
 
-`ModalBottomSheet` retains `open`/`on_open_change` and also accepts `value`
-(`"hidden"`, `"partiallyExpanded"`, `"expanded"`) with `on_value_change`.
-An explicit `value` takes precedence over `open`; its report carries one
-`value: str` field naming the actual settled anchor. Partial expansion requires
+`ModalBottomSheet` takes `open`/`on_open_change`, or `value` (`"hidden"`,
+`"partiallyExpanded"`, `"expanded"`) with `on_value_change`. `open=True` asks
+for the anchor the sheet opens to, and an explicit `value` takes precedence
+over `open`; its report carries one `value: str` field naming the actual
+settled anchor. Partial expansion requires
 a native partial anchor; short sheets or `skip_partially_expanded=True` fall
 back to expanded. Hidden sheets leave native composition after settling so they
 cannot block the app. The boolean observer reports visibility changes, while
@@ -693,9 +719,13 @@ python tools/schema/gen.py              # regenerate code from it; --check verif
 ```
 
 The compiler writes a report of what it derived and what it refused, with the
-reason, to `android/build/compose-api/composegen-report.md`. Generated Python
-components, Kotlin models and adapters, validators and the wire schema are
-committed and never hand-edited; `make codegen-check` runs every check.
+reason, to `android/build/compose-api/composegen-report.md`. Generated code is
+committed and never hand-edited: the Python under each package's `_generated/`
+(components, values and modifiers in `pycompose.ui`, effects in
+`pycompose.app`, action payloads in `pycompose.host`), the Kotlin models,
+adapters, resolvers and modifiers, and the wire schema. `make codegen-check`
+runs every check. Adding or removing a public name updates
+`packages/pycompose/tests/test_public_surface.py` in the same change.
 
 ## License
 
