@@ -5204,6 +5204,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "arrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
+            },
             "collapsedShape": {
               "$ref": "#/definitions/Family_Shape"
             },
@@ -5727,6 +5730,9 @@
             },
             "navigationSuiteType": {
               "$ref": "#/definitions/Family_NavigationSuiteType"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "required": [
@@ -5853,6 +5859,12 @@
                 }
               },
               "type": "object"
+            },
+            "navigationItemVerticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
+            },
+            "primaryActionContentHorizontalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             }
           },
           "type": "object"
@@ -5894,6 +5906,9 @@
             },
             "navigationSuiteType": {
               "$ref": "#/definitions/Family_NavigationSuiteType"
+            },
+            "primaryActionContentHorizontalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             }
           },
           "required": [
@@ -9303,27 +9318,13 @@
               ]
             },
             "fontFamily": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_FontFamily"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/Family_FontFamily"
             },
             "fontSize": {
               "$ref": "#/definitions/Family_TextUnit"
             },
             "fontStyle": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_FontStyle"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/Family_FontStyle"
             },
             "fontWeight": {
               "anyOf": [
@@ -9372,24 +9373,10 @@
               "$ref": "#/definitions/Family_AnnotatedString"
             },
             "textAlign": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_TextAlign"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextAlign"
             },
             "textDecoration": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_TextDecoration"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextDecoration"
             }
           },
           "required": [
@@ -9972,6 +9959,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "arrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -14211,7 +14201,16 @@
               "type": "string"
             },
             "contentScale": {
-              "type": "object"
+              "default": "fit",
+              "enum": [
+                "crop",
+                "fillBounds",
+                "fillHeight",
+                "fillWidth",
+                "fit",
+                "inside",
+                "none"
+              ]
             },
             "modifier": {
               "properties": {
@@ -23996,7 +23995,16 @@
               "type": "string"
             },
             "contentScale": {
-              "type": "object"
+              "default": "fit",
+              "enum": [
+                "crop",
+                "fillBounds",
+                "fillHeight",
+                "fillWidth",
+                "fit",
+                "inside",
+                "none"
+              ]
             },
             "modifier": {
               "properties": {
@@ -33802,6 +33810,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "arrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
+            },
             "collapsedShape": {
               "$ref": "#/definitions/Family_Shape"
             },
@@ -36473,6 +36484,9 @@
             },
             "navigationSuiteType": {
               "$ref": "#/definitions/Family_NavigationSuiteType"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "required": [
@@ -36599,6 +36613,12 @@
                 }
               },
               "type": "object"
+            },
+            "navigationItemVerticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
+            },
+            "primaryActionContentHorizontalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             }
           },
           "type": "object"
@@ -36640,6 +36660,9 @@
             },
             "navigationSuiteType": {
               "$ref": "#/definitions/Family_NavigationSuiteType"
+            },
+            "primaryActionContentHorizontalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             }
           },
           "required": [
@@ -40520,27 +40543,13 @@
               ]
             },
             "fontFamily": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_FontFamily"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/Family_FontFamily"
             },
             "fontSize": {
               "$ref": "#/definitions/Family_TextUnit"
             },
             "fontStyle": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_FontStyle"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/Family_FontStyle"
             },
             "fontWeight": {
               "anyOf": [
@@ -40589,24 +40598,10 @@
               "$ref": "#/definitions/Family_AnnotatedString"
             },
             "textAlign": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_TextAlign"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextAlign"
             },
             "textDecoration": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_TextDecoration"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextDecoration"
             }
           },
           "required": [
@@ -41189,6 +41184,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "arrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -41442,7 +41440,16 @@
               "type": "string"
             },
             "contentScale": {
-              "type": "object"
+              "default": "fit",
+              "enum": [
+                "crop",
+                "fillBounds",
+                "fillHeight",
+                "fillWidth",
+                "fit",
+                "inside",
+                "none"
+              ]
             },
             "modifier": {
               "properties": {
@@ -42290,7 +42297,16 @@
               "type": "string"
             },
             "contentScale": {
-              "type": "object"
+              "default": "fit",
+              "enum": [
+                "crop",
+                "fillBounds",
+                "fillHeight",
+                "fillWidth",
+                "fit",
+                "inside",
+                "none"
+              ]
             },
             "modifier": {
               "properties": {
@@ -43196,7 +43212,16 @@
               "type": "string"
             },
             "contentScale": {
-              "type": "object"
+              "default": "fit",
+              "enum": [
+                "crop",
+                "fillBounds",
+                "fillHeight",
+                "fillWidth",
+                "fit",
+                "inside",
+                "none"
+              ]
             },
             "modifier": {
               "properties": {
@@ -44102,7 +44127,16 @@
               "type": "string"
             },
             "contentScale": {
-              "type": "object"
+              "default": "fit",
+              "enum": [
+                "crop",
+                "fillBounds",
+                "fillHeight",
+                "fillWidth",
+                "fit",
+                "inside",
+                "none"
+              ]
             },
             "modifier": {
               "properties": {
@@ -45008,7 +45042,16 @@
               "type": "string"
             },
             "contentScale": {
-              "type": "object"
+              "default": "fit",
+              "enum": [
+                "crop",
+                "fillBounds",
+                "fillHeight",
+                "fillWidth",
+                "fit",
+                "inside",
+                "none"
+              ]
             },
             "modifier": {
               "properties": {
@@ -45914,7 +45957,16 @@
               "type": "string"
             },
             "contentScale": {
-              "type": "object"
+              "default": "fit",
+              "enum": [
+                "crop",
+                "fillBounds",
+                "fillHeight",
+                "fillWidth",
+                "fit",
+                "inside",
+                "none"
+              ]
             },
             "modifier": {
               "properties": {
@@ -46820,7 +46872,16 @@
               "type": "string"
             },
             "contentScale": {
-              "type": "object"
+              "default": "fit",
+              "enum": [
+                "crop",
+                "fillBounds",
+                "fillHeight",
+                "fillWidth",
+                "fit",
+                "inside",
+                "none"
+              ]
             },
             "modifier": {
               "properties": {
@@ -47726,7 +47787,16 @@
               "type": "string"
             },
             "contentScale": {
-              "type": "object"
+              "default": "fit",
+              "enum": [
+                "crop",
+                "fillBounds",
+                "fillHeight",
+                "fillWidth",
+                "fit",
+                "inside",
+                "none"
+              ]
             },
             "modifier": {
               "properties": {

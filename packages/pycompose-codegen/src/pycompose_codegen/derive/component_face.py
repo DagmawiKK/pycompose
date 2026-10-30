@@ -46,17 +46,6 @@ DIRECT_ARGUMENTS = {
 }
 """Wire prop types whose native argument the type alone decides."""
 
-NAMED_CLASSIFIERS = frozenset(
-    {
-        "androidx.compose.ui.Alignment",
-        "androidx.compose.ui.Alignment.Horizontal",
-        "androidx.compose.ui.Alignment.Vertical",
-        "androidx.compose.foundation.layout.Arrangement.Vertical",
-    }
-)
-"""Constant families an app names by string (``centerHorizontally``) rather than
-building their value: the layout vocabulary every screen spells."""
-
 
 @dataclass(frozen=True)
 class Argument:

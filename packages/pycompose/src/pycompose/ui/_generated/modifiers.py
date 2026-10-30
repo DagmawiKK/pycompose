@@ -40,6 +40,11 @@ _ColumnAlignAlignment = Literal[
     "right",
     "start",
 ]
+_MenuAnchorMenuAnchorType = Literal[
+    "primaryEditable",
+    "primaryNotEditable",
+    "secondaryEditable",
+]
 _RowAlignAlignment = Literal[
     "bottom",
     "centerVertically",
@@ -840,7 +845,7 @@ class GeneratedOperations:
     @_Operation
     def menu_anchor(
         self,
-        menu_anchor_type: JsonValue,
+        menu_anchor_type: _MenuAnchorMenuAnchorType,
         *,
         enabled: bool = True,
     ) -> Modifier:

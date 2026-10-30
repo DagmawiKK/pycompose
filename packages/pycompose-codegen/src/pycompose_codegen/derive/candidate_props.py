@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose_codegen.derive.component_face import NAMED_CLASSIFIERS
+from pycompose_codegen.derive.named_props import enum_prop, named
 from pycompose_codegen.derive.propose_lookup import source_name
 from pycompose_codegen.emit.defaults import render_default
 
@@ -64,11 +64,17 @@ def family_index(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
     Returns:
         One family spec per approved family name.
     """
-    return {
-        spec["family"]: spec
-        for spec in registry["valueTypes"].values()
-        if spec.get("family")
-    }
+    index: dict[str, dict[str, Any]] = {}
+    for spec in registry["valueTypes"].values():
+        family = spec.get("family")
+        if not family:
+            continue
+        held = index.get(family)
+        # A family built by a constructor as well as named by constants is
+        # represented by the constructor: it is not one an app names alone.
+        if held is None or held.get("kind") == "constant":
+            index[family] = spec
+    return index
 
 
 def wire_shape(
@@ -249,13 +255,12 @@ def _value_prop(
     review: list[str],
 ) -> dict[str, Any] | None:
     """Derive a value-family prop through the approved encoding for it."""
-    classifier = source_name(family["kotlinType"])
     if spec["family"] == "Color":
         return _color_prop(name, parameter, spec, review)
     if spec["family"] == "Dp":
         return _dp_prop(parameter, spec, review)
-    if classifier in NAMED_CLASSIFIERS and family.get("kind") == "constant":
-        return _enum_prop(name, parameter, spec, family, review)
+    if named(family):
+        return enum_prop(name, parameter, spec, family, review)
     return _plain_value_prop(name, parameter, spec, review)
 
 
@@ -347,45 +352,6 @@ def _plain_value_prop(
     if nullable:
         prop["nullable"] = True
     review.append(f"{parameter}: value nativeDefault {rendered}")
-    return prop
-
-
-def _enum_prop(
-    name: str,
-    parameter: str,
-    spec: dict[str, Any],
-    family: dict[str, Any],
-    review: list[str],
-) -> dict[str, Any] | None:
-    """Derive a constant family an app names by string.
-
-    The app writes a constant's name camelCased; the wire carries the family's
-    tagged constant, and an absent prop takes the native default it names.
-    """
-    values = (family.get("parameters") or {}).get("name", {}).get("values")
-    if not values:
-        raise CandidateError(
-            f"{name}.{parameter}: family {spec['family']!r} has no value names"
-        )
-    prop: dict[str, Any] = {
-        "type": "enum",
-        "valueType": spec["family"],
-        "values": [_camel(value) for value in values],
-    }
-    if spec["required"]:
-        prop["required"] = True
-        review.append(f"{parameter}: named {spec['family']} constant")
-        return prop
-    symbol = (spec.get("default") or {}).get("symbol")
-    last = str(symbol).rsplit(".", 1)[-1] if symbol else ""
-    if last not in values:
-        review.append(
-            f"{parameter}: omitted; default {symbol!r} is not a named constant"
-        )
-        return None
-    prop["default"] = _camel(last)
-    prop["nativeDefault"] = symbol
-    review.append(f"{parameter}: named {spec['family']} constant, default {last}")
     return prop
 
 

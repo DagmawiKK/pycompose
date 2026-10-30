@@ -165,7 +165,7 @@ __all__ = [
 ]
 
 
-_AnimatedContentContentAlignment = Literal[
+_Alignment = Literal[
     "bottomCenter",
     "bottomEnd",
     "bottomLeft",
@@ -181,6 +181,14 @@ _AnimatedContentContentAlignment = Literal[
     "topLeft",
     "topRight",
     "topStart",
+]
+
+_TextOverflow = Literal[
+    "clip",
+    "ellipsis",
+    "middleEllipsis",
+    "startEllipsis",
+    "visible",
 ]
 
 _BoxContentAlignment = Literal[
@@ -195,13 +203,19 @@ _BoxContentAlignment = Literal[
     "bottomEnd",
 ]
 
+_StrokeCap = Literal[
+    "butt",
+    "round",
+    "square",
+]
+
 _ColumnHorizontalAlignment = Literal[
     "start",
     "centerHorizontally",
     "end",
 ]
 
-_ColumnVerticalArrangement = Literal[
+_ArrangementVertical = Literal[
     "bottom",
     "center",
     "spaceAround",
@@ -216,49 +230,23 @@ _FlowColumnItemHorizontalAlignment = Literal[
     "end",
 ]
 
-_FlowColumnVerticalArrangement = Literal[
-    "bottom",
-    "center",
-    "spaceAround",
-    "spaceBetween",
-    "spaceEvenly",
-    "top",
-]
-
 _FlowRowItemVerticalAlignment = Literal[
     "top",
     "centerVertically",
     "bottom",
 ]
 
-_FlowRowVerticalArrangement = Literal[
-    "bottom",
-    "center",
-    "spaceAround",
-    "spaceBetween",
-    "spaceEvenly",
-    "top",
+_ContentScale = Literal[
+    "crop",
+    "fillBounds",
+    "fillHeight",
+    "fillWidth",
+    "fit",
+    "inside",
+    "none",
 ]
 
-_ImageImageVectorAlignment = Literal[
-    "bottomCenter",
-    "bottomEnd",
-    "bottomLeft",
-    "bottomRight",
-    "bottomStart",
-    "center",
-    "centerEnd",
-    "centerLeft",
-    "centerRight",
-    "centerStart",
-    "topCenter",
-    "topEnd",
-    "topLeft",
-    "topRight",
-    "topStart",
-]
-
-_LazyColumnHorizontalAlignment = Literal[
+_AlignmentHorizontal = Literal[
     "centerHorizontally",
     "end",
     "left",
@@ -275,7 +263,7 @@ _LazyColumnVerticalArrangement = Literal[
     "spaceAround",
 ]
 
-_LazyRowVerticalAlignment = Literal[
+_AlignmentVertical = Literal[
     "bottom",
     "centerVertically",
     "top",
@@ -287,28 +275,45 @@ _ModalBottomSheetValue = Literal[
     "expanded",
 ]
 
-_PullToRefreshBoxContentAlignment = Literal[
-    "bottomCenter",
-    "bottomEnd",
-    "bottomLeft",
-    "bottomRight",
-    "bottomStart",
-    "center",
-    "centerEnd",
-    "centerLeft",
-    "centerRight",
-    "centerStart",
-    "topCenter",
-    "topEnd",
-    "topLeft",
-    "topRight",
-    "topStart",
+_NavigationSuiteType = Literal[
+    "navigationBar",
+    "navigationDrawer",
+    "navigationRail",
+    "none",
+    "shortNavigationBarCompact",
+    "shortNavigationBarMedium",
+    "wideNavigationRailCollapsed",
+    "wideNavigationRailExpanded",
+]
+
+_TextObfuscationMode = Literal[
+    "hidden",
+    "revealLastTyped",
+    "system",
+    "visible",
 ]
 
 _RowVerticalAlignment = Literal[
     "top",
     "centerVertically",
     "bottom",
+]
+
+_FabPosition = Literal[
+    "center",
+    "end",
+    "endOverlay",
+    "start",
+]
+
+_ShortNavigationBarArrangement = Literal[
+    "centered",
+    "equalWeight",
+]
+
+_NavigationItemIconPosition = Literal[
+    "start",
+    "top",
 ]
 
 _SwipeToDismissBoxValue = Literal[
@@ -327,6 +332,40 @@ _TextStyle = Literal[
     "headlineMedium",
 ]
 
+_FontFamily = Literal[
+    "cursive",
+    "default",
+    "monospace",
+    "sansSerif",
+    "serif",
+]
+
+_FontStyle = Literal[
+    "italic",
+    "normal",
+]
+
+_TextAlign = Literal[
+    "center",
+    "end",
+    "justify",
+    "left",
+    "right",
+    "start",
+    "unspecified",
+]
+
+_TextDecoration = Literal[
+    "lineThrough",
+    "none",
+    "underline",
+]
+
+_TimePickerLayoutType = Literal[
+    "horizontal",
+    "vertical",
+]
+
 _TooltipBoxPosition = Literal[
     "above",
     "below",
@@ -334,6 +373,12 @@ _TooltipBoxPosition = Literal[
     "right",
     "start",
     "end",
+]
+
+_ToggleableState = Literal[
+    "indeterminate",
+    "off",
+    "on",
 ]
 
 
@@ -425,7 +470,7 @@ class AnimatedContent(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        content_alignment: _AnimatedContentContentAlignment | None = None,
+        content_alignment: _Alignment | None = None,
         label: str | None = None,
         modifier: Modifier | None = None,
         target_state: str,
@@ -718,7 +763,7 @@ class BasicText(Component):
         id: str | None = None,
         min_lines: int | None = None,
         modifier: Modifier | None = None,
-        overflow: JsonValue | None = None,
+        overflow: _TextOverflow | None = None,
         soft_wrap: bool | None = None,
         style: JsonValue | None = None,
         text: JsonValue,
@@ -1364,7 +1409,7 @@ class _CircularProgressIndicator(Component):
         color: JsonValue | Expression | None = None,
         gap_size: int | float | None = None,
         modifier: Modifier | None = None,
-        stroke_cap: JsonValue | None = None,
+        stroke_cap: _StrokeCap | None = None,
         stroke_width: int | float | None = None,
         track_color: JsonValue | Expression | None = None,
     ) -> None:
@@ -1406,7 +1451,7 @@ class CircularProgressIndicator(_CircularProgressIndicator):
         color: JsonValue | Expression | None = None,
         gap_size: int | float | None = None,
         modifier: Modifier | None = None,
-        stroke_cap: JsonValue | None = None,
+        stroke_cap: _StrokeCap | None = None,
         stroke_width: int | float | None = None,
         track_color: JsonValue | Expression | None = None,
     ) -> CircularProgressIndicator: ...
@@ -1419,7 +1464,7 @@ class CircularProgressIndicator(_CircularProgressIndicator):
         gap_size: int | float | None = None,
         modifier: Modifier | None = None,
         progress: int | float,
-        stroke_cap: JsonValue | None = None,
+        stroke_cap: _StrokeCap | None = None,
         stroke_width: int | float | None = None,
         track_color: JsonValue | Expression | None = None,
     ) -> CircularProgressIndicatorProgress: ...
@@ -1451,7 +1496,7 @@ class Column(Component):
         offset: int | float | None = None,
         on_scroll_idle: ActionTarget | None = None,
         scrollable: bool | None = None,
-        vertical_arrangement: _ColumnVerticalArrangement | None = None,
+        vertical_arrangement: _ArrangementVertical | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered Column.
@@ -3346,7 +3391,7 @@ class FlowColumn(Component):
         item_horizontal_alignment: _FlowColumnItemHorizontalAlignment | None = None,
         max_items_in_each_column: int | None = None,
         modifier: Modifier | None = None,
-        vertical_arrangement: _FlowColumnVerticalArrangement | None = None,
+        vertical_arrangement: _ArrangementVertical | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -3401,7 +3446,7 @@ class FlowRow(Component):
         item_vertical_alignment: _FlowRowItemVerticalAlignment | None = None,
         max_items_in_each_row: int | None = None,
         modifier: Modifier | None = None,
-        vertical_arrangement: _FlowRowVerticalArrangement | None = None,
+        vertical_arrangement: _ArrangementVertical | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -3658,7 +3703,7 @@ class _Image(Component):
         *,
         id: str | None = None,
         content_description: str | None = None,
-        content_scale: JsonValue | None = None,
+        content_scale: _ContentScale | None = None,
         modifier: Modifier | None = None,
         resource: str,
     ) -> None:
@@ -3691,7 +3736,7 @@ class Image(_Image):
         *,
         id: str | None = None,
         content_description: str | None = None,
-        content_scale: JsonValue | None = None,
+        content_scale: _ContentScale | None = None,
         modifier: Modifier | None = None,
         resource: str,
     ) -> Image: ...
@@ -3700,9 +3745,9 @@ class Image(_Image):
         cls,
         *,
         id: str | None = None,
-        alignment: _ImageImageVectorAlignment | None = None,
+        alignment: _Alignment | None = None,
         content_description: str | None,
-        content_scale: JsonValue | None = None,
+        content_scale: _ContentScale | None = None,
         image_vector: JsonValue,
         modifier: Modifier | None = None,
     ) -> ImageImageVector: ...
@@ -3979,7 +4024,7 @@ class LazyColumn(Component):
         *contents: Node,
         id: str | None = None,
         first_visible_index: int | None = None,
-        horizontal_alignment: _LazyColumnHorizontalAlignment | None = None,
+        horizontal_alignment: _AlignmentHorizontal | None = None,
         modifier: Modifier | None = None,
         on_scroll_idle: ActionTarget | None = None,
         reverse_layout: bool | None = None,
@@ -4055,7 +4100,7 @@ class LazyRow(Component):
         on_scroll_idle: ActionTarget | None = None,
         reverse_layout: bool | None = None,
         user_scroll_enabled: bool | None = None,
-        vertical_alignment: _LazyRowVerticalAlignment | None = None,
+        vertical_alignment: _AlignmentVertical | None = None,
         children: Content = (),
         items: Content | Sequence[Any] | None = None,
         key: Callable[[Any], str | int] | None = None,
@@ -4195,7 +4240,7 @@ class _LinearProgressIndicator(Component):
         gap_size: int | float | None = None,
         modifier: Modifier | None = None,
         progress: int | float,
-        stroke_cap: JsonValue | None = None,
+        stroke_cap: _StrokeCap | None = None,
         track_color: JsonValue | Expression | None = None,
     ) -> None:
         """Construct a registered LinearProgressIndicator.
@@ -4236,7 +4281,7 @@ class LinearProgressIndicator(_LinearProgressIndicator):
         gap_size: int | float | None = None,
         modifier: Modifier | None = None,
         progress: int | float,
-        stroke_cap: JsonValue | None = None,
+        stroke_cap: _StrokeCap | None = None,
         track_color: JsonValue | Expression | None = None,
     ) -> LinearProgressIndicator: ...
     @overload
@@ -4247,7 +4292,7 @@ class LinearProgressIndicator(_LinearProgressIndicator):
         color: JsonValue | Expression | None = None,
         gap_size: int | float | None = None,
         modifier: Modifier | None = None,
-        stroke_cap: JsonValue | None = None,
+        stroke_cap: _StrokeCap | None = None,
         track_color: JsonValue | Expression | None = None,
     ) -> LinearProgressIndicatorWithoutProgress: ...
     def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
@@ -4618,6 +4663,7 @@ class ModalWideNavigationRail(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        arrangement: _ArrangementVertical | None = None,
         collapsed_shape: JsonValue | None = None,
         expanded_header_top_padding: int | float | None = None,
         expanded_shape: JsonValue | None = None,
@@ -4631,6 +4677,7 @@ class ModalWideNavigationRail(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            arrangement: Native arrangement; None uses its default.
             collapsed_shape: Native collapsedShape; None uses its default.
             expanded_header_top_padding: Native expandedHeaderTopPadding; None uses
                 its default.
@@ -4644,6 +4691,8 @@ class ModalWideNavigationRail(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if arrangement is not None:
+            props["arrangement"] = arrangement
         if collapsed_shape is not None:
             props["collapsed_shape"] = collapsed_shape
         if expanded_header_top_padding is not None:
@@ -5059,7 +5108,8 @@ class NavigationSuite(Component):
         *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
-        navigation_suite_type: JsonValue,
+        navigation_suite_type: _NavigationSuiteType,
+        vertical_arrangement: _ArrangementVertical | None = None,
         children: Content = (),
         primary_action_content: Content | None = None,
     ) -> None:
@@ -5070,6 +5120,7 @@ class NavigationSuite(Component):
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             navigation_suite_type: Required native navigationSuiteType.
+            vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
             primary_action_content: Nodes for the native primaryActionContent slot.
 
@@ -5078,6 +5129,8 @@ class NavigationSuite(Component):
         """
         props: dict[str, PropValue] = {}
         props["navigation_suite_type"] = navigation_suite_type
+        if vertical_arrangement is not None:
+            props["vertical_arrangement"] = vertical_arrangement
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -5166,6 +5219,8 @@ class NavigationSuiteScaffold(Component):
         container_color: JsonValue | Expression | None = None,
         content_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
+        navigation_item_vertical_arrangement: _ArrangementVertical | None = None,
+        primary_action_content_horizontal_alignment: _AlignmentHorizontal | None = None,
         children: Content = (),
         navigation_items: Content | None = None,
         primary_action_content: Content | None = None,
@@ -5178,6 +5233,10 @@ class NavigationSuiteScaffold(Component):
             container_color: Native containerColor; None uses its default.
             content_color: Native contentColor; None uses its default.
             modifier: Native modifier; None uses its default.
+            navigation_item_vertical_arrangement: Native
+                navigationItemVerticalArrangement; None uses its default.
+            primary_action_content_horizontal_alignment: Native
+                primaryActionContentHorizontalAlignment; None uses its default.
             children: Ordered child nodes with stable keys.
             navigation_items: Nodes for the native navigationItems slot.
             primary_action_content: Nodes for the native primaryActionContent slot.
@@ -5190,6 +5249,14 @@ class NavigationSuiteScaffold(Component):
             props["container_color"] = container_color
         if content_color is not None:
             props["content_color"] = content_color
+        if navigation_item_vertical_arrangement is not None:
+            props["navigation_item_vertical_arrangement"] = (
+                navigation_item_vertical_arrangement
+            )
+        if primary_action_content_horizontal_alignment is not None:
+            props["primary_action_content_horizontal_alignment"] = (
+                primary_action_content_horizontal_alignment
+            )
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -5230,6 +5297,7 @@ class _NavigationSuiteScaffoldLayout(Component):
             "navigation_suite",
             "navigation_suite_type",
             "primary_action_content",
+            "primary_action_content_horizontal_alignment",
         }
     )
 
@@ -5238,7 +5306,8 @@ class _NavigationSuiteScaffoldLayout(Component):
         *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
-        navigation_suite_type: JsonValue,
+        navigation_suite_type: _NavigationSuiteType,
+        primary_action_content_horizontal_alignment: _AlignmentHorizontal | None = None,
         children: Content = (),
         navigation_suite: Content | None = None,
         primary_action_content: Content | None = None,
@@ -5250,6 +5319,8 @@ class _NavigationSuiteScaffoldLayout(Component):
             id: Stable instance key; None derives the node's path id.
             modifier: Native modifier; None uses its default.
             navigation_suite_type: Required native navigationSuiteType.
+            primary_action_content_horizontal_alignment: Native
+                primaryActionContentHorizontalAlignment; None uses its default.
             children: Ordered child nodes with stable keys.
             navigation_suite: Nodes for the native navigationSuite slot.
             primary_action_content: Nodes for the native primaryActionContent slot.
@@ -5259,6 +5330,10 @@ class _NavigationSuiteScaffoldLayout(Component):
         """
         props: dict[str, PropValue] = {}
         props["navigation_suite_type"] = navigation_suite_type
+        if primary_action_content_horizontal_alignment is not None:
+            props["primary_action_content_horizontal_alignment"] = (
+                primary_action_content_horizontal_alignment
+            )
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -5293,7 +5368,8 @@ class NavigationSuiteScaffoldLayout(_NavigationSuiteScaffoldLayout):
         *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
-        navigation_suite_type: JsonValue,
+        navigation_suite_type: _NavigationSuiteType,
+        primary_action_content_horizontal_alignment: _AlignmentHorizontal | None = None,
         children: Content = (),
         navigation_suite: Content | None = None,
         primary_action_content: Content | None = None,
@@ -5683,7 +5759,7 @@ class OutlinedSecureTextField(Component):
         selection_start: int,
         shape: JsonValue | None = None,
         text: str,
-        text_obfuscation_mode: JsonValue | None = None,
+        text_obfuscation_mode: _TextObfuscationMode | None = None,
         text_style: JsonValue | None = None,
         label: Content | None = None,
         leading_icon: Content | None = None,
@@ -6139,7 +6215,7 @@ class PullToRefreshBox(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        content_alignment: _PullToRefreshBoxContentAlignment | None = None,
+        content_alignment: _Alignment | None = None,
         is_refreshing: bool,
         modifier: Modifier | None = None,
         on_refresh: ActionTarget,
@@ -6353,7 +6429,7 @@ class Scaffold(Component):
         id: str | None = None,
         container_color: JsonValue | Expression | None = None,
         content_window_insets: JsonValue | None = None,
-        floating_action_button_position: JsonValue | None = None,
+        floating_action_button_position: _FabPosition | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -6729,7 +6805,7 @@ class SecureTextField(Component):
         selection_start: int,
         shape: JsonValue | None = None,
         text: str,
-        text_obfuscation_mode: JsonValue | None = None,
+        text_obfuscation_mode: _TextObfuscationMode | None = None,
         text_style: JsonValue | None = None,
         label: Content | None = None,
         leading_icon: Content | None = None,
@@ -6962,7 +7038,7 @@ class ShortNavigationBar(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        arrangement: JsonValue | None = None,
+        arrangement: _ShortNavigationBarArrangement | None = None,
         container_color: JsonValue | Expression | None = None,
         content_color: JsonValue | Expression | None = None,
         modifier: Modifier | None = None,
@@ -7013,7 +7089,7 @@ class ShortNavigationBarItem(Component):
         *,
         id: str | None = None,
         enabled: bool | None = None,
-        icon_position: JsonValue | None = None,
+        icon_position: _NavigationItemIconPosition | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
         on_focus: ActionTarget | None = None,
@@ -8106,29 +8182,29 @@ class TextAnnotatedString(Component):
         *,
         id: str | None = None,
         color: JsonValue | Expression | None = None,
-        font_family: JsonValue | None | _Unset = UNSET,
+        font_family: _FontFamily | None = None,
         font_size: JsonValue | None = None,
-        font_style: JsonValue | None | _Unset = UNSET,
+        font_style: _FontStyle | None = None,
         font_weight: JsonValue | None | _Unset = UNSET,
         letter_spacing: JsonValue | None = None,
         line_height: JsonValue | None = None,
         min_lines: int | None = None,
         modifier: Modifier | None = None,
-        overflow: JsonValue | None = None,
+        overflow: _TextOverflow | None = None,
         soft_wrap: bool | None = None,
         style: JsonValue | None = None,
         text: JsonValue,
-        text_align: JsonValue | None | _Unset = UNSET,
-        text_decoration: JsonValue | None | _Unset = UNSET,
+        text_align: _TextAlign | None = None,
+        text_decoration: _TextDecoration | None = None,
     ) -> None:
         """Construct a registered TextAnnotatedString.
 
         Args:
             id: Stable instance key; None derives the node's path id.
             color: Native color; None uses its default.
-            font_family: Native fontFamily; omitted uses its default; None is null.
+            font_family: Native fontFamily; None uses its default.
             font_size: Native fontSize; None uses its default.
-            font_style: Native fontStyle; omitted uses its default; None is null.
+            font_style: Native fontStyle; None uses its default.
             font_weight: Native fontWeight; omitted uses its default; None is null.
             letter_spacing: Native letterSpacing; None uses its default.
             line_height: Native lineHeight; None uses its default.
@@ -8138,18 +8214,17 @@ class TextAnnotatedString(Component):
             soft_wrap: Native softWrap; None uses its default.
             style: Native style; None uses its default.
             text: Required native text.
-            text_align: Native textAlign; omitted uses its default; None is null.
-            text_decoration: Native textDecoration; omitted uses its default; None
-                is null.
+            text_align: Native textAlign; None uses its default.
+            text_decoration: Native textDecoration; None uses its default.
         """
         props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = color
-        if not isinstance(font_family, _Unset):
+        if font_family is not None:
             props["font_family"] = font_family
         if font_size is not None:
             props["font_size"] = font_size
-        if not isinstance(font_style, _Unset):
+        if font_style is not None:
             props["font_style"] = font_style
         if not isinstance(font_weight, _Unset):
             props["font_weight"] = font_weight
@@ -8166,9 +8241,9 @@ class TextAnnotatedString(Component):
         if style is not None:
             props["style"] = style
         props["text"] = text
-        if not isinstance(text_align, _Unset):
+        if text_align is not None:
             props["text_align"] = text_align
-        if not isinstance(text_decoration, _Unset):
+        if text_decoration is not None:
             props["text_decoration"] = text_decoration
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
@@ -8344,7 +8419,7 @@ class TimePicker(Component):
         colors: JsonValue | None = None,
         hour: int | None = None,
         is24hour: bool | None = None,
-        layout_type: JsonValue | None = None,
+        layout_type: _TimePickerLayoutType | None = None,
         minute: int | None = None,
         modifier: Modifier | None = None,
         on_hour_change: ActionTarget | None = None,
@@ -8612,7 +8687,7 @@ class TriStateCheckbox(Component):
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
-        state: JsonValue,
+        state: _ToggleableState,
     ) -> None:
         """Construct a registered TriStateCheckbox.
 
@@ -8717,6 +8792,7 @@ class WideNavigationRail(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        arrangement: _ArrangementVertical | None = None,
         modifier: Modifier | None = None,
         shape: JsonValue | None = None,
         window_insets: JsonValue | None = None,
@@ -8727,6 +8803,7 @@ class WideNavigationRail(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            arrangement: Native arrangement; None uses its default.
             modifier: Native modifier; None uses its default.
             shape: Native shape; None uses its default.
             window_insets: Native windowInsets; None uses its default.
@@ -8736,6 +8813,8 @@ class WideNavigationRail(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if arrangement is not None:
+            props["arrangement"] = arrangement
         if shape is not None:
             props["shape"] = shape
         if window_insets is not None:
@@ -8902,7 +8981,7 @@ class CircularProgressIndicatorProgress(CircularProgressIndicator):
         gap_size: int | float | None = None,
         modifier: Modifier | None = None,
         progress: int | float,
-        stroke_cap: JsonValue | None = None,
+        stroke_cap: _StrokeCap | None = None,
         stroke_width: int | float | None = None,
         track_color: JsonValue | Expression | None = None,
     ) -> None:
@@ -9019,9 +9098,9 @@ class ImageImageVector(Image):
         self,
         *,
         id: str | None = None,
-        alignment: _ImageImageVectorAlignment | None = None,
+        alignment: _Alignment | None = None,
         content_description: str | None,
-        content_scale: JsonValue | None = None,
+        content_scale: _ContentScale | None = None,
         image_vector: JsonValue,
         modifier: Modifier | None = None,
     ) -> None:
@@ -9068,7 +9147,7 @@ class LinearProgressIndicatorWithoutProgress(LinearProgressIndicator):
         color: JsonValue | Expression | None = None,
         gap_size: int | float | None = None,
         modifier: Modifier | None = None,
-        stroke_cap: JsonValue | None = None,
+        stroke_cap: _StrokeCap | None = None,
         track_color: JsonValue | Expression | None = None,
     ) -> None:
         """Construct a registered LinearProgressIndicatorWithoutProgress.

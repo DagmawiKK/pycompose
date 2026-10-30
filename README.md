@@ -555,7 +555,7 @@ own properties: `selected_date_millis`, `hour`, `minute`. Setting `hour` from
 Python moves the analog dial's hand as well as the number.
 
 `ExposedDropdownMenuBox` opens from the child wearing `menu_anchor`, usually a
-field or a text: `Modifier.menu_anchor(ExposedDropdownMenuAnchorType("PrimaryNotEditable"))`,
+field or a text: `Modifier.menu_anchor("primaryNotEditable")`,
 with the anchor type from `pycompose.ui`.
 
 `SearchBar` and `DockedSearchBar` take the editable field through the

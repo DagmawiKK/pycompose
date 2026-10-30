@@ -85,3 +85,19 @@ def docstring_arg(field: str, description: str) -> list[str]:
     return [f"            {wrapped[0]}"] + [
         f"                {rest}" for rest in wrapped[1:]
     ]
+
+
+def assignment(indent: str, keyword: str) -> list[str]:
+    """``props["keyword"] = keyword``, wrapped as the formatter wraps a long one.
+
+    Args:
+        indent: The statement's indentation.
+        keyword: The prop's Python name.
+
+    Returns:
+        The statement's lines.
+    """
+    line = f'{indent}props["{keyword}"] = {keyword}'
+    if len(line) <= COLUMNS:
+        return [line]
+    return [f'{indent}props["{keyword}"] = (', f"{indent}    {keyword}", f"{indent})"]

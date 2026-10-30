@@ -337,7 +337,8 @@ object GeneratedAdapters {
             }
             .register("AnimatedContent") { node, modifier, context ->
                 val model = node as AnimatedContentNode
-                val contentAlignmentValue = model.props.contentAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.TopStart
+                val contentAlignmentValue = model.props.contentAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.TopStart
                 val keyed = context.keyedContent(model.id, model.props.targetState, model.children)
                 AnimatedContent(
                     modifier = modifier,
@@ -412,8 +413,8 @@ object GeneratedAdapters {
             }
             .register("BasicText") { node, modifier, context ->
                 val model = node as BasicTextNode
-                val overflowWire = model.props.overflow
-                val overflowValue = if (overflowWire != null) com.pycompose.renderer.generated.ValueResolver.textOverflow(overflowWire).getOrThrow() else androidx.compose.ui.text.style.TextOverflow.Companion.Clip
+                val overflowValue = model.props.overflow?.let { com.pycompose.renderer.generated.ValueResolver.textOverflow(it).getOrThrow() }
+                    ?: androidx.compose.ui.text.style.TextOverflow.Companion.Clip
                 val styleWire = model.props.style
                 val styleValue = if (styleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(styleWire).getOrThrow() else androidx.compose.ui.text.TextStyle.Companion.Default
                 val textValue = com.pycompose.renderer.generated.ValueResolver.annotatedString(model.props.text).getOrThrow()
@@ -524,7 +525,8 @@ object GeneratedAdapters {
             }
             .register("Box") { node, modifier, context ->
                 val model = node as BoxNode
-                val contentAlignmentValue = model.props.contentAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.TopStart
+                val contentAlignmentValue = model.props.contentAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.TopStart
                 Box(
                     modifier = modifier,
                     contentAlignment = contentAlignmentValue,
@@ -657,8 +659,8 @@ object GeneratedAdapters {
                 }
                 val gapSizeWire = model.props.gapSize
                 val gapSizeValue = if (gapSizeWire != null) gapSizeWire.dp else androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize
-                val strokeCapWire = model.props.strokeCap
-                val strokeCapValue = if (strokeCapWire != null) com.pycompose.renderer.generated.ValueResolver.strokeCap(strokeCapWire).getOrThrow() else androidx.compose.material3.ProgressIndicatorDefaults.CircularIndeterminateStrokeCap
+                val strokeCapValue = model.props.strokeCap?.let { com.pycompose.renderer.generated.ValueResolver.strokeCap(it).getOrThrow() }
+                    ?: androidx.compose.material3.ProgressIndicatorDefaults.CircularIndeterminateStrokeCap
                 val strokeWidthWire = model.props.strokeWidth
                 val strokeWidthValue = if (strokeWidthWire != null) strokeWidthWire.dp else androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth
                 val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
@@ -683,8 +685,8 @@ object GeneratedAdapters {
                 val gapSizeWire = model.props.gapSize
                 val gapSizeValue = if (gapSizeWire != null) gapSizeWire.dp else androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize
                 val progressValue = model.props.progress
-                val strokeCapWire = model.props.strokeCap
-                val strokeCapValue = if (strokeCapWire != null) com.pycompose.renderer.generated.ValueResolver.strokeCap(strokeCapWire).getOrThrow() else androidx.compose.material3.ProgressIndicatorDefaults.CircularDeterminateStrokeCap
+                val strokeCapValue = model.props.strokeCap?.let { com.pycompose.renderer.generated.ValueResolver.strokeCap(it).getOrThrow() }
+                    ?: androidx.compose.material3.ProgressIndicatorDefaults.CircularDeterminateStrokeCap
                 val strokeWidthWire = model.props.strokeWidth
                 val strokeWidthValue = if (strokeWidthWire != null) strokeWidthWire.dp else androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth
                 val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
@@ -703,8 +705,10 @@ object GeneratedAdapters {
             }
             .register("Column") { node, modifier, context ->
                 val model = node as ColumnNode
-                val horizontalAlignmentValue = model.props.horizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Start
-                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() } ?: androidx.compose.foundation.layout.Arrangement.Top
+                val horizontalAlignmentValue = model.props.horizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.Start
+                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
+                    ?: androidx.compose.foundation.layout.Arrangement.Top
                 val scrollStateValue = context.scrollState(model.props.offset, model.props.onScrollIdle)
                 context.publish(model.id, scrollStateValue)
                 Column(
@@ -1285,8 +1289,10 @@ object GeneratedAdapters {
             }
             .register("FlowColumn") { node, modifier, context ->
                 val model = node as FlowColumnNode
-                val itemHorizontalAlignmentValue = model.props.itemHorizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Start
-                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() } ?: androidx.compose.foundation.layout.Arrangement.Top
+                val itemHorizontalAlignmentValue = model.props.itemHorizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.Start
+                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
+                    ?: androidx.compose.foundation.layout.Arrangement.Top
                 FlowColumn(
                     modifier = modifier,
                     itemHorizontalAlignment = itemHorizontalAlignmentValue,
@@ -1297,8 +1303,10 @@ object GeneratedAdapters {
             }
             .register("FlowRow") { node, modifier, context ->
                 val model = node as FlowRowNode
-                val itemVerticalAlignmentValue = model.props.itemVerticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Top
-                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() } ?: androidx.compose.foundation.layout.Arrangement.Top
+                val itemVerticalAlignmentValue = model.props.itemVerticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.Top
+                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
+                    ?: androidx.compose.foundation.layout.Arrangement.Top
                 FlowRow(
                     modifier = modifier,
                     itemVerticalAlignment = itemVerticalAlignmentValue,
@@ -1372,9 +1380,10 @@ object GeneratedAdapters {
             }
             .register("ImageImageVector") { node, modifier, context ->
                 val model = node as ImageImageVectorNode
-                val alignmentValue = model.props.alignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Center
-                val contentScaleWire = model.props.contentScale
-                val contentScaleValue = if (contentScaleWire != null) com.pycompose.renderer.generated.ValueResolver.contentScale(contentScaleWire).getOrThrow() else androidx.compose.ui.layout.ContentScale.Companion.Fit
+                val alignmentValue = model.props.alignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.Center
+                val contentScaleValue = model.props.contentScale?.let { com.pycompose.renderer.generated.ValueResolver.contentScale(it).getOrThrow() }
+                    ?: androidx.compose.ui.layout.ContentScale.Companion.Fit
                 val imageVectorValue = com.pycompose.renderer.generated.ValueResolver.imageVector(model.props.imageVector).getOrThrow()
                 Image(
                     modifier = modifier,
@@ -1467,8 +1476,10 @@ object GeneratedAdapters {
             }
             .register("LazyColumn") { node, modifier, context ->
                 val model = node as LazyColumnNode
-                val horizontalAlignmentValue = model.props.horizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Start
-                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() } ?: androidx.compose.foundation.layout.Arrangement.Top
+                val horizontalAlignmentValue = model.props.horizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.Start
+                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
+                    ?: androidx.compose.foundation.layout.Arrangement.Top
                 val stateValue = context.lazyListState(model.props.firstVisibleIndex, model.props.onScrollIdle)
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyColumn(
@@ -1483,7 +1494,8 @@ object GeneratedAdapters {
             }
             .register("LazyRow") { node, modifier, context ->
                 val model = node as LazyRowNode
-                val verticalAlignmentValue = model.props.verticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Top
+                val verticalAlignmentValue = model.props.verticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.Top
                 val stateValue = context.lazyListState(model.props.firstVisibleIndex, model.props.onScrollIdle)
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyRow(
@@ -1522,8 +1534,8 @@ object GeneratedAdapters {
                 val gapSizeWire = model.props.gapSize
                 val gapSizeValue = if (gapSizeWire != null) gapSizeWire.dp else androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize
                 val progressValue = model.props.progress
-                val strokeCapWire = model.props.strokeCap
-                val strokeCapValue = if (strokeCapWire != null) com.pycompose.renderer.generated.ValueResolver.strokeCap(strokeCapWire).getOrThrow() else androidx.compose.material3.ProgressIndicatorDefaults.LinearStrokeCap
+                val strokeCapValue = model.props.strokeCap?.let { com.pycompose.renderer.generated.ValueResolver.strokeCap(it).getOrThrow() }
+                    ?: androidx.compose.material3.ProgressIndicatorDefaults.LinearStrokeCap
                 val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor
@@ -1545,8 +1557,8 @@ object GeneratedAdapters {
                 }
                 val gapSizeWire = model.props.gapSize
                 val gapSizeValue = if (gapSizeWire != null) gapSizeWire.dp else androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize
-                val strokeCapWire = model.props.strokeCap
-                val strokeCapValue = if (strokeCapWire != null) com.pycompose.renderer.generated.ValueResolver.strokeCap(strokeCapWire).getOrThrow() else androidx.compose.material3.ProgressIndicatorDefaults.LinearStrokeCap
+                val strokeCapValue = model.props.strokeCap?.let { com.pycompose.renderer.generated.ValueResolver.strokeCap(it).getOrThrow() }
+                    ?: androidx.compose.material3.ProgressIndicatorDefaults.LinearStrokeCap
                 val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor
@@ -1670,6 +1682,8 @@ object GeneratedAdapters {
             }
             .register("ModalWideNavigationRail") { node, modifier, context ->
                 val model = node as ModalWideNavigationRailNode
+                val arrangementValue = model.props.arrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
+                    ?: androidx.compose.material3.WideNavigationRailDefaults.arrangement
                 val collapsedShapeWire = model.props.collapsedShape
                 val collapsedShapeValue = if (collapsedShapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(collapsedShapeWire).getOrThrow() else androidx.compose.material3.WideNavigationRailDefaults.modalCollapsedShape
                 val expandedHeaderTopPaddingWire = model.props.expandedHeaderTopPadding
@@ -1680,6 +1694,7 @@ object GeneratedAdapters {
                 val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.WideNavigationRailDefaults.windowInsets
                 ModalWideNavigationRail(
                     modifier = modifier,
+                    arrangement = arrangementValue,
                     collapsedShape = collapsedShapeValue,
                     expandedHeaderTopPadding = expandedHeaderTopPaddingValue,
                     expandedShape = expandedShapeValue,
@@ -1799,9 +1814,12 @@ object GeneratedAdapters {
             .register("NavigationSuite") { node, modifier, context ->
                 val model = node as NavigationSuiteNode
                 val navigationSuiteTypeValue = com.pycompose.renderer.generated.ValueResolver.navigationSuiteType(model.props.navigationSuiteType).getOrThrow()
+                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
+                    ?: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults.verticalArrangement
                 NavigationSuite(
                     modifier = modifier,
                     navigationSuiteType = navigationSuiteTypeValue,
+                    verticalArrangement = verticalArrangementValue,
                     primaryActionContent = { context.slot(model.children, "primaryActionContent")?.invoke() },
                     content = { context.children(model.children) },
                 )
@@ -1830,10 +1848,16 @@ object GeneratedAdapters {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.contentColor)
                     else -> androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.contentColor
                 }
+                val navigationItemVerticalArrangementValue = model.props.navigationItemVerticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
+                    ?: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults.verticalArrangement
+                val primaryActionContentHorizontalAlignmentValue = model.props.primaryActionContentHorizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() }
+                    ?: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.primaryActionContentAlignment
                 NavigationSuiteScaffold(
                     modifier = modifier,
                     containerColor = containerColorValue,
                     contentColor = contentColorValue,
+                    navigationItemVerticalArrangement = navigationItemVerticalArrangementValue,
+                    primaryActionContentHorizontalAlignment = primaryActionContentHorizontalAlignmentValue,
                     navigationItems = { context.slot(model.children, "navigationItems")?.invoke() },
                     primaryActionContent = { context.slot(model.children, "primaryActionContent")?.invoke() },
                     content = { context.children(model.children) },
@@ -1842,9 +1866,12 @@ object GeneratedAdapters {
             .register("NavigationSuiteScaffoldLayout") { node, modifier, context ->
                 val model = node as NavigationSuiteScaffoldLayoutNode
                 val navigationSuiteTypeValue = com.pycompose.renderer.generated.ValueResolver.navigationSuiteType(model.props.navigationSuiteType).getOrThrow()
+                val primaryActionContentHorizontalAlignmentValue = model.props.primaryActionContentHorizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() }
+                    ?: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.primaryActionContentAlignment
                 Box(modifier = modifier) {
                 NavigationSuiteScaffoldLayout(
                     navigationSuiteType = navigationSuiteTypeValue,
+                    primaryActionContentHorizontalAlignment = primaryActionContentHorizontalAlignmentValue,
                     navigationSuite = { context.slot(model.children, "navigationSuite")?.invoke() },
                     primaryActionContent = { context.slot(model.children, "primaryActionContent")?.invoke() },
                     content = { context.children(model.children) },
@@ -1969,8 +1996,8 @@ object GeneratedAdapters {
                 val contentPaddingValue = if (contentPaddingWire != null) com.pycompose.renderer.generated.ValueResolver.paddingValues(contentPaddingWire).getOrThrow() else androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.OutlinedTextFieldDefaults.shape
-                val textObfuscationModeWire = model.props.textObfuscationMode
-                val textObfuscationModeValue = if (textObfuscationModeWire != null) com.pycompose.renderer.generated.ValueResolver.textObfuscationMode(textObfuscationModeWire).getOrThrow() else androidx.compose.foundation.text.input.TextObfuscationMode.Companion.RevealLastTyped
+                val textObfuscationModeValue = model.props.textObfuscationMode?.let { com.pycompose.renderer.generated.ValueResolver.textObfuscationMode(it).getOrThrow() }
+                    ?: androidx.compose.foundation.text.input.TextObfuscationMode.Companion.RevealLastTyped
                 val textStyleWire = model.props.textStyle
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
@@ -2106,7 +2133,8 @@ object GeneratedAdapters {
             }
             .register("PullToRefreshBox") { node, modifier, context ->
                 val model = node as PullToRefreshBoxNode
-                val contentAlignmentValue = model.props.contentAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.TopStart
+                val contentAlignmentValue = model.props.contentAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.TopStart
                 PullToRefreshBox(
                     modifier = modifier,
                     contentAlignment = contentAlignmentValue,
@@ -2131,7 +2159,8 @@ object GeneratedAdapters {
             }
             .register("Row") { node, modifier, context ->
                 val model = node as RowNode
-                val verticalAlignmentValue = model.props.verticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Top
+                val verticalAlignmentValue = model.props.verticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.Top
                 Row(
                     modifier = modifier,
                     verticalAlignment = verticalAlignmentValue,
@@ -2146,8 +2175,8 @@ object GeneratedAdapters {
                 }
                 val contentWindowInsetsWire = model.props.contentWindowInsets
                 val contentWindowInsetsValue = if (contentWindowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(contentWindowInsetsWire).getOrThrow() else androidx.compose.material3.ScaffoldDefaults.contentWindowInsets
-                val floatingActionButtonPositionWire = model.props.floatingActionButtonPosition
-                val floatingActionButtonPositionValue = if (floatingActionButtonPositionWire != null) com.pycompose.renderer.generated.ValueResolver.fabPosition(floatingActionButtonPositionWire).getOrThrow() else androidx.compose.material3.FabPosition.Companion.End
+                val floatingActionButtonPositionValue = model.props.floatingActionButtonPosition?.let { com.pycompose.renderer.generated.ValueResolver.fabPosition(it).getOrThrow() }
+                    ?: androidx.compose.material3.FabPosition.Companion.End
                 Scaffold(
                     modifier = modifier,
                     containerColor = containerColorValue,
@@ -2236,8 +2265,8 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.textFieldColors(colorsWire).getOrThrow() else androidx.compose.material3.TextFieldDefaults.colors()
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.TextFieldDefaults.shape
-                val textObfuscationModeWire = model.props.textObfuscationMode
-                val textObfuscationModeValue = if (textObfuscationModeWire != null) com.pycompose.renderer.generated.ValueResolver.textObfuscationMode(textObfuscationModeWire).getOrThrow() else androidx.compose.foundation.text.input.TextObfuscationMode.Companion.RevealLastTyped
+                val textObfuscationModeValue = model.props.textObfuscationMode?.let { com.pycompose.renderer.generated.ValueResolver.textObfuscationMode(it).getOrThrow() }
+                    ?: androidx.compose.foundation.text.input.TextObfuscationMode.Companion.RevealLastTyped
                 val textStyleWire = model.props.textStyle
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
@@ -2297,8 +2326,8 @@ object GeneratedAdapters {
             }
             .register("ShortNavigationBar") { node, modifier, context ->
                 val model = node as ShortNavigationBarNode
-                val arrangementWire = model.props.arrangement
-                val arrangementValue = if (arrangementWire != null) com.pycompose.renderer.generated.ValueResolver.shortNavigationBarArrangement(arrangementWire).getOrThrow() else androidx.compose.material3.ShortNavigationBarDefaults.arrangement
+                val arrangementValue = model.props.arrangement?.let { com.pycompose.renderer.generated.ValueResolver.shortNavigationBarArrangement(it).getOrThrow() }
+                    ?: androidx.compose.material3.ShortNavigationBarDefaults.arrangement
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.containerColor)
                     else -> androidx.compose.material3.ShortNavigationBarDefaults.containerColor
@@ -2320,8 +2349,8 @@ object GeneratedAdapters {
             }
             .register("ShortNavigationBarItem") { node, modifier, context ->
                 val model = node as ShortNavigationBarItemNode
-                val iconPositionWire = model.props.iconPosition
-                val iconPositionValue = if (iconPositionWire != null) com.pycompose.renderer.generated.ValueResolver.navigationItemIconPosition(iconPositionWire).getOrThrow() else androidx.compose.material3.NavigationItemIconPosition.Companion.Top
+                val iconPositionValue = model.props.iconPosition?.let { com.pycompose.renderer.generated.ValueResolver.navigationItemIconPosition(it).getOrThrow() }
+                    ?: androidx.compose.material3.NavigationItemIconPosition.Companion.Top
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 ShortNavigationBarItem(
                     modifier = modifier,
@@ -2663,20 +2692,12 @@ object GeneratedAdapters {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.ui.graphics.Color.Companion.Unspecified)
                     else -> androidx.compose.ui.graphics.Color.Companion.Unspecified
                 }
-                val fontFamilyWire = model.props.fontFamily
-                val fontFamilyValue = when (fontFamilyWire) {
-                    com.pycompose.ir.OptionalValue.Absent -> null
-                    com.pycompose.ir.OptionalValue.Null -> null
-                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.fontFamily(fontFamilyWire.value).getOrThrow()
-                }
+                val fontFamilyValue = model.props.fontFamily?.let { com.pycompose.renderer.generated.ValueResolver.fontFamily(it).getOrThrow() }
+                    ?: null
                 val fontSizeWire = model.props.fontSize
                 val fontSizeValue = if (fontSizeWire != null) com.pycompose.renderer.generated.ValueResolver.textUnit(fontSizeWire).getOrThrow() else androidx.compose.ui.unit.TextUnit.Companion.Unspecified
-                val fontStyleWire = model.props.fontStyle
-                val fontStyleValue = when (fontStyleWire) {
-                    com.pycompose.ir.OptionalValue.Absent -> null
-                    com.pycompose.ir.OptionalValue.Null -> null
-                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.fontStyle(fontStyleWire.value).getOrThrow()
-                }
+                val fontStyleValue = model.props.fontStyle?.let { com.pycompose.renderer.generated.ValueResolver.fontStyle(it).getOrThrow() }
+                    ?: null
                 val fontWeightWire = model.props.fontWeight
                 val fontWeightValue = when (fontWeightWire) {
                     com.pycompose.ir.OptionalValue.Absent -> null
@@ -2687,23 +2708,15 @@ object GeneratedAdapters {
                 val letterSpacingValue = if (letterSpacingWire != null) com.pycompose.renderer.generated.ValueResolver.textUnit(letterSpacingWire).getOrThrow() else androidx.compose.ui.unit.TextUnit.Companion.Unspecified
                 val lineHeightWire = model.props.lineHeight
                 val lineHeightValue = if (lineHeightWire != null) com.pycompose.renderer.generated.ValueResolver.textUnit(lineHeightWire).getOrThrow() else androidx.compose.ui.unit.TextUnit.Companion.Unspecified
-                val overflowWire = model.props.overflow
-                val overflowValue = if (overflowWire != null) com.pycompose.renderer.generated.ValueResolver.textOverflow(overflowWire).getOrThrow() else androidx.compose.ui.text.style.TextOverflow.Companion.Clip
+                val overflowValue = model.props.overflow?.let { com.pycompose.renderer.generated.ValueResolver.textOverflow(it).getOrThrow() }
+                    ?: androidx.compose.ui.text.style.TextOverflow.Companion.Clip
                 val styleWire = model.props.style
                 val styleValue = if (styleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(styleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val textValue = com.pycompose.renderer.generated.ValueResolver.annotatedString(model.props.text).getOrThrow()
-                val textAlignWire = model.props.textAlign
-                val textAlignValue = when (textAlignWire) {
-                    com.pycompose.ir.OptionalValue.Absent -> null
-                    com.pycompose.ir.OptionalValue.Null -> null
-                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.textAlign(textAlignWire.value).getOrThrow()
-                }
-                val textDecorationWire = model.props.textDecoration
-                val textDecorationValue = when (textDecorationWire) {
-                    com.pycompose.ir.OptionalValue.Absent -> null
-                    com.pycompose.ir.OptionalValue.Null -> null
-                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.textDecoration(textDecorationWire.value).getOrThrow()
-                }
+                val textAlignValue = model.props.textAlign?.let { com.pycompose.renderer.generated.ValueResolver.textAlign(it).getOrThrow() }
+                    ?: null
+                val textDecorationValue = model.props.textDecoration?.let { com.pycompose.renderer.generated.ValueResolver.textDecoration(it).getOrThrow() }
+                    ?: null
                 Text(
                     modifier = modifier,
                     color = colorValue,
@@ -2779,8 +2792,8 @@ object GeneratedAdapters {
                 val model = node as TimePickerNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.timePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.TimePickerDefaults.colors()
-                val layoutTypeWire = model.props.layoutType
-                val layoutTypeValue = if (layoutTypeWire != null) com.pycompose.renderer.generated.ValueResolver.timePickerLayoutType(layoutTypeWire).getOrThrow() else androidx.compose.material3.TimePickerDefaults.layoutType()
+                val layoutTypeValue = model.props.layoutType?.let { com.pycompose.renderer.generated.ValueResolver.timePickerLayoutType(it).getOrThrow() }
+                    ?: androidx.compose.material3.TimePickerDefaults.layoutType()
                 val stateHour = model.props.hour?.let { Wanted(it.toInt()) }
                 val stateIs24hour = model.props.is24hour?.let { Wanted(it) }
                 val stateMinute = model.props.minute?.let { Wanted(it.toInt()) }
@@ -2873,12 +2886,15 @@ object GeneratedAdapters {
             }
             .register("WideNavigationRail") { node, modifier, context ->
                 val model = node as WideNavigationRailNode
+                val arrangementValue = model.props.arrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
+                    ?: androidx.compose.material3.WideNavigationRailDefaults.arrangement
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.WideNavigationRailDefaults.shape
                 val windowInsetsWire = model.props.windowInsets
                 val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.WideNavigationRailDefaults.windowInsets
                 WideNavigationRail(
                     modifier = modifier,
+                    arrangement = arrangementValue,
                     shape = shapeValue,
                     windowInsets = windowInsetsValue,
                     content = { context.children(model.children) },

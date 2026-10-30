@@ -394,8 +394,16 @@
           "default": 1
         },
         "overflow": {
-          "type": "value",
+          "type": "enum",
           "valueType": "TextOverflow",
+          "values": [
+            "clip",
+            "ellipsis",
+            "middleEllipsis",
+            "startEllipsis",
+            "visible"
+          ],
+          "default": "clip",
           "nativeDefault": "androidx.compose.ui.text.style.TextOverflow.Companion.Clip"
         },
         "softWrap": {
@@ -1133,8 +1141,13 @@
           "since": "1.23.0"
         },
         "strokeCap": {
-          "type": "value",
+          "type": "enum",
           "valueType": "StrokeCap",
+          "values": [
+            "butt",
+            "round",
+            "square"
+          ],
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularIndeterminateStrokeCap"
         },
         "strokeWidth": {
@@ -1188,8 +1201,13 @@
           }
         },
         "strokeCap": {
-          "type": "value",
+          "type": "enum",
           "valueType": "StrokeCap",
+          "values": [
+            "butt",
+            "round",
+            "square"
+          ],
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularDeterminateStrokeCap"
         },
         "strokeWidth": {
@@ -3705,8 +3723,18 @@
           "type": "string"
         },
         "contentScale": {
-          "type": "value",
+          "type": "enum",
           "valueType": "ContentScale",
+          "values": [
+            "crop",
+            "fillBounds",
+            "fillHeight",
+            "fillWidth",
+            "fit",
+            "inside",
+            "none"
+          ],
+          "default": "fit",
           "nativeDefault": "androidx.compose.ui.layout.ContentScale.Companion.Fit"
         },
         "modifier": {
@@ -3773,8 +3801,18 @@
           "nullable": true
         },
         "contentScale": {
-          "type": "value",
+          "type": "enum",
           "valueType": "ContentScale",
+          "values": [
+            "crop",
+            "fillBounds",
+            "fillHeight",
+            "fillWidth",
+            "fit",
+            "inside",
+            "none"
+          ],
+          "default": "fit",
           "nativeDefault": "androidx.compose.ui.layout.ContentScale.Companion.Fit"
         },
         "imageVector": {
@@ -4378,8 +4416,13 @@
           "since": "1.20.0"
         },
         "strokeCap": {
-          "type": "value",
+          "type": "enum",
           "valueType": "StrokeCap",
+          "values": [
+            "butt",
+            "round",
+            "square"
+          ],
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearStrokeCap",
           "since": "1.23.0"
         },
@@ -4425,8 +4468,13 @@
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize"
         },
         "strokeCap": {
-          "type": "value",
+          "type": "enum",
           "valueType": "StrokeCap",
+          "values": [
+            "butt",
+            "round",
+            "square"
+          ],
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearStrokeCap"
         },
         "trackColor": {
@@ -4775,6 +4823,20 @@
         "owner": "androidx.compose.material3.WideNavigationRailKt"
       },
       "props": {
+        "arrangement": {
+          "type": "enum",
+          "valueType": "ArrangementVertical",
+          "values": [
+            "bottom",
+            "center",
+            "spaceAround",
+            "spaceBetween",
+            "spaceEvenly",
+            "top"
+          ],
+          "nativeDefault": "androidx.compose.material3.WideNavigationRailDefaults.arrangement",
+          "since": "1.23.0"
+        },
         "collapsedShape": {
           "type": "value",
           "valueType": "Shape",
@@ -5289,9 +5351,33 @@
       },
       "props": {
         "navigationSuiteType": {
-          "type": "value",
+          "type": "enum",
           "valueType": "NavigationSuiteType",
+          "values": [
+            "navigationBar",
+            "navigationDrawer",
+            "navigationRail",
+            "none",
+            "shortNavigationBarCompact",
+            "shortNavigationBarMedium",
+            "wideNavigationRailCollapsed",
+            "wideNavigationRailExpanded"
+          ],
           "required": true
+        },
+        "verticalArrangement": {
+          "type": "enum",
+          "valueType": "ArrangementVertical",
+          "values": [
+            "bottom",
+            "center",
+            "spaceAround",
+            "spaceBetween",
+            "spaceEvenly",
+            "top"
+          ],
+          "nativeDefault": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults.verticalArrangement",
+          "since": "1.23.0"
         },
         "modifier": {
           "type": "modifier"
@@ -5417,6 +5503,33 @@
           "fallback": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.contentColor",
           "since": "1.23.0"
         },
+        "navigationItemVerticalArrangement": {
+          "type": "enum",
+          "valueType": "ArrangementVertical",
+          "values": [
+            "bottom",
+            "center",
+            "spaceAround",
+            "spaceBetween",
+            "spaceEvenly",
+            "top"
+          ],
+          "nativeDefault": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults.verticalArrangement",
+          "since": "1.23.0"
+        },
+        "primaryActionContentHorizontalAlignment": {
+          "type": "enum",
+          "valueType": "AlignmentHorizontal",
+          "values": [
+            "centerHorizontally",
+            "end",
+            "left",
+            "right",
+            "start"
+          ],
+          "nativeDefault": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.primaryActionContentAlignment",
+          "since": "1.23.0"
+        },
         "modifier": {
           "type": "modifier"
         }
@@ -5447,9 +5560,32 @@
       },
       "props": {
         "navigationSuiteType": {
-          "type": "value",
+          "type": "enum",
           "valueType": "NavigationSuiteType",
+          "values": [
+            "navigationBar",
+            "navigationDrawer",
+            "navigationRail",
+            "none",
+            "shortNavigationBarCompact",
+            "shortNavigationBarMedium",
+            "wideNavigationRailCollapsed",
+            "wideNavigationRailExpanded"
+          ],
           "required": true
+        },
+        "primaryActionContentHorizontalAlignment": {
+          "type": "enum",
+          "valueType": "AlignmentHorizontal",
+          "values": [
+            "centerHorizontally",
+            "end",
+            "left",
+            "right",
+            "start"
+          ],
+          "nativeDefault": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.primaryActionContentAlignment",
+          "since": "1.23.0"
         },
         "modifier": {
           "type": "modifier"
@@ -5923,8 +6059,15 @@
           "nativeDefault": "androidx.compose.material3.OutlinedTextFieldDefaults.shape"
         },
         "textObfuscationMode": {
-          "type": "value",
+          "type": "enum",
           "valueType": "TextObfuscationMode",
+          "values": [
+            "hidden",
+            "revealLastTyped",
+            "system",
+            "visible"
+          ],
+          "default": "revealLastTyped",
           "nativeDefault": "androidx.compose.foundation.text.input.TextObfuscationMode.Companion.RevealLastTyped"
         },
         "textStyle": {
@@ -6684,8 +6827,15 @@
           "since": "1.23.0"
         },
         "floatingActionButtonPosition": {
-          "type": "value",
+          "type": "enum",
           "valueType": "FabPosition",
+          "values": [
+            "center",
+            "end",
+            "endOverlay",
+            "start"
+          ],
+          "default": "end",
           "nativeDefault": "androidx.compose.material3.FabPosition.Companion.End",
           "since": "1.23.0"
         },
@@ -7065,8 +7215,15 @@
           "nativeDefault": "androidx.compose.material3.TextFieldDefaults.shape"
         },
         "textObfuscationMode": {
-          "type": "value",
+          "type": "enum",
           "valueType": "TextObfuscationMode",
+          "values": [
+            "hidden",
+            "revealLastTyped",
+            "system",
+            "visible"
+          ],
+          "default": "revealLastTyped",
           "nativeDefault": "androidx.compose.foundation.text.input.TextObfuscationMode.Companion.RevealLastTyped"
         },
         "textStyle": {
@@ -7362,8 +7519,12 @@
       },
       "props": {
         "arrangement": {
-          "type": "value",
+          "type": "enum",
           "valueType": "ShortNavigationBarArrangement",
+          "values": [
+            "centered",
+            "equalWeight"
+          ],
           "nativeDefault": "androidx.compose.material3.ShortNavigationBarDefaults.arrangement"
         },
         "containerColor": {
@@ -7407,8 +7568,13 @@
           "default": true
         },
         "iconPosition": {
-          "type": "value",
+          "type": "enum",
           "valueType": "NavigationItemIconPosition",
+          "values": [
+            "start",
+            "top"
+          ],
+          "default": "top",
           "nativeDefault": "androidx.compose.material3.NavigationItemIconPosition.Companion.Top"
         },
         "onClick": {
@@ -9039,10 +9205,16 @@
           "fallback": "androidx.compose.ui.graphics.Color.Companion.Unspecified"
         },
         "fontFamily": {
-          "type": "value",
+          "type": "enum",
           "valueType": "FontFamily",
-          "nativeDefault": "null",
-          "nullable": true
+          "values": [
+            "cursive",
+            "default",
+            "monospace",
+            "sansSerif",
+            "serif"
+          ],
+          "nativeDefault": "null"
         },
         "fontSize": {
           "type": "value",
@@ -9050,10 +9222,13 @@
           "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified"
         },
         "fontStyle": {
-          "type": "value",
+          "type": "enum",
           "valueType": "FontStyle",
-          "nativeDefault": "null",
-          "nullable": true
+          "values": [
+            "italic",
+            "normal"
+          ],
+          "nativeDefault": "null"
         },
         "fontWeight": {
           "type": "value",
@@ -9079,8 +9254,16 @@
           "default": 1
         },
         "overflow": {
-          "type": "value",
+          "type": "enum",
           "valueType": "TextOverflow",
+          "values": [
+            "clip",
+            "ellipsis",
+            "middleEllipsis",
+            "startEllipsis",
+            "visible"
+          ],
+          "default": "clip",
           "nativeDefault": "androidx.compose.ui.text.style.TextOverflow.Companion.Clip"
         },
         "softWrap": {
@@ -9098,16 +9281,28 @@
           "required": true
         },
         "textAlign": {
-          "type": "value",
+          "type": "enum",
           "valueType": "TextAlign",
-          "nativeDefault": "null",
-          "nullable": true
+          "values": [
+            "center",
+            "end",
+            "justify",
+            "left",
+            "right",
+            "start",
+            "unspecified"
+          ],
+          "nativeDefault": "null"
         },
         "textDecoration": {
-          "type": "value",
+          "type": "enum",
           "valueType": "TextDecoration",
-          "nativeDefault": "null",
-          "nullable": true
+          "values": [
+            "lineThrough",
+            "none",
+            "underline"
+          ],
+          "nativeDefault": "null"
         },
         "modifier": {
           "type": "modifier"
@@ -9406,8 +9601,12 @@
           "nativeDefault": "androidx.compose.material3.TimePickerDefaults.colors()"
         },
         "layoutType": {
-          "type": "value",
+          "type": "enum",
           "valueType": "TimePickerLayoutType",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
           "nativeDefault": "androidx.compose.material3.TimePickerDefaults.layoutType()"
         },
         "modifier": {
@@ -9705,8 +9904,13 @@
           "required": true
         },
         "state": {
-          "type": "value",
+          "type": "enum",
           "valueType": "ToggleableState",
+          "values": [
+            "indeterminate",
+            "off",
+            "on"
+          ],
           "required": true
         },
         "modifier": {
@@ -9861,6 +10065,20 @@
         "owner": "androidx.compose.material3.WideNavigationRailKt"
       },
       "props": {
+        "arrangement": {
+          "type": "enum",
+          "valueType": "ArrangementVertical",
+          "values": [
+            "bottom",
+            "center",
+            "spaceAround",
+            "spaceBetween",
+            "spaceEvenly",
+            "top"
+          ],
+          "nativeDefault": "androidx.compose.material3.WideNavigationRailDefaults.arrangement",
+          "since": "1.23.0"
+        },
         "shape": {
           "type": "value",
           "valueType": "Shape",
@@ -12197,8 +12415,13 @@
       "since": "1.23.0",
       "props": {
         "menuAnchorType": {
-          "type": "value",
+          "type": "enum",
           "valueType": "ExposedDropdownMenuAnchorType",
+          "values": [
+            "primaryEditable",
+            "primaryNotEditable",
+            "secondaryEditable"
+          ],
           "required": true
         },
         "enabled": {

@@ -7,14 +7,17 @@ The whole-file renderers -- runtime tables and the package exports -- live in
 import io
 import json
 import tokenize
+from collections.abc import Mapping
 from typing import Any
 
+from pycompose_codegen.emit.enum_aliases import enum_aliases
 from pycompose_codegen.emit.literals import (
     GENERATED_NOTICE,
     python_adjacent_statements,
 )
 from pycompose_codegen.emit.overloads import groups, keywords, native_name, python_name
 from pycompose_codegen.emit.python_layout import (
+    assignment,
     class_docstring,
     class_header,
     docstring_arg,
@@ -42,6 +45,7 @@ def render_python_components(
     components = registry["components"]
     names = sorted(components)
     overloaded = groups(components)
+    aliases = enum_aliases(registry)
     lines = [
         "__all__ = [",
         *(f'    "{name}",' for name in names),
@@ -64,30 +68,38 @@ def render_python_components(
                 "",
             ]
         )
+    # Enum props annotate with their token scale even when they also carry a
+    # valueType: the alias autocompletes the scale the validator enforces. A
+    # family's full scale is one alias, named after it, shared by every prop.
+    written: set[str] = set()
     for name, spec in sorted(registry["components"].items()):
         for field, prop in sorted(spec["props"].items()):
-            # Enum props annotate with their token scale even when they also
-            # carry a valueType: the wire value is the bare token string, and
-            # the alias autocompletes the scale the validator enforces.
-            if prop["type"] == "enum":
-                lines.extend(
-                    [
-                        f"{_python_type(name, field, prop)} = Literal[",
-                        *(f"    {json.dumps(value)}," for value in prop["values"]),
-                        "]",
-                        "",
-                    ]
-                )
+            alias = aliases.get((name, field))
+            if alias is None or alias in written:
+                continue
+            written.add(alias)
+            lines.extend(
+                [
+                    f"{alias} = Literal[",
+                    *(f"    {json.dumps(value)}," for value in prop["values"]),
+                    "]",
+                    "",
+                ]
+            )
     lines.append("")
     # An overload subclasses its primary's public name, so primaries come first.
     for name, spec in sorted(components.items(), key=lambda i: "overloadOf" in i[1]):
         primary = spec.get("overloadOf")
         if name in overloaded:
-            lines.extend(_python_constructor(name, spec, class_name=f"_{name}"))
+            lines.extend(
+                _python_constructor(name, spec, aliases, class_name=f"_{name}")
+            )
             members = {extra: components[extra] for extra in overloaded[name]}
-            lines.extend(_python_dispatcher(name, spec, members))
+            lines.extend(_python_dispatcher(name, spec, members, aliases))
         else:
-            lines.extend(_python_constructor(name, spec, base=primary or "Component"))
+            lines.extend(
+                _python_constructor(name, spec, aliases, base=primary or "Component")
+            )
     for name, overloads in sorted(overloaded.items()):
         lines.append(overloads_line(name, overloads))
     body = "\n".join(lines).rstrip() + "\n"
@@ -140,9 +152,14 @@ def _imports(body: str) -> list[str]:
     return [*standard, "", *block(_FIRST_PARTY)]
 
 
-def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
+def _python_type(
+    component: str,
+    name: str,
+    prop: dict[str, Any],
+    aliases: Mapping[tuple[str, str], str],
+) -> str:
     if prop["type"] == "enum":
-        return f"_{component}{name[:1].upper() + name[1:]}"
+        return aliases[(component, name)]
     if prop["type"] == "color":
         # A colour may follow a holder's stream, evaluated by the host.
         return f"{'JsonValue' if 'valueType' in prop else 'str'} | Expression"
@@ -165,6 +182,7 @@ def _python_type(component: str, name: str, prop: dict[str, Any]) -> str:
 def _python_constructor(
     name: str,
     spec: dict[str, Any],
+    aliases: Mapping[tuple[str, str], str],
     *,
     class_name: str | None = None,
     base: str = "Component",
@@ -185,7 +203,7 @@ def _python_constructor(
         "        *contents: Node," if spec["children"]["allowed"] else "        *,",
         "        id: str | None = None,",
     ]
-    signature, arguments = _python_signature(name, spec)
+    signature, arguments = _python_signature(name, spec, aliases)
     if spec["children"]["allowed"]:
         arguments = {
             "*contents": "Children given in order, as Compose's content lambda.",
@@ -226,13 +244,10 @@ def _python_constructor(
                 else f"{keyword} is not {absent}"
             )
             lines.extend(
-                [
-                    f"        if {condition}:",
-                    f'            props["{keyword}"] = {keyword}',
-                ]
+                [f"        if {condition}:", *assignment("            ", keyword)]
             )
         else:
-            lines.append(f'        props["{keyword}"] = {keyword}')
+            lines.extend(assignment("        ", keyword))
     if spec["children"]["allowed"] and alias == "items":
         # With item, construction becomes a windowed declaration before this
         # runs (Component.__new__), so a key here is one given without it.
@@ -305,7 +320,10 @@ def _keyword_sets(spec: dict[str, Any]) -> list[str]:
 
 
 def _python_dispatcher(
-    name: str, spec: dict[str, Any], extras: dict[str, dict[str, Any]]
+    name: str,
+    spec: dict[str, Any],
+    extras: dict[str, dict[str, Any]],
+    aliases: Mapping[tuple[str, str], str],
 ) -> list[str]:
     """Render a primary's public class: one typed ``__new__`` per overload.
 
@@ -313,6 +331,7 @@ def _python_dispatcher(
         name: The primary's component name.
         spec: The primary's entry.
         extras: Its overloads' entries, by name.
+        aliases: Each enum prop's ``Literal`` alias.
 
     Returns:
         The class's source lines.
@@ -325,7 +344,7 @@ def _python_dispatcher(
         "",
     ]
     for target, entry in {name: spec, **extras}.items():
-        signature, _ = _python_signature(target, entry)
+        signature, _ = _python_signature(target, entry, aliases)
         lines.extend(
             [
                 "    @overload",
@@ -360,13 +379,14 @@ def _python_dispatcher(
 
 
 def _python_signature(
-    name: str, spec: dict[str, Any]
+    name: str, spec: dict[str, Any], aliases: Mapping[tuple[str, str], str]
 ) -> tuple[list[str], dict[str, str]]:
     """Render one component's keyword parameters and their docstring lines.
 
     Args:
         name: Component name, for prop annotations.
         spec: The component's manifest entry.
+        aliases: Each enum prop's ``Literal`` alias.
 
     Returns:
         Signature lines, then one description per parameter.
@@ -377,7 +397,7 @@ def _python_signature(
         if "protocol" in prop:
             continue
         keyword = python_name(field)
-        annotation, description = _python_argument(name, field, prop)
+        annotation, description = _python_argument(name, field, prop, aliases)
         lines.append(f"        {keyword}: {annotation},")
         arguments[keyword] = description
     alias = spec["children"].get("kind")
@@ -447,9 +467,12 @@ def _python_slot_body(spec: dict[str, Any], children: str) -> tuple[list[str], s
 
 
 def _python_argument(
-    component: str, field: str, prop: dict[str, Any]
+    component: str,
+    field: str,
+    prop: dict[str, Any],
+    aliases: Mapping[tuple[str, str], str],
 ) -> tuple[str, str]:
-    annotation = _python_type(component, field, prop)
+    annotation = _python_type(component, field, prop, aliases)
     if prop.get("nullable"):
         annotation += " | None"
     if prop.get("required"):

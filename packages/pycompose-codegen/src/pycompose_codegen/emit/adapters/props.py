@@ -235,7 +235,10 @@ def _named(prop_name: str, spec: dict[str, Any]) -> tuple[str, str]:
         resolved = resolver_call(spec["valueType"], wire) + ".getOrThrow()"
     else:
         tagged = resolver_call(spec["valueType"], "it") + ".getOrThrow()"
-        resolved = f"{wire}?.let {{ {tagged} }} ?: {spec['nativeDefault']}"
+        resolved = (
+            f"{wire}?.let {{ {tagged} }}\n"
+            f"                    ?: {spec['nativeDefault']}"
+        )
     return f"val {prop_name}Value = {resolved}", f"{prop_name} = {prop_name}Value"
 
 

@@ -13,7 +13,6 @@ from pycompose.model.nodes.resources import valid_resource
 from pycompose.state.disk import media
 from pycompose.state.disk.paths import paths
 from pycompose.ui import (
-    ContentScale,
     FlowRow,
     LinearProgressIndicator,
     Modifier,
@@ -113,7 +112,7 @@ class Image(Component):
                             resource=reference,
                             content_description=self.label or "Image",
                             # As wide as the screen allows, keeping its proportions.
-                            content_scale=ContentScale("FillWidth"),
+                            content_scale="fillWidth",
                             modifier=Modifier().fill_max_width(),
                         )
                     ]
@@ -200,7 +199,7 @@ class Gallery(Component):
                             resource=reference,
                             content_description=f"{self.label or 'Picture'} {i + 1}",
                             # Square tiles, cropped to fill, as a photo grid shows them.
-                            content_scale=ContentScale("Crop"),
+                            content_scale="crop",
                             modifier=Modifier().padding(2).size(THUMBNAIL),
                         )
                         for i, reference in enumerate(view.value(self))

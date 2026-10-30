@@ -1657,6 +1657,7 @@ data class ModalNavigationDrawer(
 
 @Serializable
 data class ModalWideNavigationRailProps(
+    val `arrangement`: JsonElement? = null,
     val `collapsedShape`: JsonElement? = null,
     val `expandedHeaderTopPadding`: Double? = null,
     val `expandedShape`: JsonElement? = null,
@@ -1835,6 +1836,7 @@ data class NavigationRailItem(
 data class NavigationSuiteProps(
     override val `modifier`: JsonObject? = null,
     val `navigationSuiteType`: JsonElement,
+    val `verticalArrangement`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1877,6 +1879,8 @@ data class NavigationSuiteScaffoldProps(
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
+    val `navigationItemVerticalArrangement`: JsonElement? = null,
+    val `primaryActionContentHorizontalAlignment`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1895,6 +1899,7 @@ data class NavigationSuiteScaffold(
 data class NavigationSuiteScaffoldLayoutProps(
     override val `modifier`: JsonObject? = null,
     val `navigationSuiteType`: JsonElement,
+    val `primaryActionContentHorizontalAlignment`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -3024,9 +3029,9 @@ data class Text(
 @Serializable
 data class TextAnnotatedStringProps(
     val `color`: JsonElement? = null,
-    val `fontFamily`: OptionalValue = OptionalValue.Absent,
+    val `fontFamily`: JsonElement? = null,
     val `fontSize`: JsonElement? = null,
-    val `fontStyle`: OptionalValue = OptionalValue.Absent,
+    val `fontStyle`: JsonElement? = null,
     val `fontWeight`: OptionalValue = OptionalValue.Absent,
     val `letterSpacing`: JsonElement? = null,
     val `lineHeight`: JsonElement? = null,
@@ -3036,8 +3041,8 @@ data class TextAnnotatedStringProps(
     val `softWrap`: Boolean = true,
     val `style`: JsonElement? = null,
     val `text`: JsonElement,
-    val `textAlign`: OptionalValue = OptionalValue.Absent,
-    val `textDecoration`: OptionalValue = OptionalValue.Absent,
+    val `textAlign`: JsonElement? = null,
+    val `textDecoration`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -3281,6 +3286,7 @@ data class VerticalDragHandle(
 
 @Serializable
 data class WideNavigationRailProps(
+    val `arrangement`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `shape`: JsonElement? = null,
     val `windowInsets`: JsonElement? = null,

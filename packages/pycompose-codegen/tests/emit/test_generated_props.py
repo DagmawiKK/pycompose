@@ -220,8 +220,8 @@ def test_a_named_constant_resolves_its_tag_or_takes_the_native_default() -> None
     )
     assert (
         "val styleValue = model.props.style?.let { "
-        "com.pycompose.renderer.generated.ValueResolver.textStyle(it).getOrThrow() }"
-        f" ?: {default}"
+        "com.pycompose.renderer.generated.ValueResolver.textStyle(it).getOrThrow() }\n"
+        f"                    ?: {default}"
     ) in block
     assert "style = styleValue" in block
 

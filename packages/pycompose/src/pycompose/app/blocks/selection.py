@@ -12,7 +12,6 @@ from pycompose.errors import StateError
 from pycompose.ui import (
     DropdownMenuItem,
     ExposedDropdownMenu,
-    ExposedDropdownMenuAnchorType,
     ExposedDropdownMenuBox,
     Modifier,
     OutlinedTextField,
@@ -266,7 +265,7 @@ class Dropdown(_Choice):
                     on_value_change=SetText.bind(component=self.id),
                     modifier=Modifier()
                     .menu_anchor(
-                        ExposedDropdownMenuAnchorType("PrimaryNotEditable"),
+                        "primaryNotEditable",
                         enabled=self.interactive,
                     )
                     .fill_max_width(),
