@@ -333,21 +333,11 @@ def _validate_provider(name: str, prop_name: str, prop: dict[str, Any]) -> None:
         prop: Its raw schema entry, whose ``provider`` object is validated.
     """
     provider = prop["provider"]
-    if not isinstance(provider, dict):
-        die(f"prop {name}.{prop_name} 'provider' must be an object")
     unknown = sorted(set(provider) - PROVIDER_KEYS)
     if unknown:
         die(f"prop {name}.{prop_name} provider has unknown keys: " + ", ".join(unknown))
-    injected = provider.get("native")
-    if not isinstance(injected, str) or NATIVE_PARAMETER.fullmatch(injected) is None:
-        die(f"prop {name}.{prop_name} provider 'native' must be a parameter name")
-    returns = provider.get("returns")
-    if not isinstance(returns, str) or DOTTED_NAME.fullmatch(returns) is None:
-        die(f"prop {name}.{prop_name} provider 'returns' must be a Kotlin type name")
     if not prop.get("required"):
         die(f"prop {name}.{prop_name} provider 'native' needs the prop to be required")
-    if prop.get("nullable"):
-        die(f"prop {name}.{prop_name} provider cannot come from a nullable prop")
     if prop.get("type") in {"modifier", "actionId"}:
         die(f"prop {name}.{prop_name} provider cannot wrap a {prop['type']} prop")
 

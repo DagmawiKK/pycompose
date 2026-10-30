@@ -64,6 +64,11 @@ def _slot(registry: dict[str, Any], component: str, name: str) -> dict[str, Any]
             lambda registry: _slot(registry, "Scaffold", "topBar").update(
                 kind="canvas"
             ),
+            "'kind' must be one of content, items, keyed",
+        ),
+        (
+            # Keyed content is a children form; no adapter renders a keyed slot.
+            lambda registry: _slot(registry, "Scaffold", "topBar").update(kind="keyed"),
             "must be content or items",
         ),
         (

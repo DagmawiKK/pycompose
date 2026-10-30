@@ -240,15 +240,19 @@ def test_a_manual_components_markers_never_reach_the_generated_file() -> None:
 
 
 @pytest.mark.parametrize(
-    "markers",
+    ("markers", "message"),
     [
-        ["androidx.compose.material3.ExperimentalMaterial3Api"] * 2,
-        ["z.Marker", "a.Marker"],
-        [""],
+        (
+            ["androidx.compose.material3.ExperimentalMaterial3Api"] * 2,
+            "optIn must be sorted",
+        ),
+        (["z.Marker", "a.Marker"], "optIn must be sorted"),
+        # Not a marker at all: the catalog's own shape refuses it first.
+        ([""], "'optIn' must be a string list"),
     ],
 )
 def test_the_codegen_refuses_an_unproven_component_opt_in(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, markers: list[str]
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, markers: list[str], message: str
 ) -> None:
     """A marker list is a promise that these, exactly, compile the file."""
     from pycompose_codegen.emit import main, rules
@@ -258,7 +262,7 @@ def test_the_codegen_refuses_an_unproven_component_opt_in(
     path = tmp_path / "components.json"
     path.write_text(json.dumps(registry))
     monkeypatch.setattr(rules, "SCHEMA_PATH", path)
-    with pytest.raises(SystemExit, match="optIn must be sorted"):
+    with pytest.raises(SystemExit, match=message):
         main.load_registry()
 
 

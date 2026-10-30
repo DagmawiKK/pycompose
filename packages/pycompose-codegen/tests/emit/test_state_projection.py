@@ -368,7 +368,7 @@ def test_a_modifier_riding_family_carries_its_boolean_gate_prop(
         ),
         (
             lambda registry: _state(registry).update(dismiss=3),
-            "must be a parameter name",
+            "'dismiss' must be a name",
         ),
         (
             lambda registry: _state(registry).update(kind="slider"),

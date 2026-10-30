@@ -132,7 +132,7 @@ def test_the_schema_refuses_a_malformed_provider(
     ("change", "message"),
     [
         ({"required": False}, "needs the prop to be required"),
-        ({"nullable": True}, "cannot come from a nullable prop"),
+        ({"nullable": True}, "a provider prop cannot be nullable"),
     ],
 )
 def test_the_schema_refuses_a_provider_it_cannot_always_fill(

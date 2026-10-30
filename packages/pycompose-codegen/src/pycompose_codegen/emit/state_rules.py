@@ -8,11 +8,6 @@ wire stays expressible and the host never double-counts.
 import re
 from typing import Any, cast
 
-from pycompose.contract.registry_types import (
-    INTERACTION_KINDS,
-    STATE_KINDS,
-    TRANSIENT_KINDS,
-)
 from pycompose_codegen.emit.derived_families import validate_properties
 from pycompose_codegen.emit.rules import (
     NATIVE_PARAMETER,
@@ -75,7 +70,7 @@ def _validate_interaction(
     props: dict[str, Any],
     children: dict[str, Any],
     slots: object,
-    interaction: object,
+    interaction: dict[str, Any] | None,
 ) -> None:
     """Check a component's declared interaction source against the vocabulary.
 
@@ -96,8 +91,6 @@ def _validate_interaction(
     if interaction is None:
         return
     where = f"component {name!r} interaction"
-    if not isinstance(interaction, dict):
-        die(f"{where} must be an object")
     unknown = sorted(set(interaction) - INTERACTION_KEYS)
     if unknown:
         die(f"{where} has unknown keys: {', '.join(unknown)}")
@@ -107,15 +100,7 @@ def _validate_interaction(
     natives = _claimed_natives(children, slots)
     if injected in natives or injected in props:
         die(f"{where}: 'native' repeats another parameter")
-    observations = interaction.get("observations")
-    if not isinstance(observations, dict) or not observations:
-        die(f"{where}: 'observations' must be a non-empty object")
-    for kind, observed in sorted(observations.items()):
-        if kind not in INTERACTION_KINDS:
-            die(
-                f"{where}: unknown observation {kind!r}; vocabulary: "
-                + ", ".join(sorted(INTERACTION_KINDS))
-            )
+    for kind, observed in sorted(interaction["observations"].items()):
         prop = props.get(observed) if isinstance(observed, str) else None
         if prop is None:
             die(f"{where}: observation {kind!r} must name one of the props")
@@ -193,7 +178,7 @@ def _validate_state(
     props: dict[str, Any],
     children: dict[str, Any],
     slots: object,
-    state: object,
+    state: dict[str, Any] | None,
 ) -> None:
     """Check a component's declared state holder against the vocabulary.
 
@@ -219,8 +204,6 @@ def _validate_state(
     if state is None:
         return
     where = f"component {name!r} state"
-    if not isinstance(state, dict):
-        die(f"{where} must be an object")
     if state.get("kind") == "properties":
         validate_properties(where, props, state)
         return
@@ -229,12 +212,7 @@ def _validate_state(
         die(f"{where} has unknown keys: {', '.join(unknown)}")
     claimed = _claimed_natives(children, slots) | set(props)
     injected = _claimed_parameter(where, "native", state.get("native"), claimed)
-    kind = state.get("kind")
-    if not isinstance(kind, str) or kind not in STATE_KINDS:
-        die(
-            f"{where}: unknown state kind {kind!r}; vocabulary: "
-            + ", ".join(sorted(STATE_KINDS))
-        )
+    kind = state["kind"]
     value = state.get("value")
     prop = props.get(value) if isinstance(value, str) else None
     if prop is None:
@@ -434,7 +412,7 @@ def _validate_transient(
     props: dict[str, Any],
     children: dict[str, Any],
     slots: object,
-    transient: object,
+    transient: dict[str, Any] | None,
 ) -> None:
     """Check a component's declared transient request against the vocabulary.
 
@@ -457,19 +435,11 @@ def _validate_transient(
     if transient is None:
         return
     where = f"component {name!r} transient"
-    if not isinstance(transient, dict):
-        die(f"{where} must be an object")
     unknown = sorted(set(transient) - TRANSIENT_KEYS)
     if unknown:
         die(f"{where} has unknown keys: {', '.join(unknown)}")
     claimed = _claimed_natives(children, slots) | set(props)
     _claimed_parameter(where, "native", transient.get("native"), claimed)
-    kind = transient.get("kind")
-    if not isinstance(kind, str) or kind not in TRANSIENT_KINDS:
-        die(
-            f"{where}: unknown transient kind {kind!r}; vocabulary: "
-            + ", ".join(sorted(TRANSIENT_KINDS))
-        )
     serial = transient.get("serial")
     serial_prop = props.get(serial) if isinstance(serial, str) else None
     if serial_prop is None:

@@ -133,7 +133,7 @@ def test_the_shape_and_the_validator_agree_on_the_transient_keys() -> None:
         ),
         (
             lambda registry: _transient(registry, {"native": 3}),
-            "'native' must be a parameter name",
+            "'native' must be a name",
         ),
         (
             lambda registry: _transient(registry, {"serial": "missing"}),
@@ -163,7 +163,7 @@ def test_the_shape_and_the_validator_agree_on_the_transient_keys() -> None:
                     type="boolean"
                 ),
             ),
-            "must be an actionId",
+            "only an actionId prop can declare a callback payload",
         ),
         (
             lambda registry: (

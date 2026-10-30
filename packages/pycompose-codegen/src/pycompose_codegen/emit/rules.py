@@ -1,15 +1,21 @@
-"""Catalog rules: the loader and registry-level validator seams.
+"""Catalog rules: the loader and what generating code from the catalog needs.
 
-Validates registry structure the codegen trusts: versions, actions and
-components, orchestrating the delegated prop and state validators (imported
-lazily -- the house pattern -- so the module graph stays acyclic).
+The catalog's shape and vocabularies are the runtime's to check: the loader
+parses the lock with the runtime's registry types first, so both read one
+definition. The rules here are the generator's own -- every native parameter
+claimed once, every slot, state family and value renderable as written --
+orchestrating the delegated prop and state validators (imported lazily -- the
+house pattern -- so the module graph stays acyclic).
 """
 
+import copy
 import json
 import re
 from typing import Any, NoReturn, cast
 
 from pycompose.contract.registry_rules import with_rules
+from pycompose.contract.registry_types import Registry
+from pycompose.errors import PyComposeError
 from pycompose_codegen.checkout import PACKAGE, ROOT
 
 PACKAGED_CATALOG = PACKAGE / "contract" / "catalog.lock.json"
@@ -95,6 +101,13 @@ def load_registry() -> dict[str, Any]:
 
 
 def _validate_registry(registry: dict[str, Any]) -> None:
+    # The runtime's parser owns the catalog's shape and vocabularies, so both
+    # read one definition of them; what follows checks only what generating
+    # code from the catalog needs on top.
+    try:
+        Registry.from_mapping(copy.deepcopy(registry))
+    except PyComposeError as exc:
+        die(str(exc))
     for key in REGISTRY_KEYS:
         if key not in registry:
             die(f"missing top-level key {key!r} in the catalog lock")
@@ -107,8 +120,6 @@ def _validate_registry(registry: dict[str, Any]) -> None:
     require_semver(min_library, "minLibraryVersion")
 
     components = registry["components"]
-    if not isinstance(components, dict) or not components:
-        die("'components' must be a non-empty object")
     for name, comp in sorted(components.items()):
         _validate_component(name, comp)
     from pycompose_codegen.emit.overloads import validate as validate_overloads
@@ -116,24 +127,14 @@ def _validate_registry(registry: dict[str, Any]) -> None:
     validate_overloads(components, die)
     _validate_versions(registry)
 
-    actions = registry["actions"]
-    if not isinstance(actions, dict):
-        die("'actions' must be an object")
-    for action_id, action in sorted(actions.items()):
+    for action_id, action in sorted(registry["actions"].items()):
         from pycompose_codegen.emit.prop_rules import _validate_action
 
         _validate_action(action_id, action)
     _validate_action_refs(registry)
     _validate_effects(registry.get("effects", {}))
     _validate_lifecycle(registry.get("lifecycle", {}))
-    modifiers = registry.get("modifiers", {})
-    if not isinstance(modifiers, dict):
-        die("'modifiers' must be an object")
-    for name, modifier in sorted(modifiers.items()):
-        if not isinstance(modifier, dict) or not isinstance(
-            modifier.get("props"), dict
-        ):
-            die(f"modifier {name!r} needs a props object")
+    for name, modifier in sorted(registry.get("modifiers", {}).items()):
         from pycompose_codegen.emit.prop_rules import _validate_prop
 
         for prop_name, prop in sorted(modifier["props"].items()):
@@ -193,8 +194,6 @@ def _validate_versions(registry: dict[str, Any]) -> None:
         die("supportedSchemaVersions must include the current schema")
     for version in supported_versions:
         require_semver(version, "supportedSchemaVersions")
-    if len(set(supported_versions)) != len(supported_versions):
-        die("supportedSchemaVersions must be unique")
     if max(supported_versions, key=version_key) != registry["schemaVersion"]:
         die("schemaVersion must be the newest supported schema")
     for spec in registry["components"].values():
@@ -238,8 +237,6 @@ def _validate_opt_in(name: str, comp: dict[str, Any]) -> None:
 
 
 def _validate_component(name: str, comp: dict[str, Any]) -> None:
-    if not isinstance(comp, dict):
-        die(f"component {name!r} must be an object")
     from pycompose_codegen.emit.prop_rules import (
         _validate_children,
         _validate_prop,
@@ -264,17 +261,13 @@ def _validate_component(name: str, comp: dict[str, Any]) -> None:
     if comp.get("boxed", True) is not True:
         die(f"component {name!r} boxed must be true when present")
     _validate_scope(name, comp)
-    props = comp.get("props")
-    if not isinstance(props, dict):
-        die(f"component {name!r} needs a 'props' object")
+    props = comp["props"]
     state = comp.get("state")
     derived = isinstance(state, dict) and state.get("kind") == "properties"
     held = set(property_props(cast("dict[str, Any]", state))) if derived else set()
     for prop_name, prop in sorted(props.items()):
         _validate_prop(name, prop_name, prop, held=prop_name in held)
-    children = comp.get("children")
-    if not isinstance(children, dict):
-        die(f"component {name!r} needs a 'children' object")
+    children = comp["children"]
     _validate_children(name, children, props)
     _validate_slots(name, props, children, comp.get("slots", {}))
     for prop_name, prop in sorted(props.items()):
