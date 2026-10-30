@@ -94,8 +94,15 @@ def _snapshot() -> dict:
     return json.loads(runtime.fetch_latest_snapshot())
 
 
+def _paths() -> dict[str, str]:
+    # Readable paths are the debug table the session keeps off the wire.
+    session = runtime._session
+    assert session is not None
+    return runtime._loop_thread().call(session.node_paths)
+
+
 def _text(snapshot: dict, node_id: str) -> str:
-    paths = json.loads(runtime.fetch_node_paths())
+    paths = _paths()
 
     def find(node: dict) -> str | None:
         if paths[node["id"]].endswith(node_id) and "text" in node.get("props", {}):
@@ -112,7 +119,7 @@ def _text(snapshot: dict, node_id: str) -> str:
 
 
 def _tap(snapshot: dict, node_id: str) -> None:
-    paths = json.loads(runtime.fetch_node_paths())
+    paths = _paths()
 
     def find(node: dict) -> dict | None:
         if paths[node["id"]].endswith(node_id) and "onClick" in node.get("props", {}):

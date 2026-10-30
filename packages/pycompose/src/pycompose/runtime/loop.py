@@ -11,7 +11,6 @@ from __future__ import annotations
 import asyncio
 import concurrent.futures
 import threading
-import time
 from collections.abc import Callable
 from typing import TypeVar
 
@@ -22,9 +21,6 @@ from pycompose.runtime.scope import Report
 __all__ = ["LoopThread"]
 
 T = TypeVar("T")
-
-HEARTBEAT = 0.5
-"""Seconds between heartbeats; a host watching the loop allows several to pass."""
 
 
 class LoopThread:
@@ -39,7 +35,6 @@ class LoopThread:
         self.loop = asyncio.new_event_loop()
         self.scheduler = Scheduler.real(self.loop, report)
         self._report = report
-        self._beat = time.monotonic()
         self._ready = threading.Event()
         self._thread = threading.Thread(target=self._run, name=name, daemon=True)
         self._thread.start()
@@ -54,8 +49,6 @@ class LoopThread:
                 "loop", context.get("exception") or RuntimeError(context["message"])
             )
         )
-        # Held, since the loop keeps only a weak reference to its tasks.
-        self._heartbeat_task = self.loop.create_task(self._heartbeat())
         self.loop.call_soon(self._ready.set)
         try:
             self.loop.run_forever()
@@ -69,11 +62,6 @@ class LoopThread:
             )
             self.loop.close()
 
-    async def _heartbeat(self) -> None:
-        while True:
-            self._beat = time.monotonic()
-            await asyncio.sleep(HEARTBEAT)
-
     @property
     def on_loop(self) -> bool:
         """Whether the caller is running on this loop's thread.
@@ -83,25 +71,14 @@ class LoopThread:
         """
         return threading.current_thread() is self._thread
 
-    def since_heartbeat(self) -> float:
-        """Return how long ago the loop last proved it was running.
-
-        Returns:
-            Seconds since the last heartbeat; a large value means the loop is stuck.
-        """
-        return time.monotonic() - self._beat
-
     def idle(self) -> bool:
         """Report whether every task the session started has finished.
 
         Returns:
-            True when only the loop's own heartbeat is still running.
+            True when no task the session started is still running.
         """
         return self.call(
-            lambda: all(
-                task is self._heartbeat_task or task.done()
-                for task in asyncio.all_tasks(self.loop)
-            )
+            lambda: all(task.done() for task in asyncio.all_tasks(self.loop))
         )
 
     def call(self, work: Callable[..., T], *args: object) -> T:

@@ -76,7 +76,6 @@ class RuntimeSession:
         self._container: object | None = None
         self._navigation: NavigationSession | None = None
         self._app: App | None = None
-        self._failures = 0
         self.identity = identity
         self._surface = self._build(route, restore)
 
@@ -154,7 +153,6 @@ class RuntimeSession:
         return surface
 
     def _report_task(self, scope: str, error: BaseException) -> None:
-        self._failures += 1
         self._error = f"{scope}: {error}"
         LOGGER.warning("Task in %s failed: %s", scope, error, exc_info=error)
         hook = self._app.on_error if self._app is not None else None
@@ -215,15 +213,6 @@ class RuntimeSession:
         """
         self._require_worker()
         return self._error or self._surface.expose_latest_error()
-
-    def counters(self) -> dict[str, object]:
-        """Return release-safe counts for the host's diagnostics.
-
-        Returns:
-            The surface's pass counts plus supervised failures.
-        """
-        self._require_worker()
-        return {**self._surface.counters(), "supervisedFailures": self._failures}
 
     def node_paths(self) -> dict[str, str]:
         """Return each node name's readable path, kept only in debug.

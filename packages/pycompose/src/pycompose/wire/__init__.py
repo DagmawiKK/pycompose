@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from pycompose.wire.actions import Action, ActionQueue
 from pycompose.wire.emitter import emit_ir
 from pycompose.wire.model import IRRoot
 from pycompose.wire.serializer import (
@@ -14,8 +13,6 @@ from pycompose.wire.serializer import (
 from pycompose.wire.validator import ValidationResult, validate_ir
 
 __all__ = [
-    "Action",
-    "ActionQueue",
     "IRRoot",
     "ValidationResult",
     "emit_ir",

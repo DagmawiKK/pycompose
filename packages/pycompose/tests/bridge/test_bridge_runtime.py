@@ -150,32 +150,6 @@ def test_view_models_are_built_on_the_loop_thread() -> None:
     assert snapshot()["metadata"]["data"]["stack"][0]["state"]["thread"] == (
         "pycompose-loop"
     )
-    assert runtime.heartbeat() < 5
-
-
-@pytest.mark.usefixtures("device")
-def test_a_recorded_debug_session_replays_to_the_same_snapshots() -> None:
-    runtime.start("device_app:app", "", True)
-    for _ in range(3):
-        bump()
-    log = runtime.fetch_input_log()
-    assert [json.loads(line)["call"] for line in log.splitlines()] == [
-        "start",
-        "accept_action",
-        "accept_action",
-        "accept_action",
-    ]
-    runtime.close()
-    sys.modules.pop("device_app", None)
-    assert runtime.replay(log) is None
-
-    lines = log.splitlines()
-    tampered = json.loads(lines[2])
-    tampered["snapshot"] = "0" * 16
-    lines[2] = json.dumps(tampered)
-    runtime.close()
-    sys.modules.pop("device_app", None)
-    assert runtime.replay("\n".join(lines)) == 2
 
 
 def test_a_container_that_is_not_callable_is_refused() -> None:

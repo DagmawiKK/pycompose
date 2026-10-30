@@ -128,7 +128,7 @@ def test_a_failing_hook_breaks_nothing(observed: object) -> None:
     assert root["children"][0]["props"]["text"] == "1"
 
 
-def test_every_pass_exports_a_span_and_counts(observed: object) -> None:
+def test_every_pass_exports_a_span(observed: object) -> None:
     tap(3, "trace-bump")
     tap(2, "trace-crash")
     spans = observed.SPANS  # type: ignore[attr-defined]
@@ -138,10 +138,3 @@ def test_every_pass_exports_a_span_and_counts(observed: object) -> None:
     ]
     # An action's span is its handler; drawing happens once, at the pull.
     assert set(spans[0].phases) == {"handler"}
-    counters = json.loads(runtime.fetch_counters())
-    assert counters["passes"] == 2
-    assert counters["failedActions"] == 1
-    assert counters["supervisedFailures"] == 1
-    assert counters["published"] >= 2
-    assert set(counters["phaseMs"]) == {"handler"}
-    assert counters["loopIdleSeconds"] < 5

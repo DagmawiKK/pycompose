@@ -53,14 +53,6 @@ def test_a_failing_call_raises_in_the_caller() -> None:
         loop.stop()
 
 
-def test_the_heartbeat_is_fresh_while_the_loop_runs() -> None:
-    loop = _loop()
-    try:
-        assert loop.since_heartbeat() < 5
-    finally:
-        loop.stop()
-
-
 def test_a_stopped_loop_refuses_calls() -> None:
     loop = _loop()
     loop.stop()
