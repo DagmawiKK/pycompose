@@ -7,8 +7,8 @@ from pathlib import Path
 import pytest
 from images import PIXEL
 
-from pycompose.storage import media
-from pycompose.storage.paths import install
+from pycompose.state.disk import media
+from pycompose.state.disk.paths import install
 
 
 @pytest.fixture(autouse=True)

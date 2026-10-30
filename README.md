@@ -463,7 +463,7 @@ view model is cleared, and returns its task, so a newer request can cancel the
 one it supersedes. Blocking calls go to a pool with
 `await to_thread("io", fn, *args)` and computation with
 `await to_thread("cpu", fn, *args)`; the screen stays live meanwhile.
-`pycompose.storage` stores documents atomically on disk, outside the
+`pycompose.state` stores documents atomically on disk, outside the
 saved-state budget.
 
 **Controlled components** — a component whose native state lives in a holder

@@ -44,7 +44,7 @@ from typing import Any, Generic, Protocol, TypeVar, cast, runtime_checkable
 
 from pycompose.errors import StateError
 from pycompose.model.canonical import canonical_json
-from pycompose.state.app_state import Codec
+from pycompose.state.memory.app_state import Codec
 
 __all__ = [
     "Document",

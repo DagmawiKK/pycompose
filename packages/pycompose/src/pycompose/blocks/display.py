@@ -10,8 +10,8 @@ from pycompose import ui
 from pycompose.blocks.components import Component
 from pycompose.blocks.intents import Pick
 from pycompose.model.nodes.resources import valid_resource
-from pycompose.storage import media
-from pycompose.storage.paths import paths
+from pycompose.state.disk import media
+from pycompose.state.disk.paths import paths
 from pycompose.ui import (
     ContentScale,
     FlowRow,

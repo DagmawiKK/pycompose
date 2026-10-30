@@ -30,12 +30,12 @@ from typing import (
 from pycompose.errors import StateError
 from pycompose.model.nodes.props import JsonValue, to_snake_case
 from pycompose.model.nodes.reads import record
-from pycompose.state.app_state_codec import (
+from pycompose.state.memory.codec import (
     _accepts,
     _decode_value,
     _encode_value,
 )
-from pycompose.state.app_state_types import _describe, _Field
+from pycompose.state.memory.types import _describe, _Field
 
 __all__ = ["AppState", "Codec", "StateError"]
 

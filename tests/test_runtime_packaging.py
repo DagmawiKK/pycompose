@@ -7,7 +7,7 @@ dotted path would mean one thing on a host and another on a device.
 
 ``pycompose.extensions`` is where that once happened: planning and evidence
 lived beside the runtime and had to be kept out of every APK by name. The rule
-below states the structural invariant for ``pycompose.storage``, the package
+below states the structural invariant for ``pycompose.state.disk``, the package
 most tempting to grow tool-only helpers -- every module in it is reached from
 runtime code, so nothing in it exists only for the CLI.
 
@@ -26,7 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "packages/pycompose/src"
 """Where the library's modules live; paths below are relative to it."""
-PACKAGE = "pycompose/storage/"
+PACKAGE = "pycompose/state/disk/"
 TESTS = (ROOT / "tests", *sorted(ROOT.glob("packages/*/tests")))
 """The repository's tests and every distribution's."""
 TOOLING = (
@@ -90,7 +90,7 @@ def _runtime_caller(importer: str) -> bool:
     return not importer.startswith(TOOLING) and not importer.startswith(PACKAGE)
 
 
-def test_no_module_under_storage_is_reached_only_by_tooling() -> None:
+def test_no_module_on_disk_is_reached_only_by_tooling() -> None:
     """A module only the CLI imports belongs to the CLI, not to the runtime.
 
     Reachability starts from callers *outside* the package, so a module cannot
@@ -105,7 +105,7 @@ def test_no_module_under_storage_is_reached_only_by_tooling() -> None:
     inside = {
         name for name, path in modules.items() if _relative(path).startswith(PACKAGE)
     }
-    assert inside, "no modules under pycompose/storage; this guard no longer applies"
+    assert inside, "no modules under pycompose/state/disk; this guard no longer applies"
 
     importers: defaultdict[str, set[str]] = defaultdict(set)
     imports: defaultdict[str, set[str]] = defaultdict(set)

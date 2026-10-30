@@ -8,8 +8,8 @@ from images import PIXEL
 from pycompose_testing.driver import AppDriver
 from test_blocks import project, value
 
-from pycompose.storage import media
-from pycompose.storage.paths import paths
+from pycompose.state.disk import media
+from pycompose.state.disk.paths import paths
 
 PICKS = """
 from pathlib import Path

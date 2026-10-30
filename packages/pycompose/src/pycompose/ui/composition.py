@@ -12,7 +12,7 @@ from pycompose.errors import IrError, IrValidationError
 from pycompose.model.nodes.expansion import DeferredNode, expand_nodes
 from pycompose.model.nodes.ids import call_site
 from pycompose.model.nodes.node import Node
-from pycompose.state.app_state import AppState
+from pycompose.state.memory.app_state import AppState
 
 __all__ = [
     "Composable",

@@ -221,7 +221,7 @@ def _require_supported(cls: type, name: str, annotation: Any) -> None:
         return
     if origin is Literal:
         return
-    from pycompose.state.app_state import AppState
+    from pycompose.state.memory.app_state import AppState
 
     if isinstance(annotation, type) and issubclass(annotation, AppState):
         return

@@ -13,7 +13,7 @@ from pycompose.bridge.session import RuntimeSession, offer_components
 from pycompose.errors import BridgeError
 from pycompose.runtime import signal
 from pycompose.runtime.loop import LoopThread
-from pycompose.storage.paths import install as install_paths
+from pycompose.state.disk.paths import install as install_paths
 
 LOGGER = logging.getLogger(__name__)
 P = ParamSpec("P")

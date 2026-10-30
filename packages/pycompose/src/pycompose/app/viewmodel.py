@@ -15,7 +15,7 @@ from pycompose.app.navigation import NavOp
 from pycompose.errors import StateError
 from pycompose.model.snapshot import Effect
 from pycompose.runtime.scope import Report, Scope
-from pycompose.state.app_state import AppState
+from pycompose.state.memory.app_state import AppState
 from pycompose.ui.intents import Intent
 
 __all__ = ["ViewModel", "ViewModelHost", "hosting"]

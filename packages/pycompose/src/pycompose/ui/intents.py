@@ -39,7 +39,7 @@ from pycompose.model.canonical import (
 from pycompose.model.catalog.registry import PropDef
 from pycompose.model.nodes.expressions import Expression
 from pycompose.model.nodes.props import JsonValue, to_camel_case
-from pycompose.state.app_state import AppState
+from pycompose.state.memory.app_state import AppState
 
 __all__ = [
     "BoundIntent",

@@ -13,7 +13,7 @@ from typing import Any
 
 from pycompose.errors import StateError
 from pycompose.model.canonical import canonical_json
-from pycompose.state.app_state import AppState
+from pycompose.state.memory.app_state import AppState
 
 __all__ = ["Pop", "Push", "Replace", "Route", "parse_route", "route_key"]
 

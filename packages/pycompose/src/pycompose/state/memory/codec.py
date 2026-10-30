@@ -5,7 +5,7 @@ fields, nested frozen dataclasses and nested app states. The per-shape
 dispatch tables (:data:`_CHECKS`, :data:`_ENCODERS`, :data:`_DECODERS`) map
 annotations to the handler each shape runs, so adding one shape touches one
 entry. :func:`_accepts` and :func:`_as_state` name the public state type, so
-they resolve ``pycompose.state.app_state`` lazily inside the call -- the codec
+they resolve ``pycompose.state.memory.app_state`` lazily inside the call -- the codec
 layer sits below it.
 
 Imports and public types live in ``app_state_type`` leaves and ``app_state``.
@@ -28,7 +28,7 @@ from typing import (
 
 from pycompose.errors import StateError
 from pycompose.model.nodes.props import JsonValue, to_camel_case
-from pycompose.state.app_state_types import (
+from pycompose.state.memory.types import (
     _PRIMITIVES,
     _is_dataclass,
     _is_optional,
@@ -75,7 +75,7 @@ def _accepts(annotation: Any, value: object) -> bool:
     Returns:
         True when the value can be stored in that field.
     """
-    from pycompose.state.app_state import AppState
+    from pycompose.state.memory.app_state import AppState
 
     if annotation in _PRIMITIVES:
         return _is_primitive(annotation, value)
@@ -104,7 +104,7 @@ def _as_state(annotation: object) -> type | None:
     Returns:
         The AppState subclass, or None when the annotation is not one.
     """
-    from pycompose.state.app_state import AppState
+    from pycompose.state.memory.app_state import AppState
 
     if isinstance(annotation, type) and issubclass(annotation, AppState):
         return annotation

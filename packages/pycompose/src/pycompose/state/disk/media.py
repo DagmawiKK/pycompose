@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from pycompose.model.nodes.resources import valid_resource
-from pycompose.storage.paths import paths
+from pycompose.state.disk.paths import paths
 
 __all__ = ["MEDIA", "image"]
 
