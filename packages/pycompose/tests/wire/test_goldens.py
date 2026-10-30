@@ -5,9 +5,9 @@ from pathlib import Path
 
 import jsonschema
 import pytest
+from goldens import component_screen, golden_names, read_golden
 from hypothesis import given
 from hypothesis import strategies as st
-from pycompose_testing.helpers import component_screen, golden_names, read_golden
 from readable import readable
 
 from pycompose.contract.catalog import REGISTRY

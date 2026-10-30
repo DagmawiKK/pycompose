@@ -1,8 +1,9 @@
-"""Stdlib-only golden fixtures and sample builders for the Python contract seam.
+"""Test an app as its phone runs it, with no phone.
 
-Fixture bytes are reviewed artifacts, not auto-updated snapshots. A deliberate
-IR change must justify each byte change in its commit/PR; AGENTS.md's PR
-checklist requires this. Files have one terminal newline, outside wire bytes.
+``driver.AppDriver`` starts an app through the session a device runs, finds
+controls in the snapshot it publishes and acts on them by the intents they
+carry; ``simulator.Simulator`` replaces the runtime's scheduler with a virtual
+clock, so timing tests take no time and repeat exactly.
 """
 
 __version__ = "0.1.0"

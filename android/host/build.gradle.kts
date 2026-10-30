@@ -47,7 +47,7 @@ extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
         .getByName(
             "test",
         ).resources
-        .srcDir("../../packages/pycompose-testing/src/pycompose_testing/fixtures")
+        .srcDir("../../schema/goldens")
     sourceSets.getByName("test").kotlin.srcDir("../architecture/src/test/kotlin")
     // Device-free rendering of an app's snapshots (`pycompose render`); it ships
     // with every generated project, unlike the library's own tests.

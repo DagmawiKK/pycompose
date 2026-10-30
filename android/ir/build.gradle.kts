@@ -26,7 +26,7 @@ sourceSets
     .getByName(
         "test",
     ).resources
-    .srcDir("../../packages/pycompose-testing/src/pycompose_testing/fixtures")
+    .srcDir("../../schema/goldens")
 
 dependencies {
     implementation(libs.serialization.json)

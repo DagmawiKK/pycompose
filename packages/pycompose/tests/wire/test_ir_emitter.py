@@ -7,7 +7,7 @@ from pathlib import Path
 
 import jsonschema
 import pytest
-from pycompose_testing.helpers import read_golden
+from goldens import read_golden
 from readable import ids, readable
 
 from pycompose.core import Node, Props

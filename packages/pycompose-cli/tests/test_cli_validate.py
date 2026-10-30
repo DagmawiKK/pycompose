@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 import pytest
-from pycompose_testing.helpers import read_golden
 from test_cli_init import cli
 
 
@@ -48,6 +47,13 @@ def test_validate_accepts_tagged_nullable_and_numeric_value_unions(
     path.write_text(json.dumps(document))
     result = cli(tmp_path, "validate", str(path))
     assert result.returncode == 2, result.stderr
+
+
+GOLDENS = Path(__file__).resolve().parents[3] / "schema" / "goldens"
+
+
+def read_golden(name: str) -> bytes:
+    return (GOLDENS / name).read_bytes().removesuffix(b"\n")
 
 
 @pytest.mark.parametrize(

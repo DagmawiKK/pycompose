@@ -15,8 +15,6 @@ dependencies = ["pycompose"]
 where = ["src"]
 include = ["pycompose_testing*"]
 
-[tool.setuptools.package-data]
-pycompose_testing = ["fixtures/*.json"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pycompose_testing.__version__" }

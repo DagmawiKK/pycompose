@@ -7,7 +7,7 @@ from pathlib import Path
 
 import jsonschema
 import pytest
-from pycompose_testing.helpers import component_screen, read_golden
+from goldens import component_screen, read_golden
 from readable import readable
 
 from pycompose.contract.catalog import SCHEMA_VERSION

@@ -27,7 +27,7 @@ extensions.configure<com.android.build.api.dsl.LibraryExtension> {
         .getByName(
             "test",
         ).resources
-        .srcDir("../../packages/pycompose-testing/src/pycompose_testing/fixtures")
+        .srcDir("../../schema/goldens")
 }
 
 kotlin {

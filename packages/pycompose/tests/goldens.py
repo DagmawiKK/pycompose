@@ -1,55 +1,52 @@
-"""Packaged goldens and a representative screen, independent of Android."""
+"""The wire goldens both languages test against, and the screen one is drawn from.
 
-from importlib.resources import files
+The goldens live in ``schema/goldens`` beside the catalog and the wire schema:
+reviewed bytes, never regenerated, each change justified in its commit.
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
 
 from pycompose.core import Node
 from pycompose.foundation import Box, Column, LazyColumn, Row, Spacer
 from pycompose.material3 import Button, Scaffold, Text, TextField
 from pycompose.ui import Modifier
 
+GOLDENS = Path(__file__).resolve().parents[3] / "schema" / "goldens"
+
 
 def golden_names() -> tuple[str, ...]:
-    """List every packaged JSON golden in deterministic filename order.
+    """Every golden's file name, in order.
 
     Returns:
-        Fixture filenames, including their .json suffix.
+        The file names, sorted.
     """
-    return tuple(
-        sorted(
-            resource.name
-            for resource in files("pycompose_testing").joinpath("fixtures").iterdir()
-            if resource.is_file() and resource.name.endswith(".json")
-        )
-    )
+    return tuple(sorted(path.name for path in GOLDENS.glob("*.json")))
 
 
 def read_golden(name: str) -> bytes:
-    """Read exact canonical wire bytes, excluding one file terminal newline.
+    """A golden's exact wire bytes, without its one terminal newline.
 
     Args:
-        name: A filename returned by golden_names.
+        name: A name from :func:`golden_names`.
 
     Returns:
-        Golden UTF-8 wire bytes; extra whitespace is not stripped.
+        The golden's bytes.
 
     Raises:
-        ValueError: If name does not identify a packaged golden.
+        ValueError: If ``name`` is not a golden.
     """
     if name not in golden_names():
         raise ValueError(f"unknown golden fixture: {name}")
-    return (
-        files("pycompose_testing")
-        .joinpath("fixtures", name)
-        .read_bytes()
-        .removesuffix(b"\n")
-    )
+    return (GOLDENS / name).read_bytes().removesuffix(b"\n")
 
 
 def component_screen() -> Node:
-    """Build a screen with all nine initial components and five modifiers.
+    """The screen ``component_screen.json`` is the wire form of.
 
     Returns:
-        Fresh immutable component nodes with explicit stable sibling keys.
+        A fresh screen with stable ids.
     """
     return Scaffold(
         id="screen",

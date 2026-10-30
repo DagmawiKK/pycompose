@@ -1,7 +1,7 @@
 """Versioned resource declarations reach the native host as names, never R ids."""
 
 import pytest
-from pycompose_testing.helpers import read_golden
+from goldens import read_golden
 
 from pycompose.errors import IrValidationError
 from pycompose.foundation import Column, Image
