@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import Any, cast
 
 from pycompose.app.app import App, Destination
-from pycompose.app.effects import Finish, Navigate
+from pycompose.app.generated_effects import Finish, Navigate
 from pycompose.app.intents import intent_class
 from pycompose.app.navigation import (
     NavOp,

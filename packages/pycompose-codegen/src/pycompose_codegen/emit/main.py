@@ -107,6 +107,9 @@ def build_app(
         slice_registry,
         with_app_lock,
     )
+    from pycompose_codegen.emit.effects import (
+        render_kotlin_effects,
+    )
     from pycompose_codegen.emit.emit_kotlin import (
         render_generated_adapters,
         render_kotlin_models,
@@ -164,6 +167,7 @@ def build_app(
         native / _IR_RELATIVE / "UiModels.kt": render_kotlin_models(sliced),
         native / _IR_RELATIVE / "IrContract.kt": render_kotlin_registry(sliced),
         native / _IR_RELATIVE / "ValueModels.kt": render_models(sliced),
+        native / _IR_RELATIVE / "EffectModels.kt": render_kotlin_effects(sliced),
         native / _VALUES_RELATIVE: render_native(sliced),
         # The renderer's own holder code calls every drive, used or not: unsliced.
         native / _VALUES_RELATIVE.with_name("HolderDrives.kt"): render_holder_drives(
@@ -244,6 +248,10 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         Artifact paths keyed to their full rendered content; the template
         mirror is added by :func:`_mirror_template` on top of this mapping.
     """
+    from pycompose_codegen.emit.effects import (
+        render_kotlin_effects,
+        render_python_effects,
+    )
     from pycompose_codegen.emit.emit_kotlin import (
         render_generated_adapters,
         render_kotlin_models,
@@ -271,7 +279,11 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         KOTLIN_MODELS_PATH: render_kotlin_models(registry),
         KOTLIN_REGISTRY_PATH: render_kotlin_registry(registry),
         PACKAGE / "values.py": render_values(registry),
+        PACKAGE / "app/generated_effects.py": render_python_effects(registry),
         KOTLIN_MODELS_PATH.with_name("ValueModels.kt"): render_models(registry),
+        KOTLIN_MODELS_PATH.with_name("EffectModels.kt"): render_kotlin_effects(
+            registry
+        ),
         ROOT / KOTLIN_VALUES_RELATIVE: render_native(registry),
     }
     for name, part in libraries(registry).items():

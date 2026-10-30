@@ -85,6 +85,8 @@ class PropDef:
             states directly.
         index_of: The slot whose items this integer indexes, for a native
             parameter that throws outside them; the host clamps and reports.
+        description: What the prop means, for the generated code's
+            documentation; the runtime only carries it.
     """
 
     type: str
@@ -108,6 +110,7 @@ class PropDef:
     provider: ProviderDef | None = None
     protocol: str | None = None
     index_of: str | None = None
+    description: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "values", tuple(self.values))
@@ -215,6 +218,7 @@ class PropDef:
             ),
             protocol=cast("str | None", data.get("protocol")),
             index_of=cast("str | None", data.get("indexOf")),
+            description=cast("str | None", data.get("description")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -235,6 +239,7 @@ class PropDef:
                     "nullable": True if self.nullable else None,
                     "protocol": self.protocol,
                     "indexOf": self.index_of,
+                    "description": self.description,
                 }.items()
                 if value is not None
             }

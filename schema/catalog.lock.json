@@ -10515,44 +10515,56 @@
   },
   "effects": {
     "navigate": {
+      "summary": "Ask the host to show another route.",
       "payload": {
         "route": {
           "type": "string",
-          "required": true
+          "required": true,
+          "description": "The route to show."
         }
       }
     },
     "finish": {
+      "summary": "Close the screen the app runs in.",
       "payload": {}
     },
     "haptic": {
+      "summary": "Play the platform's tap feedback.",
       "payload": {}
     },
     "openUrl": {
+      "summary": "Open a URL in the app the system chooses.",
       "payload": {
         "url": {
           "type": "string",
-          "required": true
+          "required": true,
+          "description": "The address to open."
         }
       }
     },
     "pickFile": {
+      "summary": "Let the user pick a file with the system picker.",
+      "detail": "The host copies the pick into the app's media cache and answers with ViewModel.on_file_picked; the bytes never cross the bridge.",
       "payload": {
         "request": {
           "type": "string",
-          "required": true
+          "required": true,
+          "description": "Handed back with the answer, to tell picks apart."
         },
         "accept": {
           "type": "string",
-          "required": true
+          "default": "*/*",
+          "description": "A MIME type such as image/*, which opens the photo picker, or */* for any file."
         }
       }
     },
     "toast": {
+      "summary": "Show a short message.",
       "payload": {
         "message": {
           "type": "string",
-          "required": true
+          "required": true,
+          "description": "The text to show."
         }
       }
     }

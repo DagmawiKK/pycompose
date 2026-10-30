@@ -86,6 +86,7 @@
       "additionalProperties": false,
       "properties": {
         "type": { "type": "string" },
+        "description": { "type": "string", "minLength": 1 },
         "values": {
           "type": "array",
           "minItems": 1,
@@ -206,9 +207,11 @@
     },
     "fieldHolder": {
       "type": "object",
-      "description": "An action, effect, or lifecycle entry: named payload fields mapped to prop-shaped field specs.",
+      "description": "An action, effect, or lifecycle entry: named payload fields mapped to prop-shaped field specs. An effect's summary and detail document it in both languages' generated code.",
       "additionalProperties": false,
       "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "detail": { "type": "string", "minLength": 1 },
         "payload": {
           "type": "object",
           "additionalProperties": { "$ref": "#/$defs/prop" }

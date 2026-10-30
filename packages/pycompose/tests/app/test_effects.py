@@ -108,3 +108,11 @@ def test_malformed_metadata_is_rejected(metadata: dict) -> None:
     )
     with pytest.raises(IrValidationError, match="effect"):
         validate_ir(broken)
+
+
+def test_a_typed_effect_names_its_fields_as_the_wire_does() -> None:
+    from pycompose.app import PickFile
+
+    effect = PickFile(request="b3").effect()
+    assert effect.kind == "pickFile"
+    assert dict(effect.payload) == {"request": "b3", "accept": "*/*"}

@@ -10,7 +10,7 @@ from collections.abc import Mapping
 from dataclasses import field
 from typing import Any
 
-from pycompose.app.effects import PickFile, Toast
+from pycompose.app.generated_effects import PickFile, Toast
 from pycompose.app.intents import Intent
 from pycompose.app.viewmodel import ViewModel
 from pycompose.blocks.components import Component

@@ -1,5 +1,6 @@
 package com.pycompose.ir
 
+import com.pycompose.ir.generated.Effect
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -28,8 +29,8 @@ class EffectsTest {
                 ).getOrThrow()
         val effects = Effects.read(parsed.snapshot.metadata, parsed.snapshot.schemaVersion)
         assertEquals(listOf("toast", "finish", "navigate"), effects.map { it.kind })
-        assertEquals("saved", Effects.string(effects[0], "message"))
-        assertEquals("details", Effects.string(effects[2], "route"))
+        assertEquals(Effect.Toast("saved"), Effect.of(effects[0]))
+        assertEquals(Effect.Navigate("details"), Effect.of(effects[2]))
     }
 
     @Test

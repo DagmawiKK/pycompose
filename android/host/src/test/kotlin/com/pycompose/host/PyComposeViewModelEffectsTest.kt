@@ -2,7 +2,7 @@ package com.pycompose.host
 
 import androidx.lifecycle.SavedStateHandle
 import com.pycompose.ir.EffectRequest
-import com.pycompose.ir.Effects
+import com.pycompose.ir.generated.Effect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -114,7 +114,8 @@ class PyComposeViewModelEffectsTest {
             for (request in requests) {
                 val known = setOf("navigate", "finish", "haptic", "openUrl", "toast")
                 if (request.kind in known) {
-                    ran.add("${request.kind}:${Effects.string(request, "message")}")
+                    val message = (Effect.of(request) as? Effect.Toast)?.message.orEmpty()
+                    ran.add("${request.kind}:$message")
                 } else {
                     reported.add("No host runner for effect ${request.kind}")
                 }

@@ -3,7 +3,6 @@ package com.pycompose.ir
 import com.pycompose.ir.generated.IrContract
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
 
 /** One validated request for the host to execute exactly once, in order. */
 data class EffectRequest(
@@ -38,14 +37,5 @@ object Effects {
             WireValidator.properties(payload, rules, "effect.$kind.payload")
             EffectRequest(kind, payload)
         }
-    }
-
-    /** Value of a required string field, or the empty string when absent. */
-    fun string(
-        request: EffectRequest,
-        field: String,
-    ): String {
-        val value = request.payload[field] ?: return ""
-        return (value as? JsonPrimitive)?.takeIf { it.isString }?.content.orEmpty()
     }
 }

@@ -2205,7 +2205,7 @@ object IrContract {
                 "url" to PropertyRule("string", required = true),
         ),
         "pickFile" to mapOf(
-                "accept" to PropertyRule("string", required = true),
+                "accept" to PropertyRule("string", required = false),
                 "request" to PropertyRule("string", required = true),
         ),
         "toast" to mapOf(

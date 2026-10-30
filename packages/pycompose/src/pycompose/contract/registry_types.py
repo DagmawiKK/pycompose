@@ -24,6 +24,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from dataclasses import field as dataclass_field
 from types import MappingProxyType
+from typing import cast
 
 from pycompose.contract.registry_component import ComponentDef, ComponentSpec
 from pycompose.contract.registry_elements import (
@@ -88,10 +89,14 @@ class ActionDef:
     Attributes:
         action_id: The ``actionId`` the host sends.
         payload: Payload fields by name.
+        summary: What it does in one sentence, for generated documentation.
+        detail: More about it, for generated documentation.
     """
 
     action_id: str
     payload: Mapping[str, PropDef]
+    summary: str | None = None
+    detail: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "payload", MappingProxyType(dict(self.payload)))
@@ -125,7 +130,12 @@ class ActionDef:
             payload[field_name] = PropDef.from_mapping(
                 field, where=f"action {action_id}.{field_name}"
             )
-        return cls(action_id=action_id, payload=payload)
+        return cls(
+            action_id=action_id,
+            payload=payload,
+            summary=cast("str | None", data.get("summary")),
+            detail=cast("str | None", data.get("detail")),
+        )
 
     def to_mapping(self) -> dict[str, object]:
         """Render back to the catalog lock action shape.
@@ -133,10 +143,12 @@ class ActionDef:
         Returns:
             A JSON-ready dict.
         """
+        documented = {"summary": self.summary, "detail": self.detail}
         return {
+            **{key: value for key, value in documented.items() if value is not None},
             "payload": {
                 name: field.to_mapping() for name, field in self.payload.items()
-            }
+            },
         }
 
 
