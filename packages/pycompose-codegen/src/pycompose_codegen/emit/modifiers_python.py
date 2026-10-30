@@ -17,6 +17,7 @@ from pycompose_codegen.emit.python_layout import docstring_arg
 
 TYPES = {
     "number": "int | float",
+    "dp": "int | float",
     "integer": "int",
     "boolean": "bool",
     "string": "str",

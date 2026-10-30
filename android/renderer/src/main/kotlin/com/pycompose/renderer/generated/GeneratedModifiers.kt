@@ -5,12 +5,69 @@ package com.pycompose.renderer.generated
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusGroup
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.absolutePadding
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.captionBarPadding
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imeNestedScroll
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.mandatorySystemGesturesPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.recalculateWindowInsets
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredHeightIn
+import androidx.compose.foundation.layout.requiredSizeIn
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.requiredWidthIn
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.systemGesturesPadding
+import androidx.compose.foundation.layout.visible
+import androidx.compose.foundation.layout.waterfallPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsEndWidth
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.windowInsetsStartWidth
+import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.preferKeepClear
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.systemGestureExclusion
+import androidx.compose.foundation.text.handwriting.handwritingHandler
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.focusRestorer
+import androidx.compose.ui.focus.focusTarget
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.keepScreenOn
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.preferredFrameRate
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
@@ -19,6 +76,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.sensitiveContent
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.constraintlayout.compose.layoutId
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.booleanOrNull
@@ -40,9 +101,37 @@ object GeneratedModifiers {
         dispatch: (String) -> Unit,
     ): Modifier? =
         when (type) {
+            "absoluteOffset" ->
+                Modifier.absoluteOffset(
+                    x = if ("x" in op) op.getValue("x").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
+                    y = if ("y" in op) op.getValue("y").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
+                )
+            "absolutePadding" ->
+                Modifier.absolutePadding(
+                    left = if ("left" in op) op.getValue("left").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
+                    top = if ("top" in op) op.getValue("top").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
+                    right = if ("right" in op) op.getValue("right").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
+                    bottom = if ("bottom" in op) op.getValue("bottom").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
+                )
+            "alpha" ->
+                Modifier.alpha(
+                    alpha = op.getValue("alpha").let { value -> value.jsonPrimitive.double.toFloat() },
+                )
+            "aspectRatio" ->
+                Modifier.aspectRatio(
+                    ratio = op.getValue("ratio").let { value -> value.jsonPrimitive.double.toFloat() },
+                    matchHeightConstraintsFirst = if ("matchHeightConstraintsFirst" in op) op.getValue("matchHeightConstraintsFirst").let { value -> value.jsonPrimitive.boolean } else false,
+                )
             "background" ->
                 Modifier.background(
                     brush = op.getValue("brush").let { value -> com.pycompose.renderer.generated.ValueResolver.brush(value).getOrThrow() },
+                )
+            "basicMarquee" ->
+                Modifier.basicMarquee(
+                    velocity = if ("velocity" in op) op.getValue("velocity").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.foundation.MarqueeDefaults.Velocity,
+                )
+            "captionBarPadding" ->
+                Modifier.captionBarPadding(
                 )
             "clickable" ->
                 Modifier.clickable(
@@ -53,9 +142,96 @@ object GeneratedModifiers {
                 Modifier.clip(
                     shape = op.getValue("shape").let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() },
                 )
+            "clipToBounds" ->
+                Modifier.clipToBounds(
+                )
+            "defaultMinSize" ->
+                Modifier.defaultMinSize(
+                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                )
+            "displayCutoutPadding" ->
+                Modifier.displayCutoutPadding(
+                )
+            "fillMaxHeight" ->
+                Modifier.fillMaxHeight(
+                    fraction = if ("fraction" in op) op.getValue("fraction").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
+                )
+            "fillMaxSize" ->
+                Modifier.fillMaxSize(
+                    fraction = if ("fraction" in op) op.getValue("fraction").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
+                )
             "fillMaxWidth" ->
                 Modifier.fillMaxWidth(
                     fraction = if ("fraction" in op) op.getValue("fraction").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
+                )
+            "focusGroup" ->
+                Modifier.focusGroup(
+                )
+            "focusRestorer" ->
+                Modifier.focusRestorer(
+                )
+            "focusTarget" ->
+                Modifier.focusTarget(
+                )
+            "focusable" ->
+                Modifier.focusable(
+                    enabled = if ("enabled" in op) op.getValue("enabled").let { value -> value.jsonPrimitive.boolean } else true,
+                )
+            "graphicsLayer" ->
+                Modifier.graphicsLayer(
+                    scaleX = if ("scaleX" in op) op.getValue("scaleX").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
+                    scaleY = if ("scaleY" in op) op.getValue("scaleY").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
+                    alpha = if ("alpha" in op) op.getValue("alpha").let { value -> value.jsonPrimitive.double.toFloat() } else 1.0f,
+                    translationX = if ("translationX" in op) op.getValue("translationX").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
+                    translationY = if ("translationY" in op) op.getValue("translationY").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
+                    shadowElevation = if ("shadowElevation" in op) op.getValue("shadowElevation").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
+                    rotationX = if ("rotationX" in op) op.getValue("rotationX").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
+                    rotationY = if ("rotationY" in op) op.getValue("rotationY").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
+                    rotationZ = if ("rotationZ" in op) op.getValue("rotationZ").let { value -> value.jsonPrimitive.double.toFloat() } else 0.0f,
+                    shape = if ("shape" in op) op.getValue("shape").let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() } else androidx.compose.ui.graphics.RectangleShape,
+                    clip = if ("clip" in op) op.getValue("clip").let { value -> value.jsonPrimitive.boolean } else false,
+                    ambientShadowColor = if ("ambientShadowColor" in op) op.getValue("ambientShadowColor").let { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } else androidx.compose.ui.graphics.DefaultShadowColor,
+                    spotShadowColor = if ("spotShadowColor" in op) op.getValue("spotShadowColor").let { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } else androidx.compose.ui.graphics.DefaultShadowColor,
+                )
+            "handwritingHandler" ->
+                Modifier.handwritingHandler(
+                )
+            "height" ->
+                Modifier.height(
+                    height = op.getValue("height").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                )
+            "heightIn" ->
+                Modifier.heightIn(
+                    min = if ("min" in op) op.getValue("min").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                )
+            "imeNestedScroll" ->
+                Modifier.imeNestedScroll(
+                )
+            "imePadding" ->
+                Modifier.imePadding(
+                )
+            "keepScreenOn" ->
+                Modifier.keepScreenOn(
+                )
+            "layoutId" ->
+                Modifier.layoutId(
+                    layoutId = op.getValue("layoutId").let { value -> value.jsonPrimitive.content },
+                )
+            "mandatorySystemGesturesPadding" ->
+                Modifier.mandatorySystemGesturesPadding(
+                )
+            "minimumInteractiveComponentSize" ->
+                Modifier.minimumInteractiveComponentSize(
+                )
+            "navigationBarsPadding" ->
+                Modifier.navigationBarsPadding(
+                )
+            "offset" ->
+                Modifier.offset(
+                    x = if ("x" in op) op.getValue("x").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
+                    y = if ("y" in op) op.getValue("y").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else (0).dp,
                 )
             "padding" ->
                 if (op.getValue("value") is JsonObject) {
@@ -65,6 +241,57 @@ object GeneratedModifiers {
                 } else {
                     Modifier.padding(all = com.pycompose.renderer.PropResolver.dp(op.getValue("value").jsonPrimitive.double).getOrThrow())
                 }
+            "preferKeepClear" ->
+                Modifier.preferKeepClear(
+                )
+            "preferredFrameRate" ->
+                Modifier.preferredFrameRate(
+                    frameRate = op.getValue("frameRate").let { value -> value.jsonPrimitive.double.toFloat() },
+                )
+            "recalculateWindowInsets" ->
+                Modifier.recalculateWindowInsets(
+                )
+            "requiredHeight" ->
+                Modifier.requiredHeight(
+                    height = op.getValue("height").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                )
+            "requiredHeightIn" ->
+                Modifier.requiredHeightIn(
+                    min = if ("min" in op) op.getValue("min").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                )
+            "requiredSizeIn" ->
+                Modifier.requiredSizeIn(
+                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxWidth = if ("maxWidth" in op) op.getValue("maxWidth").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxHeight = if ("maxHeight" in op) op.getValue("maxHeight").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                )
+            "requiredWidth" ->
+                Modifier.requiredWidth(
+                    width = op.getValue("width").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                )
+            "requiredWidthIn" ->
+                Modifier.requiredWidthIn(
+                    min = if ("min" in op) op.getValue("min").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                )
+            "rotate" ->
+                Modifier.rotate(
+                    degrees = op.getValue("degrees").let { value -> value.jsonPrimitive.double.toFloat() },
+                )
+            "safeContentPadding" ->
+                Modifier.safeContentPadding(
+                )
+            "safeDrawingPadding" ->
+                Modifier.safeDrawingPadding(
+                )
+            "safeGesturesPadding" ->
+                Modifier.safeGesturesPadding(
+                )
+            "selectableGroup" ->
+                Modifier.selectableGroup(
+                )
             "semantics" ->
                 Modifier.semantics(properties = {
                     op["contentDescription"]?.let { contentDescription = it.jsonPrimitive.content }
@@ -96,14 +323,99 @@ object GeneratedModifiers {
                     op["testTag"]?.let { testTag = it.jsonPrimitive.content }
                     op["traversalIndex"]?.let { traversalIndex = it.jsonPrimitive.double.toFloat() }
                 })
+            "sensitiveContent" ->
+                Modifier.sensitiveContent(
+                    isContentSensitive = if ("isContentSensitive" in op) op.getValue("isContentSensitive").let { value -> value.jsonPrimitive.boolean } else true,
+                )
+            "shadow" ->
+                Modifier.shadow(
+                    elevation = op.getValue("elevation").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                    shape = if ("shape" in op) op.getValue("shape").let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() } else androidx.compose.ui.graphics.RectangleShape,
+                    ambientColor = if ("ambientColor" in op) op.getValue("ambientColor").let { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } else androidx.compose.ui.graphics.DefaultShadowColor,
+                    spotColor = if ("spotColor" in op) op.getValue("spotColor").let { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } else androidx.compose.ui.graphics.DefaultShadowColor,
+                )
             "size" ->
                 Modifier.size(
                     width = op.getValue("width").let { value -> if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
                     height = op.getValue("height").let { value -> if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
                 )
+            "sizeIn" ->
+                Modifier.sizeIn(
+                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxWidth = if ("maxWidth" in op) op.getValue("maxWidth").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxHeight = if ("maxHeight" in op) op.getValue("maxHeight").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                )
+            "statusBarsPadding" ->
+                Modifier.statusBarsPadding(
+                )
+            "systemBarsPadding" ->
+                Modifier.systemBarsPadding(
+                )
+            "systemGestureExclusion" ->
+                Modifier.systemGestureExclusion(
+                )
+            "systemGesturesPadding" ->
+                Modifier.systemGesturesPadding(
+                )
+            "testTag" ->
+                Modifier.testTag(
+                    tag = op.getValue("tag").let { value -> value.jsonPrimitive.content },
+                )
+            "visible" ->
+                Modifier.visible(
+                    visible = op.getValue("visible").let { value -> value.jsonPrimitive.boolean },
+                )
+            "waterfallPadding" ->
+                Modifier.waterfallPadding(
+                )
+            "width" ->
+                Modifier.width(
+                    width = op.getValue("width").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() },
+                )
+            "widthIn" ->
+                Modifier.widthIn(
+                    min = if ("min" in op) op.getValue("min").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                )
+            "windowInsetsBottomHeight" ->
+                Modifier.windowInsetsBottomHeight(
+                    insets = op.getValue("insets").let { value -> com.pycompose.renderer.generated.ValueResolver.windowInsets(value).getOrThrow() },
+                )
+            "windowInsetsEndWidth" ->
+                Modifier.windowInsetsEndWidth(
+                    insets = op.getValue("insets").let { value -> com.pycompose.renderer.generated.ValueResolver.windowInsets(value).getOrThrow() },
+                )
             "windowInsetsPadding" ->
                 Modifier.windowInsetsPadding(
                     insets = op.getValue("insets").let { value -> com.pycompose.renderer.generated.ValueResolver.windowInsets(value).getOrThrow() },
+                )
+            "windowInsetsStartWidth" ->
+                Modifier.windowInsetsStartWidth(
+                    insets = op.getValue("insets").let { value -> com.pycompose.renderer.generated.ValueResolver.windowInsets(value).getOrThrow() },
+                )
+            "windowInsetsTopHeight" ->
+                Modifier.windowInsetsTopHeight(
+                    insets = op.getValue("insets").let { value -> com.pycompose.renderer.generated.ValueResolver.windowInsets(value).getOrThrow() },
+                )
+            "wrapContentHeight" ->
+                Modifier.wrapContentHeight(
+                    align = if ("align" in op) op.getValue("align").let { value -> com.pycompose.renderer.generated.ValueResolver.alignmentVertical(value).getOrThrow() } else androidx.compose.ui.Alignment.Companion.CenterVertically,
+                    unbounded = if ("unbounded" in op) op.getValue("unbounded").let { value -> value.jsonPrimitive.boolean } else false,
+                )
+            "wrapContentSize" ->
+                Modifier.wrapContentSize(
+                    align = if ("align" in op) op.getValue("align").let { value -> com.pycompose.renderer.generated.ValueResolver.alignment(value).getOrThrow() } else androidx.compose.ui.Alignment.Companion.Center,
+                    unbounded = if ("unbounded" in op) op.getValue("unbounded").let { value -> value.jsonPrimitive.boolean } else false,
+                )
+            "wrapContentWidth" ->
+                Modifier.wrapContentWidth(
+                    align = if ("align" in op) op.getValue("align").let { value -> com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(value).getOrThrow() } else androidx.compose.ui.Alignment.Companion.CenterHorizontally,
+                    unbounded = if ("unbounded" in op) op.getValue("unbounded").let { value -> value.jsonPrimitive.boolean } else false,
+                )
+            "zIndex" ->
+                Modifier.zIndex(
+                    zIndex = op.getValue("zIndex").let { value -> value.jsonPrimitive.double.toFloat() },
                 )
             "alignByBaseline" ->
                 when (scope) {

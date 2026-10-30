@@ -2141,16 +2141,38 @@ object IrContract {
         ),
     )
     val modifiers: Map<String, Map<String, PropertyRule>> = mapOf(
+        "absoluteOffset" to mapOf(
+                "x" to PropertyRule("dp", required = false),
+                "y" to PropertyRule("dp", required = false),
+        ),
+        "absolutePadding" to mapOf(
+                "bottom" to PropertyRule("dp", required = false),
+                "left" to PropertyRule("dp", required = false),
+                "right" to PropertyRule("dp", required = false),
+                "top" to PropertyRule("dp", required = false),
+        ),
         "alignByBaseline" to mapOf(
+        ),
+        "alpha" to mapOf(
+                "alpha" to PropertyRule("number", required = true),
         ),
         "animateEnterExit" to mapOf(
                 "label" to PropertyRule("string", required = false),
         ),
+        "aspectRatio" to mapOf(
+                "matchHeightConstraintsFirst" to PropertyRule("boolean", required = false),
+                "ratio" to PropertyRule("number", required = true),
+        ),
         "background" to mapOf(
                 "brush" to PropertyRule("value", required = true, since = "1.11.0", valueType = "Brush"),
         ),
+        "basicMarquee" to mapOf(
+                "velocity" to PropertyRule("dp", required = false),
+        ),
         "boxAlign" to mapOf(
                 "alignment" to PropertyRule("enum", required = true, valueType = "Alignment"),
+        ),
+        "captionBarPadding" to mapOf(
         ),
         "clickable" to mapOf(
                 "enabled" to PropertyRule("boolean", required = false),
@@ -2159,17 +2181,75 @@ object IrContract {
         "clip" to mapOf(
                 "shape" to PropertyRule("enum", required = true, valueType = "Shape"),
         ),
+        "clipToBounds" to mapOf(
+        ),
         "columnAlign" to mapOf(
                 "alignment" to PropertyRule("enum", required = true, valueType = "AlignmentHorizontal"),
         ),
+        "defaultMinSize" to mapOf(
+                "minHeight" to PropertyRule("dp", required = false),
+                "minWidth" to PropertyRule("dp", required = false),
+        ),
+        "displayCutoutPadding" to mapOf(
+        ),
         "fillMaxColumnWidth" to mapOf(
+                "fraction" to PropertyRule("number", required = false),
+        ),
+        "fillMaxHeight" to mapOf(
                 "fraction" to PropertyRule("number", required = false),
         ),
         "fillMaxRowHeight" to mapOf(
                 "fraction" to PropertyRule("number", required = false),
         ),
+        "fillMaxSize" to mapOf(
+                "fraction" to PropertyRule("number", required = false),
+        ),
         "fillMaxWidth" to mapOf(
                 "fraction" to PropertyRule("number", required = false, minimum = 0.0, maximum = 1.0),
+        ),
+        "focusGroup" to mapOf(
+        ),
+        "focusRestorer" to mapOf(
+        ),
+        "focusTarget" to mapOf(
+        ),
+        "focusable" to mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+        ),
+        "graphicsLayer" to mapOf(
+                "alpha" to PropertyRule("number", required = false),
+                "ambientShadowColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "clip" to PropertyRule("boolean", required = false),
+                "rotationX" to PropertyRule("number", required = false),
+                "rotationY" to PropertyRule("number", required = false),
+                "rotationZ" to PropertyRule("number", required = false),
+                "scaleX" to PropertyRule("number", required = false),
+                "scaleY" to PropertyRule("number", required = false),
+                "shadowElevation" to PropertyRule("number", required = false),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "spotShadowColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "translationX" to PropertyRule("number", required = false),
+                "translationY" to PropertyRule("number", required = false),
+        ),
+        "handwritingHandler" to mapOf(
+        ),
+        "height" to mapOf(
+                "height" to PropertyRule("dp", required = true),
+        ),
+        "heightIn" to mapOf(
+                "max" to PropertyRule("dp", required = false),
+                "min" to PropertyRule("dp", required = false),
+        ),
+        "imeNestedScroll" to mapOf(
+        ),
+        "imePadding" to mapOf(
+        ),
+        "keepScreenOn" to mapOf(
+        ),
+        "layoutId" to mapOf(
+                "layoutId" to PropertyRule("string", required = true),
+        ),
+        "mandatorySystemGesturesPadding" to mapOf(
         ),
         "maskBorder" to mapOf(
                 "border" to PropertyRule("value", required = true, valueType = "BorderStroke"),
@@ -2184,14 +2264,60 @@ object IrContract {
                 "enabled" to PropertyRule("boolean", required = false),
                 "menuAnchorType" to PropertyRule("value", required = true, valueType = "ExposedDropdownMenuAnchorType"),
         ),
+        "minimumInteractiveComponentSize" to mapOf(
+        ),
+        "navigationBarsPadding" to mapOf(
+        ),
+        "offset" to mapOf(
+                "x" to PropertyRule("dp", required = false),
+                "y" to PropertyRule("dp", required = false),
+        ),
         "padding" to mapOf(
                 "value" to PropertyRule("dp", required = true, valueType = "PaddingValues", minimum = 0.0),
+        ),
+        "preferKeepClear" to mapOf(
+        ),
+        "preferredFrameRate" to mapOf(
+                "frameRate" to PropertyRule("number", required = true),
+        ),
+        "recalculateWindowInsets" to mapOf(
         ),
         "renderInSharedTransitionScopeOverlay" to mapOf(
                 "zIndexInOverlay" to PropertyRule("number", required = false),
         ),
+        "requiredHeight" to mapOf(
+                "height" to PropertyRule("dp", required = true),
+        ),
+        "requiredHeightIn" to mapOf(
+                "max" to PropertyRule("dp", required = false),
+                "min" to PropertyRule("dp", required = false),
+        ),
+        "requiredSizeIn" to mapOf(
+                "maxHeight" to PropertyRule("dp", required = false),
+                "maxWidth" to PropertyRule("dp", required = false),
+                "minHeight" to PropertyRule("dp", required = false),
+                "minWidth" to PropertyRule("dp", required = false),
+        ),
+        "requiredWidth" to mapOf(
+                "width" to PropertyRule("dp", required = true),
+        ),
+        "requiredWidthIn" to mapOf(
+                "max" to PropertyRule("dp", required = false),
+                "min" to PropertyRule("dp", required = false),
+        ),
+        "rotate" to mapOf(
+                "degrees" to PropertyRule("number", required = true),
+        ),
         "rowAlign" to mapOf(
                 "alignment" to PropertyRule("enum", required = true, valueType = "AlignmentVertical"),
+        ),
+        "safeContentPadding" to mapOf(
+        ),
+        "safeDrawingPadding" to mapOf(
+        ),
+        "safeGesturesPadding" to mapOf(
+        ),
+        "selectableGroup" to mapOf(
         ),
         "semantics" to mapOf(
                 "contentDescription" to PropertyRule("string", required = false),
@@ -2202,24 +2328,89 @@ object IrContract {
                 "testTag" to PropertyRule("string", required = false),
                 "traversalIndex" to PropertyRule("number", required = false),
         ),
+        "sensitiveContent" to mapOf(
+                "isContentSensitive" to PropertyRule("boolean", required = false),
+        ),
+        "shadow" to mapOf(
+                "ambientColor" to PropertyRule("color", required = false, valueType = "Color"),
+                "elevation" to PropertyRule("dp", required = true),
+                "shape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "spotColor" to PropertyRule("color", required = false, valueType = "Color"),
+        ),
         "size" to mapOf(
                 "height" to PropertyRule("dp", required = true, valueType = "Dp", minimum = 0.0),
                 "width" to PropertyRule("dp", required = true, valueType = "Dp", minimum = 0.0),
+        ),
+        "sizeIn" to mapOf(
+                "maxHeight" to PropertyRule("dp", required = false),
+                "maxWidth" to PropertyRule("dp", required = false),
+                "minHeight" to PropertyRule("dp", required = false),
+                "minWidth" to PropertyRule("dp", required = false),
         ),
         "skipToLookaheadPosition" to mapOf(
         ),
         "skipToLookaheadSize" to mapOf(
         ),
+        "statusBarsPadding" to mapOf(
+        ),
+        "systemBarsPadding" to mapOf(
+        ),
+        "systemGestureExclusion" to mapOf(
+        ),
+        "systemGesturesPadding" to mapOf(
+        ),
         "tabIndicatorOffset" to mapOf(
                 "matchContentSize" to PropertyRule("boolean", required = false),
                 "selectedTabIndex" to PropertyRule("integer", required = true, minimum = -2147483648.0, maximum = 2147483647.0),
+        ),
+        "testTag" to mapOf(
+                "tag" to PropertyRule("string", required = true),
+        ),
+        "visible" to mapOf(
+                "visible" to PropertyRule("boolean", required = true),
+        ),
+        "waterfallPadding" to mapOf(
         ),
         "weight" to mapOf(
                 "fill" to PropertyRule("boolean", required = false),
                 "weight" to PropertyRule("number", required = true),
         ),
+        "width" to mapOf(
+                "width" to PropertyRule("dp", required = true),
+        ),
+        "widthIn" to mapOf(
+                "max" to PropertyRule("dp", required = false),
+                "min" to PropertyRule("dp", required = false),
+        ),
+        "windowInsetsBottomHeight" to mapOf(
+                "insets" to PropertyRule("value", required = true, valueType = "WindowInsets"),
+        ),
+        "windowInsetsEndWidth" to mapOf(
+                "insets" to PropertyRule("value", required = true, valueType = "WindowInsets"),
+        ),
         "windowInsetsPadding" to mapOf(
                 "insets" to PropertyRule("value", required = true, since = "1.11.0", valueType = "WindowInsets"),
+        ),
+        "windowInsetsStartWidth" to mapOf(
+                "insets" to PropertyRule("value", required = true, valueType = "WindowInsets"),
+        ),
+        "windowInsetsTopHeight" to mapOf(
+                "insets" to PropertyRule("value", required = true, valueType = "WindowInsets"),
+        ),
+        "wrapContentHeight" to mapOf(
+                "align" to PropertyRule("enum", required = false, valueType = "AlignmentVertical"),
+                "unbounded" to PropertyRule("boolean", required = false),
+        ),
+        "wrapContentSize" to mapOf(
+                "align" to PropertyRule("enum", required = false, valueType = "Alignment"),
+                "unbounded" to PropertyRule("boolean", required = false),
+        ),
+        "wrapContentWidth" to mapOf(
+                "align" to PropertyRule("enum", required = false, valueType = "AlignmentHorizontal"),
+                "unbounded" to PropertyRule("boolean", required = false),
+        ),
+        "zIndex" to mapOf(
+                "zIndex" to PropertyRule("number", required = true),
         ),
     )
     val streams: Map<String, Set<String>> = mapOf(

@@ -83,11 +83,11 @@ def render(report: Report) -> str:
         "",
         *(f"- {name}: {reason}" for name, reason in sorted(report.skipped.items())),
         "",
-        "## Scope modifiers derived from the pin",
+        "## Modifiers derived from the pin",
         "",
         *(f"- {name}" for name in report.modifiers),
         "",
-        "## Scope modifiers refused, by reason",
+        "## Modifiers refused, by reason",
         "",
         *(
             f"- {name}: {reason}"

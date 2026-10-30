@@ -10329,6 +10329,1607 @@
         }
       }
     },
+    "absoluteOffset": {
+      "since": "1.23.0",
+      "props": {
+        "x": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "y": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.absoluteOffset",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.OffsetKt",
+          "name": "absoluteOffset",
+          "jvmName": "absoluteOffset-VpY3zN4",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "x": {
+            "parameter": "x",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "y": {
+            "parameter": "y",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "absolutePadding": {
+      "since": "1.23.0",
+      "props": {
+        "left": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "top": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "right": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "bottom": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.absolutePadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.PaddingKt",
+          "name": "absolutePadding",
+          "jvmName": "absolutePadding-qDBjuR0",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FFFF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "left": {
+            "parameter": "left",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "top": {
+            "parameter": "top",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "right": {
+            "parameter": "right",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "bottom": {
+            "parameter": "bottom",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "alpha": {
+      "since": "1.23.0",
+      "props": {
+        "alpha": {
+          "type": "number",
+          "nativeType": "Float",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.ui.draw.alpha",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.draw.AlphaKt",
+          "name": "alpha",
+          "jvmName": "alpha",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "alpha": {
+            "parameter": "alpha",
+            "type": "kotlin.Float"
+          }
+        }
+      }
+    },
+    "aspectRatio": {
+      "since": "1.23.0",
+      "props": {
+        "ratio": {
+          "type": "number",
+          "nativeType": "Float",
+          "required": true
+        },
+        "matchHeightConstraintsFirst": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.aspectRatio",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.AspectRatioKt",
+          "name": "aspectRatio",
+          "jvmName": "aspectRatio",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FZ)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "ratio": {
+            "parameter": "ratio",
+            "type": "kotlin.Float"
+          },
+          "matchHeightConstraintsFirst": {
+            "parameter": "matchHeightConstraintsFirst",
+            "type": "kotlin.Boolean"
+          }
+        }
+      }
+    },
+    "basicMarquee": {
+      "since": "1.23.0",
+      "props": {
+        "velocity": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.foundation.MarqueeDefaults.Velocity"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.basicMarquee",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+          "owner": "androidx.compose.foundation.BasicMarqueeKt",
+          "name": "basicMarquee",
+          "jvmName": "basicMarquee-1Mj1MLw",
+          "descriptor": "(Landroidx/compose/ui/Modifier;IIIILandroidx/compose/foundation/MarqueeSpacing;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "velocity": {
+            "parameter": "velocity",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "captionBarPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.captionBarPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "captionBarPadding",
+          "jvmName": "captionBarPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "clipToBounds": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.ui.draw.clipToBounds",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.draw.ClipKt",
+          "name": "clipToBounds",
+          "jvmName": "clipToBounds",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "defaultMinSize": {
+      "since": "1.23.0",
+      "props": {
+        "minWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "minHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.defaultMinSize",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "defaultMinSize",
+          "jvmName": "defaultMinSize-VpY3zN4",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "minWidth": {
+            "parameter": "minWidth",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "minHeight": {
+            "parameter": "minHeight",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "displayCutoutPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.displayCutoutPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "displayCutoutPadding",
+          "jvmName": "displayCutoutPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "fillMaxHeight": {
+      "since": "1.23.0",
+      "props": {
+        "fraction": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 1.0
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.fillMaxHeight",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "fillMaxHeight",
+          "jvmName": "fillMaxHeight",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "fraction": {
+            "parameter": "fraction",
+            "type": "kotlin.Float"
+          }
+        }
+      }
+    },
+    "fillMaxSize": {
+      "since": "1.23.0",
+      "props": {
+        "fraction": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 1.0
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.fillMaxSize",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "fillMaxSize",
+          "jvmName": "fillMaxSize",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "fraction": {
+            "parameter": "fraction",
+            "type": "kotlin.Float"
+          }
+        }
+      }
+    },
+    "focusGroup": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.focusGroup",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+          "owner": "androidx.compose.foundation.FocusableKt",
+          "name": "focusGroup",
+          "jvmName": "focusGroup",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "focusRestorer": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.ui.focus.focusRestorer",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.focus.FocusRestorerKt",
+          "name": "focusRestorer",
+          "jvmName": "focusRestorer",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/focus/FocusRequester;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "focusTarget": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.ui.focus.focusTarget",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.focus.FocusModifierKt",
+          "name": "focusTarget",
+          "jvmName": "focusTarget",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "focusable": {
+      "since": "1.23.0",
+      "props": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.focusable",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+          "owner": "androidx.compose.foundation.FocusableKt",
+          "name": "focusable",
+          "jvmName": "focusable",
+          "descriptor": "(Landroidx/compose/ui/Modifier;ZLandroidx/compose/foundation/interaction/MutableInteractionSource;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "enabled": {
+            "parameter": "enabled",
+            "type": "kotlin.Boolean"
+          }
+        }
+      }
+    },
+    "graphicsLayer": {
+      "since": "1.23.0",
+      "props": {
+        "scaleX": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 1.0
+        },
+        "scaleY": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 1.0
+        },
+        "alpha": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 1.0
+        },
+        "translationX": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 0.0
+        },
+        "translationY": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 0.0
+        },
+        "shadowElevation": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 0.0
+        },
+        "rotationX": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 0.0
+        },
+        "rotationY": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 0.0
+        },
+        "rotationZ": {
+          "type": "number",
+          "nativeType": "Float",
+          "default": 0.0
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.ui.graphics.RectangleShape"
+        },
+        "clip": {
+          "type": "boolean",
+          "default": false
+        },
+        "ambientShadowColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor"
+        },
+        "spotShadowColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.ui.graphics.graphicsLayer",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.graphics.GraphicsLayerModifierKt",
+          "name": "graphicsLayer",
+          "jvmName": "graphicsLayer-pANQ8Wg",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FFFFFFFFFFJLandroidx/compose/ui/graphics/Shape;ZLandroidx/compose/ui/graphics/RenderEffect;JJ)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "scaleX": {
+            "parameter": "scaleX",
+            "type": "kotlin.Float"
+          },
+          "scaleY": {
+            "parameter": "scaleY",
+            "type": "kotlin.Float"
+          },
+          "alpha": {
+            "parameter": "alpha",
+            "type": "kotlin.Float"
+          },
+          "translationX": {
+            "parameter": "translationX",
+            "type": "kotlin.Float"
+          },
+          "translationY": {
+            "parameter": "translationY",
+            "type": "kotlin.Float"
+          },
+          "shadowElevation": {
+            "parameter": "shadowElevation",
+            "type": "kotlin.Float"
+          },
+          "rotationX": {
+            "parameter": "rotationX",
+            "type": "kotlin.Float"
+          },
+          "rotationY": {
+            "parameter": "rotationY",
+            "type": "kotlin.Float"
+          },
+          "rotationZ": {
+            "parameter": "rotationZ",
+            "type": "kotlin.Float"
+          },
+          "shape": {
+            "parameter": "shape",
+            "type": "androidx.compose.ui.graphics.Shape"
+          },
+          "clip": {
+            "parameter": "clip",
+            "type": "kotlin.Boolean"
+          },
+          "ambientShadowColor": {
+            "parameter": "ambientShadowColor",
+            "type": "androidx.compose.ui.graphics.Color"
+          },
+          "spotShadowColor": {
+            "parameter": "spotShadowColor",
+            "type": "androidx.compose.ui.graphics.Color"
+          }
+        }
+      }
+    },
+    "handwritingHandler": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.text.handwriting.handwritingHandler",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+          "owner": "androidx.compose.foundation.text.handwriting.HandwritingHandler_androidKt",
+          "name": "handwritingHandler",
+          "jvmName": "handwritingHandler",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "height": {
+      "since": "1.23.0",
+      "props": {
+        "height": {
+          "type": "dp",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.height",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "height",
+          "jvmName": "height-3ABfNKs",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "height": {
+            "parameter": "height",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "heightIn": {
+      "since": "1.23.0",
+      "props": {
+        "min": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "max": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.heightIn",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "heightIn",
+          "jvmName": "heightIn-VpY3zN4",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "min": {
+            "parameter": "min",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "max": {
+            "parameter": "max",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "imeNestedScroll": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.imeNestedScroll",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsConnection_androidKt",
+          "name": "imeNestedScroll",
+          "jvmName": "imeNestedScroll",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "imePadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.imePadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "imePadding",
+          "jvmName": "imePadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "keepScreenOn": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.ui.keepScreenOn",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.KeepScreenOnKt",
+          "name": "keepScreenOn",
+          "jvmName": "keepScreenOn",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "layoutId": {
+      "since": "1.23.0",
+      "props": {
+        "layoutId": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.constraintlayout.compose.layoutId",
+        "source": {
+          "artifact": "androidx.constraintlayout:constraintlayout-compose-android:1.1.2",
+          "owner": "androidx.constraintlayout.compose.ConstraintLayoutTagKt",
+          "name": "layoutId",
+          "jvmName": "layoutId",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Ljava/lang/String;Ljava/lang/String;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "layoutId": {
+            "parameter": "layoutId",
+            "type": "kotlin.String"
+          }
+        }
+      }
+    },
+    "mandatorySystemGesturesPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.mandatorySystemGesturesPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "mandatorySystemGesturesPadding",
+          "jvmName": "mandatorySystemGesturesPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "minimumInteractiveComponentSize": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.material3.minimumInteractiveComponentSize",
+        "source": {
+          "artifact": "androidx.compose.material3:material3-android:1.4.0",
+          "owner": "androidx.compose.material3.InteractiveComponentSizeKt",
+          "name": "minimumInteractiveComponentSize",
+          "jvmName": "minimumInteractiveComponentSize",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "navigationBarsPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.navigationBarsPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "navigationBarsPadding",
+          "jvmName": "navigationBarsPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "offset": {
+      "since": "1.23.0",
+      "props": {
+        "x": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        },
+        "y": {
+          "type": "dp",
+          "nativeDefault": "(0).dp"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.offset",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.OffsetKt",
+          "name": "offset",
+          "jvmName": "offset-VpY3zN4",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "x": {
+            "parameter": "x",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "y": {
+            "parameter": "y",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "preferKeepClear": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.preferKeepClear",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+          "owner": "androidx.compose.foundation.PreferKeepClear_androidKt",
+          "name": "preferKeepClear",
+          "jvmName": "preferKeepClear",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "preferredFrameRate": {
+      "since": "1.23.0",
+      "props": {
+        "frameRate": {
+          "type": "number",
+          "nativeType": "Float",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.ui.preferredFrameRate",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.FrameRateKt",
+          "name": "preferredFrameRate",
+          "jvmName": "preferredFrameRate",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "frameRate": {
+            "parameter": "frameRate",
+            "type": "kotlin.Float"
+          }
+        }
+      }
+    },
+    "recalculateWindowInsets": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.recalculateWindowInsets",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPaddingKt",
+          "name": "recalculateWindowInsets",
+          "jvmName": "recalculateWindowInsets",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "requiredHeight": {
+      "since": "1.23.0",
+      "props": {
+        "height": {
+          "type": "dp",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.requiredHeight",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "requiredHeight",
+          "jvmName": "requiredHeight-3ABfNKs",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "height": {
+            "parameter": "height",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "requiredHeightIn": {
+      "since": "1.23.0",
+      "props": {
+        "min": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "max": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.requiredHeightIn",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "requiredHeightIn",
+          "jvmName": "requiredHeightIn-VpY3zN4",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "min": {
+            "parameter": "min",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "max": {
+            "parameter": "max",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "requiredSizeIn": {
+      "since": "1.23.0",
+      "props": {
+        "minWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "minHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "maxWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "maxHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.requiredSizeIn",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "requiredSizeIn",
+          "jvmName": "requiredSizeIn-qDBjuR0",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FFFF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "minWidth": {
+            "parameter": "minWidth",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "minHeight": {
+            "parameter": "minHeight",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "maxWidth": {
+            "parameter": "maxWidth",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "maxHeight": {
+            "parameter": "maxHeight",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "requiredWidth": {
+      "since": "1.23.0",
+      "props": {
+        "width": {
+          "type": "dp",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.requiredWidth",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "requiredWidth",
+          "jvmName": "requiredWidth-3ABfNKs",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "width": {
+            "parameter": "width",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "requiredWidthIn": {
+      "since": "1.23.0",
+      "props": {
+        "min": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "max": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.requiredWidthIn",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "requiredWidthIn",
+          "jvmName": "requiredWidthIn-VpY3zN4",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "min": {
+            "parameter": "min",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "max": {
+            "parameter": "max",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "rotate": {
+      "since": "1.23.0",
+      "props": {
+        "degrees": {
+          "type": "number",
+          "nativeType": "Float",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.ui.draw.rotate",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.draw.RotateKt",
+          "name": "rotate",
+          "jvmName": "rotate",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "degrees": {
+            "parameter": "degrees",
+            "type": "kotlin.Float"
+          }
+        }
+      }
+    },
+    "safeContentPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.safeContentPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "safeContentPadding",
+          "jvmName": "safeContentPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "safeDrawingPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.safeDrawingPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "safeDrawingPadding",
+          "jvmName": "safeDrawingPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "safeGesturesPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.safeGesturesPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "safeGesturesPadding",
+          "jvmName": "safeGesturesPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "selectableGroup": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.selection.selectableGroup",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+          "owner": "androidx.compose.foundation.selection.SelectableGroupKt",
+          "name": "selectableGroup",
+          "jvmName": "selectableGroup",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "sensitiveContent": {
+      "since": "1.23.0",
+      "props": {
+        "isContentSensitive": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.ui.sensitiveContent",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.SensitiveContentKt",
+          "name": "sensitiveContent",
+          "jvmName": "sensitiveContent",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Z)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "isContentSensitive": {
+            "parameter": "isContentSensitive",
+            "type": "kotlin.Boolean"
+          }
+        }
+      }
+    },
+    "shadow": {
+      "since": "1.23.0",
+      "props": {
+        "elevation": {
+          "type": "dp",
+          "required": true
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.ui.graphics.RectangleShape"
+        },
+        "ambientColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor"
+        },
+        "spotColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.ui.draw.shadow",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.draw.ShadowKt",
+          "name": "shadow",
+          "jvmName": "shadow-s4CzXII",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FLandroidx/compose/ui/graphics/Shape;ZJJ)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "elevation": {
+            "parameter": "elevation",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "shape": {
+            "parameter": "shape",
+            "type": "androidx.compose.ui.graphics.Shape"
+          },
+          "ambientColor": {
+            "parameter": "ambientColor",
+            "type": "androidx.compose.ui.graphics.Color"
+          },
+          "spotColor": {
+            "parameter": "spotColor",
+            "type": "androidx.compose.ui.graphics.Color"
+          }
+        }
+      }
+    },
+    "sizeIn": {
+      "since": "1.23.0",
+      "props": {
+        "minWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "minHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "maxWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "maxHeight": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.sizeIn",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "sizeIn",
+          "jvmName": "sizeIn-qDBjuR0",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FFFF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "minWidth": {
+            "parameter": "minWidth",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "minHeight": {
+            "parameter": "minHeight",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "maxWidth": {
+            "parameter": "maxWidth",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "maxHeight": {
+            "parameter": "maxHeight",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "statusBarsPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.statusBarsPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "statusBarsPadding",
+          "jvmName": "statusBarsPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "systemBarsPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.systemBarsPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "systemBarsPadding",
+          "jvmName": "systemBarsPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "systemGestureExclusion": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.systemGestureExclusion",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+          "owner": "androidx.compose.foundation.SystemGestureExclusionKt",
+          "name": "systemGestureExclusion",
+          "jvmName": "systemGestureExclusion",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "systemGesturesPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.systemGesturesPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "systemGesturesPadding",
+          "jvmName": "systemGesturesPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "testTag": {
+      "since": "1.23.0",
+      "props": {
+        "tag": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.ui.platform.testTag",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.platform.TestTagKt",
+          "name": "testTag",
+          "jvmName": "testTag",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Ljava/lang/String;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "tag": {
+            "parameter": "tag",
+            "type": "kotlin.String"
+          }
+        }
+      }
+    },
+    "visible": {
+      "since": "1.23.0",
+      "props": {
+        "visible": {
+          "type": "boolean",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.visible",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.VisibleKt",
+          "name": "visible",
+          "jvmName": "visible",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Z)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "visible": {
+            "parameter": "visible",
+            "type": "kotlin.Boolean"
+          }
+        }
+      }
+    },
+    "waterfallPadding": {
+      "since": "1.23.0",
+      "props": {},
+      "call": {
+        "function": "androidx.compose.foundation.layout.waterfallPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPadding_androidKt",
+          "name": "waterfallPadding",
+          "jvmName": "waterfallPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {}
+      }
+    },
+    "width": {
+      "since": "1.23.0",
+      "props": {
+        "width": {
+          "type": "dp",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.width",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "width",
+          "jvmName": "width-3ABfNKs",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "width": {
+            "parameter": "width",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "widthIn": {
+      "since": "1.23.0",
+      "props": {
+        "min": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        },
+        "max": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.widthIn",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "widthIn",
+          "jvmName": "widthIn-VpY3zN4",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "min": {
+            "parameter": "min",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "max": {
+            "parameter": "max",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
+      }
+    },
+    "windowInsetsBottomHeight": {
+      "since": "1.23.0",
+      "props": {
+        "insets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.windowInsetsBottomHeight",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsSizeKt",
+          "name": "windowInsetsBottomHeight",
+          "jvmName": "windowInsetsBottomHeight",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/WindowInsets;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "insets": {
+            "parameter": "insets",
+            "type": "androidx.compose.foundation.layout.WindowInsets"
+          }
+        }
+      }
+    },
+    "windowInsetsEndWidth": {
+      "since": "1.23.0",
+      "props": {
+        "insets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.windowInsetsEndWidth",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsSizeKt",
+          "name": "windowInsetsEndWidth",
+          "jvmName": "windowInsetsEndWidth",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/WindowInsets;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "insets": {
+            "parameter": "insets",
+            "type": "androidx.compose.foundation.layout.WindowInsets"
+          }
+        }
+      }
+    },
+    "windowInsetsStartWidth": {
+      "since": "1.23.0",
+      "props": {
+        "insets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.windowInsetsStartWidth",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsSizeKt",
+          "name": "windowInsetsStartWidth",
+          "jvmName": "windowInsetsStartWidth",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/WindowInsets;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "insets": {
+            "parameter": "insets",
+            "type": "androidx.compose.foundation.layout.WindowInsets"
+          }
+        }
+      }
+    },
+    "windowInsetsTopHeight": {
+      "since": "1.23.0",
+      "props": {
+        "insets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.windowInsetsTopHeight",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsSizeKt",
+          "name": "windowInsetsTopHeight",
+          "jvmName": "windowInsetsTopHeight",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/WindowInsets;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "insets": {
+            "parameter": "insets",
+            "type": "androidx.compose.foundation.layout.WindowInsets"
+          }
+        }
+      }
+    },
+    "wrapContentHeight": {
+      "since": "1.23.0",
+      "props": {
+        "align": {
+          "type": "enum",
+          "valueType": "AlignmentVertical",
+          "values": [
+            "bottom",
+            "centerVertically",
+            "top"
+          ],
+          "default": "centerVertically",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.CenterVertically"
+        },
+        "unbounded": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.wrapContentHeight",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "wrapContentHeight",
+          "jvmName": "wrapContentHeight",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment$Vertical;Z)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "align": {
+            "parameter": "align",
+            "type": "androidx.compose.ui.Alignment.Vertical"
+          },
+          "unbounded": {
+            "parameter": "unbounded",
+            "type": "kotlin.Boolean"
+          }
+        }
+      }
+    },
+    "wrapContentSize": {
+      "since": "1.23.0",
+      "props": {
+        "align": {
+          "type": "enum",
+          "valueType": "Alignment",
+          "values": [
+            "bottomCenter",
+            "bottomEnd",
+            "bottomLeft",
+            "bottomRight",
+            "bottomStart",
+            "center",
+            "centerEnd",
+            "centerLeft",
+            "centerRight",
+            "centerStart",
+            "topCenter",
+            "topEnd",
+            "topLeft",
+            "topRight",
+            "topStart"
+          ],
+          "default": "center",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.Center"
+        },
+        "unbounded": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.wrapContentSize",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "wrapContentSize",
+          "jvmName": "wrapContentSize",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment;Z)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "align": {
+            "parameter": "align",
+            "type": "androidx.compose.ui.Alignment"
+          },
+          "unbounded": {
+            "parameter": "unbounded",
+            "type": "kotlin.Boolean"
+          }
+        }
+      }
+    },
+    "wrapContentWidth": {
+      "since": "1.23.0",
+      "props": {
+        "align": {
+          "type": "enum",
+          "valueType": "AlignmentHorizontal",
+          "values": [
+            "centerHorizontally",
+            "end",
+            "left",
+            "right",
+            "start"
+          ],
+          "default": "centerHorizontally",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.CenterHorizontally"
+        },
+        "unbounded": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.wrapContentWidth",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "wrapContentWidth",
+          "jvmName": "wrapContentWidth",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment$Horizontal;Z)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "align": {
+            "parameter": "align",
+            "type": "androidx.compose.ui.Alignment.Horizontal"
+          },
+          "unbounded": {
+            "parameter": "unbounded",
+            "type": "kotlin.Boolean"
+          }
+        }
+      }
+    },
+    "zIndex": {
+      "since": "1.23.0",
+      "props": {
+        "zIndex": {
+          "type": "number",
+          "nativeType": "Float",
+          "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.ui.zIndex",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.ZIndexModifierKt",
+          "name": "zIndex",
+          "jvmName": "zIndex",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "zIndex": {
+            "parameter": "zIndex",
+            "type": "kotlin.Float"
+          }
+        }
+      }
+    },
     "boxAlign": {
       "since": "1.23.0",
       "props": {

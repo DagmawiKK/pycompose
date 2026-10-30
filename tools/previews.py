@@ -30,7 +30,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from pycompose_cli.commands.validate import validate_file
-from pycompose_codegen.derive.samples import sample
+from pycompose_codegen.derive.samples import modifier_sample, sample
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = ROOT / "schema/catalog.lock.json"
@@ -40,28 +40,54 @@ CATALOG = ROOT / "android/host/src/debug/kotlin/com/pycompose/host/GeneratedPrev
 """One ``@Preview`` per component: Android Studio's catalog of the samples."""
 
 
+def _validated(name: str, document: dict[str, Any]) -> dict[str, Any]:
+    """The sample, once Python's validator has accepted it.
+
+    Args:
+        name: What the sample composes, for the refusal.
+        document: The sample snapshot.
+
+    Returns:
+        The same document.
+
+    Raises:
+        ValueError: A sample the validator refuses, naming what it samples.
+    """
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / "snapshot.json"
+        path.write_text(json.dumps(document))
+        try:
+            validate_file(path)
+        except Exception as exc:
+            raise ValueError(f"{name}: sample refused: {exc}") from exc
+    return document
+
+
 def documents() -> dict[str, dict[str, Any]]:
     """Return one valid sample snapshot per component.
 
     Returns:
         Snapshots by component name.
-
-    Raises:
-        ValueError: A sample the validator refuses, naming the component.
     """
     catalog = json.loads(LOCK.read_text(encoding="utf-8"))
-    samples = {}
-    for name in sorted(catalog["components"]):
-        document = sample(catalog, name)
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "snapshot.json"
-            path.write_text(json.dumps(document))
-            try:
-                validate_file(path)
-            except Exception as exc:
-                raise ValueError(f"{name}: sample refused: {exc}") from exc
-        samples[name] = document
-    return samples
+    return {
+        name: _validated(name, sample(catalog, name))
+        for name in sorted(catalog["components"])
+    }
+
+
+def modifier_documents() -> dict[str, dict[str, Any]]:
+    """Return one valid sample snapshot per modifier any node may wear.
+
+    Returns:
+        Snapshots by ``Modifier.<name>``.
+    """
+    catalog = json.loads(LOCK.read_text(encoding="utf-8"))
+    return {
+        f"Modifier.{name}": _validated(name, modifier_sample(catalog, name))
+        for name, entry in sorted(catalog["modifiers"].items())
+        if "scoped" not in entry
+    }
 
 
 def render(samples: dict[str, dict[str, Any]]) -> dict[str, str]:
@@ -146,7 +172,8 @@ def main() -> int:
     if out.is_dir():
         shutil.rmtree(out)
     out.mkdir(parents=True)
-    for name, text in render(samples).items():
+    # Modifiers are rendered by the gate too, but not listed as previews.
+    for name, text in render({**samples, **modifier_documents()}).items():
         (out / name).write_text(text)
     if args.out is None:
         # A test run asks for samples only; it never rewrites a source file.

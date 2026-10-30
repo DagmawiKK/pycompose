@@ -46,6 +46,8 @@ def _value(
     kind = spec["type"]
     if kind in SCALARS:
         return spec["values"][0] if "values" in spec else SCALARS[kind]
+    if kind == "enum" and "valueType" in spec:
+        return _constant(where, spec["valueType"], spec["values"][0], values)
     if kind == "enum":
         return spec["values"][0]
     if kind in {"integer", "number", "int", "float"}:
@@ -85,6 +87,18 @@ def _family(where: str, family: str, values: dict[str, Any], depth: int = 0) -> 
         except ValueError:
             continue
     raise ValueError(f"{where}: no sample for value family {family}")
+
+
+def _constant(where: str, family: str, wanted: str, values: dict[str, Any]) -> Any:
+    """The tagged constant of ``family`` an app names ``wanted``."""
+    for constructor, entry in sorted(values.items()):
+        if not isinstance(entry, dict) or entry.get("family") != family:
+            continue
+        names = entry.get("parameters", {}).get("name", {}).get("values", [])
+        for name in names:
+            if wanted in (name, name[:1].lower() + name[1:]):
+                return {"type": constructor, "name": name}
+    raise ValueError(f"{where}: no constant {wanted!r} in {family}")
 
 
 def _required(entry: dict[str, Any]) -> dict[str, Any]:
@@ -195,6 +209,38 @@ def sample(catalog: dict[str, Any], name: str) -> dict[str, Any]:
     """
     builder = _Sample(catalog)
     root = builder.scoped(name)
+    return {
+        "version": "0.1.0",
+        "schemaVersion": SCHEMA_VERSION,
+        "root": root,
+        "metadata": {"intents": builder.bindings},
+    }
+
+
+def modifier_sample(catalog: dict[str, Any], name: str) -> dict[str, Any]:
+    """A snapshot of a Box wearing one modifier, its required props filled.
+
+    Args:
+        catalog: The catalog lock: its modifiers and value families.
+        name: The modifier to sample; one a scope declares is sampled inside
+            its parent instead, so is not taken here.
+
+    Returns:
+        The snapshot document.
+    """
+    builder = _Sample(catalog)
+    operation: dict[str, Any] = {"type": name}
+    for prop, spec in catalog["modifiers"][name]["props"].items():
+        if spec["type"] == "actionId" and spec.get("required"):
+            operation[prop] = builder._binding(prop, spec)
+        elif spec.get("required"):
+            operation[prop] = _value(f"{name}.{prop}", spec, builder.values)
+    root = {
+        "id": "preview",
+        "type": "Box",
+        "props": {"modifier": {"operations": [operation]}},
+        "children": [{"id": "preview.child", "type": "Text", "props": {"text": name}}],
+    }
     return {
         "version": "0.1.0",
         "schemaVersion": SCHEMA_VERSION,

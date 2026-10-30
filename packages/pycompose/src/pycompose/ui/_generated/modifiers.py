@@ -60,6 +60,35 @@ _SemanticsLiveRegion = Literal[
     "polite",
     "assertive",
 ]
+_WrapContentHeightAlign = Literal[
+    "bottom",
+    "centerVertically",
+    "top",
+]
+_WrapContentSizeAlign = Literal[
+    "bottomCenter",
+    "bottomEnd",
+    "bottomLeft",
+    "bottomRight",
+    "bottomStart",
+    "center",
+    "centerEnd",
+    "centerLeft",
+    "centerRight",
+    "centerStart",
+    "topCenter",
+    "topEnd",
+    "topLeft",
+    "topRight",
+    "topStart",
+]
+_WrapContentWidthAlign = Literal[
+    "centerHorizontally",
+    "end",
+    "left",
+    "right",
+    "start",
+]
 
 
 class GeneratedOperations:
@@ -69,6 +98,62 @@ class GeneratedOperations:
 
     def _append(self, name: str, **props: JsonValue) -> Modifier:
         raise NotImplementedError
+
+    @_Operation
+    def absolute_offset(
+        self,
+        *,
+        x: int | float | None = None,
+        y: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.absoluteOffset``.
+
+        Args:
+            x: Native x, omitted for its native default.
+            y: Native y, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "x": x,
+            "y": y,
+        }
+        return self._append(
+            "absoluteOffset",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def absolute_padding(
+        self,
+        *,
+        left: int | float | None = None,
+        top: int | float | None = None,
+        right: int | float | None = None,
+        bottom: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.absolutePadding``.
+
+        Args:
+            left: Native left, omitted for its native default.
+            top: Native top, omitted for its native default.
+            right: Native right, omitted for its native default.
+            bottom: Native bottom, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "left": left,
+            "top": top,
+            "right": right,
+            "bottom": bottom,
+        }
+        return self._append(
+            "absolutePadding",
+            **{k: v for k, v in given.items() if v is not None},
+        )
 
     @_Operation
     def align_by_baseline(
@@ -82,6 +167,27 @@ class GeneratedOperations:
             A new modifier.
         """
         return self._append("alignByBaseline")
+
+    @_Operation
+    def alpha(
+        self,
+        alpha: int | float,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.draw.alpha``.
+
+        Args:
+            alpha: Native alpha.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "alpha": alpha,
+        }
+        return self._append(
+            "alpha",
+            **{k: v for k, v in given.items() if v is not None},
+        )
 
     @_Operation
     def animate_enter_exit(
@@ -107,6 +213,32 @@ class GeneratedOperations:
         )
 
     @_Operation
+    def aspect_ratio(
+        self,
+        ratio: int | float,
+        *,
+        match_height_constraints_first: bool = False,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.aspectRatio``.
+
+        Args:
+            ratio: Native ratio.
+            match_height_constraints_first: Native matchHeightConstraintsFirst;
+                false unless given.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "ratio": ratio,
+            "matchHeightConstraintsFirst": match_height_constraints_first,
+        }
+        return self._append(
+            "aspectRatio",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
     def background(
         self,
         brush: JsonValue,
@@ -124,6 +256,27 @@ class GeneratedOperations:
         }
         return self._append(
             "background",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def basic_marquee(
+        self,
+        velocity: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.basicMarquee``.
+
+        Args:
+            velocity: Native velocity, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "velocity": velocity,
+        }
+        return self._append(
+            "basicMarquee",
             **{k: v for k, v in given.items() if v is not None},
         )
 
@@ -149,6 +302,17 @@ class GeneratedOperations:
             "boxAlign",
             **{k: v for k, v in given.items() if v is not None},
         )
+
+    @_Operation
+    def caption_bar_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.captionBarPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("captionBarPadding")
 
     @_Operation
     def clickable(
@@ -197,6 +361,17 @@ class GeneratedOperations:
         )
 
     @_Operation
+    def clip_to_bounds(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.draw.clipToBounds``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("clipToBounds")
+
+    @_Operation
     def column_align(
         self,
         alignment: _ColumnAlignAlignment,
@@ -220,6 +395,42 @@ class GeneratedOperations:
         )
 
     @_Operation
+    def default_min_size(
+        self,
+        *,
+        min_width: int | float | None = None,
+        min_height: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.defaultMinSize``.
+
+        Args:
+            min_width: Native minWidth, omitted for its native default.
+            min_height: Native minHeight, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "minWidth": min_width,
+            "minHeight": min_height,
+        }
+        return self._append(
+            "defaultMinSize",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def display_cutout_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.displayCutoutPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("displayCutoutPadding")
+
+    @_Operation
     def fill_max_column_width(
         self,
         fraction: int | float = 1.0,
@@ -239,6 +450,27 @@ class GeneratedOperations:
         }
         return self._append(
             "fillMaxColumnWidth",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def fill_max_height(
+        self,
+        fraction: int | float = 1.0,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.fillMaxHeight``.
+
+        Args:
+            fraction: Native fraction; 1.0 unless given.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "fraction": fraction,
+        }
+        return self._append(
+            "fillMaxHeight",
             **{k: v for k, v in given.items() if v is not None},
         )
 
@@ -266,6 +498,27 @@ class GeneratedOperations:
         )
 
     @_Operation
+    def fill_max_size(
+        self,
+        fraction: int | float = 1.0,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.fillMaxSize``.
+
+        Args:
+            fraction: Native fraction; 1.0 unless given.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "fraction": fraction,
+        }
+        return self._append(
+            "fillMaxSize",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
     def fill_max_width(
         self,
         fraction: int | float = 1,
@@ -285,6 +538,242 @@ class GeneratedOperations:
             "fillMaxWidth",
             **{k: v for k, v in given.items() if v is not None},
         )
+
+    @_Operation
+    def focus_group(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.focusGroup``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("focusGroup")
+
+    @_Operation
+    def focus_restorer(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.focus.focusRestorer``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("focusRestorer")
+
+    @_Operation
+    def focus_target(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.focus.focusTarget``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("focusTarget")
+
+    @_Operation
+    def focusable(
+        self,
+        enabled: bool = True,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.focusable``.
+
+        Args:
+            enabled: Native enabled; true unless given.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "enabled": enabled,
+        }
+        return self._append(
+            "focusable",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def graphics_layer(
+        self,
+        *,
+        scale_x: int | float = 1.0,
+        scale_y: int | float = 1.0,
+        alpha: int | float = 1.0,
+        translation_x: int | float = 0.0,
+        translation_y: int | float = 0.0,
+        shadow_elevation: int | float = 0.0,
+        rotation_x: int | float = 0.0,
+        rotation_y: int | float = 0.0,
+        rotation_z: int | float = 0.0,
+        shape: JsonValue | None = None,
+        clip: bool = False,
+        ambient_shadow_color: JsonValue | None = None,
+        spot_shadow_color: JsonValue | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.graphics.graphicsLayer``.
+
+        Args:
+            scale_x: Native scaleX; 1.0 unless given.
+            scale_y: Native scaleY; 1.0 unless given.
+            alpha: Native alpha; 1.0 unless given.
+            translation_x: Native translationX; 0.0 unless given.
+            translation_y: Native translationY; 0.0 unless given.
+            shadow_elevation: Native shadowElevation; 0.0 unless given.
+            rotation_x: Native rotationX; 0.0 unless given.
+            rotation_y: Native rotationY; 0.0 unless given.
+            rotation_z: Native rotationZ; 0.0 unless given.
+            shape: Native shape, omitted for its native default.
+            clip: Native clip; false unless given.
+            ambient_shadow_color: Native ambientShadowColor, omitted for its native
+                default.
+            spot_shadow_color: Native spotShadowColor, omitted for its native
+                default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "scaleX": scale_x,
+            "scaleY": scale_y,
+            "alpha": alpha,
+            "translationX": translation_x,
+            "translationY": translation_y,
+            "shadowElevation": shadow_elevation,
+            "rotationX": rotation_x,
+            "rotationY": rotation_y,
+            "rotationZ": rotation_z,
+            "shape": shape,
+            "clip": clip,
+            "ambientShadowColor": ambient_shadow_color,
+            "spotShadowColor": spot_shadow_color,
+        }
+        return self._append(
+            "graphicsLayer",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def handwriting_handler(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.text.handwriting.handwritingHandler``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("handwritingHandler")
+
+    @_Operation
+    def height(
+        self,
+        height: int | float,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.height``.
+
+        Args:
+            height: Native height.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "height": height,
+        }
+        return self._append(
+            "height",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def height_in(
+        self,
+        *,
+        min: int | float | None = None,
+        max: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.heightIn``.
+
+        Args:
+            min: Native min, omitted for its native default.
+            max: Native max, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "min": min,
+            "max": max,
+        }
+        return self._append(
+            "heightIn",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def ime_nested_scroll(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.imeNestedScroll``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("imeNestedScroll")
+
+    @_Operation
+    def ime_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.imePadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("imePadding")
+
+    @_Operation
+    def keep_screen_on(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.keepScreenOn``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("keepScreenOn")
+
+    @_Operation
+    def layout_id(
+        self,
+        layout_id: str,
+    ) -> Modifier:
+        """Native ``androidx.constraintlayout.compose.layoutId``.
+
+        Args:
+            layout_id: Native layoutId.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "layoutId": layout_id,
+        }
+        return self._append(
+            "layoutId",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def mandatory_system_gestures_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.mandatorySystemGesturesPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("mandatorySystemGesturesPadding")
 
     @_Operation
     def mask_border(
@@ -376,6 +865,53 @@ class GeneratedOperations:
         )
 
     @_Operation
+    def minimum_interactive_component_size(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.material3.minimumInteractiveComponentSize``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("minimumInteractiveComponentSize")
+
+    @_Operation
+    def navigation_bars_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.navigationBarsPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("navigationBarsPadding")
+
+    @_Operation
+    def offset(
+        self,
+        *,
+        x: int | float | None = None,
+        y: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.offset``.
+
+        Args:
+            x: Native x, omitted for its native default.
+            y: Native y, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "x": x,
+            "y": y,
+        }
+        return self._append(
+            "offset",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
     def padding(
         self,
         value: JsonValue,
@@ -395,6 +931,49 @@ class GeneratedOperations:
             "padding",
             **{k: v for k, v in given.items() if v is not None},
         )
+
+    @_Operation
+    def prefer_keep_clear(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.preferKeepClear``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("preferKeepClear")
+
+    @_Operation
+    def preferred_frame_rate(
+        self,
+        frame_rate: int | float,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.preferredFrameRate``.
+
+        Args:
+            frame_rate: Native frameRate.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "frameRate": frame_rate,
+        }
+        return self._append(
+            "preferredFrameRate",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def recalculate_window_insets(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.recalculateWindowInsets``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("recalculateWindowInsets")
 
     @_Operation
     def render_in_shared_transition_scope_overlay(
@@ -420,6 +999,150 @@ class GeneratedOperations:
         )
 
     @_Operation
+    def required_height(
+        self,
+        height: int | float,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.requiredHeight``.
+
+        Args:
+            height: Native height.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "height": height,
+        }
+        return self._append(
+            "requiredHeight",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def required_height_in(
+        self,
+        *,
+        min: int | float | None = None,
+        max: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.requiredHeightIn``.
+
+        Args:
+            min: Native min, omitted for its native default.
+            max: Native max, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "min": min,
+            "max": max,
+        }
+        return self._append(
+            "requiredHeightIn",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def required_size_in(
+        self,
+        *,
+        min_width: int | float | None = None,
+        min_height: int | float | None = None,
+        max_width: int | float | None = None,
+        max_height: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.requiredSizeIn``.
+
+        Args:
+            min_width: Native minWidth, omitted for its native default.
+            min_height: Native minHeight, omitted for its native default.
+            max_width: Native maxWidth, omitted for its native default.
+            max_height: Native maxHeight, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "minWidth": min_width,
+            "minHeight": min_height,
+            "maxWidth": max_width,
+            "maxHeight": max_height,
+        }
+        return self._append(
+            "requiredSizeIn",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def required_width(
+        self,
+        width: int | float,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.requiredWidth``.
+
+        Args:
+            width: Native width.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "width": width,
+        }
+        return self._append(
+            "requiredWidth",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def required_width_in(
+        self,
+        *,
+        min: int | float | None = None,
+        max: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.requiredWidthIn``.
+
+        Args:
+            min: Native min, omitted for its native default.
+            max: Native max, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "min": min,
+            "max": max,
+        }
+        return self._append(
+            "requiredWidthIn",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def rotate(
+        self,
+        degrees: int | float,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.draw.rotate``.
+
+        Args:
+            degrees: Native degrees.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "degrees": degrees,
+        }
+        return self._append(
+            "rotate",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
     def row_align(
         self,
         alignment: _RowAlignAlignment,
@@ -441,6 +1164,50 @@ class GeneratedOperations:
             "rowAlign",
             **{k: v for k, v in given.items() if v is not None},
         )
+
+    @_Operation
+    def safe_content_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.safeContentPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("safeContentPadding")
+
+    @_Operation
+    def safe_drawing_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.safeDrawingPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("safeDrawingPadding")
+
+    @_Operation
+    def safe_gestures_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.safeGesturesPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("safeGesturesPadding")
+
+    @_Operation
+    def selectable_group(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.selection.selectableGroup``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("selectableGroup")
 
     @_Operation
     def semantics(
@@ -485,6 +1252,58 @@ class GeneratedOperations:
         )
 
     @_Operation
+    def sensitive_content(
+        self,
+        is_content_sensitive: bool = True,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.sensitiveContent``.
+
+        Args:
+            is_content_sensitive: Native isContentSensitive; true unless given.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "isContentSensitive": is_content_sensitive,
+        }
+        return self._append(
+            "sensitiveContent",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def shadow(
+        self,
+        elevation: int | float,
+        *,
+        shape: JsonValue | None = None,
+        ambient_color: JsonValue | None = None,
+        spot_color: JsonValue | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.draw.shadow``.
+
+        Args:
+            elevation: Native elevation.
+            shape: Native shape, omitted for its native default.
+            ambient_color: Native ambientColor, omitted for its native default.
+            spot_color: Native spotColor, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "elevation": elevation,
+            "shape": shape,
+            "ambientColor": ambient_color,
+            "spotColor": spot_color,
+        }
+        return self._append(
+            "shadow",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
     def size(
         self,
         width: JsonValue,
@@ -505,6 +1324,37 @@ class GeneratedOperations:
         }
         return self._append(
             "size",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def size_in(
+        self,
+        *,
+        min_width: int | float | None = None,
+        min_height: int | float | None = None,
+        max_width: int | float | None = None,
+        max_height: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.sizeIn``.
+
+        Args:
+            min_width: Native minWidth, omitted for its native default.
+            min_height: Native minHeight, omitted for its native default.
+            max_width: Native maxWidth, omitted for its native default.
+            max_height: Native maxHeight, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "minWidth": min_width,
+            "minHeight": min_height,
+            "maxWidth": max_width,
+            "maxHeight": max_height,
+        }
+        return self._append(
+            "sizeIn",
             **{k: v for k, v in given.items() if v is not None},
         )
 
@@ -535,6 +1385,50 @@ class GeneratedOperations:
         return self._append("skipToLookaheadSize")
 
     @_Operation
+    def status_bars_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.statusBarsPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("statusBarsPadding")
+
+    @_Operation
+    def system_bars_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.systemBarsPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("systemBarsPadding")
+
+    @_Operation
+    def system_gesture_exclusion(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.systemGestureExclusion``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("systemGestureExclusion")
+
+    @_Operation
+    def system_gestures_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.systemGesturesPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("systemGesturesPadding")
+
+    @_Operation
     def tab_indicator_offset(
         self,
         selected_tab_index: int,
@@ -560,6 +1454,59 @@ class GeneratedOperations:
             "tabIndicatorOffset",
             **{k: v for k, v in given.items() if v is not None},
         )
+
+    @_Operation
+    def test_tag(
+        self,
+        tag: str,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.platform.testTag``.
+
+        Args:
+            tag: Native tag.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "tag": tag,
+        }
+        return self._append(
+            "testTag",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def visible(
+        self,
+        visible: bool,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.visible``.
+
+        Args:
+            visible: Native visible.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "visible": visible,
+        }
+        return self._append(
+            "visible",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def waterfall_padding(
+        self,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.waterfallPadding``.
+
+        Returns:
+            A new modifier.
+        """
+        return self._append("waterfallPadding")
 
     @_Operation
     def weight(
@@ -589,6 +1536,94 @@ class GeneratedOperations:
         )
 
     @_Operation
+    def width(
+        self,
+        width: int | float,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.width``.
+
+        Args:
+            width: Native width.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "width": width,
+        }
+        return self._append(
+            "width",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def width_in(
+        self,
+        *,
+        min: int | float | None = None,
+        max: int | float | None = None,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.widthIn``.
+
+        Args:
+            min: Native min, omitted for its native default.
+            max: Native max, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "min": min,
+            "max": max,
+        }
+        return self._append(
+            "widthIn",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def window_insets_bottom_height(
+        self,
+        insets: JsonValue,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.windowInsetsBottomHeight``.
+
+        Args:
+            insets: Native insets.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "insets": insets,
+        }
+        return self._append(
+            "windowInsetsBottomHeight",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def window_insets_end_width(
+        self,
+        insets: JsonValue,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.windowInsetsEndWidth``.
+
+        Args:
+            insets: Native insets.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "insets": insets,
+        }
+        return self._append(
+            "windowInsetsEndWidth",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
     def window_insets_padding(
         self,
         insets: JsonValue,
@@ -606,5 +1641,143 @@ class GeneratedOperations:
         }
         return self._append(
             "windowInsetsPadding",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def window_insets_start_width(
+        self,
+        insets: JsonValue,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.windowInsetsStartWidth``.
+
+        Args:
+            insets: Native insets.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "insets": insets,
+        }
+        return self._append(
+            "windowInsetsStartWidth",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def window_insets_top_height(
+        self,
+        insets: JsonValue,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.windowInsetsTopHeight``.
+
+        Args:
+            insets: Native insets.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "insets": insets,
+        }
+        return self._append(
+            "windowInsetsTopHeight",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def wrap_content_height(
+        self,
+        *,
+        align: _WrapContentHeightAlign = "centerVertically",
+        unbounded: bool = False,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.wrapContentHeight``.
+
+        Args:
+            align: Native align; "centerVertically" unless given.
+            unbounded: Native unbounded; false unless given.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "align": align,
+            "unbounded": unbounded,
+        }
+        return self._append(
+            "wrapContentHeight",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def wrap_content_size(
+        self,
+        *,
+        align: _WrapContentSizeAlign = "center",
+        unbounded: bool = False,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.wrapContentSize``.
+
+        Args:
+            align: Native align; "center" unless given.
+            unbounded: Native unbounded; false unless given.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "align": align,
+            "unbounded": unbounded,
+        }
+        return self._append(
+            "wrapContentSize",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def wrap_content_width(
+        self,
+        *,
+        align: _WrapContentWidthAlign = "centerHorizontally",
+        unbounded: bool = False,
+    ) -> Modifier:
+        """Native ``androidx.compose.foundation.layout.wrapContentWidth``.
+
+        Args:
+            align: Native align; "centerHorizontally" unless given.
+            unbounded: Native unbounded; false unless given.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "align": align,
+            "unbounded": unbounded,
+        }
+        return self._append(
+            "wrapContentWidth",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def z_index(
+        self,
+        z_index: int | float,
+    ) -> Modifier:
+        """Native ``androidx.compose.ui.zIndex``.
+
+        Args:
+            z_index: Native zIndex.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "zIndex": z_index,
+        }
+        return self._append(
+            "zIndex",
             **{k: v for k, v in given.items() if v is not None},
         )

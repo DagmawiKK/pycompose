@@ -27,6 +27,8 @@ from pycompose_codegen.derive.propose import identity
 
 MODIFIER = "androidx/compose/ui/Modifier"
 DP = "androidx/compose/ui/unit/Dp"
+MATERIAL_2 = "androidx.compose.material."
+"""Material 2's package; Material 3's is ``androidx.compose.material3``."""
 EXTENSION = "kotlin/ExtensionFunctionType"
 
 SCALARS = {
@@ -52,6 +54,9 @@ def _accepts(spec: dict[str, Any], classifier: str, families: dict[str, Any]) ->
     if "valueType" in spec:
         family = families.get(spec["valueType"])
         return family is not None and _dotted(classifier) == family["kotlinType"]
+    if spec["type"] == "dp":
+        # A bare dp number (ADR-0036) fills a Dp parameter.
+        return classifier == DP
     return classifier in SCALARS.get(spec["type"], frozenset())
 
 
@@ -185,6 +190,8 @@ def _call(
         and d.receiver is not None
         and d.receiver.classifier == MODIFIER
         and d.dispatch_receiver is None
+        and d.document.get("visibility") == "PUBLIC"
+        and not f"{d.package}.".startswith(MATERIAL_2)
     ]
     bound = [
         (_defaults_used(d, binding), d, binding)

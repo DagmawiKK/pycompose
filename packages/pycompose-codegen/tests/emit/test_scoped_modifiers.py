@@ -105,7 +105,7 @@ def test_an_alignment_outside_its_scope_vocabulary_is_rejected() -> None:
 
 
 def test_an_entry_keeps_the_version_it_entered_at() -> None:
-    from pycompose_codegen.derive.lock import carried
+    from pycompose_codegen.derive.versions import carried
 
     stamped = {"since": "1.24.0"}
     lock = {
@@ -127,7 +127,7 @@ def test_an_entry_keeps_the_version_it_entered_at() -> None:
 
 def test_a_prop_new_since_the_last_lock_enters_at_the_current_version() -> None:
     """A restored or newly derived prop must not reach envelopes released before it."""
-    from pycompose_codegen.derive.lock import carried
+    from pycompose_codegen.derive.versions import carried
 
     lock = {
         "schemaVersion": "1.24.0",

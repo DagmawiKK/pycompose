@@ -32,6 +32,7 @@ from pycompose_codegen.derive.core_modifiers import core_modifiers
 from pycompose_codegen.derive.entry_candidates import derive, select
 from pycompose_codegen.derive.holders import derive as derive_holders
 from pycompose_codegen.derive.overloads import extras
+from pycompose_codegen.derive.plain_modifiers import plain_modifiers
 from pycompose_codegen.derive.policy import (
     Policy,
     merge,
@@ -45,6 +46,7 @@ from pycompose_codegen.derive.scoped_modifiers import (
     scoped_declarations,
     scoped_modifiers,
 )
+from pycompose_codegen.derive.versions import carried
 
 LOCK = ROOT / "schema/catalog.lock.json"
 
@@ -79,9 +81,9 @@ class Report:
         promoted: Components no policy names, exposed because they derive.
         refused: Components no policy names that do not derive, with the reason.
         coverage: Per artifact group, component overloads by outcome.
-        modifiers: Scope-declared modifiers derived from the pin.
+        modifiers: Plain and scope-declared modifiers derived from the pin.
         families: Constant families derived from the pin.
-        refused_modifiers: Scope-declared modifiers that do not derive, with why.
+        refused_modifiers: Modifiers that do not derive, with why.
         removed: Props policy removes from a derived entry, with the reason.
     """
 
@@ -221,13 +223,28 @@ def generate(
         frozenset(sections["modifiers"]),
         sections["schemaVersion"],
     )
-    # Policy states each modifier's wire contract; the pin says what it calls.
-    core, refused_core = core_modifiers(
-        found, sections["modifiers"], family_index(sections)
+    plain, refused_plain = plain_modifiers(
+        found,
+        value_families(sections),
+        family_index(sections),
+        defaults,
+        frozenset(sections["modifiers"]) | frozenset(modifiers),
+        sections["schemaVersion"],
     )
-    report.errors.extend(f"modifier {n}: {why}" for n, why in refused_core.items())
+    # Policy states its modifiers' wire contracts and the pin the rest; the pin
+    # says what each calls.
+    core, refused_core = core_modifiers(
+        found, {**sections["modifiers"], **plain}, family_index(sections)
+    )
+    for name, why in refused_core.items():
+        if name in plain:
+            refused_plain[name] = why
+        else:
+            report.errors.append(f"modifier {name}: {why}")
     lock["modifiers"] = {**sections["modifiers"], **core, **modifiers}
-    report.modifiers, report.families = sorted(modifiers), sorted(derived)
+    report.refused_modifiers.update(refused_plain)
+    report.modifiers = sorted([*modifiers, *(name for name in plain if name in core)])
+    report.families = sorted(derived)
     holders, refused = derive_holders(found, source_drives(directory), lock)
     report.errors.extend(refused)
     lock["holders"] = holders
@@ -237,52 +254,6 @@ def generate(
     report.errors.extend(compare(lock, found))
     report.errors.extend(compare_values(lock, found, source_defaults(directory)))
     return {key: lock[key] for key in ORDER if key in lock}, report
-
-
-VERSIONED = ("components", "modifiers", "valueTypes")
-"""Sections whose entries say the schema version they entered at."""
-
-
-def carried(lock: dict[str, Any], previous: dict[str, Any]) -> None:
-    """Keep each entry's ``since`` from the committed lock.
-
-    A derived entry is stamped with the current schema version, which is right
-    only the first time: re-stamped at the next bump, every older envelope
-    would stop accepting it. The version an entry entered at is history the
-    pin cannot answer, so the committed lock is where it is read from. An entry
-    the lock already has without one is the first schema's, and stays so.
-
-    Args:
-        lock: The lock being generated, changed in place.
-        previous: The committed lock.
-    """
-    for section in VERSIONED:
-        known = previous.get(section, {})
-        for name, entry in lock.get(section, {}).items():
-            if section == "components" and name in known:
-                _carried_props(entry, known[name], lock["schemaVersion"])
-            if "since" not in entry or name not in known:
-                continue
-            if "since" in known[name]:
-                entry["since"] = known[name]["since"]
-            else:
-                del entry["since"]
-
-
-def _carried_props(entry: dict[str, Any], known: dict[str, Any], version: str) -> None:
-    """Date each prop as its component is dated: kept if known, current if new.
-
-    A prop the committed lock lacks entered now; without a ``since``, every older
-    envelope would claim it.
-    """
-    previous = known.get("props", {})
-    for prop, spec in entry.get("props", {}).items():
-        if prop not in previous:
-            spec.setdefault("since", version)
-        elif "since" in previous[prop]:
-            spec["since"] = previous[prop]["since"]
-        else:
-            spec.pop("since", None)
 
 
 def derived_families(

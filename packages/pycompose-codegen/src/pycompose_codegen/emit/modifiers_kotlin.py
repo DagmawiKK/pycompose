@@ -84,6 +84,11 @@ def _decoded(spec: dict[str, Any], argument: dict[str, Any]) -> str:
         )
     if spec["type"] == "actionId":
         return "{ dispatch(value.jsonPrimitive.content) }"
+    if spec["type"] == "dp":
+        return (
+            "com.pycompose.renderer.PropResolver"
+            ".dp(value.jsonPrimitive.double).getOrThrow()"
+        )
     decoded = f"value.jsonPrimitive.{READS[spec['type']]}"
     native = argument["type"].rsplit(".", 1)[-1]
     return decoded + NARROW.get(native, "")
@@ -94,11 +99,19 @@ def _passed(prop: str, spec: dict[str, Any], argument: dict[str, Any]) -> str:
     present = f'op.getValue("{prop}").let {{ value -> {_decoded(spec, argument)} }}'
     if spec.get("required"):
         return present
-    if "default" not in spec:
-        die(f"modifier prop {prop!r} has no default to fall back on")
+    native_default = spec.get("nativeDefault") or spec.get("fallback")
+    if "default" not in spec or ("valueType" in spec and native_default):
+        # A value, a colour or a named constant falls back on what the pin names.
+        if native_default is None:
+            die(f"modifier prop {prop!r} has no default to fall back on")
+        return f'if ("{prop}" in op) {present} else {native_default}'
     default = spec["default"]
     native = argument["type"].rsplit(".", 1)[-1]
-    if isinstance(default, bool):
+    if native == "Dp":
+        fallback = f"androidx.compose.ui.unit.Dp({float(default)}f)"
+    elif isinstance(default, str):
+        fallback = kotlin_string(default)
+    elif isinstance(default, bool):
         fallback = "true" if default else "false"
     elif native == "Float":
         fallback = f"{float(default)}f"
@@ -194,6 +207,12 @@ def _imports(registry: dict[str, Any]) -> list[str]:
         if call is None:
             continue
         names.add(call["function"])
+        # A rendered default such as ``(0).dp`` calls the dp extension property.
+        if any(
+            str(spec.get("nativeDefault", "")).endswith(".dp")
+            for spec in modifier.get("props", {}).values()
+        ):
+            names.add("androidx.compose.ui.unit.dp")
         if "block" in call:
             package = call["function"].rsplit(".", 1)[0]
             names.update(

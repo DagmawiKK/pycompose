@@ -357,9 +357,10 @@ tasks.register("dumpComposeDefaults") {
                 val constructed = record["name"] == "<init>" && requested.contains(owner)
                 val receiver = (record["dispatchReceiver"] as? Map<*, *>)?.get("classifier")
                 val drive = record["suspend"] == true && receiver in holders
-                // A modifier a scope declares (RowScope.weight): one a child in it can wear.
+                // A modifier, plain (Modifier.alpha) or one a scope declares
+                // (RowScope.weight): its parameters' defaults become its props'.
                 val extended = (record["receiver"] as? Map<*, *>)?.get("classifier")
-                val scoped = extended == "androidx/compose/ui/Modifier" && receiver != null
+                val modifier = extended == "androidx/compose/ui/Modifier"
                 // A holder's remember... factory: the defaults a seeded holder falls back on.
                 val factory = record["category"] == "composable-factory"
                 record["disposition"] == "ui" ||
@@ -368,7 +369,7 @@ tasks.register("dumpComposeDefaults") {
                         named ||
                             constructed ||
                             drive ||
-                            scoped ||
+                            modifier ||
                             factory ||
                             identities.contains(identity)
                     )
