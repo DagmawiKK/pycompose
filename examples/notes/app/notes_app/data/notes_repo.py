@@ -18,7 +18,7 @@ from pathlib import Path
 
 from notes_app.domain.models import Note
 from pycompose.app import to_thread
-from pycompose.state.disk.documents import root
+from pycompose.state import documents_root
 
 SCHEMA = (
     "CREATE TABLE IF NOT EXISTS notes ("
@@ -37,7 +37,7 @@ class SqliteNotesRepo:
     """
 
     def __init__(self, path: Path | None = None) -> None:
-        self.path = path if path is not None else root() / "notes.db"
+        self.path = path if path is not None else documents_root() / "notes.db"
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._connection: sqlite3.Connection | None = None
         # Read once as the session starts, on whatever thread builds the

@@ -27,7 +27,7 @@ from notes_app.view_models import (
     SetTitleCaret,
 )
 from pycompose import composable
-from pycompose.model.nodes import Node
+from pycompose.ui import Node
 
 
 def editor_screen(state: EditorState) -> Node:

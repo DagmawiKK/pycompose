@@ -18,7 +18,6 @@ from todo_model import (
 
 from pycompose import composable
 from pycompose.app import App, Destination, Intent, Toast, ViewModel
-from pycompose.model.nodes import Node
 from pycompose.state import AppState
 from pycompose.ui import (
     Button,
@@ -27,6 +26,7 @@ from pycompose.ui import (
     FilterChip,
     LazyColumn,
     Modifier,
+    Node,
     Row,
     Scaffold,
     Spacer,

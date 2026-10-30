@@ -1,8 +1,8 @@
 """pycompose.ui — everything a screen is described with.
 
 Every component the catalog declares, ``Modifier``, the value types (``Color``,
-``Dp``, ``TextStyle``…), ``Fallback`` and ``Intent``: the one import an app
-needs to draw.
+``Dp``, ``TextStyle``…), ``Fallback``, ``Intent`` and ``Node``, the type a
+screen returns: the one import an app needs to draw.
 
 Components load on first use. An app on its own slice (ADR-0014) imports them
 from its ``components`` package instead, and its APK ships without the
@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from pycompose.model.nodes.node import Node as Node  # noqa: PLC0414
 from pycompose.ui._generated.values import *  # noqa: F403 -- the catalog's values
 
 # The redundant aliases re-export: the star imports leave no room for __all__.

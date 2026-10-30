@@ -9,13 +9,21 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.state.disk.documents import Document, Repository
+from pycompose.state.disk.documents import Document, Repository, documents_root
 from pycompose.state.disk.media import image
 from pycompose.state.disk.paths import paths
 from pycompose.state.memory.app_state import AppState
 from pycompose.state.memory.types import Loaded
 
-__all__ = ["AppState", "Document", "Loaded", "Repository", "image", "paths"]
+__all__ = [
+    "AppState",
+    "Document",
+    "Loaded",
+    "Repository",
+    "documents_root",
+    "image",
+    "paths",
+]
 
 _VIEW_MODEL = "define an Intent and handle it in a ViewModel (pycompose.app)"
 REMOVED = {

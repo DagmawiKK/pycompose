@@ -10,7 +10,7 @@ from pycompose.state.disk.documents import (
     Document,
     Repository,
     diagnostics,
-    root,
+    documents_root,
     use_root,
 )
 from pycompose.state.disk.media import MEDIA, image
@@ -24,6 +24,6 @@ __all__ = [
     "diagnostics",
     "image",
     "paths",
-    "root",
+    "documents_root",
     "use_root",
 ]

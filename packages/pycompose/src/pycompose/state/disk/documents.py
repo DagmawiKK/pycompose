@@ -50,7 +50,7 @@ __all__ = [
     "Document",
     "Repository",
     "diagnostics",
-    "root",
+    "documents_root",
     "use_root",
 ]
 
@@ -67,7 +67,7 @@ _diagnostics: deque[str] = deque(maxlen=DIAGNOSTIC_HISTORY)
 _lock = threading.RLock()
 
 
-def root() -> Path:
+def documents_root() -> Path:
     """Return the directory this app's documents live in.
 
     On Android that is the app's private files directory, which Chaquopy exposes.
@@ -221,7 +221,9 @@ class Document(Generic[T]):
         if not name or Path(name).name != name:
             raise StateError("document name must be a plain file name")
         self._codec = _codec_for(model)
-        self._path = Path(directory) / name if directory is not None else root() / name
+        self._path = (
+            Path(directory) / name if directory is not None else documents_root() / name
+        )
         # Immutable items can be shared between loads, so an unchanged file
         # returns the same objects: no re-decode, and views keyed by identity
         # (ExpansionMemo) see unchanged items as unchanged.

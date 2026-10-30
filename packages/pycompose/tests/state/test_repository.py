@@ -16,7 +16,12 @@ from types import ModuleType, SimpleNamespace
 import pytest
 
 from pycompose.errors import StateError
-from pycompose.state.disk.documents import Document, diagnostics, root, use_root
+from pycompose.state.disk.documents import (
+    Document,
+    diagnostics,
+    documents_root,
+    use_root,
+)
 
 
 @dataclass(frozen=True)
@@ -193,7 +198,7 @@ def test_the_storage_root_is_the_app_directory_and_can_be_overridden(
     tmp_path: Path,
 ) -> None:
     use_root(tmp_path)
-    assert root() == tmp_path
+    assert documents_root() == tmp_path
 
 
 def test_the_storage_root_is_the_app_directory_on_a_device(
@@ -208,7 +213,7 @@ def test_the_storage_root_is_the_app_directory_on_a_device(
     monkeypatch.setitem(sys.modules, "java.android", android)
     monkeypatch.setattr("pycompose.state.disk.documents._override", None)
 
-    assert root() == tmp_path
+    assert documents_root() == tmp_path
 
 
 def test_a_bridge_without_context_falls_back_to_the_environment(
@@ -219,7 +224,7 @@ def test_a_bridge_without_context_falls_back_to_the_environment(
     monkeypatch.setattr("pycompose.state.disk.documents._override", None)
     monkeypatch.setenv("PYCOMPOSE_HOME", str(tmp_path / "env"))
 
-    assert root() == tmp_path / "env"
+    assert documents_root() == tmp_path / "env"
 
 
 def test_a_document_may_live_outside_the_root(tmp_path: Path) -> None:

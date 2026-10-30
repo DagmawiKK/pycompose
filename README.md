@@ -206,8 +206,8 @@ models. Here is a counter, in full:
 
 from components import Button, Column, Modifier, Text
 from pycompose.app import App, Destination, Intent, ViewModel
-from pycompose.model.nodes import Node
 from pycompose.state import AppState
+from pycompose.ui import Node
 
 
 class Counter(AppState):

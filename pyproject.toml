@@ -67,11 +67,19 @@ root_packages = ["pycompose", "pycompose_cli", "pycompose_codegen", "pycompose_t
 include_external_packages = true
 
 [[tool.importlinter.contracts]]
-name = "Layered: the runtime's packages, each importing only those below it"
+name = "Layered: the runtime's six packages, each importing only those below it"
 type = "layers"
-layers = ["host", "app", "ui", "runtime", "state", "model"]
+layers = ["host", "app", "ui | runtime", "state", "model"]
 containers = ["pycompose"]
-explanation = "The host runs apps; apps describe screens with ui; ui builds on state and the model; no cycles."
+explanation = """The host runs apps; apps describe screens with ui and run on the loop; ui
+builds on state and the model; the loop and ui never import each other."""
+
+[[tool.importlinter.contracts]]
+name = "The loop is a leaf: runtime imports none of the other packages"
+type = "forbidden"
+source_modules = ["pycompose.runtime"]
+forbidden_modules = ["pycompose.state", "pycompose.model"]
+explanation = "The scheduler, scopes and signals know nothing of screens, data or the wire."
 
 [[tool.importlinter.contracts]]
 name = "CLI does not depend on testing helpers"
