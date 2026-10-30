@@ -89,8 +89,8 @@ def config_problems(config: dict[str, Any]) -> list[Problem]:
         One problem per violation, naming the key.
     """
     schema = json.loads(
-        files("pycompose")
-        .joinpath("schema", "pycompose.schema.json")
+        files("pycompose_cli")
+        .joinpath("schemas", "pycompose.schema.json")
         .read_text("utf-8")
     )
     return list(_validate(config, schema, ""))

@@ -93,9 +93,9 @@ def test_ir_schema_is_fresh() -> None:
     assert IR_SCHEMA_PATH.read_text(encoding="utf-8") == importlib.import_module(
         "pycompose_codegen.emit.emit_wire"
     ).render_ir_schema(_registry())
-    assert (
-        PACKAGE / "schema" / "ir.schema.json"
-    ).read_bytes() == IR_SCHEMA_PATH.read_bytes()
+    # The command line validates snapshots against its copy.
+    copy = ROOT / "packages/pycompose-cli/src/pycompose_cli/schemas/ir.schema.json"
+    assert copy.read_bytes() == IR_SCHEMA_PATH.read_bytes()
 
 
 def test_the_runtime_catalog_is_the_committed_lock() -> None:

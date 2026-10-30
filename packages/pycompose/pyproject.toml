@@ -44,7 +44,7 @@ where = ["src"]
 include = ["pycompose", "pycompose.*"]
 
 [tool.setuptools.package-data]
-pycompose = ["py.typed", "contract/catalog.lock.json", "schema/ir.schema.json", "schema/pycompose.schema.json"]
+pycompose = ["py.typed", "contract/catalog.lock.json"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pycompose.version.__version__" }

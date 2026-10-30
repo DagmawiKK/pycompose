@@ -67,11 +67,11 @@ root_packages = ["pycompose", "pycompose_cli", "pycompose_codegen", "pycompose_t
 include_external_packages = true
 
 [[tool.importlinter.contracts]]
-name = "Layered: core -> schema/state -> ir -> bridge -> components"
+name = "Layered: the runtime's packages, each importing only those below it"
 type = "layers"
-layers = ["blocks", "material3", "foundation", "ui", "bridge", "app", "runtime", "storage", "wire", "state", "schema", "core", "contract", "utils"]
+layers = ["blocks", "material3", "foundation", "ui", "bridge", "app", "runtime", "storage", "wire", "state", "core", "contract", "utils"]
 containers = ["pycompose"]
-explanation = "components depends on ir+core+registry; no cycles, no skips."
+explanation = "Components build on the wire, the wire on core and the catalog; no cycles."
 
 [[tool.importlinter.contracts]]
 name = "Bridge is the only runtime boundary surface"
@@ -85,7 +85,7 @@ explanation = "Python bridge surface is Chaquopy-agnostic; the host implements t
 [[tool.importlinter.contracts]]
 name = "Runtime packages never import CLI or templates"
 type = "forbidden"
-source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
+source_modules = ["pycompose.core", "pycompose.contract", "pycompose.state", "pycompose.runtime", "pycompose.app",
                   "pycompose.blocks", "pycompose.wire", "pycompose.bridge", "pycompose.ui",
                    "pycompose.utils", "pycompose.foundation", "pycompose.material3", "pycompose.storage"]
 forbidden_modules = ["pycompose_cli"]
@@ -101,7 +101,7 @@ explanation = "State + Store stay minimal and purpose-free."
 [[tool.importlinter.contracts]]
 name = "Runtime never imports testing helpers or fixtures"
 type = "forbidden"
-source_modules = ["pycompose.core", "pycompose.contract", "pycompose.schema", "pycompose.state", "pycompose.runtime", "pycompose.app",
+source_modules = ["pycompose.core", "pycompose.contract", "pycompose.state", "pycompose.runtime", "pycompose.app",
                    "pycompose.blocks", "pycompose.wire", "pycompose.bridge", "pycompose.ui",
                    "pycompose.utils", "pycompose.foundation", "pycompose.material3", "pycompose.storage"]
 forbidden_modules = ["pycompose_testing"]

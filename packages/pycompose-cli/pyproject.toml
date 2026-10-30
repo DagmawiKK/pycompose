@@ -32,7 +32,7 @@ include = ["pycompose_cli*"]
 exclude = ["pycompose_cli.templates*"]
 
 [tool.setuptools.package-data]
-pycompose_cli = ["templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep", "templates/extract/**/*", "templates/toolchain.toml"]
+pycompose_cli = ["templates/android/**/*", "templates/android/.gitignore", "templates/android/.editorconfig", "templates/android/**/.gitkeep", "templates/extract/**/*", "templates/toolchain.toml", "schemas/*.json"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pycompose_cli.__version__" }

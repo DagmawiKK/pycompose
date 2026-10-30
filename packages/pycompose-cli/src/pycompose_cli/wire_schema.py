@@ -90,8 +90,8 @@ class WireSchema:
 
     def __init__(self) -> None:
         self._root: dict[str, Any] = json.loads(
-            files("pycompose")
-            .joinpath("schema", "ir.schema.json")
+            files("pycompose_cli")
+            .joinpath("schemas", "ir.schema.json")
             .read_text(encoding="utf-8")
         )
         self._choices: dict[int, dict[str, dict[str, Any]]] = {}

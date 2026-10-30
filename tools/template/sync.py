@@ -98,15 +98,17 @@ while ``add`` runs."""
 
 
 PACKAGE = ROOT / "packages/pycompose/src/pycompose"
-"""The runtime package: it carries the catalog lock and the wire schema."""
-TEMPLATES = ROOT / "packages/pycompose-cli/src/pycompose_cli/templates"
+"""The runtime package: it carries the catalog lock it validates against."""
+CLI = ROOT / "packages/pycompose-cli/src/pycompose_cli"
+"""The command line: it carries the wire schema ``pycompose validate`` reads."""
+TEMPLATES = CLI / "templates"
 """The command line's templates: it carries the scaffold an app starts from."""
 OVERLAY = TEMPLATES / "overlay"
 """The template's own files: what a scaffolded app has that ``android/`` lacks."""
 
 COPIES = {
     PACKAGE / "contract/catalog.lock.json": ROOT / "schema/catalog.lock.json",
-    PACKAGE / "schema/ir.schema.json": ROOT / "schema/ir.schema.json",
+    CLI / "schemas/ir.schema.json": ROOT / "schema/ir.schema.json",
 }
 """Single files the package carries, by their source."""
 

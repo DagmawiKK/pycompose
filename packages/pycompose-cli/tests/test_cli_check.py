@@ -145,7 +145,7 @@ def test_every_schema_key_is_exercised_by_a_golden_config() -> None:
     from importlib.resources import files
 
     schema = json.loads(
-        files("pycompose").joinpath("schema", "pycompose.schema.json").read_text()
+        files("pycompose_cli").joinpath("schemas", "pycompose.schema.json").read_text()
     )
     golden = tomllib.loads(GOLDEN)
     assert config_problems(golden) == []
